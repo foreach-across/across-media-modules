@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foreach.imageserver.dao.ImageDao">
+
+
+    <sql id="servableImageColumns">
+        I.id as image_id,
+        I.applicationid as image_applicationid,
+        I.groupid as image_groupid,
+        I.width as image_width,
+        I.height as image_height,
+        I.filesize as image_filesize,
+        I.filepath as image_filepath,
+        I.originalfilename as image_originalfilename,
+        I.extension as image_extension,
+        I.datecreated as image_datecreated,
+        I.deleted as image_deleted
+    </sql>
+
+    <resultMap id="servableImageMap" type="ServableImageData">
+        <id property="id" column="image_id"/>
+        <result property="applicationId" column="image_applicationid"/>
+        <result property="groupId" column="image_groupid"/>
+        <result property="width" column="image_width"/>
+        <result property="height" column="image_height"/>
+        <result property="fileSize" column="image_filesize"/>
+        <result property="path" column="image_filepath"/>
+        <result property="originalFileName" column="image_originalfilename"/>
+        <result property="extension" column="image_extension"/>
+        <result property="dateCreated" column="image_datecreated"/>
+        <result property="deleted" column="image_deleted"/>
+
+        <collection property="crops" column="crop_imageid" resultMap="com.foreach.imageserver.dao.CropDao.cropMap" />
+    </resultMap>
+
+    <select id="getImageById" parameterType="long" resultMap="servableImageMap">
+        SELECT
+        <include refid="servableImageColumns"/>,
+        <include refid="com.foreach.imageserver.dao.CropDao.cropColumns"/>
+        FROM ServableImage I LEFT JOIN Crop C ON C.imageid = I.id
+        WHERE I.id = #{value}
+    </select>
+
+     <select id="getImageByPath" parameterType="ImageSelector" resultMap="servableImageMap">
+        SELECT
+        <include refid="servableImageColumns"/>,
+         <include refid="com.foreach.imageserver.dao.CropDao.cropColumns"/>
+        FROM ServableImage I LEFT JOIN Crop C ON C.imageid = I.id
+        WHERE I.filepath = #{path}
+         AND I.originalfilename = #{originalFileName}
+         AND I.extension = #{extension}
+    </select>
+
+    <select id="getImages" parameterType="ImageSelector" resultMap="servableImageMap">
+        SELECT
+        <include refid="servableImageColumns"/>,
+        <include refid="com.foreach.imageserver.dao.CropDao.cropColumns"/>
+        FROM ServableImage I LEFT JOIN Crop C ON C.imageid = I.id
+        <where>
+			<if test="applicationId != null">
+				I.applicationid = #{applicationId}
+			</if>
+			<if test="groupId != null">
+				AND I.groupid = #{groupId}
+			</if>
+		</where>
+        ORDER BY image_id ASC
+    </select>
+
+    <select id="getAllImages" resultMap="servableImageMap">
+        SELECT
+        <include refid="servableImageColumns"/>,
+        <include refid="com.foreach.imageserver.dao.CropDao.cropColumns"/>
+        FROM ServableImage I LEFT JOIN Crop C ON C.imageid = I.id
+        ORDER BY image_id ASC
+    </select>
+
+    <select id="getImageCount" parameterType="ImageSelector" resultType="int">
+		SELECT count (I.id)
+        FROM ServableImage I
+		<where>
+			<if test="applicationId != null">
+				I.applicationid = #{applicationId}
+			</if>
+			<if test="groupId != null">
+				AND I.groupid = #{groupId}
+			</if>
+		</where>
+	</select>
+
+    <insert id="insertImage" parameterType="ServableImageData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ServableImage (
+            applicationid,
+            groupid,
+            width,
+            height,
+            filesize,
+            filepath,
+            originalfilename,
+            extension,
+            datecreated,
+            deleted
+        ) VALUES (
+            #{applicationId},
+            #{groupId},
+            #{width},
+            #{height},
+            #{fileSize},
+            #{path},
+            #{originalFileName},
+            #{extension},
+            GETDATE(),
+            #{deleted}
+        )
+    </insert>
+
+    <update id="updateImage" parameterType="ServableImageData">
+        UPDATE ServableImage
+        SET
+            applicationid = #{applicationId},
+            groupid = #{groupId},
+            width = #{width},
+            height = #{height},
+            filesize = #{fileSize},
+            filepath = #{path},
+            originalfilename = #{originalFileName},
+            extension = #{extension},
+            deleted = #{deleted}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteImage" parameterType="long">
+        DELETE
+        FROM ServableImage
+        WHERE id = #{value}
+    </delete>
+
+</mapper>

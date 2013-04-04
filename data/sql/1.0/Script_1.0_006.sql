@@ -1,0 +1,85 @@
+--Use this script in case a database still has the old version (using numeric and float and with single ratio column)
+--
+-- DROP TABLE Crop
+--
+-- GO
+--
+-- DROP TABLE Format
+--
+-- GO
+--
+-- DROP TABLE ServableImage
+--
+-- GO
+--
+-- CREATE TABLE ServableImage (
+--   id BIGINT IDENTITY(1,1) NOT NULL,
+--   applicationid INT NOT NULL,
+--   groupid INT NOT NULL,
+--   width INT NULL,
+--   height INT NULL,
+--   filesize BIGINT NULL,
+--   filepath nvarchar(200) NULL,
+--   originalfilename nvarchar(50) NULL,
+--   extension nvarchar(50) NULL,
+--   datecreated datetime NOT NULL DEFAULT GETDATE(),
+--   deleted BIT NULL DEFAULT 0,
+--
+--   CONSTRAINT PK_image PRIMARY KEY CLUSTERED (id ASC),
+--   CONSTRAINT FK_image_application FOREIGN KEY (applicationid) REFERENCES dbo.Application (id),
+--   CONSTRAINT FK_image_group FOREIGN KEY (groupid) REFERENCES dbo.ImageGroup (id)
+-- )
+--
+-- GO
+--
+-- INSERT INTO ServableImage (applicationid, groupid, width, height, filesize, filepath, originalfilename, extension, datecreated, deleted) VALUES (1,1,300,200,46080,'c:/','image','png','2011-06-29 11:02:09.340',0)
+-- INSERT INTO ServableImage (applicationid, groupid, width, height, filesize, filepath, originalfilename, extension, datecreated, deleted) VALUES (1,1,300,200,92160,'c:/','image','png','2011-06-29 11:04:17.557',0)
+-- INSERT INTO ServableImage (applicationid, groupid, width, height, filesize, filepath, originalfilename, extension, datecreated, deleted) VALUES (1,1,501,381,17846,'/temp/1/1/originals/2011/06/29','test','jpeg','2011-06-29 12:17:01.237',0)
+-- INSERT INTO ServableImage (applicationid, groupid, width, height, filesize, filepath, originalfilename, extension, datecreated, deleted) VALUES (1,1,1024,768,777835,'/temp/1/1/originals/2011/06/29','Penguins','jpg','2011-06-29 12:27:10.730',0)
+-- INSERT INTO ServableImage (applicationid, groupid, width, height, filesize, filepath, originalfilename, extension, datecreated, deleted) VALUES (1,1,1024,768,777835,'/temp/1/1/originals/2011/06/29','Penguins','jpg','2011-06-29 12:28:25.023',0)
+-- INSERT INTO ServableImage (applicationid, groupid, width, height, filesize, filepath, originalfilename, extension, datecreated, deleted) VALUES (1,1,501,381,17846,'/temp/1/1/originals/2011/06/29','test','jpeg','2011-06-29 13:10:40.057',0)
+--
+-- GO
+--
+-- CREATE TABLE Format (
+--     id INT IDENTITY(1,1) NOT NULL,
+--     groupid INT NOT NULL,
+--     width INT NULL,
+--     height INT NULL,
+--     ratiowidth INT NULL,
+--     ratioheight INT NULL,
+--     x INT NULL,
+--     y INT NULL,
+--     name NVARCHAR(50),
+--
+--     CONSTRAINT PK_format PRIMARY KEY CLUSTERED (id ASC),
+--     CONSTRAINT FK_format_group FOREIGN KEY (groupid) REFERENCES dbo.ImageGroup (id)
+-- )
+--
+-- GO
+--
+-- INSERT INTO Format (groupid, width, height, ratiowidth, ratioheight, x, y, name) VALUES (1,150,100,3,2,74,49,'halfImage')
+-- INSERT INTO Format (groupid, width, height, ratiowidth, ratioheight, x, y, name) VALUES (1,170,120,3,2,74,49,'halfImage')
+--
+-- GO
+--
+-- CREATE TABLE Crop (
+--     id BIGINT IDENTITY(1,1) NOT NULL,
+--     imageid BIGINT NOT NULL,
+--     formatid INT NOT NULL,
+--     width INT NULL,
+--     height INT NULL,
+--     ratiowidth INT NULL,
+--     ratioheight INT NULL,
+--     version INT NULL,
+--     originX INT NULL,
+--     originY INT NULL,
+--
+--     CONSTRAINT PK_crop PRIMARY KEY CLUSTERED (id ASC),
+--     CONSTRAINT FK_crop_servableimage FOREIGN KEY (imageid) REFERENCES dbo.ServableImage (id),
+--     CONSTRAINT FK_crop_format FOREIGN KEY (formatid) REFERENCES dbo.Format (id)
+-- )
+--
+-- GO
+--
+-- INSERT INTO Crop (imageid, formatid, width, height, ratiowidth, ratioheight, version, originX, originY) VALUES (1,1,150,100,3,2,1,74,49)

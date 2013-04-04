@@ -1,0 +1,5 @@
+ul { list-style-type: none; }
+.imageDetails { margin-bottom: 30px; }
+.imageDetails li { margin-bottom: 10px;}
+.grayedId { color: #a9a9a9; font-style: italic; }
+.highlighted { font-weight: bold; }

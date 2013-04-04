@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foreach.imageserver.dao.ApplicationDao">
+
+    <sql id="applicationColumns">
+        IA.id as application_id,
+        IA.name as application_name,
+        IA.callbackurl as application_callbackurl
+    </sql>
+	
+	<resultMap id="applicationMap" type="Application">
+		<id property="id" column="application_id"/>
+		<result property="name" column="application_name"/>
+		<result property="callbackUrl" column="application_callbackurl"/>
+	</resultMap>
+
+	<select id="getApplicationById" parameterType="int" resultMap="applicationMap">
+		SELECT
+		<include refid="applicationColumns"/>
+		FROM Application IA
+		WHERE IA.id = #{value}
+	</select>
+	
+	<select id="getAllApplications" resultMap="applicationMap">
+		SELECT
+		<include refid="applicationColumns"/>
+		FROM Application IA
+		ORDER BY application_id ASC
+	</select>
+
+    <insert id="insertApplication" parameterType="Application" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO Application (
+            name,
+            callbackurl
+        ) VALUES (
+            #{name},
+            #{callbackUrl}
+        )
+    </insert>
+
+    <update id="updateApplication" parameterType="Application">
+        UPDATE Application
+        SET
+            name = #{name},
+            callbackurl = #{callbackUrl}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteApplication" parameterType="int">
+        DELETE
+        FROM Application
+        WHERE id = #{value}
+    </delete>
+
+</mapper>

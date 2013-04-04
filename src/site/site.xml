@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="Maven" xmlns="http://maven.apache.org/DECORATION/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+	<bannerLeft>
+		<name>common-web-utils</name>
+		<src>http://www.foreach.com/sites/default/themes/foreach2010_theme/images/menu-items/logo.png</src>
+		<href>http://maven.apache.org/</href>
+	</bannerLeft>
+	<bannerRight>
+		<src>http://www.foreach.com/sites/default/themes/foreach2010_theme/images/menu-items/logo.png</src>
+	</bannerRight>
+
+	<body>
+
+		<menu name="ImageServer">
+			<item name="Introduction" href="index.html"/>
+			<item name="QuickStart" href="quickstart.html"/>
+			<item name="javadocs" href="apidocs/index.html" />
+		</menu>
+
+	</body>
+</project>

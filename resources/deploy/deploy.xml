@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<project name="Deploy foreach-imageserver" basedir="../../">
+	<property name="deploy.site.location" value="foreach@java.libs.foreach.com:/home/foreach/lib-sites/imageserver" />
+	<loadproperties srcfile="${user.home}/.foreach/foreach-buildserver.properties" />
+	
+	<target name="deploy.site" description="Copy website">
+		<scp todir="${deploy.site.location}" keyfile="${keyfile}" passphrase="${passphrase}" trust="yes">
+			<fileset dir="target/site">
+				<include name="**/*" />
+			</fileset>
+		</scp>
+	</target>
+
+</project>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <option name="DEFAULT_COMPILER" value="Javac" />
+    <resourceExtensions />
+    <wildcardResourcePatterns>
+      <entry name="?*.properties" />
+      <entry name="?*.xml" />
+      <entry name="?*.gif" />
+      <entry name="?*.png" />
+      <entry name="?*.jpeg" />
+      <entry name="?*.jpg" />
+      <entry name="?*.html" />
+      <entry name="?*.dtd" />
+      <entry name="?*.tld" />
+      <entry name="?*.ftl" />
+    </wildcardResourcePatterns>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="business" />
+        <module name="client-api" />
+        <module name="data" />
+        <module name="rendering" />
+        <module name="services" />
+        <module name="testUtils" />
+        <module name="utils" />
+        <module name="web.imageserver.api" />
+        <module name="web.imageserver.front" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="business" target="1.5" />
+      <module name="client-api" target="1.5" />
+      <module name="data" target="1.5" />
+      <module name="platform" target="1.5" />
+      <module name="rendering" target="1.5" />
+      <module name="services" target="1.5" />
+      <module name="testUtils" target="1.5" />
+      <module name="utils" target="1.5" />
+      <module name="web.imageserver.api" target="1.5" />
+      <module name="web.imageserver.front" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
+

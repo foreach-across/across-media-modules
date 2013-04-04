@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foreach.imageserver.dao.FormatDao">
+
+    <sql id="formatColumns">
+        F.id AS format_id,
+        F.name AS format_name,
+        F.groupid AS format_groupid,
+        F.width AS format_width,
+        F.height AS format_height,
+        F.ratiowidth AS format_ratiowidth,
+        F.ratioheight AS format_ratioheight
+    </sql>
+
+
+	<resultMap id="formatMap" type="Format">
+		<id property="id" column="format_id"/>
+		<result property="name" column="format_name"/>
+        <result property="groupId" column="format_groupid"/>
+        <result property="dimensions.width" column="format_width"/>
+        <result property="dimensions.height" column="format_height"/>
+        <association property="dimensions.ratio" javaType="Fraction" column="format_id">
+            <constructor >
+                <idArg column="format_ratiowidth" javaType="_int"/>
+                <idArg column="format_ratioheight" javaType="_int"/>
+            </constructor>
+        </association>
+	</resultMap>
+
+	<select id="getFormatById" parameterType="int" resultMap="formatMap">
+        SELECT
+        <include refid="formatColumns"/>
+        FROM Format F
+        WHERE F.id = #{value}
+	</select>
+
+    <select id="getFormatsByGroupId" parameterType="int" resultMap="formatMap">
+        SELECT
+        <include refid="formatColumns"/>
+        FROM Format F
+        WHERE F.groupid = #{value}
+    </select>
+
+    <insert id="insertFormat" parameterType="Format" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO Format (
+            name,
+            groupid,
+            width,
+            height,
+            ratiowidth,
+            ratioheight
+        ) VALUES (
+            #{name},
+            #{groupId},
+            #{dimensions.width},
+            #{dimensions.height},
+            #{dimensions.ratio.numerator},
+            #{dimensions.ratio.denominator}
+        )
+    </insert>
+
+    <update id="updateFormat" parameterType="Format">
+        UPDATE Format
+        SET
+            name = #{name},
+            <!-- groupId is immutable -->
+            width = #{dimensions.width},
+            height = #{dimensions.height},
+            ratiowidth = #{dimensions.ratio.numerator},
+            ratioheight = #{dimensions.ratio.denominator}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteFormat" parameterType="int">
+        DELETE
+        FROM Format
+        WHERE id = #{value}
+    </delete>
+
+</mapper>
