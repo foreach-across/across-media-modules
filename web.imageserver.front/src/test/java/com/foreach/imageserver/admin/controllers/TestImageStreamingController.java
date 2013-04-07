@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 import static com.foreach.shared.utils.InjectUtils.inject;
 import static org.junit.Assert.assertEquals;
@@ -58,6 +59,28 @@ public class TestImageStreamingController
 
 		applicationId = 1001;
 		groupId = 2002;
+
+	}
+
+	public void getImage(){
+		// Image exists on disk, it is returned
+	}
+
+	public void getImageThatDoesNotExist() {
+		// 404 is returned
+	}
+
+	public void getImageWithOriginal() {
+		// Image doesn't exist on disk
+		// Best matching crop is generated
+		// Crop is returned
+	}
+
+	public void getSimultaneousCropGeneration() {
+		// Image does not exist
+
+		// Multiple thread requests are locked for the same image
+		// Threads for another image are allowed
 
 	}
 
