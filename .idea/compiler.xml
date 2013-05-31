@@ -24,6 +24,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="acceptance-tests" />
         <module name="business" />
         <module name="client-api" />
         <module name="data" />
@@ -36,6 +37,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="acceptance-tests" target="1.5" />
       <module name="business" target="1.5" />
       <module name="client-api" target="1.5" />
       <module name="data" target="1.5" />

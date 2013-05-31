@@ -46,6 +46,7 @@
 		<module>api</module>
         <module>services</module>
         <module>utils</module>
+	    <module>acceptance-tests</module>
     </modules>
     <dependencies>
 	    <dependency>
