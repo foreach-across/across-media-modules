@@ -2,26 +2,98 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5ca393ec-02c1-461b-a3df-aedf6ee02684" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Application.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/ImageLookupRepository.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_3_0_7_RELEASE.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_3_2_3_RELEASE.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/TestApplication.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="DELETED" beforePath="C:\code\imageserver\.idea\libraries\Maven__commons_lang_commons_lang_2_6.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_aspectj_aspectjrt_1_6_8.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_aspectj_aspectjweaver_1_6_8.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_web_3_0_5_RELEASE.xml" afterPath="" />
+      <change type="DELETED" beforePath="C:\code\imageserver\business\src\main\java\com\foreach\imageserver\business\taxonomy\Application.java" afterPath="" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_mockito_mockito_all_1_8_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_all_1_9_5.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_acl_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_acl_3_1_4_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_config_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_config_3_1_4_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_core_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_core_3_1_4_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_taglibs_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_taglibs_3_1_4_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_web_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_web_3_1_4_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_aop_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_3_0_7_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_asm_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_beans_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_context_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_context_support_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_support_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_core_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_test_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_expression_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_jdbc_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jdbc_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_oxm_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_asm_3_0_7_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_test_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_tx_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_tx_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_web_3_0_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_oxm_3_2_3_RELEASE.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_webmvc_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_webmvc_3_2_3_RELEASE.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ApplicationController.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ApplicationController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/main/java/com/foreach/imageserver/dao/ApplicationDao.java" afterPath="$PROJECT_DIR$/data/src/main/java/com/foreach/imageserver/dao/ApplicationDao.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationService.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationServiceImpl.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/viewHelpers/ApplicationViewHelper.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/viewHelpers/ApplicationViewHelper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageController.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/models/ImageDetailsModel.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/models/ImageDetailsModel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestApplicationDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestApplicationDao.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/TestApplicationService.java" afterPath="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/TestApplicationService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestCropDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestCropDao.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestFormatDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestFormatDao.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestGroupDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestGroupDao.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestVariantImageDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestVariantImageDao.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageCleanUpService.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageCleanUpService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageCleanUpServiceImpl.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageCleanUpServiceImpl.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/acceptance-tests/acceptance-tests.iml" afterPath="$PROJECT_DIR$/acceptance-tests/acceptance-tests.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/business/business.iml" afterPath="$PROJECT_DIR$/business/business.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/client-api.iml" afterPath="$PROJECT_DIR$/api/client-api.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/data.iml" afterPath="$PROJECT_DIR$/data/data.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/main/resources/config/mybatis-config.xml" afterPath="$PROJECT_DIR$/data/src/main/resources/config/mybatis-config.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform.iml" afterPath="$PROJECT_DIR$/platform.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/acceptance-tests/pom.xml" afterPath="$PROJECT_DIR$/acceptance-tests/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rendering/rendering.iml" afterPath="$PROJECT_DIR$/rendering/rendering.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/services.iml" afterPath="$PROJECT_DIR$/services/services.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testUtils/testUtils.iml" afterPath="$PROJECT_DIR$/testUtils/testUtils.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/utils/utils.iml" afterPath="$PROJECT_DIR$/utils/utils.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.api/web.imageserver.api.iml" afterPath="$PROJECT_DIR$/web.imageserver.api/web.imageserver.api.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" afterPath="$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/web_imageserver_api_war_exploded.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/web_imageserver_api_war_exploded.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/web_imageserver_front_war_exploded.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/web_imageserver_front_war_exploded.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="imageserver.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1369996653563" ignored="false" />
-    <file path="/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1369996976322" ignored="false" />
-    <file path="/a.dummy" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1365052300092" ignored="false" />
+    <file path="/Dummy.txt" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370334023439" ignored="false" />
+    <file path="/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370338571256" ignored="false" />
+    <file path="/a.dummy" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370335639808" ignored="false" />
     <file path="$PROJECT_DIR$/utils/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1365052305356" ignored="false" />
     <file path="$PROJECT_DIR$/rendering/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1365052305357" ignored="false" />
     <file path="/common.properties" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1365319286303" ignored="false" />
     <file path="/TestImageStreamingController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1365320494548" ignored="false" />
     <file path="/load-remote-image.feature" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1369996810837" ignored="false" />
-    <file path="/fragment.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1369996913712" ignored="false" />
+    <file path="/fragment.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370337844028" ignored="false" />
     <file path="/ImageStreamingController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370006446747" ignored="false" />
+    <file path="/ImageLoadController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370351730024" ignored="false" />
+    <file path="/TestImageLoadController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370351834217" ignored="false" />
+    <file path="/a.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370335399446" ignored="false" />
+    <file path="/sample.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370335463866" ignored="false" />
+    <file path="/TestApplicationService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370336465191" ignored="false" />
+    <file path="/ApplicationService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370337453880" ignored="false" />
+    <file path="/ApplicationServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370336481093" ignored="false" />
+    <file path="/ApplicationController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370336568872" ignored="false" />
+    <file path="/Application.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370338740885" ignored="false" />
+    <file path="/TestApplication.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370338729014" ignored="false" />
+    <file path="/ImageLookupRepository.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370344594180" ignored="false" />
+    <file path="/RepositoryLookupResult.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370351288188" ignored="false" />
+    <file path="/RepositoryLookupStatus.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370351274863" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,91 +154,102 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name="TestImageLoadController.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="83" column="34" selection-start="2872" selection-end="2872" vertical-scroll-proportion="-0.10987261">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="method#unknownApplicationReturnsPermissionDenied#0;class#TestImageLoadController#0" expanded="false" />
+                <element signature="method#ifApplicationManagementNotAllowedThenPermissionDenied#0;class#TestImageLoadController#0" expanded="false" />
+                <element signature="class#TestConfig#0;class#TestImageLoadController#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RepositoryLookupStatus.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="12" selection-start="68" selection-end="68" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Application.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Application.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6" column="19" selection-start="132" selection-end="132" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImageService.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="0" selection-start="378" selection-end="378" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="ImageStoreService.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageStoreService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="48" selection-start="411" selection-end="411" vertical-scroll-proportion="0.0">
+            <state line="13" column="0" selection-start="414" selection-end="414" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageController.java">
+      <file leaf-file-name="ImageLookupRepository.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/ImageLookupRepository.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="110" column="47" selection-start="3782" selection-end="3782" vertical-scroll-proportion="0.0">
+            <state line="6" column="0" selection-start="149" selection-end="149" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageServerFacadeImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/service/ImageServerFacadeImpl.java">
+      <file leaf-file-name="ImageLoadController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="0" selection-start="560" selection-end="560" vertical-scroll-proportion="0.0">
+            <state line="36" column="0" selection-start="1357" selection-end="1357" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RepositoryLookupResult.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="5" column="0" selection-start="140" selection-end="140" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageServiceImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageServiceImpl.java">
+      <file leaf-file-name="TestApplication.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/TestApplication.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="28" selection-start="881" selection-end="881" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="11" column="31" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageStoreServiceImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageStoreServiceImpl.java">
+      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="41" selection-start="1139" selection-end="1139" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImageStreamingController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageStreamingController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="84" selection-start="2048" selection-end="2048" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TestImageStreamingController.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageStreamingController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="0" selection-start="1360" selection-end="1360" vertical-scroll-proportion="-1.0625">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImagePathBuilder.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImagePathBuilder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="17" selection-start="156" selection-end="156" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImagePathBuilderImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImagePathBuilderImpl.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="157" column="57" selection-start="5158" selection-end="5158" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImageSpecifier.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImageSpecifier.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="5" selection-start="521" selection-end="521" vertical-scroll-proportion="0.0">
+            <state line="64" column="34" selection-start="1885" selection-end="1885" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -190,13 +273,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/api/pom.xml" />
-        <option value="$PROJECT_DIR$/web.imageserver.front/src/main/resources/config/development/common.properties" />
-        <option value="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageStreamingController.java" />
         <option value="$PROJECT_DIR$/acceptance-tests/features/load-remote-image.feature" />
         <option value="$PROJECT_DIR$/acceptance-tests/pom.xml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageStreamingController.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationServiceImpl.java" />
+        <option value="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/TestApplicationService.java" />
+        <option value="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ApplicationController.java" />
+        <option value="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/taxonomy/Application.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationService.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/TestApplication.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/ImageLookupRepository.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java" />
+        <option value="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Application.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java" />
+        <option value="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java" />
+        <option value="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java" />
       </list>
     </option>
   </component>
@@ -229,8 +321,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-9" />
     <option name="y" value="-9" />
-    <option name="width" value="1698" />
-    <option name="height" value="1034" />
+    <option name="width" value="1618" />
+    <option name="height" value="1184" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -258,6 +350,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -307,6 +400,74 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web.imageserver.front" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web.imageserver.front" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -390,21 +551,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="service" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="testUtils" />
+              <option name="myItemId" value="controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -522,7 +669,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="utils" />
+              <option name="myItemId" value="repositories" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -536,34 +683,31 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
+              <option name="myItemId" value="acceptance-tests" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
+              <option name="myItemId" value="acceptance-tests" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="paths" />
+              <option name="myItemId" value="features" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -573,71 +717,162 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="options.lastSelected" value="preferences.pluginManager" />
+    <property name="options.lastSelected" value="preferences.sourceCode.Java" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
+    <property name="FullScreen" value="false" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
+    <property name="dynamic.classpath" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
-  <component name="RunManager" selected="Cucumber.load-remote-image">
-    <configuration default="false" name="Feature: load-remote-image" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.foreach.imageserver.business" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.TestImageLoadController">
+    <configuration default="false" name="TestImageLoadController.unknownApplicationReturnsPermissionDenied" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
         <pattern>
-          <option name="PATTERN" value="cucumber.cli.*" />
+          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="GLUE" />
-      <option name="MAIN_CLASS_NAME" value="cucumber.cli.Main" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" value="&quot;$PROJECT_DIR$/acceptance-tests/features/load-remote-image.feature&quot; --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome" />
-      <option name="WORKING_DIRECTORY" />
+      <module name="web.imageserver.front" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
+      <option name="METHOD_NAME" value="unknownApplicationReturnsPermissionDenied" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="acceptance-tests" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
       <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="load-remote-image" type="CucumberRunConfigurationType" factoryName="Cucumber" temporary="true">
-      <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
-      <module name="acceptance-tests" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$PROJECT_DIR$/acceptance-tests" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="ANSICON" value="" />
-        <env name="JRUBY_OPTS" value="-X+O" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" />
-      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov" />
-      <EXTENSION ID="org.jetbrains.plugins.ruby.motion.run.MotionSimulatorRunExtension" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*.feature" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$PROJECT_DIR$/acceptance-tests/features/load-remote-image.feature" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TAGS_FILTER" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_NAME_FILTER" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_ARGS" VALUE="--color -r features" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="VERBOSE_OPTION" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_RUNNER_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_RUNNER" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SETTINGS_VERSION" VALUE="2" />
+    <configuration default="false" name="TestImageLoadController.ifApplicationManagementNotAllowedThenPermissionDenied" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="web.imageserver.front" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
+      <option name="METHOD_NAME" value="ifApplicationManagementNotAllowedThenPermissionDenied" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TestImageLoadController" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="web.imageserver.front" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TestImageLoadController.validApplicationWillResultInRepositoryLookup" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="web.imageserver.front" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
+      <option name="METHOD_NAME" value="validApplicationWillResultInRepositoryLookup" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TestImageLoadController.lookupNotFound" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="web.imageserver.front" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
+      <option name="METHOD_NAME" value="lookupNotFound" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
@@ -648,6 +883,19 @@
       <option name="SHMEM_ADDRESS" value="javadebug" />
       <option name="HOST" value="localhost" />
       <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java">
@@ -664,19 +912,6 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="" />
       <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -840,16 +1075,21 @@
         </option>
       </method>
     </configuration>
-    <list size="3">
+    <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Tomcat Server.Tomcat 7" />
-      <item index="1" class="java.lang.String" itemvalue="Cucumber java.Feature: load-remote-image" />
-      <item index="2" class="java.lang.String" itemvalue="Cucumber.load-remote-image" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.unknownApplicationReturnsPermissionDenied" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.ifApplicationManagementNotAllowedThenPermissionDenied" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.TestImageLoadController" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.validApplicationWillResultInRepositoryLookup" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.lookupNotFound" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Cucumber.load-remote-image" />
-        <item index="1" class="java.lang.String" itemvalue="Cucumber java.Feature: load-remote-image" />
-        <item index="2" class="java.lang.String" itemvalue="Cucumber.Load jpeg image" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="JUnit.TestImageLoadController" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.lookupNotFound" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.validApplicationWillResultInRepositoryLookup" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.ifApplicationManagementNotAllowedThenPermissionDenied" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.unknownApplicationReturnsPermissionDenied" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -867,12 +1107,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1698" height="1034" extended-state="6" />
+    <frame x="-9" y="-9" width="1618" height="1184" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3990981" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -881,21 +1122,20 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32830626" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3171937" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986537" sideWeight="0.67169374" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24908201" sideWeight="0.67169374" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27348778" sideWeight="0.6709486" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32905138" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -964,115 +1204,132 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="jar://$MAVEN_REPOSITORY$/junit/junit/4.8.2/junit-4.8.2-sources.jar!/org/junit/Assert.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="128" column="27" selection-start="3545" selection-end="3545" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="64" column="34" selection-start="1885" selection-end="1885" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web.imageserver.front/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="91" column="35" selection-start="3321" selection-end="3321" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/util/UUID.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="57" column="19" selection-start="1975" selection-end="1975" vertical-scroll-proportion="0.33280253">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="0" selection-start="602" selection-end="602" vertical-scroll-proportion="0.0">
+        <state line="13" column="0" selection-start="378" selection-end="378" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageCleanUpServiceImpl.java">
+    <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/AbstractServiceTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="29" selection-start="393" selection-end="393" vertical-scroll-proportion="0.22537878">
+        <state line="7" column="17" selection-start="268" selection-end="268" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ApplicationController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="101" column="19" selection-start="3822" selection-end="3822" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageServiceImpl.java">
+    <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/TestApplicationService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="13" selection-start="379" selection-end="379" vertical-scroll-proportion="0.16098484">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImageType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="261" selection-end="261" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/utils/TempFileServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="33" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="38" column="0" selection-start="1322" selection-end="1322" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageStoreService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="48" selection-start="411" selection-end="411" vertical-scroll-proportion="0.0">
+        <state line="13" column="0" selection-start="414" selection-end="414" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageStoreServiceImpl.java">
+    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/ImageLookupRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="41" selection-start="1139" selection-end="1139" vertical-scroll-proportion="0.0">
+        <state line="6" column="0" selection-start="149" selection-end="149" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImageSpecifier.java">
+    <entry file="file://$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/TestApplication.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="5" selection-start="521" selection-end="521" vertical-scroll-proportion="0.0">
+        <state line="11" column="31" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="0" selection-start="140" selection-end="140" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImagePathBuilder.java">
+    <entry file="file://$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Application.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="156" selection-end="156" vertical-scroll-proportion="0.0">
+        <state line="6" column="19" selection-start="132" selection-end="132" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="12" selection-start="68" selection-end="68" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImagePathBuilderImpl.java">
+    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="157" column="57" selection-start="5158" selection-end="5158" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="36" column="0" selection-start="1357" selection-end="1357" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageServiceImpl.java">
+    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="28" selection-start="881" selection-end="881" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/springframework/spring-web/3.0.3.RELEASE/spring-web-3.0.3.RELEASE-sources.jar!/org/springframework/http/HttpStatus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="169" column="4" selection-start="4775" selection-end="4775" vertical-scroll-proportion="0.33333334">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageStreamingController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="84" selection-start="2048" selection-end="2048" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="110" column="47" selection-start="3782" selection-end="3782" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/service/ImageServerFacadeImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="0" selection-start="560" selection-end="560" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageStreamingController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="0" selection-start="1360" selection-end="1360" vertical-scroll-proportion="-1.0625">
-          <folding />
+        <state line="83" column="34" selection-start="2872" selection-end="2872" vertical-scroll-proportion="-0.10987261">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#unknownApplicationReturnsPermissionDenied#0;class#TestImageLoadController#0" expanded="false" />
+            <element signature="method#ifApplicationManagementNotAllowedThenPermissionDenied#0;class#TestImageLoadController#0" expanded="false" />
+            <element signature="class#TestConfig#0;class#TestImageLoadController#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

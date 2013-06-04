@@ -1,6 +1,6 @@
 package dao;
 
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.dao.ApplicationDao;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.image.Format;
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.taxonomy.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 

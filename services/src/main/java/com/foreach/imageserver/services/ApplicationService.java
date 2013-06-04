@@ -1,11 +1,13 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.UUID;
 
 public interface ApplicationService
 {
-    Application getApplicationById(int id);
-    List<Application> getAllApplications();
+	Application getApplicationById( int id );
+
+	Collection<Application> getAllApplications();
 }

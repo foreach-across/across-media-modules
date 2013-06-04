@@ -6,7 +6,7 @@ import com.foreach.imageserver.admin.viewHelpers.GroupsViewHelper;
 import com.foreach.imageserver.admin.viewHelpers.ImagesViewHelper;
 import com.foreach.imageserver.business.image.Format;
 import com.foreach.imageserver.business.image.ServableImageData;
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.taxonomy.Group;
 import com.foreach.imageserver.dao.selectors.ImageSelector;
 import com.foreach.imageserver.services.ApplicationService;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -101,7 +102,7 @@ public class ApplicationController
 		return mav;
 	}
 
-     private List<ApplicationViewHelper> buildApplicationViewHelperList(List<Application> applications) {
+     private List<ApplicationViewHelper> buildApplicationViewHelperList(Collection<Application> applications) {
 
         List<ApplicationViewHelper> viewHelperList = new ArrayList<ApplicationViewHelper>();
 

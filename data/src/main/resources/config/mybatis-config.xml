@@ -7,7 +7,7 @@
         <typeAlias alias="Fraction" type="com.foreach.imageserver.business.math.Fraction"/>
 
         <!-- business objects -->
-        <typeAlias alias="Application" type="com.foreach.imageserver.business.taxonomy.Application"/>
+        <typeAlias alias="Application" type="com.foreach.imageserver.business.Application"/>
         <typeAlias alias="Group" type="com.foreach.imageserver.business.taxonomy.Group"/>
         <typeAlias alias="Format" type="com.foreach.imageserver.business.image.Format"/>
         <typeAlias alias="ServableImageData" type="com.foreach.imageserver.business.image.ServableImageData"/>

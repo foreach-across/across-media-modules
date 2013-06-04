@@ -4,7 +4,7 @@ import com.foreach.imageserver.business.image.Crop;
 import com.foreach.imageserver.business.image.Format;
 import com.foreach.imageserver.business.image.ServableImageData;
 import com.foreach.imageserver.business.image.VariantImage;
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.taxonomy.Group;
 import com.foreach.imageserver.dao.*;
 import com.foreach.imageserver.dao.selectors.VariantImageSelector;

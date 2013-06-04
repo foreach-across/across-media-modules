@@ -1,69 +1,68 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.dao.ApplicationDao;
-import com.foreach.shared.utils.InjectUtils;
-import junit.framework.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-public class TestApplicationService extends AbstractServiceTest
+import static junit.framework.Assert.*;
+import static org.mockito.Mockito.*;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ContextConfiguration(classes = TestApplicationService.TestConfig.class)
+public class TestApplicationService
 {
-    private ApplicationService applicationService;
-    private ApplicationDao applicationDao;
+	@Autowired
+	private ApplicationService applicationService;
 
-    private Application testApplication;
-    private List<Application> testApplications;
+	@Autowired
+	private ApplicationDao applicationDao;
 
-    private int testId = 1;
-    private String testName = "test";
+	@Test
+	public void testGetApplicationById() {
+		Application testApplication = new Application();
+		testApplication.setId( 5 );
+		testApplication.setName( "test" );
 
-    @Before
-    public void prepareForTest()
-    {
-        applicationService = new ApplicationServiceImpl();
+		when( applicationDao.getApplicationById( 5 ) ).thenReturn( testApplication );
 
-        applicationDao = Mockito.mock(ApplicationDao.class);
+		Application application = applicationService.getApplicationById( 5 );
 
-        InjectUtils.inject(applicationService, "applicationDao", applicationDao);
+		assertSame( testApplication, application );
+	}
 
-        testApplication = new Application();
-        testApplication.setId(testId);
-        testApplication.setName(testName);
-        
-        Mockito.when(applicationDao.getApplicationById(testId)).thenReturn( testApplication );
-        
-        testApplications = new ArrayList<Application>();
-        testApplications.add(testApplication);
+	@Test
+	public void testGetAllApplications() {
+		List<Application> expectedApplications = Collections.emptyList();
 
-        Mockito.when(applicationDao.getAllApplications()).thenReturn( testApplications );
-    }
+		when( applicationDao.getAllApplications() ).thenReturn( expectedApplications );
+		Collection<Application> applications = applicationService.getAllApplications();
 
-    @Test
-    public void testGetApplicationById()
-    {
-        Application application = applicationService.getApplicationById( testId );
+		assertSame( expectedApplications, applications );
+	}
 
-        Mockito.verify(applicationDao, Mockito.times(1)).getApplicationById(testId);
-        
-        Assert.assertNotNull(application);
-        Assert.assertEquals(testId, application.getId());
-        Assert.assertEquals(testName, application.getName()) ;
-    }
+	@Configuration
+	public static class TestConfig
+	{
+		@Bean
+		public ApplicationService applicationService() {
+			return new ApplicationServiceImpl();
+		}
 
-    @Test
-    public void testGetAllApplications()
-    {
-        List<Application> applications = applicationService.getAllApplications();
-
-        Mockito.verify(applicationDao, Mockito.times(1)).getAllApplications();
-
-        Assert.assertNotNull(applications);
-        Assert.assertTrue(applications.size() > 0);
-        Assert.assertEquals(testApplications.size(), applications.size());
-    }
+		@Bean
+		public ApplicationDao applicationDao() {
+			return mock( ApplicationDao.class );
+		}
+	}
 }

@@ -1,6 +1,6 @@
 package com.foreach.imageserver.dao;
 
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -3,7 +3,7 @@ package dao;
 import com.foreach.imageserver.business.image.Dimensions;
 import com.foreach.imageserver.business.image.Format;
 import com.foreach.imageserver.business.math.Fraction;
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.taxonomy.Group;
 import com.foreach.imageserver.dao.ApplicationDao;
 import com.foreach.imageserver.dao.FormatDao;

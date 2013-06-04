@@ -5,7 +5,7 @@ import com.foreach.imageserver.business.geometry.Rect;
 import com.foreach.imageserver.business.geometry.Size;
 import com.foreach.imageserver.business.image.Crop;
 import com.foreach.imageserver.business.image.ServableImageData;
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.taxonomy.Group;
 import com.foreach.imageserver.dao.ApplicationDao;
 import com.foreach.imageserver.dao.CropDao;

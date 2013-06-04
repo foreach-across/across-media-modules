@@ -1,6 +1,6 @@
 package com.foreach.imageserver.admin.viewHelpers;
 
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 
 public class ApplicationViewHelper {
 

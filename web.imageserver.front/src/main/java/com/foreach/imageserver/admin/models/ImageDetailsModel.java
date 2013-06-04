@@ -1,6 +1,6 @@
 package com.foreach.imageserver.admin.models;
 
-import com.foreach.imageserver.business.taxonomy.Application;
+import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.image.Format;
 import com.foreach.imageserver.business.taxonomy.Group;
 import com.foreach.imageserver.business.image.ServableImageData;
