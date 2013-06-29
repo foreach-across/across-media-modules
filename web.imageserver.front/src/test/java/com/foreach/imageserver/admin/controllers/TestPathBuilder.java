@@ -1,7 +1,7 @@
 package com.foreach.imageserver.admin.controllers;
 
 import com.foreach.imageserver.services.paths.ImageSpecifier;
-import com.foreach.imageserver.services.paths.ImageType;
+import com.foreach.imageserver.services.paths.ImageVersion;
 import com.foreach.imageserver.services.paths.ImagePathBuilder;
 import com.foreach.imageserver.services.paths.ImagePathBuilderImpl;
 import com.foreach.imageserver.business.image.ServableImageData;
@@ -39,7 +39,7 @@ public class TestPathBuilder {
         imageSpecifier.setFileType( extension );
 
         String manualPathToOriginalFile =
-                pathBuilder.createManualImagePath( ImageType.ORIGINAL, applicationId, groupId, "1970", "01",
+                pathBuilder.createManualImagePath( ImageVersion.ORIGINAL, applicationId, groupId, "1970", "01",
                                                    "01", imageSpecifier );
         String generatedPathToOriginalFile = pathBuilder.generateOriginalImagePath( data );
 

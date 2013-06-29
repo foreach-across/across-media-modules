@@ -1,0 +1,78 @@
+package com.foreach.imageserver.business;
+
+import com.foreach.imageserver.business.image.Dimensions;
+
+import java.util.Date;
+
+public final class Image
+{
+	private int id, applicationId;
+	private String key, filePath;
+	private Dimensions dimensions;
+	private long fileSize;
+	private Date dateCreated = new Date(), dateUpdated;
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey( String key ) {
+		this.key = key;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId( int id ) {
+		this.id = id;
+	}
+
+	public int getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId( int applicationId ) {
+		this.applicationId = applicationId;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath( String filePath ) {
+		this.filePath = filePath;
+	}
+
+	public Dimensions getDimensions() {
+		return dimensions;
+	}
+
+	public void setDimensions( Dimensions dimensions ) {
+		this.dimensions = dimensions;
+	}
+
+	public long getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize( long fileSize ) {
+		this.fileSize = fileSize;
+	}
+
+	public Date getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated( Date dateCreated ) {
+		this.dateCreated = dateCreated;
+	}
+
+	public Date getDateUpdated() {
+		return dateUpdated;
+	}
+
+	public void setDateUpdated( Date dateUpdated ) {
+		this.dateUpdated = dateUpdated;
+	}
+}

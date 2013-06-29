@@ -4,6 +4,7 @@ import com.foreach.imageserver.business.geometry.Size;
 
 import java.util.Date;
 
+@Deprecated
 public abstract class ServableImage
 {
 	private long id;

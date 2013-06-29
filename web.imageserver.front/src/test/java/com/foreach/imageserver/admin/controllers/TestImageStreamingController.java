@@ -2,7 +2,7 @@ package com.foreach.imageserver.admin.controllers;
 
 import com.foreach.imageserver.services.VariantImageLogger;
 import com.foreach.imageserver.services.paths.ImageSpecifier;
-import com.foreach.imageserver.services.paths.ImageType;
+import com.foreach.imageserver.services.paths.ImageVersion;
 import com.foreach.imageserver.admin.rendering.ImageRenderingFacade;
 import com.foreach.imageserver.admin.service.ImageServerFacade;
 import com.foreach.imageserver.services.paths.ImagePathBuilder;
@@ -16,7 +16,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Future;
 
 import static com.foreach.shared.utils.InjectUtils.inject;
 import static org.junit.Assert.assertEquals;
@@ -103,7 +102,7 @@ public class TestImageStreamingController
 		File file = File.createTempFile( "TestImageStreamingController", "" );
 		assertEquals( true, file.exists() );
 
-		when( pathBuilder.createManualImagePath( (ImageType) anyObject(), eq(applicationId), eq(groupId), eq(pathYear), eq(pathMonth),
+		when( pathBuilder.createManualImagePath( (ImageVersion) anyObject(), eq(applicationId), eq(groupId), eq(pathYear), eq(pathMonth),
 		                                         eq(pathDay), (ImageSpecifier) anyObject() ) )
 				.thenReturn( file.getPath() );
 

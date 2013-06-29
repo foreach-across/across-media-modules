@@ -4,7 +4,7 @@ import com.foreach.imageserver.api.business.UploadStatus;
 import com.foreach.imageserver.services.ImageStoreService;
 import com.foreach.imageserver.services.paths.ImagePathBuilder;
 import com.foreach.imageserver.services.paths.ImageSpecifier;
-import com.foreach.imageserver.services.paths.ImageType;
+import com.foreach.imageserver.services.paths.ImageVersion;
 import com.foreach.imageserver.admin.models.ImageUploadModel;
 import com.foreach.imageserver.business.geometry.Size;
 import com.foreach.imageserver.business.image.ServableImageData;
@@ -166,7 +166,7 @@ public class TestImageUploadController
 
 		when( image.getBytes() ).thenReturn( imageContent );
 		when( imageMagick.getSize( anyString() ) ).thenReturn( new Size( 64, 64) );
-		when( pathBuilder.createManualImagePath( (ImageType) anyObject(), eq(applicationId), eq(groupId),
+		when( pathBuilder.createManualImagePath( (ImageVersion) anyObject(), eq(applicationId), eq(groupId),
 		                                         (Date) anyObject(), (ImageSpecifier) anyObject()) ).thenReturn( "/temp" );
 
 		ModelAndView mav = controller.uploadImage( applicationId, groupId, true, uploadModel, true );
@@ -191,7 +191,7 @@ public class TestImageUploadController
 
 		when( image.getBytes() ).thenReturn( imageContent );
 		when( imageMagick.getSize( anyString() ) ).thenReturn( new Size( 64, 64) );
-		when( pathBuilder.createManualImagePath( (ImageType) anyObject(), eq(applicationId), eq(groupId),
+		when( pathBuilder.createManualImagePath( (ImageVersion) anyObject(), eq(applicationId), eq(groupId),
 		                                         (Date) anyObject(), (ImageSpecifier) anyObject()) ).thenReturn( "/temp" );
 
 		ModelAndView mav = controller.uploadImage( applicationId, groupId, true, uploadModel, true );
@@ -222,7 +222,7 @@ public class TestImageUploadController
 
 		when( image.getBytes() ).thenReturn( imageContent );
 		when( imageMagick.getSize( anyString() ) ).thenReturn( new Size( 64, 64) );
-		when( pathBuilder.createManualImagePath( (ImageType) anyObject(), eq(applicationId), eq(groupId),
+		when( pathBuilder.createManualImagePath( (ImageVersion) anyObject(), eq(applicationId), eq(groupId),
 		                                         (Date) anyObject(), (ImageSpecifier) anyObject()) ).thenReturn( "/temp" );
 
 

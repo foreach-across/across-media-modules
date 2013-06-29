@@ -1,22 +1,37 @@
 package com.foreach.imageserver.services;
 
+import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.image.ServableImageData;
 import com.foreach.imageserver.dao.selectors.ImageSelector;
+import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 
 import java.util.List;
 
-public interface ImageService {
-    ServableImageData getImageById(long id);
+public interface ImageService
+{
+	Image getImageByKey( String key, int applicationId );
 
-    ServableImageData getImageByPath(ImageSelector selector);
+	@Deprecated
+	ServableImageData getImageById( long id );
 
-    List<ServableImageData> getAllImages();
+	@Deprecated
+	ServableImageData getImageByPath( ImageSelector selector );
 
-    int getImageCount(ImageSelector selector);
+	@Deprecated
+	List<ServableImageData> getAllImages();
 
-    long saveImage(ServableImageData image);
+	@Deprecated
+	int getImageCount( ImageSelector selector );
 
-	long saveImage(ServableImageData image, boolean deleteCrops);
+	@Deprecated
+	long saveImage( ServableImageData image );
 
-    List<ServableImageData> getImages(ImageSelector selector);
+	@Deprecated
+	long saveImage( ServableImageData image, boolean deleteCrops );
+
+	@Deprecated
+	List<ServableImageData> getImages( ImageSelector selector );
+
+	@Deprecated
+	void save( Image image, RepositoryLookupResult lookupResult );
 }

@@ -7,7 +7,7 @@ import java.util.Date;
 public interface ImagePathBuilder {
 
     String createManualImagePath(
-            ImageType imageType,
+            ImageVersion imageVersion,
             int applicationId,
             int groupId,
             String pathYear,
@@ -17,14 +17,14 @@ public interface ImagePathBuilder {
 
 
     String createManualImagePath(
-            ImageType imageType,
+            ImageVersion imageVersion,
             int applicationId,
             int groupId,
             Date date,
             ImageSpecifier imageSpecifier);
 
     String createManualImageDirectory(
-            ImageType imageType,
+            ImageVersion imageVersion,
             int applicationId,
             int groupId,
             Date date );

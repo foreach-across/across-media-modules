@@ -3,7 +3,7 @@ package com.foreach.imageserver.admin.controllers;
 import com.foreach.imageserver.admin.rendering.ImageRenderingResult;
 import com.foreach.imageserver.services.VariantImageLogger;
 import com.foreach.imageserver.services.paths.ImageSpecifier;
-import com.foreach.imageserver.services.paths.ImageType;
+import com.foreach.imageserver.services.paths.ImageVersion;
 import com.foreach.imageserver.admin.service.ImageServerFacade;
 import com.foreach.imageserver.admin.editors.ImageSpecifierEditor;
 import com.foreach.imageserver.admin.rendering.ImageRenderingFacade;
@@ -100,10 +100,10 @@ public class ImageStreamingController
 			int height = imageSpecifier.getHeight();
 			String fileExtension = imageSpecifier.getFileType();
 
-			ImageType imageType = ( ( width == 0 ) && ( height == 0 ) ) ? ImageType.ORIGINAL : ImageType.VARIANT;
+			ImageVersion imageVersion = ( ( width == 0 ) && ( height == 0 ) ) ? ImageVersion.ORIGINAL : ImageVersion.VARIANT;
 
 			String physicalPath =
-					pathBuilder.createManualImagePath( imageType, applicationId, groupId, pathYear, pathMonth, pathDay,
+					pathBuilder.createManualImagePath( imageVersion, applicationId, groupId, pathYear, pathMonth, pathDay,
 													   imageSpecifier );
 
 			File imageFile = new File( physicalPath );
@@ -117,7 +117,7 @@ public class ImageStreamingController
 
 			if ( !imageFile.exists() ) {
 				// If the original was not found, we can't do anything about it
-				if ( imageType == ImageType.ORIGINAL ) {
+				if ( imageVersion == ImageVersion.ORIGINAL ) {
 					throw new NotFoundException();
 				}
 
@@ -129,7 +129,7 @@ public class ImageStreamingController
 				}
 
 				String manualPathToOriginalFile =
-						pathBuilder.createManualImagePath( ImageType.ORIGINAL, applicationId, groupId, pathYear, pathMonth,
+						pathBuilder.createManualImagePath( ImageVersion.ORIGINAL, applicationId, groupId, pathYear, pathMonth,
 														   pathDay, imageSpecifier );
 				String generatedPathToOriginalFile = pathBuilder.generateOriginalImagePath( imageData );
 
@@ -176,7 +176,7 @@ public class ImageStreamingController
 				}
 			}
 
-			if (imageType == ImageType.VARIANT) {
+			if ( imageVersion == ImageVersion.VARIANT) {
 				// Log access
 				variantImageLogger.logVariantImage(variantImage);
 			}

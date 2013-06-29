@@ -2,63 +2,54 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5ca393ec-02c1-461b-a3df-aedf6ee02684" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Application.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/ImageLookupRepository.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_3_0_7_RELEASE.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_3_2_3_RELEASE.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/TestApplication.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="DELETED" beforePath="C:\code\imageserver\.idea\libraries\Maven__commons_lang_commons_lang_2_6.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_aspectj_aspectjrt_1_6_8.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_aspectj_aspectjweaver_1_6_8.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_web_3_0_5_RELEASE.xml" afterPath="" />
-      <change type="DELETED" beforePath="C:\code\imageserver\business\src\main\java\com\foreach\imageserver\business\taxonomy\Application.java" afterPath="" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_mockito_mockito_all_1_8_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_all_1_9_5.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_acl_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_acl_3_1_4_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_config_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_config_3_1_4_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_core_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_core_3_1_4_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_taglibs_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_taglibs_3_1_4_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_security_spring_security_web_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_security_spring_security_web_3_1_4_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_aop_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_3_0_7_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_asm_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_beans_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_context_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_context_support_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_support_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_core_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_test_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_expression_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_jdbc_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jdbc_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_oxm_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_asm_3_0_7_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_test_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_tx_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_tx_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_web_3_0_3_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_oxm_3_2_3_RELEASE.xml" />
-      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_springframework_spring_webmvc_3_0_5_RELEASE.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_webmvc_3_2_3_RELEASE.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ApplicationController.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ApplicationController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/main/java/com/foreach/imageserver/dao/ApplicationDao.java" afterPath="$PROJECT_DIR$/data/src/main/java/com/foreach/imageserver/dao/ApplicationDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationService.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationServiceImpl.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationServiceImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/viewHelpers/ApplicationViewHelper.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/viewHelpers/ApplicationViewHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageController.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/models/ImageDetailsModel.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/models/ImageDetailsModel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestApplicationDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestApplicationDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/TestApplicationService.java" afterPath="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/TestApplicationService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestCropDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestCropDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestFormatDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestFormatDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestGroupDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestGroupDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/test/java/dao/TestVariantImageDao.java" afterPath="$PROJECT_DIR$/data/src/test/java/dao/TestVariantImageDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageCleanUpService.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageCleanUpService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageCleanUpServiceImpl.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/VariantImageCleanUpServiceImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/test/resources/images/earth_large.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/test/resources/images/sunset.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/DummyWebServer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/HttpImageLookupRepository.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Image.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/ImageTestData.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/ImageType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_0_13.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_0_13.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_codec_commons_codec_1_6.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_2_5.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_2_4.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_continuation_7_6_11_v20130520.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_http_7_6_11_v20130520.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_io_7_6_11_v20130520.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_server_7_6_11_v20130520.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_util_7_6_11_v20130520.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_orbit_javax_servlet_2_5_0_v201103041518.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/repositories/TestHttpImageLookupRepository.java" />
+      <change type="DELETED" beforePath="C:\code\imageserver\.idea\libraries\Maven__log4j_apache_log4j_extras_1_1.xml" afterPath="" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__javax_servlet_servlet_api_2_4.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_servlet_servlet_api_2_5.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\.idea\libraries\Maven__org_slf4j_slf4j_api_1_5_6.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_5.xml" />
+      <change type="MOVED" beforePath="C:\code\imageserver\services\src\main\java\com\foreach\imageserver\services\paths\ImageType.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImageVersion.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/image/Dimensions.java" afterPath="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/image/Dimensions.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImagePathBuilder.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImagePathBuilder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImagePathBuilderImpl.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/paths/ImagePathBuilderImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageService.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageServiceImpl.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageStoreServiceImpl.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageStoreServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageStreamingController.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageStreamingController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java" afterPath="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/image/ServableImage.java" afterPath="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/image/ServableImage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/image/TestDimensions.java" afterPath="$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/image/TestDimensions.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageStreamingController.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageStreamingController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageUploadController.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageUploadController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestPathBuilder.java" afterPath="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestPathBuilder.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/acceptance-tests/acceptance-tests.iml" afterPath="$PROJECT_DIR$/acceptance-tests/acceptance-tests.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/business/business.iml" afterPath="$PROJECT_DIR$/business/business.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/client-api.iml" afterPath="$PROJECT_DIR$/api/client-api.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/data.iml" afterPath="$PROJECT_DIR$/data/data.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/src/main/resources/config/mybatis-config.xml" afterPath="$PROJECT_DIR$/data/src/main/resources/config/mybatis-config.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/platform.iml" afterPath="$PROJECT_DIR$/platform.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/pom.xml" afterPath="$PROJECT_DIR$/services/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rendering/rendering.iml" afterPath="$PROJECT_DIR$/rendering/rendering.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/services.iml" afterPath="$PROJECT_DIR$/services/services.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testUtils/testUtils.iml" afterPath="$PROJECT_DIR$/testUtils/testUtils.iml" />
@@ -71,18 +62,18 @@
     </list>
     <ignored path="imageserver.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370334023439" ignored="false" />
-    <file path="/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370338571256" ignored="false" />
-    <file path="/a.dummy" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370335639808" ignored="false" />
+    <file path="/Dummy.txt" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372504762445" ignored="false" />
+    <file path="/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372518294039" ignored="false" />
+    <file path="/a.dummy" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372319279864" ignored="false" />
     <file path="$PROJECT_DIR$/utils/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1365052305356" ignored="false" />
     <file path="$PROJECT_DIR$/rendering/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1365052305357" ignored="false" />
     <file path="/common.properties" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1365319286303" ignored="false" />
     <file path="/TestImageStreamingController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1365320494548" ignored="false" />
     <file path="/load-remote-image.feature" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1369996810837" ignored="false" />
-    <file path="/fragment.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370337844028" ignored="false" />
-    <file path="/ImageStreamingController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370006446747" ignored="false" />
-    <file path="/ImageLoadController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370351730024" ignored="false" />
-    <file path="/TestImageLoadController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370351834217" ignored="false" />
+    <file path="/fragment.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372532691460" ignored="false" />
+    <file path="/ImageStreamingController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370458270191" ignored="false" />
+    <file path="/ImageLoadController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372533334549" ignored="false" />
+    <file path="/TestImageLoadController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370458675095" ignored="false" />
     <file path="/a.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370335399446" ignored="false" />
     <file path="/sample.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370335463866" ignored="false" />
     <file path="/TestApplicationService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370336465191" ignored="false" />
@@ -92,8 +83,368 @@
     <file path="/Application.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370338740885" ignored="false" />
     <file path="/TestApplication.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370338729014" ignored="false" />
     <file path="/ImageLookupRepository.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370344594180" ignored="false" />
-    <file path="/RepositoryLookupResult.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370351288188" ignored="false" />
-    <file path="/RepositoryLookupStatus.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370351274863" ignored="false" />
+    <file path="/RepositoryLookupResult.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372531101776" ignored="false" />
+    <file path="/RepositoryLookupStatus.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372529839499" ignored="false" />
+    <file path="/ServableImage.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370443557070" ignored="false" />
+    <file path="/Image.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370443908358" ignored="false" />
+    <file path="/ImageType.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372530733651" ignored="false" />
+    <file path="/ImageService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372505320125" ignored="false" />
+    <file path="/ImageServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372505290857" ignored="false" />
+    <file path="/SimpleBrowser.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370854249590" ignored="false" />
+    <file path="$PROJECT_DIR$/../foreach-twist-sahi/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1370852960156" ignored="false" />
+    <file path="$PROJECT_DIR$/../test-cucumber/features/test.feature" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019443466" ignored="false" />
+    <file path="/test.feature" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019962324" ignored="false" />
+    <file path="$PROJECT_DIR$/../test-cucumber/features/MyStepdefs.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019442662" ignored="false" />
+    <file path="/MyStepdefs.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019556857" ignored="false" />
+    <file path="$PROJECT_DIR$/../test-cucumber/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019517898" ignored="false" />
+    <file path="$PROJECT_DIR$/../test-cucumber/src/test/java/MyStepdefs.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019559170" ignored="false" />
+    <file path="$PROJECT_DIR$/../test-cucumber/src/test/java/test/MyStepdefs.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019569932" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.3.4.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753481" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.3.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753481" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.3.6.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753481" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.3.7.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753481" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.3.8.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753481" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.1.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753482" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.1.5.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753482" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.1.5.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753482" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.1.5.3.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753482" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.2.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753482" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.1.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753482" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.1.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753483" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753483" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.2.6.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753483" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.2.7.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753483" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/FlexCompilerSchema.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753483" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753483" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven.jar!/schemas/profiles-1.0.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753484" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven.jar!/schemas/maven-4.0.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753484" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven.jar!/schemas/settings-1.0.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753484" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jdbc-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753484" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-lang-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753484" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tool-2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753484" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-context-2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753485" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-cache-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753485" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-oxm-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753485" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jdbc-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753485" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jee-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753485" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tool-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753485" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jms-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753486" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jee-2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753486" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-mvc-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753486" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-beans-2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753486" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-util-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753486" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-aop-2.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753486" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tx-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753487" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jdbc-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753487" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jee-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753487" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-task-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753487" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/javaee_web_services_client_1_2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753487" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-lang-2.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753487" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/web-app_2_5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753488" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tool-2.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753488" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/web-jsptaglibrary_2_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753488" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jee-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753488" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/connector_1_6.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753488" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-util-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753488" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/application_6.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753488" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-mvc-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753489" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tx-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753489" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/javaee_web_services_1_2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753489" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tool-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753489" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/jsp_2_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753489" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tool-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753490" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-context-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753490" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/web-fragment_3_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753490" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jms-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753490" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jee-2.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753490" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/javaee_6.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753490" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-oxm-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753491" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/javaee_web_services_1_3.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753491" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tx-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753491" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-mvc-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753491" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-beans-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753491" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/ejb-jar_3_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753491" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-lang-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753491" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-context-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753492" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/application-client_5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753492" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-task-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753492" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/persistence.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753492" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jms-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753492" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/javaee_web_services_client_1_3.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753492" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-lang-2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753493" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/jspxml.tld" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753493" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-util-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753493" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/jspxml.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753493" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-oxm-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753493" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/j2ee_web_services_client_1_1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753493" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-jms-2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753494" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-beans-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753494" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/spring-form.tld" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753494" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/ejb-jar_3_1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753494" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-aop-3.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753494" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/application-client_6.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753494" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-util-2.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753494" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-beans-2.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753495" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/application-client_1_4.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753495" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tx-2.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753495" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/orm_2_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753495" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-lang-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753495" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-context-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753495" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/web-common_3_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753496" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-beans-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753496" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/web-app_2_4.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753496" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-aop-3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753496" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-aop-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753496" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/web-jsptaglibrary_2_1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753496" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-aop-2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753497" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/web-facesconfig_1_2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753497" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-tx-2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753497" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/application_5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753497" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-cache-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753497" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/orm_1_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753498" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/jsp_2_1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753498" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-task-3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753498" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Spring/lib/spring.jar!/resources/schemas/spring-util-2.5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753498" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/spring.tld" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753498" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/javaee_5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753498" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/persistence_2_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753499" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/web-app_3_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753499" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/j2ee_1_4.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753499" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/jsp_2_2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753499" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/connector_1_5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753500" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/application_1_4.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753500" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/JavaEE/lib/javaee-impl.jar!/standardSchemas/ejb-jar_2_1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753500" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/xpath/lib/xpath.jar!/org/intellij/lang/xpath/xslt/resources/xslt-schema.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753500" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/xpath/lib/xpath.jar!/org/intellij/lang/xpath/xslt/resources/documentation.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753500" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/xpath/lib/xpath.jar!/org/intellij/lang/xpath/xslt/resources/documentation.xsl" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753500" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/Axis2.services.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753501" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/jaxrpc-ri-runtime.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753501" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/REST_SWDP.web.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753501" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/Axis2.conf_axis2.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753501" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/AxisServlet.web.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753501" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/JAXRPCServlet.web.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753501" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/WSServlet.web.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753502" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/Axis2Servlet.web.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753502" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/cxf-servlet.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753502" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/Axis.services.wsdd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753502" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/sun-jaxws.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753502" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/resources/cxf.web.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753502" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/resources/relaxng.rng" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753503" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl/soap/wsdl11_soapbinding.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753503" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/html5/xhtml5.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753503" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl/mime/wsdl11_mimebinding.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753503" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl/http/wsdl11_httpbinding.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753503" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl/wsdl.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753503" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Hibernate/lib/hibernate.jar!/resources/schemas/hibernate-mapping-4.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753504" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/Hibernate/lib/hibernate.jar!/resources/schemas/hibernate-configuration-4.0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753504" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/catalog.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753504" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/soap-envelope.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753504" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/ws-policy.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753504" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/j2ee_jaxrpc_mapping_1_1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753504" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl11_soapbinding.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753505" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/soap-encoding1_2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753505" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/xhtml1-frameset.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753505" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wadl20090202.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753505" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/xhtml1-strict.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753505" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/sun-jaxws.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753505" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/jbossws-tool_1_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753506" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/ws-addr2006.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753506" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/xinclude.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753506" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/xjc.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753506" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/xslt-2_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753506" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdd_provider_java.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753507" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl_customizationschema_2_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753507" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/cxf-soap.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753507" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/jboss-jaxws-config_2_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753507" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/cxf-jaxws.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753507" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl11soap12.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753507" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/ws-eventing.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753508" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/ws-addr.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753508" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/xml.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753508" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/jboss-ws-security_1_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753508" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/xhtml1-transitional.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753508" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl11_httpbinding.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753508" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/XMLSchema-instance.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753509" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/XMLSchema.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753509" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/XMLSchema.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753509" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/jersey.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753509" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl11.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753509" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/lib/idea.jar!/standardSchemas/xslt-1_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753509" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/business-process.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753510" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/bindingfile.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753510" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl12.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753510" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl20.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753510" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/jboss-jaxrpc-config_2_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753510" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/bindingschema_2_0.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753511" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wadl20061109.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753511" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/wsdl11_mimebinding.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753511" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/WebServices/lib/WebServices.jar!/schemas/soap-encoding.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753511" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.3.1.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753511" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.3.2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753511" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/flex/lib/FlexSupport.jar!/schemas/AIR_Descriptor.3.3.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1371019753512" ignored="false" />
+    <file path="$PROJECT_DIR$/../test-sahi-ctf/.idea/workspace.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372400792930" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/jsp/lib/jsp-impl.jar!/standardSchemas/jspdirectives.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372234373968" ignored="false" />
+    <file path="$APPLICATION_HOME_DIR$/plugins/jsp/lib/jsp-impl.jar!/standardSchemas/jspxml2.xsd" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372234373968" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/component/TextComponentServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612182" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/admin-config.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/repositories-config.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612182" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/file/FileServer.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612182" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/services-config.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/editor/src/be/mediafin/editor/business/DigitalEdition.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/persistence_mme/src/be/mediafin/mme/workflow/WorkflowState.hbm.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/logback.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/StoryCompareController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/log/MethodExecutionTimeLogger.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/dto/assets/AssetListDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalEditionPriceService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/business/src/be/mediafin/mme/channel/digital/DigitalEditionType.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalTemplateService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/ImageController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/digital/DigitalEditionController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/digital/DigitalSectionController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856453" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/web/WEB-INF/webmvc-application-config.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/digital/DigitalPublicationController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/digital/DigitalPreviewController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/digital/DigitalImportController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/xml/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/QuotationsController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/digital/DigitalCoverManagementController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/SlidersController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/editor/src/be/mediafin/editor/repository/DigitalEditionPriceRepository.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/TeasersController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/dto/edition/DigitalEditionDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/test.base/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/editor/src/be/mediafin/editor/mapping/DigitalEdition.hbm.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/channel/digital/DigitalAdvertService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalEditionDataImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/web/WEB-INF/jsp/edition/adverts/editioninfo.jsp" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/web/WEB-INF/jsp/edition/adverts/confirmPlacing.jsp" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/web/WEB-INF/jsp/main.jsp" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/StoryOnlineController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/web/WEB-INF/jsp/edition/adverts/availableads.jsp" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalTemplateServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856454" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/StoryPrintController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/persistence_mme/src/be/mediafin/mme/persistence-config.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/managers/CitationsManager.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/test.base/src/be/mediafin/mme/utils/Utils.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/web/WEB-INF/jsp/edition/preview.jsp" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/managers/CreationManager.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/test.base/src/be/mediafin/mme/utils/ftpd/FTPDaemon.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/digital/DigitalEditionAdvertController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/digital/DigitalArticleContainerHelper.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/managers/ImageManager.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/editor/src/be/mediafin/editor/mapping/DigitalSection.hbm.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/managers/InfoManager.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalSectionServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalSectionService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalEditionData.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalPublicationServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/test.base/src/be/mediafin/mme/utils/ftpd/VirtualFile.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalEditionService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalPublicationService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856455" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/ant-build/liquibase.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/helpers/DigitalPageViewHelperFactoryImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalEditionServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/tests/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/helpers/DigitalPageViewHelper.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/ant-build/mme.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/helpers/DigitalInterstititalPageViewHelper.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalEditionPriceServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/tests/src/logback.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/helpers/DigitalPageViewHelperFactory.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/persistence_mme/src/be/mediafin/mme/asset/Asset.hbm.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/tests/src/test-config.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/helpers/DigitalArticlePageViewHelper.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/editor/EditorService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/helpers/DigitalSectionPageViewHelper.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalArticleService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalArticleServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/web/WEB-INF/tld/DigitalAdvertFunctions.tld" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856456" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/StoryDigitalController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/channel/BaseChannelService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/channel/BaseChannelServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372318151800" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/channel/ChannelServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalAssetFilter.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856457" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/helpers/UiContext.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856457" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/StoryClusterController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/component/TextComponentService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372240856457" ignored="false" />
+    <file path="$PROJECT_DIR$/../cucumber-test-framework/ctf-lib-sahi/features/02 - Form actions.feature" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372245811099" ignored="false" />
+    <file path="/02 - Form actions.feature" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372245811099" ignored="false" />
+    <file path="$PROJECT_DIR$/../cucumber-test-framework/ctf-lib-sahi/pom.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372252050549" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/export/telex/TelexExportServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612182" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/diocontent/DioContentClientServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612182" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/test/be/mediafin/mme/service/story/TextEditOnStoryTest.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612182" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/conversion/TextConversionServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/dto/BindingSettingsDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/test/be/mediafin/mme/service/conversion/TextConversionServiceTest.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/agents/src/be/mediafin/mme/agents/dpp/DppParser.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/business/src/be/mediafin/mme/component/templates/TextTemplate.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/dto/DigitalArticleDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/util/MmeMailService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/util/MmeMailServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/digital/DigitalSettingsDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/lock/LockingServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/qps/src/be/persgroep/red/qps/QPSSession.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612183" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/AuthenticationController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/dto/TextComponentDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/agents/src/be/mediafin/mme/agents/newsml/MessageDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/business/src/be/mediafin/mme/channel/digital/DigitalSettings.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/notification/NotificationServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/common/src/be/mediafin/mme/common/xml/BaseParser.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/asset/AssetListServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/web/WEB-INF/tags/panels/editionContent.tag" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/NodeController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/business/src/be/mediafin/mme/asset/AssetType.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612184" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/qps/QpsConnectionPool.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/business/src/be/mediafin/mme/binding/ChannelBinding.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/channel/print/QpsSettingsDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/digital/BaseDigitalController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/editor/src/editor-config.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/qps/QpsServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612185" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/qps/QpsSessionWrapper.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/InlineAssetController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/channel/digital/DigitalAdvertServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/managers/DigitalBindingImporter.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/editor/src/be/mediafin/editor/mapping/DigitalPublication.hbm.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/dto/assets/image/ImageDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/StoryTelexController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/test/be/mediafin/editor/repository/DigitalArticleRepositoryTest.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612186" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/print/PrintServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317615168" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/qps/messaging/handlers/QPSAssetAddedHandler.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/sms/SmsServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/web/WEB-INF/tags/digitalSettings.tag" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/repositories/print/PrintRepositoryImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/business/src/be/mediafin/mme/story/Story.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/repositories/revision/RevisionRepositoryHelper.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/admintask/TaskExecutorImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612187" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/story/managers/TagsManager.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/admintask/handlers/ImportTaskHandlerImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/channel/digital/DigitalAdvertExportImportServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/dto/DigitalAdvertDto.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/persistence_mme/src/be/mediafin/mme/binding/ChannelBinding.hbm.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/controllers/util/DebugController.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/business/src/be/mediafin/mme/user/User.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/assetlink/AssetLinkServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/persistence_mme/src/be/mediafin/mme/binding/settings/BindingSettings.hbm.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/export/OnlineExportServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/online/OnlineServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612188" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/persistence_mme/src/be/mediafin/mme/common/Types.hbm.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/service/telex/TelexServiceImpl.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/business/src/be/mediafin/mme/workflow/WorkflowState.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/revisionManagers/ChannelBindingRevisionManager.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/webmvc/src/be/mediafin/mme/web/helpers/auth/LdapService.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/services/src/be/mediafin/mme/renders/HtmlRender.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/editor/src/be/mediafin/editor/mapping/Enums.hbm.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317612189" ignored="false" />
+    <file path="$PROJECT_DIR$/../mme/atlassian-ide-plugin.xml" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372317705924" ignored="false" />
+    <file path="/HttpImageLookupRepository.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372531178786" ignored="false" />
+    <file path="/TestHttpImageLookupRepository.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372532320762" ignored="false" />
+    <file path="/DummyWebServer.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372532973678" ignored="false" />
+    <file path="/ImageData.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372527170881" ignored="false" />
+    <file path="/ImageTestData.java" changelist="5ca393ec-02c1-461b-a3df-aedf6ee02684" time="1372531984239" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -154,33 +505,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="TestImageLoadController.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java">
+      <file leaf-file-name="HttpImageLookupRepository.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/HttpImageLookupRepository.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="83" column="34" selection-start="2872" selection-end="2872" vertical-scroll-proportion="-0.10987261">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="method#unknownApplicationReturnsPermissionDenied#0;class#TestImageLoadController#0" expanded="false" />
-                <element signature="method#ifApplicationManagementNotAllowedThenPermissionDenied#0;class#TestImageLoadController#0" expanded="false" />
-                <element signature="class#TestConfig#0;class#TestImageLoadController#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RepositoryLookupStatus.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="12" selection-start="68" selection-end="68" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Application.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Application.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="19" selection-start="132" selection-end="132" vertical-scroll-proportion="0.0">
+            <state line="20" column="71" selection-start="685" selection-end="685" vertical-scroll-proportion="0.5733558">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -188,40 +516,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageService.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageService.java">
+      <file leaf-file-name="DummyWebServer.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/DummyWebServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="0" selection-start="378" selection-end="378" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImageStoreService.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageStoreService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="0" selection-start="414" selection-end="414" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImageLookupRepository.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/ImageLookupRepository.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="0" selection-start="149" selection-end="149" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImageLoadController.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="0" selection-start="1357" selection-end="1357" vertical-scroll-proportion="0.0">
+            <state line="70" column="0" selection-start="2176" selection-end="2176" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractHttpConnection.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-server/7.6.11.v20130520/jetty-server-7.6.11.v20130520-sources.jar!/org/eclipse/jetty/server/AbstractHttpConnection.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="531" column="15" selection-start="19034" selection-end="19034" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -229,16 +539,7 @@
       <file leaf-file-name="RepositoryLookupResult.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="0" selection-start="140" selection-end="140" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TestApplication.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/TestApplication.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="31" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0">
+            <state line="38" column="37" selection-start="854" selection-end="854" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -246,10 +547,61 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="TestDimensions.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/image/TestDimensions.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="41" column="21" selection-start="1168" selection-end="1168" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImageTestData.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/ImageTestData.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="38" selection-start="440" selection-end="440" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestHttpImageLookupRepository.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/repositories/TestHttpImageLookupRepository.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="29" selection-start="396" selection-end="396" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImageLoadController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="57" column="0" selection-start="2141" selection-end="2141" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImageType.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/ImageType.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="26" column="0" selection-start="553" selection-end="553" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="64" column="34" selection-start="1885" selection-end="1885" vertical-scroll-proportion="0.0">
+            <state line="60" column="21" selection-start="1787" selection-end="1787" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -273,21 +625,21 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/acceptance-tests/features/load-remote-image.feature" />
-        <option value="$PROJECT_DIR$/acceptance-tests/pom.xml" />
-        <option value="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageStreamingController.java" />
-        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationServiceImpl.java" />
-        <option value="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/TestApplicationService.java" />
-        <option value="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ApplicationController.java" />
-        <option value="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/taxonomy/Application.java" />
-        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ApplicationService.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/TestApplication.java" />
-        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/ImageLookupRepository.java" />
-        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java" />
-        <option value="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Application.java" />
-        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java" />
         <option value="$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageServiceImpl.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageService.java" />
+        <option value="$PROJECT_DIR$/services/pom.xml" />
+        <option value="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/ImageData.java" />
+        <option value="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/image/Dimensions.java" />
+        <option value="$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/image/TestDimensions.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/ImageType.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java" />
+        <option value="$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/HttpImageLookupRepository.java" />
+        <option value="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/ImageTestData.java" />
+        <option value="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/repositories/TestHttpImageLookupRepository.java" />
+        <option value="$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/DummyWebServer.java" />
         <option value="$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java" />
       </list>
     </option>
@@ -321,8 +673,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-9" />
     <option name="y" value="-9" />
-    <option name="width" value="1618" />
-    <option name="height" value="1184" />
+    <option name="width" value="1938" />
+    <option name="height" value="1064" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -453,119 +805,149 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web.imageserver.front" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web.imageserver.front" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="service" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web.imageserver.front" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="admin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
+              <option name="myItemId" value="resources" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="admin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controllers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="web.imageserver.front" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="web.imageserver.front" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="admin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="web.imageserver.front" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="admin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controllers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="imageserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="services" />
+              <option name="myItemId" value="images" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -584,6 +966,36 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -683,6 +1095,68 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="business" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="business" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="business" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="business" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="imageserver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="acceptance-tests" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -713,43 +1187,47 @@
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="project.structure.last.edited" value="Project" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="options.lastSelected" value="preferences.sourceCode.Java" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../foreach-twist-sahi/src/main/java/be/foreach/twist/sahi/SimpleBrowser.java" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="MemberChooser.showClasses" value="true" />
     <property name="FullScreen" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\code\imageserver\services\src\test\resources\images" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.foreach.imageserver.business" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.TestImageLoadController">
-    <configuration default="false" name="TestImageLoadController.unknownApplicationReturnsPermissionDenied" type="JUnit" factoryName="JUnit" temporary="true">
+  <component name="RunManager" selected="JUnit.TestHttpImageLookupRepository">
+    <configuration default="false" name="TestHttpImageLookupRepository.getSunsetImage" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
+          <option name="PATTERN" value="com.foreach.imageserver.services.repositories.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="web.imageserver.front" />
+      <module name="services" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
-      <option name="METHOD_NAME" value="unknownApplicationReturnsPermissionDenied" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.services.repositories" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.services.repositories.TestHttpImageLookupRepository" />
+      <option name="METHOD_NAME" value="getSunsetImage" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -761,50 +1239,28 @@
       </option>
       <envs />
       <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="TestImageLoadController.ifApplicationManagementNotAllowedThenPermissionDenied" type="JUnit" factoryName="JUnit" temporary="true">
+    <configuration default="false" name="TestHttpImageLookupRepository" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
+          <option name="PATTERN" value="com.foreach.imageserver.services.repositories.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="web.imageserver.front" />
+      <module name="services" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
-      <option name="METHOD_NAME" value="ifApplicationManagementNotAllowedThenPermissionDenied" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="TestImageLoadController" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="web.imageserver.front" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.services.repositories" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.services.repositories.TestHttpImageLookupRepository" />
       <option name="METHOD_NAME" />
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" />
@@ -821,19 +1277,19 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="TestImageLoadController.validApplicationWillResultInRepositoryLookup" type="JUnit" factoryName="JUnit" temporary="true">
+    <configuration default="false" name="TestHttpImageLookupRepository.getValidImages" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
+          <option name="PATTERN" value="com.foreach.imageserver.services.repositories.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="web.imageserver.front" />
+      <module name="services" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
-      <option name="METHOD_NAME" value="validApplicationWillResultInRepositoryLookup" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.services.repositories" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.services.repositories.TestHttpImageLookupRepository" />
+      <option name="METHOD_NAME" value="getValidImages" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -845,23 +1301,29 @@
       </option>
       <envs />
       <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="TestImageLoadController.lookupNotFound" type="JUnit" factoryName="JUnit" temporary="true">
+    <configuration default="false" name="TestHttpImageLookupRepository.getImageSunset" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.foreach.imageserver.admin.controllers.*" />
+          <option name="PATTERN" value="com.foreach.imageserver.services.repositories.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <module name="web.imageserver.front" />
+      <module name="services" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.foreach.imageserver.admin.controllers" />
-      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.admin.controllers.TestImageLoadController" />
-      <option name="METHOD_NAME" value="lookupNotFound" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.services.repositories" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.services.repositories.TestHttpImageLookupRepository" />
+      <option name="METHOD_NAME" value="getImageSunset" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" />
       <option name="PARAMETERS" />
@@ -873,7 +1335,47 @@
       </option>
       <envs />
       <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="TestHttpImageLookupRepository.getImageEarth" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.foreach.imageserver.services.repositories.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="services" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.foreach.imageserver.services.repositories" />
+      <option name="MAIN_CLASS_NAME" value="com.foreach.imageserver.services.repositories.TestHttpImageLookupRepository" />
+      <option name="METHOD_NAME" value="getImageEarth" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -883,19 +1385,6 @@
       <option name="SHMEM_ADDRESS" value="javadebug" />
       <option name="HOST" value="localhost" />
       <option name="PORT" value="5005" />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java">
@@ -914,6 +1403,19 @@
       <envs />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <extension name="coverage" enabled="false" merge="false" runner="idea" />
       <option name="MAIN_CLASS_NAME" />
@@ -927,37 +1429,6 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="" />
       <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="CucumberRunConfigurationType" factoryName="Cucumber">
-      <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
-      <module name="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="ANSICON" value="" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" />
-      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov" />
-      <EXTENSION ID="org.jetbrains.plugins.ruby.motion.run.MotionSimulatorRunExtension" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*.feature" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TAGS_FILTER" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_NAME_FILTER" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_ARGS" VALUE="--color -r features" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="VERBOSE_OPTION" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_RUNNER_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_RUNNER" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SETTINGS_VERSION" VALUE="2" />
       <method />
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
@@ -1077,19 +1548,19 @@
     </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Tomcat Server.Tomcat 7" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.unknownApplicationReturnsPermissionDenied" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.ifApplicationManagementNotAllowedThenPermissionDenied" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.TestImageLoadController" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.validApplicationWillResultInRepositoryLookup" />
-      <item index="5" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.lookupNotFound" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository.getSunsetImage" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository.getValidImages" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository.getImageSunset" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository.getImageEarth" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.TestImageLoadController" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.lookupNotFound" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.validApplicationWillResultInRepositoryLookup" />
-        <item index="3" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.ifApplicationManagementNotAllowedThenPermissionDenied" />
-        <item index="4" class="java.lang.String" itemvalue="JUnit.TestImageLoadController.unknownApplicationReturnsPermissionDenied" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository.getImageEarth" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository.getImageSunset" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository.getValidImages" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.TestHttpImageLookupRepository.getSunsetImage" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -1107,35 +1578,35 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1618" height="1184" extended-state="6" />
+    <frame x="-9" y="-9" width="1938" height="1064" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3990981" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39798206" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32830626" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3171937" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31614348" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32986537" sideWeight="0.67169374" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.7219731" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27348778" sideWeight="0.6709486" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32905138" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30149412" sideWeight="0.7219731" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2780269" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1204,131 +1675,124 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/junit/junit/4.8.2/junit-4.8.2-sources.jar!/org/junit/Assert.java">
+    <entry file="file://$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Image.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="27" selection-start="3545" selection-end="3545" vertical-scroll-proportion="0.0">
+        <state line="12" column="55" selection-start="324" selection-end="324" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/src/test/resources/images/sunset.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/image/Dimensions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="25" selection-start="555" selection-end="555" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="34" selection-start="1885" selection-end="1885" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web.imageserver.front/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="35" selection-start="3321" selection-end="3321" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.6.0_29/src.zip!/java/util/UUID.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="19" selection-start="1975" selection-end="1975" vertical-scroll-proportion="0.33280253">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="378" selection-end="378" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/AbstractServiceTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="17" selection-start="268" selection-end="268" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ApplicationController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="101" column="19" selection-start="3822" selection-end="3822" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/TestApplicationService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="0" selection-start="1322" selection-end="1322" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/ImageStoreService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="414" selection-end="414" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/ImageLookupRepository.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="0" selection-start="149" selection-end="149" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/TestApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="31" selection-start="210" selection-end="210" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="140" selection-end="140" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/Application.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="19" selection-start="132" selection-end="132" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupStatus.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="12" selection-start="68" selection-end="68" vertical-scroll-proportion="0.0">
+        <state line="11" column="57" selection-start="242" selection-end="242" vertical-scroll-proportion="0.3153457">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java">
+    <entry file="file://$PROJECT_DIR$/services/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="0" selection-start="1357" selection-end="1357" vertical-scroll-proportion="0.0">
+        <state line="41" column="21" selection-start="1538" selection-end="1538" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/business/src/main/java/com/foreach/imageserver/business/ImageType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="0" selection-start="553" selection-end="553" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/RepositoryLookupResult.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="37" selection-start="854" selection-end="854" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/test/java/com/foreach/imageserver/admin/controllers/TestImageLoadController.java">
+    <entry file="file://$PROJECT_DIR$/services/src/test/resources/images/earth_large.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="83" column="34" selection-start="2872" selection-end="2872" vertical-scroll-proportion="-0.10987261">
+        <state line="60" column="21" selection-start="1787" selection-end="1787" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-server/7.6.11.v20130520/jetty-server-7.6.11.v20130520-sources.jar!/org/eclipse/jetty/server/AbstractHttpConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="531" column="15" selection-start="19034" selection-end="19034" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/ImageTestData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="38" selection-start="440" selection-end="440" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="method#unknownApplicationReturnsPermissionDenied#0;class#TestImageLoadController#0" expanded="false" />
-            <element signature="method#ifApplicationManagementNotAllowedThenPermissionDenied#0;class#TestImageLoadController#0" expanded="false" />
-            <element signature="class#TestConfig#0;class#TestImageLoadController#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/business/src/test/java/com/foreach/imageserver/business/image/TestDimensions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="41" column="21" selection-start="1168" selection-end="1168" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/DummyWebServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="0" selection-start="2176" selection-end="2176" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/src/test/java/com/foreach/imageserver/services/repositories/TestHttpImageLookupRepository.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="29" selection-start="396" selection-end="396" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web.imageserver.front/src/main/java/com/foreach/imageserver/admin/controllers/ImageLoadController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="57" column="0" selection-start="2141" selection-end="2141" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/src/main/java/com/foreach/imageserver/services/repositories/HttpImageLookupRepository.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="71" selection-start="685" selection-end="685" vertical-scroll-proportion="0.5733558">
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

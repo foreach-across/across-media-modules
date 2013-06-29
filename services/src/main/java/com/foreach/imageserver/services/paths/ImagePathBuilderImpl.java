@@ -17,7 +17,7 @@ public class ImagePathBuilderImpl implements ImagePathBuilder
     }
 
 	public final String createManualImagePath(
-			ImageType imageType,
+			ImageVersion imageVersion,
 			int applicationId,
 			int groupId,
 			String pathYear,
@@ -31,7 +31,7 @@ public class ImagePathBuilderImpl implements ImagePathBuilder
                 .append( "/" )
                 .append( groupId )
                 .append( "/" )
-                .append( imageType.getPath() )
+                .append( imageVersion.getPath() )
                 .append( "/" )
                 .append( pathYear )
                 .append( "/" )
@@ -40,7 +40,7 @@ public class ImagePathBuilderImpl implements ImagePathBuilder
                 .append( pathDay )
                 .append( "/" );
 
-		if ( imageType == ImageType.VARIANT ) {
+		if ( imageVersion == ImageVersion.VARIANT ) {
 			path.append( imageSpecifier.toString() );
 		} else {
             path.append( imageSpecifier.baseImageName() );
@@ -50,7 +50,7 @@ public class ImagePathBuilderImpl implements ImagePathBuilder
 	}
 
     public final String createManualImagePath(
-			ImageType imageType,
+			ImageVersion imageVersion,
 			int applicationId,
 			int groupId,
 			Date date,
@@ -64,11 +64,11 @@ public class ImagePathBuilderImpl implements ImagePathBuilder
         String pathMonth =  monthFormat.format(date);
         String pathDay =  dayFormat.format(date);
 
-        return createManualImagePath(imageType, applicationId, groupId, pathYear, pathMonth, pathDay, imageSpecifier);
+        return createManualImagePath( imageVersion, applicationId, groupId, pathYear, pathMonth, pathDay, imageSpecifier);
 	}
 
     public final String createManualImageDirectory(
-			ImageType imageType,
+			ImageVersion imageVersion,
 			int applicationId,
 			int groupId,
 			Date date )
@@ -83,7 +83,7 @@ public class ImagePathBuilderImpl implements ImagePathBuilder
                 .append( "/" )
                 .append( groupId )
                 .append( "/" )
-                .append( imageType.getPath() )
+                .append( imageVersion.getPath() )
                 .append( "/" )
                 .append( pathDate );
 
@@ -96,16 +96,16 @@ public class ImagePathBuilderImpl implements ImagePathBuilder
         imageSpecifier.setImageId( imageData.getId() );
         imageSpecifier.setFileType( imageData.getExtension() );
 
-        return generateImagePath( ImageType.ORIGINAL, imageData, imageSpecifier );
+        return generateImagePath( ImageVersion.ORIGINAL, imageData, imageSpecifier );
 	}
 
 	public final String generateVariantImagePath( ServableImageData imageData, ImageSpecifier imageSpecifier )
 	{
-		return generateImagePath( ImageType.VARIANT, imageData, imageSpecifier );
+		return generateImagePath( ImageVersion.VARIANT, imageData, imageSpecifier );
 	}
 
 	private String generateImagePath(
-			ImageType imageType,
+			ImageVersion imageVersion,
 			ServableImageData imageData,
 			ImageSpecifier imageSpecifier)
 	{
@@ -116,12 +116,12 @@ public class ImagePathBuilderImpl implements ImagePathBuilder
                         .append( "/" )
                         .append( imageData.getGroupId() )
                         .append( "/" )
-                        .append( imageType.getPath() )
+                        .append( imageVersion.getPath() )
                         .append( "/" )
                         .append( imageData.getPath() )
                         .append( "/" );
 
-        if ( imageType == ImageType.VARIANT ) {
+        if ( imageVersion == ImageVersion.VARIANT ) {
             path.append( imageSpecifier.toString() );
         } else {
             path.append( imageSpecifier.baseImageName() );

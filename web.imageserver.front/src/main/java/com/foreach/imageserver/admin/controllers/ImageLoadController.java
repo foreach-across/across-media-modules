@@ -1,9 +1,12 @@
 package com.foreach.imageserver.admin.controllers;
 
 import com.foreach.imageserver.business.Application;
+import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.services.ApplicationService;
+import com.foreach.imageserver.services.ImageService;
 import com.foreach.imageserver.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -23,8 +26,11 @@ public final class ImageLoadController
 	@Autowired
 	private ImageLookupRepository imageLookupRepository;
 
+	@Autowired
+	private ImageService imageService;
+
 	@RequestMapping("/load")
-	public void load( int applicationId, UUID applicationKey, String repositoryURI ) {
+	public void load( int applicationId, UUID applicationKey, String repositoryURI, String targetKey ) {
 		Application application = applicationService.getApplicationById( applicationId );
 
 		if ( application == null || !application.canBeManaged( applicationKey ) ) {
@@ -34,7 +40,23 @@ public final class ImageLoadController
 		RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage( repositoryURI );
 		ensureLookupResultIsValid( lookupResult );
 
+		String imageKey = StringUtils.defaultIfEmpty( targetKey, repositoryURI );
+		Image image = imageService.getImageByKey( imageKey, application.getId() );
 
+		if ( image == null ) {
+			image = createNewImage( application, imageKey, lookupResult );
+		}
+
+		imageService.save( image, lookupResult );
+	}
+
+	private Image createNewImage( Application application, String imageKey, RepositoryLookupResult lookupResult ) {
+		Image image = new Image();
+		image.setApplicationId( application.getId() );
+		image.setKey( imageKey );
+		image.setDimensions( lookupResult.getDimensions() );
+
+		return image;
 	}
 
 	private void ensureLookupResultIsValid( RepositoryLookupResult result ) {

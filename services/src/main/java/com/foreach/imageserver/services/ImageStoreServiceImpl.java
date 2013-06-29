@@ -3,7 +3,7 @@ package com.foreach.imageserver.services;
 import com.foreach.imageserver.business.image.ServableImageData;
 import com.foreach.imageserver.services.paths.ImagePathBuilder;
 import com.foreach.imageserver.services.paths.ImageSpecifier;
-import com.foreach.imageserver.services.paths.ImageType;
+import com.foreach.imageserver.services.paths.ImageVersion;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		int applicationId = image.getApplicationId();
 		int groupId = image.getGroupId();
 
-		String physicalPath = pathBuilder.createManualImagePath( ImageType.ORIGINAL, applicationId, groupId, new Date(),
+		String physicalPath = pathBuilder.createManualImagePath( ImageVersion.ORIGINAL, applicationId, groupId, new Date(),
 		                                                         imageSpecifier );
 		saveImageOnDisk( physicalPath, imageData );
 	}

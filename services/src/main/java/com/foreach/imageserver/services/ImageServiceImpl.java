@@ -1,5 +1,6 @@
 package com.foreach.imageserver.services;
 
+import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.geometry.Point;
 import com.foreach.imageserver.business.geometry.Rect;
 import com.foreach.imageserver.business.geometry.Size;
@@ -9,6 +10,7 @@ import com.foreach.imageserver.dao.CropDao;
 import com.foreach.imageserver.dao.ImageDao;
 import com.foreach.imageserver.dao.selectors.CropSelector;
 import com.foreach.imageserver.dao.selectors.ImageSelector;
+import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,24 +26,37 @@ public class ImageServiceImpl implements ImageService {
 	@Autowired
 	private CropDao cropDao;
 
-    public final ServableImageData getImageById(long id) {
+	public Image getImageByKey( String key, int applicationId ) {
+		return null;
+	}
+
+	public void save( Image image, RepositoryLookupResult lookupResult ) {
+		//To change body of implemented methods use File | Settings | File Templates.
+	}
+
+	@Deprecated
+	public final ServableImageData getImageById(long id) {
         return imageDao.getImageById(id);
     }
 
+	@Deprecated
     public final ServableImageData getImageByPath(ImageSelector selector) {
         return imageDao.getImageByPath(selector);
     }
 
+	@Deprecated
     public final List<ServableImageData> getAllImages() {
         return imageDao.getAllImages();
     }
 
+	@Deprecated
 	@Transactional
 	public final long saveImage( ServableImageData image )
 	{
 		return saveImage( image, false );
 	}
 
+	@Deprecated
 	@Transactional
     public final long saveImage( ServableImageData image, boolean deleteCrops )
     {
@@ -67,10 +82,12 @@ public class ImageServiceImpl implements ImageService {
 		}
 	}
 
+	@Deprecated
     public final List<ServableImageData> getImages(ImageSelector selector) {
         return imageDao.getImages(selector);
     }
 
+	@Deprecated
     public final int getImageCount(ImageSelector selector) {
         return imageDao.getImageCount(selector);
     }
