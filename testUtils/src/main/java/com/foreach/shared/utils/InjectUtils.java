@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public final class InjectUtils {
     private static Map<Class, Map<String, Field>> fieldsByClass = new HashMap<Class, Map<String, Field>>();
 

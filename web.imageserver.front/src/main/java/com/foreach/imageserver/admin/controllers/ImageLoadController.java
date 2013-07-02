@@ -30,7 +30,7 @@ public final class ImageLoadController
 	private ImageService imageService;
 
 	@RequestMapping("/load")
-	public void load( int applicationId, UUID applicationKey, String repositoryURI, String targetKey ) {
+	public void load( int applicationId, String applicationKey, String repositoryURI, String targetKey ) {
 		Application application = applicationService.getApplicationById( applicationId );
 
 		if ( application == null || !application.canBeManaged( applicationKey ) ) {

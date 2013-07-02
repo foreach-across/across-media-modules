@@ -5,23 +5,38 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:annotation-config />
-    <context:component-scan base-package="com.foreach.imageserver"/>
+	<context:annotation-config/>
+	<context:component-scan base-package="com.foreach.imageserver"/>
 
-    <bean class="com.foreach.spring.logging.Log4JConfigurator" init-method="configure" lazy-init="false">
-        <property name="propertiesFile" value="classpath:/config/log.properties"/>
-        <property name="logDirectory" value="/logs/imageserver/test"/>
-    </bean>
+	<!--
+	<bean class="com.foreach.spring.logging.Log4JConfigurator" init-method="configure" lazy-init="false">
+		<property name="propertiesFile" value="classpath:/config/log.properties"/>
+		<property name="logDirectory" value="/logs/imageserver/test"/>
+	</bean>
+	-->
 
-    <bean id="propertyConfigurer"
-          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:config/unittests/test.properties</value>
-            </list>
-        </property>
-    </bean>
+	<bean id="propertyConfigurer"
+	      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:config/unittests/test.properties</value>
+			</list>
+		</property>
+	</bean>
 
-    <import resource="classpath:config/spring-config-data.xml"/>
+	<import resource="classpath:config/spring-config-data.xml"/>
+
+	<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSource" destroy-method="close">
+		<property name="driverClassName" value="org.h2.Driver"/>
+		<property name="url" value="jdbc:h2:mem:image-server-unit-tests;DB_CLOSE_DELAY=-1;MODE=MSSQLServer"/>
+		<property name="username" value="sa"/>
+		<property name="password" value=""/>
+	</bean>
+
+	<bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+	      <property name="dataSource" ref="dataSource" />
+	      <property name="changeLog" value="classpath:/liquibase/changelog-ut.xml" />
+	      <property name="contexts" value="test" />
+	 </bean>
 
 </beans>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet id="201307020830" author="arne" dbms="h2">
+		<comment>Insert known test application</comment>
+		<insert tableName="Application">
+			<column name="Id">9999</column>
+			<column name="Name">Unit Test Application</column>
+			<column name="Code">30EB4EF0-E2E2-11E2-A28F-0800200C9A66</column>
+			<column name="Active">true</column>
+			<column name="Created">2013-07-02 08:40:33</column>
+			<column name="Updated">2013-07-03 11:13:12</column>
+		</insert>
+	</changeSet>
+</databaseChangeLog>

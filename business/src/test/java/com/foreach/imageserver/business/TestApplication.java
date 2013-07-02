@@ -34,7 +34,7 @@ public class TestApplication
 	public void canBeManagedIfActiveAndCodeEquals() {
 		Application application = new Application();
 		application.setActive( true );
-		application.setCode( UUID.randomUUID() );
+		application.setCode( UUID.randomUUID().toString() );
 
 		assertTrue( application.canBeManaged( application.getCode() ) );
 	}
@@ -45,14 +45,14 @@ public class TestApplication
 		application.setActive( true );
 
 		assertFalse( application.canBeManaged( null ) );
-		assertFalse( application.canBeManaged( UUID.randomUUID() ) );
+		assertFalse( application.canBeManaged( UUID.randomUUID().toString() ) );
 	}
 
 	@Test
 	public void canNeverBeManagedIfNotActive() {
 		Application application = new Application();
 		application.setActive( false );
-		application.setCode( UUID.randomUUID() );
+		application.setCode( UUID.randomUUID().toString() );
 
 		assertFalse( application.canBeManaged( application.getCode() ) );
 	}

@@ -8,13 +8,13 @@ import java.util.List;
 @Repository
 public interface ApplicationDao
 {
-    Application getApplicationById(int id);
+	Application getApplicationById( int id );
 
-    List<Application> getAllApplications();
+	List<Application> getAllApplications();
 
-    void insertApplication( Application application );
+	void insertApplication( Application application );
 
-    void updateApplication( Application application );
+	void updateApplication( Application application );
 
-    void deleteApplication( int applicationId );
+	void deleteApplication( int applicationId );
 }

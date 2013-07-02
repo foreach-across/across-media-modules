@@ -11,6 +11,8 @@ public interface ImageService
 {
 	Image getImageByKey( String key, int applicationId );
 
+	void save( Image image, RepositoryLookupResult lookupResult );
+
 	@Deprecated
 	ServableImageData getImageById( long id );
 
@@ -31,7 +33,4 @@ public interface ImageService
 
 	@Deprecated
 	List<ServableImageData> getImages( ImageSelector selector );
-
-	@Deprecated
-	void save( Image image, RepositoryLookupResult lookupResult );
 }

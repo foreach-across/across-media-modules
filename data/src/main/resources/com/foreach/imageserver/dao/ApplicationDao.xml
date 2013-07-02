@@ -3,28 +3,33 @@
 <mapper namespace="com.foreach.imageserver.dao.ApplicationDao">
 
     <sql id="applicationColumns">
-        IA.id as application_id,
-        IA.name as application_name,
-        IA.callbackurl as application_callbackurl
+        A.id as application_id,
+        A.name as application_name,
+        A.code as application_code,
+        A.active as application_active,
+        A.created as application_created,
+        A.updated as application_updated
     </sql>
 	
 	<resultMap id="applicationMap" type="Application">
 		<id property="id" column="application_id"/>
 		<result property="name" column="application_name"/>
-		<result property="callbackUrl" column="application_callbackurl"/>
+		<result property="code" column="application_code"/>
+		<result property="active" column="application_active"/>
+		<result property="dateCreated" column="application_created"/>
+		<result property="dateUpdated" column="application_updated"/>
 	</resultMap>
 
 	<select id="getApplicationById" parameterType="int" resultMap="applicationMap">
-		SELECT
-		<include refid="applicationColumns"/>
-		FROM Application IA
-		WHERE IA.id = #{value}
+		SELECT <include refid="applicationColumns"/>
+		FROM Application A
+		WHERE A.id = #{value}
 	</select>
 	
 	<select id="getAllApplications" resultMap="applicationMap">
 		SELECT
 		<include refid="applicationColumns"/>
-		FROM Application IA
+		FROM Application A
 		ORDER BY application_id ASC
 	</select>
 

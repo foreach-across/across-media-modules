@@ -2,7 +2,7 @@ package com.foreach.imageserver.business;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.util.UUID;
+import java.util.Date;
 
 public final class Application
 {
@@ -10,7 +10,9 @@ public final class Application
 	private String name;
 
 	private boolean active;
-	private UUID code;
+	private String code;
+
+	private Date dateCreated, dateUpdated;
 
 	@Deprecated
 	private String callbackUrl;
@@ -47,12 +49,28 @@ public final class Application
 		this.active = active;
 	}
 
-	public UUID getCode() {
+	public String getCode() {
 		return code;
 	}
 
-	public void setCode( UUID code ) {
+	public void setCode( String code ) {
 		this.code = code;
+	}
+
+	public Date getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated( Date dateCreated ) {
+		this.dateCreated = dateCreated;
+	}
+
+	public Date getDateUpdated() {
+		return dateUpdated;
+	}
+
+	public void setDateUpdated( Date dateUpdated ) {
+		this.dateUpdated = dateUpdated;
 	}
 
 	@Override
@@ -78,7 +96,7 @@ public final class Application
 		return id;
 	}
 
-	public boolean canBeManaged( UUID code ) {
+	public boolean canBeManaged( String code ) {
 		return isActive() && getCode() != null && ObjectUtils.equals( getCode(), code );
 	}
 }

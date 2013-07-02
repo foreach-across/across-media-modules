@@ -53,7 +53,7 @@ public class TestImageLoadController
 		boolean exceptionWasThrown = false;
 
 		try {
-			loadController.load( 1, UUID.randomUUID(), "http://someimageurl", null );
+			loadController.load( 1, UUID.randomUUID().toString(), "http://someimageurl", null );
 		}
 		catch ( ImageLoadController.ApplicationDeniedException ade ) {
 			exceptionWasThrown = true;
@@ -70,7 +70,7 @@ public class TestImageLoadController
 		Application application = createApplication( true );
 		when( applicationService.getApplicationById( anyInt() ) ).thenReturn( application );
 
-		UUID code = UUID.randomUUID();
+		String code = RandomStringUtils.random( 10 );
 		assertFalse( "Precondition on test data failed", application.canBeManaged( code ) );
 
 		try {
@@ -262,7 +262,7 @@ public class TestImageLoadController
 	private Application createApplication( boolean active ) {
 		Application application = new Application();
 		application.setId( RANDOM.nextInt() );
-		application.setCode( UUID.randomUUID() );
+		application.setCode( UUID.randomUUID().toString() );
 		application.setActive( active );
 
 		return application;
