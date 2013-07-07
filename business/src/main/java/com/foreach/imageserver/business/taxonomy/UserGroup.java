@@ -1,6 +1,6 @@
 package com.foreach.imageserver.business.taxonomy;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class UserGroup {
     private String userKey;

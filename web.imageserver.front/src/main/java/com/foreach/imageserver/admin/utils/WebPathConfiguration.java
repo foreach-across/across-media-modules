@@ -1,6 +1,6 @@
 package com.foreach.imageserver.admin.utils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class WebPathConfiguration {
 

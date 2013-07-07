@@ -9,7 +9,7 @@ import com.foreach.imageserver.business.taxonomy.Group;
 import com.foreach.imageserver.dao.*;
 import com.foreach.imageserver.dao.selectors.VariantImageSelector;
 import com.foreach.shared.utils.SqlServerUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

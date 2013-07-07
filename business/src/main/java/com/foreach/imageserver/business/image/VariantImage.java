@@ -1,6 +1,6 @@
 package com.foreach.imageserver.business.image;
 
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 import java.util.Date;
 import java.util.Locale;

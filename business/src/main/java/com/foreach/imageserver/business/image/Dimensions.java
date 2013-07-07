@@ -24,43 +24,43 @@ public class Dimensions implements Comparable<Dimensions>
 	public Dimensions() {
 	}
 
-	public final int getWidth() {
+	public int getWidth() {
 		return width;
 	}
 
-	public final void setWidth( int width ) {
+	public void setWidth( int width ) {
 		this.width = width;
 	}
 
-	public final int getHeight() {
+	public int getHeight() {
 		return height;
 	}
 
-	public final void setHeight( int height ) {
+	public void setHeight( int height ) {
 		this.height = height;
 	}
 
-	public final Fraction getRatio() {
+	public Fraction getRatio() {
 		return ratio;
 	}
 
 	// clean up after persistence engine...
-	public final void setRatio( Fraction ratio ) {
+	public void setRatio( Fraction ratio ) {
 		this.ratio = ratio;
 	}
 
-	public final boolean isAbsolute() {
+	public boolean isAbsolute() {
 		return ( ratio.equals( Fraction.UNDEFINED ) );
 	}
 
-	public final Size getSize() {
+	public Size getSize() {
 		if ( !isAbsolute() ) {
 			throw new NullPointerException();
 		}
 		return new Size( width, height );
 	}
 
-	public final boolean hasAspectRatio() {
+	public boolean hasAspectRatio() {
 		if ( isAbsolute() ) {
 			return ( ( width != 0 ) && ( height != 0 ) );
 		}
@@ -69,7 +69,7 @@ public class Dimensions implements Comparable<Dimensions>
 		}
 	}
 
-	public final Fraction getAspectRatio() {
+	public Fraction getAspectRatio() {
 		if ( isAbsolute() ) {
 			return new Fraction( width, height );
 		}
@@ -95,7 +95,7 @@ public class Dimensions implements Comparable<Dimensions>
 		}
 	}
 
-	public final int compareTo( Dimensions other ) {
+	public int compareTo( Dimensions other ) {
 		if ( isAbsolute() != other.isAbsolute() ) {
 			return isAbsolute() ? -1 : 1;
 		}
@@ -133,7 +133,7 @@ public class Dimensions implements Comparable<Dimensions>
 	}
 
 	@Override
-	public final boolean equals( Object o ) {
+	public boolean equals( Object o ) {
 		if ( this == o ) {
 			return true;
 		}
@@ -157,7 +157,7 @@ public class Dimensions implements Comparable<Dimensions>
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
 		if ( isAbsolute() ) {
@@ -177,7 +177,7 @@ public class Dimensions implements Comparable<Dimensions>
 	}
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		if ( isAbsolute() ) {
 			return 10007 * width + height;
 		}

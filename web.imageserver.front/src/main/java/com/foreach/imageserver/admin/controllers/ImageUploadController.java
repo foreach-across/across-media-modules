@@ -14,7 +14,7 @@ import com.foreach.imageserver.services.UserGroupService;
 import com.foreach.imageserver.services.VariantImageService;
 import com.foreach.imageserver.services.utils.TempFileService;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

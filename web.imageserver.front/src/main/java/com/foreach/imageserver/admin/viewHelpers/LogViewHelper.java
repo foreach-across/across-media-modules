@@ -1,7 +1,7 @@
 package com.foreach.imageserver.admin.viewHelpers;
 
 import com.foreach.imageserver.business.image.VariantImage;
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 import java.util.Locale;
 import java.util.TimeZone;

@@ -4,12 +4,13 @@ import com.foreach.imageserver.business.image.Dimensions;
 
 import java.util.Date;
 
-public final class Image
+public class Image
 {
 	private int id, applicationId;
 	private String key, filePath;
-	private Dimensions dimensions;
+	private Dimensions dimensions = new Dimensions();
 	private long fileSize;
+	private ImageType imageType;
 	private Date dateCreated = new Date(), dateUpdated;
 
 	public String getKey() {
@@ -74,5 +75,13 @@ public final class Image
 
 	public void setDateUpdated( Date dateUpdated ) {
 		this.dateUpdated = dateUpdated;
+	}
+
+	public ImageType getImageType() {
+		return imageType;
+	}
+
+	public void setImageType( ImageType imageType ) {
+		this.imageType = imageType;
 	}
 }

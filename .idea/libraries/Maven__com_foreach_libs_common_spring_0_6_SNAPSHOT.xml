@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.foreach.libs:common-spring:0.6-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-spring/0.6-SNAPSHOT/common-spring-0.6-20130707.144038-6.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-spring/0.6-SNAPSHOT/common-spring-0.6-20130707.144038-6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-spring/0.6-SNAPSHOT/common-spring-0.6-20130707.144038-6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -5,7 +5,7 @@ import com.foreach.imageserver.admin.viewHelpers.LogsViewHelper;
 import com.foreach.imageserver.business.image.VariantImage;
 import com.foreach.imageserver.dao.selectors.VariantImageSelector;
 import com.foreach.imageserver.services.VariantImageService;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

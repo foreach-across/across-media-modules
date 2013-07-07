@@ -1,5 +1,6 @@
 package com.foreach.imageserver.services;
 
+import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.image.ServableImageData;
 import com.foreach.imageserver.services.paths.ImagePathBuilder;
 import com.foreach.imageserver.services.paths.ImageSpecifier;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 
 @Service
@@ -21,6 +23,21 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Autowired
 	private ImagePathBuilder pathBuilder;
+
+	@Override
+	public String generateRelativeImagePath( Image image ) {
+		return null;  //To change body of implemented methods use File | Settings | File Templates.
+	}
+
+	@Override
+	public long saveImage( Image image, InputStream imageData ) {
+		return 0;  //To change body of implemented methods use File | Settings | File Templates.
+	}
+
+	@Override
+	public void deleteVariants( Image image ) {
+		//To change body of implemented methods use File | Settings | File Templates.
+	}
 
 	public final void saveImage( ServableImageData image, MultipartFile imageData )
 	{

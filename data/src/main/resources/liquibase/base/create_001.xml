@@ -5,22 +5,86 @@
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 	<changeSet id="201306300938" author="arne">
-		<comment>Creates Application table</comment>
-		<createTable tableName="Application">
-			<column name="Id" type="int" autoIncrement="true">
+		<comment>Creates application table</comment>
+		<createTable tableName="application">
+			<column name="id" type="int" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="Name" type="varchar(100)">
+			<column name="name" type="varchar(100)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="Code" type="varchar(36)">
+			<column name="code" type="varchar(36)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="Active" type="boolean" defaultValueBoolean="false"/>
-			<column name="Created" type="datetime" defaultValueComputed="GETDATE()">
+			<column name="active" type="boolean" defaultValueBoolean="false"/>
+			<column name="created" type="datetime" defaultValueComputed="GETDATE()">
 				<constraints nullable="false"/>
 			</column>
-			<column name="Updated" type="datetime"/>
+			<column name="updated" type="datetime"/>
 		</createTable>
+	</changeSet>
+
+	<changeSet id="201307071258" author="arne">
+		<comment>Creates Image and imagetype table</comment>
+		<createTable tableName="imagetype">
+			<column name="id" type="varchar(10)">
+				<constraints primaryKey="true"/>
+			</column>
+			<column name="contenttype" type="varchar(50)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+		</createTable>
+		<createTable tableName="image">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="key" type="varchar(500)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="applicationid" type="int">
+				<constraints nullable="false" references="Application(id)" foreignKeyName="fk_application_id"/>
+			</column>
+			<column name="width" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="height" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="imagetypeid" type="varchar(10)">
+				<constraints nullable="false" references="imagetype(id)" foreignKeyName="fk_imagetype_id"/>
+			</column>
+			<column name="filepath" type="varchar(500)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="filesize" type="long">
+				<constraints nullable="false"/>
+			</column>
+			<column name="created" type="datetime" defaultValueComputed="GETDATE()">
+				<constraints nullable="false"/>
+			</column>
+			<column name="updated" type="datetime"/>
+		</createTable>
+		<createIndex
+				indexName="ix_image_key"
+				tableName="image"
+				unique="true">
+			<column name="key" type="varchar(500)"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201307071316" author="arne">
+		<comment>Insert default image types</comment>
+		<insert tableName="imagetype">
+			<column name="id">jpeg</column>
+			<column name="contenttype">image/jpeg</column>
+		</insert>
+		<insert tableName="imagetype">
+			<column name="id">png</column>
+			<column name="contenttype">image/png</column>
+		</insert>
+		<insert tableName="imagetype">
+			<column name="id">gif</column>
+			<column name="contenttype">image/gif</column>
+		</insert>
 	</changeSet>
 </databaseChangeLog>

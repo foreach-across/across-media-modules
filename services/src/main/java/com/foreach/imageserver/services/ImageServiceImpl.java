@@ -18,77 +18,101 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class ImageServiceImpl implements ImageService {
+public class ImageServiceImpl implements ImageService
+{
 
 	@Autowired
-    private ImageDao imageDao;
+	private ImageDao imageDao;
+
+	@Autowired
+	private ImageStoreService imageStoreService;
 
 	@Autowired
 	private CropDao cropDao;
 
 	public Image getImageByKey( String key, int applicationId ) {
-		return null;
+		return imageDao.getImageByKey( key, applicationId );
 	}
 
+	@Transactional
 	public void save( Image image, RepositoryLookupResult lookupResult ) {
-		//To change body of implemented methods use File | Settings | File Templates.
+		if ( isNewImage( image ) ) {
+			image.setFilePath( imageStoreService.generateRelativeImagePath( image ) );
+		}
+
+		image.setDimensions( lookupResult.getDimensions() );
+		image.setImageType( lookupResult.getImageType() );
+
+		long savedFileSize = imageStoreService.saveImage( image, lookupResult.getContent() );
+
+		image.setFileSize( savedFileSize );
+
+		if ( isNewImage( image ) ) {
+			imageDao.insertImage( image );
+		}
+		else {
+			imageStoreService.deleteVariants( image );
+			imageDao.updateImage( image );
+		}
+	}
+
+	private boolean isNewImage( Image image ) {
+		return image.getId() <= 0;
 	}
 
 	@Deprecated
-	public final ServableImageData getImageById(long id) {
-        return imageDao.getImageById(id);
-    }
+	public final ServableImageData getImageById( long id ) {
+		return imageDao.getImageById( id );
+	}
 
 	@Deprecated
-    public final ServableImageData getImageByPath(ImageSelector selector) {
-        return imageDao.getImageByPath(selector);
-    }
+	public final ServableImageData getImageByPath( ImageSelector selector ) {
+		return imageDao.getImageByPath( selector );
+	}
 
 	@Deprecated
-    public final List<ServableImageData> getAllImages() {
-        return imageDao.getAllImages();
-    }
+	public final List<ServableImageData> getAllImages() {
+		return imageDao.getAllImages();
+	}
 
 	@Deprecated
 	@Transactional
-	public final long saveImage( ServableImageData image )
-	{
+	public final long saveImage( ServableImageData image ) {
 		return saveImage( image, false );
 	}
 
 	@Deprecated
 	@Transactional
-    public final long saveImage( ServableImageData image, boolean deleteCrops )
-    {
+	public final long saveImage( ServableImageData image, boolean deleteCrops ) {
 		if ( image.getId() > 0 ) {
 			imageDao.updateImage( image );
 			if ( deleteCrops ) {
 				cullCrops( image.getId(), image.getSize() );
 			}
-		} else {
+		}
+		else {
 			imageDao.insertImage( image );
 		}
 		return image.getId();
-    }
+	}
 
-	private void cullCrops( long imageId, Size imageSize )
-	{
-		Rect boundingRect = new Rect( new Point(0, 0), imageSize );
+	private void cullCrops( long imageId, Size imageSize ) {
+		Rect boundingRect = new Rect( new Point( 0, 0 ), imageSize );
 		List<Crop> crops = cropDao.getCrops( CropSelector.onImageId( imageId ) );
-		for( Crop crop : crops ) {
-			if( ! crop.withinRect( boundingRect ) ) {
+		for ( Crop crop : crops ) {
+			if ( !crop.withinRect( boundingRect ) ) {
 				cropDao.deleteCrop( crop.getId() );
 			}
 		}
 	}
 
 	@Deprecated
-    public final List<ServableImageData> getImages(ImageSelector selector) {
-        return imageDao.getImages(selector);
-    }
+	public final List<ServableImageData> getImages( ImageSelector selector ) {
+		return imageDao.getImages( selector );
+	}
 
 	@Deprecated
-    public final int getImageCount(ImageSelector selector) {
-        return imageDao.getImageCount(selector);
-    }
+	public final int getImageCount( ImageSelector selector ) {
+		return imageDao.getImageCount( selector );
+	}
 }

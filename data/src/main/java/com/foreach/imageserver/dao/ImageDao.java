@@ -1,7 +1,9 @@
 package com.foreach.imageserver.dao;
 
+import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.image.ServableImageData;
 import com.foreach.imageserver.dao.selectors.ImageSelector;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,19 +11,27 @@ import java.util.List;
 @Repository
 public interface ImageDao
 {
-    ServableImageData getImageById( long id );
+	Image getImageByKey( @Param("key") String key, @Param("applicationId") int applicationId );
 
-    ServableImageData getImageByPath( ImageSelector selector);
+	void insertImage( Image image );
 
-    int getImageCount(ImageSelector selector);
+	void updateImage( Image image );
 
-    List<ServableImageData> getAllImages();
+	void deleteImage( @Param("key") String key, @Param("applicationId") int applicationId );
 
-    void insertImage( ServableImageData image );
+	ServableImageData getImageById( long id );
 
-    void updateImage( ServableImageData image );
+	ServableImageData getImageByPath( ImageSelector selector );
 
-    void deleteImage( long imageId );
+	int getImageCount( ImageSelector selector );
 
-    List<ServableImageData> getImages(ImageSelector selector);
+	List<ServableImageData> getAllImages();
+
+	void insertImage( ServableImageData image );
+
+	void updateImage( ServableImageData image );
+
+	void deleteImage( long imageId );
+
+	List<ServableImageData> getImages( ImageSelector selector );
 }

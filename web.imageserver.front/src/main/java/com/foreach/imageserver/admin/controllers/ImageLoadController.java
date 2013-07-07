@@ -6,7 +6,7 @@ import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;
 import com.foreach.imageserver.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -44,17 +44,16 @@ public final class ImageLoadController
 		Image image = imageService.getImageByKey( imageKey, application.getId() );
 
 		if ( image == null ) {
-			image = createNewImage( application, imageKey, lookupResult );
+			image = createNewImage( application, imageKey );
 		}
 
 		imageService.save( image, lookupResult );
 	}
 
-	private Image createNewImage( Application application, String imageKey, RepositoryLookupResult lookupResult ) {
+	private Image createNewImage( Application application, String imageKey ) {
 		Image image = new Image();
 		image.setApplicationId( application.getId() );
 		image.setKey( imageKey );
-		image.setDimensions( lookupResult.getDimensions() );
 
 		return image;
 	}

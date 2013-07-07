@@ -1,8 +1,9 @@
 package com.foreach.imageserver.business;
 
-import org.apache.commons.lang.StringUtils;
+import com.foreach.spring.enums.IdLookup;
+import org.apache.commons.lang3.StringUtils;
 
-public enum ImageType
+public enum ImageType implements IdLookup<String>
 {
 	JPEG( "image/jpeg", "jpeg" ),
 	PNG( "image/png", "png" ),
@@ -21,6 +22,11 @@ public enum ImageType
 
 	public String getExtension() {
 		return extension;
+	}
+
+	@Override
+	public String getId() {
+		return getExtension();
 	}
 
 	public static ImageType getForContentType( String contentType ) {

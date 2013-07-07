@@ -2,7 +2,7 @@ package dao;
 
 import com.foreach.imageserver.business.user.AppUser;
 import com.foreach.imageserver.dao.UserDao;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
