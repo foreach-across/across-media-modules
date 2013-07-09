@@ -4,7 +4,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.Date;
 
-public final class Application
+public class Application
 {
 	private int id;
 	private String name;

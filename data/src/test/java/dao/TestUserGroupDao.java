@@ -3,9 +3,11 @@ package dao;
 import com.foreach.imageserver.business.taxonomy.UserGroup;
 import com.foreach.imageserver.dao.UserGroupDao;
 import junit.framework.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Ignore
 public class TestUserGroupDao extends AbstractDaoTest {
 
     @Autowired

@@ -26,13 +26,9 @@
         <processorPath useClasspath="true" />
         <module name="acceptance-tests" />
         <module name="business" />
-        <module name="client-api" />
         <module name="data" />
-        <module name="rendering" />
         <module name="services" />
         <module name="testUtils" />
-        <module name="utils" />
-        <module name="web.imageserver.api" />
         <module name="web.imageserver.front" />
       </profile>
     </annotationProcessing>

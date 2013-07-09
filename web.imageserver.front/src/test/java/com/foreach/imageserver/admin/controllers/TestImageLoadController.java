@@ -2,11 +2,13 @@ package com.foreach.imageserver.admin.controllers;
 
 import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.Image;
+import com.foreach.imageserver.controllers.ImageLoadController;
 import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;
 import com.foreach.imageserver.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import com.foreach.imageserver.services.repositories.RepositoryLookupStatus;
+import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +17,6 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ContextConfiguration(classes = TestImageLoadController.TestConfig.class)
+@ContextConfiguration(classes = TestImageLoadController.TestConfig.class, loader = MockedLoader.class)
 public class TestImageLoadController
 {
 	private final Random RANDOM = new Random( System.currentTimeMillis() );
@@ -274,21 +275,6 @@ public class TestImageLoadController
 		@Bean
 		public ImageLoadController imageLoadController() {
 			return new ImageLoadController();
-		}
-
-		@Bean
-		public ApplicationService applicationService() {
-			return mock( ApplicationService.class );
-		}
-
-		@Bean
-		public ImageLookupRepository imageLookupRepository() {
-			return mock( ImageLookupRepository.class );
-		}
-
-		@Bean
-		public ImageService imageService() {
-			return mock( ImageService.class );
 		}
 	}
 }

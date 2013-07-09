@@ -12,6 +12,7 @@ import com.foreach.shared.utils.SqlServerUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+@Ignore
 public class TestVariantImageDao extends AbstractDaoTest {
 
     @Autowired

@@ -7,10 +7,12 @@ import com.foreach.imageserver.services.crop.CropServiceImpl;
 import com.foreach.shared.utils.InjectUtils;
 import junit.framework.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+@Ignore
 public class TestCropService extends AbstractServiceTest
 {
     private CropService cropService;

@@ -4,14 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/acceptance-tests/acceptance-tests.iml" filepath="$PROJECT_DIR$/acceptance-tests/acceptance-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/business/business.iml" filepath="$PROJECT_DIR$/business/business.iml" />
-      <module fileurl="file://$PROJECT_DIR$/api/client-api.iml" filepath="$PROJECT_DIR$/api/client-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />
-      <module fileurl="file://$PROJECT_DIR$/rendering/rendering.iml" filepath="$PROJECT_DIR$/rendering/rendering.iml" />
       <module fileurl="file://$PROJECT_DIR$/services/services.iml" filepath="$PROJECT_DIR$/services/services.iml" />
       <module fileurl="file://$PROJECT_DIR$/testUtils/testUtils.iml" filepath="$PROJECT_DIR$/testUtils/testUtils.iml" />
-      <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
-      <module fileurl="file://$PROJECT_DIR$/web.imageserver.api/web.imageserver.api.iml" filepath="$PROJECT_DIR$/web.imageserver.api/web.imageserver.api.iml" />
       <module fileurl="file://$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" filepath="$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" />
     </modules>
   </component>

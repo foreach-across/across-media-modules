@@ -4,6 +4,7 @@ import com.foreach.imageserver.business.user.AppUser;
 import com.foreach.imageserver.dao.UserDao;
 import com.foreach.imageserver.services.AbstractServiceTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import static com.foreach.shared.utils.InjectUtils.inject;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+@Ignore
 public class TestUserService extends AbstractServiceTest {
 
     private List<AppUser> testUsers;

@@ -19,6 +19,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class TestFormatDao extends AbstractDaoTest
 {
     @Autowired

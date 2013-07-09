@@ -5,12 +5,14 @@ import com.foreach.imageserver.dao.GroupDao;
 import com.foreach.shared.utils.InjectUtils;
 import junit.framework.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Ignore
 public class TestGroupService extends AbstractServiceTest
 {
     private GroupService groupService;
