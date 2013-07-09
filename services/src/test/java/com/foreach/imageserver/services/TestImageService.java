@@ -65,7 +65,7 @@ public class TestImageService
 		imageService.save( newImage, lookupResult );
 
 		verify( imageDao, times( 1 ) ).insertImage( newImage );
-		verify( imageDao, never() ).updateImage( any( Image.class ) );
+		verify( imageDao, times( 1 ) ).updateImage( newImage );
 		verify( imageStoreService, never() ).deleteVariants( any( Image.class ) );
 
 		assertEquals( expectedPath, newImage.getFilePath() );

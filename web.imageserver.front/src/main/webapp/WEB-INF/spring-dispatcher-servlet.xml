@@ -10,23 +10,37 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:annotation-config />
-    <context:component-scan base-package="com.foreach.imageserver.admin"/>
-    <context:component-scan base-package="com.foreach.imageserver.services"/>
+	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:/config/${environment.type}/common.properties</value>
+				<value>file:${user.home}/dev-configs/imageserver.local.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="ignoreResourceNotFound" value="true"/>
+	</bean>
 
-    <mvc:interceptors>
-        <!-- Set global variables if all other interceptors have passed (they could modify settings first) -->
-        <bean class="com.foreach.imageserver.admin.utils.GlobalVariableInterceptor"/>
-        <!-- Disable client caching on all requests (to be finetuned) -->
-        <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
-            <property name="cacheSeconds" value="0"/>
-            <property name="useExpiresHeader" value="true"/>
-            <property name="useCacheControlHeader" value="true"/>
-            <property name="useCacheControlNoStore" value="true"/>
-        </bean>
-    </mvc:interceptors>
+	<bean class="com.foreach.imageserver.admin.utils.WebPathConfiguration">
+		<property name="siteRoot" value="${path.siteRoot}"/>
+		<property name="resources" value="${path.resources}"/>
+	</bean>
 
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<import resource="classpath:config/spring-config-services.xml"/>
+
+	<mvc:interceptors>
+		<!-- Set global variables if all other interceptors have passed (they could modify settings first) -->
+		<bean class="com.foreach.imageserver.admin.utils.GlobalVariableInterceptor"/>
+		<!-- Disable client caching on all requests (to be finetuned) -->
+		<bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+			<property name="cacheSeconds" value="0"/>
+			<property name="useExpiresHeader" value="true"/>
+			<property name="useCacheControlHeader" value="true"/>
+			<property name="useCacheControlNoStore" value="true"/>
+		</bean>
+	</mvc:interceptors>
+
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>
@@ -34,13 +48,8 @@
 		<property name="order" value="1"/>
 	</bean>
 
-    <bean id="multipartResolver"
-        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="uploadTempDir" ref="uploadDirResource" />
-    </bean>
 
-    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-        <property name="useDefaultSuffixPattern" value="false" />
-    </bean>
+	<context:annotation-config/>
 
+	<context:component-scan base-package="com.foreach.imageserver"/>
 </beans>

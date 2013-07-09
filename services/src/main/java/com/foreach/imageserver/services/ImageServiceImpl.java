@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 public class ImageServiceImpl implements ImageService
 {
-
 	@Autowired
 	private ImageDao imageDao;
 
@@ -36,23 +35,23 @@ public class ImageServiceImpl implements ImageService
 
 	@Transactional
 	public void save( Image image, RepositoryLookupResult lookupResult ) {
-		if ( isNewImage( image ) ) {
-			image.setFilePath( imageStoreService.generateRelativeImagePath( image ) );
-		}
-
 		image.setDimensions( lookupResult.getDimensions() );
 		image.setImageType( lookupResult.getImageType() );
+
+		boolean isInsert = isNewImage( image );
+
+		if ( isInsert ) {
+			image.setFilePath( imageStoreService.generateRelativeImagePath( image ) );
+			imageDao.insertImage( image );
+		}
 
 		long savedFileSize = imageStoreService.saveImage( image, lookupResult.getContent() );
 
 		image.setFileSize( savedFileSize );
 
-		if ( isNewImage( image ) ) {
-			imageDao.insertImage( image );
-		}
-		else {
+		imageDao.updateImage( image );
+		if ( !isInsert ) {
 			imageStoreService.deleteVariants( image );
-			imageDao.updateImage( image );
 		}
 	}
 

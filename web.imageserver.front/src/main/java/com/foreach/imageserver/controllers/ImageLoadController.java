@@ -11,15 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import java.util.UUID;
 
 @Controller
 public class ImageLoadController
 {
-	//private static final Logger LOG = LoggerFactory.getLogger( ImageLoadController.class );
-
 	@Autowired
 	private ApplicationService applicationService;
 
@@ -30,7 +28,11 @@ public class ImageLoadController
 	private ImageService imageService;
 
 	@RequestMapping("/load")
-	public void load( int applicationId, String applicationKey, String repositoryURI, String targetKey ) {
+	@ResponseBody
+	public String load( @RequestParam(value = "aid", required = true) int applicationId,
+	                    @RequestParam(value = "token", required = true) String applicationKey,
+	                    @RequestParam(value = "uri", required = true) String repositoryURI,
+	                    @RequestParam(value = "key", required = false) String targetKey ) {
 		Application application = applicationService.getApplicationById( applicationId );
 
 		if ( application == null || !application.canBeManaged( applicationKey ) ) {
@@ -48,6 +50,8 @@ public class ImageLoadController
 		}
 
 		imageService.save( image, lookupResult );
+
+		return StringUtils.EMPTY;
 	}
 
 	private Image createNewImage( Application application, String imageKey ) {

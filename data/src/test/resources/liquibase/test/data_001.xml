@@ -21,7 +21,7 @@
 		<insert tableName="image">
 			<column name="id">9999001</column>
 			<column name="applicationid">9999</column>
-			<column name="key">validimagekey</column>
+			<column name="imagekey">validimagekey</column>
 			<column name="width">1600</column>
 			<column name="height">1200</column>
 			<column name="filepath">/2013/07/07</column>

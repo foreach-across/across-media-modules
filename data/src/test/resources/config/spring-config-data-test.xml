@@ -8,13 +8,6 @@
 	<context:annotation-config/>
 	<context:component-scan base-package="com.foreach.imageserver"/>
 
-	<!--
-	<bean class="com.foreach.spring.logging.Log4JConfigurator" init-method="configure" lazy-init="false">
-		<property name="propertiesFile" value="classpath:/config/log.properties"/>
-		<property name="logDirectory" value="/logs/imageserver/test"/>
-	</bean>
-	-->
-
 	<bean id="propertyConfigurer"
 	      class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -34,9 +27,9 @@
 	</bean>
 
 	<bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
-	      <property name="dataSource" ref="dataSource" />
-	      <property name="changeLog" value="classpath:/liquibase/changelog-ut.xml" />
-	      <property name="contexts" value="test" />
-	 </bean>
+		<property name="dataSource" ref="dataSource"/>
+		<property name="changeLog" value="classpath:/liquibase/changelog-ut.xml"/>
+		<property name="contexts" value="test"/>
+	</bean>
 
 </beans>

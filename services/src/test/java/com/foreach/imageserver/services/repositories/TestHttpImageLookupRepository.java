@@ -2,13 +2,13 @@ package com.foreach.imageserver.services.repositories;
 
 import com.foreach.imageserver.services.DummyWebServer;
 import com.foreach.imageserver.services.ImageTestData;
+import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class TestHttpImageLookupRepository
 {
@@ -50,21 +50,23 @@ public class TestHttpImageLookupRepository
 	}
 
 	@Test
-	public void getImageSunset() {
+	public void getImageSunset() throws Exception {
 		getValidImage( ImageTestData.SUNSET );
 	}
 
 	@Test
-	public void getImageEarth() {
+	public void getImageEarth() throws Exception {
 		getValidImage( ImageTestData.EARTH );
 	}
 
-	private void getValidImage( ImageTestData imageTestData ) {
+	private void getValidImage( ImageTestData imageTestData ) throws Exception {
 		RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage( webServer.imageUrl( imageTestData ) );
 
 		assertEquals( RepositoryLookupStatus.SUCCESS, lookupResult.getStatus() );
 		assertEquals( imageTestData.getDimensions(), lookupResult.getDimensions() );
 		assertEquals( imageTestData.getImageType(), lookupResult.getImageType() );
 		assertNotNull( lookupResult.getContent() );
+		assertTrue( IOUtils.contentEquals( getClass().getResourceAsStream( imageTestData.getResourcePath() ),
+		                                   lookupResult.getContent() ) );
 	}
 }

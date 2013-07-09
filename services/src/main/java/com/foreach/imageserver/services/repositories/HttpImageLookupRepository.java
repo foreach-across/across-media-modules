@@ -2,6 +2,7 @@ package com.foreach.imageserver.services.repositories;
 
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.business.image.Dimensions;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.UnknownHostException;
 
 /**
  * Will fetch an image from a specific url.
@@ -26,6 +30,8 @@ public class HttpImageLookupRepository implements ImageLookupRepository
 		RepositoryLookupResult result = new RepositoryLookupResult();
 
 		try {
+			LOG.info( "Fetching remote image with url " + uri );
+
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet( uri );
 
@@ -41,14 +47,23 @@ public class HttpImageLookupRepository implements ImageLookupRepository
 					throw new RuntimeException( "Unknown Content-Type: " + entity.getContentType() );
 				}
 
-				BufferedImage image = ImageIO.read( entity.getContent() );
+				InputStream contentStream = entity.getContent();
+				byte[] content = IOUtils.toByteArray( contentStream );
+				IOUtils.closeQuietly( contentStream );
+
+				BufferedImage image = ImageIO.read( new ByteArrayInputStream( content ) );
 				result.setDimensions( new Dimensions( image.getWidth(), image.getHeight() ) );
 				result.setImageType( imageType );
-				result.setContent( entity.getContent() );
+				result.setContent( new ByteArrayInputStream( content ) );
 			}
 		}
+		catch ( UnknownHostException uhe ) {
+			LOG.error( "Could not fetch image from " + uri, uhe );
+
+			result.setStatus( RepositoryLookupStatus.NOT_FOUND );
+		}
 		catch ( Exception e ) {
-			LOG.error( "Exception fetching image: ", e );
+			LOG.error( "Exception fetching image from " + uri, e );
 
 			result.setStatus( RepositoryLookupStatus.ERROR );
 		}

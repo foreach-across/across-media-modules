@@ -24,13 +24,4 @@
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="com.foreach.imageserver.dao"/>
 	</bean>
-
-	<!-- Ugly, but we need to specify mybatis to use log4j to get the correct logging results -->
-	<!--
-	<bean id="mybatisLog4JLogEnabler" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-	   <property name="targetClass"><value>org.apache.ibatis.logging.LogFactory</value></property>
-	   <property name="targetMethod"><value>useLog4JLogging</value></property>
-	 </bean>
-	 -->
-
 </beans>

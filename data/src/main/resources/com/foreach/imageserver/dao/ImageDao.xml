@@ -4,7 +4,7 @@
 	<sql id="imageColumns">
 		I.id as image_id,
         I.applicationid as image_applicationid,
-        I.key as image_key,
+        I.imagekey as image_key,
         I.width as image_width,
         I.height as image_height,
         I.filesize as image_filesize,
@@ -31,13 +31,13 @@
 		SELECT
 		<include refid="imageColumns"/>
 		FROM Image I
-		WHERE I.applicationid = #{applicationId} AND I.key = #{key}
+		WHERE I.imagekey = #{key} AND I.applicationid = #{applicationId}
 	</select>
 
 	<insert id="insertImage" parameterType="Image" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO Image (
             applicationid,
-            key,
+            imagekey,
             width,
             height,
             filesize,
@@ -65,13 +65,13 @@
             filepath = #{filePath},
             imagetypeid = #{imageType.id},
             updated = GETDATE()
-        WHERE key = #{key} AND applicationid = #{applicationId}
+        WHERE imagekey = #{key} AND applicationid = #{applicationId}
     </update>
 
 	<delete id="deleteImage" parameterType="map">
         DELETE
         FROM Image
-        WHERE key = #{key} AND applicationid = #{applicationId}
+        WHERE imagekey = #{key} AND applicationid = #{applicationId}
     </delete>
 
 	<sql id="servableImageColumns">

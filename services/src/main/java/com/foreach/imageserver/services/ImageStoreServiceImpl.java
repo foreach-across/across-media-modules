@@ -4,7 +4,9 @@ import com.foreach.imageserver.business.Image;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +18,26 @@ import java.io.InputStream;
 @Service
 public class ImageStoreServiceImpl implements ImageStoreService
 {
-	private static final Logger LOG = Logger.getLogger( ImageStoreServiceImpl.class );
+	private static final Logger LOG = LoggerFactory.getLogger( ImageStoreServiceImpl.class );
 	private static final FastDateFormat PATH_FORMAT = FastDateFormat.getInstance( "/yyyy/MM/dd/" );
 
 	private final File originalBasePath;
 	private final File variantBasePath;
 
-	public ImageStoreServiceImpl( @Value("store.original.path") String originalBasePath,
-	                              @Value("store.variant.path") String variantBasePath ) {
+	@Autowired
+	public ImageStoreServiceImpl( @Value("${store.original.path}") String originalBasePath,
+	                              @Value("${store.variant.path}") String variantBasePath ) {
 		this.originalBasePath = new File( originalBasePath );
 		this.variantBasePath = new File( variantBasePath );
+
+		LOG.info( "Image store original file location: {}", originalBasePath );
+		LOG.info( "Image store variant file location: {}", variantBasePath );
+
+		if ( StringUtils.equalsIgnoreCase( this.originalBasePath.getAbsolutePath(),
+		                                   this.variantBasePath.getAbsolutePath() ) ) {
+			throw new ImageStoreOperationException(
+					"Original and variant directory are identical - this is not allowed." );
+		}
 	}
 
 	@Override
@@ -71,7 +83,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 			} );
 
 			for ( File variant : variants ) {
-				variant.delete();
+				if ( !variant.delete() ) {
+					LOG.warn( "Could not delete variant file {}", variant );
+				}
 			}
 		}
 		catch ( Exception e ) {

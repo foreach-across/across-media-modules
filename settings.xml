@@ -6,4 +6,15 @@
 			<password>uK3zwz4</password>
 		</server>
 	</servers>
+	<profiles>
+		<profile>
+			<id>test</id>
+			<properties>
+				<db.username>sa</db.username>
+				<db.password>mcd</db.password>
+				<db.url>jdbc:jtds:sqlserver://vm-sql2008.fe.dom:64169/imageserver-2;instanceName=sql2008</db.url>
+				<db.driver>net.sourceforge.jtds.jdbc.Driver</db.driver>
+			</properties>
+		</profile>
+	</profiles>
 </settings>

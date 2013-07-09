@@ -9,39 +9,4 @@
 
     <import resource="classpath:config/spring-config-data.xml"/>
 
-    <context:annotation-config/>
-
-    <context:component-scan base-package="com.foreach.imageserver.services"/>
-
-    <bean id="variantImageLogger" class="com.foreach.imageserver.services.VariantImageLoggerImpl">
-        <constructor-arg type="int"><value>${variantLog.size}</value></constructor-arg>
-    </bean>
-
-    <bean id="scheduledTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-        <property name="delay" value="${variantLog.delay}"/>
-        <property name="period" value="${variantLog.period}"/>
-        <property name="timerTask" ref="updateLog"/>
-    </bean>
-
-    <bean id="updateLog" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">
-        <property name="targetObject" ref="variantImageLogger"/>
-        <property name="targetMethod" value="flushLog"/>
-    </bean>
-
-    <bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
-        <property name="scheduledTimerTasks">
-            <list>
-                <ref bean="scheduledTask"/>
-            </list>
-        </property>
-    </bean>
-
-	<bean class="com.foreach.imageserver.services.paths.ImagePathBuilderImpl">
-	    <property name="rootpath" value="${store.images.rootpath}"/>
-	</bean>
-
-	<bean id="tempFileService" class="com.foreach.imageserver.services.utils.TempFileServiceImpl">
-		<property name="tempDir" value="${tempDir.path}" />
-	</bean>
-
 </beans>
