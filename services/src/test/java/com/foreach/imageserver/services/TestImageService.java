@@ -1,6 +1,7 @@
 package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.Image;
+import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.business.image.Dimensions;
 import com.foreach.imageserver.dao.ImageDao;
@@ -109,6 +110,18 @@ public class TestImageService
 		assertEquals( lookupResult.getDimensions(), existing.getDimensions() );
 	}
 
+
+	@Test
+	public void fetchOriginalImageFile() {
+		Image image = new Image();
+		ImageFile imageFile = new ImageFile( ImageType.JPEG, 0, null );
+
+		when( imageStoreService.getImageFile( image ) ).thenReturn( imageFile );
+
+		ImageFile returned = imageService.fetchImageFile( image );
+
+		assertSame( imageFile, returned );
+	}
 	@Configuration
 	public static class TestConfig
 	{

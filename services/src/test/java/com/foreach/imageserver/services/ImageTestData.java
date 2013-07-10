@@ -3,6 +3,8 @@ package com.foreach.imageserver.services;
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.business.image.Dimensions;
 
+import java.io.InputStream;
+
 public enum ImageTestData
 {
 	SUNSET( "/images/sunset.jpg", "image/jpeg", ImageType.JPEG, 1083349L, 1420, 930 ),
@@ -36,6 +38,10 @@ public enum ImageTestData
 
 	public String getResourcePath() {
 		return resourcePath;
+	}
+
+	public InputStream getResourceAsStream() {
+		return getClass().getResourceAsStream( getResourcePath() );
 	}
 
 	public long getFileSize() {

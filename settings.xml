@@ -8,7 +8,7 @@
 	</servers>
 	<profiles>
 		<profile>
-			<id>test</id>
+			<id>development</id>
 			<properties>
 				<db.username>sa</db.username>
 				<db.password>mcd</db.password>

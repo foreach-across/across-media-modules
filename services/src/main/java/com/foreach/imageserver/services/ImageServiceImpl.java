@@ -1,6 +1,7 @@
 package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.Image;
+import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.geometry.Point;
 import com.foreach.imageserver.business.geometry.Rect;
 import com.foreach.imageserver.business.geometry.Size;
@@ -57,6 +58,11 @@ public class ImageServiceImpl implements ImageService
 
 	private boolean isNewImage( Image image ) {
 		return image.getId() <= 0;
+	}
+
+	@Override
+	public ImageFile fetchImageFile( Image image ) {
+		return imageStoreService.getImageFile( image );
 	}
 
 	@Deprecated

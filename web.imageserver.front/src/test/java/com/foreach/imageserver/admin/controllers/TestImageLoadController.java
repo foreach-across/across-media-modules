@@ -3,6 +3,10 @@ package com.foreach.imageserver.admin.controllers;
 import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.controllers.ImageLoadController;
+import com.foreach.imageserver.controllers.exception.ApplicationDeniedException;
+import com.foreach.imageserver.controllers.exception.ImageForbiddenException;
+import com.foreach.imageserver.controllers.exception.ImageLookupException;
+import com.foreach.imageserver.controllers.exception.ImageNotFoundException;
 import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;
 import com.foreach.imageserver.services.repositories.ImageLookupRepository;
@@ -56,7 +60,7 @@ public class TestImageLoadController
 		try {
 			loadController.load( 1, UUID.randomUUID().toString(), "http://someimageurl", null );
 		}
-		catch ( ImageLoadController.ApplicationDeniedException ade ) {
+		catch ( ApplicationDeniedException ade ) {
 			exceptionWasThrown = true;
 		}
 
@@ -77,7 +81,7 @@ public class TestImageLoadController
 		try {
 			loadController.load( application.getId(), code, "http://someimageurl", null );
 		}
-		catch ( ImageLoadController.ApplicationDeniedException ade ) {
+		catch ( ApplicationDeniedException ade ) {
 			exceptionWasThrown = true;
 		}
 
@@ -90,17 +94,17 @@ public class TestImageLoadController
 		lookupWithStatus( RepositoryLookupStatus.SUCCESS );
 	}
 
-	@Test(expected = ImageLoadController.ImageNotFoundException.class)
+	@Test(expected = ImageNotFoundException.class)
 	public void lookupNotFound() {
 		lookupWithStatus( RepositoryLookupStatus.NOT_FOUND );
 	}
 
-	@Test(expected = ImageLoadController.ImageForbiddenException.class)
+	@Test(expected = ImageForbiddenException.class)
 	public void lookupPermissionDenied() {
 		lookupWithStatus( RepositoryLookupStatus.ACCESS_DENIED );
 	}
 
-	@Test(expected = ImageLoadController.ImageLookupException.class)
+	@Test(expected = ImageLookupException.class)
 	public void lookupError() {
 		lookupWithStatus( RepositoryLookupStatus.ERROR );
 	}

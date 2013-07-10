@@ -1,6 +1,7 @@
 package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.Image;
+import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.shared.utils.DateUtils;
 import com.foreach.test.MockedLoader;
@@ -95,7 +96,7 @@ public class TestImageStoreService
 	                            ImageTestData testData,
 	                            String path,
 	                            String expectedFileName ) throws Exception {
-		InputStream imageData = getClass().getResourceAsStream( testData.getResourcePath() );
+		InputStream imageData = testData.getResourceAsStream();
 
 		File expectedFile = new File( path, expectedFileName );
 		long fileSize = imageStoreService.saveImage( image, imageData );
@@ -103,7 +104,7 @@ public class TestImageStoreService
 		assertEquals( testData.getFileSize(), fileSize );
 		assertTrue( expectedFile.exists() );
 		FileInputStream fos = new FileInputStream( expectedFile );
-		assertTrue( IOUtils.contentEquals( getClass().getResourceAsStream( testData.getResourcePath() ), fos ) );
+		assertTrue( IOUtils.contentEquals( testData.getResourceAsStream(), fos ) );
 		fos.close();
 	}
 
@@ -152,6 +153,38 @@ public class TestImageStoreService
 		File file = new File( path, fileName );
 		FileOutputStream fos = new FileOutputStream( file );
 		IOUtils.write( new byte[0], fos );
+		fos.close();
+
+		return file;
+	}
+
+	@Test
+	public void getOriginalImageFile() throws Exception {
+		Image image = new Image();
+		image.setId( 3 );
+		image.setApplicationId( 10 );
+		image.setFilePath( "/2013/07/06/" );
+		image.setImageType( ImageType.JPEG );
+
+		new File( ORIGINAL_STORE, "/10/2013/07/06/" ).mkdirs();
+
+		File actual = createActual( ORIGINAL_STORE, "/10/2013/07/06/3.jpeg", ImageTestData.SUNSET );
+
+		ImageFile imageFile = imageStoreService.getImageFile( image );
+
+		assertNotNull( imageFile );
+		assertEquals( ImageType.JPEG, imageFile.getImageType() );
+		assertEquals( ImageTestData.SUNSET.getFileSize(), imageFile.getFileSize() );
+		FileInputStream fos = new FileInputStream( actual );
+		assertTrue( IOUtils.contentEquals( ImageTestData.SUNSET.getResourceAsStream(), fos ) );
+		fos.close();
+		imageFile.getContent().close();
+	}
+
+	private File createActual( String path, String fileName, ImageTestData testData ) throws Exception {
+		File file = new File( path, fileName );
+		FileOutputStream fos = new FileOutputStream( file );
+		IOUtils.copy( testData.getResourceAsStream(), fos );
 		fos.close();
 
 		return file;

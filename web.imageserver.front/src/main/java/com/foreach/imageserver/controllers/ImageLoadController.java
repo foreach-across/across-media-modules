@@ -2,18 +2,20 @@ package com.foreach.imageserver.controllers;
 
 import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.Image;
+import com.foreach.imageserver.controllers.exception.ApplicationDeniedException;
+import com.foreach.imageserver.controllers.exception.ImageForbiddenException;
+import com.foreach.imageserver.controllers.exception.ImageLookupException;
+import com.foreach.imageserver.controllers.exception.ImageNotFoundException;
 import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;
 import com.foreach.imageserver.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 public class ImageLoadController
@@ -77,23 +79,4 @@ public class ImageLoadController
 		}
 	}
 
-	@ResponseStatus(HttpStatus.FORBIDDEN)
-	public static class ApplicationDeniedException extends RuntimeException
-	{
-	}
-
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public static class ImageNotFoundException extends RuntimeException
-	{
-	}
-
-	@ResponseStatus(HttpStatus.FORBIDDEN)
-	public static class ImageForbiddenException extends RuntimeException
-	{
-	}
-
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public static class ImageLookupException extends RuntimeException
-	{
-	}
 }

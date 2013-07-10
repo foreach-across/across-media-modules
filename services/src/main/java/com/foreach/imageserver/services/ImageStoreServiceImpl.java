@@ -1,6 +1,7 @@
 package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.Image;
+import com.foreach.imageserver.business.ImageFile;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -10,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.InputStream;
+import java.io.*;
 
 @Service
 public class ImageStoreServiceImpl implements ImageStoreService
@@ -62,9 +60,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 				IOUtils.closeQuietly( imageData );
 			}
 		}
-		catch ( Exception ioe ) {
-			LOG.error( "Unable to save image: ", ioe );
-			throw new ImageStoreOperationException( ioe );
+		catch ( Exception e ) {
+			LOG.error( "Unable to save image image {}, exception: {}", image, e );
+			throw new ImageStoreOperationException( e );
 		}
 	}
 
@@ -89,7 +87,28 @@ public class ImageStoreServiceImpl implements ImageStoreService
 			}
 		}
 		catch ( Exception e ) {
-			LOG.warn( "Failed to delete variants for image ", e );
+			LOG.warn( "Failed to delete variants for image {}, exception: {}", image, e );
+			throw new ImageStoreOperationException( e );
+		}
+	}
+
+	@Override
+	public ImageFile getImageFile( Image image ) {
+		try {
+			String path = createPathForOriginal( image );
+			String fileName = createFileName( image );
+
+			File physicalFile = new File( path, fileName );
+
+			if ( physicalFile.exists() ) {
+				return new ImageFile( image.getImageType(), physicalFile.length(),
+				                      new FileInputStream( physicalFile ) );
+			}
+
+			return null;
+		}
+		catch ( Exception e ) {
+			LOG.error( "Was not able to get image file for image {}, exception: {}", image, e );
 			throw new ImageStoreOperationException( e );
 		}
 	}
