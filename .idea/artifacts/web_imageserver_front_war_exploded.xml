@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="web.imageserver.front:war exploded">
-    <output-path>$PROJECT_DIR$/web.imageserver.front/target/web.imageserver.front-2.0-SNAPSHOT</output-path>
+    <output-path>$PROJECT_DIR$/web.imageserver.front/target/web.imageserver.front</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="web.imageserver.front/web/Web" />
       <element id="directory" name="WEB-INF">
