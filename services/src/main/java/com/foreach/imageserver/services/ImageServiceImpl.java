@@ -35,6 +35,7 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Transactional
+	@Override
 	public void save( Image image, RepositoryLookupResult lookupResult ) {
 		image.setDimensions( lookupResult.getDimensions() );
 		image.setImageType( lookupResult.getImageType() );
@@ -63,6 +64,16 @@ public class ImageServiceImpl implements ImageService
 	@Override
 	public ImageFile fetchImageFile( Image image ) {
 		return imageStoreService.getImageFile( image );
+	}
+
+	@Transactional
+	@Override
+	public void delete( Image image ) {
+		// First delete the database entry - this avoids requests coming in
+		imageDao.deleteImage( image.getId() );
+
+		// Delete the actual physical phyles
+		imageStoreService.delete( image );
 	}
 
 	@Deprecated

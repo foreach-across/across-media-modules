@@ -1,6 +1,6 @@
 package com.foreach.imageserver.business;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 
@@ -97,6 +97,6 @@ public class Application
 	}
 
 	public boolean canBeManaged( String code ) {
-		return isActive() && getCode() != null && ObjectUtils.equals( getCode(), code );
+		return isActive() && getCode() != null && StringUtils.equals( getCode(), code );
 	}
 }

@@ -59,7 +59,7 @@ public class TestImageDao extends AbstractDaoTest
 		compareImages( modified, fetched );
 		assertNotNull( fetched.getDateUpdated() );
 
-		imageDao.deleteImage( inserted.getKey(), inserted.getApplicationId() );
+		imageDao.deleteImage( inserted.getId() );
 		assertNull( imageDao.getImageByKey( inserted.getKey(), inserted.getApplicationId() ) );
 	}
 

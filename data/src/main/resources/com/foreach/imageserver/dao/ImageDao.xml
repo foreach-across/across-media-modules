@@ -68,10 +68,10 @@
         WHERE imagekey = #{key} AND applicationid = #{applicationId}
     </update>
 
-	<delete id="deleteImage" parameterType="map">
+	<delete id="deleteImage" parameterType="int">
         DELETE
         FROM Image
-        WHERE imagekey = #{key} AND applicationid = #{applicationId}
+        WHERE id = #{value}
     </delete>
 
 	<sql id="servableImageColumns">

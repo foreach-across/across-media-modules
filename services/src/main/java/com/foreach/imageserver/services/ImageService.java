@@ -16,6 +16,8 @@ public interface ImageService
 
 	ImageFile fetchImageFile( Image image );
 
+	void delete( Image image );
+
 	@Deprecated
 	ServableImageData getImageById( long id );
 

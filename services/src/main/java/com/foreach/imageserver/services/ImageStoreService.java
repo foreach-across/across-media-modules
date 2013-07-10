@@ -11,6 +11,8 @@ public interface ImageStoreService
 
 	long saveImage( Image image, InputStream imageData );
 
+	void delete( Image image );
+
 	void deleteVariants( Image image );
 
 	ImageFile getImageFile( Image image );

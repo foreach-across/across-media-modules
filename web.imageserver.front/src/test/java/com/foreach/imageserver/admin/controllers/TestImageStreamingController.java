@@ -9,7 +9,6 @@ import com.foreach.imageserver.controllers.exception.ImageNotFoundException;
 import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;
 import com.foreach.test.MockedLoader;
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +20,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.io.ByteArrayInputStream;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -75,7 +76,7 @@ public class TestImageStreamingController
 
 		byte[] contentBytes = new byte[] { 'A', 'B', 'C' };
 
-		ImageFile imageFile = new ImageFile( ImageType.PNG, 123456, new ByteInputStream( contentBytes, 3 ) );
+		ImageFile imageFile = new ImageFile( ImageType.PNG, 123456, new ByteArrayInputStream( contentBytes ) );
 
 		when( applicationService.getApplicationById( 1 ) ).thenReturn( application );
 		when( imageService.getImageByKey( "myimagekey", 1 ) ).thenReturn( image );

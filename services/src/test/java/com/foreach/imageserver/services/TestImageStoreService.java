@@ -149,6 +149,39 @@ public class TestImageStoreService
 		assertTrue( otherVariant.exists() );
 	}
 
+	@Test
+	public void deleteImage() throws Exception {
+		Image image = new Image();
+		image.setId( 2 );
+		image.setApplicationId( 10 );
+		image.setFilePath( "/2013/07/10/" );
+		image.setImageType( ImageType.JPEG );
+
+		// Put dummy files in place
+		new File( VARIANT_STORE, "/10/2013/07/10/" ).mkdirs();
+		new File( ORIGINAL_STORE, "/10/2013/07/10/" ).mkdirs();
+
+		File original = createDummy( ORIGINAL_STORE, "/10/2013/07/10/2.jpeg" );
+		File variantOne = createDummy( VARIANT_STORE, "/10/2013/07/10/2.100x200.jpeg" );
+		File variantTwo = createDummy( VARIANT_STORE, "/10/2013/07/10/2.test.png" );
+		File otherOriginal = createDummy( ORIGINAL_STORE, "/10/2013/07/10/7.jpeg" );
+		File otherVariant = createDummy( VARIANT_STORE, "/10/2013/07/10/3.100x200.jpeg" );
+
+		assertTrue( original.exists() );
+		assertTrue( variantOne.exists() );
+		assertTrue( variantTwo.exists() );
+		assertTrue( otherOriginal.exists() );
+		assertTrue( otherVariant.exists() );
+
+		imageStoreService.delete( image );
+
+		assertFalse( original.exists() );
+		assertTrue( otherOriginal.exists() );
+		assertFalse( variantOne.exists() );
+		assertFalse( variantTwo.exists() );
+		assertTrue( otherVariant.exists() );
+	}
+
 	private File createDummy( String path, String fileName ) throws Exception {
 		File file = new File( path, fileName );
 		FileOutputStream fos = new FileOutputStream( file );

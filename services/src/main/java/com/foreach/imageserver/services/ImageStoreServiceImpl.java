@@ -67,6 +67,32 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	@Override
+	public void delete( Image image ) {
+		try {
+			String path = createPathForOriginal( image );
+			String fileName = createFileName( image );
+
+			File physicalFile = new File( path, fileName );
+
+			if ( physicalFile.exists() ) {
+				if ( !physicalFile.delete() ) {
+					LOG.error( "Could not delete original file {}", physicalFile );
+					throw new ImageStoreOperationException( "Could not delete original file" );
+				}
+			}
+		}
+		catch ( ImageStoreOperationException isoe ) {
+			throw isoe;
+		}
+		catch ( Exception e ) {
+			LOG.warn( "Failed to delete original for image {}, exception: {}", image, e );
+			throw new ImageStoreOperationException( e );
+		}
+
+		deleteVariants( image );
+	}
+
+	@Override
 	public void deleteVariants( Image image ) {
 		try {
 			String path = createPathForVariant( image );

@@ -17,7 +17,7 @@ public interface ImageDao
 
 	void updateImage( Image image );
 
-	void deleteImage( @Param("key") String key, @Param("applicationId") int applicationId );
+	void deleteImage( long imageId );
 
 	ServableImageData getImageById( long id );
 
@@ -30,8 +30,6 @@ public interface ImageDao
 	void insertImage( ServableImageData image );
 
 	void updateImage( ServableImageData image );
-
-	void deleteImage( long imageId );
 
 	List<ServableImageData> getImages( ImageSelector selector );
 }
