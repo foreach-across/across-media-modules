@@ -2,6 +2,7 @@ package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
+import com.foreach.imageserver.business.ImageModifier;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -44,15 +45,14 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	@Override
-	public long saveImage( Image image, InputStream imageData ) {
-		String path = createPathForOriginal( image );
-		String fileName = createFileName( image );
-
+	public ImageFile saveImage( Image image, InputStream imageData ) {
 		try {
-			FileOutputStream fos = new FileOutputStream( path + "/" + fileName );
+			File physical = new File( generateFullImagePath( image ) );
+			FileOutputStream fos = new FileOutputStream( physical );
 
 			try {
-				return IOUtils.copy( imageData, fos );
+				long contentLength = IOUtils.copy( imageData, fos );
+				return new ImageFile( image.getImageType(), physical, contentLength );
 			}
 			finally {
 				fos.flush();
@@ -61,7 +61,31 @@ public class ImageStoreServiceImpl implements ImageStoreService
 			}
 		}
 		catch ( Exception e ) {
-			LOG.error( "Unable to save image image {}, exception: {}", image, e );
+			LOG.error( "Unable to save original image {}, exception: {}", image, e );
+			throw new ImageStoreOperationException( e );
+		}
+	}
+
+	@Override
+	public ImageFile saveImageFile( Image image, ImageModifier modifier, ImageFile file ) {
+		try {
+			File physical = new File( generateFullImagePath( image, modifier ) );
+			FileOutputStream fos = new FileOutputStream( physical );
+
+			InputStream imageData = file.openContentStream();
+
+			try {
+				long contentLength = IOUtils.copy( imageData, fos );
+				return new ImageFile( image.getImageType(), physical, contentLength );
+			}
+			finally {
+				fos.flush();
+				IOUtils.closeQuietly( fos );
+				IOUtils.closeQuietly( imageData );
+			}
+		}
+		catch ( Exception e ) {
+			LOG.error( "Unable to save variant image {}, exception: {}", image, e );
 			throw new ImageStoreOperationException( e );
 		}
 	}
@@ -70,7 +94,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	public void delete( Image image ) {
 		try {
 			String path = createPathForOriginal( image );
-			String fileName = createFileName( image );
+			String fileName = createFileName( image, null );
 
 			File physicalFile = new File( path, fileName );
 
@@ -120,11 +144,13 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public ImageFile getImageFile( Image image ) {
-		try {
-			String path = createPathForOriginal( image );
-			String fileName = createFileName( image );
+		return getImageFile( image, null );
+	}
 
-			File physicalFile = new File( path, fileName );
+	@Override
+	public ImageFile getImageFile( Image image, ImageModifier modifier ) {
+		try {
+			File physicalFile = new File( generateFullImagePath( image, modifier ) );
 
 			if ( physicalFile.exists() ) {
 				return new ImageFile( image.getImageType(), physicalFile.length(),
@@ -139,8 +165,39 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		}
 	}
 
-	private String createFileName( Image image ) {
-		return image.getId() + "." + image.getImageType().getExtension();
+	@Override
+	public String generateFullImagePath( Image image ) {
+		return generateFullImagePath( image, null );
+	}
+
+	@Override
+	public String generateFullImagePath( Image image, ImageModifier modifier ) {
+		String path = isOriginalImage( modifier ) ? createPathForOriginal( image ) : createPathForVariant( image );
+		String fileName = createFileName( image, modifier );
+
+		return new File( path, fileName ).getAbsolutePath();
+	}
+
+	private boolean isOriginalImage( ImageModifier modifier ) {
+		return modifier == null || ImageModifier.EMPTY.equals( modifier );
+	}
+
+	private String createFileName( Image image, ImageModifier modifier ) {
+		if ( !isOriginalImage( modifier ) ) {
+			StringBuilder path = new StringBuilder();
+			path.append( image.getId() );
+
+			// Output resolution: 100x100
+			path.append( "." ).append( modifier.getWidth() ).append( "x" ).append( modifier.getHeight() );
+
+			// Image type extension
+			path.append( "." ).append( image.getImageType().getExtension() );
+
+			return path.toString();
+		}
+		else {
+			return image.getId() + "." + image.getImageType().getExtension();
+		}
 	}
 
 	private String createPathForOriginal( Image image ) {

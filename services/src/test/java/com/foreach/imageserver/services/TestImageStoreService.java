@@ -2,6 +2,7 @@ package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
+import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.shared.utils.DateUtils;
 import com.foreach.test.MockedLoader;
@@ -77,7 +78,7 @@ public class TestImageStoreService
 		image.setFilePath( "/2013/07/09/" );
 		image.setImageType( ImageType.JPEG );
 
-		saveAndVerify( image, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/2.jpeg" );
+		saveAndVerify( image, null, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/2.jpeg" );
 	}
 
 	@Test
@@ -88,24 +89,75 @@ public class TestImageStoreService
 		image.setFilePath( "/2013/07/09/" );
 		image.setImageType( ImageType.JPEG );
 
-		saveAndVerify( image, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg" );
-		saveAndVerify( image, ImageTestData.SUNSET, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg" );
+		saveAndVerify( image, null, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg" );
+		saveAndVerify( image, null, ImageTestData.SUNSET, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg" );
+	}
+
+	@Test
+	public void saveNewVariantImage() throws Exception {
+		Image image = new Image();
+		image.setId( 6 );
+		image.setApplicationId( 10 );
+		image.setFilePath( "/2013/07/06/" );
+		image.setImageType( ImageType.JPEG );
+
+		ImageModifier modifier = new ImageModifier();
+		modifier.setWidth( 1600 );
+		modifier.setHeight( 200 );
+
+		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/6.1600x200.jpeg" );
+
+		modifier.setWidth( 0 );
+		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/6.0x200.jpeg" );
+	}
+
+	@Test
+	public void updateVariantImage() throws Exception {
+		Image image = new Image();
+		image.setId( 7 );
+		image.setApplicationId( 10 );
+		image.setFilePath( "/2013/07/06/" );
+		image.setImageType( ImageType.JPEG );
+
+		ImageModifier modifier = new ImageModifier();
+		modifier.setWidth( 1600 );
+		modifier.setHeight( 200 );
+
+		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg" );
+		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg" );
 	}
 
 	private void saveAndVerify( Image image,
+	                            ImageModifier modifier,
 	                            ImageTestData testData,
 	                            String path,
 	                            String expectedFileName ) throws Exception {
 		InputStream imageData = testData.getResourceAsStream();
 
 		File expectedFile = new File( path, expectedFileName );
-		long fileSize = imageStoreService.saveImage( image, imageData );
 
-		assertEquals( testData.getFileSize(), fileSize );
+		ImageFile imageFile;
+
+		if ( modifier != null ) {
+			imageFile = imageStoreService.saveImageFile( image, modifier,
+			                                             new ImageFile( image.getImageType(), testData.getFileSize(),
+			                                                            imageData ) );
+		}
+		else {
+			imageFile = imageStoreService.saveImage( image, imageData );
+		}
+
+		assertEquals( testData.getImageType(), imageFile.getImageType() );
+		assertEquals( testData.getFileSize(), imageFile.getFileSize() );
 		assertTrue( expectedFile.exists() );
+
 		FileInputStream fos = new FileInputStream( expectedFile );
 		assertTrue( IOUtils.contentEquals( testData.getResourceAsStream(), fos ) );
 		fos.close();
+
+		InputStream ios = imageFile.openContentStream();
+		assertTrue( IOUtils.contentEquals( testData.getResourceAsStream(), ios ) );
+		ios.close();
 	}
 
 	@Test(expected = ImageStoreOperationException.class)
@@ -192,6 +244,43 @@ public class TestImageStoreService
 	}
 
 	@Test
+	public void originalImagePathGeneration() throws Exception {
+		Image image = new Image();
+		image.setId( 3 );
+		image.setApplicationId( 10 );
+		image.setFilePath( "/2013/07/06/" );
+		image.setImageType( ImageType.JPEG );
+
+		String expected = new File( ORIGINAL_STORE, "/10/2013/07/06/3.jpeg" ).getAbsolutePath();
+
+		assertEquals( expected, imageStoreService.generateFullImagePath( image ) );
+		assertEquals( expected, imageStoreService.generateFullImagePath( image, null ) );
+		assertEquals( expected, imageStoreService.generateFullImagePath( image, new ImageModifier() ) );
+	}
+
+	@Test
+	public void variantImagePathGeneration() throws Exception {
+		Image image = new Image();
+		image.setId( 3 );
+		image.setApplicationId( 10 );
+		image.setFilePath( "/2013/07/06/" );
+		image.setImageType( ImageType.JPEG );
+
+		String root = new File( VARIANT_STORE, "/10/2013/07/06/" ).getAbsolutePath();
+
+		ImageModifier modifier = new ImageModifier();
+		modifier.setWidth( 1600 );
+		assertEquals( variant( root, "3.1600x0.jpeg" ), imageStoreService.generateFullImagePath( image, modifier ) );
+
+		modifier.setHeight( 1200 );
+		assertEquals( variant( root, "3.1600x1200.jpeg" ), imageStoreService.generateFullImagePath( image, modifier ) );
+	}
+
+	private String variant( String path, String fileName ) {
+		return new File( path, fileName ).getAbsolutePath();
+	}
+
+	@Test
 	public void getOriginalImageFile() throws Exception {
 		Image image = new Image();
 		image.setId( 3 );
@@ -203,15 +292,28 @@ public class TestImageStoreService
 
 		File actual = createActual( ORIGINAL_STORE, "/10/2013/07/06/3.jpeg", ImageTestData.SUNSET );
 
-		ImageFile imageFile = imageStoreService.getImageFile( image );
+		verifyImageFile( imageStoreService.getImageFile( image ), ImageTestData.SUNSET, actual );
+		verifyImageFile( imageStoreService.getImageFile( image, null ), ImageTestData.SUNSET, actual );
+		verifyImageFile( imageStoreService.getImageFile( image, new ImageModifier() ), ImageTestData.SUNSET, actual );
+	}
 
-		assertNotNull( imageFile );
-		assertEquals( ImageType.JPEG, imageFile.getImageType() );
-		assertEquals( ImageTestData.SUNSET.getFileSize(), imageFile.getFileSize() );
-		FileInputStream fos = new FileInputStream( actual );
-		assertTrue( IOUtils.contentEquals( ImageTestData.SUNSET.getResourceAsStream(), fos ) );
-		fos.close();
-		imageFile.getContent().close();
+	@Test
+	public void getVariantImageFile() throws Exception {
+		Image image = new Image();
+		image.setId( 3 );
+		image.setApplicationId( 10 );
+		image.setFilePath( "/2013/07/06/" );
+		image.setImageType( ImageType.JPEG );
+
+		ImageModifier modifier = new ImageModifier();
+		modifier.setWidth( 1600 );
+		modifier.setHeight( 200 );
+
+		new File( VARIANT_STORE, "/10/2013/07/06/" ).mkdirs();
+
+		File actual = createActual( VARIANT_STORE, "/10/2013/07/06/3.1600x200.jpeg", ImageTestData.SUNSET );
+
+		verifyImageFile( imageStoreService.getImageFile( image, modifier ), ImageTestData.SUNSET, actual );
 	}
 
 	private File createActual( String path, String fileName, ImageTestData testData ) throws Exception {
@@ -221,6 +323,16 @@ public class TestImageStoreService
 		fos.close();
 
 		return file;
+	}
+
+	private void verifyImageFile( ImageFile imageFile, ImageTestData testData, File physical ) throws IOException {
+		assertNotNull( imageFile );
+		assertEquals( testData.getImageType(), imageFile.getImageType() );
+		assertEquals( testData.getFileSize(), imageFile.getFileSize() );
+		FileInputStream fos = new FileInputStream( physical );
+		assertTrue( IOUtils.contentEquals( testData.getResourceAsStream(), fos ) );
+		fos.close();
+		imageFile.openContentStream().close();
 	}
 
 	@Configuration

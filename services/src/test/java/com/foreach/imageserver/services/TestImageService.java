@@ -2,6 +2,7 @@ package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
+import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.business.image.Dimensions;
 import com.foreach.imageserver.dao.ImageDao;
@@ -35,6 +36,9 @@ public class TestImageService
 	private ImageStoreService imageStoreService;
 
 	@Autowired
+	private ImageModificationService imageModificationService;
+
+	@Autowired
 	private ImageDao imageDao;
 
 	@Test
@@ -61,7 +65,7 @@ public class TestImageService
 
 		String expectedPath = RandomStringUtils.randomAlphanumeric( 20 );
 		when( imageStoreService.generateRelativeImagePath( newImage ) ).thenReturn( expectedPath );
-		when( imageStoreService.saveImage( newImage, stream ) ).thenReturn( 5678L );
+		when( imageStoreService.saveImage( newImage, stream ) ).thenReturn( new ImageFile( null, null, 5678L ) );
 
 		imageService.save( newImage, lookupResult );
 
@@ -95,7 +99,7 @@ public class TestImageService
 		lookupResult.setDimensions( new Dimensions( 1024, 768 ) );
 		lookupResult.setContent( stream );
 
-		when( imageStoreService.saveImage( existing, stream ) ).thenReturn( 5678L );
+		when( imageStoreService.saveImage( existing, stream ) ).thenReturn( new ImageFile( null, null, 5678L ) );
 
 		imageService.save( existing, lookupResult );
 
@@ -111,15 +115,39 @@ public class TestImageService
 	}
 
 	@Test
-	public void fetchOriginalImageFile() {
+	public void fetchImageFileThatExists() {
 		Image image = new Image();
 		ImageFile imageFile = new ImageFile( ImageType.JPEG, 0, null );
+		ImageModifier modifier = new ImageModifier();
 
-		when( imageStoreService.getImageFile( image ) ).thenReturn( imageFile );
+		when( imageStoreService.getImageFile( image, modifier ) ).thenReturn( imageFile );
 
-		ImageFile returned = imageService.fetchImageFile( image );
-
+		ImageFile returned = imageService.fetchImageFile( image, modifier );
 		assertSame( imageFile, returned );
+
+		verify( imageStoreService, never() ).getImageFile( any( Image.class ) );
+		verify( imageModificationService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
+		verify( imageStoreService, never() ).saveImageFile( any( Image.class ), any( ImageModifier.class ),
+		                                                    any( ImageFile.class ) );
+	}
+
+	@Test
+	public void fetchImageFileThatDoesNotExist() {
+		Image image = new Image();
+		ImageModifier modifier = new ImageModifier();
+
+		ImageFile original = new ImageFile( ImageType.GIF, 0, null );
+		ImageFile renderedFile = new ImageFile( ImageType.JPEG, 0, null );
+		ImageFile storedFile = new ImageFile( ImageType.PNG, 0, null );
+
+		when( imageStoreService.getImageFile( image, modifier ) ).thenReturn( null );
+		when( imageStoreService.getImageFile( image ) ).thenReturn( original );
+		when( imageModificationService.apply( original, modifier ) ).thenReturn( renderedFile );
+		when( imageStoreService.saveImageFile( image, modifier, renderedFile ) ).thenReturn( storedFile );
+
+		ImageFile returned = imageService.fetchImageFile( image, modifier );
+
+		assertSame( storedFile, returned );
 	}
 
 	@Test

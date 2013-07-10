@@ -2,21 +2,13 @@ package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.geometry.Point;
-import com.foreach.imageserver.business.geometry.Rect;
-import com.foreach.imageserver.business.geometry.Size;
-import com.foreach.imageserver.business.image.Crop;
-import com.foreach.imageserver.business.image.ServableImageData;
+import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.dao.CropDao;
 import com.foreach.imageserver.dao.ImageDao;
-import com.foreach.imageserver.dao.selectors.CropSelector;
-import com.foreach.imageserver.dao.selectors.ImageSelector;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class ImageServiceImpl implements ImageService
@@ -26,6 +18,9 @@ public class ImageServiceImpl implements ImageService
 
 	@Autowired
 	private ImageStoreService imageStoreService;
+
+	@Autowired
+	private ImageModificationService imageModificationService;
 
 	@Autowired
 	private CropDao cropDao;
@@ -47,9 +42,9 @@ public class ImageServiceImpl implements ImageService
 			imageDao.insertImage( image );
 		}
 
-		long savedFileSize = imageStoreService.saveImage( image, lookupResult.getContent() );
+		ImageFile savedFile = imageStoreService.saveImage( image, lookupResult.getContent() );
 
-		image.setFileSize( savedFileSize );
+		image.setFileSize( savedFile.getFileSize() );
 
 		imageDao.updateImage( image );
 		if ( !isInsert ) {
@@ -62,8 +57,17 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
-	public ImageFile fetchImageFile( Image image ) {
-		return imageStoreService.getImageFile( image );
+	public ImageFile fetchImageFile( Image image, ImageModifier modifier ) {
+		ImageFile file = imageStoreService.getImageFile( image, modifier );
+
+		if ( file == null ) {
+			ImageFile original = imageStoreService.getImageFile( image );
+			ImageFile modified = imageModificationService.apply( original, modifier );
+
+			file = imageStoreService.saveImageFile( image, modifier, modified );
+		}
+
+		return file;
 	}
 
 	@Transactional
@@ -74,61 +78,5 @@ public class ImageServiceImpl implements ImageService
 
 		// Delete the actual physical phyles
 		imageStoreService.delete( image );
-	}
-
-	@Deprecated
-	public final ServableImageData getImageById( long id ) {
-		return imageDao.getImageById( id );
-	}
-
-	@Deprecated
-	public final ServableImageData getImageByPath( ImageSelector selector ) {
-		return imageDao.getImageByPath( selector );
-	}
-
-	@Deprecated
-	public final List<ServableImageData> getAllImages() {
-		return imageDao.getAllImages();
-	}
-
-	@Deprecated
-	@Transactional
-	public final long saveImage( ServableImageData image ) {
-		return saveImage( image, false );
-	}
-
-	@Deprecated
-	@Transactional
-	public final long saveImage( ServableImageData image, boolean deleteCrops ) {
-		if ( image.getId() > 0 ) {
-			imageDao.updateImage( image );
-			if ( deleteCrops ) {
-				cullCrops( image.getId(), image.getSize() );
-			}
-		}
-		else {
-			imageDao.insertImage( image );
-		}
-		return image.getId();
-	}
-
-	private void cullCrops( long imageId, Size imageSize ) {
-		Rect boundingRect = new Rect( new Point( 0, 0 ), imageSize );
-		List<Crop> crops = cropDao.getCrops( CropSelector.onImageId( imageId ) );
-		for ( Crop crop : crops ) {
-			if ( !crop.withinRect( boundingRect ) ) {
-				cropDao.deleteCrop( crop.getId() );
-			}
-		}
-	}
-
-	@Deprecated
-	public final List<ServableImageData> getImages( ImageSelector selector ) {
-		return imageDao.getImages( selector );
-	}
-
-	@Deprecated
-	public final int getImageCount( ImageSelector selector ) {
-		return imageDao.getImageCount( selector );
 	}
 }

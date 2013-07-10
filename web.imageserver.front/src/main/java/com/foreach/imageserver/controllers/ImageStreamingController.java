@@ -3,6 +3,7 @@ package com.foreach.imageserver.controllers;
 import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
+import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.controllers.exception.ImageLookupException;
 import com.foreach.imageserver.controllers.exception.ImageNotFoundException;
 import com.foreach.imageserver.services.ApplicationService;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
@@ -31,11 +33,11 @@ public class ImageStreamingController
 	@Autowired
 	private ImageService imageService;
 
-	@RequestMapping("/view")
+	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	public void view( @RequestParam(value = "aid", required = true) int applicationId,
 	                  @RequestParam(value = "key", required = true) String imageKey,
+	                  ImageModifier modifier,
 	                  HttpServletResponse response ) {
-
 		Application application = applicationService.getApplicationById( applicationId );
 
 		if ( application == null || !application.isActive() ) {
@@ -49,13 +51,13 @@ public class ImageStreamingController
 			throw new ImageNotFoundException();
 		}
 
-		ImageFile imageFile = imageService.fetchImageFile( image );
+		ImageFile imageFile = imageService.fetchImageFile( image, modifier );
 
 		response.setStatus( HttpStatus.OK.value() );
 		response.setContentType( imageFile.getImageType().getContentType() );
 		response.setContentLength( Long.valueOf( imageFile.getFileSize() ).intValue() );
 
-		InputStream content = imageFile.getContent();
+		InputStream content = imageFile.openContentStream();
 
 		try {
 			IOUtils.copy( content, response.getOutputStream() );

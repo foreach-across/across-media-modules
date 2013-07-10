@@ -1,5 +1,6 @@
 package com.foreach.imageserver.services.paths;
 
+@Deprecated
 public class ImageSpecifier {
 
     private long imageId;

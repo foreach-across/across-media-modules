@@ -1,9 +1,6 @@
 package com.foreach.imageserver.admin.controllers;
 
-import com.foreach.imageserver.business.Application;
-import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.business.*;
 import com.foreach.imageserver.controllers.ImageStreamingController;
 import com.foreach.imageserver.controllers.exception.ImageNotFoundException;
 import com.foreach.imageserver.services.ApplicationService;
@@ -43,7 +40,7 @@ public class TestImageStreamingController
 
 	@Test(expected = ImageNotFoundException.class)
 	public void requestUnknownApplication() {
-		streamingController.view( 1, RandomStringUtils.randomAlphanumeric( 50 ), new MockHttpServletResponse() );
+		streamingController.view( 1, RandomStringUtils.randomAlphanumeric( 50 ), null, new MockHttpServletResponse() );
 	}
 
 	@Test(expected = ImageNotFoundException.class)
@@ -53,7 +50,8 @@ public class TestImageStreamingController
 
 		when( applicationService.getApplicationById( 1 ) ).thenReturn( inactive );
 
-		streamingController.view( 1, RandomStringUtils.randomAlphanumeric( 50 ), new MockHttpServletResponse() );
+		streamingController.view( 1, RandomStringUtils.randomAlphanumeric( 50 ), new ImageModifier(),
+		                          new MockHttpServletResponse() );
 	}
 
 	@Test(expected = ImageNotFoundException.class)
@@ -63,7 +61,7 @@ public class TestImageStreamingController
 
 		when( applicationService.getApplicationById( 1 ) ).thenReturn( application );
 
-		streamingController.view( 1, RandomStringUtils.randomAlphanumeric( 50 ), new MockHttpServletResponse() );
+		streamingController.view( 1, RandomStringUtils.randomAlphanumeric( 50 ), null, new MockHttpServletResponse() );
 	}
 
 	@Test
@@ -73,6 +71,7 @@ public class TestImageStreamingController
 		application.setActive( true );
 
 		Image image = new Image();
+		ImageModifier modifier = new ImageModifier();
 
 		byte[] contentBytes = new byte[] { 'A', 'B', 'C' };
 
@@ -80,11 +79,11 @@ public class TestImageStreamingController
 
 		when( applicationService.getApplicationById( 1 ) ).thenReturn( application );
 		when( imageService.getImageByKey( "myimagekey", 1 ) ).thenReturn( image );
-		when( imageService.fetchImageFile( image ) ).thenReturn( imageFile );
+		when( imageService.fetchImageFile( image, modifier ) ).thenReturn( imageFile );
 
 		MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-		streamingController.view( 1, "myimagekey", mockResponse );
+		streamingController.view( 1, "myimagekey", modifier, mockResponse );
 
 		assertEquals( HttpStatus.OK.value(), mockResponse.getStatus() );
 		assertEquals( imageFile.getImageType().getContentType(), mockResponse.getContentType() );
