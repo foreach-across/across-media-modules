@@ -52,4 +52,12 @@ public class ImageModifier
 		result = 31 * result + height;
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return "ImageModifier{" +
+				"width=" + width +
+				", height=" + height +
+				'}';
+	}
 }

@@ -4,6 +4,7 @@ import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.services.exceptions.ImageStoreOperationException;
 import com.foreach.shared.utils.DateUtils;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.io.FileUtils;

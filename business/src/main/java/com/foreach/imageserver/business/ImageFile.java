@@ -46,4 +46,12 @@ public class ImageFile
 			throw new RuntimeException( ioe );
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "ImageFile{" +
+				"imageType=" + imageType +
+				", physicalFile=" + physicalFile +
+				'}';
+	}
 }

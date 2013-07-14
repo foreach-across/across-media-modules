@@ -2,126 +2,96 @@ package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
+import com.foreach.imageserver.services.exceptions.ImageModificationException;
+import com.foreach.imageserver.services.transformers.ImageTransformer;
+import com.foreach.imageserver.services.transformers.ImageTransformerPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Iterator;
+import javax.annotation.PostConstruct;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 
+/**
+ * Will iterate over all registered ImageTransformers to find the best one to apply the modification.
+ */
 @Service
 public class ImageModificationServiceImpl implements ImageModificationService
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ImageModificationServiceImpl.class );
 
+	@Autowired
+	private List<ImageTransformer> transformerList;
+
+	@PostConstruct
+	private void sortTransformers() {
+		LOG.info( "Sorting {} image transformers according to configured priority", transformerList.size() );
+		Collections.sort( transformerList, new Comparator<ImageTransformer>()
+		{
+			@Override
+			public int compare( ImageTransformer left, ImageTransformer right ) {
+				return Integer.valueOf( right.getPriority() ).compareTo( left.getPriority() );
+			}
+		} );
+
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "The following {} image transformers have been registered, in priority order:",
+			           transformerList.size() );
+			for ( ImageTransformer transformer : transformerList ) {
+				LOG.debug( "class: {} - priority: {}", transformer.getClass(), transformer.getPriority() );
+			}
+		}
+	}
+
 	@Override
 	public ImageFile apply( ImageFile original, ImageModifier modifier ) {
-		try {
-			BufferedImage bufferedImage = readImage( new MemoryCacheImageInputStream( original.openContentStream() ) );
+		List<ImageTransformer> transformers = new LinkedList<ImageTransformer>();
+		List<ImageTransformer> fallback = new LinkedList<ImageTransformer>();
 
-			bufferedImage = getScaledInstance( bufferedImage, modifier.getWidth(), modifier.getHeight(),
-			                           RenderingHints.VALUE_INTERPOLATION_BILINEAR, false );
+		for ( ImageTransformer candidate : transformerList ) {
+			ImageTransformerPriority priority = candidate.canApply( original, modifier );
 
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-			ImageIO.write( bufferedImage, original.getImageType().getExtension(), os );
-
-			byte[] content = os.toByteArray();
-
-			return new ImageFile( original.getImageType(), content.length, new ByteArrayInputStream( content ) );
-		}
-		catch ( Exception e ) {
-			LOG.error( "exception applying transform {} ", e );
-		}
-
-		return null;
-	}
-
-	private static BufferedImage readImage( ImageInputStream is ) throws IOException {
-		ImageReader reader = ImageIO.getImageReaders( is ).next();
-		try {
-			reader.setInput( is );
-			ImageReadParam param = reader.getDefaultReadParam();
-
-			ImageTypeSpecifier typeToUse = null;
-
-			for ( Iterator<ImageTypeSpecifier> i = reader.getImageTypes( 0 ); i.hasNext(); ) {
-				ImageTypeSpecifier type = i.next();
-				if ( type.getColorModel().getColorSpace().isCS_sRGB() ) {
-					typeToUse = type;
+			if ( priority != null && priority != ImageTransformerPriority.UNABLE ) {
+				if ( priority == ImageTransformerPriority.PREFERRED ) {
+					transformers.add( candidate );
+				}
+				else {
+					fallback.add( candidate );
 				}
 			}
-			if ( typeToUse != null ) {
-				param.setDestinationType( typeToUse );
+		}
+
+		transformers.addAll( fallback );
+
+		if ( transformers.isEmpty() ) {
+			LOG.error( "No possible transformer to modify image {} with {}", original, modifier );
+			throw new ImageModificationException( "No valid transformer for image modification" );
+		}
+
+		for ( ImageTransformer transformer : transformers ) {
+			try {
+				ImageFile result = transformer.apply( original, modifier );
+
+				if ( result != null ) {
+					return result;
+				}
+				else {
+					LOG.warn(
+							"ImageTransformer {} said it could handle modification {} on image {}, but it returned empty result",
+							transformer, modifier, original );
+				}
 			}
-
-			return reader.read( 0, param );
-		}
-		finally {
-			// guarantee we close the reader here, even if we throw an IOException
-			// since readers keep the entire image in the buffer this could lead to out of memory errors otherwise
-			reader.dispose();
-			// also we intentionally do not close the imageinputstream here, since it was passed to us and maybe it will
-			// be used later on.
-		}
-	}
-
-	public BufferedImage getScaledInstance( BufferedImage img,
-	                                        int targetWidth,
-	                                        int targetHeight,
-	                                        Object interpolationHint,
-	                                        boolean preserveAlpha ) {
-		boolean hasPossibleAlphaChannel = img.getTransparency() != Transparency.OPAQUE;
-
-		// rescale while ignoring the preserveAlpha flag, otherwise we lose the transparency at this point
-		int imageTypeForScaling = hasPossibleAlphaChannel ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
-		BufferedImage result = img;
-		int w = img.getWidth();
-		int h = img.getHeight();
-		do {
-			if ( w > targetWidth ) {
-				w = Math.max( w / 2, targetWidth );
+			catch ( Exception e ) {
+				LOG.warn( "ImageTransformer {} threw exception on handling modification {} on image {}: {}",
+				          transformer, modifier, original, e );
 			}
-			if ( h > targetHeight ) {
-				h = Math.max( h / 2, targetHeight );
-			}
-			BufferedImage tmp = new BufferedImage( w, h, imageTypeForScaling );
-
-			Graphics2D g2 = tmp.createGraphics();
-			g2.setRenderingHint( RenderingHints.KEY_INTERPOLATION, interpolationHint );
-			g2.drawImage( result, 0, 0, w, h, null );
-			g2.dispose();
-			result = tmp;
 		}
-		while ( w > targetWidth || h > targetHeight );
 
-		return hasPossibleAlphaChannel && !preserveAlpha ? getFlattenedBufferedImageWithWhiteBG( result ) : result;
-	}
-
-	// add white background if we don't want to preserve the alpha channel
-	public BufferedImage getFlattenedBufferedImageWithWhiteBG( BufferedImage result ) {
-		if ( result.getTransparency() == Transparency.OPAQUE ) {
-			// no alpha channel, so no need to transform anything
-			return result;
-		}
-		// create new buffered image with a white background and draw the result onto it
-		BufferedImage res = new BufferedImage( result.getWidth(), result.getHeight(), BufferedImage.TYPE_INT_RGB );
-		Graphics2D graphics = res.createGraphics();
-		graphics.setBackground( Color.WHITE );
-		graphics.setColor( Color.WHITE );
-		graphics.fillRect( 0, 0, result.getWidth(), result.getHeight() );
-		graphics.drawImage( result, 0, 0, null );
-		graphics.dispose();
-		return res;
+		LOG.error( "All transformers failed trying to modify image {} with {}", original, modifier );
+		throw new ImageModificationException( "All transformers failed trying to apply image modification" );
 	}
 }

@@ -3,6 +3,7 @@ package com.foreach.imageserver.services;
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
+import com.foreach.imageserver.services.exceptions.ImageStoreOperationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;

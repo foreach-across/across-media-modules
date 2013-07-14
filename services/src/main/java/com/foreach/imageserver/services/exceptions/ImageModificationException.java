@@ -1,13 +1,13 @@
-package com.foreach.imageserver.services;
+package com.foreach.imageserver.services.exceptions;
 
-public class ImageStoreOperationException extends RuntimeException
+public class ImageModificationException extends RuntimeException
 {
 	/**
 	 * Constructs a new runtime exception with <code>null</code> as its
 	 * detail message.  The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public ImageStoreOperationException() {
+	public ImageModificationException() {
 	}
 
 	/**
@@ -18,7 +18,7 @@ public class ImageStoreOperationException extends RuntimeException
 	 * @param message the detail message. The detail message is saved for
 	 *                later retrieval by the {@link #getMessage()} method.
 	 */
-	public ImageStoreOperationException( String message ) {
+	public ImageModificationException( String message ) {
 		super( message );
 	}
 
@@ -36,7 +36,7 @@ public class ImageStoreOperationException extends RuntimeException
 	 *                unknown.)
 	 * @since 1.4
 	 */
-	public ImageStoreOperationException( String message, Throwable cause ) {
+	public ImageModificationException( String message, Throwable cause ) {
 		super( message, cause );
 	}
 
@@ -53,7 +53,7 @@ public class ImageStoreOperationException extends RuntimeException
 	 *              unknown.)
 	 * @since 1.4
 	 */
-	public ImageStoreOperationException( Throwable cause ) {
+	public ImageModificationException( Throwable cause ) {
 		super( cause );
 	}
 }
