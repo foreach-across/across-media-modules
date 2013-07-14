@@ -1,6 +1,6 @@
 package com.foreach.imageserver.dao.selectors;
 
-import com.foreach.imageserver.business.math.Fraction;
+import com.foreach.imageserver.business.Fraction;
 
 public class CropSelector extends AbstractSelector {
 

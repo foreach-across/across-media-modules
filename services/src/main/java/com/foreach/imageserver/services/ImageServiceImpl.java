@@ -3,7 +3,6 @@ package com.foreach.imageserver.services;
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
-import com.foreach.imageserver.dao.CropDao;
 import com.foreach.imageserver.dao.ImageDao;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,6 @@ public class ImageServiceImpl implements ImageService
 
 	@Autowired
 	private ImageModificationService imageModificationService;
-
-	@Autowired
-	private CropDao cropDao;
 
 	public Image getImageByKey( String key, int applicationId ) {
 		return imageDao.getImageByKey( key, applicationId );
@@ -72,11 +68,17 @@ public class ImageServiceImpl implements ImageService
 
 	@Transactional
 	@Override
-	public void delete( Image image ) {
-		// First delete the database entry - this avoids requests coming in
-		imageDao.deleteImage( image.getId() );
+	public void delete( Image image, boolean variantsOnly ) {
+		if ( variantsOnly ) {
+			// Delete physical variant files
+			imageStoreService.deleteVariants( image );
+		}
+		else {
+			// First delete the database entry - this avoids requests coming in
+			imageDao.deleteImage( image.getId() );
 
-		// Delete the actual physical phyles
-		imageStoreService.delete( image );
+			// Delete the actual physical files
+			imageStoreService.delete( image );
+		}
 	}
 }

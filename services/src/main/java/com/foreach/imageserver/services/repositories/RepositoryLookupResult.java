@@ -1,7 +1,7 @@
 package com.foreach.imageserver.services.repositories;
 
 import com.foreach.imageserver.business.ImageType;
-import com.foreach.imageserver.business.image.Dimensions;
+import com.foreach.imageserver.business.Dimensions;
 
 import java.io.InputStream;
 

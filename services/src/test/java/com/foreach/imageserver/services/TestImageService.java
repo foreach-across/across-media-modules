@@ -4,7 +4,7 @@ import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.business.ImageType;
-import com.foreach.imageserver.business.image.Dimensions;
+import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.dao.ImageDao;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import com.foreach.test.MockedLoader;
@@ -151,14 +151,26 @@ public class TestImageService
 	}
 
 	@Test
-	public void deleteImage() {
+	public void deleteImageAndAllVariants() {
 		Image image = new Image();
 		image.setId( 123 );
 
-		imageService.delete( image );
+		imageService.delete( image, false );
 
 		verify( imageDao, times( 1 ) ).deleteImage( image.getId() );
 		verify( imageStoreService, times( 1 ) ).delete( image );
+	}
+
+	@Test
+	public void deleteImageVariants() {
+		Image image = new Image();
+		image.setId( 123 );
+
+		imageService.delete( image, true );
+
+		verify( imageDao, never() ).deleteImage( image.getId() );
+		verify( imageStoreService, never() ).delete( image );
+		verify( imageStoreService, times( 1 ) ).deleteVariants( image );
 	}
 
 	@Configuration

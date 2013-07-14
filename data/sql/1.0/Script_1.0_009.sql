@@ -1,8 +1,0 @@
-CREATE TABLE AuthUser (
-  id BIGINT IDENTITY(1,1) NOT NULL,
-  userkey nvarchar(100) NOT NULL,
-
-  CONSTRAINT PK_user PRIMARY KEY CLUSTERED (id ASC)
-)
-
-GO

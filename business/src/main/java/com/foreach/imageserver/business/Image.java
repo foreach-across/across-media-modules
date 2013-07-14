@@ -1,7 +1,5 @@
 package com.foreach.imageserver.business;
 
-import com.foreach.imageserver.business.image.Dimensions;
-
 import java.util.Date;
 
 public class Image

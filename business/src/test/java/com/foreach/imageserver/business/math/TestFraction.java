@@ -3,6 +3,7 @@ package com.foreach.imageserver.business.math;
 
 import static org.junit.Assert.assertEquals;
 
+import com.foreach.imageserver.business.Fraction;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

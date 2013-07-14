@@ -1,7 +1,4 @@
-package com.foreach.imageserver.business.image;
-
-import com.foreach.imageserver.business.geometry.Size;
-import com.foreach.imageserver.business.math.Fraction;
+package com.foreach.imageserver.business;
 
 public class Dimensions implements Comparable<Dimensions>
 {
@@ -53,13 +50,6 @@ public class Dimensions implements Comparable<Dimensions>
 		return ( ratio.equals( Fraction.UNDEFINED ) );
 	}
 
-	public Size getSize() {
-		if ( !isAbsolute() ) {
-			throw new NullPointerException();
-		}
-		return new Size( width, height );
-	}
-
 	public boolean hasAspectRatio() {
 		if ( isAbsolute() ) {
 			return ( ( width != 0 ) && ( height != 0 ) );
@@ -84,15 +74,6 @@ public class Dimensions implements Comparable<Dimensions>
 
 	private boolean matchesHeight( int heightToMatch ) {
 		return ( ( height == heightToMatch ) || ( height == 0 ) );
-	}
-
-	public final boolean matches( Size size ) {
-		if ( isAbsolute() ) {
-			return ( matchesWidth( size.getWidth() ) && ( matchesHeight( size.getHeight() ) ) );
-		}
-		else {
-			return ( ( ratio.equals( size.aspectRatio() ) ) );
-		}
 	}
 
 	public int compareTo( Dimensions other ) {

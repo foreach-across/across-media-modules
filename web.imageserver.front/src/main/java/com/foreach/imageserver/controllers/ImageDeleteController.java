@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+@RequestMapping("/delete")
 public class ImageDeleteController
 {
 	@Autowired
@@ -21,12 +22,23 @@ public class ImageDeleteController
 	@Autowired
 	private ImageService imageService;
 
-	@RequestMapping("/delete")
+	@RequestMapping("/all")
 	@ResponseBody
 	public String delete( @RequestParam(value = "aid", required = true) int applicationId,
 	                      @RequestParam(value = "token", required = true) String applicationKey,
 	                      @RequestParam(value = "key", required = false) String imageKey ) {
+		return delete( applicationId, applicationKey, imageKey, false );
+	}
 
+	@RequestMapping("/variants")
+	@ResponseBody
+	public String deleteVariants( @RequestParam(value = "aid", required = true) int applicationId,
+	                              @RequestParam(value = "token", required = true) String applicationKey,
+	                              @RequestParam(value = "key", required = false) String imageKey ) {
+		return delete( applicationId, applicationKey, imageKey, true );
+	}
+
+	private String delete( int applicationId, String applicationKey, String imageKey, boolean variantsOnly ) {
 		Application application = applicationService.getApplicationById( applicationId );
 
 		if ( application == null || !application.canBeManaged( applicationKey ) ) {
@@ -36,7 +48,7 @@ public class ImageDeleteController
 		Image image = imageService.getImageByKey( imageKey, application.getId() );
 
 		if ( image != null ) {
-			imageService.delete( image );
+			imageService.delete( image, variantsOnly );
 		}
 
 		return StringUtils.EMPTY;

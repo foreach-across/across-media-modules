@@ -2,7 +2,7 @@ package dao;
 
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageType;
-import com.foreach.imageserver.business.image.Dimensions;
+import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.dao.ImageDao;
 import com.foreach.shared.utils.DateUtils;
 import org.apache.commons.lang3.RandomStringUtils;

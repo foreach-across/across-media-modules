@@ -1,4 +1,4 @@
-package com.foreach.imageserver.business.math;
+package com.foreach.imageserver.business;
 
 public class Fraction implements Comparable  {
 

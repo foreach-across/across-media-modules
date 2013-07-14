@@ -3,39 +3,16 @@
 <configuration>
 	<typeAliases>
 		<!-- utility objects -->
-		<typeAlias alias="Rect" type="com.foreach.imageserver.business.geometry.Rect"/>
-		<typeAlias alias="Fraction" type="com.foreach.imageserver.business.math.Fraction"/>
+		<typeAlias alias="Fraction" type="com.foreach.imageserver.business.Fraction"/>
 
 		<!-- business objects -->
 		<typeAlias alias="Application" type="com.foreach.imageserver.business.Application"/>
 		<typeAlias alias="Image" type="com.foreach.imageserver.business.Image"/>
-		<typeAlias alias="Dimensions" type="com.foreach.imageserver.business.image.Dimensions"/>
-		<typeAlias alias="Group" type="com.foreach.imageserver.business.taxonomy.Group"/>
-		<typeAlias alias="Format" type="com.foreach.imageserver.business.image.Format"/>
-		<typeAlias alias="ServableImageData" type="com.foreach.imageserver.business.image.ServableImageData"/>
-		<typeAlias alias="Crop" type="com.foreach.imageserver.business.image.Crop"/>
-		<typeAlias alias="VariantImage" type="com.foreach.imageserver.business.image.VariantImage"/>
-		<typeAlias alias="UserGroup" type="com.foreach.imageserver.business.taxonomy.UserGroup"/>
-		<typeAlias alias="AppUser" type="com.foreach.imageserver.business.user.AppUser"/>
-
-		<!-- selectors -->
-		<typeAlias alias="ImageSelector" type="com.foreach.imageserver.dao.selectors.ImageSelector"/>
-		<typeAlias alias="VariantImageSelector" type="com.foreach.imageserver.dao.selectors.VariantImageSelector"/>
-		<typeAlias alias="CropSelector" type="com.foreach.imageserver.dao.selectors.CropSelector"/>
+		<typeAlias alias="Dimensions" type="com.foreach.imageserver.business.Dimensions"/>
 	</typeAliases>
-
-	<typeHandlers>
-		<typeHandler javaType="com.foreach.imageserver.business.ImageType" handler="com.foreach.imageserver.dao.handlers.ImageTypeHandler" />
-	</typeHandlers>
 
 	<mappers>
 		<mapper resource="com/foreach/imageserver/dao/ApplicationDao.xml"/>
-		<mapper resource="com/foreach/imageserver/dao/FormatDao.xml"/>
-		<mapper resource="com/foreach/imageserver/dao/GroupDao.xml"/>
 		<mapper resource="com/foreach/imageserver/dao/ImageDao.xml"/>
-		<mapper resource="com/foreach/imageserver/dao/CropDao.xml"/>
-		<mapper resource="com/foreach/imageserver/dao/VariantImageDao.xml"/>
-		<mapper resource="com/foreach/imageserver/dao/UserGroup.xml"/>
-		<mapper resource="com/foreach/imageserver/dao/UserDao.xml"/>
 	</mappers>
 </configuration>
