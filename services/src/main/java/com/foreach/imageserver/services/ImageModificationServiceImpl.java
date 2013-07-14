@@ -28,7 +28,7 @@ public class ImageModificationServiceImpl implements ImageModificationService
 	private List<ImageTransformer> transformerList;
 
 	@PostConstruct
-	private void sortTransformers() {
+	protected void sortTransformers() {
 		LOG.info( "Sorting {} image transformers according to configured priority", transformerList.size() );
 		Collections.sort( transformerList, new Comparator<ImageTransformer>()
 		{

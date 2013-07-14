@@ -68,14 +68,6 @@ public class Dimensions implements Comparable<Dimensions>
 		}
 	}
 
-	private boolean matchesWidth( int widthToMatch ) {
-		return ( ( width == widthToMatch ) || ( width == 0 ) );
-	}
-
-	private boolean matchesHeight( int heightToMatch ) {
-		return ( ( height == heightToMatch ) || ( height == 0 ) );
-	}
-
 	public int compareTo( Dimensions other ) {
 		if ( isAbsolute() != other.isAbsolute() ) {
 			return isAbsolute() ? -1 : 1;

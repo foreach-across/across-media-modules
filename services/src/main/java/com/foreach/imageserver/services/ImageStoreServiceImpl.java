@@ -99,11 +99,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 			File physicalFile = new File( path, fileName );
 
-			if ( physicalFile.exists() ) {
-				if ( !physicalFile.delete() ) {
-					LOG.error( "Could not delete original file {}", physicalFile );
-					throw new ImageStoreOperationException( "Could not delete original file" );
-				}
+			if ( physicalFile.exists() && !physicalFile.delete() ) {
+				LOG.error( "Could not delete original file {}", physicalFile );
+				throw new ImageStoreOperationException( "Could not delete original file" );
 			}
 		}
 		catch ( ImageStoreOperationException isoe ) {
@@ -212,10 +210,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private String createPathForImage( File basePath, Image image ) {
 		File path = new File( basePath.getAbsolutePath() + "/" + image.getApplicationId() +
 				                      "/" + image.getFilePath() );
-		if ( !path.exists() ) {
-			if ( path.mkdirs() ) {
-				LOG.debug( "Created new file location " + path.getAbsolutePath() );
-			}
+		if ( !path.exists() && path.mkdirs() ) {
+			LOG.debug( "Created new file location " + path.getAbsolutePath() );
 		}
 
 		return path.getAbsolutePath();
