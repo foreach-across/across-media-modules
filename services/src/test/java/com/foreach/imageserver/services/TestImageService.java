@@ -5,7 +5,7 @@ import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.business.Dimensions;
-import com.foreach.imageserver.dao.ImageDao;
+import com.foreach.imageserver.data.ImageDao;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;

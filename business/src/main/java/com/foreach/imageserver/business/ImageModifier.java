@@ -8,6 +8,9 @@ public class ImageModifier
 	public static final ImageModifier EMPTY = new ImageModifier();
 
 	private int width, height;
+	private Crop crop = new Crop();
+	private ImageType output;
+	private boolean stretch;
 
 	public int getWidth() {
 		return width;
@@ -25,6 +28,30 @@ public class ImageModifier
 		this.height = height;
 	}
 
+	public Crop getCrop() {
+		return crop;
+	}
+
+	public void setCrop( Crop crop ) {
+		this.crop = crop;
+	}
+
+	public ImageType getOutput() {
+		return output;
+	}
+
+	public void setOutput( ImageType output ) {
+		this.output = output;
+	}
+
+	public boolean isStretch() {
+		return stretch;
+	}
+
+	public void setStretch( boolean stretch ) {
+		this.stretch = stretch;
+	}
+
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {
@@ -34,12 +61,21 @@ public class ImageModifier
 			return false;
 		}
 
-		ImageModifier that = (ImageModifier) o;
+		ImageModifier modifier = (ImageModifier) o;
 
-		if ( height != that.height ) {
+		if ( height != modifier.height ) {
 			return false;
 		}
-		if ( width != that.width ) {
+		if ( stretch != modifier.stretch ) {
+			return false;
+		}
+		if ( width != modifier.width ) {
+			return false;
+		}
+		if ( crop != null ? !crop.equals( modifier.crop ) : modifier.crop != null ) {
+			return false;
+		}
+		if ( output != modifier.output ) {
 			return false;
 		}
 
@@ -50,6 +86,9 @@ public class ImageModifier
 	public int hashCode() {
 		int result = width;
 		result = 31 * result + height;
+		result = 31 * result + ( crop != null ? crop.hashCode() : 0 );
+		result = 31 * result + ( output != null ? output.hashCode() : 0 );
+		result = 31 * result + ( stretch ? 1 : 0 );
 		return result;
 	}
 
@@ -58,6 +97,9 @@ public class ImageModifier
 		return "ImageModifier{" +
 				"width=" + width +
 				", height=" + height +
+				", crop=" + crop +
+				", output=" + output +
+				", stretch=" + stretch +
 				'}';
 	}
 }

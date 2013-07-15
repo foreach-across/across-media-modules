@@ -3,8 +3,10 @@ package com.foreach.imageserver.services;
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
-import com.foreach.imageserver.dao.ImageDao;
+import com.foreach.imageserver.data.ImageDao;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ImageServiceImpl implements ImageService
 {
+	private static final Logger LOG = LoggerFactory.getLogger( ImageServiceImpl.class );
+
 	@Autowired
 	private ImageDao imageDao;
 
@@ -54,6 +58,10 @@ public class ImageServiceImpl implements ImageService
 
 	@Override
 	public ImageFile fetchImageFile( Image image, ImageModifier modifier ) {
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Requesting image {} with modifier {}", image.getId(), modifier );
+		}
+
 		ImageFile file = imageStoreService.getImageFile( image, modifier );
 
 		if ( file == null ) {

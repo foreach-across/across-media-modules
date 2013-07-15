@@ -21,35 +21,24 @@
 		<property name="ignoreResourceNotFound" value="true"/>
 	</bean>
 
-	<bean class="com.foreach.imageserver.admin.utils.WebPathConfiguration">
-		<property name="siteRoot" value="${path.siteRoot}"/>
-		<property name="resources" value="${path.resources}"/>
+	<bean class="com.foreach.imageserver.web.context.WebPathConfiguration">
+		<property name="siteRoot" value=""/>
+		<property name="resources" value=""/>
 	</bean>
 
 	<import resource="classpath:config/spring-config-services.xml"/>
 
-	<mvc:interceptors>
-		<!-- Set global variables if all other interceptors have passed (they could modify settings first) -->
-		<bean class="com.foreach.imageserver.admin.utils.GlobalVariableInterceptor"/>
-		<!-- Disable client caching on all requests (to be finetuned) -->
-		<bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
-			<property name="cacheSeconds" value="0"/>
-			<property name="useExpiresHeader" value="true"/>
-			<property name="useCacheControlHeader" value="true"/>
-			<property name="useCacheControlNoStore" value="true"/>
-		</bean>
-	</mvc:interceptors>
+	<context:component-scan base-package="com.foreach.imageserver"/>
 
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-		<property name="prefix" value="/WEB-INF/jsp/"/>
-		<property name="suffix" value=".jsp"/>
-		<property name="redirectContextRelative" value="true"/>
-		<property name="order" value="1"/>
+	<bean id="myConversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<set>
+				<bean class="com.foreach.web.converter.EnumConverterFactory"/>
+				<bean class="com.foreach.web.converter.EnumIdRenderer"/>
+				<bean class="com.foreach.web.converter.EnumCodeRenderer"/>
+			</set>
+		</property>
 	</bean>
 
-
-	<context:annotation-config/>
-
-	<context:component-scan base-package="com.foreach.imageserver"/>
+	<mvc:annotation-driven/>
 </beans>

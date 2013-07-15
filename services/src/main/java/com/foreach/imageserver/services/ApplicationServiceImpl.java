@@ -1,7 +1,7 @@
 package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.business.Application;
-import com.foreach.imageserver.dao.ApplicationDao;
+import com.foreach.imageserver.data.ApplicationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
