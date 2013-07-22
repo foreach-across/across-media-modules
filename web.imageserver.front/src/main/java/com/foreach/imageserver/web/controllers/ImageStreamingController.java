@@ -32,16 +32,6 @@ public class ImageStreamingController
 
 	@Autowired
 	private ImageService imageService;
-/*
-	@Autowired
-	@Qualifier("myConversionService")
-	private ConversionService conversionService;
-
-	@InitBinder
-	public void init( ServletRequestDataBinder binder ) {
-		binder.setConversionService( conversionService );
-	}
-	*/
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	public void view( @RequestParam(value = "aid", required = true) int applicationId,

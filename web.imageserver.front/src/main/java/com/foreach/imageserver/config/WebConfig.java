@@ -1,12 +1,14 @@
 package com.foreach.imageserver.config;
 
 import com.foreach.imageserver.web.interceptors.GlobalVariableInterceptor;
+import com.foreach.web.converter.EnumConverterFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -19,6 +21,17 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @ComponentScan(basePackages = "com.foreach.imageserver")
 public class WebConfig extends WebMvcConfigurerAdapter
 {
+	@Override
+	public void addInterceptors( InterceptorRegistry registry ) {
+		registry.addInterceptor( globalVariableInterceptor() );
+		registry.addInterceptor( cachingInterceptor() );
+	}
+
+	@Override
+	public void addFormatters( FormatterRegistry registry ) {
+		registry.addConverterFactory( new EnumConverterFactory() );
+	}
+
 	@Bean
 	public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer( @Value(
 			"classpath:/config/${environment.type}/common.properties") Resource defaultProperties, @Value("file:${user.home}/dev-configs/imageserver.local.properties") Resource localProperties ) {
@@ -28,12 +41,6 @@ public class WebConfig extends WebMvcConfigurerAdapter
 		propertySources.setIgnoreUnresolvablePlaceholders( true );
 
 		return propertySources;
-	}
-
-	@Override
-	public void addInterceptors( InterceptorRegistry registry ) {
-		registry.addInterceptor( globalVariableInterceptor() );
-		registry.addInterceptor( cachingInterceptor() );
 	}
 
 	@Bean
