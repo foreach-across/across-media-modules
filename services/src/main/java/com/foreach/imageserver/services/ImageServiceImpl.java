@@ -62,13 +62,19 @@ public class ImageServiceImpl implements ImageService
 			LOG.debug( "Requesting image {} with modifier {}", image.getId(), modifier );
 		}
 
-		ImageFile file = imageStoreService.getImageFile( image, modifier );
+		ImageModifier normalized = modifier.normalize( image.getDimensions() );
+
+		if ( LOG.isDebugEnabled() ) {
+			LOG.debug( "Requestion image {} with normalized modifier {}", image.getId(), normalized );
+		}
+
+		ImageFile file = imageStoreService.getImageFile( image, normalized );
 
 		if ( file == null ) {
 			ImageFile original = imageStoreService.getImageFile( image );
-			ImageFile modified = imageModificationService.apply( original, modifier );
+			ImageFile modified = imageModificationService.apply( original, normalized );
 
-			file = imageStoreService.saveImageFile( image, modifier, modified );
+			file = imageStoreService.saveImageFile( image, normalized, modified );
 		}
 
 		return file;

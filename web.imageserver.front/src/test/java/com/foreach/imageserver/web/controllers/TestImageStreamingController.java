@@ -65,7 +65,7 @@ public class TestImageStreamingController
 	}
 
 	@Test
-	public void requestValidOriginal() throws Exception {
+	public void requestValidImage() throws Exception {
 		Application application = new Application();
 		application.setId( 1 );
 		application.setActive( true );
@@ -89,14 +89,6 @@ public class TestImageStreamingController
 		assertEquals( imageFile.getImageType().getContentType(), mockResponse.getContentType() );
 		assertEquals( imageFile.getFileSize(), mockResponse.getContentLength() );
 		assertArrayEquals( contentBytes, mockResponse.getContentAsByteArray() );
-	}
-
-	public void requestValidCustomImage() {
-
-	}
-
-	public void requestInvalidCustomImage() {
-
 	}
 
 	@Configuration

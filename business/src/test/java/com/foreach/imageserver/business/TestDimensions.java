@@ -1,4 +1,4 @@
-package com.foreach.imageserver.business.image;
+package com.foreach.imageserver.business;
 
 import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.business.Fraction;

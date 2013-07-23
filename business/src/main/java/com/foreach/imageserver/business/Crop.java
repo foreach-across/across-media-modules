@@ -4,6 +4,16 @@ public class Crop
 {
 	private int x, y, width, height;
 
+	public Crop() {
+	}
+
+	public Crop( int x, int y, int width, int height ) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+
 	public int getX() {
 		return x;
 	}
@@ -34,6 +44,41 @@ public class Crop
 
 	public void setHeight( int height ) {
 		this.height = height;
+	}
+
+	public boolean isEmpty() {
+		return height <= 0 || width <= 0;
+	}
+
+	public Dimensions getDimensions() {
+		return new Dimensions( width, height );
+	}
+
+	/**
+	 * Snaps a crop to match with the dimensions specified (points exceeding dimensions are snapped to boundaries).
+	 */
+	public Crop normalize( Dimensions dimensions ) {
+		int leftX = this.x;
+		int leftY = this.y;
+		int rightX = leftX + this.width;
+		int rightY = leftY + this.height;
+
+		leftX = snap( leftX, dimensions.getWidth() );
+		leftY = snap( leftY, dimensions.getHeight() );
+		rightX = snap( rightX, dimensions.getWidth() );
+		rightY = snap( rightY, dimensions.getHeight() );
+
+		return new Crop( leftX, leftY, rightX - leftX, rightY - leftY );
+	}
+
+	private int snap( int pos, int max ) {
+		if ( pos < 0 ) {
+			return 0;
+		}
+		else if ( pos > max ) {
+			return max;
+		}
+		return pos;
 	}
 
 	@Override

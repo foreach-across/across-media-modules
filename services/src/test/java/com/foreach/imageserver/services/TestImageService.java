@@ -1,10 +1,6 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageModifier;
-import com.foreach.imageserver.business.ImageType;
-import com.foreach.imageserver.business.Dimensions;
+import com.foreach.imageserver.business.*;
 import com.foreach.imageserver.data.ImageDao;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import com.foreach.test.MockedLoader;
@@ -117,14 +113,22 @@ public class TestImageService
 	@Test
 	public void fetchImageFileThatExists() {
 		Image image = new Image();
-		ImageFile imageFile = new ImageFile( ImageType.JPEG, 0, null );
-		ImageModifier modifier = new ImageModifier();
+		image.setDimensions( new Dimensions( 100, 200 ) );
 
-		when( imageStoreService.getImageFile( image, modifier ) ).thenReturn( imageFile );
+		ImageFile imageFile = new ImageFile( ImageType.JPEG, 0, null );
+		ImageModifier modifier = mock( ImageModifier.class );
+
+		ImageModifier normalized = new ImageModifier();
+		normalized.setWidth( 20 );
+		normalized.setHeight( 20 );
+
+		when( modifier.normalize( image.getDimensions() ) ).thenReturn( normalized );
+		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( imageFile );
 
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
 		assertSame( imageFile, returned );
 
+		verify( modifier, times( 1 ) ).normalize( image.getDimensions() );
 		verify( imageStoreService, never() ).getImageFile( any( Image.class ) );
 		verify( imageModificationService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
 		verify( imageStoreService, never() ).saveImageFile( any( Image.class ), any( ImageModifier.class ),
@@ -134,16 +138,23 @@ public class TestImageService
 	@Test
 	public void fetchImageFileThatDoesNotExist() {
 		Image image = new Image();
-		ImageModifier modifier = new ImageModifier();
+		image.setDimensions( new Dimensions( 100, 200 ) );
+
+		ImageModifier modifier = mock( ImageModifier.class );
+
+		ImageModifier normalized = new ImageModifier();
+		normalized.setWidth( 20 );
+		normalized.setHeight( 20 );
 
 		ImageFile original = new ImageFile( ImageType.GIF, 0, null );
 		ImageFile renderedFile = new ImageFile( ImageType.JPEG, 0, null );
 		ImageFile storedFile = new ImageFile( ImageType.PNG, 0, null );
 
-		when( imageStoreService.getImageFile( image, modifier ) ).thenReturn( null );
+		when( modifier.normalize( image.getDimensions() ) ).thenReturn( normalized );
+		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( null );
 		when( imageStoreService.getImageFile( image ) ).thenReturn( original );
-		when( imageModificationService.apply( original, modifier ) ).thenReturn( renderedFile );
-		when( imageStoreService.saveImageFile( image, modifier, renderedFile ) ).thenReturn( storedFile );
+		when( imageModificationService.apply( original, normalized ) ).thenReturn( renderedFile );
+		when( imageStoreService.saveImageFile( image, normalized, renderedFile ) ).thenReturn( storedFile );
 
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
 
