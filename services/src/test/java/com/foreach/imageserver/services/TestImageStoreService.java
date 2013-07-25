@@ -26,6 +26,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.*;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -40,6 +42,9 @@ public class TestImageStoreService
 
 	@Autowired
 	private ImageStoreService imageStoreService;
+
+	@Autowired
+	private TempFileService tempFileService;
 
 	@BeforeClass
 	public static void createStorePaths() {
@@ -79,7 +84,8 @@ public class TestImageStoreService
 		image.setFilePath( "/2013/07/09/" );
 		image.setImageType( ImageType.JPEG );
 
-		saveAndVerify( image, null, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/2.jpeg" );
+		saveAndVerify( image, null, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/2.jpeg", false );
+		saveAndVerify( image, null, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/2.jpeg", true );
 	}
 
 	@Test
@@ -90,8 +96,10 @@ public class TestImageStoreService
 		image.setFilePath( "/2013/07/09/" );
 		image.setImageType( ImageType.JPEG );
 
-		saveAndVerify( image, null, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg" );
-		saveAndVerify( image, null, ImageTestData.SUNSET, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg" );
+		saveAndVerify( image, null, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg", false );
+		saveAndVerify( image, null, ImageTestData.EARTH, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg", true );
+		saveAndVerify( image, null, ImageTestData.SUNSET, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg", false );
+		saveAndVerify( image, null, ImageTestData.SUNSET, ORIGINAL_STORE, "/10/2013/07/09/3.jpeg", true );
 	}
 
 	@Test
@@ -106,10 +114,12 @@ public class TestImageStoreService
 		modifier.setWidth( 1600 );
 		modifier.setHeight( 200 );
 
-		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/6.1600x200.jpeg" );
+		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/6.1600x200.jpeg", false );
+		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/6.1600x200.jpeg", true );
 
 		modifier.setWidth( 0 );
-		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/6.0x200.jpeg" );
+		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/6.0x200.jpeg", false );
+		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/6.0x200.jpeg", true );
 	}
 
 	@Test
@@ -124,39 +134,56 @@ public class TestImageStoreService
 		modifier.setWidth( 1600 );
 		modifier.setHeight( 200 );
 
-		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg" );
-		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg" );
+		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg", false );
+		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg", true );
+		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg", false );
+		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg", true );
 	}
 
 	private void saveAndVerify( Image image,
 	                            ImageModifier modifier,
 	                            ImageTestData testData,
 	                            String path,
-	                            String expectedFileName ) throws Exception {
+	                            String expectedFileName,
+	                            boolean useTempFile ) throws Exception {
+		reset( tempFileService );
+
 		InputStream imageData = testData.getResourceAsStream();
 
 		File expectedFile = new File( path, expectedFileName );
 
-		ImageFile imageFile;
+		ImageFile savedImageFile;
+
+		ImageFile imageFileToSave = new ImageFile( image.getImageType(), testData.getFileSize(), imageData );
+
+		when( tempFileService.isTempFile( imageFileToSave ) ).thenReturn( useTempFile );
+		when( tempFileService.move( imageFileToSave, expectedFile ) ).thenReturn(
+				new ImageFile( image.getImageType(), testData.getFileSize(), imageData ) );
 
 		if ( modifier != null ) {
-			imageFile = imageStoreService.saveImageFile( image, modifier,
-			                                             new ImageFile( image.getImageType(), testData.getFileSize(),
-			                                                            imageData ) );
+			savedImageFile = imageStoreService.saveImage( image, modifier, imageFileToSave );
 		}
 		else {
-			imageFile = imageStoreService.saveImage( image, imageData );
+			savedImageFile = imageStoreService.saveImage( image, imageFileToSave );
 		}
 
-		assertEquals( testData.getImageType(), imageFile.getImageType() );
-		assertEquals( testData.getFileSize(), imageFile.getFileSize() );
+		verify( tempFileService, times( 1 ) ).isTempFile( imageFileToSave );
+		if ( !useTempFile ) {
+			verify( tempFileService, never() ).move( any( ImageFile.class ), any( File.class ) );
+		}
+		else {
+			verify( tempFileService, times( 1 ) ).move( imageFileToSave, expectedFile );
+		}
+
+		assertEquals( testData.getImageType(), savedImageFile.getImageType() );
+		assertEquals( testData.getFileSize(), savedImageFile.getFileSize() );
 		assertTrue( expectedFile.exists() );
 
 		FileInputStream fos = new FileInputStream( expectedFile );
 		assertTrue( IOUtils.contentEquals( testData.getResourceAsStream(), fos ) );
 		fos.close();
 
-		InputStream ios = imageFile.openContentStream();
+		InputStream ios = savedImageFile.openContentStream();
 		assertTrue( IOUtils.contentEquals( testData.getResourceAsStream(), ios ) );
 		ios.close();
 	}

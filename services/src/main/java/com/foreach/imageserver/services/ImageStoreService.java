@@ -14,9 +14,9 @@ public interface ImageStoreService
 
 	String generateFullImagePath( Image image, ImageModifier modifier );
 
-	ImageFile saveImage( Image image, InputStream imageData );
+	ImageFile saveImage( Image image, ImageFile imageFile );
 
-	ImageFile saveImageFile( Image image, ImageModifier modifier, ImageFile file );
+	ImageFile saveImage( Image image, ImageModifier modifier, ImageFile file );
 
 	void delete( Image image );
 

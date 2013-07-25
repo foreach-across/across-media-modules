@@ -63,7 +63,6 @@ public class TestHttpImageLookupRepository
 		RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage( webServer.imageUrl( imageTestData ) );
 
 		assertEquals( RepositoryLookupStatus.SUCCESS, lookupResult.getStatus() );
-		assertEquals( imageTestData.getDimensions(), lookupResult.getDimensions() );
 		assertEquals( imageTestData.getImageType(), lookupResult.getImageType() );
 		assertNotNull( lookupResult.getContent() );
 		assertTrue( IOUtils.contentEquals( getClass().getResourceAsStream( imageTestData.getResourcePath() ),

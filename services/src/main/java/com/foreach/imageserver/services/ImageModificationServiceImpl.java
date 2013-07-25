@@ -1,5 +1,6 @@
 package com.foreach.imageserver.services;
 
+import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
@@ -45,6 +46,11 @@ public class ImageModificationServiceImpl implements ImageModificationService
 				LOG.debug( "class: {} - priority: {}", transformer.getClass(), transformer.getPriority() );
 			}
 		}
+	}
+
+	@Override
+	public Dimensions calculateDimensions( ImageFile file ) {
+		return null;
 	}
 
 	@Override

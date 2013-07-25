@@ -35,6 +35,9 @@ public class TestImageService
 	private ImageModificationService imageModificationService;
 
 	@Autowired
+	private TempFileService tempFileService;
+
+	@Autowired
 	private ImageDao imageDao;
 
 	@Test
@@ -48,20 +51,25 @@ public class TestImageService
 
 	@Test
 	public void saveNewImage() {
+		Dimensions dimensions = new Dimensions( 1024, 768 );
+
 		Image newImage = new Image();
 		newImage.setApplicationId( 5 );
 		newImage.setKey( RandomStringUtils.random( 50 ) );
 
+		ImageFile tempFile = mock( ImageFile.class );
 		InputStream stream = mock( InputStream.class );
 
 		RepositoryLookupResult lookupResult = new RepositoryLookupResult();
 		lookupResult.setImageType( ImageType.PNG );
-		lookupResult.setDimensions( new Dimensions( 1024, 768 ) );
 		lookupResult.setContent( stream );
+
+		when( tempFileService.createImageFile( ImageType.PNG, stream ) ).thenReturn( tempFile );
+		when( imageModificationService.calculateDimensions( tempFile ) ).thenReturn( dimensions );
 
 		String expectedPath = RandomStringUtils.randomAlphanumeric( 20 );
 		when( imageStoreService.generateRelativeImagePath( newImage ) ).thenReturn( expectedPath );
-		when( imageStoreService.saveImage( newImage, stream ) ).thenReturn( new ImageFile( null, null, 5678L ) );
+		when( imageStoreService.saveImage( newImage, tempFile ) ).thenReturn( new ImageFile( null, null, 5678L ) );
 
 		imageService.save( newImage, lookupResult );
 
@@ -72,11 +80,13 @@ public class TestImageService
 		assertEquals( expectedPath, newImage.getFilePath() );
 		assertEquals( 5678, newImage.getFileSize() );
 		assertEquals( ImageType.PNG, newImage.getImageType() );
-		assertEquals( lookupResult.getDimensions(), newImage.getDimensions() );
+		assertEquals( dimensions, newImage.getDimensions() );
 	}
 
 	@Test
 	public void updateExistingImage() {
+		Dimensions dimensions = new Dimensions( 1024, 768 );
+
 		String existingPath = RandomStringUtils.randomAlphanumeric( 20 );
 
 		Image existing = new Image();
@@ -88,14 +98,17 @@ public class TestImageService
 		existing.setDimensions( new Dimensions( 1600, 1200 ) );
 		existing.setImageType( ImageType.JPEG );
 
+		ImageFile tempFile = mock( ImageFile.class );
 		InputStream stream = mock( InputStream.class );
 
 		RepositoryLookupResult lookupResult = new RepositoryLookupResult();
 		lookupResult.setImageType( ImageType.PNG );
-		lookupResult.setDimensions( new Dimensions( 1024, 768 ) );
 		lookupResult.setContent( stream );
 
-		when( imageStoreService.saveImage( existing, stream ) ).thenReturn( new ImageFile( null, null, 5678L ) );
+		when( tempFileService.createImageFile( ImageType.PNG, stream ) ).thenReturn( tempFile );
+		when( imageModificationService.calculateDimensions( tempFile ) ).thenReturn( dimensions );
+
+		when( imageStoreService.saveImage( existing, tempFile ) ).thenReturn( new ImageFile( null, null, 5678L ) );
 
 		imageService.save( existing, lookupResult );
 
@@ -107,7 +120,7 @@ public class TestImageService
 		assertEquals( existingPath, existing.getFilePath() );
 		assertEquals( 5678, existing.getFileSize() );
 		assertEquals( ImageType.PNG, existing.getImageType() );
-		assertEquals( lookupResult.getDimensions(), existing.getDimensions() );
+		assertEquals( dimensions, existing.getDimensions() );
 	}
 
 	@Test
@@ -131,8 +144,8 @@ public class TestImageService
 		verify( modifier, times( 1 ) ).normalize( image.getDimensions() );
 		verify( imageStoreService, never() ).getImageFile( any( Image.class ) );
 		verify( imageModificationService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
-		verify( imageStoreService, never() ).saveImageFile( any( Image.class ), any( ImageModifier.class ),
-		                                                    any( ImageFile.class ) );
+		verify( imageStoreService, never() ).saveImage( any( Image.class ), any( ImageModifier.class ),
+		                                                any( ImageFile.class ) );
 	}
 
 	@Test
@@ -154,7 +167,7 @@ public class TestImageService
 		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( null );
 		when( imageStoreService.getImageFile( image ) ).thenReturn( original );
 		when( imageModificationService.apply( original, normalized ) ).thenReturn( renderedFile );
-		when( imageStoreService.saveImageFile( image, normalized, renderedFile ) ).thenReturn( storedFile );
+		when( imageStoreService.saveImage( image, normalized, renderedFile ) ).thenReturn( storedFile );
 
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
 

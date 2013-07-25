@@ -47,6 +47,10 @@ public class ImageFile
 		}
 	}
 
+	protected File getPhysicalFile() {
+		return physicalFile;
+	}
+
 	@Override
 	public String toString() {
 		return "ImageFile{" +

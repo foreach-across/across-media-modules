@@ -25,6 +25,10 @@ public class ImageServiceImpl implements ImageService
 	@Autowired
 	private ImageModificationService imageModificationService;
 
+	@Autowired
+	private TempFileService tempFileService;
+
+	@Override
 	public Image getImageByKey( String key, int applicationId ) {
 		return imageDao.getImageByKey( key, applicationId );
 	}
@@ -32,8 +36,10 @@ public class ImageServiceImpl implements ImageService
 	@Transactional
 	@Override
 	public void save( Image image, RepositoryLookupResult lookupResult ) {
-		image.setDimensions( lookupResult.getDimensions() );
 		image.setImageType( lookupResult.getImageType() );
+
+		ImageFile tempFile = tempFileService.createImageFile( lookupResult.getImageType(), lookupResult.getContent() );
+		image.setDimensions( imageModificationService.calculateDimensions( tempFile ) );
 
 		boolean isInsert = isNewImage( image );
 
@@ -42,7 +48,7 @@ public class ImageServiceImpl implements ImageService
 			imageDao.insertImage( image );
 		}
 
-		ImageFile savedFile = imageStoreService.saveImage( image, lookupResult.getContent() );
+		ImageFile savedFile = imageStoreService.saveImage( image, tempFile );
 
 		image.setFileSize( savedFile.getFileSize() );
 
@@ -74,7 +80,7 @@ public class ImageServiceImpl implements ImageService
 			ImageFile original = imageStoreService.getImageFile( image );
 			ImageFile modified = imageModificationService.apply( original, normalized );
 
-			file = imageStoreService.saveImageFile( image, normalized, modified );
+			file = imageStoreService.saveImage( image, normalized, modified );
 		}
 
 		return file;

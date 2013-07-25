@@ -46,15 +46,8 @@ public class HttpImageLookupRepository implements ImageLookupRepository
 				if ( imageType == null ) {
 					throw new RuntimeException( "Unknown Content-Type: " + entity.getContentType() );
 				}
-
-				InputStream contentStream = entity.getContent();
-				byte[] content = IOUtils.toByteArray( contentStream );
-				IOUtils.closeQuietly( contentStream );
-
-				BufferedImage image = ImageIO.read( new ByteArrayInputStream( content ) );
-				result.setDimensions( new Dimensions( image.getWidth(), image.getHeight() ) );
 				result.setImageType( imageType );
-				result.setContent( new ByteArrayInputStream( content ) );
+				result.setContent( entity.getContent() );
 			}
 		}
 		catch ( UnknownHostException uhe ) {

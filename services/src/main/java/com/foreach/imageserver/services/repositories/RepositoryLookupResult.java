@@ -8,6 +8,7 @@ import java.io.InputStream;
 public final class RepositoryLookupResult
 {
 	private ImageType imageType;
+	@Deprecated
 	private Dimensions dimensions;
 	private RepositoryLookupStatus status;
 	private InputStream content;
@@ -20,10 +21,12 @@ public final class RepositoryLookupResult
 		this.status = status;
 	}
 
+	@Deprecated
 	public Dimensions getDimensions() {
 		return dimensions;
 	}
 
+	@Deprecated
 	public void setDimensions( Dimensions dimensions ) {
 		this.dimensions = dimensions;
 	}

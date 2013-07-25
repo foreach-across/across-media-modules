@@ -25,6 +25,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private final File variantBasePath;
 
 	@Autowired
+	private TempFileService tempFileService;
+
+	@Autowired
 	public ImageStoreServiceImpl( @Value("${store.original.path}") String originalBasePath,
 	                              @Value("${store.variant.path}") String variantBasePath ) {
 		this.originalBasePath = new File( originalBasePath );
@@ -46,19 +49,27 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	@Override
-	public ImageFile saveImage( Image image, InputStream imageData ) {
+	public ImageFile saveImage( Image image, ImageFile imageFile ) {
 		try {
 			File physical = new File( generateFullImagePath( image ) );
-			FileOutputStream fos = new FileOutputStream( physical );
 
-			try {
-				long contentLength = IOUtils.copy( imageData, fos );
-				return new ImageFile( image.getImageType(), physical, contentLength );
+			if ( tempFileService.isTempFile( imageFile ) ) {
+				return tempFileService.move( imageFile, physical );
 			}
-			finally {
-				fos.flush();
-				IOUtils.closeQuietly( fos );
-				IOUtils.closeQuietly( imageData );
+			else {
+				InputStream imageData = null;
+				FileOutputStream fos = new FileOutputStream( physical );
+
+				try {
+					imageData = imageFile.openContentStream();
+					long contentLength = IOUtils.copy( imageData, fos );
+					return new ImageFile( image.getImageType(), physical, contentLength );
+				}
+				finally {
+					fos.flush();
+					IOUtils.closeQuietly( fos );
+					IOUtils.closeQuietly( imageData );
+				}
 			}
 		}
 		catch ( Exception e ) {
@@ -68,21 +79,27 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	@Override
-	public ImageFile saveImageFile( Image image, ImageModifier modifier, ImageFile file ) {
+	public ImageFile saveImage( Image image, ImageModifier modifier, ImageFile file ) {
 		try {
 			File physical = new File( generateFullImagePath( image, modifier ) );
-			FileOutputStream fos = new FileOutputStream( physical );
 
-			InputStream imageData = file.openContentStream();
-
-			try {
-				long contentLength = IOUtils.copy( imageData, fos );
-				return new ImageFile( image.getImageType(), physical, contentLength );
+			if ( tempFileService.isTempFile( file ) ) {
+				return tempFileService.move( file, physical );
 			}
-			finally {
-				fos.flush();
-				IOUtils.closeQuietly( fos );
-				IOUtils.closeQuietly( imageData );
+			else {
+				FileOutputStream fos = new FileOutputStream( physical );
+
+				InputStream imageData = file.openContentStream();
+
+				try {
+					long contentLength = IOUtils.copy( imageData, fos );
+					return new ImageFile( image.getImageType(), physical, contentLength );
+				}
+				finally {
+					fos.flush();
+					IOUtils.closeQuietly( fos );
+					IOUtils.closeQuietly( imageData );
+				}
 			}
 		}
 		catch ( Exception e ) {
