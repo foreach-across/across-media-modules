@@ -1,15 +1,17 @@
 package com.foreach.imageserver.services;
 
+import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
-import com.foreach.imageserver.services.transformers.ImageTransformer;
-import com.foreach.imageserver.services.transformers.ImageTransformerPriority;
+import com.foreach.imageserver.services.transformers.*;
 import com.foreach.test.MockedLoader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +26,69 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(classes = { TestImageModificationService.TestConfig.class }, loader = MockedLoader.class)
-public class TestImageModificationService
+public abstract class TestImageModificationService<T extends ImageTransformerAction<Y>, Y>
 {
+	/**
+	 * Test routing of ImageModifyAction.
+	 */
+	public static class TestImageModificationServiceWithImageModifyAction extends TestImageModificationService<ImageModifyAction, ImageFile>
+	{
+		@Override
+		protected ActionTestItem<ImageModifyAction, ImageFile> createTestItem() {
+			return new ActionTestItem<ImageModifyAction, ImageFile>()
+			{
+				private ImageFile original = new ImageFile( ImageType.JPEG, 0, null );
+				private ImageFile modified = new ImageFile( ImageType.PNG, 10, null );
+				private ImageModifier modifier = new ImageModifier();
+
+				@Override
+				public ImageModifyAction getAction() {
+					return new ImageModifyAction( original, modifier );
+				}
+
+				@Override
+				public ImageFile execute() {
+					return modificationService.apply( original, modifier );
+				}
+
+				@Override
+				public ImageFile getExpectedValue() {
+					return modified;
+				}
+			};
+		}
+	}
+
+	/**
+	 * Test routing of ImageCalculateDimensionsAction.
+	 */
+	public static class TestImageModificationServiceWithImageCalculateDimensionsAction extends TestImageModificationService<ImageCalculateDimensionsAction, Dimensions>
+	{
+		@Override
+		protected ActionTestItem<ImageCalculateDimensionsAction, Dimensions> createTestItem() {
+			return new ActionTestItem<ImageCalculateDimensionsAction, Dimensions>()
+			{
+				private Dimensions result = new Dimensions( 333, 666 );
+				private ImageFile original = new ImageFile( ImageType.JPEG, 0, null );
+
+				@Override
+				public ImageCalculateDimensionsAction getAction() {
+					return new ImageCalculateDimensionsAction( original );
+				}
+
+				@Override
+				public Dimensions execute() {
+					return modificationService.calculateDimensions( original );
+				}
+
+				@Override
+				public Dimensions getExpectedValue() {
+					return result;
+				}
+			};
+		}
+	}
+
 	@Autowired
 	private ImageTransformer transformerOne;
 
@@ -36,136 +99,191 @@ public class TestImageModificationService
 	private ImageTransformer transformerThree;
 
 	@Autowired
-	private ImageModificationService modificationService;
+	protected ImageModificationService modificationService;
 
-	private ImageFile original, modified;
-	private ImageModifier modifier;
+	private ActionTestItem<T, Y> actionTestItem;
+
+	public static interface ActionTestItem<T extends ImageTransformerAction<Y>, Y>
+	{
+		T getAction();
+
+		Y execute();
+
+		Y getExpectedValue();
+	}
 
 	@Before
-	public void createTestInstances() {
-		original = new ImageFile( ImageType.JPEG, 0, null );
-		modified = new ImageFile( ImageType.PNG, 10, null );
-		modifier = new ImageModifier();
+	public void prepareForTest() throws Exception {
+		actionTestItem = createTestItem();
 	}
+
+	protected abstract ActionTestItem<T, Y> createTestItem();
 
 	@Test
 	public void ifNoTransformersCanBeAppliedThenExceptionShouldBeThrown() {
-		when( transformerTwo.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.UNABLE );
+		final ImageTransformerAction action = actionTestItem.getAction();
+		when( transformerTwo.canExecute( action ) ).thenReturn( ImageTransformerPriority.UNABLE );
 
 		boolean exceptionThrown = false;
 
 		try {
-			modificationService.apply( original, modifier );
+			actionTestItem.execute();
 		}
 		catch ( ImageModificationException ime ) {
 			exceptionThrown = true;
 		}
 
 		assertTrue( exceptionThrown );
-		verify( transformerOne, times( 1 ) ).canApply( original, modifier );
-		verify( transformerTwo, times( 1 ) ).canApply( original, modifier );
-		verify( transformerThree, times( 1 ) ).canApply( original, modifier );
+		verify( transformerOne, times( 1 ) ).canExecute( action );
+		verify( transformerTwo, times( 1 ) ).canExecute( action );
+		verify( transformerThree, times( 1 ) ).canExecute( action );
 	}
 
 	@Test
 	public void ifOnlyOneTransformerAvailableThatOneIsUsed() {
-		when( transformerOne.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
-		when( transformerOne.apply( original, modifier ) ).thenReturn( modified );
+		ImageTransformerAction action = actionTestItem.getAction();
 
-		ImageFile applied = modificationService.apply( original, modifier );
+		when( transformerOne.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		doAnswer( new Answer()
+		{
+			@Override
+			public Object answer( InvocationOnMock invocation ) throws Throwable {
+				( (T) invocation.getArguments()[0] ).setResult( actionTestItem.getExpectedValue() );
+				return null;
+			}
+		} ).when( transformerOne ).execute( action );
 
-		assertSame( modified, applied );
-		verify( transformerTwo, never() ).apply( original, modifier );
-		verify( transformerThree, never() ).apply( original, modifier );
+		Object applied = actionTestItem.execute();
+
+		assertSame( actionTestItem.getExpectedValue(), applied );
+		verify( transformerTwo, never() ).execute( action );
+		verify( transformerThree, never() ).execute( action );
 	}
 
 	@Test
-	public void IfMultipleTransformersThenFirstOneThatSucceedsIsReturned() {
-		when( transformerOne.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
-		when( transformerThree.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
-		when( transformerThree.apply( original, modifier ) ).thenReturn( modified );
+	public void ifMultipleTransformersThenFirstOneThatSucceedsIsReturned() {
+		ImageTransformerAction action = actionTestItem.getAction();
 
-		ImageFile applied = modificationService.apply( original, modifier );
+		when( transformerOne.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		when( transformerThree.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		doAnswer( new Answer()
+		{
+			@Override
+			public Object answer( InvocationOnMock invocation ) throws Throwable {
+				( (T) invocation.getArguments()[0] ).setResult( actionTestItem.getExpectedValue() );
+				return null;
+			}
+		} ).when( transformerThree ).execute( action );
 
-		assertSame( modified, applied );
-		verify( transformerOne, never() ).apply( original, modifier );
-		verify( transformerTwo, never() ).apply( original, modifier );
+		Object applied = actionTestItem.execute();
+
+		assertSame( actionTestItem.getExpectedValue(), applied );
+		verify( transformerOne, never() ).execute( action );
+		verify( transformerTwo, never() ).execute( action );
 	}
 
 	@Test
 	public void multipleTransformersAreTriedInOrder() {
-		when( transformerOne.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
-		when( transformerTwo.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
-		when( transformerThree.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		ImageTransformerAction action = actionTestItem.getAction();
 
-		when( transformerThree.apply( original, modifier ) ).thenReturn( null );
-		when( transformerTwo.apply( original, modifier ) ).thenThrow( new RuntimeException() );
-		when( transformerOne.apply( original, modifier ) ).thenReturn( modified );
+		when( transformerOne.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		when( transformerTwo.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		when( transformerThree.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
 
-		ImageFile applied = modificationService.apply( original, modifier );
+		doThrow( new RuntimeException() ).when( transformerTwo ).execute( action );
 
-		assertSame( modified, applied );
-		verify( transformerOne, times( 1 ) ).apply( original, modifier );
-		verify( transformerTwo, times( 1 ) ).apply( original, modifier );
-		verify( transformerThree, times( 1 ) ).apply( original, modifier );
+		doAnswer( new Answer()
+		{
+			@Override
+			public Object answer( InvocationOnMock invocation ) throws Throwable {
+				( (T) invocation.getArguments()[0] ).setResult( actionTestItem.getExpectedValue() );
+				return null;
+			}
+		} ).when( transformerOne ).execute( action );
+
+		Object applied = actionTestItem.execute();
+
+		assertSame( actionTestItem.getExpectedValue(), applied );
+		verify( transformerOne, times( 1 ) ).execute( action );
+		verify( transformerTwo, times( 1 ) ).execute( action );
+		verify( transformerThree, times( 1 ) ).execute( action );
 	}
 
 	@Test
-	public void preferredTransformersComesBeforeFallback() {
-		when( transformerOne.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
-		when( transformerTwo.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
-		when( transformerThree.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.FALLBACK );
+	public void preferredTransformersComeBeforeFallback() {
+		ImageTransformerAction action = actionTestItem.getAction();
 
-		when( transformerOne.apply( original, modifier ) ).thenReturn( modified );
+		when( transformerOne.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		when( transformerTwo.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		when( transformerThree.canExecute( action ) ).thenReturn( ImageTransformerPriority.FALLBACK );
 
-		ImageFile applied = modificationService.apply( original, modifier );
+		doAnswer( new Answer()
+		{
+			@Override
+			public Object answer( InvocationOnMock invocation ) throws Throwable {
+				( (T) invocation.getArguments()[0] ).setResult( actionTestItem.getExpectedValue() );
+				return null;
+			}
+		} ).when( transformerOne ).execute( action );
 
-		assertSame( modified, applied );
-		verify( transformerTwo, times(1) ).apply( original, modifier );
-		verify( transformerThree, never() ).apply( original, modifier );
+		Object applied = actionTestItem.execute();
+
+		assertSame( actionTestItem.getExpectedValue(), applied );
+		verify( transformerTwo, times( 1 ) ).execute( action );
+		verify( transformerThree, never() ).execute( action );
 	}
 
 	@Test
 	public void preferredTransformerIsNotRequired() {
-		when( transformerOne.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.FALLBACK );
-		when( transformerTwo.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.FALLBACK );
-		when( transformerThree.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.FALLBACK );
+		ImageTransformerAction action = actionTestItem.getAction();
 
-		when( transformerThree.apply( original, modifier ) ).thenReturn( null );
-		when( transformerTwo.apply( original, modifier ) ).thenThrow( new RuntimeException() );
-		when( transformerOne.apply( original, modifier ) ).thenReturn( modified );
+		when( transformerOne.canExecute( action ) ).thenReturn( ImageTransformerPriority.FALLBACK );
+		when( transformerTwo.canExecute( action ) ).thenReturn( ImageTransformerPriority.FALLBACK );
+		when( transformerThree.canExecute( action ) ).thenReturn( ImageTransformerPriority.FALLBACK );
 
-		ImageFile applied = modificationService.apply( original, modifier );
+		doThrow( new RuntimeException() ).when( transformerTwo ).execute( action );
 
-		assertSame( modified, applied );
-		verify( transformerOne, times( 1 ) ).apply( original, modifier );
-		verify( transformerTwo, times( 1 ) ).apply( original, modifier );
-		verify( transformerThree, times( 1 ) ).apply( original, modifier );
+		doAnswer( new Answer()
+		{
+			@Override
+			public Object answer( InvocationOnMock invocation ) throws Throwable {
+				( (T) invocation.getArguments()[0] ).setResult( actionTestItem.getExpectedValue() );
+				return null;
+			}
+		} ).when( transformerOne ).execute( action );
+
+		Object applied = actionTestItem.execute();
+
+		assertSame( actionTestItem.getExpectedValue(), applied );
+		verify( transformerOne, times( 1 ) ).execute( action );
+		verify( transformerTwo, times( 1 ) ).execute( action );
+		verify( transformerThree, times( 1 ) ).execute( action );
 	}
 
 	@Test
 	public void ifAllTransformersFailThenExceptionShouldBeThrown() {
-		when( transformerOne.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
-		when( transformerTwo.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
-		when( transformerThree.canApply( original, modifier ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		ImageTransformerAction action = actionTestItem.getAction();
 
-		when( transformerThree.apply( original, modifier ) ).thenReturn( null );
-		when( transformerTwo.apply( original, modifier ) ).thenThrow( new RuntimeException() );
-		when( transformerOne.apply( original, modifier ) ).thenThrow( new RuntimeException() );
+		when( transformerOne.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		when( transformerTwo.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		when( transformerThree.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+
+		doThrow( new RuntimeException() ).when( transformerTwo ).execute( action );
+		doThrow( new RuntimeException() ).when( transformerOne ).execute( action );
 
 		boolean exceptionThrown = false;
 
 		try {
-			modificationService.apply( original, modifier );
+			actionTestItem.execute();
 		}
 		catch ( ImageModificationException ime ) {
 			exceptionThrown = true;
 		}
 
 		assertTrue( exceptionThrown );
-		verify( transformerOne, times( 1 ) ).apply( original, modifier );
-		verify( transformerTwo, times( 1 ) ).apply( original, modifier );
-		verify( transformerThree, times( 1 ) ).apply( original, modifier );
+		verify( transformerOne, times( 1 ) ).execute( action );
+		verify( transformerTwo, times( 1 ) ).execute( action );
+		verify( transformerThree, times( 1 ) ).execute( action );
 	}
 
 	@Configuration

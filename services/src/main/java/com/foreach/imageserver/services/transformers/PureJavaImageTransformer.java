@@ -1,7 +1,10 @@
 package com.foreach.imageserver.services.transformers;
 
+import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
+import com.foreach.imageserver.services.exceptions.ImageModificationException;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 @org.springframework.stereotype.Component
@@ -24,13 +28,42 @@ public class PureJavaImageTransformer implements ImageTransformer
 	private static final Logger LOG = LoggerFactory.getLogger( PureJavaImageTransformer.class );
 
 	@Override
-	public ImageTransformerPriority canApply( ImageFile imageFile, ImageModifier modifier ) {
+	public ImageTransformerPriority canExecute( ImageTransformerAction action ) {
 		return ImageTransformerPriority.FALLBACK;
 	}
 
 	@Override
-	public ImageFile apply( ImageFile original, ImageModifier modifier ) {
+	public void execute( ImageTransformerAction action ) {
+		if ( action instanceof ImageModifyAction ) {
+			executeModification( (ImageModifyAction) action );
+		}
+		else if ( action instanceof ImageCalculateDimensionsAction ) {
+			calculateDimensions( (ImageCalculateDimensionsAction) action );
+		}
+	}
+
+	private void calculateDimensions( ImageCalculateDimensionsAction action ) {
+		InputStream stream = null;
 		try {
+			stream = action.getImageFile().openContentStream();
+
+			BufferedImage image = ImageIO.read( stream );
+			action.setResult( new Dimensions( image.getWidth(), image.getHeight() ) );
+		}
+		catch ( Exception e ) {
+			LOG.error( "Failed to calculate image dimensions {}: {}", action, e );
+			throw new ImageModificationException( e );
+		}
+		finally {
+			IOUtils.closeQuietly( stream );
+		}
+	}
+
+	private void executeModification( ImageModifyAction action ) {
+		try {
+			ImageFile original = action.getOriginal();
+			ImageModifier modifier = action.getModifier();
+
 			BufferedImage bufferedImage = readImage( new MemoryCacheImageInputStream( original.openContentStream() ) );
 
 			bufferedImage = getScaledInstance( bufferedImage, modifier.getWidth(), modifier.getHeight(),
@@ -42,13 +75,12 @@ public class PureJavaImageTransformer implements ImageTransformer
 
 			byte[] content = os.toByteArray();
 
-			return new ImageFile( original.getImageType(), content.length, new ByteArrayInputStream( content ) );
+			action.setResult(
+					new ImageFile( original.getImageType(), content.length, new ByteArrayInputStream( content ) ) );
 		}
 		catch ( Exception e ) {
 			LOG.error( "exception applying transform {} ", e );
 		}
-
-		return null;
 	}
 
 	private static BufferedImage readImage( ImageInputStream is ) throws IOException {
@@ -80,11 +112,11 @@ public class PureJavaImageTransformer implements ImageTransformer
 		}
 	}
 
-	public BufferedImage getScaledInstance( BufferedImage img,
-	                                        int targetWidth,
-	                                        int targetHeight,
-	                                        Object interpolationHint,
-	                                        boolean preserveAlpha ) {
+	private BufferedImage getScaledInstance( BufferedImage img,
+	                                         int targetWidth,
+	                                         int targetHeight,
+	                                         Object interpolationHint,
+	                                         boolean preserveAlpha ) {
 		boolean hasPossibleAlphaChannel = img.getTransparency() != Transparency.OPAQUE;
 
 		// rescale while ignoring the preserveAlpha flag, otherwise we lose the transparency at this point
@@ -113,7 +145,7 @@ public class PureJavaImageTransformer implements ImageTransformer
 	}
 
 	// add white background if we don't want to preserve the alpha channel
-	public BufferedImage getFlattenedBufferedImageWithWhiteBG( BufferedImage result ) {
+	private BufferedImage getFlattenedBufferedImageWithWhiteBG( BufferedImage result ) {
 		if ( result.getTransparency() == Transparency.OPAQUE ) {
 			// no alpha channel, so no need to transform anything
 			return result;

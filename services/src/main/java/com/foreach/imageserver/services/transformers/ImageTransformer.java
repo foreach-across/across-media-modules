@@ -6,24 +6,22 @@ import com.foreach.imageserver.business.ImageModifier;
 public interface ImageTransformer
 {
 	/**
-	 * Checks if the instance can execute a certain modification (without actually doing it)
+	 * Checks if the instance can execute a certain action (without actually doing it)
 	 * and returns the corresponding priority enum value.
 	 *
-	 * @param original Original file to be modified.
-	 * @param modifier Modification to be done.
+	 * @param action ImageTransformerAction to execute.
 	 * @return ImageTransformerPriority value
 	 */
-	ImageTransformerPriority canApply( ImageFile original, ImageModifier modifier );
+	ImageTransformerPriority canExecute( ImageTransformerAction action );
 
 	/**
-	 * Applies the actual modification on an image.  If the canApply() method is implemented
-	 * correctly, the actual apply() can rely on only being called if the canApply() did not return UNABLE.
+	 * Applies the actual modification on an image.  If the canExecute() method is implemented
+	 * correctly, the actual execute() can rely on only being called if the canExecute() did not return UNABLE.
+	 * After execution the result property will be set on the action instance.
 	 *
-	 * @param original Original file to be modified.
-	 * @param modifier Modification to be done.
-	 * @return ImageFile with the modified image
+	 * @param action ImageTransformerAction to execute.
 	 */
-	ImageFile apply( ImageFile original, ImageModifier modifier );
+	void execute( ImageTransformerAction action );
 
 	/**
 	 * Determines the preferred order into which this transformer is applied, if it can

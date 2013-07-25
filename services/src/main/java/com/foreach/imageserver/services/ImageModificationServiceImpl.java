@@ -4,8 +4,7 @@ import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
-import com.foreach.imageserver.services.transformers.ImageTransformer;
-import com.foreach.imageserver.services.transformers.ImageTransformerPriority;
+import com.foreach.imageserver.services.transformers.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,16 +49,20 @@ public class ImageModificationServiceImpl implements ImageModificationService
 
 	@Override
 	public Dimensions calculateDimensions( ImageFile file ) {
-		return null;
+		return execute( new ImageCalculateDimensionsAction( file ) );
 	}
 
 	@Override
 	public ImageFile apply( ImageFile original, ImageModifier modifier ) {
+		return execute( new ImageModifyAction( original, modifier ) );
+	}
+
+	private <T> T execute( ImageTransformerAction<T> action ) {
 		List<ImageTransformer> transformers = new LinkedList<ImageTransformer>();
 		List<ImageTransformer> fallback = new LinkedList<ImageTransformer>();
 
 		for ( ImageTransformer candidate : transformerList ) {
-			ImageTransformerPriority priority = candidate.canApply( original, modifier );
+			ImageTransformerPriority priority = candidate.canExecute( action );
 
 			if ( priority != null && priority != ImageTransformerPriority.UNABLE ) {
 				if ( priority == ImageTransformerPriority.PREFERRED ) {
@@ -74,30 +77,29 @@ public class ImageModificationServiceImpl implements ImageModificationService
 		transformers.addAll( fallback );
 
 		if ( transformers.isEmpty() ) {
-			LOG.error( "No possible transformer to modify image {} with {}", original, modifier );
+			LOG.error( "No possible transformer for action {}", action );
 			throw new ImageModificationException( "No valid transformer for image modification" );
 		}
 
 		for ( ImageTransformer transformer : transformers ) {
 			try {
-				ImageFile result = transformer.apply( original, modifier );
+				transformer.execute( action );
 
+				T result = action.getResult();
 				if ( result != null ) {
 					return result;
 				}
 				else {
-					LOG.warn(
-							"ImageTransformer {} said it could handle modification {} on image {}, but it returned empty result",
-							transformer, modifier, original );
+					LOG.warn( "ImageTransformer {} said it could handle action {}, but it returned empty result",
+					          transformer, action );
 				}
 			}
 			catch ( Exception e ) {
-				LOG.warn( "ImageTransformer {} threw exception on handling modification {} on image {}: {}",
-				          transformer, modifier, original, e );
+				LOG.warn( "ImageTransformer {} threw exception on handling action {}: {}", transformer, action, e );
 			}
 		}
 
-		LOG.error( "All transformers failed trying to modify image {} with {}", original, modifier );
+		LOG.error( "All transformers failed trying to execute action {}", action );
 		throw new ImageModificationException( "All transformers failed trying to apply image modification" );
 	}
 }
