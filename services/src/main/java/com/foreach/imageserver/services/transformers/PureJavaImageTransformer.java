@@ -3,6 +3,7 @@ package com.foreach.imageserver.services.transformers;
 import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
+import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -29,6 +30,15 @@ public class PureJavaImageTransformer implements ImageTransformer
 
 	@Override
 	public ImageTransformerPriority canExecute( ImageTransformerAction action ) {
+		ImageType imageType = action.getImageFile().getImageType();
+
+		if ( imageType == ImageType.JPEG || imageType == ImageType.GIF || imageType == ImageType.PNG ) {
+			return ImageTransformerPriority.PREFERRED;
+		}
+		else if ( imageType == ImageType.SVG || imageType == ImageType.EPS || imageType == ImageType.PDF ) {
+			return ImageTransformerPriority.UNABLE;
+		}
+
 		return ImageTransformerPriority.FALLBACK;
 	}
 
@@ -61,7 +71,7 @@ public class PureJavaImageTransformer implements ImageTransformer
 
 	private void executeModification( ImageModifyAction action ) {
 		try {
-			ImageFile original = action.getOriginal();
+			ImageFile original = action.getImageFile();
 			ImageModifier modifier = action.getModifier();
 
 			BufferedImage bufferedImage = readImage( new MemoryCacheImageInputStream( original.openContentStream() ) );

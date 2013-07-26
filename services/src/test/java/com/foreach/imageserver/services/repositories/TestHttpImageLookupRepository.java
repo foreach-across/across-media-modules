@@ -50,13 +50,10 @@ public class TestHttpImageLookupRepository
 	}
 
 	@Test
-	public void getImageSunset() throws Exception {
-		getValidImage( ImageTestData.SUNSET );
-	}
-
-	@Test
-	public void getImageEarth() throws Exception {
-		getValidImage( ImageTestData.EARTH );
+	public void getImages() throws Exception {
+		for ( ImageTestData image : ImageTestData.values() ) {
+			getValidImage( image );
+		}
 	}
 
 	private void getValidImage( ImageTestData imageTestData ) throws Exception {

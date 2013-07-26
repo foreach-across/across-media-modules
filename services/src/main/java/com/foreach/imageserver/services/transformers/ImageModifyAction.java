@@ -5,16 +5,11 @@ import com.foreach.imageserver.business.ImageModifier;
 
 public class ImageModifyAction extends ImageTransformerAction<ImageFile>
 {
-	private final ImageFile original;
 	private final ImageModifier modifier;
 
 	public ImageModifyAction( ImageFile original, ImageModifier modifier ) {
-		this.original = original;
+		super( original );
 		this.modifier = modifier;
-	}
-
-	public ImageFile getOriginal() {
-		return original;
 	}
 
 	public ImageModifier getModifier() {
@@ -29,13 +24,13 @@ public class ImageModifyAction extends ImageTransformerAction<ImageFile>
 		if ( o == null || getClass() != o.getClass() ) {
 			return false;
 		}
+		if ( !super.equals( o ) ) {
+			return false;
+		}
 
 		ImageModifyAction that = (ImageModifyAction) o;
 
-		if ( !modifier.equals( that.modifier ) ) {
-			return false;
-		}
-		if ( !original.equals( that.original ) ) {
+		if ( modifier != null ? !modifier.equals( that.modifier ) : that.modifier != null ) {
 			return false;
 		}
 
@@ -44,15 +39,15 @@ public class ImageModifyAction extends ImageTransformerAction<ImageFile>
 
 	@Override
 	public int hashCode() {
-		int result = original.hashCode();
-		result = 31 * result + modifier.hashCode();
+		int result = super.hashCode();
+		result = 31 * result + ( modifier != null ? modifier.hashCode() : 0 );
 		return result;
 	}
 
 	@Override
 	public String toString() {
 		return "ImageModifyAction{" +
-				"original=" + original +
+				"original=" + getImageFile() +
 				", modifier=" + modifier +
 				'}';
 	}

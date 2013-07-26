@@ -83,6 +83,10 @@ public class ImageModificationServiceImpl implements ImageModificationService
 
 		for ( ImageTransformer transformer : transformers ) {
 			try {
+				if ( LOG.isDebugEnabled() ) {
+					LOG.debug( "Using ImageTransformer {} for action {}", transformer, action );
+				}
+
 				transformer.execute( action );
 
 				T result = action.getResult();

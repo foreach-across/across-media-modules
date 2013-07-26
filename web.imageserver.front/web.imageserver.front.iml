@@ -72,6 +72,7 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.2.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.2.4" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.6" level="project" />
+    <orderEntry type="library" name="Maven: org.im4java:im4java:1.4.0" level="project" />
     <orderEntry type="module" module-name="testUtils" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="library" name="Maven: com.foreach.libs:common-web:0.6-SNAPSHOT" level="project" />

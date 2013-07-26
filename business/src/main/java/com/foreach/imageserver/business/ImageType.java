@@ -7,13 +7,18 @@ public enum ImageType implements IdLookup<String>
 {
 	JPEG( "image/jpeg", "jpeg" ),
 	PNG( "image/png", "png" ),
-	GIF( "image/gif", "gif" );
+	GIF( "image/gif", "gif" ),
+	SVG( "image/svg+xml", "svg" ),
+	EPS( "application/postscript", "eps", "image/eps", "image/x-eps", "application/eps", "application/x-eps" ),
+	PDF( "application/pdf", "pdf", "application/x-pdf" );
 
 	private String contentType, extension;
+	private String[] alternativeContentTypes;
 
-	private ImageType( String contentType, String extension ) {
+	private ImageType( String contentType, String extension, String... alternativeContentTypes ) {
 		this.contentType = contentType;
 		this.extension = extension;
+		this.alternativeContentTypes = alternativeContentTypes;
 	}
 
 	public String getContentType() {
@@ -33,6 +38,11 @@ public enum ImageType implements IdLookup<String>
 		for ( ImageType imageType : values() ) {
 			if ( StringUtils.equalsIgnoreCase( imageType.getContentType(), contentType ) ) {
 				return imageType;
+			}
+			for ( String alternative : imageType.alternativeContentTypes ) {
+				if ( StringUtils.equalsIgnoreCase( alternative, contentType ) ) {
+					return imageType;
+				}
 			}
 		}
 		return null;

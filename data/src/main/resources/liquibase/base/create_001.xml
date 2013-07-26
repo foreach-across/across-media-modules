@@ -39,7 +39,7 @@
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="imagekey" type="varchar(500)">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 			<column name="applicationid" type="int">
 				<constraints nullable="false" references="Application(id)" foreignKeyName="fk_application_id"/>
@@ -68,7 +68,7 @@
 				indexName="ix_image_imagekey_applicationid"
 				tableName="image"
 				unique="true">
-			<column name="applicationid" type="int" />
+			<column name="applicationid" type="int"/>
 			<column name="imagekey" type="varchar(500)"/>
 		</createIndex>
 	</changeSet>
@@ -86,6 +86,22 @@
 		<insert tableName="imagetype">
 			<column name="id">gif</column>
 			<column name="contenttype">image/gif</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="201307261349" author="arne">
+		<comment>Insert svg/eps/pdf image types</comment>
+		<insert tableName="imagetype">
+			<column name="id">svg</column>
+			<column name="contenttype">image/svg+xml</column>
+		</insert>
+		<insert tableName="imagetype">
+			<column name="id">eps</column>
+			<column name="contenttype">image/eps</column>
+		</insert>
+		<insert tableName="imagetype">
+			<column name="id">pdf</column>
+			<column name="contenttype">application/pdf</column>
 		</insert>
 	</changeSet>
 </databaseChangeLog>

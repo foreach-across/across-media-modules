@@ -1,25 +1,41 @@
 package com.foreach.imageserver.services.transformers;
 
-import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.services.ImageTestData;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
-public class TestPureJavaImageTransformer
+public class TestPureJavaImageTransformer extends AbstractImageTransformerTest
 {
-	private PureJavaImageTransformer transformer = new PureJavaImageTransformer();
+	@Override
+	protected ImageTransformer createTransformer() {
+		return new PureJavaImageTransformer();
+	}
 
 	@Test
-	public void calculateDimensions() {
-		ImageTestData testImage = ImageTestData.EARTH;
+	public void dimensionsCalculatedOk() {
+		dimensions( ImageTestData.EARTH, ImageTransformerPriority.PREFERRED, true );
+		dimensions( ImageTestData.SUNSET, ImageTransformerPriority.PREFERRED, true );
+		dimensions( ImageTestData.HIGH_RES, ImageTransformerPriority.PREFERRED, true );
+		dimensions( ImageTestData.ICE_ROCK, ImageTransformerPriority.PREFERRED, true );
+		dimensions( ImageTestData.KAAIMAN_JPEG, ImageTransformerPriority.PREFERRED, true );
+		dimensions( ImageTestData.KAAIMAN_GIF, ImageTransformerPriority.PREFERRED, true );
+		dimensions( ImageTestData.KAAIMAN_PNG, ImageTransformerPriority.PREFERRED, true );
+		dimensions( ImageTestData.TEST_PNG, ImageTransformerPriority.PREFERRED, true );
+		dimensions( ImageTestData.TEST_TRANSPARENT_PNG, ImageTransformerPriority.PREFERRED, true );
+	}
 
-		ImageFile imageFile =
-				new ImageFile( testImage.getImageType(), testImage.getFileSize(), testImage.getResourceAsStream() );
-		ImageCalculateDimensionsAction action = new ImageCalculateDimensionsAction( imageFile );
+	@Test
+	public void dimensionsCalculationFailures() {
+		dimensions( ImageTestData.CMYK_COLOR, ImageTransformerPriority.PREFERRED, false );
+	}
 
-		transformer.execute( action );
-
-		assertEquals( testImage.getDimensions(), action.getResult() );
+	@Test
+	public void cantCalculateDimensions() {
+		dimensions( ImageTestData.KAAIMAN_SVG, ImageTransformerPriority.UNABLE, false );
+		dimensions( ImageTestData.KAAIMAN_EPS, ImageTransformerPriority.UNABLE, false );
+		dimensions( ImageTestData.TEST_EPS, ImageTransformerPriority.UNABLE, false );
+		dimensions( ImageTestData.BRUXELLES_EPS, ImageTransformerPriority.UNABLE, false );
+		dimensions( ImageTestData.BRUXELLES_ECHO_EPS, ImageTransformerPriority.UNABLE, false );
+		dimensions( ImageTestData.SINGLE_PAGE_PDF, ImageTransformerPriority.UNABLE, false );
+		dimensions( ImageTestData.MULTI_PAGE_PDF, ImageTransformerPriority.UNABLE, false );
 	}
 }
