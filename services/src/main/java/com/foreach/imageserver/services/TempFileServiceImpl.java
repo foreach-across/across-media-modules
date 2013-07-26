@@ -29,10 +29,8 @@ public class TempFileServiceImpl implements TempFileService
 
 		LOG.info( "Temp file store created: {}", tempDir.getAbsolutePath() );
 
-		if ( !tempDir.exists() ) {
-			if ( tempDir.mkdirs() ) {
-				LOG.info( "Temporary directory created: {}", tempDir.getAbsolutePath() );
-			}
+		if ( !tempDir.exists() && tempDir.mkdirs() ) {
+			LOG.info( "Temporary directory created: {}", tempDir.getAbsolutePath() );
 		}
 	}
 
@@ -111,6 +109,7 @@ public class TempFileServiceImpl implements TempFileService
 			super( imageType, physicalFile );
 		}
 
+		@SuppressWarnings("all")
 		public File getPhysicalFile() {
 			return super.getPhysicalFile();
 		}

@@ -57,9 +57,10 @@ public class ImageStreamingController
 		response.setContentType( imageFile.getImageType().getContentType() );
 		response.setContentLength( Long.valueOf( imageFile.getFileSize() ).intValue() );
 
-		InputStream content = imageFile.openContentStream();
+		InputStream content = null;
 
 		try {
+			content = imageFile.openContentStream();
 			IOUtils.copy( content, response.getOutputStream() );
 		}
 		catch ( IOException ioe ) {

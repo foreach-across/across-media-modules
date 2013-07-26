@@ -38,13 +38,8 @@ public class ImageFile
 		return fileSize;
 	}
 
-	public InputStream openContentStream() {
-		try {
-			return content != null ? content : new FileInputStream( physicalFile );
-		}
-		catch ( IOException ioe ) {
-			throw new RuntimeException( ioe );
-		}
+	public InputStream openContentStream() throws IOException {
+		return content != null ? content : new FileInputStream( physicalFile );
 	}
 
 	protected File getPhysicalFile() {

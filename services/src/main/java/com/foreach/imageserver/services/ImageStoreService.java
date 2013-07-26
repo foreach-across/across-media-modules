@@ -4,8 +4,6 @@ import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 
-import java.io.InputStream;
-
 public interface ImageStoreService
 {
 	String generateRelativeImagePath( Image image );

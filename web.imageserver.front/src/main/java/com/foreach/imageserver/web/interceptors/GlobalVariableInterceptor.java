@@ -16,9 +16,7 @@ public class GlobalVariableInterceptor extends HandlerInterceptorAdapter
 	private WebPathConfiguration webPathConfiguration;
 
 	@Override
-	public final boolean preHandle(
-			HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception
-	{
+	public final boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) {
 		AbstractContextUtils.storeWebPathConfiguration( webPathConfiguration, request );
 
 		request.setAttribute( ATTRIBUTE_SERVERNAME, request.getServerName() );
@@ -28,7 +26,6 @@ public class GlobalVariableInterceptor extends HandlerInterceptorAdapter
 		return true;
 	}
 
-	protected void setAdditionalVariables( HttpServletRequest request, HttpServletResponse response )
-	{
+	protected void setAdditionalVariables( HttpServletRequest request, HttpServletResponse response ) {
 	}
 }

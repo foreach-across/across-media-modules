@@ -4,7 +4,6 @@ import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageType;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 public interface TempFileService

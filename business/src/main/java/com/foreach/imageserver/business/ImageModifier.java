@@ -109,40 +109,61 @@ public class ImageModifier
 
 		Dimensions maxDimensions = normalized.hasCrop() ? normalized.getCrop().getDimensions() : dimensions;
 
-		int width = this.width == 0 ? normalized.getWidth() : this.width;
-		int height = this.height == 0 ? normalized.getHeight() : this.height;
+		Dimensions dimensionsToUse = new Dimensions();
+		dimensionsToUse.setWidth( width == 0 ? normalized.getWidth() : width );
+		dimensionsToUse.setHeight( height == 0 ? normalized.getHeight() : height );
 
 		if ( maxDimensions != null && maxDimensions.getWidth() > 0 && maxDimensions.getHeight() > 0 ) {
-			Fraction originalAspectRatio = maxDimensions.getAspectRatio();
-
-			if ( width == 0 && height == 0 ) {
-				width = maxDimensions.getWidth();
-				height = maxDimensions.getHeight();
-			}
-			else if ( height == 0 ) {
-				height = originalAspectRatio.calculateHeightForWidth( width );
-			}
-			else if ( width == 0 ) {
-				width = originalAspectRatio.calculateWidthForHeight( height );
-			}
+			setUnspecifiedDimensions( dimensionsToUse, maxDimensions );
 
 			if ( !stretch ) {
-				Fraction requestedAspectRatio = new Dimensions( width, height ).getAspectRatio();
-
-				if ( width > maxDimensions.getWidth() ) {
-					width = maxDimensions.getWidth();
-					height = requestedAspectRatio.calculateHeightForWidth( width );
-				}
-
-				if ( height > maxDimensions.getHeight() ) {
-					height = maxDimensions.getHeight();
-					width = requestedAspectRatio.calculateWidthForHeight( height );
-				}
+				fitDimensionsToMaxDimensions( dimensionsToUse, maxDimensions );
 			}
 		}
 
-		normalized.setWidth( width );
-		normalized.setHeight( height );
+		normalized.setWidth( dimensionsToUse.getWidth() );
+		normalized.setHeight( dimensionsToUse.getHeight() );
+	}
+
+	private void setUnspecifiedDimensions( Dimensions requested, Dimensions maxDimensions ) {
+		int widthToUse = requested.getWidth();
+		int heightToUse = requested.getHeight();
+
+		Fraction originalAspectRatio = maxDimensions.getAspectRatio();
+
+		if ( widthToUse == 0 && heightToUse == 0 ) {
+			widthToUse = maxDimensions.getWidth();
+			heightToUse = maxDimensions.getHeight();
+		}
+		else if ( heightToUse == 0 ) {
+			heightToUse = originalAspectRatio.calculateHeightForWidth( widthToUse );
+		}
+		else if ( widthToUse == 0 ) {
+			widthToUse = originalAspectRatio.calculateWidthForHeight( heightToUse );
+		}
+
+		requested.setWidth( widthToUse );
+		requested.setHeight( heightToUse );
+	}
+
+	private void fitDimensionsToMaxDimensions( Dimensions requested, Dimensions maxDimensions ) {
+		int widthToUse = requested.getWidth();
+		int heightToUse = requested.getHeight();
+
+		Fraction requestedAspectRatio = requested.getAspectRatio();
+
+		if ( widthToUse > maxDimensions.getWidth() ) {
+			widthToUse = maxDimensions.getWidth();
+			heightToUse = requestedAspectRatio.calculateHeightForWidth( widthToUse );
+		}
+
+		if ( heightToUse > maxDimensions.getHeight() ) {
+			heightToUse = maxDimensions.getHeight();
+			widthToUse = requestedAspectRatio.calculateWidthForHeight( heightToUse );
+		}
+
+		requested.setWidth( widthToUse );
+		requested.setHeight( heightToUse );
 	}
 
 	@Override
