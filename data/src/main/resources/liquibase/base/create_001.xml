@@ -104,4 +104,12 @@
 			<column name="contenttype">application/pdf</column>
 		</insert>
 	</changeSet>
+
+	<changeSet id="201307271308" author="arne">
+		<comment>Insert tiff image type</comment>
+		<insert tableName="imagetype">
+			<column name="id">tif</column>
+			<column name="contenttype">image/tiff</column>
+		</insert>
+	</changeSet>
 </databaseChangeLog>

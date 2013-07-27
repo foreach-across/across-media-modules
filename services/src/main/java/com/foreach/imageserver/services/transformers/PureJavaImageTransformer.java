@@ -5,7 +5,12 @@ import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
+import org.apache.commons.imaging.ImageInfo;
+import org.apache.commons.imaging.Imaging;
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +34,14 @@ public class PureJavaImageTransformer implements ImageTransformer
 	private static final Logger LOG = LoggerFactory.getLogger( PureJavaImageTransformer.class );
 
 	@Override
-	public ImageTransformerPriority canExecute( ImageTransformerAction action ) {
+	public ImageTransformerPriority canExecute( ImageTransformerAction action )
+	{
 		ImageType imageType = action.getImageFile().getImageType();
 
-		if ( imageType == ImageType.JPEG || imageType == ImageType.GIF || imageType == ImageType.PNG ) {
+		if ( imageType == ImageType.JPEG || imageType == ImageType.GIF || imageType == ImageType.PNG || imageType == ImageType.TIFF || imageType == ImageType.PDF ) {
 			return ImageTransformerPriority.PREFERRED;
 		}
-		else if ( imageType == ImageType.SVG || imageType == ImageType.EPS || imageType == ImageType.PDF ) {
+		else if ( imageType == ImageType.SVG || imageType == ImageType.EPS ) {
 			return ImageTransformerPriority.UNABLE;
 		}
 
@@ -43,7 +49,8 @@ public class PureJavaImageTransformer implements ImageTransformer
 	}
 
 	@Override
-	public void execute( ImageTransformerAction action ) {
+	public void execute( ImageTransformerAction action )
+	{
 		if ( action instanceof ImageModifyAction ) {
 			executeModification( (ImageModifyAction) action );
 		}
@@ -52,13 +59,35 @@ public class PureJavaImageTransformer implements ImageTransformer
 		}
 	}
 
-	private void calculateDimensions( ImageCalculateDimensionsAction action ) {
+	private void calculateDimensions( ImageCalculateDimensionsAction action )
+	{
 		InputStream stream = null;
+
 		try {
 			stream = action.getImageFile().openContentStream();
 
-			BufferedImage image = ImageIO.read( stream );
-			action.setResult( new Dimensions( image.getWidth(), image.getHeight() ) );
+			if ( action.getImageFile().getImageType() == ImageType.PDF ) {
+				PDDocument pdf = null;
+
+				try {
+					pdf = PDDocument.load( stream );
+					PDPage firstPage = (PDPage) pdf.getDocumentCatalog().getAllPages().get( 0 );
+					PDRectangle cropBox = firstPage.findMediaBox();
+
+					action.setResult(
+							new Dimensions( Math.round( cropBox.getWidth() ), Math.round( cropBox.getHeight() ) ) );
+				}
+				finally {
+					if ( pdf != null ) {
+						pdf.close();
+					}
+				}
+
+			}
+			else {
+				ImageInfo imageInfo = Imaging.getImageInfo( stream, "" );
+				action.setResult( new Dimensions( imageInfo.getWidth(), imageInfo.getHeight() ) );
+			}
 		}
 		catch ( Exception e ) {
 			LOG.error( "Failed to calculate image dimensions {}: {}", action, e );
@@ -69,7 +98,8 @@ public class PureJavaImageTransformer implements ImageTransformer
 		}
 	}
 
-	private void executeModification( ImageModifyAction action ) {
+	private void executeModification( ImageModifyAction action )
+	{
 		try {
 			ImageFile original = action.getImageFile();
 			ImageModifier modifier = action.getModifier();
@@ -93,7 +123,8 @@ public class PureJavaImageTransformer implements ImageTransformer
 		}
 	}
 
-	private static BufferedImage readImage( ImageInputStream is ) throws IOException {
+	private static BufferedImage readImage( ImageInputStream is ) throws IOException
+	{
 		ImageReader reader = ImageIO.getImageReaders( is ).next();
 		try {
 			reader.setInput( is );
@@ -122,11 +153,9 @@ public class PureJavaImageTransformer implements ImageTransformer
 		}
 	}
 
-	private BufferedImage getScaledInstance( BufferedImage img,
-	                                         int targetWidth,
-	                                         int targetHeight,
-	                                         Object interpolationHint,
-	                                         boolean preserveAlpha ) {
+	private BufferedImage getScaledInstance(
+			BufferedImage img, int targetWidth, int targetHeight, Object interpolationHint, boolean preserveAlpha )
+	{
 		boolean hasPossibleAlphaChannel = img.getTransparency() != Transparency.OPAQUE;
 
 		// rescale while ignoring the preserveAlpha flag, otherwise we lose the transparency at this point
@@ -155,7 +184,8 @@ public class PureJavaImageTransformer implements ImageTransformer
 	}
 
 	// add white background if we don't want to preserve the alpha channel
-	private BufferedImage getFlattenedBufferedImageWithWhiteBG( BufferedImage result ) {
+	private BufferedImage getFlattenedBufferedImageWithWhiteBG( BufferedImage result )
+	{
 		if ( result.getTransparency() == Transparency.OPAQUE ) {
 			// no alpha channel, so no need to transform anything
 			return result;
@@ -172,7 +202,8 @@ public class PureJavaImageTransformer implements ImageTransformer
 	}
 
 	@Override
-	public int getPriority() {
+	public int getPriority()
+	{
 		return 0;
 	}
 }

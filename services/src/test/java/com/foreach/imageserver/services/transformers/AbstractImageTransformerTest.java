@@ -34,7 +34,7 @@ public abstract class AbstractImageTransformerTest
 				assertEquals( "Calculated dimensions for " + image.getResourcePath() + " are wrong",
 				              image.getDimensions(), action.getResult() );
 
-				LOG.debug( "Dimensions calculated for {} in {}ms", image.getResourcePath(),
+				LOG.debug( "Dimensions calculated for {} in {} ms", image.getResourcePath(),
 				           ( System.currentTimeMillis() - start ) );
 			}
 			catch ( Exception e ) {

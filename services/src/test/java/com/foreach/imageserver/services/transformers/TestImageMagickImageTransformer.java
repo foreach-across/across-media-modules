@@ -8,12 +8,14 @@ import static org.junit.Assert.assertEquals;
 public class TestImageMagickImageTransformer extends AbstractImageTransformerTest
 {
 	@Override
-	protected ImageTransformer createTransformer() {
+	protected ImageTransformer createTransformer()
+	{
 		return new ImageMagickImageTransformer( "c:/imagemagick", true );
 	}
 
 	@Test
-	public void cantCalculateDimensionsForGhostScriptIfNotInstalled() {
+	public void cantCalculateDimensionsForGhostScriptIfNotInstalled()
+	{
 		ImageMagickImageTransformer otherTransformer = new ImageMagickImageTransformer( "c:/imagemagick", false );
 
 		ImageCalculateDimensionsAction action =
@@ -24,8 +26,15 @@ public class TestImageMagickImageTransformer extends AbstractImageTransformerTes
 		assertEquals( ImageTransformerPriority.UNABLE, otherTransformer.canExecute( action ) );
 	}
 
+	@Test(expected = AssertionError.class)
+	public void animatedGifSupportIsIncomplete()
+	{
+		dimensions( ImageTestData.ANIMATED_GIF, ImageTransformerPriority.FALLBACK, true );
+	}
+
 	@Test
-	public void dimensionsCalculatedOk() {
+	public void dimensionsCalculatedOk()
+	{
 		dimensions( ImageTestData.EARTH, ImageTransformerPriority.FALLBACK, true );
 		dimensions( ImageTestData.SUNSET, ImageTransformerPriority.FALLBACK, true );
 		dimensions( ImageTestData.HIGH_RES, ImageTransformerPriority.FALLBACK, true );
@@ -43,5 +52,8 @@ public class TestImageMagickImageTransformer extends AbstractImageTransformerTes
 		dimensions( ImageTestData.BRUXELLES_ECHO_EPS, ImageTransformerPriority.FALLBACK, true );
 		dimensions( ImageTestData.SINGLE_PAGE_PDF, ImageTransformerPriority.FALLBACK, true );
 		dimensions( ImageTestData.MULTI_PAGE_PDF, ImageTransformerPriority.FALLBACK, true );
+		dimensions( ImageTestData.SMALL_TIFF, ImageTransformerPriority.FALLBACK, true );
+		dimensions( ImageTestData.LARGE_TIFF, ImageTransformerPriority.FALLBACK, true );
+		dimensions( ImageTestData.HUGE_TIFF, ImageTransformerPriority.FALLBACK, true );
 	}
 }
