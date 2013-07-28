@@ -3,6 +3,11 @@ package com.foreach.imageserver.services.transformers;
 public interface ImageTransformer
 {
 	/**
+	 * @return Short name of the transformer implementation.
+	 */
+	public String getName();
+
+	/**
 	 * Checks if the instance can execute a certain action (without actually doing it)
 	 * and returns the corresponding priority enum value.
 	 *

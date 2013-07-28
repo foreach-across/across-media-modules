@@ -13,8 +13,8 @@ public enum ImageType implements IdLookup<String>
 	PDF( "application/pdf", "pdf", "application/x-pdf" ),
 	TIFF( "image/tiff", "tif" );
 
-	private String contentType, extension;
-	private String[] alternativeContentTypes;
+	private final String contentType, extension;
+	private final String[] alternativeContentTypes;
 
 	private ImageType( String contentType, String extension, String... alternativeContentTypes )
 	{

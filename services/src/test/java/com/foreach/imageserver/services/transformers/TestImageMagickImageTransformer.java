@@ -1,21 +1,22 @@
 package com.foreach.imageserver.services.transformers;
 
+import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.services.ImageTestData;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
 public class TestImageMagickImageTransformer extends AbstractImageTransformerTest
 {
 	@Override
-	protected ImageTransformer createTransformer()
-	{
+	protected ImageTransformer createTransformer() {
 		return new ImageMagickImageTransformer( "c:/imagemagick", true );
 	}
 
 	@Test
-	public void cantCalculateDimensionsForGhostScriptIfNotInstalled()
-	{
+	public void cantCalculateDimensionsForGhostScriptIfNotInstalled() {
 		ImageMagickImageTransformer otherTransformer = new ImageMagickImageTransformer( "c:/imagemagick", false );
 
 		ImageCalculateDimensionsAction action =
@@ -27,14 +28,12 @@ public class TestImageMagickImageTransformer extends AbstractImageTransformerTes
 	}
 
 	@Test(expected = AssertionError.class)
-	public void animatedGifSupportIsIncomplete()
-	{
+	public void animatedGifSupportIsIncomplete() {
 		dimensions( ImageTestData.ANIMATED_GIF, ImageTransformerPriority.FALLBACK, true );
 	}
 
 	@Test
-	public void dimensionsCalculatedOk()
-	{
+	public void dimensionsCalculatedOk() {
 		dimensions( ImageTestData.EARTH, ImageTransformerPriority.FALLBACK, true );
 		dimensions( ImageTestData.SUNSET, ImageTransformerPriority.FALLBACK, true );
 		dimensions( ImageTestData.HIGH_RES, ImageTransformerPriority.FALLBACK, true );
@@ -56,4 +55,42 @@ public class TestImageMagickImageTransformer extends AbstractImageTransformerTes
 		dimensions( ImageTestData.LARGE_TIFF, ImageTransformerPriority.FALLBACK, true );
 		dimensions( ImageTestData.HUGE_TIFF, ImageTransformerPriority.FALLBACK, true );
 	}
+
+	/*
+	@Test
+	public void smallResizes() {
+		for ( ImageTestData image : Arrays.asList( ImageTestData.EARTH, ImageTestData.SUNSET, ImageTestData.HIGH_RES,
+		                                           ImageTestData.ICE_ROCK, ImageTestData.KAAIMAN_JPEG ) ) {
+			modify( image, scale( image, 0.33f, ImageType.JPEG ), ImageTransformerPriority.FALLBACK, true );
+		}
+
+		for ( ImageTestData image : Arrays.asList( ImageTestData.CMYK_COLOR, ImageTestData.KAAIMAN_GIF,
+		                                           ImageTestData.KAAIMAN_PNG, ImageTestData.TEST_PNG,
+		                                           ImageTestData.TEST_TRANSPARENT_PNG, ImageTestData.SMALL_TIFF,
+		                                           ImageTestData.LARGE_TIFF, ImageTestData.HUGE_TIFF ) ) {
+			modify( image, scale( image, 0.33f, ImageType.JPEG ), ImageTransformerPriority.FALLBACK, true );
+		}
+	}
+
+	@Test
+	public void largeResizes() {
+		for ( ImageTestData image : Arrays.asList( ImageTestData.EARTH, ImageTestData.SUNSET, ImageTestData.HIGH_RES,
+		                                           ImageTestData.ICE_ROCK, ImageTestData.KAAIMAN_JPEG ) ) {
+			modify( image, scale( image, 1.75f, ImageType.JPEG ), ImageTransformerPriority.FALLBACK, true );
+		}
+
+		for ( ImageTestData image : Arrays.asList( ImageTestData.CMYK_COLOR, ImageTestData.KAAIMAN_GIF,
+		                                           ImageTestData.KAAIMAN_PNG, ImageTestData.TEST_PNG,
+		                                           ImageTestData.TEST_TRANSPARENT_PNG, ImageTestData.SMALL_TIFF,
+		                                           ImageTestData.LARGE_TIFF, ImageTestData.HUGE_TIFF ) ) {
+			modify( image, scale( image, 1.75f, ImageType.JPEG ), ImageTransformerPriority.FALLBACK, true );
+		}
+	}
+
+	@Test
+	public void scaleSvgTenfold() {
+		modify( ImageTestData.KAAIMAN_EPS, scale( ImageTestData.KAAIMAN_EPS, 2, ImageType.PNG ),
+		        ImageTransformerPriority.FALLBACK, true );
+	}
+	*/
 }

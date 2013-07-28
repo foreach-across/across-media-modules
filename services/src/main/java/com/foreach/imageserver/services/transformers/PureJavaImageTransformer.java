@@ -34,8 +34,12 @@ public class PureJavaImageTransformer implements ImageTransformer
 	private static final Logger LOG = LoggerFactory.getLogger( PureJavaImageTransformer.class );
 
 	@Override
-	public ImageTransformerPriority canExecute( ImageTransformerAction action )
-	{
+	public String getName() {
+		return "java";
+	}
+
+	@Override
+	public ImageTransformerPriority canExecute( ImageTransformerAction action ) {
 		ImageType imageType = action.getImageFile().getImageType();
 
 		if ( imageType == ImageType.JPEG || imageType == ImageType.GIF || imageType == ImageType.PNG || imageType == ImageType.TIFF || imageType == ImageType.PDF ) {
@@ -49,8 +53,7 @@ public class PureJavaImageTransformer implements ImageTransformer
 	}
 
 	@Override
-	public void execute( ImageTransformerAction action )
-	{
+	public void execute( ImageTransformerAction action ) {
 		if ( action instanceof ImageModifyAction ) {
 			executeModification( (ImageModifyAction) action );
 		}
@@ -59,8 +62,7 @@ public class PureJavaImageTransformer implements ImageTransformer
 		}
 	}
 
-	private void calculateDimensions( ImageCalculateDimensionsAction action )
-	{
+	private void calculateDimensions( ImageCalculateDimensionsAction action ) {
 		InputStream stream = null;
 
 		try {
@@ -98,13 +100,12 @@ public class PureJavaImageTransformer implements ImageTransformer
 		}
 	}
 
-	private void executeModification( ImageModifyAction action )
-	{
+	private void executeModification( ImageModifyAction action ) {
 		try {
 			ImageFile original = action.getImageFile();
 			ImageModifier modifier = action.getModifier();
 
-			BufferedImage bufferedImage = readImage( new MemoryCacheImageInputStream( original.openContentStream() ) );
+			BufferedImage bufferedImage = readImage( original );
 
 			bufferedImage = getScaledInstance( bufferedImage, modifier.getWidth(), modifier.getHeight(),
 			                                   RenderingHints.VALUE_INTERPOLATION_BILINEAR, false );
@@ -123,8 +124,17 @@ public class PureJavaImageTransformer implements ImageTransformer
 		}
 	}
 
-	private static BufferedImage readImage( ImageInputStream is ) throws IOException
-	{
+	private static BufferedImage readImage( ImageFile imageFile ) throws IOException {
+		byte[] bytes = IOUtils.toByteArray( imageFile.openContentStream() );
+
+		try {
+			return Imaging.getBufferedImage( bytes );
+		}
+		catch ( Exception e ) {
+			LOG.debug( "Couldn't read image using commons imaging library: {}", imageFile );
+		}
+
+		ImageInputStream is = new MemoryCacheImageInputStream( new ByteArrayInputStream( bytes ) );
 		ImageReader reader = ImageIO.getImageReaders( is ).next();
 		try {
 			reader.setInput( is );
@@ -154,8 +164,7 @@ public class PureJavaImageTransformer implements ImageTransformer
 	}
 
 	private BufferedImage getScaledInstance(
-			BufferedImage img, int targetWidth, int targetHeight, Object interpolationHint, boolean preserveAlpha )
-	{
+			BufferedImage img, int targetWidth, int targetHeight, Object interpolationHint, boolean preserveAlpha ) {
 		boolean hasPossibleAlphaChannel = img.getTransparency() != Transparency.OPAQUE;
 
 		// rescale while ignoring the preserveAlpha flag, otherwise we lose the transparency at this point
@@ -170,6 +179,7 @@ public class PureJavaImageTransformer implements ImageTransformer
 			if ( h > targetHeight ) {
 				h = Math.max( h / 2, targetHeight );
 			}
+
 			BufferedImage tmp = new BufferedImage( w, h, imageTypeForScaling );
 
 			Graphics2D g2 = tmp.createGraphics();
@@ -184,8 +194,7 @@ public class PureJavaImageTransformer implements ImageTransformer
 	}
 
 	// add white background if we don't want to preserve the alpha channel
-	private BufferedImage getFlattenedBufferedImageWithWhiteBG( BufferedImage result )
-	{
+	private BufferedImage getFlattenedBufferedImageWithWhiteBG( BufferedImage result ) {
 		if ( result.getTransparency() == Transparency.OPAQUE ) {
 			// no alpha channel, so no need to transform anything
 			return result;
@@ -202,8 +211,7 @@ public class PureJavaImageTransformer implements ImageTransformer
 	}
 
 	@Override
-	public int getPriority()
-	{
+	public int getPriority() {
 		return 0;
 	}
 }
