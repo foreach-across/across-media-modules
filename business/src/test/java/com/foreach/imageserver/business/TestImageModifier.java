@@ -268,4 +268,22 @@ public class TestImageModifier
 		assertEquals( 300, normalized.getWidth() );
 		assertEquals( 200, normalized.getHeight() );
 	}
+
+	@Test
+	public void withStretchDimensionsAreScaledAccordingToCrop() {
+		modifier.setCrop( new Crop( 50, 50, 300, 200 ) );
+		modifier.setWidth( 600 );
+		modifier.setStretch( true );
+
+		normalized = modifier.normalize( original );
+		assertEquals( 600, normalized.getWidth() );
+		assertEquals( 400, normalized.getHeight() );
+
+		modifier.setWidth( 0 );
+		modifier.setHeight( 400 );
+
+		normalized = modifier.normalize( original );
+		assertEquals( 600, normalized.getWidth() );
+		assertEquals( 400, normalized.getHeight() );
+	}
 }

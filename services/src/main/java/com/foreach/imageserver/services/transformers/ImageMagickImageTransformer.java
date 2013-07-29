@@ -111,7 +111,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 			}
 
 			op.resize( modifier.getWidth(), modifier.getHeight(), "!" );
-			op.colorspace( "rgb" );
+			op.colorspace( "sRGB" );
 			op.addImage( modifier.getOutput().getExtension() + ":-" );
 
 			ByteArrayOutputStream os = new ByteArrayOutputStream();

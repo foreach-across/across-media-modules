@@ -147,8 +147,6 @@ public class ImageModifier
 
 				if ( !dimensions.equals( new Dimensions( normalizedCrop.getWidth(), normalizedCrop.getHeight() ) ) ) {
 					normalized.setCrop( normalizedCrop );
-					normalized.setWidth( normalizedCrop.getWidth() );
-					normalized.setHeight( normalizedCrop.getHeight() );
 				}
 			}
 			else {
@@ -163,8 +161,8 @@ public class ImageModifier
 		Dimensions maxDimensions = normalized.hasCrop() ? normalized.getCrop().getDimensions() : dimensions;
 
 		Dimensions dimensionsToUse = new Dimensions();
-		dimensionsToUse.setWidth( width == 0 ? normalized.getWidth() : width );
-		dimensionsToUse.setHeight( height == 0 ? normalized.getHeight() : height );
+		dimensionsToUse.setWidth( width );
+		dimensionsToUse.setHeight( height );
 
 		if ( maxDimensions != null && maxDimensions.getWidth() > 0 && maxDimensions.getHeight() > 0 ) {
 			setUnspecifiedDimensions( dimensionsToUse, maxDimensions );

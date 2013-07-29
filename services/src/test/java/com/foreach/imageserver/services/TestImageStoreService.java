@@ -1,9 +1,6 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageModifier;
-import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.business.*;
 import com.foreach.imageserver.services.exceptions.ImageStoreOperationException;
 import com.foreach.shared.utils.DateUtils;
 import com.foreach.test.MockedLoader;
@@ -120,6 +117,13 @@ public class TestImageStoreService
 		modifier.setWidth( 0 );
 		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/6.0x200.jpeg", false );
 		saveAndVerify( image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/6.0x200.jpeg", true );
+
+		modifier.setOutput( ImageType.PNG );
+		modifier.setCrop( new Crop( 10, 5, 50, 75 ) );
+		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/6.0x200.[50x75+10+5].png",
+		               false );
+		saveAndVerify( image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/6.0x200.[50x75+10+5].png",
+		               true );
 	}
 
 	@Test

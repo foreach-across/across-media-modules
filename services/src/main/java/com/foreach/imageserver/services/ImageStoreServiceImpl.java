@@ -1,8 +1,6 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageModifier;
+import com.foreach.imageserver.business.*;
 import com.foreach.imageserver.services.exceptions.ImageStoreOperationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -200,14 +198,23 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	private String createFileName( Image image, ImageModifier modifier ) {
 		if ( !isOriginalImage( modifier ) ) {
+			ImageType imageType = modifier.getOutput();
+
 			StringBuilder path = new StringBuilder();
 			path.append( image.getId() );
 
 			// Output resolution: 100x100
 			path.append( "." ).append( modifier.getWidth() ).append( "x" ).append( modifier.getHeight() );
 
+			// Crop
+			if ( modifier.hasCrop() ) {
+				Crop crop = modifier.getCrop();
+				path.append( ".[" ).append( crop.getWidth() ).append( "x" ).append( crop.getHeight() ).append(
+						"+" ).append( crop.getX() ).append( "+" ).append( crop.getY() ).append( "]" );
+			}
+
 			// Image type extension
-			path.append( "." ).append( image.getImageType().getExtension() );
+			path.append( "." ).append( imageType != null ? imageType.getExtension() : image.getImageType().getExtension() );
 
 			return path.toString();
 		}
