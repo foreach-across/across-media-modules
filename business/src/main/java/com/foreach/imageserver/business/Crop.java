@@ -2,16 +2,22 @@ package com.foreach.imageserver.business;
 
 public class Crop
 {
-	private int x, y, width, height;
+	private int x, y, width, height, sourceWidth, sourceHeight;
 
 	public Crop() {
 	}
 
 	public Crop( int x, int y, int width, int height ) {
+		this( x, y, width, height, 0, 0 );
+	}
+
+	public Crop( int x, int y, int width, int height, int sourceWidth, int sourceHeight ) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.sourceWidth = sourceWidth;
+		this.sourceHeight = sourceHeight;
 	}
 
 	public int getX() {
@@ -46,6 +52,22 @@ public class Crop
 		this.height = height;
 	}
 
+	public int getSourceWidth() {
+		return sourceWidth;
+	}
+
+	public void setSourceWidth( int sourceWidth ) {
+		this.sourceWidth = sourceWidth;
+	}
+
+	public int getSourceHeight() {
+		return sourceHeight;
+	}
+
+	public void setSourceHeight( int sourceHeight ) {
+		this.sourceHeight = sourceHeight;
+	}
+
 	public boolean isEmpty() {
 		return height <= 0 || width <= 0;
 	}
@@ -63,12 +85,37 @@ public class Crop
 		int rightX = leftX + this.width;
 		int rightY = leftY + this.height;
 
-		leftX = snap( leftX, dimensions.getWidth() );
-		leftY = snap( leftY, dimensions.getHeight() );
-		rightX = snap( rightX, dimensions.getWidth() );
-		rightY = snap( rightY, dimensions.getHeight() );
+		Dimensions source = determineSourceDimensions( dimensions );
 
-		return new Crop( leftX, leftY, rightX - leftX, rightY - leftY );
+		leftX = snap( leftX, source.getWidth() );
+		leftY = snap( leftY, source.getHeight() );
+		rightX = snap( rightX, source.getWidth() );
+		rightY = snap( rightY, source.getHeight() );
+
+		if ( !dimensions.equals( source ) ) {
+			double modX = (double) dimensions.getWidth() / source.getWidth();
+			double modY = (double) dimensions.getHeight() / source.getHeight();
+
+			return new Crop( Double.valueOf( leftX * modX ).intValue(), Double.valueOf( leftY * modY ).intValue(),
+			                 Double.valueOf( ( rightX - leftX ) * modX ).intValue(),
+			                 Double.valueOf( ( rightY - leftY ) * modY ).intValue(), dimensions.getWidth(),
+			                 dimensions.getHeight() );
+		}
+
+		return new Crop( leftX, leftY, rightX - leftX, rightY - leftY, sourceWidth, sourceHeight );
+	}
+
+	private Dimensions determineSourceDimensions( Dimensions dimensions ) {
+		if ( sourceWidth > 0 || sourceHeight > 0 ) {
+			Fraction aspectRatio = dimensions.getAspectRatio();
+
+			int sw = sourceWidth <= 0 ? aspectRatio.calculateWidthForHeight( sourceHeight ) : sourceWidth;
+			int sh = sourceHeight <= 0 ? aspectRatio.calculateHeightForWidth( sourceWidth ) : sourceHeight;
+
+			return new Dimensions( sw, sh );
+		}
+
+		return dimensions;
 	}
 
 	private int snap( int pos, int max ) {
@@ -95,6 +142,12 @@ public class Crop
 		if ( height != crop.height ) {
 			return false;
 		}
+		if ( sourceHeight != crop.sourceHeight ) {
+			return false;
+		}
+		if ( sourceWidth != crop.sourceWidth ) {
+			return false;
+		}
 		if ( width != crop.width ) {
 			return false;
 		}
@@ -114,6 +167,8 @@ public class Crop
 		result = 31 * result + y;
 		result = 31 * result + width;
 		result = 31 * result + height;
+		result = 31 * result + sourceWidth;
+		result = 31 * result + sourceHeight;
 		return result;
 	}
 
@@ -124,6 +179,8 @@ public class Crop
 				", y=" + y +
 				", width=" + width +
 				", height=" + height +
+				", sourceWidth=" + sourceWidth +
+				", sourceHeight=" + sourceHeight +
 				'}';
 	}
 }

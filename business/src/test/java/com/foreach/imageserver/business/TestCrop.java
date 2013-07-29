@@ -43,6 +43,28 @@ public class TestCrop
 	}
 
 	@Test
+	public void cropWithSourceDimensionsSnapsToSource() {
+		Crop crop = new Crop( 50, 70, 200, 300, 400, 600 );
+
+		Crop normalized = crop.normalize( new Dimensions( 200, 300 ) );
+		assertEquals( new Crop( 25, 35, 100, 150, 200, 300 ), normalized );
+
+		crop = new Crop( 50, 70, 200, 550, 400, 0 );
+		assertEquals( new Crop( 25, 35, 100, 265, 200, 300 ), crop.normalize( new Dimensions( 200, 300 ) ) );
+
+		crop = new Crop( 50, 70, 380, 300, 0, 600 );
+		assertEquals( new Crop( 25, 35, 175, 150, 200, 300 ), crop.normalize( new Dimensions( 200, 300 ) ) );
+	}
+
+	@Test
+	public void translateWithSourceAdjustsCoordinatesAndWithAndHeight() {
+		Crop crop = new Crop( 50, 60, 200, 300, 400, 900 );
+
+		assertEquals( new Crop( 25, 20, 100, 100, 200, 300 ), crop.normalize( new Dimensions( 200, 300 ) ) );
+		assertEquals( new Crop( 75, 80, 300, 400, 600, 1200 ), crop.normalize( new Dimensions( 600, 1200 ) ) );
+	}
+
+	@Test
 	public void cropExceedingEntireDimensionsSnapsToDimensions() {
 		Dimensions dimensions = new Dimensions( 200, 300 );
 

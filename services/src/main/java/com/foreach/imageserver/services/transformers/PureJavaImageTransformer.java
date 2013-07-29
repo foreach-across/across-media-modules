@@ -13,6 +13,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -32,6 +34,16 @@ import java.util.Iterator;
 public class PureJavaImageTransformer implements ImageTransformer
 {
 	private static final Logger LOG = LoggerFactory.getLogger( PureJavaImageTransformer.class );
+
+	private final int priority;
+
+	@Value("${transformer.java.enabled}")
+	private boolean enabled;
+
+	@Autowired
+	public PureJavaImageTransformer( @Value("${transformer.java.priority}") int priority ) {
+		this.priority = priority;
+	}
 
 	@Override
 	public String getName() {
@@ -163,8 +175,11 @@ public class PureJavaImageTransformer implements ImageTransformer
 		}
 	}
 
-	private BufferedImage getScaledInstance(
-			BufferedImage img, int targetWidth, int targetHeight, Object interpolationHint, boolean preserveAlpha ) {
+	private BufferedImage getScaledInstance( BufferedImage img,
+	                                         int targetWidth,
+	                                         int targetHeight,
+	                                         Object interpolationHint,
+	                                         boolean preserveAlpha ) {
 		boolean hasPossibleAlphaChannel = img.getTransparency() != Transparency.OPAQUE;
 
 		// rescale while ignoring the preserveAlpha flag, otherwise we lose the transparency at this point
@@ -211,7 +226,17 @@ public class PureJavaImageTransformer implements ImageTransformer
 	}
 
 	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled( boolean enabled ) {
+		this.enabled = enabled;
+	}
+
+	@Override
 	public int getPriority() {
-		return 0;
+		return priority;
 	}
 }

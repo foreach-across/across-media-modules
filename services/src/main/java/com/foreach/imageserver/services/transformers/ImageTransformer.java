@@ -5,7 +5,7 @@ public interface ImageTransformer
 	/**
 	 * @return Short name of the transformer implementation.
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Checks if the instance can execute a certain action (without actually doing it)
@@ -33,4 +33,14 @@ public interface ImageTransformer
 	 * @return Priority as int.
 	 */
 	int getPriority();
+
+	/**
+	 * @return True if transformer can be used.
+	 */
+	boolean isEnabled();
+
+	/**
+	 * @param enabled True if transformer can be used.
+	 */
+	void setEnabled( boolean enabled );
 }

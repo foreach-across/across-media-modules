@@ -1,16 +1,13 @@
 package com.foreach.imageserver.services.transformers;
 
-import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.services.ImageTestData;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 public class TestPureJavaImageTransformer extends AbstractImageTransformerTest
 {
 	@Override
 	protected ImageTransformer createTransformer() {
-		return new PureJavaImageTransformer();
+		return new PureJavaImageTransformer( 0 );
 	}
 
 	@Test
@@ -41,20 +38,4 @@ public class TestPureJavaImageTransformer extends AbstractImageTransformerTest
 		dimensions( ImageTestData.BRUXELLES_EPS, ImageTransformerPriority.UNABLE, false );
 		dimensions( ImageTestData.BRUXELLES_ECHO_EPS, ImageTransformerPriority.UNABLE, false );
 	}
-/*
-	@Test
-	public void smallResizes() {
-		for ( ImageTestData image : Arrays.asList( ImageTestData.EARTH, ImageTestData.SUNSET, ImageTestData.HIGH_RES,
-		                                           ImageTestData.ICE_ROCK, ImageTestData.KAAIMAN_JPEG ) ) {
-			modify( image, scale( image, 0.33f, ImageType.JPEG ), ImageTransformerPriority.PREFERRED, true );
-		}
-//ImageTestData.CMYK_COLOR,
-		for ( ImageTestData image : Arrays.asList( ImageTestData.KAAIMAN_GIF,
-		                                           ImageTestData.KAAIMAN_PNG, ImageTestData.TEST_PNG,
-		                                           ImageTestData.TEST_TRANSPARENT_PNG, ImageTestData.SMALL_TIFF,
-		                                           ImageTestData.LARGE_TIFF, ImageTestData.HUGE_TIFF ) ) {
-			modify( image, scale( image, 0.33f, ImageType.JPEG ), ImageTransformerPriority.PREFERRED, true );
-		}
-	}
-	*/
 }

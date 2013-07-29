@@ -16,12 +16,12 @@ public class TestImageMagickImageTransformer extends AbstractImageTransformerTes
 {
 	@Override
 	protected ImageTransformer createTransformer() {
-		return new ImageMagickImageTransformer( "c:/imagemagick", true );
+		return new ImageMagickImageTransformer( 0, "c:/imagemagick", true );
 	}
 
 	@Test
 	public void cantCalculateDimensionsForGhostScriptIfNotInstalled() {
-		ImageMagickImageTransformer otherTransformer = new ImageMagickImageTransformer( "c:/imagemagick", false );
+		ImageMagickImageTransformer otherTransformer = new ImageMagickImageTransformer( 0, "c:/imagemagick", false );
 
 		ImageCalculateDimensionsAction action =
 				new ImageCalculateDimensionsAction( ImageTestData.TEST_EPS.getImageFile() );

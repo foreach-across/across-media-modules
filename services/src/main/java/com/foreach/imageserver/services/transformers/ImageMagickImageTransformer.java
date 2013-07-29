@@ -29,7 +29,11 @@ public class ImageMagickImageTransformer implements ImageTransformer
 
 	private static final Logger LOG = LoggerFactory.getLogger( ImageMagickImageTransformer.class );
 
+	private final int priority;
 	private final boolean ghostScriptEnabled;
+
+	@Value("${transformer.imagemagick.enabled}")
+	private boolean enabled;
 
 	@Override
 	public String getName() {
@@ -37,8 +41,10 @@ public class ImageMagickImageTransformer implements ImageTransformer
 	}
 
 	@Autowired
-	public ImageMagickImageTransformer( @Value("${transformer.imagemagick.path}") String imageMagickPath,
+	public ImageMagickImageTransformer( @Value("${transformer.imagemagick.priority}") int priority,
+	                                    @Value("${transformer.imagemagick.path}") String imageMagickPath,
 	                                    @Value("${transformer.imagemagick.ghostscript}") boolean ghostScriptEnabled ) {
+		this.priority = priority;
 		this.ghostScriptEnabled = ghostScriptEnabled;
 
 		ProcessStarter.setGlobalSearchPath( new File( imageMagickPath ).getAbsolutePath() );
@@ -172,7 +178,17 @@ public class ImageMagickImageTransformer implements ImageTransformer
 	}
 
 	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled( boolean enabled ) {
+		this.enabled = enabled;
+	}
+
+	@Override
 	public int getPriority() {
-		return -1;
+		return priority;
 	}
 }

@@ -146,9 +146,7 @@ public class ImageModifier
 				Crop normalizedCrop = crop.normalize( dimensions );
 
 				if ( !dimensions.equals( new Dimensions( normalizedCrop.getWidth(), normalizedCrop.getHeight() ) ) ) {
-					normalized.setCrop(
-							new Crop( normalizedCrop.getX(), normalizedCrop.getY(), normalizedCrop.getWidth(),
-							          normalizedCrop.getHeight() ) );
+					normalized.setCrop( normalizedCrop );
 					normalized.setWidth( normalizedCrop.getWidth() );
 					normalized.setHeight( normalizedCrop.getHeight() );
 				}

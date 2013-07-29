@@ -62,14 +62,16 @@ public class ImageModificationServiceImpl implements ImageModificationService
 		List<ImageTransformer> fallback = new LinkedList<ImageTransformer>();
 
 		for ( ImageTransformer candidate : transformerList ) {
-			ImageTransformerPriority priority = candidate.canExecute( action );
+			if ( candidate.isEnabled() ) {
+				ImageTransformerPriority priority = candidate.canExecute( action );
 
-			if ( priority != null && priority != ImageTransformerPriority.UNABLE ) {
-				if ( priority == ImageTransformerPriority.PREFERRED ) {
-					transformers.add( candidate );
-				}
-				else {
-					fallback.add( candidate );
+				if ( priority != null && priority != ImageTransformerPriority.UNABLE ) {
+					if ( priority == ImageTransformerPriority.PREFERRED ) {
+						transformers.add( candidate );
+					}
+					else {
+						fallback.add( candidate );
+					}
 				}
 			}
 		}

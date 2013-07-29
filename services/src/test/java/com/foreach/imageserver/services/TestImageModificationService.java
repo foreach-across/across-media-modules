@@ -140,6 +140,31 @@ public abstract class TestImageModificationService<T extends ImageTransformerAct
 	}
 
 	@Test
+	public void onlyEnabledTransformersShouldBeAsked() {
+		final ImageTransformerAction action = actionTestItem.getAction();
+
+		when( transformerThree.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		when( transformerTwo.canExecute( action ) ).thenReturn( ImageTransformerPriority.UNABLE );
+		when( transformerOne.canExecute( action ) ).thenReturn( ImageTransformerPriority.PREFERRED );
+		when( transformerThree.isEnabled() ).thenReturn( false );
+
+		doAnswer( new Answer()
+		{
+			@Override
+			public Object answer( InvocationOnMock invocation ) throws Throwable {
+				( (T) invocation.getArguments()[0] ).setResult( actionTestItem.getExpectedValue() );
+				return null;
+			}
+		} ).when( transformerOne ).execute( action );
+
+		actionTestItem.execute();
+
+		verify( transformerThree, never() ).canExecute( action );
+		verify( transformerTwo, never() ).execute( action );
+		verify( transformerThree, never() ).execute( action );
+	}
+
+	@Test
 	public void ifOnlyOneTransformerAvailableThatOneIsUsed() {
 		ImageTransformerAction action = actionTestItem.getAction();
 
@@ -307,6 +332,7 @@ public abstract class TestImageModificationService<T extends ImageTransformerAct
 		private ImageTransformer transformerMock( int priority ) {
 			ImageTransformer t = mock( ImageTransformer.class );
 			when( t.getPriority() ).thenReturn( priority );
+			when( t.isEnabled() ).thenReturn( true );
 
 			return t;
 		}
