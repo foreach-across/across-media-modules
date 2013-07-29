@@ -5,42 +5,53 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum ImageType implements IdLookup<String>
 {
-	JPEG( "image/jpeg", "jpeg" ),
-	PNG( "image/png", "png" ),
-	GIF( "image/gif", "gif" ),
-	SVG( "image/svg+xml", "svg" ),
-	EPS( "application/postscript", "eps", "image/eps", "image/x-eps", "application/eps", "application/x-eps" ),
-	PDF( "application/pdf", "pdf", "application/x-pdf" ),
-	TIFF( "image/tiff", "tif" );
+	JPEG( "image/jpeg", "jpeg", false, false ),
+	PNG( "image/png", "png", true, false ),
+	GIF( "image/gif", "gif", true, false ),
+	SVG( "image/svg+xml", "svg", true, true ),
+	EPS( "application/postscript", "eps", true, true, "image/eps", "image/x-eps", "application/eps",
+	     "application/x-eps" ),
+	PDF( "application/pdf", "pdf", false, false, "application/x-pdf" ),
+	TIFF( "image/tiff", "tif", false, false );
 
 	private final String contentType, extension;
 	private final String[] alternativeContentTypes;
+	private final boolean transparency, scalable;
 
-	private ImageType( String contentType, String extension, String... alternativeContentTypes )
-	{
+	private ImageType( String contentType,
+	                   String extension,
+	                   boolean transparency,
+	                   boolean scalable,
+	                   String... alternativeContentTypes ) {
 		this.contentType = contentType;
 		this.extension = extension;
 		this.alternativeContentTypes = alternativeContentTypes;
+		this.transparency = transparency;
+		this.scalable = scalable;
 	}
 
-	public String getContentType()
-	{
+	public String getContentType() {
 		return contentType;
 	}
 
-	public String getExtension()
-	{
+	public String getExtension() {
 		return extension;
 	}
 
+	public boolean hasTransparency() {
+		return transparency;
+	}
+
+	public boolean isScalable() {
+		return scalable;
+	}
+
 	@Override
-	public String getId()
-	{
+	public String getId() {
 		return getExtension();
 	}
 
-	public static ImageType getForContentType( String contentType )
-	{
+	public static ImageType getForContentType( String contentType ) {
 		for ( ImageType imageType : values() ) {
 			if ( StringUtils.equalsIgnoreCase( imageType.getContentType(), contentType ) ) {
 				return imageType;

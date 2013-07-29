@@ -4,15 +4,19 @@ import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.services.ImageTestData;
+import org.apache.commons.imaging.ImageInfo;
+import org.apache.commons.imaging.Imaging;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.im4java.core.Info;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileOutputStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public abstract class AbstractImageTransformerTest
 {
@@ -56,17 +60,18 @@ public abstract class AbstractImageTransformerTest
 		}
 	}
 
-	protected void modify(
-			ImageTestData image,
-			ImageModifier modifier,
-			ImageTransformerPriority expectedPriority,
-			boolean shouldSucceed ) {
+	protected void modify( String label,
+	                       ImageTestData image,
+	                       ImageModifier modifier,
+	                       ImageTransformerPriority expectedPriority,
+	                       boolean shouldSucceed ) {
 		long start = System.currentTimeMillis();
 
-		ImageModifyAction action = new ImageModifyAction( image.getImageFile(), modifier );
+		ImageModifier normalized = modifier.normalize( image.getDimensions() );
+		ImageModifyAction action = new ImageModifyAction( image.getImageFile(), normalized );
 
 		ImageTransformerPriority priority = transformer.canExecute( action );
-		assertEquals( "Wrong priority for image modification " + modifier + " for " + image.getResourcePath(),
+		assertEquals( "Wrong priority for image modification " + normalized + " for " + image.getResourcePath(),
 		              expectedPriority, priority );
 
 		if ( priority != ImageTransformerPriority.UNABLE ) {
@@ -77,32 +82,54 @@ public abstract class AbstractImageTransformerTest
 				ImageFile modified = action.getResult();
 				assertNotNull( modified );
 
-				LOG.debug( "Applied modification {} to {} in {} ms", modifier, image.getResourcePath(),
+				LOG.debug( "Applied modification {} to {} in {} ms", normalized, image.getResourcePath(),
 				           ( System.currentTimeMillis() - start ) );
 
-				IOUtils.copy( modified.openContentStream(), new FileOutputStream(
-						"/temp/images_generated/" + image.name() + "." + transformer.getName() + "." + modifier.getOutput().getExtension() ) );
+				File dir = new File( "target/test-images/" + image.name() + "/" );
+
+				if ( !dir.exists() ) {
+					dir.mkdirs();
+				}
+
+				File output = new File( dir,
+				                        image.name() + "." + label + "." + transformer.getName() + "." + normalized.getOutput().getExtension() );
+
+				FileOutputStream fos = new FileOutputStream( output );
+				IOUtils.copy( modified.openContentStream(), fos );
+				IOUtils.closeQuietly( fos );
+
+				verifyUsingImageMagickThatImageMatchesModifier( output, image, normalized );
 			}
 			catch ( Exception e ) {
 				if ( shouldSucceed ) {
-					LOG.error( "Exception applying modification " + modifier + " to " + image.getResourcePath(), e );
+					LOG.error( "Exception applying modification " + normalized + " to " + image.getResourcePath(), e );
 				}
 				succeeded = false;
 			}
 
-			assertEquals( "Unexpected modification outcome for " + modifier + " on " + image.getResourcePath(),
+			assertEquals( "Unexpected modification outcome for " + normalized + " on " + image.getResourcePath(),
 			              shouldSucceed, succeeded );
 		}
 	}
 
-	protected ImageModifier scale( ImageTestData image, float delta, ImageType output ) {
-		ImageModifier mod = new ImageModifier();
-		mod.setOutput( output );
-		mod.setWidth( Math.round( image.getDimensions().getWidth() * delta ) );
-		mod.setHeight( Math.round( image.getDimensions().getHeight() * delta ) );
+	private void verifyUsingImageMagickThatImageMatchesModifier( File file,
+	                                                             ImageTestData image,
+	                                                             ImageModifier modifier ) throws Exception {
+		Info info = new Info( file.getAbsolutePath(), true );
+		assertEquals( modifier.getWidth(), info.getImageWidth() );
+		assertEquals( modifier.getHeight(), info.getImageHeight() );
+		assertEquals( StringUtils.upperCase( modifier.getOutput().getExtension() ), info.getImageFormat() );
 
-		return mod;
+		if ( image.isTransparent() && modifier.getOutput().hasTransparency() ) {
+			verifyTransparency( file );
+		}
 	}
+
+	private void verifyTransparency( File file ) throws Exception {
+		ImageInfo info = Imaging.getImageInfo( file );
+		assertTrue( "File " + file.getAbsolutePath() + " was expected to be transparent", info.isTransparent() );
+	}
+
 
 	protected abstract ImageTransformer createTransformer();
 }

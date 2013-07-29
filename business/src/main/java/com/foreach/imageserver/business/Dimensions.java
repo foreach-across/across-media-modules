@@ -2,6 +2,8 @@ package com.foreach.imageserver.business;
 
 public class Dimensions implements Comparable<Dimensions>
 {
+	public static final Dimensions EMPTY = new Dimensions();
+
 	private int width;
 	private int height;
 	private Fraction ratio = Fraction.UNDEFINED;

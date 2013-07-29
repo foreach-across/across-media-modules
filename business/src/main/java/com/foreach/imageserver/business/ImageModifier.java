@@ -17,6 +17,7 @@ public class ImageModifier
 	private Crop crop = new Crop();
 	private ImageType output;
 	private boolean stretch;
+	private Dimensions density = new Dimensions();
 
 	public int getWidth() {
 		return width;
@@ -58,6 +59,29 @@ public class ImageModifier
 		this.stretch = stretch;
 	}
 
+	/**
+	 * Density is the lowest possible numbers to be used as multiplier on the original
+	 * as to achieve the ideal original dimensions for the output requested.
+	 *
+	 * @return Horizontal (width) and vertical (height) density.
+	 */
+	public Dimensions getDensity() {
+		return density;
+	}
+
+	public void setDensity( Dimensions density ) {
+		this.density = density;
+	}
+
+	public void setDensity( int density ) {
+		setDensity( density, density );
+	}
+
+	public void setDensity( int horizontal, int vertical ) {
+		density.setWidth( horizontal );
+		density.setHeight( vertical );
+	}
+
 	public boolean isEmpty() {
 		return this.equals( EMPTY ) || this.equals( EMPTY_WITH_STRETCH );
 	}
@@ -81,8 +105,39 @@ public class ImageModifier
 		adjustCrop( normalized, dimensions );
 		adjustWidthAndHeight( normalized, dimensions );
 		normalized.setOutput( output );
+		normalized.setDensity( density );
+
+		calculateDensity( normalized, dimensions );
 
 		return normalized;
+	}
+
+	private void calculateDensity( ImageModifier normalized, Dimensions original ) {
+		if ( Dimensions.EMPTY.equals( normalized.getDensity() ) ) {
+			Dimensions density = new Dimensions();
+
+			int requestedWidth = normalized.getWidth();
+			int requestedHeight = normalized.getHeight();
+
+			int originalWidth = normalized.hasCrop() ? normalized.getCrop().getWidth() : original.getWidth();
+			int originalHeight = normalized.hasCrop() ? normalized.getCrop().getHeight() : original.getHeight();
+
+			if ( originalWidth >= requestedWidth ) {
+				density.setWidth( 1 );
+			}
+			else {
+				density.setWidth( Double.valueOf( Math.ceil( requestedWidth / (double) originalWidth ) ).intValue() );
+			}
+			if ( originalHeight >= requestedHeight ) {
+				density.setHeight( 1 );
+			}
+			else {
+				density.setHeight(
+						Double.valueOf( Math.ceil( requestedHeight / (double) originalHeight ) ).intValue() );
+			}
+
+			normalized.setDensity( density );
+		}
 	}
 
 	private void adjustCrop( ImageModifier normalized, Dimensions dimensions ) {
@@ -191,6 +246,11 @@ public class ImageModifier
 		}
 		if ( output != modifier.output ) {
 			return false;
+		}
+
+		if ( density != null && !Dimensions.EMPTY.equals(
+				density ) && modifier.density != null && !Dimensions.EMPTY.equals( modifier.density ) ) {
+			return density.equals( modifier.density );
 		}
 
 		return true;

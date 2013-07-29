@@ -1,8 +1,6 @@
 package com.foreach.imageserver.services.transformers;
 
-import com.foreach.imageserver.business.Dimensions;
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.business.*;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
 import org.apache.commons.io.IOUtils;
 import org.im4java.core.ConvertCmd;
@@ -24,7 +22,11 @@ import java.io.InputStream;
 @Component
 public class ImageMagickImageTransformer implements ImageTransformer
 {
-	private static final int GS_DENSITY = 600;
+	public static final int GS_MAX_DENSITY = 1200;
+	public static final int GS_DEFAULT_DENSITY = 72;
+	public static final int GS_DENSITY_STEP = 300;
+	public static final String ALPHA_BACKGROUND = "white";
+
 	private static final Logger LOG = LoggerFactory.getLogger( ImageMagickImageTransformer.class );
 
 	private final boolean ghostScriptEnabled;
@@ -35,9 +37,8 @@ public class ImageMagickImageTransformer implements ImageTransformer
 	}
 
 	@Autowired
-	public ImageMagickImageTransformer(
-			@Value("${transformer.imagemagick.path}") String imageMagickPath,
-			@Value("${transformer.imagemagick.ghostscript}") boolean ghostScriptEnabled ) {
+	public ImageMagickImageTransformer( @Value("${transformer.imagemagick.path}") String imageMagickPath,
+	                                    @Value("${transformer.imagemagick.ghostscript}") boolean ghostScriptEnabled ) {
 		this.ghostScriptEnabled = ghostScriptEnabled;
 
 		ProcessStarter.setGlobalSearchPath( new File( imageMagickPath ).getAbsolutePath() );
@@ -51,7 +52,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 			return ImageTransformerPriority.UNABLE;
 		}
 
-		return ImageTransformerPriority.FALLBACK;
+		return action instanceof ImageModifyAction ? ImageTransformerPriority.PREFERRED : ImageTransformerPriority.FALLBACK;
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 		try {
 			stream = imageFile.openContentStream();
 
-			Info info = new Info( "-", stream );
+			Info info = new Info( "-", stream, false );
 			action.setResult( new Dimensions( info.getImageWidth(), info.getImageHeight() ) );
 		}
 		catch ( Exception e ) {
@@ -85,13 +86,27 @@ public class ImageMagickImageTransformer implements ImageTransformer
 
 	private void executeModification( ImageModifyAction action ) {
 		try {
+			ImageModifier modifier = action.getModifier();
+
 			ConvertCmd cmd = new ConvertCmd();
 
 			IMOperation op = new IMOperation();
+			Dimensions appliedDensity = setDensityIfRequired( op, action.getImageFile(), modifier );
 			op.addImage( "-" );
-			op.resize( action.getModifier().getWidth(), action.getModifier().getHeight() );
-			op.format( action.getModifier().getOutput().getExtension() );
-			op.addImage( "-" );
+
+			if ( shouldRemoveTransparency( action.getImageFile().getImageType(), modifier.getOutput() ) ) {
+				op.background( ALPHA_BACKGROUND );
+				op.flatten();
+			}
+
+			if ( modifier.hasCrop() ) {
+				Crop crop = applyDensity( modifier.getCrop(), appliedDensity );
+				op.crop( crop.getWidth(), crop.getHeight(), crop.getX(), crop.getY() );
+			}
+
+			op.resize( modifier.getWidth(), modifier.getHeight(), "!" );
+			op.colorspace( "rgb" );
+			op.addImage( modifier.getOutput().getExtension() + ":-" );
 
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 
@@ -109,6 +124,51 @@ public class ImageMagickImageTransformer implements ImageTransformer
 			LOG.error( "Failed to apply modification {}: {}", action, e );
 			throw new ImageModificationException( e );
 		}
+	}
+
+	private Crop applyDensity( Crop crop, Dimensions density ) {
+		if ( density != null ) {
+			double widthFactor = (double) density.getWidth() / GS_DEFAULT_DENSITY;
+			double heightFactor = (double) density.getHeight() / GS_DEFAULT_DENSITY;
+
+			return new Crop( Double.valueOf( widthFactor * crop.getX() ).intValue(),
+			                 Double.valueOf( heightFactor * crop.getY() ).intValue(),
+			                 Double.valueOf( widthFactor * crop.getWidth() ).intValue(),
+			                 Double.valueOf( heightFactor * crop.getHeight() ).intValue() );
+		}
+
+		return crop;
+	}
+
+	private Dimensions setDensityIfRequired( IMOperation operation, ImageFile original, ImageModifier modifier ) {
+		if ( original.getImageType().isScalable() ) {
+			Dimensions density = modifier.getDensity();
+
+			if ( density != null && !Dimensions.EMPTY.equals(
+					density ) && ( density.getHeight() > 1 || density.getWidth() > 1 ) ) {
+				int horizontalDensity = calculateDensity( density.getWidth() );
+				int verticalDensity = calculateDensity( density.getHeight() );
+
+				LOG.debug( "Applying density {}x{}", horizontalDensity, verticalDensity );
+				operation.density( horizontalDensity, verticalDensity );
+
+				return new Dimensions( horizontalDensity, verticalDensity );
+			}
+		}
+
+		return null;
+	}
+
+	private int calculateDensity( int multiplier ) {
+		int raw = Math.min( GS_MAX_DENSITY, GS_DEFAULT_DENSITY * Math.max( multiplier, 1 ) );
+		int times = raw / GS_DENSITY_STEP;
+		int remainder = raw % GS_DENSITY_STEP;
+
+		return remainder == 0 ? raw : Math.min( GS_MAX_DENSITY, ( times + 1 ) * GS_DENSITY_STEP );
+	}
+
+	private boolean shouldRemoveTransparency( ImageType original, ImageType requested ) {
+		return original.hasTransparency() && !requested.hasTransparency();
 	}
 
 	@Override

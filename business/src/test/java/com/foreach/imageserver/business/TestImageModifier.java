@@ -26,6 +26,22 @@ public class TestImageModifier
 	}
 
 	@Test
+	public void densityZeroIsIgnoredForEquality() {
+		ImageModifier left = new ImageModifier();
+		ImageModifier right = new ImageModifier();
+		assertEquals( left, right );
+
+		right.setDensity( 100 );
+		assertEquals( left, right );
+
+		left.setDensity( 100, 100 );
+		assertEquals( left, right );
+
+		right.getDensity().setHeight( 105 );
+		assertFalse( left.equals( right ) );
+	}
+
+	@Test
 	public void hasCrop() {
 		assertFalse( modifier.hasCrop() );
 
@@ -75,6 +91,56 @@ public class TestImageModifier
 		checkWidthAndHeight( 800, 700, true, 800, 700 );
 		checkWidthAndHeight( 1024, 768, false, 1024, 768 );
 		checkWidthAndHeight( 1024, 768, true, 1024, 768 );
+	}
+
+	@Test
+	public void densityIsBasedOnOutputDimensionsIfNoCrop() {
+		checkDensity( 800, 700, 1, 1 );
+		checkDensity( 1024, 768, 1, 1 );
+		checkDensity( 1025, 768, 2, 1 );
+		checkDensity( 1024, 769, 1, 2 );
+	}
+
+	@Test
+	public void densityIsBasedOnCropAndOutputDimensions() {
+		original.setWidth( 100 );
+		original.setHeight( 100 );
+
+		checkDensity( 1000, 1000, 10, 10 );
+		checkDensity( 1000, 1000, new Crop( 1, 1, 5, 10 ), 200, 100 );
+		checkDensity( 1000, 1000, new Crop( 1, 1, 10, 5 ), 100, 200 );
+		checkDensity( 1000, 1000, new Crop( 1, 1, 10, 10 ), 100, 100 );
+		checkDensity( 500, 1000, new Crop( 1, 1, 10, 10 ), 50, 100 );
+		checkDensity( 1000, 500, new Crop( 1, 1, 10, 10 ), 100, 50 );
+		checkDensity( 500, 1000, new Crop( 1, 1, 5, 10 ), 100, 100 );
+		checkDensity( 1000, 500, new Crop( 1, 1, 10, 5 ), 100, 100 );
+	}
+
+	private void checkDensity( int requestedWidth,
+	                           int requestedHeight,
+	                           int expectedHorizontalDensity,
+	                           int expectedVerticalDensity ) {
+		checkDensity( requestedWidth, requestedHeight, null, expectedHorizontalDensity, expectedVerticalDensity );
+	}
+
+	private void checkDensity( int requestedWidth,
+	                           int requestedHeight,
+	                           Crop crop,
+	                           int expectedHorizontalDensity,
+	                           int expectedVerticalDensity ) {
+		modifier.setWidth( requestedWidth );
+		modifier.setHeight( requestedHeight );
+		modifier.setStretch( true );
+
+		if ( crop != null ) {
+			modifier.setCrop( crop );
+		}
+
+		ImageModifier normalized = modifier.normalize( original );
+
+		Dimensions density = normalized.getDensity();
+		assertEquals( expectedHorizontalDensity, density.getWidth() );
+		assertEquals( expectedVerticalDensity, density.getHeight() );
 	}
 
 	@Test
