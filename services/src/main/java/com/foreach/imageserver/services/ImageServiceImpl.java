@@ -3,6 +3,7 @@ package com.foreach.imageserver.services;
 import com.foreach.imageserver.business.Image;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
+import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.data.ImageDao;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import org.slf4j.Logger;
@@ -69,6 +70,7 @@ public class ImageServiceImpl implements ImageService
 		}
 
 		ImageModifier normalized = modifier.normalize( image.getDimensions() );
+		verifyOutputType( image.getImageType(), normalized );
 
 		if ( LOG.isDebugEnabled() ) {
 			LOG.debug( "Requesting image {} with normalized modifier {}", image.getId(), normalized );
@@ -84,6 +86,12 @@ public class ImageServiceImpl implements ImageService
 		}
 
 		return file;
+	}
+
+	private void verifyOutputType( ImageType original, ImageModifier modifier ) {
+		if ( modifier.getOutput() == null && !modifier.isEmpty()) {
+			modifier.setOutput( ImageType.getPreferredOutputType( original ) );
+		}
 	}
 
 	@Transactional
