@@ -64,4 +64,16 @@ public enum ImageType implements IdLookup<String>
 		}
 		return null;
 	}
+
+	public static ImageType getPreferredOutputType( ImageType imageType ) {
+		switch ( imageType ) {
+			case GIF:
+				return GIF;
+			case SVG:
+			case EPS:
+				return PNG;
+			default:
+				return JPEG;
+		}
+	}
 }

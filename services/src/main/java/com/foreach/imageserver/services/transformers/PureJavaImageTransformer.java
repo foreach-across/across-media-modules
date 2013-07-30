@@ -61,7 +61,8 @@ public class PureJavaImageTransformer implements ImageTransformer
 			return ImageTransformerPriority.UNABLE;
 		}
 
-		return ImageTransformerPriority.FALLBACK;
+		// Current implementation is very dodgy, make sure modifications only go through imagemagick
+		return action instanceof ImageModifyAction ? ImageTransformerPriority.UNABLE : ImageTransformerPriority.FALLBACK;
 	}
 
 	@Override

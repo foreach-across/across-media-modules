@@ -2,6 +2,7 @@ package com.foreach.imageserver.services.repositories;
 
 import com.foreach.imageserver.business.ImageType;
 import com.foreach.imageserver.services.exceptions.RepositoryLookupException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -20,6 +21,12 @@ import java.net.UnknownHostException;
 public class HttpImageLookupRepository implements ImageLookupRepository
 {
 	private static final Logger LOG = LoggerFactory.getLogger( HttpImageLookupRepository.class );
+
+	@Override
+	public boolean isValidURI( String uri ) {
+		return StringUtils.startsWithIgnoreCase( uri, "http://" ) || StringUtils.startsWithIgnoreCase( uri,
+		                                                                                               "https://" );
+	}
 
 	public RepositoryLookupResult fetchImage( String uri ) {
 		RepositoryLookupResult result = new RepositoryLookupResult();

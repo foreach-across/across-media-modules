@@ -32,6 +32,17 @@ public class TestHttpImageLookupRepository
 	}
 
 	@Test
+	public void validURI() {
+		assertTrue( imageLookupRepository.isValidURI( "http://www.google.be:80/" ) );
+		assertTrue( imageLookupRepository.isValidURI( "https://www.foreach.com/sdfqsdfsd?test=boe&kipe=jio" ) );
+	}
+
+	@Test
+	public void invalidURI() {
+		assertFalse( imageLookupRepository.isValidURI( "somerandomstring" ) );
+	}
+
+	@Test
 	public void imageNotFoundStatusCode() {
 		RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage( webServer.notFoundUrl() );
 		assertEquals( RepositoryLookupStatus.NOT_FOUND, lookupResult.getStatus() );

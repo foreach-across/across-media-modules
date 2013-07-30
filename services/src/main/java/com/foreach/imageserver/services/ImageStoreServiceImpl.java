@@ -91,7 +91,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 				try {
 					long contentLength = IOUtils.copy( imageData, fos );
-					return new ImageFile( image.getImageType(), physical, contentLength );
+
+					return new ImageFile( file.getImageType(), physical, contentLength );
 				}
 				finally {
 					fos.flush();
@@ -167,7 +168,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 			File physicalFile = new File( generateFullImagePath( image, modifier ) );
 
 			if ( physicalFile.exists() ) {
-				return new ImageFile( image.getImageType(), physicalFile.length(),
+				ImageType imageType = modifier != null ? modifier.getOutput() : image.getImageType();
+
+				return new ImageFile( imageType != null ? imageType : image.getImageType(), physicalFile.length(),
 				                      new FileInputStream( physicalFile ) );
 			}
 
@@ -193,7 +196,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	private boolean isOriginalImage( ImageModifier modifier ) {
-		return modifier == null || ImageModifier.EMPTY.equals( modifier );
+		return modifier == null || modifier.isEmpty();
 	}
 
 	private String createFileName( Image image, ImageModifier modifier ) {
@@ -214,7 +217,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 			}
 
 			// Image type extension
-			path.append( "." ).append( imageType != null ? imageType.getExtension() : image.getImageType().getExtension() );
+			path.append( "." ).append(
+					imageType != null ? imageType.getExtension() : image.getImageType().getExtension() );
 
 			return path.toString();
 		}

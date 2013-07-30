@@ -7,6 +7,7 @@ import com.foreach.test.MockedLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -158,11 +159,12 @@ public class TestImageStoreService
 
 		ImageFile savedImageFile;
 
-		ImageFile imageFileToSave = new ImageFile( image.getImageType(), testData.getFileSize(), imageData );
+		ImageType imageTypeToSave = StringUtils.endsWith( expectedFileName, "png" ) ? ImageType.PNG : ImageType.JPEG;
+		ImageFile imageFileToSave = new ImageFile( imageTypeToSave, testData.getFileSize(), imageData );
 
 		when( tempFileService.isTempFile( imageFileToSave ) ).thenReturn( useTempFile );
 		when( tempFileService.move( imageFileToSave, expectedFile ) ).thenReturn(
-				new ImageFile( image.getImageType(), testData.getFileSize(), imageData ) );
+				new ImageFile( imageTypeToSave, testData.getFileSize(), imageData ) );
 
 		if ( modifier != null ) {
 			savedImageFile = imageStoreService.saveImage( image, modifier, imageFileToSave );
@@ -179,7 +181,7 @@ public class TestImageStoreService
 			verify( tempFileService, times( 1 ) ).move( imageFileToSave, expectedFile );
 		}
 
-		assertEquals( testData.getImageType(), savedImageFile.getImageType() );
+		assertEquals( imageTypeToSave, savedImageFile.getImageType() );
 		assertEquals( testData.getFileSize(), savedImageFile.getFileSize() );
 		assertTrue( expectedFile.exists() );
 
@@ -324,9 +326,10 @@ public class TestImageStoreService
 
 		File actual = createActual( ORIGINAL_STORE, "/10/2013/07/06/3.jpeg", ImageTestData.SUNSET );
 
-		verifyImageFile( imageStoreService.getImageFile( image ), ImageTestData.SUNSET, actual );
-		verifyImageFile( imageStoreService.getImageFile( image, null ), ImageTestData.SUNSET, actual );
-		verifyImageFile( imageStoreService.getImageFile( image, new ImageModifier() ), ImageTestData.SUNSET, actual );
+		verifyImageFile( imageStoreService.getImageFile( image ), ImageType.JPEG, ImageTestData.SUNSET, actual );
+		verifyImageFile( imageStoreService.getImageFile( image, null ), ImageType.JPEG, ImageTestData.SUNSET, actual );
+		verifyImageFile( imageStoreService.getImageFile( image, new ImageModifier() ), ImageType.JPEG,
+		                 ImageTestData.SUNSET, actual );
 	}
 
 	@Test
@@ -338,14 +341,15 @@ public class TestImageStoreService
 		image.setImageType( ImageType.JPEG );
 
 		ImageModifier modifier = new ImageModifier();
+		modifier.setOutput( ImageType.PNG );
 		modifier.setWidth( 1600 );
 		modifier.setHeight( 200 );
 
 		new File( VARIANT_STORE, "/10/2013/07/06/" ).mkdirs();
 
-		File actual = createActual( VARIANT_STORE, "/10/2013/07/06/3.1600x200.jpeg", ImageTestData.SUNSET );
+		File actual = createActual( VARIANT_STORE, "/10/2013/07/06/3.1600x200.png", ImageTestData.SUNSET );
 
-		verifyImageFile( imageStoreService.getImageFile( image, modifier ), ImageTestData.SUNSET, actual );
+		verifyImageFile( imageStoreService.getImageFile( image, modifier ), ImageType.PNG, ImageTestData.SUNSET, actual );
 	}
 
 	private File createActual( String path, String fileName, ImageTestData testData ) throws Exception {
@@ -357,9 +361,12 @@ public class TestImageStoreService
 		return file;
 	}
 
-	private void verifyImageFile( ImageFile imageFile, ImageTestData testData, File physical ) throws IOException {
+	private void verifyImageFile( ImageFile imageFile,
+	                              ImageType expectedType,
+	                              ImageTestData testData,
+	                              File physical ) throws IOException {
 		assertNotNull( imageFile );
-		assertEquals( testData.getImageType(), imageFile.getImageType() );
+		assertEquals( expectedType, imageFile.getImageType() );
 		assertEquals( testData.getFileSize(), imageFile.getFileSize() );
 		FileInputStream fos = new FileInputStream( physical );
 		assertTrue( IOUtils.contentEquals( testData.getResourceAsStream(), fos ) );
