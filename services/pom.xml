@@ -58,5 +58,22 @@
 			<artifactId>pdfbox</artifactId>
 			<version>1.8.2</version>
 		</dependency>
+		<dependency>
+			<groupId>be.persgroep.red.diocontent.webservice</groupId>
+			<artifactId>diocontent-webservice-client</artifactId>
+			<version>2.13</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Provider org.apache.xerces.jaxp.SAXParserFactoryImpl for diocontent webservice -->
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.9.1</version>
+		</dependency>
 	</dependencies>
 </project>
