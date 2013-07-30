@@ -17,7 +17,7 @@ import java.net.UnknownHostException;
 /**
  * Will fetch an image from a specific url.
  */
-/*@Service*/
+@Service
 public class HttpImageLookupRepository implements ImageLookupRepository
 {
 	private static final Logger LOG = LoggerFactory.getLogger( HttpImageLookupRepository.class );

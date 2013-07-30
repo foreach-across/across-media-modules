@@ -77,6 +77,8 @@
     <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox:1.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pdfbox:fontbox:1.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pdfbox:jempbox:1.8.2" level="project" />
+    <orderEntry type="module" module-name="dpp-connector" />
+    <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:3.1" level="project" />
     <orderEntry type="library" name="Maven: be.persgroep.red.diocontent.webservice:diocontent-webservice-client:2.13" level="project" />
     <orderEntry type="library" name="Maven: be.persgroep.red.diocontent.api:diocontent-api-client:1.13" level="project" />
     <orderEntry type="library" name="Maven: be.persgroep.red.diocontent.api:diocontent-api-core:1.13" level="project" />
