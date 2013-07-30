@@ -1,6 +1,7 @@
 package com.foreach.imageserver.config;
 
 import com.foreach.imageserver.web.interceptors.GlobalVariableInterceptor;
+import com.foreach.spring.logging.LogbackConfigurer;
 import com.foreach.web.converter.EnumConverterFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,13 @@ public class WebConfig extends WebMvcConfigurerAdapter
 	@Override
 	public void addFormatters( FormatterRegistry registry ) {
 		registry.addConverterFactory( new EnumConverterFactory() );
+	}
+
+	@Bean
+	public LogbackConfigurer logbackConfigurer( @Value("${log.dir}") String logDir,
+	                                            @Value("${log.config}") Resource baseConfig,
+	                                            @Value("${log.config.extend}") Resource envConfig ) {
+		return new LogbackConfigurer( logDir, baseConfig, envConfig );
 	}
 
 	@Bean

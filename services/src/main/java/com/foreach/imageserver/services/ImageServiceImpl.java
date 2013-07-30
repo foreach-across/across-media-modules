@@ -71,7 +71,7 @@ public class ImageServiceImpl implements ImageService
 		ImageModifier normalized = modifier.normalize( image.getDimensions() );
 
 		if ( LOG.isDebugEnabled() ) {
-			LOG.debug( "Requestion image {} with normalized modifier {}", image.getId(), normalized );
+			LOG.debug( "Requesting image {} with normalized modifier {}", image.getId(), normalized );
 		}
 
 		ImageFile file = imageStoreService.getImageFile( image, normalized );

@@ -2,14 +2,14 @@ package com.foreach.imageserver.web.controllers;
 
 import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.web.exceptions.ApplicationDeniedException;
-import com.foreach.imageserver.web.exceptions.ImageForbiddenException;
-import com.foreach.imageserver.web.exceptions.ImageLookupException;
-import com.foreach.imageserver.web.exceptions.ImageNotFoundException;
 import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;
 import com.foreach.imageserver.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
+import com.foreach.imageserver.web.exceptions.ApplicationDeniedException;
+import com.foreach.imageserver.web.exceptions.ImageForbiddenException;
+import com.foreach.imageserver.web.exceptions.ImageLookupException;
+import com.foreach.imageserver.web.exceptions.ImageNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -78,5 +78,4 @@ public class ImageLoadController
 				throw new ImageForbiddenException();
 		}
 	}
-
 }
