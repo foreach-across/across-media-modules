@@ -2,18 +2,18 @@ package com.foreach.imageserver.web.controllers;
 
 import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.web.controllers.ImageLoadController;
-import com.foreach.imageserver.web.exceptions.ApplicationDeniedException;
-import com.foreach.imageserver.web.exceptions.ImageForbiddenException;
-import com.foreach.imageserver.web.exceptions.ImageLookupException;
-import com.foreach.imageserver.web.exceptions.ImageNotFoundException;
 import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;
 import com.foreach.imageserver.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import com.foreach.imageserver.services.repositories.RepositoryLookupStatus;
+import com.foreach.imageserver.web.exceptions.ApplicationDeniedException;
+import com.foreach.imageserver.web.exceptions.ImageForbiddenException;
+import com.foreach.imageserver.web.exceptions.ImageLookupException;
+import com.foreach.imageserver.web.exceptions.ImageNotFoundException;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
@@ -48,10 +48,18 @@ public class TestImageLoadController
 	private ApplicationService applicationService;
 
 	@Autowired
-	private ImageLookupRepository imageLookupRepository;
+	private ImageLookupRepository repositoryOne;
+
+	@Autowired
+	private ImageLookupRepository repositoryTwo;
 
 	@Autowired
 	private ImageService imageService;
+
+	@Before
+	public void before() {
+		when( repositoryOne.isValidURI( anyString() ) ).thenReturn( true );
+	}
 
 	@Test
 	public void unknownApplicationReturnsPermissionDenied() {
@@ -115,11 +123,45 @@ public class TestImageLoadController
 
 		RepositoryLookupResult lookupResult = new RepositoryLookupResult();
 		lookupResult.setStatus( status );
-		when( imageLookupRepository.fetchImage( imageURI ) ).thenReturn( lookupResult );
+		when( repositoryOne.fetchImage( imageURI ) ).thenReturn( lookupResult );
 
 		loadController.load( application.getId(), application.getCode(), imageURI, null );
 
-		verify( imageLookupRepository ).fetchImage( imageURI );
+		verify( repositoryOne, times( 1 ) ).isValidURI( imageURI );
+		verify( repositoryOne ).fetchImage( imageURI );
+		verify( repositoryTwo, never() ).isValidURI( anyString() );
+		verify( repositoryTwo, never() ).fetchImage( anyString() );
+	}
+
+	@Test(expected = ImageLookupException.class)
+	public void noRepositoriesForURI() {
+		when( repositoryOne.isValidURI( anyString() ) ).thenReturn( false );
+		when( repositoryTwo.isValidURI( anyString() ) ).thenReturn( false );
+
+		Application application = prepareValidApplication();
+		String imageURI = RandomStringUtils.random( 30 );
+
+		loadController.load( application.getId(), application.getCode(), imageURI, null );
+	}
+
+	@Test
+	public void firstRepositoryThatMatchesURIWillBeUsed() {
+		when( repositoryOne.isValidURI( anyString() ) ).thenReturn( false );
+		when( repositoryTwo.isValidURI( anyString() ) ).thenReturn( true );
+
+		Application application = prepareValidApplication();
+		String imageURI = RandomStringUtils.random( 30 );
+
+		RepositoryLookupResult lookupResult = new RepositoryLookupResult();
+		lookupResult.setStatus( RepositoryLookupStatus.SUCCESS );
+		when( repositoryTwo.fetchImage( imageURI ) ).thenReturn( lookupResult );
+
+		loadController.load( application.getId(), application.getCode(), imageURI, null );
+
+		verify( repositoryOne, times( 1 ) ).isValidURI( imageURI );
+		verify( repositoryTwo, times( 1 ) ).isValidURI( imageURI );
+		verify( repositoryOne, never() ).fetchImage( anyString() );
+		verify( repositoryTwo ).fetchImage( imageURI );
 	}
 
 	@Test
@@ -129,7 +171,7 @@ public class TestImageLoadController
 
 		final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
 		lookupResult.setStatus( RepositoryLookupStatus.SUCCESS );
-		when( imageLookupRepository.fetchImage( imageURI ) ).thenReturn( lookupResult );
+		when( repositoryOne.fetchImage( imageURI ) ).thenReturn( lookupResult );
 
 		Image expectedImageToSave = new Image();
 		expectedImageToSave.setKey( imageURI );
@@ -151,7 +193,7 @@ public class TestImageLoadController
 
 		loadController.load( application.getId(), application.getCode(), imageURI, null );
 
-		verify( imageLookupRepository ).fetchImage( imageURI );
+		verify( repositoryOne ).fetchImage( imageURI );
 		verify( imageService ).getImageByKey( imageURI, application.getId() );
 		verify( imageService ).save( any( Image.class ), any( RepositoryLookupResult.class ) );
 	}
@@ -164,7 +206,7 @@ public class TestImageLoadController
 
 		final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
 		lookupResult.setStatus( RepositoryLookupStatus.SUCCESS );
-		when( imageLookupRepository.fetchImage( imageURI ) ).thenReturn( lookupResult );
+		when( repositoryOne.fetchImage( imageURI ) ).thenReturn( lookupResult );
 
 		Image expectedImageToSave = new Image();
 		expectedImageToSave.setKey( imageURI );
@@ -186,7 +228,7 @@ public class TestImageLoadController
 
 		loadController.load( application.getId(), application.getCode(), imageURI, imageKey );
 
-		verify( imageLookupRepository ).fetchImage( imageURI );
+		verify( repositoryOne ).fetchImage( imageURI );
 		verify( imageService ).getImageByKey( imageKey, application.getId() );
 		verify( imageService ).save( any( Image.class ), any( RepositoryLookupResult.class ) );
 	}
@@ -198,7 +240,7 @@ public class TestImageLoadController
 
 		final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
 		lookupResult.setStatus( RepositoryLookupStatus.SUCCESS );
-		when( imageLookupRepository.fetchImage( imageURI ) ).thenReturn( lookupResult );
+		when( repositoryOne.fetchImage( imageURI ) ).thenReturn( lookupResult );
 
 		final Image existing = new Image();
 		when( imageService.getImageByKey( imageURI, application.getId() ) ).thenReturn( existing );
@@ -218,7 +260,7 @@ public class TestImageLoadController
 
 		loadController.load( application.getId(), application.getCode(), imageURI, null );
 
-		verify( imageLookupRepository ).fetchImage( imageURI );
+		verify( repositoryOne ).fetchImage( imageURI );
 		verify( imageService ).getImageByKey( imageURI, application.getId() );
 		verify( imageService ).save( existing, lookupResult );
 	}
@@ -231,7 +273,7 @@ public class TestImageLoadController
 
 		final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
 		lookupResult.setStatus( RepositoryLookupStatus.SUCCESS );
-		when( imageLookupRepository.fetchImage( imageURI ) ).thenReturn( lookupResult );
+		when( repositoryOne.fetchImage( imageURI ) ).thenReturn( lookupResult );
 
 		final Image existing = new Image();
 		when( imageService.getImageByKey( imageKey, application.getId() ) ).thenReturn( existing );
@@ -251,7 +293,7 @@ public class TestImageLoadController
 
 		loadController.load( application.getId(), application.getCode(), imageURI, imageKey );
 
-		verify( imageLookupRepository ).fetchImage( imageURI );
+		verify( repositoryOne ).fetchImage( imageURI );
 		verify( imageService ).getImageByKey( imageKey, application.getId() );
 		verify( imageService ).save( existing, lookupResult );
 	}
@@ -276,6 +318,16 @@ public class TestImageLoadController
 	@Configuration
 	public static class TestConfig
 	{
+		@Bean
+		public ImageLookupRepository repositoryOne() {
+			return mock( ImageLookupRepository.class );
+		}
+
+		@Bean
+		public ImageLookupRepository repositoryTwo() {
+			return mock( ImageLookupRepository.class );
+		}
+
 		@Bean
 		public ImageLoadController imageLoadController() {
 			return new ImageLoadController();

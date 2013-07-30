@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collection;
+
 @Controller
 public class ImageLoadController
 {
@@ -24,7 +26,7 @@ public class ImageLoadController
 	private ApplicationService applicationService;
 
 	@Autowired
-	private ImageLookupRepository imageLookupRepository;
+	private Collection<ImageLookupRepository> imageLookupRepositories;
 
 	@Autowired
 	private ImageService imageService;
@@ -41,6 +43,8 @@ public class ImageLoadController
 			throw new ApplicationDeniedException();
 		}
 
+		ImageLookupRepository imageLookupRepository = determineLookupRepository( repositoryURI );
+
 		RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage( repositoryURI );
 		ensureLookupResultIsValid( lookupResult );
 
@@ -54,6 +58,16 @@ public class ImageLoadController
 		imageService.save( image, lookupResult );
 
 		return StringUtils.EMPTY;
+	}
+
+	private ImageLookupRepository determineLookupRepository( String uri ) {
+		for ( ImageLookupRepository repository : imageLookupRepositories ) {
+			if ( repository.isValidURI( uri ) ) {
+				return repository;
+			}
+		}
+
+		throw new ImageLookupException( "Did not find any lookup repositories that can handle uri: " + uri );
 	}
 
 	private Image createNewImage( Application application, String imageKey ) {
