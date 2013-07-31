@@ -129,7 +129,6 @@ public class TestImageLoadController
 
 		verify( repositoryOne, times( 1 ) ).isValidURI( imageURI );
 		verify( repositoryOne ).fetchImage( imageURI );
-		verify( repositoryTwo, never() ).isValidURI( anyString() );
 		verify( repositoryTwo, never() ).fetchImage( anyString() );
 	}
 
@@ -158,7 +157,6 @@ public class TestImageLoadController
 
 		loadController.load( application.getId(), application.getCode(), imageURI, null );
 
-		verify( repositoryOne, times( 1 ) ).isValidURI( imageURI );
 		verify( repositoryTwo, times( 1 ) ).isValidURI( imageURI );
 		verify( repositoryOne, never() ).fetchImage( anyString() );
 		verify( repositoryTwo ).fetchImage( imageURI );
