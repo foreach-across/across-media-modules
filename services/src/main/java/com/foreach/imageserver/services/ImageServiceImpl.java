@@ -91,7 +91,7 @@ public class ImageServiceImpl implements ImageService
 			LOG.debug( "Requesting image {} with modifier {}", image.getId(), modifier );
 		}
 
-		ImageModifier normalized = normalizeAndUseExistingIfPossible( image, modifier );
+		ImageModifier normalized = modifier.normalize( image.getDimensions() );
 		verifyOutputType( image.getImageType(), normalized );
 
 		if ( LOG.isDebugEnabled() ) {

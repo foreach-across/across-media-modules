@@ -29,19 +29,19 @@ public class ImageModificationController
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	@ResponseBody
-	public String register( @RequestParam(value = "aid", required = true) int applicationId,
-	                        @RequestParam(value = "token", required = true) String applicationKey,
-	                        @RequestParam(value = "key", required = true) String imageKey,
-	                        @RequestParam(value = "mod", required = true) ImageModifier modifier,
-	                        Dimensions dimensions ) {
+	public String register(
+			@RequestParam(value = "aid", required = true) int applicationId,
+			@RequestParam(value = "token", required = true) String applicationKey,
+			@RequestParam(value = "key", required = true) String imageKey,
+			ModifierWithDestinationDimensions modifier ) {
 		Application application = applicationService.getApplicationById( applicationId );
 
 		if ( application == null || !application.canBeManaged( applicationKey ) ) {
 			throw new ApplicationDeniedException();
 		}
 
-		if ( dimensions == null || ( dimensions.getWidth() == 0 && dimensions.getHeight() == 0 ) ) {
-			throw new ImageModificationException( "No width or heigh specified." );
+		if ( modifier == null || modifier.getTarget() == null || ( modifier.getTarget().getWidth() == 0 && modifier.getTarget().getHeight() == 0 ) ) {
+			throw new ImageModificationException( "No target width or height specified." );
 		}
 
 		Image image = imageService.getImageByKey( imageKey, application.getId() );
@@ -50,8 +50,21 @@ public class ImageModificationController
 			throw new ImageNotFoundException();
 		}
 
-		imageService.registerModification( image, dimensions, modifier );
+		imageService.registerModification( image, modifier.getTarget(), modifier );
 
 		return StringUtils.EMPTY;
+	}
+
+	public static class ModifierWithDestinationDimensions extends ImageModifier
+	{
+		private Dimensions target = new Dimensions();
+
+		public Dimensions getTarget() {
+			return target;
+		}
+
+		public void setTarget( Dimensions target ) {
+			this.target = target;
+		}
 	}
 }

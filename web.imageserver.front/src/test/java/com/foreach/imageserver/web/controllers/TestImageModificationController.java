@@ -3,7 +3,6 @@ package com.foreach.imageserver.web.controllers;
 import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
@@ -43,8 +42,7 @@ public class TestImageModificationController
 		boolean exceptionWasThrown = false;
 
 		try {
-			modificationController.register( 1, UUID.randomUUID().toString(), "somekey", new ImageModifier(),
-			                                 new Dimensions() );
+			modificationController.register( 1, UUID.randomUUID().toString(), "somekey", createModifier() );
 		}
 		catch ( ApplicationDeniedException ade ) {
 			exceptionWasThrown = true;
@@ -64,8 +62,7 @@ public class TestImageModificationController
 		when( application.canBeManaged( anyString() ) ).thenReturn( false );
 
 		try {
-			modificationController.register( 1, UUID.randomUUID().toString(), "somekey", new ImageModifier(),
-			                                 new Dimensions() );
+			modificationController.register( 1, UUID.randomUUID().toString(), "somekey", createModifier() );
 		}
 		catch ( ApplicationDeniedException ade ) {
 			exceptionWasThrown = true;
@@ -82,7 +79,7 @@ public class TestImageModificationController
 
 		when( applicationService.getApplicationById( 1 ) ).thenReturn( inactive );
 
-		modificationController.register( 1, inactive.getCode(), "somekey", new ImageModifier(), new Dimensions() );
+		modificationController.register( 1, inactive.getCode(), "somekey", createModifier() );
 	}
 
 	@Test(expected = ImageNotFoundException.class)
@@ -92,8 +89,7 @@ public class TestImageModificationController
 		when( applicationService.getApplicationById( 1 ) ).thenReturn( application );
 		when( application.canBeManaged( anyString() ) ).thenReturn( true );
 
-		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", new ImageModifier(),
-		                                 new Dimensions( 800, 600 ) );
+		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", createModifier( 800, 600 ) );
 	}
 
 	@Test(expected = ImageModificationException.class)
@@ -103,8 +99,7 @@ public class TestImageModificationController
 		when( applicationService.getApplicationById( 1 ) ).thenReturn( application );
 		when( application.canBeManaged( anyString() ) ).thenReturn( true );
 
-		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", new ImageModifier(),
-		                                 new Dimensions() );
+		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", createModifier() );
 	}
 
 	@Test
@@ -116,14 +111,25 @@ public class TestImageModificationController
 		when( application.canBeManaged( anyString() ) ).thenReturn( true );
 
 		Image image = mock( Image.class );
-		ImageModifier modifier = mock( ImageModifier.class );
+		ImageModificationController.ModifierWithDestinationDimensions modifier = createModifier( 800, 0 );
 
 		when( imageService.getImageByKey( "somekey", 1 ) ).thenReturn( image );
 
-		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", modifier,
-		                                 new Dimensions( 800, 0 ) );
+		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", modifier );
 
 		verify( imageService, times( 1 ) ).registerModification( image, new Dimensions( 800, 0 ), modifier );
+	}
+
+	private ImageModificationController.ModifierWithDestinationDimensions createModifier() {
+		return new ImageModificationController.ModifierWithDestinationDimensions();
+	}
+
+	private ImageModificationController.ModifierWithDestinationDimensions createModifier( int w, int h ) {
+		ImageModificationController.ModifierWithDestinationDimensions mod =
+				new ImageModificationController.ModifierWithDestinationDimensions();
+		mod.setTarget( new Dimensions( w, h ) );
+
+		return mod;
 	}
 
 	@Configuration
