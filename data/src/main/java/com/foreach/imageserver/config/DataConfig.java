@@ -2,6 +2,7 @@ package com.foreach.imageserver.config;
 
 import com.foreach.imageserver.business.Application;
 import com.foreach.imageserver.business.Image;
+import com.foreach.imageserver.business.ImageModification;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -49,7 +50,7 @@ public class DataConfig
 	public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
 		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
 		sessionFactory.setDataSource( dataSource() );
-		sessionFactory.setTypeAliases( new Class[] { Application.class, Image.class } );
+		sessionFactory.setTypeAliases( new Class[] { Application.class, Image.class, ImageModification.class } );
 		return sessionFactory.getObject();
 	}
 }

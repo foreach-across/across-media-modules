@@ -17,6 +17,7 @@ public class ImageModifier
 	private Crop crop = new Crop();
 	private ImageType output;
 	private boolean stretch;
+	private boolean keepAspect;
 	private Dimensions density = new Dimensions();
 
 	public int getWidth() {
@@ -57,6 +58,14 @@ public class ImageModifier
 
 	public void setStretch( boolean stretch ) {
 		this.stretch = stretch;
+	}
+
+	public boolean isKeepAspect() {
+		return keepAspect;
+	}
+
+	public void setKeepAspect( boolean keepAspect ) {
+		this.keepAspect = keepAspect;
 	}
 
 	/**
