@@ -91,6 +91,16 @@ public class ImageModifier
 		density.setHeight( vertical );
 	}
 
+	public boolean isOnlyDimensions() {
+		ImageModifier other = new ImageModifier();
+		other.setStretch( stretch );
+		other.setKeepAspect( keepAspect );
+		other.setWidth( width );
+		other.setHeight( height );
+
+		return this.equals( other );
+	}
+
 	public boolean isEmpty() {
 		return this.equals( EMPTY ) || this.equals( EMPTY_WITH_STRETCH );
 	}

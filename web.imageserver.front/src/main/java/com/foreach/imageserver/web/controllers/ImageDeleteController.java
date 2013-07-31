@@ -26,7 +26,7 @@ public class ImageDeleteController
 	@ResponseBody
 	public String delete( @RequestParam(value = "aid", required = true) int applicationId,
 	                      @RequestParam(value = "token", required = true) String applicationKey,
-	                      @RequestParam(value = "key", required = false) String imageKey ) {
+	                      @RequestParam(value = "key", required = true) String imageKey ) {
 		return delete( applicationId, applicationKey, imageKey, false );
 	}
 
@@ -34,7 +34,7 @@ public class ImageDeleteController
 	@ResponseBody
 	public String deleteVariants( @RequestParam(value = "aid", required = true) int applicationId,
 	                              @RequestParam(value = "token", required = true) String applicationKey,
-	                              @RequestParam(value = "key", required = false) String imageKey ) {
+	                              @RequestParam(value = "key", required = true) String imageKey ) {
 		return delete( applicationId, applicationKey, imageKey, true );
 	}
 

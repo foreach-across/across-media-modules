@@ -1,10 +1,8 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageModifier;
-import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.business.*;
 import com.foreach.imageserver.data.ImageDao;
+import com.foreach.imageserver.data.ImageModificationDao;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +17,9 @@ public class ImageServiceImpl implements ImageService
 
 	@Autowired
 	private ImageDao imageDao;
+
+	@Autowired
+	private ImageModificationDao modificationDao;
 
 	@Autowired
 	private ImageStoreService imageStoreService;
@@ -63,13 +64,34 @@ public class ImageServiceImpl implements ImageService
 		return image.getId() <= 0;
 	}
 
+	@Transactional
+	@Override
+	public void registerModification( Image image, Dimensions dimensions, ImageModifier modifier ) {
+		//ImageFile imageFile = fetchImageFile( image, modifier );
+
+		ImageModification modification = modificationDao.getModification( image.getId(), dimensions );
+
+		if ( modification == null ) {
+			modification = new ImageModification();
+			modification.setImageId( image.getId() );
+			modification.setDimensions( dimensions );
+			modification.setModifier( modifier );
+
+			modificationDao.insertModification( modification );
+		}
+		else {
+			modification.setModifier( modifier );
+			modificationDao.updateModification( modification );
+		}
+	}
+
 	@Override
 	public ImageFile fetchImageFile( Image image, ImageModifier modifier ) {
 		if ( LOG.isDebugEnabled() ) {
 			LOG.debug( "Requesting image {} with modifier {}", image.getId(), modifier );
 		}
 
-		ImageModifier normalized = modifier.normalize( image.getDimensions() );
+		ImageModifier normalized = normalizeAndUseExistingIfPossible( image, modifier );
 		verifyOutputType( image.getImageType(), normalized );
 
 		if ( LOG.isDebugEnabled() ) {
@@ -88,8 +110,21 @@ public class ImageServiceImpl implements ImageService
 		return file;
 	}
 
+	private ImageModifier normalizeAndUseExistingIfPossible( Image image, ImageModifier modifier ) {
+		if ( modifier.isOnlyDimensions() ) {
+			ImageModification modification = modificationDao.getModification( image.getId(),
+			                                                                  new Dimensions( modifier.getWidth(),
+			                                                                                  modifier.getHeight() ) );
+			if ( modification != null ) {
+				return modification.getModifier().normalize( image.getDimensions() );
+			}
+		}
+
+		return modifier.normalize( image.getDimensions() );
+	}
+
 	private void verifyOutputType( ImageType original, ImageModifier modifier ) {
-		if ( modifier.getOutput() == null && !modifier.isEmpty()) {
+		if ( modifier.getOutput() == null && !modifier.isEmpty() ) {
 			modifier.setOutput( ImageType.getPreferredOutputType( original ) );
 		}
 	}
