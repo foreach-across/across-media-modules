@@ -66,6 +66,9 @@ public enum ImageType implements IdLookup<String>
 	}
 
 	public static ImageType getPreferredOutputType( ImageType imageType ) {
+		if ( imageType == null ) {
+			return JPEG;
+		}
 		switch ( imageType ) {
 			case GIF:
 				return GIF;
