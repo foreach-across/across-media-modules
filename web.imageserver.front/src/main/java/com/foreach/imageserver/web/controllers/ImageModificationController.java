@@ -29,18 +29,17 @@ public class ImageModificationController
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	@ResponseBody
-	public String register(
-			@RequestParam(value = "aid", required = true) int applicationId,
-			@RequestParam(value = "token", required = true) String applicationKey,
-			@RequestParam(value = "key", required = true) String imageKey,
-			ModifierWithDestinationDimensions modifier ) {
+	public String register( @RequestParam(value = "aid", required = true) int applicationId,
+	                        @RequestParam(value = "token", required = true) String applicationKey,
+	                        @RequestParam(value = "key", required = true) String imageKey,
+	                        ModifierWithDestinationDimensions modifier ) {
 		Application application = applicationService.getApplicationById( applicationId );
 
 		if ( application == null || !application.canBeManaged( applicationKey ) ) {
 			throw new ApplicationDeniedException();
 		}
 
-		if ( modifier == null || modifier.getTarget() == null || ( modifier.getTarget().getWidth() == 0 && modifier.getTarget().getHeight() == 0 ) ) {
+		if ( modifier == null || modifier.getTarget() == null || Dimensions.EMPTY.equals( modifier.getTarget() ) ) {
 			throw new ImageModificationException( "No target width or height specified." );
 		}
 

@@ -89,17 +89,18 @@ public class TestImageModificationController
 		when( applicationService.getApplicationById( 1 ) ).thenReturn( application );
 		when( application.canBeManaged( anyString() ) ).thenReturn( true );
 
-		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", createModifier( 800, 600 ) );
+		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", createModifier() );
 	}
 
 	@Test(expected = ImageModificationException.class)
-	public void emptyDimensionsAreNotAllowed() {
+	public void requestEmptyTargetDimensions() {
 		Application application = mock( Application.class );
 
 		when( applicationService.getApplicationById( 1 ) ).thenReturn( application );
 		when( application.canBeManaged( anyString() ) ).thenReturn( true );
 
-		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", createModifier() );
+		modificationController.register( 1, UUID.randomUUID().toString(), "somekey",
+		                                 createModifier( new Dimensions() ) );
 	}
 
 	@Test
@@ -111,23 +112,25 @@ public class TestImageModificationController
 		when( application.canBeManaged( anyString() ) ).thenReturn( true );
 
 		Image image = mock( Image.class );
-		ImageModificationController.ModifierWithDestinationDimensions modifier = createModifier( 800, 0 );
+		Dimensions dimensions = new Dimensions( 800, 0 );
+
+		ImageModificationController.ModifierWithDestinationDimensions modifier = createModifier( dimensions );
 
 		when( imageService.getImageByKey( "somekey", 1 ) ).thenReturn( image );
 
 		modificationController.register( 1, UUID.randomUUID().toString(), "somekey", modifier );
 
-		verify( imageService, times( 1 ) ).registerModification( image, new Dimensions( 800, 0 ), modifier );
+		verify( imageService, times( 1 ) ).registerModification( image, dimensions, modifier );
 	}
 
 	private ImageModificationController.ModifierWithDestinationDimensions createModifier() {
-		return new ImageModificationController.ModifierWithDestinationDimensions();
+		return createModifier( new Dimensions( 800, 600 ) );
 	}
 
-	private ImageModificationController.ModifierWithDestinationDimensions createModifier( int w, int h ) {
+	private ImageModificationController.ModifierWithDestinationDimensions createModifier( Dimensions dimensions ) {
 		ImageModificationController.ModifierWithDestinationDimensions mod =
 				new ImageModificationController.ModifierWithDestinationDimensions();
-		mod.setTarget( new Dimensions( w, h ) );
+		mod.setTarget( dimensions );
 
 		return mod;
 	}

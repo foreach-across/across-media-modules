@@ -69,12 +69,13 @@ public class ImageServiceImpl implements ImageService
 	public void registerModification( Image image, Dimensions dimensions, ImageModifier modifier ) {
 		//ImageFile imageFile = fetchImageFile( image, modifier );
 
-		ImageModification modification = modificationDao.getModification( image.getId(), dimensions );
+		Dimensions normalized = dimensions.normalize( image.getDimensions() );
+		ImageModification modification = modificationDao.getModification( image.getId(), normalized );
 
 		if ( modification == null ) {
 			modification = new ImageModification();
 			modification.setImageId( image.getId() );
-			modification.setDimensions( dimensions );
+			modification.setDimensions( normalized );
 			modification.setModifier( modifier );
 
 			modificationDao.insertModification( modification );
@@ -101,6 +102,19 @@ public class ImageServiceImpl implements ImageService
 		ImageFile file = imageStoreService.getImageFile( image, normalized );
 
 		if ( file == null ) {
+			ImageModification modification = modificationDao.getModification( image.getId(),
+			                                                                  new Dimensions( normalized.getWidth(),
+			                                                                                  normalized.getHeight() ) );
+
+			if ( modification != null ) {
+				normalized = modification.getModifier().normalize( image.getDimensions() );
+				verifyOutputType( image.getImageType(), normalized );
+
+				file = imageStoreService.getImageFile( image, normalized );
+			}
+		}
+
+		if ( file == null ) {
 			ImageFile original = imageStoreService.getImageFile( image );
 			ImageFile modified = imageModificationService.apply( original, normalized );
 
@@ -108,19 +122,6 @@ public class ImageServiceImpl implements ImageService
 		}
 
 		return file;
-	}
-
-	private ImageModifier normalizeAndUseExistingIfPossible( Image image, ImageModifier modifier ) {
-		if ( modifier.isOnlyDimensions() ) {
-			ImageModification modification = modificationDao.getModification( image.getId(),
-			                                                                  new Dimensions( modifier.getWidth(),
-			                                                                                  modifier.getHeight() ) );
-			if ( modification != null ) {
-				return modification.getModifier().normalize( image.getDimensions() );
-			}
-		}
-
-		return modifier.normalize( image.getDimensions() );
 	}
 
 	private void verifyOutputType( ImageType original, ImageModifier modifier ) {

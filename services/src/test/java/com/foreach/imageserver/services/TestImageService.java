@@ -179,15 +179,17 @@ public class TestImageService
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
 
 		assertSame( storedFile, returned );
-		verify( modificationDao, never() ).getModification( anyInt(), any( Dimensions.class ) );
+		verify( modificationDao, times(1) ).getModification( anyInt(), any( Dimensions.class ) );
 	}
 
 	@Test
 	public void fetchImageFileWithEmptyModifierWithoutExistingModification() {
 		Image image = new Image();
+		image.setId( 123 );
 		image.setDimensions( new Dimensions( 100, 200 ) );
 
 		ImageFile imageFile = new ImageFile( ImageType.JPEG, 0, null );
+		ImageFile originalImageFile = new ImageFile( ImageType.JPEG, 0, null );
 		ImageModifier modifier = mock( ImageModifier.class );
 		when( modifier.isOnlyDimensions() ).thenReturn( true );
 
@@ -196,51 +198,55 @@ public class TestImageService
 		normalized.setHeight( 20 );
 
 		when( modifier.normalize( image.getDimensions() ) ).thenReturn( normalized );
-		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( imageFile );
+		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( null );
+
+		when( imageStoreService.getImageFile( image ) ).thenReturn( originalImageFile );
+		when( imageModificationService.apply( originalImageFile, normalized ) ).thenReturn( imageFile );
+		when( imageStoreService.saveImage( image, normalized, imageFile ) ).thenReturn( imageFile );
 
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
 		assertSame( imageFile, returned );
 
 		verify( modifier, times( 1 ) ).normalize( image.getDimensions() );
-		verify( imageStoreService, never() ).getImageFile( any( Image.class ) );
-		verify( imageModificationService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
-		verify( imageStoreService, never() ).saveImage( any( Image.class ), any( ImageModifier.class ),
-		                                                any( ImageFile.class ) );
-		verify( modificationDao, times( 1 ) ).getModification( anyInt(), any( Dimensions.class ) );
+		verify( modificationDao, times( 1 ) ).getModification( 123, new Dimensions( 20, 20 ) );
 	}
 
 	@Test
 	public void fetchImageFileWillUseExistingModificationIfEmptyModifier() {
 		Image image = new Image();
+		image.setId( 123 );
 		image.setDimensions( new Dimensions( 100, 200 ) );
 
 		ImageFile imageFile = new ImageFile( ImageType.JPEG, 0, null );
+
 		ImageModifier modifier = mock( ImageModifier.class );
 		when( modifier.isOnlyDimensions() ).thenReturn( true );
-
-		ImageModification modification = mock( ImageModification.class );
-		when( modificationDao.getModification( anyInt(), any( Dimensions.class ) ) ).thenReturn( modification );
 
 		ImageModifier normalized = new ImageModifier();
 		normalized.setWidth( 20 );
 		normalized.setHeight( 20 );
 
-		ImageModifier otherModifier = mock( ImageModifier.class );
+		when( modifier.normalize( image.getDimensions() ) ).thenReturn( normalized );
+		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( null );
 
-		when( modification.getModifier() ).thenReturn( otherModifier );
-		when( otherModifier.normalize( image.getDimensions() ) ).thenReturn( normalized );
-		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( imageFile );
+		ImageModification modification = mock( ImageModification.class );
+		when( modificationDao.getModification( image.getId(), new Dimensions( 20, 20 ) ) ).thenReturn( modification );
+
+		ImageModifier registeredModifier = mock( ImageModifier.class );
+		when( modification.getModifier() ).thenReturn( registeredModifier );
+		when( registeredModifier.normalize( any( Dimensions.class ) ) ).thenReturn( registeredModifier );
+
+		when( imageStoreService.getImageFile( image, registeredModifier ) ).thenReturn( imageFile );
 
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
 		assertSame( imageFile, returned );
 
-		verify( modifier, never() ).normalize( image.getDimensions() );
-		verify( otherModifier, times( 1 ) ).normalize( image.getDimensions() );
+		verify( modifier, times( 1 ) ).normalize( image.getDimensions() );
+		verify( modificationDao, times( 1 ) ).getModification( 123, new Dimensions( 20, 20 ) );
 		verify( imageStoreService, never() ).getImageFile( any( Image.class ) );
 		verify( imageModificationService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
 		verify( imageStoreService, never() ).saveImage( any( Image.class ), any( ImageModifier.class ),
 		                                                any( ImageFile.class ) );
-		verify( modificationDao, times( 1 ) ).getModification( anyInt(), any( Dimensions.class ) );
 	}
 
 	@Test
@@ -274,13 +280,15 @@ public class TestImageService
 		final Dimensions dimensions = mock( Dimensions.class );
 		final ImageModifier modifier = mock( ImageModifier.class );
 
+		when( dimensions.normalize( any( Dimensions.class ) ) ).thenReturn( new Dimensions( 800, 600 ) );
+
 		doAnswer( new Answer()
 		{
 			@Override
 			public Object answer( InvocationOnMock invocation ) throws Throwable {
 				ImageModification modification = (ImageModification) invocation.getArguments()[0];
 				assertEquals( 123, modification.getImageId() );
-				assertSame( dimensions, modification.getDimensions() );
+				assertEquals( new Dimensions( 800, 600 ), modification.getDimensions() );
 				assertSame( modifier, modification.getModifier() );
 				return null;
 			}
@@ -288,7 +296,7 @@ public class TestImageService
 
 		imageService.registerModification( image, dimensions, modifier );
 
-		verify( modificationDao, times( 1 ) ).getModification( 123, dimensions );
+		verify( modificationDao, times( 1 ) ).getModification( 123, new Dimensions( 800, 600 ) );
 		verify( modificationDao, times( 1 ) ).insertModification( any( ImageModification.class ) );
 	}
 
@@ -302,13 +310,16 @@ public class TestImageService
 
 		final ImageModification existing = new ImageModification();
 
-		when( modificationDao.getModification( 123, dimensions ) ).thenReturn( existing );
+		when( dimensions.normalize( any( Dimensions.class ) ) ).thenReturn( new Dimensions( 800, 600 ) );
+		when( modificationDao.getModification( 123, new Dimensions( 800, 600 ) ) ).thenReturn( existing );
 
 		imageService.registerModification( image, dimensions, modifier );
 
-		verify( modificationDao, times( 1 ) ).getModification( 123, dimensions );
+		verify( modificationDao, times( 1 ) ).getModification( 123, new Dimensions( 800, 600 ) );
 		verify( modificationDao, never() ).insertModification( any( ImageModification.class ) );
 		verify( modificationDao, times( 1 ) ).updateModification( existing );
+
+		assertSame( modifier, existing.getModifier() );
 	}
 
 	@Configuration
