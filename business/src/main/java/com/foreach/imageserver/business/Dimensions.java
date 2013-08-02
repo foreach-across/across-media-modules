@@ -1,23 +1,15 @@
 package com.foreach.imageserver.business;
 
-public class Dimensions implements Comparable<Dimensions>
+public class Dimensions
 {
 	public static final Dimensions EMPTY = new Dimensions();
 
 	private int width;
 	private int height;
-	private Fraction ratio = Fraction.UNDEFINED;
 
 	public Dimensions( int width, int height ) {
 		this.width = width;
 		this.height = height;
-		this.ratio = Fraction.UNDEFINED;
-	}
-
-	public Dimensions( Fraction f ) {
-		this.width = 0;
-		this.height = 0;
-		this.ratio = f;
 	}
 
 	public Dimensions() {
@@ -39,72 +31,59 @@ public class Dimensions implements Comparable<Dimensions>
 		this.height = height;
 	}
 
-	public Fraction getRatio() {
-		return ratio;
-	}
+	/**
+	 * Will calculate the unknown dimensions according to the boundaries specified.
+	 * Any unknown dimensions will be scaled according to the aspect ratio of the boundaries.
+	 */
+	public Dimensions normalize( Dimensions boundaries ) {
+		Dimensions normalized = new Dimensions( width, height );
 
-	// clean up after persistence engine...
-	public void setRatio( Fraction ratio ) {
-		this.ratio = ratio;
-	}
+		Fraction originalAspectRatio = boundaries.getAspectRatio();
 
-	public boolean isAbsolute() {
-		return ( ratio.equals( Fraction.UNDEFINED ) );
-	}
-
-	public boolean hasAspectRatio() {
-		if ( isAbsolute() ) {
-			return ( ( width != 0 ) && ( height != 0 ) );
+		if ( width == 0 && height == 0 ) {
+			normalized.setWidth( boundaries.getWidth() );
+			normalized.setHeight( boundaries.getHeight() );
 		}
-		else {
-			return true;
+		else if ( height == 0 ) {
+			normalized.setHeight( originalAspectRatio.calculateHeightForWidth( width ) );
 		}
+		else if ( width == 0 ) {
+			normalized.setWidth( originalAspectRatio.calculateWidthForHeight( height ) );
+		}
+
+		return normalized;
+	}
+
+	/**
+	 * Will downscale the dimensions to fit in the boundaries if they are larger.
+	 */
+	public Dimensions scaleToFitIn( Dimensions boundaries ) {
+		Dimensions normalized = normalize( boundaries );
+		Dimensions scaled = new Dimensions( normalized.getWidth(), normalized.getHeight() );
+
+		Fraction aspectRatio = normalized.getAspectRatio();
+
+		boolean shouldNormalize =
+				normalized.getWidth() > boundaries.getWidth() || normalized.getHeight() > boundaries.getHeight();
+		boolean extendsOnBoth =
+				normalized.getWidth() > boundaries.getWidth() && normalized.getHeight() > boundaries.getHeight();
+		boolean scaleOnWidth =
+				( extendsOnBoth && normalized.getWidth() > normalized.getHeight() ) || ( !extendsOnBoth && normalized.getWidth() > boundaries.getWidth() );
+
+		if ( shouldNormalize && scaleOnWidth ) {
+			scaled.setWidth( boundaries.getWidth() );
+			scaled.setHeight( aspectRatio.calculateHeightForWidth( boundaries.getWidth() ) );
+		}
+		else if ( shouldNormalize ) {
+			scaled.setHeight( boundaries.getHeight() );
+			scaled.setWidth( aspectRatio.calculateWidthForHeight( boundaries.getHeight() ) );
+		}
+
+		return scaled;
 	}
 
 	public Fraction getAspectRatio() {
-		if ( isAbsolute() ) {
-			return new Fraction( width, height );
-		}
-		else {
-			return ratio;
-		}
-	}
-
-	public int compareTo( Dimensions other ) {
-		if ( isAbsolute() != other.isAbsolute() ) {
-			return isAbsolute() ? -1 : 1;
-		}
-		if ( isAbsolute() ) {
-			if ( height < other.height ) {
-				return -1;
-			}
-			if ( height > other.height ) {
-				return 1;
-			}
-			if ( width < other.width ) {
-				return -1;
-			}
-			if ( width > other.width ) {
-				return 1;
-			}
-			return 0;
-		}
-		else {
-			if ( relativeEqual( other ) ) {
-				return 0;
-			}
-			else {
-				return ratio.compareTo( other.ratio );
-			}
-		}
-	}
-
-	private boolean absoluteEqual( Dimensions other ) {
-		return ( ( width == other.width ) && ( height == other.height ) );
-	}
-
-	private boolean relativeEqual( Dimensions other ) {
-		return ( ratio.equals( other.ratio ) );
+		return new Fraction( width, height );
 	}
 
 	@Override
@@ -112,52 +91,31 @@ public class Dimensions implements Comparable<Dimensions>
 		if ( this == o ) {
 			return true;
 		}
-		if ( !( o instanceof Dimensions ) ) {
+		if ( o == null || getClass() != o.getClass() ) {
 			return false;
 		}
 
-		Dimensions other = (Dimensions) o;
+		Dimensions that = (Dimensions) o;
 
-		if ( isAbsolute() != other.isAbsolute() ) {
+		if ( height != that.height ) {
+			return false;
+		}
+		if ( width != that.width ) {
 			return false;
 		}
 
-		if ( isAbsolute() ) {
-			return absoluteEqual( other );
-		}
-		else {
-
-			return relativeEqual( other );
-		}
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		if ( isAbsolute() ) {
-			if ( width != 0 ) {
-				sb.append( width );
-			}
-			sb.append( 'x' );
-			if ( height != 0 ) {
-				sb.append( height );
-			}
-		}
-		else {
-			sb.append( ratio );
-		}
-
-		return sb.toString();
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		if ( isAbsolute() ) {
-			return 10007 * width + height;
-		}
-		else {
-			return ratio.hashCode();
-		}
+		int result = width;
+		result = 31 * result + height;
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return width + "x" + height;
 	}
 }

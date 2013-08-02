@@ -184,56 +184,15 @@ public class ImageModifier
 		dimensionsToUse.setHeight( height );
 
 		if ( maxDimensions != null && maxDimensions.getWidth() > 0 && maxDimensions.getHeight() > 0 ) {
-			setUnspecifiedDimensions( dimensionsToUse, maxDimensions );
+			dimensionsToUse = dimensionsToUse.normalize( maxDimensions );
 
 			if ( !stretch ) {
-				fitDimensionsToMaxDimensions( dimensionsToUse, maxDimensions );
+				dimensionsToUse = dimensionsToUse.scaleToFitIn( maxDimensions );
 			}
 		}
 
 		normalized.setWidth( dimensionsToUse.getWidth() );
 		normalized.setHeight( dimensionsToUse.getHeight() );
-	}
-
-	private void setUnspecifiedDimensions( Dimensions requested, Dimensions maxDimensions ) {
-		int widthToUse = requested.getWidth();
-		int heightToUse = requested.getHeight();
-
-		Fraction originalAspectRatio = maxDimensions.getAspectRatio();
-
-		if ( widthToUse == 0 && heightToUse == 0 ) {
-			widthToUse = maxDimensions.getWidth();
-			heightToUse = maxDimensions.getHeight();
-		}
-		else if ( heightToUse == 0 ) {
-			heightToUse = originalAspectRatio.calculateHeightForWidth( widthToUse );
-		}
-		else if ( widthToUse == 0 ) {
-			widthToUse = originalAspectRatio.calculateWidthForHeight( heightToUse );
-		}
-
-		requested.setWidth( widthToUse );
-		requested.setHeight( heightToUse );
-	}
-
-	private void fitDimensionsToMaxDimensions( Dimensions requested, Dimensions maxDimensions ) {
-		int widthToUse = requested.getWidth();
-		int heightToUse = requested.getHeight();
-
-		Fraction requestedAspectRatio = requested.getAspectRatio();
-
-		if ( widthToUse > maxDimensions.getWidth() ) {
-			widthToUse = maxDimensions.getWidth();
-			heightToUse = requestedAspectRatio.calculateHeightForWidth( widthToUse );
-		}
-
-		if ( heightToUse > maxDimensions.getHeight() ) {
-			heightToUse = maxDimensions.getHeight();
-			widthToUse = requestedAspectRatio.calculateWidthForHeight( heightToUse );
-		}
-
-		requested.setWidth( widthToUse );
-		requested.setHeight( heightToUse );
 	}
 
 	@Override
