@@ -54,11 +54,16 @@ public class PureJavaImageTransformer implements ImageTransformer
 	public ImageTransformerPriority canExecute( ImageTransformerAction action ) {
 		ImageType imageType = action.getImageFile().getImageType();
 
-		if ( imageType == ImageType.JPEG || imageType == ImageType.GIF || imageType == ImageType.PNG || imageType == ImageType.TIFF || imageType == ImageType.PDF ) {
-			return ImageTransformerPriority.PREFERRED;
-		}
-		else if ( imageType == ImageType.SVG || imageType == ImageType.EPS ) {
-			return ImageTransformerPriority.UNABLE;
+		switch ( imageType ) {
+			case JPEG:
+			case GIF:
+			case PNG:
+			case TIFF:
+			case PDF:
+				return ImageTransformerPriority.PREFERRED;
+			case SVG:
+			case EPS:
+				return ImageTransformerPriority.UNABLE;
 		}
 
 		// Current implementation is very dodgy, make sure modifications only go through imagemagick

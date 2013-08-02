@@ -179,7 +179,7 @@ public class TestImageService
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
 
 		assertSame( storedFile, returned );
-		verify( modificationDao, times(1) ).getModification( anyInt(), any( Dimensions.class ) );
+		verify( modificationDao, times( 1 ) ).getModification( anyInt(), any( Dimensions.class ) );
 	}
 
 	@Test
@@ -247,6 +247,40 @@ public class TestImageService
 		verify( imageModificationService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
 		verify( imageStoreService, never() ).saveImage( any( Image.class ), any( ImageModifier.class ),
 		                                                any( ImageFile.class ) );
+	}
+
+	@Test
+	public void ifModificationIsNotYetCreatedItWillBeCreatedAsRequestedModifier() {
+		Image image = new Image();
+		image.setId( 123 );
+		image.setDimensions( new Dimensions( 100, 200 ) );
+
+		ImageFile imageFile = new ImageFile( ImageType.JPEG, 0, null );
+		ImageFile originalImageFile = new ImageFile( ImageType.JPEG, 0, null );
+
+		ImageModifier modifier = mock( ImageModifier.class );
+		when( modifier.isOnlyDimensions() ).thenReturn( true );
+
+		ImageModifier normalized = new ImageModifier();
+		normalized.setWidth( 20 );
+		normalized.setHeight( 20 );
+
+		when( modifier.normalize( image.getDimensions() ) ).thenReturn( normalized );
+		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( null );
+
+		ImageModification modification = mock( ImageModification.class );
+		when( modificationDao.getModification( image.getId(), new Dimensions( 20, 20 ) ) ).thenReturn( modification );
+
+		ImageModifier registeredModifier = mock( ImageModifier.class );
+		when( modification.getModifier() ).thenReturn( registeredModifier );
+		when( registeredModifier.normalize( any( Dimensions.class ) ) ).thenReturn( registeredModifier );
+
+		when( imageStoreService.getImageFile( image ) ).thenReturn( originalImageFile );
+		when( imageModificationService.apply( originalImageFile, registeredModifier ) ).thenReturn( imageFile );
+		when( imageStoreService.saveImage( image, normalized, imageFile ) ).thenReturn( imageFile );
+
+		ImageFile returned = imageService.fetchImageFile( image, modifier );
+		assertSame( imageFile, returned );
 	}
 
 	@Test

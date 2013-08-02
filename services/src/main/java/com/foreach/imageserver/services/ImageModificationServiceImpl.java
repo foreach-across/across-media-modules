@@ -58,25 +58,7 @@ public class ImageModificationServiceImpl implements ImageModificationService
 	}
 
 	private <T> T execute( ImageTransformerAction<T> action ) {
-		List<ImageTransformer> transformers = new LinkedList<ImageTransformer>();
-		List<ImageTransformer> fallback = new LinkedList<ImageTransformer>();
-
-		for ( ImageTransformer candidate : transformerList ) {
-			if ( candidate.isEnabled() ) {
-				ImageTransformerPriority priority = candidate.canExecute( action );
-
-				if ( priority != null && priority != ImageTransformerPriority.UNABLE ) {
-					if ( priority == ImageTransformerPriority.PREFERRED ) {
-						transformers.add( candidate );
-					}
-					else {
-						fallback.add( candidate );
-					}
-				}
-			}
-		}
-
-		transformers.addAll( fallback );
+		List<ImageTransformer> transformers = findTransformersForAction( action );
 
 		if ( transformers.isEmpty() ) {
 			LOG.error( "No possible transformer for action {}", action );
@@ -107,5 +89,29 @@ public class ImageModificationServiceImpl implements ImageModificationService
 
 		LOG.error( "All transformers failed trying to execute action {}", action );
 		throw new ImageModificationException( "All transformers failed trying to apply image modification" );
+	}
+
+	private <T> List<ImageTransformer> findTransformersForAction( ImageTransformerAction<T> action ) {
+		List<ImageTransformer> transformers = new LinkedList<ImageTransformer>();
+		List<ImageTransformer> fallback = new LinkedList<ImageTransformer>();
+
+		for ( ImageTransformer candidate : transformerList ) {
+			if ( candidate.isEnabled() ) {
+				ImageTransformerPriority priority = candidate.canExecute( action );
+
+				if ( priority != null && priority != ImageTransformerPriority.UNABLE ) {
+					if ( priority == ImageTransformerPriority.PREFERRED ) {
+						transformers.add( candidate );
+					}
+					else {
+						fallback.add( candidate );
+					}
+				}
+			}
+		}
+
+		transformers.addAll( fallback );
+
+		return transformers;
 	}
 }

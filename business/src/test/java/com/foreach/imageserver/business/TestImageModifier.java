@@ -87,10 +87,10 @@ public class TestImageModifier
 
 		assertEquals( modifier, modifier.normalize( original ) );
 
-		checkWidthAndHeight( 800, 700, false, 800, 700 );
-		checkWidthAndHeight( 800, 700, true, 800, 700 );
-		checkWidthAndHeight( 1024, 768, false, 1024, 768 );
-		checkWidthAndHeight( 1024, 768, true, 1024, 768 );
+		checkWidthAndHeight( 800, 700, false, false, 800, 700 );
+		checkWidthAndHeight( 800, 700, true, false, 800, 700 );
+		checkWidthAndHeight( 1024, 768, false, false, 1024, 768 );
+		checkWidthAndHeight( 1024, 768, true, false, 1024, 768 );
 	}
 
 	@Test
@@ -145,16 +145,45 @@ public class TestImageModifier
 
 	@Test
 	public void withoutStretchExceedingDimensionsResultInOriginalAccordingToAspectRatioRequested() {
-		checkWidthAndHeight( 1024, 1000, false, 786, 768 );
-		checkWidthAndHeight( 1200, 768, false, 1024, 655 );
-		checkWidthAndHeight( 1600, 1200, false, 1024, 768 );
+		checkWidthAndHeight( 1024, 1000, false, false, 786, 768 );
+		checkWidthAndHeight( 1200, 768, false, false, 1024, 655 );
+		checkWidthAndHeight( 1600, 1200, false, false, 1024, 768 );
 	}
 
 	@Test
 	public void withStretchExceedingDimensionsAreAllowed() {
-		checkWidthAndHeight( 1024, 1000, true, 1024, 1000 );
-		checkWidthAndHeight( 1200, 768, true, 1200, 768 );
-		checkWidthAndHeight( 1600, 1200, true, 1600, 1200 );
+		checkWidthAndHeight( 1024, 1000, true, false, 1024, 1000 );
+		checkWidthAndHeight( 1200, 768, true, false, 1200, 768 );
+		checkWidthAndHeight( 1600, 1200, true, false, 1600, 1200 );
+	}
+
+	@Test
+	public void keepAspectEnforcesAspectRatio() {
+		checkWidthAndHeight( 800, 200, false, true, 800, 600 );
+
+		original = new Dimensions( 1000, 500 );
+		checkWidthAndHeight( 300, 90, false, true, 300, 150 );
+
+		original = new Dimensions( 500, 1000 );
+		checkWidthAndHeight( 300, 90, false, true, 45, 90 );
+	}
+
+	@Test
+	public void keepAspectButNoStretchModifiesToLargestFittingSideWithAspectRatio() {
+		original = new Dimensions( 1000, 500 );
+		checkWidthAndHeight( 3000, 900, false, true, 1000, 500 );
+
+		original = new Dimensions( 500, 1000 );
+		checkWidthAndHeight( 3000, 900, false, true, 450, 900 );
+	}
+
+	@Test
+	public void keepAspectAndStretchModifiesToLargestPossibleThatFitsInDimensions() {
+		original = new Dimensions( 1000, 500 );
+		checkWidthAndHeight( 2000, 2000, true, true, 2000, 1000 );
+
+		original = new Dimensions( 50, 100 );
+		checkWidthAndHeight( 2000, 2000, true, true, 1000, 2000 );
 	}
 
 	@Test
@@ -169,39 +198,41 @@ public class TestImageModifier
 
 	@Test
 	public void unspecifiedDimensionsResultInOriginalAccordingToOriginalAspectRatio() {
-		checkWidthAndHeight( 1024, 0, false, 1024, 768 );
-		checkWidthAndHeight( 1024, 0, true, 1024, 768 );
-		checkWidthAndHeight( 0, 768, false, 1024, 768 );
-		checkWidthAndHeight( 0, 768, true, 1024, 768 );
+		checkWidthAndHeight( 1024, 0, false, false, 1024, 768 );
+		checkWidthAndHeight( 1024, 0, true, false, 1024, 768 );
+		checkWidthAndHeight( 0, 768, false, false, 1024, 768 );
+		checkWidthAndHeight( 0, 768, true, false, 1024, 768 );
 	}
 
 	@Test
 	public void unspecifiedCombinedWithExceedingDimensionWithoutStretch() {
-		checkWidthAndHeight( 1600, 0, false, 1024, 768 );
-		checkWidthAndHeight( 1600, 0, true, 1600, 1200 );
-		checkWidthAndHeight( 0, 1200, false, 1024, 768 );
-		checkWidthAndHeight( 0, 1200, true, 1600, 1200 );
+		checkWidthAndHeight( 1600, 0, false, false, 1024, 768 );
+		checkWidthAndHeight( 1600, 0, true, false, 1600, 1200 );
+		checkWidthAndHeight( 0, 1200, false, false, 1024, 768 );
+		checkWidthAndHeight( 0, 1200, true, false, 1600, 1200 );
 	}
 
 	@Test
 	public void exceedingDimensionsShouldSnapToLargestSide() {
 		original = new Dimensions( 100, 100 );
 
-		checkWidthAndHeight( 10000, 1000, false, 100, 10 );
-		checkWidthAndHeight( 1000, 10000, false, 10, 100 );
-		checkWidthAndHeight( 1000, 100, false, 100, 10 );
-		checkWidthAndHeight( 100, 1000, false, 10, 100 );
+		checkWidthAndHeight( 10000, 1000, false, false, 100, 10 );
+		checkWidthAndHeight( 1000, 10000, false, false, 10, 100 );
+		checkWidthAndHeight( 1000, 100, false, false, 100, 10 );
+		checkWidthAndHeight( 100, 1000, false, false, 10, 100 );
 	}
 
 	private void checkWidthAndHeight( int requestedWidth,
 	                                  int requestedHeight,
 	                                  boolean stretch,
+	                                  boolean keepAspect,
 	                                  int normalizedWidth,
 	                                  int normalizedHeight ) {
 		modifier = new ImageModifier();
 		modifier.setWidth( requestedWidth );
 		modifier.setHeight( requestedHeight );
 		modifier.setStretch( stretch );
+		modifier.setKeepAspect( keepAspect );
 
 		normalized = modifier.normalize( original );
 		assertEquals( normalizedWidth, normalized.getWidth() );

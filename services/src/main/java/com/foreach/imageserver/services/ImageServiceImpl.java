@@ -93,6 +93,7 @@ public class ImageServiceImpl implements ImageService
 		}
 
 		ImageModifier normalized = modifier.normalize( image.getDimensions() );
+		ImageModifier saveAsModifier = normalized;
 		verifyOutputType( image.getImageType(), normalized );
 
 		if ( LOG.isDebugEnabled() ) {
@@ -118,7 +119,7 @@ public class ImageServiceImpl implements ImageService
 			ImageFile original = imageStoreService.getImageFile( image );
 			ImageFile modified = imageModificationService.apply( original, normalized );
 
-			file = imageStoreService.saveImage( image, normalized, modified );
+			file = imageStoreService.saveImage( image, saveAsModifier, modified );
 		}
 
 		return file;

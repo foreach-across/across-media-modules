@@ -133,7 +133,7 @@ public class ImageModifier
 
 	private void calculateDensity( ImageModifier normalized, Dimensions original ) {
 		if ( Dimensions.EMPTY.equals( normalized.getDensity() ) ) {
-			Dimensions density = new Dimensions();
+			Dimensions calculated = new Dimensions();
 
 			int requestedWidth = normalized.getWidth();
 			int requestedHeight = normalized.getHeight();
@@ -142,20 +142,19 @@ public class ImageModifier
 			int originalHeight = normalized.hasCrop() ? normalized.getCrop().getHeight() : original.getHeight();
 
 			if ( originalWidth >= requestedWidth ) {
-				density.setWidth( 1 );
+				calculated.setWidth( 1 );
 			}
 			else {
-				density.setWidth( Double.valueOf( Math.ceil( requestedWidth / (double) originalWidth ) ).intValue() );
+				calculated.setWidth( Double.valueOf( Math.ceil( requestedWidth / (double) originalWidth ) ).intValue() );
 			}
 			if ( originalHeight >= requestedHeight ) {
-				density.setHeight( 1 );
+				calculated.setHeight( 1 );
 			}
 			else {
-				density.setHeight(
-						Double.valueOf( Math.ceil( requestedHeight / (double) originalHeight ) ).intValue() );
+				calculated.setHeight( Double.valueOf( Math.ceil( requestedHeight / (double) originalHeight ) ).intValue() );
 			}
 
-			normalized.setDensity( density );
+			normalized.setDensity( calculated );
 		}
 	}
 
@@ -186,6 +185,9 @@ public class ImageModifier
 		if ( maxDimensions != null && maxDimensions.getWidth() > 0 && maxDimensions.getHeight() > 0 ) {
 			dimensionsToUse = dimensionsToUse.normalize( maxDimensions );
 
+			if ( keepAspect ) {
+				dimensionsToUse = dimensionsToUse.normalize( maxDimensions.getAspectRatio() );
+			}
 			if ( !stretch ) {
 				dimensionsToUse = dimensionsToUse.scaleToFitIn( maxDimensions );
 			}

@@ -55,6 +55,25 @@ public class Dimensions
 	}
 
 	/**
+	 * Will verify and modify the dimensions so that they match the aspect ratio.
+	 * The largest dimension according to aspect ratio is kept.
+	 */
+	public Dimensions normalize( Fraction aspectRatio ) {
+		Dimensions normalized = new Dimensions( width, height );
+
+		if ( !normalized.getAspectRatio().equals( aspectRatio ) ) {
+			if ( aspectRatio.getNumerator() > aspectRatio.getDenominator() ) {
+				normalized.setHeight( aspectRatio.calculateHeightForWidth( normalized.getWidth() ) );
+			}
+			else {
+				normalized.setWidth( aspectRatio.calculateWidthForHeight( normalized.getHeight() ) );
+			}
+		}
+
+		return normalized;
+	}
+
+	/**
 	 * Will downscale the dimensions to fit in the boundaries if they are larger.
 	 */
 	public Dimensions scaleToFitIn( Dimensions boundaries ) {

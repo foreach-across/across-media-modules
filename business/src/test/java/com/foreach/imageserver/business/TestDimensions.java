@@ -7,13 +7,19 @@ import static org.junit.Assert.assertEquals;
 public class TestDimensions
 {
 	@Test
-	public void normalizeWillDetermineUnknownDimension() {
+	public void normalizeOnDimensionsWillDetermineUnknownDimension() {
 		Dimensions boundaries = new Dimensions( 1600, 1200 );
 
 		assertEquals( new Dimensions( 1600, 1200 ), new Dimensions().normalize( boundaries ) );
 		assertEquals( new Dimensions( 800, 600 ), new Dimensions( 800, 0 ).normalize( boundaries ) );
 		assertEquals( new Dimensions( 800, 600 ), new Dimensions( 0, 600 ).normalize( boundaries ) );
 		assertEquals( new Dimensions( 123, 456 ), new Dimensions( 123, 456 ).normalize( boundaries ) );
+	}
+
+	@Test
+	public void normalizeOnAspectRatioWillModifyBasedOnLargestDimension() {
+		assertEquals( new Dimensions( 800, 600 ), new Dimensions( 800, 200 ).normalize( new Fraction( 4, 3 ) ) );
+		assertEquals( new Dimensions( 600, 800 ), new Dimensions( 200, 800 ).normalize( new Fraction( 3, 4 ) ) );
 	}
 
 	@Test

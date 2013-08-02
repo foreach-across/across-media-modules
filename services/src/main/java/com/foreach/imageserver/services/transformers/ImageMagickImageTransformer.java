@@ -90,6 +90,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 		}
 	}
 
+	@SuppressWarnings( "REC_CATCH_EXCEPTION" )
 	private void executeModification( ImageModifyAction action ) {
 		try {
 			ImageModifier modifier = action.getModifier();
