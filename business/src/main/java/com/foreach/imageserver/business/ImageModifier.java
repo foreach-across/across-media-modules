@@ -197,6 +197,7 @@ public class ImageModifier
 		normalized.setHeight( dimensionsToUse.getHeight() );
 	}
 
+	@SuppressWarnings( "all" )
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {

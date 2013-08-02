@@ -20,9 +20,9 @@ import java.util.List;
  * Will iterate over all registered ImageTransformers to find the best one to apply the modification.
  */
 @Service
-public class ImageModificationServiceImpl implements ImageModificationService
+public class ImageTransformServiceImpl implements ImageTransformService
 {
-	private static final Logger LOG = LoggerFactory.getLogger( ImageModificationServiceImpl.class );
+	private static final Logger LOG = LoggerFactory.getLogger( ImageTransformServiceImpl.class );
 
 	@Autowired
 	private List<ImageTransformer> transformerList;

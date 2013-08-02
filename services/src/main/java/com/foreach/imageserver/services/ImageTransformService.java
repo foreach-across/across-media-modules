@@ -4,7 +4,7 @@ import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.business.ImageFile;
 import com.foreach.imageserver.business.ImageModifier;
 
-public interface ImageModificationService
+public interface ImageTransformService
 {
 	Dimensions calculateDimensions( ImageFile file );
 

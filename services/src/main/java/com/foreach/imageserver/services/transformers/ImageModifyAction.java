@@ -16,6 +16,7 @@ public class ImageModifyAction extends ImageTransformerAction<ImageFile>
 		return modifier;
 	}
 
+	@SuppressWarnings( "all" )
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {

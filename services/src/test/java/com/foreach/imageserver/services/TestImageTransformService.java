@@ -25,13 +25,13 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ContextConfiguration(classes = { TestImageModificationService.TestConfig.class }, loader = MockedLoader.class)
-public abstract class TestImageModificationService<T extends ImageTransformerAction<Y>, Y>
+@ContextConfiguration(classes = { TestImageTransformService.TestConfig.class }, loader = MockedLoader.class)
+public abstract class TestImageTransformService<T extends ImageTransformerAction<Y>, Y>
 {
 	/**
 	 * Test routing of ImageModifyAction.
 	 */
-	public static class TestImageModificationServiceWithImageModifyAction extends TestImageModificationService<ImageModifyAction, ImageFile>
+	public static class TestImageTransformServiceWithImageModifyAction extends TestImageTransformService<ImageModifyAction, ImageFile>
 	{
 		@Override
 		protected ActionTestItem<ImageModifyAction, ImageFile> createTestItem() {
@@ -48,7 +48,7 @@ public abstract class TestImageModificationService<T extends ImageTransformerAct
 
 				@Override
 				public ImageFile execute() {
-					return modificationService.apply( original, modifier );
+					return transformService.apply( original, modifier );
 				}
 
 				@Override
@@ -62,7 +62,7 @@ public abstract class TestImageModificationService<T extends ImageTransformerAct
 	/**
 	 * Test routing of ImageCalculateDimensionsAction.
 	 */
-	public static class TestImageModificationServiceWithImageCalculateDimensionsAction extends TestImageModificationService<ImageCalculateDimensionsAction, Dimensions>
+	public static class TestImageTransformServiceWithImageCalculateDimensionsAction extends TestImageTransformService<ImageCalculateDimensionsAction, Dimensions>
 	{
 		@Override
 		protected ActionTestItem<ImageCalculateDimensionsAction, Dimensions> createTestItem() {
@@ -78,7 +78,7 @@ public abstract class TestImageModificationService<T extends ImageTransformerAct
 
 				@Override
 				public Dimensions execute() {
-					return modificationService.calculateDimensions( original );
+					return transformService.calculateDimensions( original );
 				}
 
 				@Override
@@ -99,7 +99,7 @@ public abstract class TestImageModificationService<T extends ImageTransformerAct
 	private ImageTransformer transformerThree;
 
 	@Autowired
-	protected ImageModificationService modificationService;
+	protected ImageTransformService transformService;
 
 	private ActionTestItem<T, Y> actionTestItem;
 
@@ -338,8 +338,8 @@ public abstract class TestImageModificationService<T extends ImageTransformerAct
 		}
 
 		@Bean
-		public ImageModificationService imageModificationService() {
-			return new ImageModificationServiceImpl();
+		public ImageTransformService imageModificationService() {
+			return new ImageTransformServiceImpl();
 		}
 	}
 }

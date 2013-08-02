@@ -25,7 +25,7 @@ public class ImageServiceImpl implements ImageService
 	private ImageStoreService imageStoreService;
 
 	@Autowired
-	private ImageModificationService imageModificationService;
+	private ImageTransformService imageTransformService;
 
 	@Autowired
 	private TempFileService tempFileService;
@@ -41,7 +41,7 @@ public class ImageServiceImpl implements ImageService
 		image.setImageType( lookupResult.getImageType() );
 
 		ImageFile tempFile = tempFileService.createImageFile( lookupResult.getImageType(), lookupResult.getContent() );
-		image.setDimensions( imageModificationService.calculateDimensions( tempFile ) );
+		image.setDimensions( imageTransformService.calculateDimensions( tempFile ) );
 
 		boolean isInsert = isNewImage( image );
 
@@ -117,7 +117,7 @@ public class ImageServiceImpl implements ImageService
 
 		if ( file == null ) {
 			ImageFile original = imageStoreService.getImageFile( image );
-			ImageFile modified = imageModificationService.apply( original, normalized );
+			ImageFile modified = imageTransformService.apply( original, normalized );
 
 			file = imageStoreService.saveImage( image, saveAsModifier, modified );
 		}

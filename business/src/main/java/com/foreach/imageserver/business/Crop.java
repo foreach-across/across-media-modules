@@ -128,6 +128,7 @@ public class Crop
 		return pos;
 	}
 
+	@SuppressWarnings( "all" )
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {

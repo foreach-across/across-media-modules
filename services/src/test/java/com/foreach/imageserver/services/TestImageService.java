@@ -35,7 +35,7 @@ public class TestImageService
 	private ImageStoreService imageStoreService;
 
 	@Autowired
-	private ImageModificationService imageModificationService;
+	private ImageTransformService imageTransformService;
 
 	@Autowired
 	private TempFileService tempFileService;
@@ -71,7 +71,7 @@ public class TestImageService
 		lookupResult.setContent( stream );
 
 		when( tempFileService.createImageFile( ImageType.PNG, stream ) ).thenReturn( tempFile );
-		when( imageModificationService.calculateDimensions( tempFile ) ).thenReturn( dimensions );
+		when( imageTransformService.calculateDimensions( tempFile ) ).thenReturn( dimensions );
 
 		String expectedPath = RandomStringUtils.randomAlphanumeric( 20 );
 		when( imageStoreService.generateRelativeImagePath( newImage ) ).thenReturn( expectedPath );
@@ -112,7 +112,7 @@ public class TestImageService
 		lookupResult.setContent( stream );
 
 		when( tempFileService.createImageFile( ImageType.PNG, stream ) ).thenReturn( tempFile );
-		when( imageModificationService.calculateDimensions( tempFile ) ).thenReturn( dimensions );
+		when( imageTransformService.calculateDimensions( tempFile ) ).thenReturn( dimensions );
 
 		when( imageStoreService.saveImage( existing, tempFile ) ).thenReturn( new ImageFile( null, null, 5678L ) );
 
@@ -149,7 +149,7 @@ public class TestImageService
 
 		verify( modifier, times( 1 ) ).normalize( image.getDimensions() );
 		verify( imageStoreService, never() ).getImageFile( any( Image.class ) );
-		verify( imageModificationService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
+		verify( imageTransformService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
 		verify( imageStoreService, never() ).saveImage( any( Image.class ), any( ImageModifier.class ),
 		                                                any( ImageFile.class ) );
 	}
@@ -173,7 +173,7 @@ public class TestImageService
 		when( modifier.normalize( image.getDimensions() ) ).thenReturn( normalized );
 		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( null );
 		when( imageStoreService.getImageFile( image ) ).thenReturn( original );
-		when( imageModificationService.apply( original, normalized ) ).thenReturn( renderedFile );
+		when( imageTransformService.apply( original, normalized ) ).thenReturn( renderedFile );
 		when( imageStoreService.saveImage( image, normalized, renderedFile ) ).thenReturn( storedFile );
 
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
@@ -201,7 +201,7 @@ public class TestImageService
 		when( imageStoreService.getImageFile( image, normalized ) ).thenReturn( null );
 
 		when( imageStoreService.getImageFile( image ) ).thenReturn( originalImageFile );
-		when( imageModificationService.apply( originalImageFile, normalized ) ).thenReturn( imageFile );
+		when( imageTransformService.apply( originalImageFile, normalized ) ).thenReturn( imageFile );
 		when( imageStoreService.saveImage( image, normalized, imageFile ) ).thenReturn( imageFile );
 
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
@@ -244,7 +244,7 @@ public class TestImageService
 		verify( modifier, times( 1 ) ).normalize( image.getDimensions() );
 		verify( modificationDao, times( 1 ) ).getModification( 123, new Dimensions( 20, 20 ) );
 		verify( imageStoreService, never() ).getImageFile( any( Image.class ) );
-		verify( imageModificationService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
+		verify( imageTransformService, never() ).apply( any( ImageFile.class ), any( ImageModifier.class ) );
 		verify( imageStoreService, never() ).saveImage( any( Image.class ), any( ImageModifier.class ),
 		                                                any( ImageFile.class ) );
 	}
@@ -276,7 +276,7 @@ public class TestImageService
 		when( registeredModifier.normalize( any( Dimensions.class ) ) ).thenReturn( registeredModifier );
 
 		when( imageStoreService.getImageFile( image ) ).thenReturn( originalImageFile );
-		when( imageModificationService.apply( originalImageFile, registeredModifier ) ).thenReturn( imageFile );
+		when( imageTransformService.apply( originalImageFile, registeredModifier ) ).thenReturn( imageFile );
 		when( imageStoreService.saveImage( image, normalized, imageFile ) ).thenReturn( imageFile );
 
 		ImageFile returned = imageService.fetchImageFile( image, modifier );
