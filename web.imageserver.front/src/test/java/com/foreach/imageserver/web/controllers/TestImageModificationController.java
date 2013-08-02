@@ -114,7 +114,7 @@ public class TestImageModificationController
 		Image image = mock( Image.class );
 		Dimensions dimensions = new Dimensions( 800, 0 );
 
-		ImageModificationController.ModifierWithDestinationDimensions modifier = createModifier( dimensions );
+		ImageModificationController.ModifierWithTargetDimensions modifier = createModifier( dimensions );
 
 		when( imageService.getImageByKey( "somekey", 1 ) ).thenReturn( image );
 
@@ -123,13 +123,13 @@ public class TestImageModificationController
 		verify( imageService, times( 1 ) ).registerModification( image, dimensions, modifier );
 	}
 
-	private ImageModificationController.ModifierWithDestinationDimensions createModifier() {
+	private ImageModificationController.ModifierWithTargetDimensions createModifier() {
 		return createModifier( new Dimensions( 800, 600 ) );
 	}
 
-	private ImageModificationController.ModifierWithDestinationDimensions createModifier( Dimensions dimensions ) {
-		ImageModificationController.ModifierWithDestinationDimensions mod =
-				new ImageModificationController.ModifierWithDestinationDimensions();
+	private ImageModificationController.ModifierWithTargetDimensions createModifier( Dimensions dimensions ) {
+		ImageModificationController.ModifierWithTargetDimensions mod =
+				new ImageModificationController.ModifierWithTargetDimensions();
 		mod.setTarget( dimensions );
 
 		return mod;

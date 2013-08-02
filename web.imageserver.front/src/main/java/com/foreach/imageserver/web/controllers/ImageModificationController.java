@@ -32,7 +32,7 @@ public class ImageModificationController
 	public String register( @RequestParam(value = "aid", required = true) int applicationId,
 	                        @RequestParam(value = "token", required = true) String applicationKey,
 	                        @RequestParam(value = "key", required = true) String imageKey,
-	                        ModifierWithDestinationDimensions modifier ) {
+	                        ModifierWithTargetDimensions modifier ) {
 		Application application = applicationService.getApplicationById( applicationId );
 
 		if ( application == null || !application.canBeManaged( applicationKey ) ) {
@@ -54,7 +54,7 @@ public class ImageModificationController
 		return StringUtils.EMPTY;
 	}
 
-	public static class ModifierWithDestinationDimensions extends ImageModifier
+	public static class ModifierWithTargetDimensions extends ImageModifier
 	{
 		private Dimensions target = new Dimensions();
 
