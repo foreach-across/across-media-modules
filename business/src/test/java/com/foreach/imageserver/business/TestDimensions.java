@@ -2,7 +2,7 @@ package com.foreach.imageserver.business;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class TestDimensions
 {
@@ -20,6 +20,15 @@ public class TestDimensions
 	public void normalizeOnAspectRatioWillModifyBasedOnLargestDimension() {
 		assertEquals( new Dimensions( 800, 600 ), new Dimensions( 800, 200 ).normalize( new Fraction( 4, 3 ) ) );
 		assertEquals( new Dimensions( 600, 800 ), new Dimensions( 200, 800 ).normalize( new Fraction( 3, 4 ) ) );
+	}
+
+	@Test
+	public void fitsIn() {
+		assertTrue( new Dimensions( 1024, 768 ).fitsIn( new Dimensions( 1600, 1200 ) ) );
+		assertTrue( new Dimensions( 1024, 768 ).fitsIn( new Dimensions( 1024, 768 ) ) );
+		assertFalse( new Dimensions( 1600, 1200 ).fitsIn( new Dimensions( 1024, 768 ) ) );
+		assertFalse( new Dimensions( 1024, 1201 ).fitsIn( new Dimensions( 1600, 1200 ) ) );
+		assertFalse( new Dimensions( 1601, 768 ).fitsIn( new Dimensions( 1600, 1200 ) ) );
 	}
 
 	@Test
@@ -44,6 +53,9 @@ public class TestDimensions
 		              new Dimensions( 1024, 1000 ).scaleToFitIn( new Dimensions( 1024, 768 ) ) );
 		assertEquals( new Dimensions( 10, 100 ),
 		              new Dimensions( 1000, 10000 ).scaleToFitIn( new Dimensions( 100, 100 ) ) );
+
+		assertEquals( new Dimensions( 819, 768 ),
+		              new Dimensions( 1600, 1500 ).scaleToFitIn( new Dimensions( 1024, 768 ) ) );
 	}
 
 	@Test

@@ -1,10 +1,9 @@
 package com.foreach.imageserver.business;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class TestFraction
 {
@@ -31,6 +30,9 @@ public class TestFraction
 
 		fraction = new Fraction( 1280, 1024 );
 		assertEquals( 1280, fraction.calculateWidthForHeight( 1024 ) );
+
+		fraction = new Fraction( 700, 467 );
+		assertEquals( 628, fraction.calculateWidthForHeight( 419 ) );
 	}
 
 	@Test
@@ -49,6 +51,24 @@ public class TestFraction
 
 		fraction = new Fraction( 1280, 1024 );
 		assertEquals( 1024, fraction.calculateHeightForWidth( 1280 ) );
+
+		fraction = new Fraction( 700, 467 );
+		assertEquals( 419, fraction.calculateHeightForWidth( 628 ) );
+	}
+
+	@Test
+	public void isLargerOnSide() {
+		Fraction fraction = new Fraction( 4, 3 );
+		assertTrue( fraction.isLargerOnWidth() );
+		assertFalse( fraction.isLargerOnHeight() );
+
+		fraction = new Fraction( 9, 16 );
+		assertTrue( fraction.isLargerOnHeight() );
+		assertFalse( fraction.isLargerOnWidth() );
+
+		fraction = new Fraction( 4, 4 );
+		assertFalse( fraction.isLargerOnWidth() );
+		assertFalse( fraction.isLargerOnHeight() );
 	}
 
 	@Test
@@ -56,7 +76,6 @@ public class TestFraction
 		Fraction oneHalve = new Fraction( 1, 2 );
 		Fraction same = new Fraction( -1, -2 );
 
-		assertEquals( true, ( oneHalve.compareTo( same ) ) == 0 );
 		assertEquals( true, ( oneHalve.equals( same ) ) );
 		assertEquals( true, ( oneHalve.equals( oneHalve ) ) );
 	}
@@ -66,46 +85,7 @@ public class TestFraction
 		Fraction a = new Fraction( 11, 17 );
 		Fraction b = new Fraction( -11000, -17000 );
 
-		assertEquals( true, ( a.compareTo( b ) ) == 0 );
 		assertEquals( true, ( a.equals( b ) ) );
-	}
-
-	@Test
-	public void compare() {
-		Fraction oneHalve = new Fraction( 1, 2 );
-		Fraction oneThird = new Fraction( 1, 3 );
-
-		assertEquals( true, ( oneHalve.compareTo( oneThird ) ) > 0 );
-		assertEquals( true, ( oneThird.compareTo( oneHalve ) ) < 0 );
-		assertEquals( true, ( oneThird.compareTo( oneThird ) ) == 0 );
-
-		Fraction minusOneHalve = new Fraction( -1, 2 );
-		Fraction minusOneThird = new Fraction( -1, 3 );
-
-		assertEquals( true, ( minusOneHalve.compareTo( minusOneThird ) ) < 0 );
-		assertEquals( true, ( minusOneThird.compareTo( minusOneHalve ) ) > 0 );
-	}
-
-	@Test(expected = ClassCastException.class)
-	public void cantCompare() {
-		Fraction oneHalve = new Fraction( 1, 2 );
-		oneHalve.compareTo( new Float( 1.33f ) );
-	}
-
-	@Test
-	public void compareWithUndefineds() {
-		Fraction oneHalve = new Fraction( 1, 2 );
-
-		assertEquals( true, ( oneHalve.compareTo( Fraction.UNDEFINED ) ) > 0 );
-		assertEquals( true, ( Fraction.UNDEFINED.compareTo( oneHalve ) ) < 0 );
-		assertEquals( true, ( Fraction.UNDEFINED.compareTo( Fraction.UNDEFINED ) ) == 0 );
-
-		Fraction undef = new Fraction( 0, 0 );
-		assertEquals( true, ( oneHalve.compareTo( undef ) ) > 0 );
-		assertEquals( true, ( undef.compareTo( oneHalve ) ) < 0 );
-		assertEquals( true, ( undef.compareTo( undef ) ) == 0 );
-		assertEquals( true, ( undef.compareTo( Fraction.UNDEFINED ) ) == 0 );
-		assertEquals( true, ( Fraction.UNDEFINED.compareTo( undef ) ) == 0 );
 	}
 
 	@Test
@@ -183,12 +163,6 @@ public class TestFraction
 		assertEquals( tv.hashCode(), bigTv.hashCode() );
 	}
 
-	@Test(expected = ArithmeticException.class)
-	@Ignore // Deliberately broken for Ibatis model
-	public void divideByZero() {
-		Fraction f = new Fraction( 1, 0 );
-	}
-
 	@Test
 	public void gcd() {
 		Fraction f = new Fraction( 120, -40 );
@@ -210,64 +184,5 @@ public class TestFraction
 
 		assertEquals( 0, zero.getNumerator() );
 		assertEquals( 1, zero.getDenominator() );
-	}
-
-	@Test
-	public void toAndFromString() {
-		for ( int i = -10; i < 11; i++ ) {
-			for ( int j = 1; j < 11; j++ ) {
-				Fraction f = new Fraction( i, j );
-				assertEquals( f, Fraction.parseString( f.toString() ) );
-				assertEquals( f, Fraction.parseString( f.getStringForUrl() ) );
-			}
-		}
-	}
-
-	@Test(expected = NumberFormatException.class)
-	public void noOverlapWithIntegers() {
-		Fraction.parseString( "10" );
-	}
-
-	@Test
-	public void lossyRepresentation() {
-		Fraction f = new Fraction( 4, 3 );
-
-		assertEquals( true, f.getLossyRepresentation().contains( "1.333" ) );
-	}
-
-	@Test
-	public void tolerance() {
-		Fraction f = new Fraction( 8, 10 );
-		Fraction g = new Fraction( 10, 10 );
-
-		// 0.8 is within a 20% tolerance interval of 1.0
-		assertEquals( true, f.withinTolerance( g, new Fraction( 20, 100 ) ) );
-		assertEquals( false, f.withinTolerance( g, new Fraction( 19, 100 ) ) );
-
-		// 1.0 is within a 25% tolerance interval of 0.8
-		assertEquals( true, g.withinTolerance( f, new Fraction( 25, 100 ) ) );
-		assertEquals( false, g.withinTolerance( f, new Fraction( 24, 100 ) ) );
-
-		f = new Fraction( -8, 10 );
-		g = new Fraction( -10, 10 );
-
-		// -0.8 is within a 20% tolerance interval of -1.0
-		assertEquals( true, f.withinTolerance( g, new Fraction( 20, 100 ) ) );
-		assertEquals( false, f.withinTolerance( g, new Fraction( 19, 100 ) ) );
-
-		// -1.0 is within a 25% tolerance interval of -0.8
-		assertEquals( true, g.withinTolerance( f, new Fraction( 25, 100 ) ) );
-		assertEquals( false, g.withinTolerance( f, new Fraction( 24, 100 ) ) );
-
-		f = new Fraction( -1, 10 );
-		g = new Fraction( 2, 10 );
-
-		// -0.1 is within a 150% tolerance interval of 0.2
-		assertEquals( true, f.withinTolerance( g, new Fraction( 150, 100 ) ) );
-		assertEquals( false, f.withinTolerance( g, new Fraction( 149, 100 ) ) );
-
-		// 0.2 is within a 300% tolerance interval of -0.1
-		assertEquals( true, g.withinTolerance( f, new Fraction( 300, 100 ) ) );
-		assertEquals( false, g.withinTolerance( f, new Fraction( 299, 100 ) ) );
 	}
 }

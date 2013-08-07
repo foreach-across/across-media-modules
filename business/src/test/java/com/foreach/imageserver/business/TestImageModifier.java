@@ -144,10 +144,11 @@ public class TestImageModifier
 	}
 
 	@Test
-	public void withoutStretchExceedingDimensionsResultInOriginalAccordingToAspectRatioRequested() {
+	public void withoutStretchExceedingDimensionsResultInOriginalOrSmallerAccordingToAspectRatioRequested() {
 		checkWidthAndHeight( 1024, 1000, false, false, 786, 768 );
 		checkWidthAndHeight( 1200, 768, false, false, 1024, 655 );
 		checkWidthAndHeight( 1600, 1200, false, false, 1024, 768 );
+		checkWidthAndHeight( 1600, 1500, false, false, 819, 768 );
 	}
 
 	@Test
@@ -184,6 +185,9 @@ public class TestImageModifier
 
 		original = new Dimensions( 50, 100 );
 		checkWidthAndHeight( 2000, 2000, true, true, 1000, 2000 );
+
+		original = new Dimensions( 628, 419 );
+//		checkWidthAndHeight( 1000, 500, true, true, 749, 500 );
 	}
 
 	@Test

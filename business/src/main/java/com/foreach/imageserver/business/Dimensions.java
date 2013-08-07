@@ -31,6 +31,10 @@ public class Dimensions
 		this.height = height;
 	}
 
+	public boolean fitsIn( Dimensions boundaries ) {
+		return getWidth() <= boundaries.getWidth() && getHeight() <= boundaries.getHeight();
+	}
+
 	/**
 	 * Will calculate the unknown dimensions according to the boundaries specified.
 	 * Any unknown dimensions will be scaled according to the aspect ratio of the boundaries.
@@ -82,20 +86,28 @@ public class Dimensions
 
 		Fraction aspectRatio = normalized.getAspectRatio();
 
-		boolean shouldNormalize =
-				normalized.getWidth() > boundaries.getWidth() || normalized.getHeight() > boundaries.getHeight();
-		boolean extendsOnBoth =
-				normalized.getWidth() > boundaries.getWidth() && normalized.getHeight() > boundaries.getHeight();
-		boolean scaleOnWidth =
-				( extendsOnBoth && normalized.getWidth() > normalized.getHeight() ) || ( !extendsOnBoth && normalized.getWidth() > boundaries.getWidth() );
+		if ( !normalized.fitsIn( boundaries ) ) {
+			if ( normalized.getAspectRatio().isLargerOnWidth() ) {
+				scaled.setWidth( boundaries.getWidth() );
+				scaled.setHeight( aspectRatio.calculateHeightForWidth( boundaries.getWidth() ) );
+			}
+			else {
+				scaled.setHeight( boundaries.getHeight() );
+				scaled.setWidth( aspectRatio.calculateWidthForHeight( boundaries.getHeight() ) );
+			}
 
-		if ( shouldNormalize && scaleOnWidth ) {
-			scaled.setWidth( boundaries.getWidth() );
-			scaled.setHeight( aspectRatio.calculateHeightForWidth( boundaries.getWidth() ) );
-		}
-		else if ( shouldNormalize ) {
-			scaled.setHeight( boundaries.getHeight() );
-			scaled.setWidth( aspectRatio.calculateWidthForHeight( boundaries.getHeight() ) );
+			if ( !scaled.fitsIn( boundaries ) ) {
+				// Reverse the side as scaling basis, we made the wrong decision
+				if ( normalized.getAspectRatio().isLargerOnWidth() ) {
+					scaled.setHeight( boundaries.getHeight() );
+					scaled.setWidth( aspectRatio.calculateWidthForHeight( boundaries.getHeight() ) );
+				}
+				else {
+					scaled.setWidth( boundaries.getWidth() );
+					scaled.setHeight( aspectRatio.calculateHeightForWidth( boundaries.getWidth() ) );
+
+				}
+			}
 		}
 
 		return scaled;

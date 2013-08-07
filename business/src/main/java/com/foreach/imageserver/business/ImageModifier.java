@@ -19,6 +19,8 @@ public class ImageModifier
 	private boolean stretch;
 	private boolean keepAspect;
 	private Dimensions density = new Dimensions();
+	//private Dimensions min = new Dimensions();
+	//private Dimensions max = new Dimensions();
 
 	public int getWidth() {
 		return width;
