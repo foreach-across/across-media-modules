@@ -1,11 +1,4 @@
 <settings>
-	<servers>
-		<server>
-			<id>vdev01</id>
-			<username>Resto</username>
-			<password>uK3zwz4</password>
-		</server>
-	</servers>
 	<profiles>
 		<profile>
 			<id>development</id>
