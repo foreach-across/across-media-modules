@@ -10,11 +10,16 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: junit:junit:4.8.2" level="project" />
-    <orderEntry type="library" name="Maven: com.foreach.libs:common-spring:0.6-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.libs:common-spring:0.7" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.1" level="project" />
+    <orderEntry type="library" name="Maven: javax.mail:mail:1.4.1" level="project" />
+    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:4.2.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
+    <orderEntry type="library" name="Maven: org.aspectj:aspectjrt:1.6.8" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.0.13" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.0.13" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:3.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:3.2.3.RELEASE" level="project" />
@@ -34,7 +39,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-io:7.6.11.v20130520" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-util:7.6.11.v20130520" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.h2database:h2:1.3.172" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.foreach.libs:common-test:0.6-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.foreach.libs:common-test:0.7" level="project" />
   </component>
 </module>
 

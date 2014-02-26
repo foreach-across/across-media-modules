@@ -7,7 +7,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<springVersion>3.2.3.RELEASE</springVersion>
-		<foreachCommonVersion>0.6-SNAPSHOT</foreachCommonVersion>
+		<foreachCommonVersion>0.7</foreachCommonVersion>
 	</properties>
 
 	<repositories>
