@@ -30,6 +30,7 @@
 		<module>web.imageserver.front</module>
 		<module>services</module>
 		<module>acceptance-tests</module>
+		<module>dpp-connector</module>
 	</modules>
 	<dependencies>
 		<dependency>
