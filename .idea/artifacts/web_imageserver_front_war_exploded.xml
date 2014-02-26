@@ -76,6 +76,10 @@
           <element id="library" level="project" name="Maven: xml-apis:xml-apis:1.3.04" />
           <element id="library" level="project" name="Maven: com.foreach.libs:common-web:0.7" />
           <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
+          <element id="library" level="project" name="Maven: across:across-core:1.0-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: net.engio:mbassador:1.1.9" />
+          <element id="library" level="project" name="Maven: org.liquibase:liquibase-core:3.0.8" />
+          <element id="library" level="project" name="Maven: org.yaml:snakeyaml:1.13" />
         </element>
       </element>
     </root>
