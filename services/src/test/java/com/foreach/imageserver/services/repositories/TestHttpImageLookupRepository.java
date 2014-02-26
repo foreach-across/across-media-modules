@@ -2,13 +2,13 @@ package com.foreach.imageserver.services.repositories;
 
 import com.foreach.imageserver.services.DummyWebServer;
 import com.foreach.imageserver.services.ImageTestData;
+import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class TestHttpImageLookupRepository
 {
@@ -32,6 +32,17 @@ public class TestHttpImageLookupRepository
 	}
 
 	@Test
+	public void validURI() {
+		assertTrue( imageLookupRepository.isValidURI( "http://www.google.be:80/" ) );
+		assertTrue( imageLookupRepository.isValidURI( "https://www.foreach.com/sdfqsdfsd?test=boe&kipe=jio" ) );
+	}
+
+	@Test
+	public void invalidURI() {
+		assertFalse( imageLookupRepository.isValidURI( "somerandomstring" ) );
+	}
+
+	@Test
 	public void imageNotFoundStatusCode() {
 		RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage( webServer.notFoundUrl() );
 		assertEquals( RepositoryLookupStatus.NOT_FOUND, lookupResult.getStatus() );
@@ -50,21 +61,19 @@ public class TestHttpImageLookupRepository
 	}
 
 	@Test
-	public void getImageSunset() {
-		getValidImage( ImageTestData.SUNSET );
+	public void getImages() throws Exception {
+		for ( ImageTestData image : ImageTestData.values() ) {
+			getValidImage( image );
+		}
 	}
 
-	@Test
-	public void getImageEarth() {
-		getValidImage( ImageTestData.EARTH );
-	}
-
-	private void getValidImage( ImageTestData imageTestData ) {
+	private void getValidImage( ImageTestData imageTestData ) throws Exception {
 		RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage( webServer.imageUrl( imageTestData ) );
 
 		assertEquals( RepositoryLookupStatus.SUCCESS, lookupResult.getStatus() );
-		assertEquals( imageTestData.getDimensions(), lookupResult.getDimensions() );
 		assertEquals( imageTestData.getImageType(), lookupResult.getImageType() );
 		assertNotNull( lookupResult.getContent() );
+		assertTrue( IOUtils.contentEquals( getClass().getResourceAsStream( imageTestData.getResourcePath() ),
+		                                   lookupResult.getContent() ) );
 	}
 }

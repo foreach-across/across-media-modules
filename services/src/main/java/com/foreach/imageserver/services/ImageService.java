@@ -1,11 +1,10 @@
 package com.foreach.imageserver.services;
 
+import com.foreach.imageserver.business.Dimensions;
 import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.image.ServableImageData;
-import com.foreach.imageserver.dao.selectors.ImageSelector;
+import com.foreach.imageserver.business.ImageFile;
+import com.foreach.imageserver.business.ImageModifier;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;
-
-import java.util.List;
 
 public interface ImageService
 {
@@ -13,24 +12,9 @@ public interface ImageService
 
 	void save( Image image, RepositoryLookupResult lookupResult );
 
-	@Deprecated
-	ServableImageData getImageById( long id );
+	ImageFile fetchImageFile( Image image, ImageModifier modifier );
 
-	@Deprecated
-	ServableImageData getImageByPath( ImageSelector selector );
+	void registerModification( Image image, Dimensions dimensions, ImageModifier modifier );
 
-	@Deprecated
-	List<ServableImageData> getAllImages();
-
-	@Deprecated
-	int getImageCount( ImageSelector selector );
-
-	@Deprecated
-	long saveImage( ServableImageData image );
-
-	@Deprecated
-	long saveImage( ServableImageData image, boolean deleteCrops );
-
-	@Deprecated
-	List<ServableImageData> getImages( ImageSelector selector );
+	void delete( Image image, boolean variantsOnly );
 }

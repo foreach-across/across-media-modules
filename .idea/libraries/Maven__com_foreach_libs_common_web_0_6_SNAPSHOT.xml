@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.foreach.libs:common-web:0.6-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-web/0.6-SNAPSHOT/common-web-0.6-20130801.075938-22.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-web/0.6-SNAPSHOT/common-web-0.6-20130801.075938-22-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/libs/common-web/0.6-SNAPSHOT/common-web-0.6-20130801.075938-22-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

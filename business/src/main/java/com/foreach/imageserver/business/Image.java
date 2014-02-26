@@ -1,7 +1,5 @@
 package com.foreach.imageserver.business;
 
-import com.foreach.imageserver.business.image.Dimensions;
-
 import java.util.Date;
 
 public class Image
@@ -11,7 +9,8 @@ public class Image
 	private Dimensions dimensions = new Dimensions();
 	private long fileSize;
 	private ImageType imageType;
-	private Date dateCreated = new Date(), dateUpdated;
+	private Date dateCreated = new Date();
+	private Date dateUpdated;
 
 	public String getKey() {
 		return key;

@@ -1,7 +1,8 @@
 package com.foreach.imageserver.services.repositories;
 
 import com.foreach.imageserver.business.ImageType;
-import com.foreach.imageserver.business.image.Dimensions;
+import com.foreach.imageserver.services.exceptions.RepositoryLookupException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -11,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.net.UnknownHostException;
 
 /**
  * Will fetch an image from a specific url.
@@ -22,10 +22,18 @@ public class HttpImageLookupRepository implements ImageLookupRepository
 {
 	private static final Logger LOG = LoggerFactory.getLogger( HttpImageLookupRepository.class );
 
+	@Override
+	public boolean isValidURI( String uri ) {
+		return StringUtils.startsWithIgnoreCase( uri, "http://" ) || StringUtils.startsWithIgnoreCase( uri,
+		                                                                                               "https://" );
+	}
+
 	public RepositoryLookupResult fetchImage( String uri ) {
 		RepositoryLookupResult result = new RepositoryLookupResult();
 
 		try {
+			LOG.info( "Fetching remote image with url " + uri );
+
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet( uri );
 
@@ -38,17 +46,19 @@ public class HttpImageLookupRepository implements ImageLookupRepository
 				ImageType imageType = ImageType.getForContentType( entity.getContentType().getValue() );
 
 				if ( imageType == null ) {
-					throw new RuntimeException( "Unknown Content-Type: " + entity.getContentType() );
+					throw new RepositoryLookupException( "Unknown Content-Type: " + entity.getContentType() );
 				}
-
-				BufferedImage image = ImageIO.read( entity.getContent() );
-				result.setDimensions( new Dimensions( image.getWidth(), image.getHeight() ) );
 				result.setImageType( imageType );
 				result.setContent( entity.getContent() );
 			}
 		}
+		catch ( UnknownHostException uhe ) {
+			LOG.error( "Could not fetch image from " + uri, uhe );
+
+			result.setStatus( RepositoryLookupStatus.NOT_FOUND );
+		}
 		catch ( Exception e ) {
-			LOG.error( "Exception fetching image: ", e );
+			LOG.error( "Exception fetching image from " + uri, e );
 
 			result.setStatus( RepositoryLookupStatus.ERROR );
 		}

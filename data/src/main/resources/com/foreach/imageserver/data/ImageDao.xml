@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foreach.imageserver.data.ImageDao">
+	<sql id="imageColumns">
+		I.id as image_id,
+        I.applicationid as image_applicationid,
+        I.imagekey as image_key,
+        I.width as image_width,
+        I.height as image_height,
+        I.filesize as image_filesize,
+        I.filepath as image_filepath,
+        I.imagetypeid as image_imagetype,
+        I.created as image_datecreated,
+        I.updated as image_dateupdated
+	</sql>
+
+	<resultMap id="imageMap" type="Image">
+		<id property="id" column="image_id"/>
+		<result property="applicationId" column="image_applicationid"/>
+		<result property="fileSize" column="image_filesize"/>
+		<result property="filePath" column="image_filepath"/>
+		<result property="key" column="image_key"/>
+		<result property="dimensions.width" column="image_width"/>
+		<result property="dimensions.height" column="image_height"/>
+		<result property="imageType" column="image_imagetype" typeHandler="com.foreach.imageserver.data.handlers.ImageTypeHandler"/>
+		<result property="dateCreated" column="image_datecreated"/>
+		<result property="dateUpdated" column="image_dateupdated"/>
+	</resultMap>
+
+	<select id="getImageByKey" parameterType="map" resultMap="imageMap">
+		SELECT
+		<include refid="imageColumns"/>
+		FROM Image I
+		WHERE I.imagekey = #{key} AND I.applicationid = #{applicationId}
+	</select>
+
+	<insert id="insertImage" parameterType="Image" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO Image (
+            applicationid,
+            imagekey,
+            width,
+            height,
+            filesize,
+            filepath,
+            imagetypeid,
+            created
+        ) VALUES (
+            #{applicationId},
+            #{key},
+            #{dimensions.width},
+            #{dimensions.height},
+            #{fileSize},
+            #{filePath},
+            #{imageType.id},
+            GETDATE()
+        )
+    </insert>
+
+	<update id="updateImage" parameterType="Image">
+        UPDATE Image
+        SET
+            width = #{dimensions.width},
+            height = #{dimensions.height},
+            filesize = #{fileSize},
+            filepath = #{filePath},
+            imagetypeid = #{imageType.id},
+            updated = GETDATE()
+        WHERE imagekey = #{key} AND applicationid = #{applicationId}
+    </update>
+
+	<delete id="deleteImage" parameterType="int">
+        DELETE
+        FROM Image
+        WHERE id = #{value}
+    </delete>
+</mapper>

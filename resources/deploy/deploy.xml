@@ -1,14 +1,68 @@
 <?xml version="1.0"?>
-<project name="Deploy foreach-imageserver" basedir="../../">
-	<property name="deploy.site.location" value="foreach@java.libs.foreach.com:/home/foreach/lib-sites/imageserver" />
-	<loadproperties srcfile="${user.home}/.foreach/foreach-buildserver.properties" />
-	
-	<target name="deploy.site" description="Copy website">
-		<scp todir="${deploy.site.location}" keyfile="${keyfile}" passphrase="${passphrase}" trust="yes">
-			<fileset dir="target/site">
-				<include name="**/*" />
-			</fileset>
-		</scp>
+<project name="Deploy Foreach ImageServer" basedir="./">
+	<property name="dir.backup" value="/var/www/backup"/>
+
+	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/>
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"/>
+	<property name="tomcat.username" value="foreach"/>
+	<property name="tomcat.password" value="goodfood01"/>
+
+	<tstamp>
+		<format property="today" pattern="yyyy-MM-dd.HH'h'mm" locale="en,UK"/>
+	</tstamp>
+
+	<target name="deploy.imageserver">
+		<deploy-war dns="imageserver.preview1.foreach.be" package="web.imageserver.front"/>
 	</target>
 
+	<target name="restore.imageserver">
+		<redeploy-previous-war dns="imageserver.preview1.foreach.be" package="web.imageserver.front"/>
+	</target>
+
+	<macrodef name="deploy-war">
+		<attribute name="dns"/>
+		<attribute name="package"/>
+		<attribute name="path" default="/"/>
+		<sequential>
+			<mkdir dir="${dir.backup}/@{dns}"/>
+			<copy file="${basedir}/@{package}.war"
+			      tofile="${dir.backup}/@{dns}/@{package}.${today}.war"/>
+			<copy failonerror="false" file="${dir.backup}/@{dns}/@{package}.current.war"
+			      tofile="${dir.backup}/@{dns}/@{package}.previous.war"/>
+			<copy file="${basedir}/@{package}.war"
+			      tofile="${dir.backup}/@{dns}/@{package}.current.war"/>
+
+			<echo>Undeploy Url - http://@{dns}/manager/text</echo>
+
+			<undeploy url="http://@{dns}/manager/text" username="${tomcat.username}" password="${tomcat.password}"
+			          path="@{path}" failonerror="false"/>
+
+			<deploy url="http://@{dns}/manager/text" username="${tomcat.username}" password="${tomcat.password}"
+			        path="@{path}" war="file:${basedir}/@{package}.war"/>
+
+			<delete file="${basedir}/@{package}.war"/>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="redeploy-previous-war">
+		<attribute name="dns"/>
+		<attribute name="package"/>
+		<attribute name="path" default="/"/>
+		<sequential>
+			<copy file="${dir.backup}/@{dns}/@{package}.current.war"
+			      tofile="${dir.backup}/@{dns}/@{package}.undeployed.war"/>
+			<copy file="${dir.backup}/@{dns}/@{package}.previous.war"
+			      tofile="${dir.backup}/@{dns}/@{package}.current.war"/>
+
+			<echo>Undeploy Url - http://@{dns}/manager/text</echo>
+
+			<undeploy url="http://@{dns}/manager/text" username="${tomcat.username}" password="${tomcat.password}"
+			          path="@{path}" failonerror="false"/>
+
+			<deploy url="http://@{dns}/manager/text" username="${tomcat.username}" password="${tomcat.password}"
+			        path="@{path}" war="file:${dir.backup}/@{dns}/@{package}.previous.war"/>
+		</sequential>
+	</macrodef>
+
 </project>
+
