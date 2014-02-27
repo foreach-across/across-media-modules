@@ -34,12 +34,11 @@
           <element id="library" level="project" name="Maven: net.engio:mbassador:1.1.9" />
           <element id="library" level="project" name="Maven: commons-dbcp:commons-dbcp:1.4" />
           <element id="library" level="project" name="Maven: commons-pool:commons-pool:1.5.4" />
-          <element id="library" level="project" name="Maven: org.liquibase:liquibase-core:3.0.1" />
-          <element id="library" level="project" name="Maven: org.yaml:snakeyaml:1.12" />
+          <element id="library" level="project" name="Maven: org.liquibase:liquibase-core:3.1.1" />
+          <element id="library" level="project" name="Maven: org.yaml:snakeyaml:1.13" />
           <element id="archive" name="data-2.0-SNAPSHOT.jar">
             <element id="module-output" name="data" />
           </element>
-          <element id="library" level="project" name="Maven: net.sourceforge.jtds:jtds:1.2.4" />
           <element id="library" level="project" name="Maven: org.mybatis:mybatis:3.2.2" />
           <element id="library" level="project" name="Maven: org.mybatis:mybatis-spring:1.2.0" />
           <element id="library" level="project" name="Maven: com.foreach.libs:common-mybatis:0.7" />

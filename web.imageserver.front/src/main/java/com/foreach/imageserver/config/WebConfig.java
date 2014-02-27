@@ -41,7 +41,7 @@ public class WebConfig extends WebMvcConfigurerAdapter
 	}
 
 	@Bean
-	public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer( @Value(
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer( @Value(
 			"classpath:/config/${environment.type}/common.properties") Resource defaultProperties, @Value("file:${user.home}/dev-configs/imageserver.local.properties") Resource localProperties ) {
 		PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
 		propertySources.setLocations( new Resource[] { defaultProperties, localProperties } );
