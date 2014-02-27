@@ -4,6 +4,8 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <property name="now" value="GETDATE()" dbms="mssql"/>
+    <property name="now" value="NOW" dbms="hsqldb"/>
 	<changeSet id="201307311437" author="arne">
 		<comment>Creates imagemodification table</comment>
 		<createTable tableName="imagemodification">
@@ -55,7 +57,7 @@
 			<column name="keepaspect" type="boolean" defaultValueBoolean="false">
 				<constraints nullable="false"/>
 			</column>
-			<column name="created" type="datetime" defaultValueComputed="GETDATE()">
+			<column name="created" type="datetime" defaultValueComputed="${now}">
 				<constraints nullable="false"/>
 			</column>
 			<column name="updated" type="datetime"/>

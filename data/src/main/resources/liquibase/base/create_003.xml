@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="201402271416" author="olivier" dbms="hsqldb">
+        <comment>Insert test application.</comment>
+        <insert tableName="application">
+            <column name="id" valueNumeric="1"/>
+            <column name="name">Test Application</column>
+            <column name="code">test</column>
+            <column name="active" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="201402271450" author="olivier" dbms="hsqldb">
+        <comment>Support MSSQL's GET_DATE() function.</comment>
+        <sql>
+            CREATE FUNCTION GETDATE()
+            RETURNS TIMESTAMP
+            RETURN NOW;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
