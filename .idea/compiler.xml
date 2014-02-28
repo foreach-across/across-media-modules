@@ -24,7 +24,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="acceptance-tests" />
         <module name="dpp-connector" />
         <module name="imageserver" />
         <module name="web.imageserver.front" />

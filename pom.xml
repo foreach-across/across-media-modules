@@ -25,7 +25,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>web.imageserver.front</module>
-		<module>acceptance-tests</module>
 		<module>dpp-connector</module>
         <module>imageserver</module>
 	</modules>
