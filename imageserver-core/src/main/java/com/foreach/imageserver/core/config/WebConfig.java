@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.config;
 
-import com.foreach.imageserver.web.interceptors.GlobalVariableInterceptor;
+import com.foreach.imageserver.core.web.interceptors.GlobalVariableInterceptor;
 import com.foreach.spring.logging.LogbackConfigurer;
 import com.foreach.web.converter.EnumConverterFactory;
 import org.springframework.beans.factory.annotation.Value;

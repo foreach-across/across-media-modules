@@ -1,6 +1,6 @@
 package com.foreach.imageserver.connectors.dpp;
 
-import com.foreach.imageserver.services.repositories.ImageLookupRepository;
+import com.foreach.imageserver.core.services.repositories.ImageLookupRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
