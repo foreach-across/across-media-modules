@@ -24,7 +24,6 @@
 	<version>2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
-		<module>testUtils</module>
 		<module>web.imageserver.front</module>
 		<module>acceptance-tests</module>
 		<module>dpp-connector</module>

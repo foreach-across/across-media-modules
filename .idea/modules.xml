@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/dpp-connector/dpp-connector.iml" filepath="$PROJECT_DIR$/dpp-connector/dpp-connector.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver/imageserver.iml" filepath="$PROJECT_DIR$/imageserver/imageserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />
-      <module fileurl="file://$PROJECT_DIR$/testUtils/testUtils.iml" filepath="$PROJECT_DIR$/testUtils/testUtils.iml" />
       <module fileurl="file://$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" filepath="$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" />
     </modules>
   </component>
