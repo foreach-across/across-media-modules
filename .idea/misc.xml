@@ -37,6 +37,7 @@
         <option value="$PROJECT_DIR$/business/pom.xml" />
         <option value="$PROJECT_DIR$/data/pom.xml" />
         <option value="$PROJECT_DIR$/rendering/pom.xml" />
+        <option value="$PROJECT_DIR$/services/pom.xml" />
         <option value="$PROJECT_DIR$/utils/pom.xml" />
         <option value="$PROJECT_DIR$/web.imageserver.api/pom.xml" />
       </set>

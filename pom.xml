@@ -26,7 +26,6 @@
 	<modules>
 		<module>testUtils</module>
 		<module>web.imageserver.front</module>
-		<module>services</module>
 		<module>acceptance-tests</module>
 		<module>dpp-connector</module>
         <module>imageserver</module>

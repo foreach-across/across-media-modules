@@ -11,7 +11,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="services" />
     <orderEntry type="module" module-name="imageserver" />
     <orderEntry type="library" name="Maven: com.foreach.libs:common-spring:0.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.1" level="project" />
@@ -36,7 +35,7 @@
     <orderEntry type="library" name="Maven: net.engio:mbassador:1.1.9" level="project" />
     <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.5.4" level="project" />
-    <orderEntry type="library" name="Maven: org.liquibase:liquibase-core:3.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.liquibase:liquibase-core:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.13" level="project" />
     <orderEntry type="library" name="Maven: org.mybatis:mybatis:3.2.2" level="project" />
     <orderEntry type="library" name="Maven: org.mybatis:mybatis-spring:1.2.0" level="project" />

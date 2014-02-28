@@ -27,7 +27,6 @@
         <module name="acceptance-tests" />
         <module name="dpp-connector" />
         <module name="imageserver" />
-        <module name="services" />
         <module name="testUtils" />
         <module name="web.imageserver.front" />
       </profile>

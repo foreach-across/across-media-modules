@@ -12,11 +12,11 @@
 	<artifactId>dpp-connector</artifactId>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.foreach.imageserver</groupId>
-			<artifactId>services</artifactId>
-			<version>2.0-SNAPSHOT</version>
-		</dependency>
+        <dependency>
+            <artifactId>imageserver</artifactId>
+            <groupId>com.foreach.imageserver</groupId>
+            <version>2.0-SNAPSHOT</version>
+        </dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
