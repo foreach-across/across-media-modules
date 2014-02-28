@@ -6,18 +6,27 @@
 			http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
          version="2.4">
 
-	<display-name>Foreach ImageServer</display-name>
+	<display-name>MFN ImageServer</display-name>
+
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+    </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>com.foreach.imageserver.config.WebConfig</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
     <servlet>
 		<servlet-name>spring-dispatcher</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
+            <!-- We need this context class; the container will complain that we don't have a spring-dispatcher-servlet.xml otherwise. -->
             <param-name>contextClass</param-name>
             <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-        </init-param>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>com.foreach.imageserver.config.WebConfig</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
