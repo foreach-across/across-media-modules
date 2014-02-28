@@ -1,6 +1,6 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.*;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.services.exceptions.ImageStoreOperationException;
 import com.foreach.shared.utils.DateUtils;
 import com.foreach.test.MockedLoader;

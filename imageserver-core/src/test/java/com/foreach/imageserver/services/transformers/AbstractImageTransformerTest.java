@@ -1,8 +1,7 @@
 package com.foreach.imageserver.services.transformers;
 
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageModifier;
-import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.core.business.ImageFile;
+import com.foreach.imageserver.core.business.ImageModifier;
 import com.foreach.imageserver.services.ImageTestData;
 import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.Imaging;

@@ -1,6 +1,6 @@
 package com.foreach.imageserver.data;
 
-import com.foreach.imageserver.business.Application;
+import com.foreach.imageserver.core.business.Application;
 import com.foreach.shared.utils.DateUtils;
 import org.junit.Ignore;
 import org.junit.Test;

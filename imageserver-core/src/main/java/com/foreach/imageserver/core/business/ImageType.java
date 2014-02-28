@@ -1,4 +1,4 @@
-package com.foreach.imageserver.business;
+package com.foreach.imageserver.core.business;
 
 import com.foreach.spring.enums.IdLookup;
 import org.apache.commons.lang3.StringUtils;

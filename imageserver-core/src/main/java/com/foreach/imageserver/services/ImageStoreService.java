@@ -1,8 +1,8 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageModifier;
+import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageFile;
+import com.foreach.imageserver.core.business.ImageModifier;
 
 public interface ImageStoreService
 {

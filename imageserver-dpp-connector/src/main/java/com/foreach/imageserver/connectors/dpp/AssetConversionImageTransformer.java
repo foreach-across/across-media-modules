@@ -1,12 +1,11 @@
 package com.foreach.imageserver.connectors.dpp;
 
-import com.foreach.imageserver.business.*;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
 import com.foreach.imageserver.services.transformers.ImageModifyAction;
 import com.foreach.imageserver.services.transformers.ImageTransformer;
 import com.foreach.imageserver.services.transformers.ImageTransformerAction;
 import com.foreach.imageserver.services.transformers.ImageTransformerPriority;
-import org.apache.commons.httpclient.methods.multipart.ByteArrayPartSource;
 import org.apache.pdfbox.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

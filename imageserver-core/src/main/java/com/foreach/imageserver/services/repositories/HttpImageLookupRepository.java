@@ -1,6 +1,6 @@
 package com.foreach.imageserver.services.repositories;
 
-import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.services.exceptions.RepositoryLookupException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;

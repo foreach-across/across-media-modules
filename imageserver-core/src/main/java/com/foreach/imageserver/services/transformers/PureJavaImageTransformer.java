@@ -1,9 +1,9 @@
 package com.foreach.imageserver.services.transformers;
 
-import com.foreach.imageserver.business.Dimensions;
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageModifier;
-import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.core.business.Dimensions;
+import com.foreach.imageserver.core.business.ImageFile;
+import com.foreach.imageserver.core.business.ImageModifier;
+import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
 import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.Imaging;

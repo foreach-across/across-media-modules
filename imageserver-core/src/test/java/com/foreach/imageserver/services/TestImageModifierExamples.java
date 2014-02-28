@@ -1,6 +1,6 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.*;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.test.MockedLoader;
 import org.junit.Test;
 import org.junit.runner.RunWith;

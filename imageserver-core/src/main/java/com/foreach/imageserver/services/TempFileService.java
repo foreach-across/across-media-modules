@@ -1,7 +1,7 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.core.business.ImageFile;
+import com.foreach.imageserver.core.business.ImageType;
 
 import java.io.File;
 import java.io.InputStream;

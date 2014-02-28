@@ -4,7 +4,7 @@ import be.persgroep.red.diocontent.api.attachment.Attachment;
 import be.persgroep.red.diocontent.api.attachment.AttachmentRole;
 import be.persgroep.red.diocontent.api.client.DioContentClient;
 import be.persgroep.red.diocontent.webservice.client.DefaultRestDioContentClient;
-import com.foreach.imageserver.business.ImageType;
+import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.services.exceptions.RepositoryLookupException;
 import com.foreach.imageserver.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;

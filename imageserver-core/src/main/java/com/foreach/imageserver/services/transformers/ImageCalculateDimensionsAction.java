@@ -1,7 +1,7 @@
 package com.foreach.imageserver.services.transformers;
 
-import com.foreach.imageserver.business.Dimensions;
-import com.foreach.imageserver.business.ImageFile;
+import com.foreach.imageserver.core.business.Dimensions;
+import com.foreach.imageserver.core.business.ImageFile;
 
 public class ImageCalculateDimensionsAction extends ImageTransformerAction<Dimensions>
 {

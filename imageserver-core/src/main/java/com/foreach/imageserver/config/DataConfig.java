@@ -1,8 +1,8 @@
 package com.foreach.imageserver.config;
 
-import com.foreach.imageserver.business.Application;
-import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.ImageModification;
+import com.foreach.imageserver.core.business.Application;
+import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageModification;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;

@@ -1,7 +1,7 @@
 package com.foreach.imageserver.data;
 
-import com.foreach.imageserver.business.Dimensions;
-import com.foreach.imageserver.business.ImageModification;
+import com.foreach.imageserver.core.business.Dimensions;
+import com.foreach.imageserver.core.business.ImageModification;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

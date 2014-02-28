@@ -1,7 +1,6 @@
 package com.foreach.imageserver.web.controllers;
 
-import com.foreach.imageserver.business.*;
-import com.foreach.imageserver.web.controllers.ImageStreamingController;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.web.exceptions.ImageNotFoundException;
 import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;

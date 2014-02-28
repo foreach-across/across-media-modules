@@ -1,6 +1,6 @@
 package com.foreach.imageserver.services.transformers;
 
-import com.foreach.imageserver.business.ImageFile;
+import com.foreach.imageserver.core.business.ImageFile;
 
 public abstract class ImageTransformerAction<T>
 {

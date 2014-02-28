@@ -1,8 +1,8 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.Dimensions;
-import com.foreach.imageserver.business.ImageFile;
-import com.foreach.imageserver.business.ImageModifier;
+import com.foreach.imageserver.core.business.Dimensions;
+import com.foreach.imageserver.core.business.ImageFile;
+import com.foreach.imageserver.core.business.ImageModifier;
 
 public interface ImageTransformService
 {

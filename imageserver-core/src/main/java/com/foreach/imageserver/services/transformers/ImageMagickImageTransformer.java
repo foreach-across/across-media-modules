@@ -1,6 +1,6 @@
 package com.foreach.imageserver.services.transformers;
 
-import com.foreach.imageserver.business.*;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.services.exceptions.ImageModificationException;
 import org.apache.commons.io.IOUtils;
 import org.im4java.core.ConvertCmd;

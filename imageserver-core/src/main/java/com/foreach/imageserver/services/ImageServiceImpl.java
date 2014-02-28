@@ -1,6 +1,6 @@
 package com.foreach.imageserver.services;
 
-import com.foreach.imageserver.business.*;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.data.ImageDao;
 import com.foreach.imageserver.data.ImageModificationDao;
 import com.foreach.imageserver.services.repositories.RepositoryLookupResult;

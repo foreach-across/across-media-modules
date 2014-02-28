@@ -1,4 +1,4 @@
-package com.foreach.imageserver.business;
+package com.foreach.imageserver.core.business;
 
 public class Fraction
 {

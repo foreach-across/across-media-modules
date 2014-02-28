@@ -1,8 +1,8 @@
 package com.foreach.imageserver.data;
 
-import com.foreach.imageserver.business.Image;
-import com.foreach.imageserver.business.ImageType;
-import com.foreach.imageserver.business.Dimensions;
+import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.shared.utils.DateUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.foreach.imageserver.business;
+package com.foreach.imageserver.core.business;
 
 /**
  * Specifies a single set of modifications to be done to an image.

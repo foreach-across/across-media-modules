@@ -1,7 +1,7 @@
 package com.foreach.imageserver.web.controllers;
 
-import com.foreach.imageserver.business.Application;
-import com.foreach.imageserver.business.Image;
+import com.foreach.imageserver.core.business.Application;
+import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.services.ApplicationService;
 import com.foreach.imageserver.services.ImageService;
 import com.foreach.imageserver.web.exceptions.ApplicationDeniedException;
