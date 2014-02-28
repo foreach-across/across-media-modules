@@ -1,1 +1,0 @@
-<%@ tag pageEncoding="UTF-8" %><jsp:doBody var="templateRenderingBody" scope="request" />
