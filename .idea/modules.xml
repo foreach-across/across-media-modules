@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/acceptance-tests/acceptance-tests.iml" filepath="$PROJECT_DIR$/acceptance-tests/acceptance-tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
       <module fileurl="file://$PROJECT_DIR$/dpp-connector/dpp-connector.iml" filepath="$PROJECT_DIR$/dpp-connector/dpp-connector.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver/imageserver.iml" filepath="$PROJECT_DIR$/imageserver/imageserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />

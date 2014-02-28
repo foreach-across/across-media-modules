@@ -25,7 +25,6 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="acceptance-tests" />
-        <module name="data" />
         <module name="dpp-connector" />
         <module name="imageserver" />
         <module name="services" />

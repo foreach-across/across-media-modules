@@ -45,7 +45,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-util:7.6.11.v20130520" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.h2database:h2:1.3.172" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.foreach.libs:common-test:0.7" level="project" />
-    <orderEntry type="module" module-name="imageserver" />
   </component>
 </module>
 
