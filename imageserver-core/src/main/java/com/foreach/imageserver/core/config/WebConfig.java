@@ -19,7 +19,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.foreach.imageserver")
+@ComponentScan(basePackages = "com.foreach.imageserver.core")
 public class WebConfig extends WebMvcConfigurerAdapter
 {
 	@Override
@@ -42,7 +42,7 @@ public class WebConfig extends WebMvcConfigurerAdapter
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer( @Value(
-			"classpath:/config/${environment.type}/common.properties") Resource defaultProperties, @Value("file:${user.home}/dev-configs/imageserver.local.properties") Resource localProperties ) {
+			"classpath:com/foreach/imageserver/core/config/${environment.type}/common.properties") Resource defaultProperties, @Value("file:${user.home}/dev-configs/imageserver.local.properties") Resource localProperties ) {
 		PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
 		propertySources.setLocations( new Resource[] { defaultProperties, localProperties } );
 		propertySources.setIgnoreResourceNotFound( true );

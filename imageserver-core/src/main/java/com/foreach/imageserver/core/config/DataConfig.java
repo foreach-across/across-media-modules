@@ -15,7 +15,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan("com.foreach.imageserver.data")
+@MapperScan("com.foreach.imageserver.core.data")
 public class DataConfig
 {
 	@Value("${jdbc.driver}")
@@ -59,7 +59,7 @@ public class DataConfig
     public SpringLiquibase springLiquibase( DataSource dataSource ) {
         SpringLiquibase springLiquibase = new SpringLiquibase();
         springLiquibase.setDataSource( dataSource );
-        springLiquibase.setChangeLog( "classpath:liquibase/changelog.xml" );
+        springLiquibase.setChangeLog( "classpath:com/foreach/imageserver/core/liquibase/changelog.xml" );
         return springLiquibase;
     }
 
