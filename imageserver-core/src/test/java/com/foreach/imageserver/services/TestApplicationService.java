@@ -1,7 +1,7 @@
 package com.foreach.imageserver.services;
 
 import com.foreach.imageserver.core.business.Application;
-import com.foreach.imageserver.data.ApplicationDao;
+import com.foreach.imageserver.core.data.ApplicationDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

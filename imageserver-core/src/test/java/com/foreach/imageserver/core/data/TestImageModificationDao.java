@@ -1,7 +1,7 @@
-package com.foreach.imageserver.data;
+package com.foreach.imageserver.core.data;
 
 import com.foreach.imageserver.core.business.*;
-import com.foreach.shared.utils.DateUtils;
+import com.foreach.imageserver.core.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

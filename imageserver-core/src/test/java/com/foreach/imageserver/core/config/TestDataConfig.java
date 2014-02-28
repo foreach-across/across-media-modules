@@ -1,4 +1,4 @@
-package com.foreach.imageserver.config;
+package com.foreach.imageserver.core.config;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp.BasicDataSource;

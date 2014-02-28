@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.foreach.imageserver.data.ImageModificationDao">
+<mapper namespace="com.foreach.imageserver.core.data.ImageModificationDao">
 
 	<resultMap id="imageModificationMap" type="ImageModification">
 		<id property="imageId" column="imageid"/>
@@ -9,7 +9,7 @@
 		<result property="modifier.width" column="width"/>
 		<result property="modifier.height" column="height"/>
 		<result property="modifier.output" column="outputtype"
-		        typeHandler="com.foreach.imageserver.data.handlers.ImageTypeHandler"/>
+		        typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
 		<result property="modifier.crop.x" column="cropx"/>
 		<result property="modifier.crop.y" column="cropy"/>
 		<result property="modifier.crop.width" column="cropwidth"/>

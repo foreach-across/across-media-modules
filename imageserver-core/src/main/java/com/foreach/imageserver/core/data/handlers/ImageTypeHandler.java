@@ -1,4 +1,4 @@
-package com.foreach.imageserver.data.handlers;
+package com.foreach.imageserver.core.data.handlers;
 
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.mybatis.enums.IdBasedEnumHandler;

@@ -1,4 +1,4 @@
-package com.foreach.imageserver.config;
+package com.foreach.imageserver.core.config;
 
 import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;

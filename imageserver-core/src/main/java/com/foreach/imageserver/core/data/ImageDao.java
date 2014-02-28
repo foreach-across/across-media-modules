@@ -1,4 +1,4 @@
-package com.foreach.imageserver.data;
+package com.foreach.imageserver.core.data;
 
 import com.foreach.imageserver.core.business.Image;
 import org.apache.ibatis.annotations.Param;

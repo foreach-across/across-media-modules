@@ -1,4 +1,4 @@
-package com.foreach.shared.utils;
+package com.foreach.imageserver.core;
 
 import java.text.ParseException;
 import java.util.Date;
