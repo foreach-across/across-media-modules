@@ -31,18 +31,6 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
-    <option name="ignoredFiles">
-      <set>
-        <option value="$PROJECT_DIR$/api/pom.xml" />
-        <option value="$PROJECT_DIR$/business/pom.xml" />
-        <option value="$PROJECT_DIR$/data/pom.xml" />
-        <option value="$PROJECT_DIR$/rendering/pom.xml" />
-        <option value="$PROJECT_DIR$/services/pom.xml" />
-        <option value="$PROJECT_DIR$/testUtils/pom.xml" />
-        <option value="$PROJECT_DIR$/utils/pom.xml" />
-        <option value="$PROJECT_DIR$/web.imageserver.api/pom.xml" />
-      </set>
-    </option>
   </component>
   <component name="ModuleEditorState">
     <option name="LAST_EDITED_MODULE_NAME" />
