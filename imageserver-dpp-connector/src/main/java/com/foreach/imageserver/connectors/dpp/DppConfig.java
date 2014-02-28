@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:/config/${environment.type}/dpp-connector.properties")
+@PropertySource("classpath:com/foreach/imageserver/connectors/dpp/config/${environment.type}/dpp-connector.properties")
 public class DppConfig
 {
 	@Bean
