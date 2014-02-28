@@ -9,11 +9,12 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>dpp-connector</artifactId>
+	<artifactId>imageserver-dpp-connector</artifactId>
+    <name>ImageServer DPP Connector</name>
 
 	<dependencies>
         <dependency>
-            <artifactId>imageserver</artifactId>
+            <artifactId>imageserver-core</artifactId>
             <groupId>com.foreach.imageserver</groupId>
             <version>2.0-SNAPSHOT</version>
         </dependency>

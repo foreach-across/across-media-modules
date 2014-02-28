@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/dpp-connector/dpp-connector.iml" filepath="$PROJECT_DIR$/dpp-connector/dpp-connector.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imageserver/imageserver.iml" filepath="$PROJECT_DIR$/imageserver/imageserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imageserver-core/imageserver-core.iml" filepath="$PROJECT_DIR$/imageserver-core/imageserver-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imageserver-dpp-connector/imageserver-dpp-connector.iml" filepath="$PROJECT_DIR$/imageserver-dpp-connector/imageserver-dpp-connector.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />
       <module fileurl="file://$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" filepath="$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" />
     </modules>

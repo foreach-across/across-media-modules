@@ -25,8 +25,8 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>web.imageserver.front</module>
-		<module>dpp-connector</module>
-        <module>imageserver</module>
+		<module>imageserver-dpp-connector</module>
+        <module>imageserver-core</module>
 	</modules>
 	<dependencies>
         <dependency>
