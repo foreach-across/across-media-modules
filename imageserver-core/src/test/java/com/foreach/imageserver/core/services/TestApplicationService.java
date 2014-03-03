@@ -15,54 +15,53 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static junit.framework.Assert.*;
-import static org.mockito.Mockito.*;
+import static junit.framework.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(classes = TestApplicationService.TestConfig.class)
-public class TestApplicationService
-{
-	@Autowired
-	private ApplicationService applicationService;
+public class TestApplicationService {
+    @Autowired
+    private ApplicationService applicationService;
 
-	@Autowired
-	private ApplicationDao applicationDao;
+    @Autowired
+    private ApplicationDao applicationDao;
 
-	@Test
-	public void testGetApplicationById() {
-		Application testApplication = new Application();
-		testApplication.setId( 5 );
-		testApplication.setName( "test" );
+    @Test
+    public void testGetApplicationById() {
+        Application testApplication = new Application();
+        testApplication.setId(5);
+        testApplication.setName("test");
 
-		when( applicationDao.getApplicationById( 5 ) ).thenReturn( testApplication );
+        when(applicationDao.getApplicationById(5)).thenReturn(testApplication);
 
-		Application application = applicationService.getApplicationById( 5 );
+        Application application = applicationService.getApplicationById(5);
 
-		assertSame( testApplication, application );
-	}
+        assertSame(testApplication, application);
+    }
 
-	@Test
-	public void testGetAllApplications() {
-		List<Application> expectedApplications = Collections.emptyList();
+    @Test
+    public void testGetAllApplications() {
+        List<Application> expectedApplications = Collections.emptyList();
 
-		when( applicationDao.getAllApplications() ).thenReturn( expectedApplications );
-		Collection<Application> applications = applicationService.getAllApplications();
+        when(applicationDao.getAllApplications()).thenReturn(expectedApplications);
+        Collection<Application> applications = applicationService.getAllApplications();
 
-		assertSame( expectedApplications, applications );
-	}
+        assertSame(expectedApplications, applications);
+    }
 
-	@Configuration
-	public static class TestConfig
-	{
-		@Bean
-		public ApplicationService applicationService() {
-			return new ApplicationServiceImpl();
-		}
+    @Configuration
+    public static class TestConfig {
+        @Bean
+        public ApplicationService applicationService() {
+            return new ApplicationServiceImpl();
+        }
 
-		@Bean
-		public ApplicationDao applicationDao() {
-			return mock( ApplicationDao.class );
-		}
-	}
+        @Bean
+        public ApplicationDao applicationDao() {
+            return mock(ApplicationDao.class);
+        }
+    }
 }

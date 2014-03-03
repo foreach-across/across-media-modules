@@ -8,16 +8,15 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 
 @Service
-public class ApplicationServiceImpl implements ApplicationService
-{
-	@Autowired
-	private ApplicationDao applicationDao;
+public class ApplicationServiceImpl implements ApplicationService {
+    @Autowired
+    private ApplicationDao applicationDao;
 
-	public final Application getApplicationById( int id ) {
-		return applicationDao.getApplicationById( id );
-	}
+    public final Application getApplicationById(int id) {
+        return applicationDao.getApplicationById(id);
+    }
 
-	public final Collection<Application> getAllApplications() {
-		return applicationDao.getAllApplications();
-	}
+    public final Collection<Application> getAllApplications() {
+        return applicationDao.getAllApplications();
+    }
 }

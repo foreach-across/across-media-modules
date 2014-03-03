@@ -2,85 +2,84 @@ package com.foreach.imageserver.core.business;
 
 import java.util.Date;
 
-public class Image
-{
-	private int id, applicationId;
-	private String key, filePath;
-	private Dimensions dimensions = new Dimensions();
-	private long fileSize;
-	private ImageType imageType;
-	private Date dateCreated = new Date();
-	private Date dateUpdated;
+public class Image {
+    private int id, applicationId;
+    private String key, filePath;
+    private Dimensions dimensions = new Dimensions();
+    private long fileSize;
+    private ImageType imageType;
+    private Date dateCreated = new Date();
+    private Date dateUpdated;
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey( String key ) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setId( int id ) {
-		this.id = id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public int getApplicationId() {
-		return applicationId;
-	}
+    public int getApplicationId() {
+        return applicationId;
+    }
 
-	public void setApplicationId( int applicationId ) {
-		this.applicationId = applicationId;
-	}
+    public void setApplicationId(int applicationId) {
+        this.applicationId = applicationId;
+    }
 
-	public String getFilePath() {
-		return filePath;
-	}
+    public String getFilePath() {
+        return filePath;
+    }
 
-	public void setFilePath( String filePath ) {
-		this.filePath = filePath;
-	}
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
 
-	public Dimensions getDimensions() {
-		return dimensions;
-	}
+    public Dimensions getDimensions() {
+        return dimensions;
+    }
 
-	public void setDimensions( Dimensions dimensions ) {
-		this.dimensions = dimensions;
-	}
+    public void setDimensions(Dimensions dimensions) {
+        this.dimensions = dimensions;
+    }
 
-	public long getFileSize() {
-		return fileSize;
-	}
+    public long getFileSize() {
+        return fileSize;
+    }
 
-	public void setFileSize( long fileSize ) {
-		this.fileSize = fileSize;
-	}
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
 
-	public Date getDateCreated() {
-		return dateCreated;
-	}
+    public Date getDateCreated() {
+        return dateCreated;
+    }
 
-	public void setDateCreated( Date dateCreated ) {
-		this.dateCreated = dateCreated;
-	}
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 
-	public Date getDateUpdated() {
-		return dateUpdated;
-	}
+    public Date getDateUpdated() {
+        return dateUpdated;
+    }
 
-	public void setDateUpdated( Date dateUpdated ) {
-		this.dateUpdated = dateUpdated;
-	}
+    public void setDateUpdated(Date dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
 
-	public ImageType getImageType() {
-		return imageType;
-	}
+    public ImageType getImageType() {
+        return imageType;
+    }
 
-	public void setImageType( ImageType imageType ) {
-		this.imageType = imageType;
-	}
+    public void setImageType(ImageType imageType) {
+        this.imageType = imageType;
+    }
 }

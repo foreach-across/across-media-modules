@@ -8,15 +8,14 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 @Repository
-public interface ImageModificationDao
-{
-	Collection<ImageModification> getModificationsForImage( int imageId );
+public interface ImageModificationDao {
+    Collection<ImageModification> getModificationsForImage(int imageId);
 
-	void insertModification( ImageModification modification );
+    void insertModification(ImageModification modification);
 
-	void updateModification( ImageModification modification );
+    void updateModification(ImageModification modification);
 
-	ImageModification getModification( @Param("imageId") int imageId, @Param("dimensions") Dimensions dimensions );
+    ImageModification getModification(@Param("imageId") int imageId, @Param("dimensions") Dimensions dimensions);
 
-	void deleteModification( @Param("imageId") int imageId, @Param("dimensions") Dimensions dimensions );
+    void deleteModification(@Param("imageId") int imageId, @Param("dimensions") Dimensions dimensions);
 }

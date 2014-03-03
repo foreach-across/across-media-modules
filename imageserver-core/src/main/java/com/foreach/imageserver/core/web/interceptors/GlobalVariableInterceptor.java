@@ -8,24 +8,23 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class GlobalVariableInterceptor extends HandlerInterceptorAdapter
-{
-	public static final String ATTRIBUTE_SERVERNAME = "serverName";
+public class GlobalVariableInterceptor extends HandlerInterceptorAdapter {
+    public static final String ATTRIBUTE_SERVERNAME = "serverName";
 
-	@Autowired
-	private WebPathConfiguration webPathConfiguration;
+    @Autowired
+    private WebPathConfiguration webPathConfiguration;
 
-	@Override
-	public final boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) {
-		AbstractContextUtils.storeWebPathConfiguration( webPathConfiguration, request );
+    @Override
+    public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        AbstractContextUtils.storeWebPathConfiguration(webPathConfiguration, request);
 
-		request.setAttribute( ATTRIBUTE_SERVERNAME, request.getServerName() );
+        request.setAttribute(ATTRIBUTE_SERVERNAME, request.getServerName());
 
-		setAdditionalVariables( request, response );
+        setAdditionalVariables(request, response);
 
-		return true;
-	}
+        return true;
+    }
 
-	protected void setAdditionalVariables( HttpServletRequest request, HttpServletResponse response ) {
-	}
+    protected void setAdditionalVariables(HttpServletRequest request, HttpServletResponse response) {
+    }
 }

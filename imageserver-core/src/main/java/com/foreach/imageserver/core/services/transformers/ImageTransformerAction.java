@@ -2,48 +2,47 @@ package com.foreach.imageserver.core.services.transformers;
 
 import com.foreach.imageserver.core.business.ImageFile;
 
-public abstract class ImageTransformerAction<T>
-{
-	private final ImageFile imageFile;
+public abstract class ImageTransformerAction<T> {
+    private final ImageFile imageFile;
 
-	protected ImageTransformerAction( ImageFile imageFile ) {
-		this.imageFile = imageFile;
-	}
+    protected ImageTransformerAction(ImageFile imageFile) {
+        this.imageFile = imageFile;
+    }
 
-	public ImageFile getImageFile() {
-		return imageFile;
-	}
+    public ImageFile getImageFile() {
+        return imageFile;
+    }
 
-	private T result;
+    private T result;
 
-	public T getResult() {
-		return result;
-	}
+    public T getResult() {
+        return result;
+    }
 
-	public void setResult( T result ) {
-		this.result = result;
-	}
+    public void setResult(T result) {
+        this.result = result;
+    }
 
-	@Override
-	public boolean equals( Object o ) {
-		if ( this == o ) {
-			return true;
-		}
-		if ( o == null || getClass() != o.getClass() ) {
-			return false;
-		}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-		ImageTransformerAction that = (ImageTransformerAction) o;
+        ImageTransformerAction that = (ImageTransformerAction) o;
 
-		if ( !imageFile.equals( that.imageFile ) ) {
-			return false;
-		}
+        if (!imageFile.equals(that.imageFile)) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public int hashCode() {
-		return imageFile.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return imageFile.hashCode();
+    }
 }

@@ -17,57 +17,54 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-public class DioContentLookupRepository implements ImageLookupRepository
-{
-	private static final Logger LOG = LoggerFactory.getLogger( DioContentLookupRepository.class );
+public class DioContentLookupRepository implements ImageLookupRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(DioContentLookupRepository.class);
 
-	private final String serverUrl;
-	private final String login;
-	private final String password;
+    private final String serverUrl;
+    private final String login;
+    private final String password;
 
-	public DioContentLookupRepository( String serverUrl, String login, String password ) {
-		this.serverUrl = serverUrl;
-		this.login = login;
-		this.password = password;
+    public DioContentLookupRepository(String serverUrl, String login, String password) {
+        this.serverUrl = serverUrl;
+        this.login = login;
+        this.password = password;
 
-		LOG.info( "Registered DioContentLookupRepository on endpoint {}", serverUrl );
-	}
+        LOG.info("Registered DioContentLookupRepository on endpoint {}", serverUrl);
+    }
 
-	@Override
-	public boolean isValidURI( String uri ) {
-		return StringUtils.startsWithIgnoreCase( uri, "dc:" );
-	}
+    @Override
+    public boolean isValidURI(String uri) {
+        return StringUtils.startsWithIgnoreCase(uri, "dc:");
+    }
 
-	@Override
-	public RepositoryLookupResult fetchImage( String uri ) {
-		try {
-			DioContentClient client = new DefaultRestDioContentClient( serverUrl, login, password );
-			int dcId = Integer.valueOf( StringUtils.replace( uri, "dc:", "" ) );
+    @Override
+    public RepositoryLookupResult fetchImage(String uri) {
+        try {
+            DioContentClient client = new DefaultRestDioContentClient(serverUrl, login, password);
+            int dcId = Integer.valueOf(StringUtils.replace(uri, "dc:", ""));
 
-			LOG.debug( "Requesting ORIGINAL image with dio:content id {}", dcId );
+            LOG.debug("Requesting ORIGINAL image with dio:content id {}", dcId);
 
-			Attachment attachment = client.getAttachmentWithRole( dcId, AttachmentRole.ORIGINAL );
-			ImageType imageType = ImageType.getForContentType( attachment.getFileInfo().getMimeType() );
+            Attachment attachment = client.getAttachmentWithRole(dcId, AttachmentRole.ORIGINAL);
+            ImageType imageType = ImageType.getForContentType(attachment.getFileInfo().getMimeType());
 
-			ByteArrayOutputStream data = new ByteArrayOutputStream();
+            ByteArrayOutputStream data = new ByteArrayOutputStream();
 
-			try {
-				client.downloadAttachment( attachment.getId(), data );
-				data.flush();
-			}
-			finally {
-				IOUtils.closeQuietly( data );
-			}
+            try {
+                client.downloadAttachment(attachment.getId(), data);
+                data.flush();
+            } finally {
+                IOUtils.closeQuietly(data);
+            }
 
-			RepositoryLookupResult lookupResult = new RepositoryLookupResult();
-			lookupResult.setStatus( RepositoryLookupStatus.SUCCESS );
-			lookupResult.setImageType( imageType );
-			lookupResult.setContent( new ByteArrayInputStream( data.toByteArray() ) );
+            RepositoryLookupResult lookupResult = new RepositoryLookupResult();
+            lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
+            lookupResult.setImageType(imageType);
+            lookupResult.setContent(new ByteArrayInputStream(data.toByteArray()));
 
-			return lookupResult;
-		}
-		catch ( Exception e ) {
-			throw new RepositoryLookupException( e );
-		}
-	}
+            return lookupResult;
+        } catch (Exception e) {
+            throw new RepositoryLookupException(e);
+        }
+    }
 }

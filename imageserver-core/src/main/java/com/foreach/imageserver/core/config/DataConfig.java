@@ -16,50 +16,49 @@ import javax.sql.DataSource;
 
 @Configuration
 @MapperScan("com.foreach.imageserver.core.data")
-public class DataConfig
-{
-	@Value("${jdbc.driver}")
-	private String driver;
+public class DataConfig {
+    @Value("${jdbc.driver}")
+    private String driver;
 
-	@Value("${jdbc.url}")
-	private String url;
+    @Value("${jdbc.url}")
+    private String url;
 
-	@Value("${jdbc.username}")
-	private String userName;
+    @Value("${jdbc.username}")
+    private String userName;
 
-	@Value("${jdbc.password}")
-	private String password;
-
-	@Bean
-	public DataSource dataSource() {
-		BasicDataSource ds = new BasicDataSource();
-		ds.setDriverClassName( driver );
-		ds.setUrl( url );
-		ds.setUsername( userName );
-		ds.setPassword( password );
-		ds.setDefaultAutoCommit( true );
-
-		return ds;
-	}
-
-	@Bean
-	public DataSourceTransactionManager transactionManager() {
-		return new DataSourceTransactionManager( dataSource() );
-	}
-
-	@Bean
-	public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
-		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-		sessionFactory.setDataSource( dataSource() );
-		sessionFactory.setTypeAliases( new Class[] { Application.class, Image.class, ImageModification.class } );
-		return sessionFactory.getObject();
-	}
+    @Value("${jdbc.password}")
+    private String password;
 
     @Bean
-    public SpringLiquibase springLiquibase( DataSource dataSource ) {
+    public DataSource dataSource() {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName(driver);
+        ds.setUrl(url);
+        ds.setUsername(userName);
+        ds.setPassword(password);
+        ds.setDefaultAutoCommit(true);
+
+        return ds;
+    }
+
+    @Bean
+    public DataSourceTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
+    }
+
+    @Bean
+    public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
+        SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setTypeAliases(new Class[]{Application.class, Image.class, ImageModification.class});
+        return sessionFactory.getObject();
+    }
+
+    @Bean
+    public SpringLiquibase springLiquibase(DataSource dataSource) {
         SpringLiquibase springLiquibase = new SpringLiquibase();
-        springLiquibase.setDataSource( dataSource );
-        springLiquibase.setChangeLog( "classpath:com/foreach/imageserver/core/liquibase/changelog.xml" );
+        springLiquibase.setDataSource(dataSource);
+        springLiquibase.setChangeLog("classpath:com/foreach/imageserver/core/liquibase/changelog.xml");
         return springLiquibase;
     }
 

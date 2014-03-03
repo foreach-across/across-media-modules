@@ -26,126 +26,123 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ContextConfiguration(classes = { TestImageService.TestConfig.class }, loader = MockedLoader.class)
-public class TestImageModifierExamples
-{
-	@Autowired
-	private ImageService imageService;
+@ContextConfiguration(classes = {TestImageService.TestConfig.class}, loader = MockedLoader.class)
+public class TestImageModifierExamples {
+    @Autowired
+    private ImageService imageService;
 
-	@Autowired
-	private ImageStoreService imageStoreService;
+    @Autowired
+    private ImageStoreService imageStoreService;
 
-	private final Image original = originalWithKnownDimensionsAndImageType();
+    private final Image original = originalWithKnownDimensionsAndImageType();
 
-	@Test
-	public void otherOutputType() {
-		verify( request( ImageType.PNG ), response( ImageType.PNG ) );
-		verify( request( ImageType.GIF ), response( ImageType.GIF ) );
-	}
+    @Test
+    public void otherOutputType() {
+        verify(request(ImageType.PNG), response(ImageType.PNG));
+        verify(request(ImageType.GIF), response(ImageType.GIF));
+    }
 
-	@Test
-	public void imageSmallerThanOriginal() {
-		verify( request( 500, 300 ), response( 500, 300 ) );
-	}
+    @Test
+    public void imageSmallerThanOriginal() {
+        verify(request(500, 300), response(500, 300));
+    }
 
-	@Test
-	public void imageLargerThanOriginal() {
-		verify( request( 700, 500 ), response( 587, 419 ) );
-		verify( request( 700, 500, true ), response( 700, 500, true ) );
-	}
+    @Test
+    public void imageLargerThanOriginal() {
+        verify(request(700, 500), response(587, 419));
+        verify(request(700, 500, true), response(700, 500, true));
+    }
 
-	@Test
-	public void imageWithSpecificDimensionAndOtherAccordingToOriginalAspect() {
-		verify( request( 700, 0 ), response( 628, 419 ) );
-		verify( request( 0, 300 ), response( 450, 300 ) );
-		verify( request( 700, 0, true ), response( 700, 467, true ) );
-	}
+    @Test
+    public void imageWithSpecificDimensionAndOtherAccordingToOriginalAspect() {
+        verify(request(700, 0), response(628, 419));
+        verify(request(0, 300), response(450, 300));
+        verify(request(700, 0, true), response(700, 467, true));
+    }
 
-	@Test
-	public void largestImageFittingInFrame() {
-		verify( request( 700, 700, false, true ), response( 628, 419, false, true ) );
-		verify( request( 500, 300, false, true ), response( 500, 334, false, true ) );
+    @Test
+    public void largestImageFittingInFrame() {
+        verify(request(700, 700, false, true), response(628, 419, false, true));
+        verify(request(500, 300, false, true), response(500, 334, false, true));
 //		verify( request( 1000, 500, true, true ), response( 749, 500, true, true ) );
-	}
+    }
 
-	private ImageModifier request( ImageType output ) {
-		return modifier( 0, 0, false, false, output );
-	}
+    private ImageModifier request(ImageType output) {
+        return modifier(0, 0, false, false, output);
+    }
 
-	private ImageModifier request( int width, int height ) {
-		return request( width, height, false );
-	}
+    private ImageModifier request(int width, int height) {
+        return request(width, height, false);
+    }
 
-	private ImageModifier request( int width, int height, boolean stretch ) {
-		return request( width, height, stretch, false );
-	}
+    private ImageModifier request(int width, int height, boolean stretch) {
+        return request(width, height, stretch, false);
+    }
 
-	private ImageModifier request( int width, int height, boolean stretch, boolean keepAspect ) {
-		return modifier( width, height, stretch, keepAspect, null );
-	}
+    private ImageModifier request(int width, int height, boolean stretch, boolean keepAspect) {
+        return modifier(width, height, stretch, keepAspect, null);
+    }
 
-	private ImageModifier response( ImageType output ) {
-		return modifier( original.getDimensions().getWidth(), original.getDimensions().getHeight(), false, false,
-		                 output );
-	}
+    private ImageModifier response(ImageType output) {
+        return modifier(original.getDimensions().getWidth(), original.getDimensions().getHeight(), false, false,
+                output);
+    }
 
-	private ImageModifier response( int width, int height ) {
-		return response( width, height, false );
-	}
+    private ImageModifier response(int width, int height) {
+        return response(width, height, false);
+    }
 
-	private ImageModifier response( int width, int height, boolean stretch ) {
-		return response( width, height, stretch, false );
-	}
+    private ImageModifier response(int width, int height, boolean stretch) {
+        return response(width, height, stretch, false);
+    }
 
-	private ImageModifier response( int width, int height, boolean stretch, boolean keepAspect ) {
-		return modifier( width, height, stretch, keepAspect, original.getImageType() );
-	}
+    private ImageModifier response(int width, int height, boolean stretch, boolean keepAspect) {
+        return modifier(width, height, stretch, keepAspect, original.getImageType());
+    }
 
-	private ImageModifier modifier( int width, int height, boolean stretch, boolean keepAspect, ImageType output ) {
-		ImageModifier modifier = new ImageModifier();
-		modifier.setWidth( width );
-		modifier.setHeight( height );
-		modifier.setOutput( output );
-		modifier.setStretch( stretch );
-		modifier.setKeepAspect( keepAspect );
+    private ImageModifier modifier(int width, int height, boolean stretch, boolean keepAspect, ImageType output) {
+        ImageModifier modifier = new ImageModifier();
+        modifier.setWidth(width);
+        modifier.setHeight(height);
+        modifier.setOutput(output);
+        modifier.setStretch(stretch);
+        modifier.setKeepAspect(keepAspect);
 
-		return modifier;
-	}
+        return modifier;
+    }
 
-	private void verify( ImageModifier request, final ImageModifier expectedModifier ) {
-		final ImageFile expectedImageFile = mock( ImageFile.class );
+    private void verify(ImageModifier request, final ImageModifier expectedModifier) {
+        final ImageFile expectedImageFile = mock(ImageFile.class);
 
-		when( imageStoreService.getImageFile( eq( original ), any( ImageModifier.class ) ) ).thenAnswer(
-				new Answer<ImageFile>()
-				{
-					@Override
-					public ImageFile answer( InvocationOnMock invocation ) throws Throwable {
-						ImageModifier normalized = (ImageModifier) invocation.getArguments()[1];
+        when(imageStoreService.getImageFile(eq(original), any(ImageModifier.class))).thenAnswer(
+                new Answer<ImageFile>() {
+                    @Override
+                    public ImageFile answer(InvocationOnMock invocation) throws Throwable {
+                        ImageModifier normalized = (ImageModifier) invocation.getArguments()[1];
 
-						assertEquals( expectedModifier, normalized );
+                        assertEquals(expectedModifier, normalized);
 
-						return expectedImageFile;
-					}
-				} );
+                        return expectedImageFile;
+                    }
+                });
 
-		ImageFile imageFile = imageService.fetchImageFile( original, request );
-		assertSame( expectedImageFile, imageFile );
-	}
+        ImageFile imageFile = imageService.fetchImageFile(original, request);
+        assertSame(expectedImageFile, imageFile);
+    }
 
-	private Image originalWithKnownDimensionsAndImageType() {
-		Image image = new Image();
-		image.setDimensions( new Dimensions( 628, 419 ) );
-		image.setImageType( ImageType.JPEG );
+    private Image originalWithKnownDimensionsAndImageType() {
+        Image image = new Image();
+        image.setDimensions(new Dimensions(628, 419));
+        image.setImageType(ImageType.JPEG);
 
-		return image;
-	}
+        return image;
+    }
 
-	@Configuration
-	public static class TestConfig
-	{
-		@Bean
-		public ImageService imageService() {
-			return new ImageServiceImpl();
-		}
-	}
+    @Configuration
+    public static class TestConfig {
+        @Bean
+        public ImageService imageService() {
+            return new ImageServiceImpl();
+        }
+    }
 }

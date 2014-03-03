@@ -17,15 +17,15 @@ public abstract class HttpWebServiceRequest implements WebServiceRequest {
     * */
     private boolean interceptResultStream = false;
 
-    public void setHeader( String key, String value ) {
-        headers.put( key, value );
+    public void setHeader(String key, String value) {
+        headers.put(key, value);
     }
 
     public String getRequestMethod() {
         return requestMethod;
     }
 
-    public void setRequestMethod( String requestMethod ) {
+    public void setRequestMethod(String requestMethod) {
         this.requestMethod = requestMethod;
     }
 
@@ -33,11 +33,11 @@ public abstract class HttpWebServiceRequest implements WebServiceRequest {
         return headers;
     }
 
-    public void setContent( InputStream inputStream ) {
+    public void setContent(InputStream inputStream) {
         this.inputStream = inputStream;
     }
 
-    public void setContentLength( long contentlength ) {
+    public void setContentLength(long contentlength) {
         this.contentlength = contentlength;
     }
 
@@ -53,7 +53,7 @@ public abstract class HttpWebServiceRequest implements WebServiceRequest {
         return interceptResultStream;
     }
 
-    public void setInterceptResultStream( boolean interceptResultStream ) {
+    public void setInterceptResultStream(boolean interceptResultStream) {
         this.interceptResultStream = interceptResultStream;
     }
 
@@ -64,7 +64,7 @@ public abstract class HttpWebServiceRequest implements WebServiceRequest {
 
     @Override
     public WebServiceResult invoke() {
-        return getInvoker().invoke( this );
+        return getInvoker().invoke(this);
     }
 
     @Override

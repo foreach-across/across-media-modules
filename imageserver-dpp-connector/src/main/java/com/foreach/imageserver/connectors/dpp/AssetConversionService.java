@@ -16,5 +16,5 @@ public interface AssetConversionService {
 
     String RESPONSE_ENCODING = "application/octet-stream";
 
-    byte[] convert( ByteArrayPartSource fileToConvert, Asset.Format targetFormat, Conversion conversion );
+    byte[] convert(ByteArrayPartSource fileToConvert, Asset.Format targetFormat, Conversion conversion);
 }

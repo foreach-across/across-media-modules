@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AssetConversionServiceImpl implements AssetConversionService {
     @Override
-    public byte[] convert( ByteArrayPartSource file, Asset.Format targetFormat, Conversion conversion ) {
-        HttpWebServiceRequest request = new AssetConversionServiceRequest( file, targetFormat, conversion );
+    public byte[] convert(ByteArrayPartSource file, Asset.Format targetFormat, Conversion conversion) {
+        HttpWebServiceRequest request = new AssetConversionServiceRequest(file, targetFormat, conversion);
         AssetConversionServiceResponse response = (AssetConversionServiceResponse) request.invoke();
         return response.getResponse();
     }

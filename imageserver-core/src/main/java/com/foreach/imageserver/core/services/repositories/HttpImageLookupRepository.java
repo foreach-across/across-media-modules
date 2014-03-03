@@ -18,51 +18,48 @@ import java.net.UnknownHostException;
  * Will fetch an image from a specific url.
  */
 @Service
-public class HttpImageLookupRepository implements ImageLookupRepository
-{
-	private static final Logger LOG = LoggerFactory.getLogger( HttpImageLookupRepository.class );
+public class HttpImageLookupRepository implements ImageLookupRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(HttpImageLookupRepository.class);
 
-	@Override
-	public boolean isValidURI( String uri ) {
-		return StringUtils.startsWithIgnoreCase( uri, "http://" ) || StringUtils.startsWithIgnoreCase( uri,
-		                                                                                               "https://" );
-	}
+    @Override
+    public boolean isValidURI(String uri) {
+        return StringUtils.startsWithIgnoreCase(uri, "http://") || StringUtils.startsWithIgnoreCase(uri,
+                "https://");
+    }
 
-	public RepositoryLookupResult fetchImage( String uri ) {
-		RepositoryLookupResult result = new RepositoryLookupResult();
+    public RepositoryLookupResult fetchImage(String uri) {
+        RepositoryLookupResult result = new RepositoryLookupResult();
 
-		try {
-			LOG.info( "Fetching remote image with url " + uri );
+        try {
+            LOG.info("Fetching remote image with url " + uri);
 
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet httpGet = new HttpGet( uri );
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(uri);
 
-			HttpResponse response = httpClient.execute( httpGet );
-			HttpEntity entity = response.getEntity();
+            HttpResponse response = httpClient.execute(httpGet);
+            HttpEntity entity = response.getEntity();
 
-			result.setStatus( RepositoryLookupStatus.getForHttpStatusCode( response.getStatusLine().getStatusCode() ) );
+            result.setStatus(RepositoryLookupStatus.getForHttpStatusCode(response.getStatusLine().getStatusCode()));
 
-			if ( result.getStatus() == RepositoryLookupStatus.SUCCESS ) {
-				ImageType imageType = ImageType.getForContentType( entity.getContentType().getValue() );
+            if (result.getStatus() == RepositoryLookupStatus.SUCCESS) {
+                ImageType imageType = ImageType.getForContentType(entity.getContentType().getValue());
 
-				if ( imageType == null ) {
-					throw new RepositoryLookupException( "Unknown Content-Type: " + entity.getContentType() );
-				}
-				result.setImageType( imageType );
-				result.setContent( entity.getContent() );
-			}
-		}
-		catch ( UnknownHostException uhe ) {
-			LOG.error( "Could not fetch image from " + uri, uhe );
+                if (imageType == null) {
+                    throw new RepositoryLookupException("Unknown Content-Type: " + entity.getContentType());
+                }
+                result.setImageType(imageType);
+                result.setContent(entity.getContent());
+            }
+        } catch (UnknownHostException uhe) {
+            LOG.error("Could not fetch image from " + uri, uhe);
 
-			result.setStatus( RepositoryLookupStatus.NOT_FOUND );
-		}
-		catch ( Exception e ) {
-			LOG.error( "Exception fetching image from " + uri, e );
+            result.setStatus(RepositoryLookupStatus.NOT_FOUND);
+        } catch (Exception e) {
+            LOG.error("Exception fetching image from " + uri, e);
 
-			result.setStatus( RepositoryLookupStatus.ERROR );
-		}
+            result.setStatus(RepositoryLookupStatus.ERROR);
+        }
 
-		return result;
-	}
+        return result;
+    }
 }
