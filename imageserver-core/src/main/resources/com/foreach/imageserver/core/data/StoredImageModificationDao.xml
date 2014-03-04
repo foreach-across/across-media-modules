@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foreach.imageserver.core.data.StoredImageModificationDao">
+
+    <resultMap id="imageModificationMap" type="StoredImageModification">
+        <id property="imageId" column="imageid"/>
+        <result property="modification.variant.width" column="width"/>
+        <result property="modification.variant.height" column="height"/>
+        <result property="modification.variant.output" column="outputtype"
+                typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
+        <result property="modification.crop.x" column="cropx"/>
+        <result property="modification.crop.y" column="cropy"/>
+        <result property="modification.crop.width" column="cropwidth"/>
+        <result property="modification.crop.height" column="cropheight"/>
+        <result property="modification.crop.sourceWidth" column="cropsourcewidth"/>
+        <result property="modification.crop.sourceHeight" column="cropsourceheight"/>
+        <result property="modification.variant.density.width" column="densityx"/>
+        <result property="modification.variant.density.height" column="densityy"/>
+        <result property="modification.variant.stretch" column="stretch"/>
+        <result property="modification.variant.keepAspect" column="keepaspect"/>
+        <result property="dateCreated" column="created"/>
+        <result property="dateUpdated" column="updated"/>
+    </resultMap>
+
+    <select id="getModificationsForImage" parameterType="int" resultMap="imageModificationMap">
+		SELECT *
+		FROM imagemodification
+		WHERE imageid = #{value}
+		ORDER BY width ASC, height ASC
+	</select>
+
+    <select id="getModification" parameterType="map" resultMap="imageModificationMap">
+		SELECT *
+		FROM imagemodification
+		WHERE imageid = #{imageId} AND width = #{variant.width} AND height = #{variant.height}
+		<!-- TODO: Add more parameters from the variant in the select clause ? -->
+	</select>
+
+    <insert id="insertModification" parameterType="StoredImageModification">
+        INSERT INTO imagemodification (
+            imageid, width, height, outputtype, densityx, densityy, stretch, keepaspect,
+            cropx, cropy, cropwidth, cropheight, cropsourcewidth, cropsourceheight,
+            created
+        ) VALUES (
+            #{imageId},
+            #{modification.variant.width},
+            #{modification.variant.height},
+            #{modification.variant.output.id},
+            #{modification.variant.density.width},
+            #{modification.variant.density.height},
+            #{modification.variant.stretch},
+            #{modification.variant.keepAspect},
+            #{modification.crop.x},
+            #{modification.crop.y},
+            #{modification.crop.width},
+            #{modification.crop.height},
+            #{modification.crop.sourceWidth},
+            #{modification.crop.sourceHeight},
+            GETDATE()
+        )
+    </insert>
+
+    <update id="updateModification" parameterType="StoredImageModification">
+        UPDATE imagemodification
+        SET
+        	outputtype = #{modification.variant.output.id},
+			densityx = #{modification.variant.density.width},
+			densityy = #{modification.variant.density.height},
+			stretch = #{modification.variant.stretch},
+			keepaspect = #{modification.variant.keepAspect},
+			cropx = #{modification.crop.x},
+			cropy = #{modification.crop.y},
+			cropwidth = #{modification.crop.width},
+			cropheight = #{modification.crop.height},
+			cropsourcewidth = #{modification.crop.sourceWidth},
+			cropsourceheight = #{modification.crop.sourceHeight},
+            updated = GETDATE()
+        WHERE imageid = #{imageId} AND width = #{modification.variant.width} AND height = #{modification.variant.height}
+    </update>
+
+    <delete id="deleteModification" parameterType="map">
+		DELETE FROM imagemodification
+	    WHERE imageid = #{imageId} AND width = #{modification.variant.width} AND height = #{modification.variant.height}
+	</delete>
+</mapper>

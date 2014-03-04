@@ -73,7 +73,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     }
 
     @Override
-    public ImageFile saveImage(Image image, ImageVariant modifier, ImageFile file) {
+    public ImageFile saveImage(Image image, ImageModification modifier, ImageFile file) {
         try {
             File physical = new File(generateFullImagePath(image, modifier));
 
@@ -152,12 +152,12 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     }
 
     @Override
-    public ImageFile getImageFile(Image image, ImageVariant modifier) {
+    public ImageFile getImageFile(Image image, ImageModification modifier) {
         try {
             File physicalFile = new File(generateFullImagePath(image, modifier));
 
             if (physicalFile.exists()) {
-                ImageType imageType = modifier != null ? modifier.getModifier().getOutput() : image.getImageType();
+                ImageType imageType = modifier != null ? modifier.getVariant().getOutput() : image.getImageType();
 
                 return new ImageFile(imageType != null ? imageType : image.getImageType(), physicalFile.length(),
                         new FileInputStream(physicalFile));
@@ -176,26 +176,26 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     }
 
     @Override
-    public String generateFullImagePath(Image image, ImageVariant modifier) {
+    public String generateFullImagePath(Image image, ImageModification modifier) {
         String path = isOriginalImage(modifier) ? createPathForOriginal(image) : createPathForVariant(image);
         String fileName = createFileName(image, modifier);
 
         return new File(path, fileName).getAbsolutePath();
     }
 
-    private boolean isOriginalImage(ImageVariant modifier) {
+    private boolean isOriginalImage(ImageModification modifier) {
         return modifier == null || modifier.isEmpty();
     }
 
-    private String createFileName(Image image, ImageVariant modifier) {
+    private String createFileName(Image image, ImageModification modifier) {
         if (!isOriginalImage(modifier)) {
-            ImageType imageType = modifier.getModifier().getOutput();
+            ImageType imageType = modifier.getVariant().getOutput();
 
             StringBuilder path = new StringBuilder();
             path.append(image.getId());
 
             // Output resolution: 100x100
-            path.append(".").append(modifier.getModifier().getWidth()).append("x").append(modifier.getModifier().getHeight());
+            path.append(".").append(modifier.getVariant().getWidth()).append("x").append(modifier.getVariant().getHeight());
 
             // Crop
             if (modifier.hasCrop()) {

@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.services.transformers;
 
 import com.foreach.imageserver.core.business.Crop;
 import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.ImageTestData;
 import org.junit.Test;
@@ -97,21 +97,21 @@ public class TestImageMagickImageTransformer extends AbstractImageTransformerTes
         assertEquals("Test data has been modified - test unreliable", 321, image.getDimensions().getWidth());
         assertEquals("Test data has been modified - test unreliable", 583, image.getDimensions().getHeight());
 
-        ImageVariant modifier = new ImageVariant();
-        modifier.getModifier().setOutput(ImageType.PNG);
-        modifier.getModifier().setStretch(true);
+        ImageModification modifier = new ImageModification();
+        modifier.getVariant().setOutput(ImageType.PNG);
+        modifier.getVariant().setStretch(true);
         modifier.setCrop(new Crop(10, 10, 300, 250));
 
         // uniform 3 times larger should be sharp
-        modifier.getModifier().setWidth(1500);
-        modifier.getModifier().setHeight(1250);
-        modifier.getModifier().setDensity(5);
+        modifier.getVariant().setWidth(1500);
+        modifier.getVariant().setHeight(1250);
+        modifier.getVariant().setDensity(5);
         modify("crop+x5", image, modifier, ImageTransformerPriority.PREFERRED, true);
 
         // Non uniform scale of the crop
-        modifier.getModifier().setWidth(1500);
-        modifier.getModifier().setHeight(500);
-        modifier.getModifier().setDensity(5, 2);
+        modifier.getVariant().setWidth(1500);
+        modifier.getVariant().setHeight(500);
+        modifier.getVariant().setDensity(5, 2);
         modify("crop+x5x2", image, modifier, ImageTransformerPriority.PREFERRED, true);
     }
 
@@ -122,31 +122,31 @@ public class TestImageMagickImageTransformer extends AbstractImageTransformerTes
         assertEquals("Test data has been modified - test unreliable", 130, image.getDimensions().getWidth());
         assertEquals("Test data has been modified - test unreliable", 104, image.getDimensions().getHeight());
 
-        ImageVariant modifier = new ImageVariant();
-        modifier.getModifier().setOutput(ImageType.PNG);
-        modifier.getModifier().setStretch(true);
+        ImageModification modifier = new ImageModification();
+        modifier.getVariant().setOutput(ImageType.PNG);
+        modifier.getVariant().setStretch(true);
 
         // uniform 3 times larger should be sharp
-        modifier.getModifier().setWidth(130 * 3);
-        modifier.getModifier().setHeight(104 * 3);
-        modifier.getModifier().setDensity(3);
+        modifier.getVariant().setWidth(130 * 3);
+        modifier.getVariant().setHeight(104 * 3);
+        modifier.getVariant().setDensity(3);
         modify("x3", image, modifier, ImageTransformerPriority.PREFERRED, true);
 
         // 10 times larger should also be sharp
-        modifier.getModifier().setWidth(130 * 10);
-        modifier.getModifier().setHeight(104 * 10);
-        modifier.getModifier().setDensity(10);
+        modifier.getVariant().setWidth(130 * 10);
+        modifier.getVariant().setHeight(104 * 10);
+        modifier.getVariant().setDensity(10);
         modify("x10", image, modifier, ImageTransformerPriority.PREFERRED, true);
 
         // Non uniform scales
-        modifier.getModifier().setWidth(130 * 3);
-        modifier.getModifier().setHeight(104 * 6);
-        modifier.getModifier().setDensity(3, 6);
+        modifier.getVariant().setWidth(130 * 3);
+        modifier.getVariant().setHeight(104 * 6);
+        modifier.getVariant().setDensity(3, 6);
         modify("x3x6", image, modifier, ImageTransformerPriority.PREFERRED, true);
 
-        modifier.getModifier().setWidth(130 * 10);
-        modifier.getModifier().setHeight(104 * 3);
-        modifier.getModifier().setDensity(10, 3);
+        modifier.getVariant().setWidth(130 * 10);
+        modifier.getVariant().setHeight(104 * 3);
+        modifier.getVariant().setDensity(10, 3);
         modify("x10x3", image, modifier, ImageTransformerPriority.PREFERRED, true);
     }
 
@@ -180,35 +180,35 @@ public class TestImageMagickImageTransformer extends AbstractImageTransformerTes
                 ImageTransformerPriority.PREFERRED, true);
     }
 
-    private ImageVariant scale(ImageTestData image, ImageType output, float delta) {
+    private ImageModification scale(ImageTestData image, ImageType output, float delta) {
         return scale(image, output, delta, delta);
     }
 
-    private ImageVariant scale(ImageTestData image, ImageType output, float deltaWidth, float deltaHeight) {
-        ImageVariant mod = new ImageVariant();
-        mod.getModifier().setStretch(true);
-        mod.getModifier().setOutput(output);
-        mod.getModifier().setWidth(Math.round(image.getDimensions().getWidth() * deltaWidth));
-        mod.getModifier().setHeight(Math.round(image.getDimensions().getHeight() * deltaHeight));
+    private ImageModification scale(ImageTestData image, ImageType output, float deltaWidth, float deltaHeight) {
+        ImageModification mod = new ImageModification();
+        mod.getVariant().setStretch(true);
+        mod.getVariant().setOutput(output);
+        mod.getVariant().setWidth(Math.round(image.getDimensions().getWidth() * deltaWidth));
+        mod.getVariant().setHeight(Math.round(image.getDimensions().getHeight() * deltaHeight));
 
         return mod;
     }
 
-    private ImageVariant crop(ImageType output, Crop crop) {
+    private ImageModification crop(ImageType output, Crop crop) {
         return cropAndScale(output, crop, 1f);
     }
 
-    private ImageVariant cropAndScale(ImageType output, Crop crop, float delta) {
+    private ImageModification cropAndScale(ImageType output, Crop crop, float delta) {
         return cropAndScale(output, crop, delta, delta);
     }
 
-    private ImageVariant cropAndScale(ImageType output, Crop crop, float deltaWidth, float deltaHeight) {
-        ImageVariant mod = new ImageVariant();
-        mod.getModifier().setStretch(true);
-        mod.getModifier().setOutput(output);
+    private ImageModification cropAndScale(ImageType output, Crop crop, float deltaWidth, float deltaHeight) {
+        ImageModification mod = new ImageModification();
+        mod.getVariant().setStretch(true);
+        mod.getVariant().setOutput(output);
         mod.setCrop(crop);
-        mod.getModifier().setWidth(Math.round(crop.getWidth() * deltaWidth));
-        mod.getModifier().setHeight(Math.round(crop.getHeight() * deltaHeight));
+        mod.getVariant().setWidth(Math.round(crop.getWidth() * deltaWidth));
+        mod.getVariant().setHeight(Math.round(crop.getHeight() * deltaHeight));
 
         return mod;
     }

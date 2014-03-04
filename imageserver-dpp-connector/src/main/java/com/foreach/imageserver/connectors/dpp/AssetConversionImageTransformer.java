@@ -58,7 +58,7 @@ public class AssetConversionImageTransformer implements ImageTransformer {
         ImageModifyAction action = (ImageModifyAction) transformerAction;
 
         try {
-            ImageVariant modifier = action.getVariant();
+            ImageModification modifier = action.getVariant();
 
             byte[] sourceData = IOUtils.toByteArray(action.getImageFile().openContentStream());
 
@@ -77,7 +77,7 @@ public class AssetConversionImageTransformer implements ImageTransformer {
                 parameters.add("y", crop.getY());
             }
 
-            parameters.add("format", modifier.getModifier().getOutput().getExtension());
+            parameters.add("format", modifier.getVariant().getOutput().getExtension());
             parameters.add("noprofiles", "true");
             parameters.add("colorspace", "sRGB");
 
@@ -113,13 +113,13 @@ public class AssetConversionImageTransformer implements ImageTransformer {
 
 					byte[] bytes = os.toByteArray();
 					ImageFile result =
-							new ImageFile( action.getModifier().getOutput(), bytes.length, new ByteArrayInputStream( bytes ) );
+							new ImageFile( action.getVariant().getOutput(), bytes.length, new ByteArrayInputStream( bytes ) );
 					action.setResult( result );*/
 
 			/*byte[] converted = assetConversionService.convert( file, Asset.Format.fromMimeType(
                                 modifier.getOutput().getContentType() ), conversion );
 
-						ImageFile result = new ImageFile( action.getModifier().getOutput(), converted.length,
+						ImageFile result = new ImageFile( action.getVariant().getOutput(), converted.length,
 						                                  new ByteArrayInputStream( converted ) );
 						action.setResult( result );*/
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class AssetConversionImageTransformer implements ImageTransformer {
 
     }
 
-    private byte[] executeCrop(byte[] source, ImageFile imageFile, ImageVariant modifier) {
+    private byte[] executeCrop(byte[] source, ImageFile imageFile, ImageModification modifier) {
         Parameters parameters = new Parameters();
         Dimensions appliedDensity = setDensityIfRequired(parameters, imageFile, modifier);
 
@@ -139,7 +139,7 @@ public class AssetConversionImageTransformer implements ImageTransformer {
         parameters.add("x", crop.getX());
         parameters.add("y", crop.getY());
 
-        parameters.add("format", modifier.getModifier().getOutput().getExtension());
+        parameters.add("format", modifier.getVariant().getOutput().getExtension());
         parameters.add("noprofiles", "true");
         parameters.add("colorspace", "sRGB");
 
@@ -161,9 +161,9 @@ public class AssetConversionImageTransformer implements ImageTransformer {
         return crop;
     }
 
-    private Dimensions setDensityIfRequired(Parameters parameters, ImageFile original, ImageVariant modifier) {
+    private Dimensions setDensityIfRequired(Parameters parameters, ImageFile original, ImageModification modifier) {
         if (original.getImageType().isScalable()) {
-            Dimensions density = modifier.getModifier().getDensity();
+            Dimensions density = modifier.getVariant().getDensity();
 
             if (density != null && !Dimensions.EMPTY.equals(
                     density) && (density.getHeight() > 1 || density.getWidth() > 1)) {

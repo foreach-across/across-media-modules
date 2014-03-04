@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.services.transformers;
 
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
 import org.apache.commons.imaging.ImageInfo;
@@ -118,11 +118,11 @@ public class PureJavaImageTransformer implements ImageTransformer {
         }
         try {
             ImageFile original = action.getImageFile();
-            ImageVariant modifier = action.getVariant();
+            ImageModification modifier = action.getVariant();
 
             BufferedImage bufferedImage = readImage(original);
 
-            bufferedImage = getScaledInstance(bufferedImage, modifier.getModifier().getWidth(), modifier.getModifier().getHeight(),
+            bufferedImage = getScaledInstance(bufferedImage, modifier.getVariant().getWidth(), modifier.getVariant().getHeight(),
                     RenderingHints.VALUE_INTERPOLATION_BILINEAR, false);
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();

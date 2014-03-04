@@ -51,14 +51,14 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     }
 
     @Override
-    public ImageFile apply(Image image, ImageVariant modifier) {
+    public ImageFile apply(Image image, ImageModification modifier) {
         ImageFile originalFile = imageStoreService.getImageFile(image);
-        ImageVariant normalized = modifier.normalize(image.getDimensions());
-        verifyOutputType(originalFile.getImageType(), normalized.getModifier());
+        ImageModification normalized = modifier.normalize(image.getDimensions());
+        verifyOutputType(originalFile.getImageType(), normalized.getVariant());
         return execute(new ImageModifyAction(originalFile, normalized));
     }
 
-    private void verifyOutputType(ImageType original, ImageModifier modifier) {
+    private void verifyOutputType(ImageType original, ImageVariant modifier) {
         if (modifier.getOutput() == null) {
             modifier.setOutput(ImageType.getPreferredOutputType(original));
         }

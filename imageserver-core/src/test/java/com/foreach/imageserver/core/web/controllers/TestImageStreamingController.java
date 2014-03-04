@@ -70,8 +70,8 @@ public class TestImageStreamingController {
         application.setActive(true);
 
         Image image = new Image();
-        ImageVariant modifier = new ImageVariant();
-        modifier.getModifier().setWidth(100);
+        ImageModification modifier = new ImageModification();
+        modifier.getVariant().setWidth(100);
 
         ImageModifierDto modifierDto = new ImageModifierDto();
         modifierDto.setWidth(100);

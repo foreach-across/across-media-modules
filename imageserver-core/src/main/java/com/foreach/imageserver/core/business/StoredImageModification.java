@@ -2,10 +2,10 @@ package com.foreach.imageserver.core.business;
 
 import java.util.Date;
 
-public class StoredImageVariant {
+public class StoredImageModification {
 
     private int imageId;
-    private ImageVariant variant = new ImageVariant();
+    private ImageModification modification = new ImageModification();
     private Date dateCreated;
     private Date dateUpdated;
 
@@ -17,12 +17,12 @@ public class StoredImageVariant {
         this.imageId = imageId;
     }
 
-    public ImageVariant getVariant() {
-        return variant;
+    public ImageModification getModification() {
+        return modification;
     }
 
-    public void setVariant(ImageVariant variant) {
-        this.variant = variant;
+    public void setModification(ImageModification modification) {
+        this.modification = modification;
     }
 
     public Date getDateCreated() {

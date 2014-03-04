@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.web.controllers;
 
 import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageVariantService;
 import com.foreach.imageserver.core.services.ImageService;
@@ -37,13 +37,13 @@ public class ImageModificationController {
                            @RequestParam(value = "key", required = true) String imageKey,
                            ImageModifierDto modifierDto) {
         Application application = applicationService.getApplicationById(applicationId);
-        ImageVariant modifier = new ImageVariant(modifierDto);
+        ImageModification modifier = new ImageModification(modifierDto);
 
         if (application == null || !application.canBeManaged(applicationKey)) {
             throw new ApplicationDeniedException();
         }
 
-        if (modifier.getModifier().getHeight() == 0 && modifier.getModifier().getWidth() == 0) {
+        if (modifier.getVariant().getHeight() == 0 && modifier.getVariant().getWidth() == 0) {
             throw new ImageModificationException("No target width or height specified.");
         }
 

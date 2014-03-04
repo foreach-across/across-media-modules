@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 
 public interface ImageService {
@@ -10,7 +10,7 @@ public interface ImageService {
 
     void save(Image image, RepositoryLookupResult lookupResult);
 
-    ImageFile fetchImageFile(Image image, ImageVariant modifier);
+    ImageFile fetchImageFile(Image image, ImageModification modifier);
 
     void delete(Image image, boolean variantsOnly);
 }

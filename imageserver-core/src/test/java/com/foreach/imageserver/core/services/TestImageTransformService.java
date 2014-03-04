@@ -39,7 +39,7 @@ public abstract class TestImageTransformService<T extends ImageTransformerAction
 
                 private ImageFile original = new ImageFile(ImageType.JPEG, 0, null);
                 private ImageFile modified = new ImageFile(ImageType.PNG, 10, null);
-                private ImageVariant modifier = new ImageVariant();
+                private ImageModification modifier = new ImageModification();
 
                 @Override
                 public ImageModifyAction getAction() {

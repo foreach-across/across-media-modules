@@ -3,7 +3,7 @@ package com.foreach.imageserver.core.web.controllers;
 import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageVariantService;
 import com.foreach.imageserver.core.services.ImageService;
@@ -118,7 +118,7 @@ public class TestImageModificationController {
         Dimensions dimensions = new Dimensions(800, 0);
 
         ImageModifierDto modifierDto = createModifierDto(dimensions);
-        ImageVariant modifier = new ImageVariant(modifierDto);
+        ImageModification modifier = new ImageModification(modifierDto);
 
         when(imageService.getImageByKey("somekey", 1)).thenReturn(image);
 

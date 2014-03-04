@@ -12,101 +12,101 @@ import static org.junit.Assert.*;
 
 public class TestImageVariantDao extends AbstractDaoTest {
     @Autowired
-    private ImageVariantDao imageVariantDao;
+    private StoredImageModificationDao storedImageModificationDao;
 
     @Test
     public void getKnownImageModifications() {
-        Collection<StoredImageVariant> modifications = imageVariantDao.getVariantsForImage(9999001);
+        Collection<StoredImageModification> modifications = storedImageModificationDao.getModificationsForImage(9999001);
 
         assertNotNull(modifications);
         assertEquals(2, modifications.size());
 
         // First modification should be smallest width
-        Iterator<StoredImageVariant> iterator = modifications.iterator();
+        Iterator<StoredImageModification> iterator = modifications.iterator();
 
-        StoredImageVariant modification = iterator.next();
+        StoredImageModification modification = iterator.next();
         assertNotNull(modification);
         assertEquals(9999001, modification.getImageId());
-        assertEquals(1024, modification.getVariant().getModifier().getWidth());
-        assertEquals(768, modification.getVariant().getModifier().getHeight());
-        assertEquals(ImageType.GIF, modification.getVariant().getModifier().getOutput());
-        assertFalse(modification.getVariant().hasCrop());
-        assertEquals(new Dimensions(), modification.getVariant().getModifier().getDensity());
-        assertFalse(modification.getVariant().getModifier().isStretch());
-        assertFalse(modification.getVariant().getModifier().isKeepAspect());
+        assertEquals(1024, modification.getModification().getVariant().getWidth());
+        assertEquals(768, modification.getModification().getVariant().getHeight());
+        assertEquals(ImageType.GIF, modification.getModification().getVariant().getOutput());
+        assertFalse(modification.getModification().hasCrop());
+        assertEquals(new Dimensions(), modification.getModification().getVariant().getDensity());
+        assertFalse(modification.getModification().getVariant().isStretch());
+        assertFalse(modification.getModification().getVariant().isKeepAspect());
         assertEquals(DateUtils.parseDate("2013-07-31 13:40:33"), modification.getDateCreated());
         assertEquals(DateUtils.parseDate("2013-08-01 13:25:31"), modification.getDateUpdated());
 
         modification = iterator.next();
         assertNotNull(modification);
         assertEquals(9999001, modification.getImageId());
-        assertEquals(1600, modification.getVariant().getModifier().getWidth());
-        assertEquals(1200, modification.getVariant().getModifier().getHeight());
-        assertEquals(ImageType.PNG, modification.getVariant().getModifier().getOutput());
-        assertEquals(new Crop(100, 150, 500, 750, 1000, 2000), modification.getVariant().getCrop());
-        assertEquals(new Dimensions(300, 600), modification.getVariant().getModifier().getDensity());
-        assertTrue(modification.getVariant().getModifier().isStretch());
-        assertTrue(modification.getVariant().getModifier().isKeepAspect());
+        assertEquals(1600, modification.getModification().getVariant().getWidth());
+        assertEquals(1200, modification.getModification().getVariant().getHeight());
+        assertEquals(ImageType.PNG, modification.getModification().getVariant().getOutput());
+        assertEquals(new Crop(100, 150, 500, 750, 1000, 2000), modification.getModification().getCrop());
+        assertEquals(new Dimensions(300, 600), modification.getModification().getVariant().getDensity());
+        assertTrue(modification.getModification().getVariant().isStretch());
+        assertTrue(modification.getModification().getVariant().isKeepAspect());
         assertEquals(DateUtils.parseDate("2013-07-31 13:40:33"), modification.getDateCreated());
         assertEquals(DateUtils.parseDate("2013-08-01 13:25:31"), modification.getDateUpdated());
     }
 
     @Test
     public void createReadUpdateDelete() {
-        StoredImageVariant inserted = createModification();
+        StoredImageModification inserted = createModification();
 
-        imageVariantDao.insertVariant(inserted);
+        storedImageModificationDao.insertModification(inserted);
 
-        StoredImageVariant fetched =
-                imageVariantDao.getVariant(inserted.getImageId(), inserted.getVariant().getModifier());
+        StoredImageModification fetched =
+                storedImageModificationDao.getModification(inserted.getImageId(), inserted.getModification().getVariant());
 
         compareModifications(inserted, fetched);
         assertNotNull(fetched.getDateCreated());
         assertNull(fetched.getDateUpdated());
 
-        StoredImageVariant modified = modify(fetched);
-        imageVariantDao.updateVariant(modified);
+        StoredImageModification modified = modify(fetched);
+        storedImageModificationDao.updateModification(modified);
 
-        fetched = imageVariantDao.getVariant(inserted.getImageId(), inserted.getVariant().getModifier());
+        fetched = storedImageModificationDao.getModification(inserted.getImageId(), inserted.getModification().getVariant());
         compareModifications(modified, fetched);
         assertNotNull(fetched.getDateUpdated());
 
-        imageVariantDao.deleteVariant(inserted.getImageId(), inserted.getVariant().getModifier());
+        storedImageModificationDao.deleteModification(inserted.getImageId(), inserted.getModification().getVariant());
     }
 
-    private StoredImageVariant createModification() {
-        StoredImageVariant mod = new StoredImageVariant();
+    private StoredImageModification createModification() {
+        StoredImageModification mod = new StoredImageModification();
         mod.setImageId(9999001);
 
-        ImageVariant modifier = new ImageVariant();
-        modifier.getModifier().setWidth(500);
-        modifier.getModifier().setHeight(400);
+        ImageModification modifier = new ImageModification();
+        modifier.getVariant().setWidth(500);
+        modifier.getVariant().setHeight(400);
         modifier.setCrop(new Crop(5, 15, 100, 110, 200, 300));
-        modifier.getModifier().setDensity(250, 500);
-        modifier.getModifier().setKeepAspect(false);
-        modifier.getModifier().setStretch(true);
+        modifier.getVariant().setDensity(250, 500);
+        modifier.getVariant().setKeepAspect(false);
+        modifier.getVariant().setStretch(true);
 
-        mod.setVariant(modifier);
+        mod.setModification(modifier);
 
         return mod;
     }
 
-    private StoredImageVariant modify(StoredImageVariant modification) {
-        ImageVariant modifier = new ImageVariant();
-        modifier.getModifier().setWidth(1900);
-        modifier.getModifier().setHeight(1440);
+    private StoredImageModification modify(StoredImageModification modification) {
+        ImageModification modifier = new ImageModification();
+        modifier.getVariant().setWidth(1900);
+        modifier.getVariant().setHeight(1440);
         modifier.setCrop(new Crop());
-        modifier.getModifier().setDensity(900, 1200);
-        modifier.getModifier().setKeepAspect(true);
-        modifier.getModifier().setStretch(false);
-        modifier.getModifier().setOutput(ImageType.PNG);
+        modifier.getVariant().setDensity(900, 1200);
+        modifier.getVariant().setKeepAspect(true);
+        modifier.getVariant().setStretch(false);
+        modifier.getVariant().setOutput(ImageType.PNG);
 
-        modification.setVariant(modifier);
+        modification.setModification(modifier);
         return modification;
     }
 
-    private void compareModifications(StoredImageVariant left, StoredImageVariant right) {
+    private void compareModifications(StoredImageModification left, StoredImageModification right) {
         assertEquals(left.getImageId(), right.getImageId());
-        assertEquals(left.getVariant(), right.getVariant());
+        assertEquals(left.getModification(), right.getModification());
     }
 }

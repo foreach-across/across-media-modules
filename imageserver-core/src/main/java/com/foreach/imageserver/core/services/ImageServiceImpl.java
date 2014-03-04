@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.data.ImageDao;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 import org.slf4j.Logger;
@@ -66,14 +66,14 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
-    public ImageFile fetchImageFile(Image image, ImageVariant modifier) {
+    public ImageFile fetchImageFile(Image image, ImageModification modifier) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Requesting image {} with modifier {}", image.getId(), modifier);
         }
 
         if (modifier.getCrop().isEmpty()) {
             //No crop given, compute or fetch one
-            modifier.setCrop(imageVariantService.getCropForModifier(image, modifier.getModifier()));
+            modifier.setCrop(imageVariantService.getCropForModifier(image, modifier.getVariant()));
         }
 
         ImageFile file = imageStoreService.getImageFile(image, modifier);

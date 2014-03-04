@@ -88,8 +88,8 @@ public class ImageMagickImageTransformer implements ImageTransformer {
 
     private void executeModification(ImageModifyAction action) {
         try {
-            ImageVariant variant = action.getVariant();
-            ImageModifier modifier = variant.getModifier();
+            ImageModification variant = action.getVariant();
+            ImageVariant modifier = variant.getVariant();
 
             ConvertCmd cmd = new ConvertCmd();
 
@@ -140,9 +140,9 @@ public class ImageMagickImageTransformer implements ImageTransformer {
         return crop;
     }
 
-    private Dimensions setDensityIfRequired(IMOperation operation, ImageFile original, ImageModifier imageModifier) {
+    private Dimensions setDensityIfRequired(IMOperation operation, ImageFile original, ImageVariant imageVariant) {
         if (original.getImageType().isScalable()) {
-            Dimensions density = imageModifier.getDensity();
+            Dimensions density = imageVariant.getDensity();
 
             if (density != null && !Dimensions.EMPTY.equals(
                     density) && (density.getHeight() > 1 || density.getWidth() > 1)) {

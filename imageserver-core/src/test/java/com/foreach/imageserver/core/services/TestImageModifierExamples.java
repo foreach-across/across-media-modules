@@ -67,58 +67,58 @@ public class TestImageModifierExamples {
 //		verify( request( 1000, 500, true, true ), response( 749, 500, true, true ) );
     }
 
-    private ImageVariant request(ImageType output) {
+    private ImageModification request(ImageType output) {
         return modifier(0, 0, false, false, output);
     }
 
-    private ImageVariant request(int width, int height) {
+    private ImageModification request(int width, int height) {
         return request(width, height, false);
     }
 
-    private ImageVariant request(int width, int height, boolean stretch) {
+    private ImageModification request(int width, int height, boolean stretch) {
         return request(width, height, stretch, false);
     }
 
-    private ImageVariant request(int width, int height, boolean stretch, boolean keepAspect) {
+    private ImageModification request(int width, int height, boolean stretch, boolean keepAspect) {
         return modifier(width, height, stretch, keepAspect, null);
     }
 
-    private ImageVariant response(ImageType output) {
+    private ImageModification response(ImageType output) {
         return modifier(original.getDimensions().getWidth(), original.getDimensions().getHeight(), false, false,
                 output);
     }
 
-    private ImageVariant response(int width, int height) {
+    private ImageModification response(int width, int height) {
         return response(width, height, false);
     }
 
-    private ImageVariant response(int width, int height, boolean stretch) {
+    private ImageModification response(int width, int height, boolean stretch) {
         return response(width, height, stretch, false);
     }
 
-    private ImageVariant response(int width, int height, boolean stretch, boolean keepAspect) {
+    private ImageModification response(int width, int height, boolean stretch, boolean keepAspect) {
         return modifier(width, height, stretch, keepAspect, original.getImageType());
     }
 
-    private ImageVariant modifier(int width, int height, boolean stretch, boolean keepAspect, ImageType output) {
-        ImageVariant modifier = new ImageVariant();
-        modifier.getModifier().setWidth(width);
-        modifier.getModifier().setHeight(height);
-        modifier.getModifier().setOutput(output);
-        modifier.getModifier().setStretch(stretch);
-        modifier.getModifier().setKeepAspect(keepAspect);
+    private ImageModification modifier(int width, int height, boolean stretch, boolean keepAspect, ImageType output) {
+        ImageModification modifier = new ImageModification();
+        modifier.getVariant().setWidth(width);
+        modifier.getVariant().setHeight(height);
+        modifier.getVariant().setOutput(output);
+        modifier.getVariant().setStretch(stretch);
+        modifier.getVariant().setKeepAspect(keepAspect);
 
         return modifier;
     }
 
-    private void verify(ImageVariant request, final ImageVariant expectedModifier) {
+    private void verify(ImageModification request, final ImageModification expectedModifier) {
         final ImageFile expectedImageFile = mock(ImageFile.class);
 
-        when(imageStoreService.getImageFile(eq(original), any(ImageVariant.class))).thenAnswer(
+        when(imageStoreService.getImageFile(eq(original), any(ImageModification.class))).thenAnswer(
                 new Answer<ImageFile>() {
                     @Override
                     public ImageFile answer(InvocationOnMock invocation) throws Throwable {
-                        ImageVariant normalized = (ImageVariant) invocation.getArguments()[1];
+                        ImageModification normalized = (ImageModification) invocation.getArguments()[1];
 
                         assertEquals(expectedModifier, normalized);
 

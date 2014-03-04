@@ -1,17 +1,17 @@
 package com.foreach.imageserver.core.services.transformers;
 
 import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.ImageModification;
 
 public class ImageModifyAction extends ImageTransformerAction<ImageFile> {
-    private final ImageVariant variant;
+    private final ImageModification variant;
 
-    public ImageModifyAction(ImageFile original, ImageVariant variant) {
+    public ImageModifyAction(ImageFile original, ImageModification variant) {
         super(original);
         this.variant = variant;
     }
 
-    public ImageVariant getVariant() {
+    public ImageModification getVariant() {
         return variant;
     }
 
