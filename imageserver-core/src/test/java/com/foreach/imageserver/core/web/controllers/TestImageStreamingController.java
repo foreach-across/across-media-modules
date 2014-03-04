@@ -3,7 +3,7 @@ package com.foreach.imageserver.core.web.controllers;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.core.web.dto.ImageModifierDto;
+import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -49,7 +49,7 @@ public class TestImageStreamingController {
 
         when(applicationService.getApplicationById(1)).thenReturn(inactive);
 
-        streamingController.view(1, RandomStringUtils.randomAlphanumeric(50), new ImageModifierDto(),
+        streamingController.view(1, RandomStringUtils.randomAlphanumeric(50), new ImageModificationDto(),
                 new MockHttpServletResponse());
     }
 
@@ -73,7 +73,7 @@ public class TestImageStreamingController {
         ImageModification modifier = new ImageModification();
         modifier.getVariant().setWidth(100);
 
-        ImageModifierDto modifierDto = new ImageModifierDto();
+        ImageModificationDto modifierDto = new ImageModificationDto();
         modifierDto.setWidth(100);
 
         byte[] contentBytes = new byte[]{'A', 'B', 'C'};

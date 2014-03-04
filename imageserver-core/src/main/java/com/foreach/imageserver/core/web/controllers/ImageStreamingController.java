@@ -6,7 +6,7 @@ import com.foreach.imageserver.core.business.ImageFile;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.core.web.dto.ImageModifierDto;
+import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import com.foreach.imageserver.core.web.exceptions.ImageLookupException;
 import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
 import org.apache.commons.io.IOUtils;
@@ -36,11 +36,11 @@ public class ImageStreamingController {
     @RequestMapping(value = "/view", method = RequestMethod.GET)
     public void view(@RequestParam(value = "aid", required = true) int applicationId,
                      @RequestParam(value = "key", required = true) String imageKey,
-                     ImageModifierDto imageModifierDto,
+                     ImageModificationDto imageModificationDto,
                      HttpServletResponse response) {
 
         Application application = applicationService.getApplicationById(applicationId);
-        ImageModification modifier = new ImageModification(imageModifierDto);
+        ImageModification modifier = new ImageModification(imageModificationDto);
 
         if (application == null || !application.isActive()) {
             LOG.debug("Application not found or inactive {}", applicationId);

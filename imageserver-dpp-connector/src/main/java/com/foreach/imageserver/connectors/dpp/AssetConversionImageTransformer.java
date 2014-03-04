@@ -129,17 +129,17 @@ public class AssetConversionImageTransformer implements ImageTransformer {
 
     }
 
-    private byte[] executeCrop(byte[] source, ImageFile imageFile, ImageModification modifier) {
+    private byte[] executeCrop(byte[] source, ImageFile imageFile, ImageModification modification) {
         Parameters parameters = new Parameters();
-        Dimensions appliedDensity = setDensityIfRequired(parameters, imageFile, modifier);
+        Dimensions appliedDensity = setDensityIfRequired(parameters, imageFile, modification);
 
-        Crop crop = applyDensity(modifier.getCrop(), appliedDensity);
+        Crop crop = applyDensity(modification.getCrop(), appliedDensity);
         parameters.add("width", crop.getWidth());
         parameters.add("height", crop.getHeight());
         parameters.add("x", crop.getX());
         parameters.add("y", crop.getY());
 
-        parameters.add("format", modifier.getVariant().getOutput().getExtension());
+        parameters.add("format", modification.getVariant().getOutput().getExtension());
         parameters.add("noprofiles", "true");
         parameters.add("colorspace", "sRGB");
 

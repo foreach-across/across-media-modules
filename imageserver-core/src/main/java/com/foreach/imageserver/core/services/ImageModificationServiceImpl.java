@@ -12,44 +12,44 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
-public class ImageVariantServiceImpl implements ImageVariantService {
+public class ImageModificationServiceImpl implements ImageModificationService {
 
     @Autowired
     private StoredImageModificationDao variantDao;
 
     @Transactional
     @Override
-    public void registerVariant(Image image, ImageModification variant) {
-        StoredImageModification modification = variantDao.getModification(image.getId(), variant.getVariant());
-        if (modification == null) {
-            modification = new StoredImageModification();
-            modification.setImageId(image.getId());
-            modification.setModification(variant);
-            variantDao.insertModification(modification);
+    public void saveModification(Image image, ImageModification modification) {
+        StoredImageModification storedModification = variantDao.getModification(image.getId(), modification.getVariant());
+        if (storedModification == null) {
+            storedModification = new StoredImageModification();
+            storedModification.setImageId(image.getId());
+            storedModification.setModification(modification);
+            variantDao.insertModification(storedModification);
         } else {
-            modification.setModification(variant);
-            variantDao.updateModification(modification);
+            storedModification.setModification(modification);
+            variantDao.updateModification(storedModification);
         }
     }
 
     @Override
-    public Crop getCropForModifier(Image image, ImageVariant modifier) {
-        StoredImageModification modification = variantDao.getModification(image.getId(), modifier);
+    public Crop getCropForVariant(Image image, ImageVariant variant) {
+        StoredImageModification modification = variantDao.getModification(image.getId(), variant);
         if (modification != null) {
             return modification.getModification().getCrop();
         }
-        //No crop registered. Re-use the crop of 'closest' modifier for this image
+        //No crop registered. Re-use the crop of 'closest' variant for this image
         List<StoredImageModification> modifications = new ArrayList<>(variantDao.getModificationsForImage(image.getId()));
-        Collections.sort(modifications, new DistanceToModifier(modifier));
+        Collections.sort(modifications, new DistanceToVariant(variant));
         for (StoredImageModification modification1 : modifications) {
             return modification1.getModification().getCrop();
         }
-        //No modifiers for this image. Use entire image as crop
+        //No modifications for this image. Use entire image as crop
         return new Crop(0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight());
     }
 
-    private class DistanceToModifier implements Comparator<StoredImageModification> {
-        public DistanceToModifier(ImageVariant modifier) {
+    private class DistanceToVariant implements Comparator<StoredImageModification> {
+        public DistanceToVariant(ImageVariant variant) {
         }
 
         @Override

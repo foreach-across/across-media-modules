@@ -4,7 +4,7 @@ import com.foreach.imageserver.core.business.Crop;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 
-public class ImageModifierDto {
+public class ImageModificationDto {
 
     private Crop crop = new Crop();
     private Dimensions density = new Dimensions();

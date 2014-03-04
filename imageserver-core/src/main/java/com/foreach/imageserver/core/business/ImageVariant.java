@@ -85,7 +85,7 @@ public class ImageVariant {
     }
 
     /**
-     * Will normalize the modifier based on the dimensions of the original passed in.
+     * Will normalize the variant based on the dimensions of the original passed in.
      *
      * @param dimensions Dimensions of the original image.
      * @return Normalized ImageVariant fitting the original image.
@@ -156,24 +156,24 @@ public class ImageVariant {
             return false;
         }
 
-        ImageVariant modifier = (ImageVariant) o;
+        ImageVariant variant = (ImageVariant) o;
 
-        if (height != modifier.height) {
+        if (height != variant.height) {
             return false;
         }
-        if (stretch != modifier.stretch) {
+        if (stretch != variant.stretch) {
             return false;
         }
-        if (width != modifier.width) {
+        if (width != variant.width) {
             return false;
         }
-        if (output != modifier.output) {
+        if (output != variant.output) {
             return false;
         }
 
         if (density != null && !Dimensions.EMPTY.equals(
-                density) && modifier.density != null && !Dimensions.EMPTY.equals(modifier.density)) {
-            return density.equals(modifier.density);
+                density) && variant.density != null && !Dimensions.EMPTY.equals(variant.density)) {
+            return density.equals(variant.density);
         }
 
         return true;

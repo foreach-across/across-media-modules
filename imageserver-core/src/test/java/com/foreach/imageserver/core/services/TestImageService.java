@@ -46,7 +46,7 @@ public class TestImageService {
     private StoredImageModificationDao modificationDao;
 
     @Autowired
-    private ImageVariantService imageVariantService;
+    private ImageModificationService imageModificationService;
 
     @Test
     public void getImageByKey() {
@@ -329,7 +329,7 @@ public class TestImageService {
             }
         }).when(modificationDao).insertModification(any(StoredImageModification.class));
 
-        imageVariantService.registerVariant(image, modifier);
+        imageModificationService.saveModification(image, modifier);
 
         verify(modificationDao, times(1)).getModification(123, imageVariant);
         verify(modificationDao, times(1)).insertModification(any(StoredImageModification.class));
@@ -352,7 +352,7 @@ public class TestImageService {
         when(dimensions.normalize(any(Dimensions.class))).thenReturn(new Dimensions(800, 600));
         when(modificationDao.getModification(123, imageVariant)).thenReturn(existing);
 
-        imageVariantService.registerVariant(image, modifier);
+        imageModificationService.saveModification(image, modifier);
 
         verify(modificationDao, times(1)).getModification(123, imageVariant);
         verify(modificationDao, never()).insertModification(any(StoredImageModification.class));

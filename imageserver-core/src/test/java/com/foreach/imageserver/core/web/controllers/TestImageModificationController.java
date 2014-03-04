@@ -5,10 +5,10 @@ import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.services.ApplicationService;
-import com.foreach.imageserver.core.services.ImageVariantService;
+import com.foreach.imageserver.core.services.ImageModificationService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
-import com.foreach.imageserver.core.web.dto.ImageModifierDto;
+import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
 import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
 import com.foreach.test.MockedLoader;
@@ -40,7 +40,7 @@ public class TestImageModificationController {
     private ImageService imageService;
 
     @Autowired
-    private ImageVariantService imageVariantService;
+    private ImageModificationService imageModificationService;
 
     @Test
     public void unknownApplicationReturnsPermissionDenied() {
@@ -117,23 +117,23 @@ public class TestImageModificationController {
         Image image = mock(Image.class);
         Dimensions dimensions = new Dimensions(800, 0);
 
-        ImageModifierDto modifierDto = createModifierDto(dimensions);
+        ImageModificationDto modifierDto = createModifierDto(dimensions);
         ImageModification modifier = new ImageModification(modifierDto);
 
         when(imageService.getImageByKey("somekey", 1)).thenReturn(image);
 
         modificationController.register(1, UUID.randomUUID().toString(), "somekey", modifierDto);
 
-        verify(imageVariantService, times(1)).registerVariant(image, modifier);
+        verify(imageModificationService, times(1)).saveModification(image, modifier);
     }
 
-    private ImageModifierDto createModifierDto() {
+    private ImageModificationDto createModifierDto() {
         return createModifierDto(new Dimensions(800, 600));
     }
 
-    private ImageModifierDto createModifierDto(Dimensions dimensions) {
-        ImageModifierDto mod =
-                new ImageModifierDto();
+    private ImageModificationDto createModifierDto(Dimensions dimensions) {
+        ImageModificationDto mod =
+                new ImageModificationDto();
         mod.setHeight(dimensions.getHeight());
         mod.setWidth(dimensions.getWidth());
         return mod;

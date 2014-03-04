@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.business;
 
-import com.foreach.imageserver.core.web.dto.ImageModifierDto;
+import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -24,19 +24,19 @@ public class ImageModification {
 
     }
 
-    public ImageModification(ImageModifierDto imageModifierDto) {
-        crop.setX(imageModifierDto.getCrop().getX());
-        crop.setY(imageModifierDto.getCrop().getY());
-        crop.setWidth(imageModifierDto.getCrop().getWidth());
-        crop.setHeight(imageModifierDto.getCrop().getHeight());
-        crop.setSourceHeight(imageModifierDto.getCrop().getSourceHeight());
-        crop.setSourceWidth(imageModifierDto.getCrop().getSourceWidth());
-        variant.setHeight(imageModifierDto.getHeight());
-        variant.setWidth(imageModifierDto.getWidth());
-        variant.setDensity(new Dimensions(imageModifierDto.getDensity()));
-        variant.setKeepAspect(imageModifierDto.isKeepAspect());
-        variant.setStretch(imageModifierDto.isStretch());
-        variant.setOutput(imageModifierDto.getOutput());
+    public ImageModification(ImageModificationDto imageModificationDto) {
+        crop.setX(imageModificationDto.getCrop().getX());
+        crop.setY(imageModificationDto.getCrop().getY());
+        crop.setWidth(imageModificationDto.getCrop().getWidth());
+        crop.setHeight(imageModificationDto.getCrop().getHeight());
+        crop.setSourceHeight(imageModificationDto.getCrop().getSourceHeight());
+        crop.setSourceWidth(imageModificationDto.getCrop().getSourceWidth());
+        variant.setHeight(imageModificationDto.getHeight());
+        variant.setWidth(imageModificationDto.getWidth());
+        variant.setDensity(new Dimensions(imageModificationDto.getDensity()));
+        variant.setKeepAspect(imageModificationDto.isKeepAspect());
+        variant.setStretch(imageModificationDto.isStretch());
+        variant.setOutput(imageModificationDto.getOutput());
     }
 
     public ImageModification normalize(Dimensions dimensions) {
@@ -95,9 +95,9 @@ public class ImageModification {
             return false;
         }
 
-        ImageModification modifier = (ImageModification) o;
+        ImageModification modification = (ImageModification) o;
 
-        return ObjectUtils.equals(crop, modifier.getCrop()) && ObjectUtils.equals(this.variant, modifier.getVariant());
+        return ObjectUtils.equals(crop, modification.getCrop()) && ObjectUtils.equals(this.variant, modification.getVariant());
     }
 
     @Override

@@ -6,10 +6,10 @@ import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.business.ImageVariant;
 
-public interface ImageVariantService {
+public interface ImageModificationService {
 
-    void registerVariant(Image image, ImageModification variant);
+    void saveModification(Image image, ImageModification modification);
 
-    Crop getCropForModifier(Image image, ImageVariant modifier);
+    Crop getCropForVariant(Image image, ImageVariant variant);
 
 }

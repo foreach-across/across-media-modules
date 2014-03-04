@@ -73,9 +73,9 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     }
 
     @Override
-    public ImageFile saveImage(Image image, ImageModification modifier, ImageFile file) {
+    public ImageFile saveImage(Image image, ImageModification modification, ImageFile file) {
         try {
-            File physical = new File(generateFullImagePath(image, modifier));
+            File physical = new File(generateFullImagePath(image, modification));
 
             if (tempFileService.isTempFile(file)) {
                 return tempFileService.move(file, physical);
@@ -152,12 +152,12 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     }
 
     @Override
-    public ImageFile getImageFile(Image image, ImageModification modifier) {
+    public ImageFile getImageFile(Image image, ImageModification modification) {
         try {
-            File physicalFile = new File(generateFullImagePath(image, modifier));
+            File physicalFile = new File(generateFullImagePath(image, modification));
 
             if (physicalFile.exists()) {
-                ImageType imageType = modifier != null ? modifier.getVariant().getOutput() : image.getImageType();
+                ImageType imageType = modification != null ? modification.getVariant().getOutput() : image.getImageType();
 
                 return new ImageFile(imageType != null ? imageType : image.getImageType(), physicalFile.length(),
                         new FileInputStream(physicalFile));
@@ -176,30 +176,30 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     }
 
     @Override
-    public String generateFullImagePath(Image image, ImageModification modifier) {
-        String path = isOriginalImage(modifier) ? createPathForOriginal(image) : createPathForVariant(image);
-        String fileName = createFileName(image, modifier);
+    public String generateFullImagePath(Image image, ImageModification modification) {
+        String path = isOriginalImage(modification) ? createPathForOriginal(image) : createPathForVariant(image);
+        String fileName = createFileName(image, modification);
 
         return new File(path, fileName).getAbsolutePath();
     }
 
-    private boolean isOriginalImage(ImageModification modifier) {
-        return modifier == null || modifier.isEmpty();
+    private boolean isOriginalImage(ImageModification modification) {
+        return modification == null || modification.isEmpty();
     }
 
-    private String createFileName(Image image, ImageModification modifier) {
-        if (!isOriginalImage(modifier)) {
-            ImageType imageType = modifier.getVariant().getOutput();
+    private String createFileName(Image image, ImageModification modification) {
+        if (!isOriginalImage(modification)) {
+            ImageType imageType = modification.getVariant().getOutput();
 
             StringBuilder path = new StringBuilder();
             path.append(image.getId());
 
             // Output resolution: 100x100
-            path.append(".").append(modifier.getVariant().getWidth()).append("x").append(modifier.getVariant().getHeight());
+            path.append(".").append(modification.getVariant().getWidth()).append("x").append(modification.getVariant().getHeight());
 
             // Crop
-            if (modifier.hasCrop()) {
-                Crop crop = modifier.getCrop();
+            if (modification.hasCrop()) {
+                Crop crop = modification.getCrop();
                 path.append(".[").append(crop.getWidth()).append("x").append(crop.getHeight()).append(
                         "+").append(crop.getX()).append("+").append(crop.getY()).append("]");
             }

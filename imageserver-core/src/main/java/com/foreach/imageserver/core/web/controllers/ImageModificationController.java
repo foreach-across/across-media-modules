@@ -4,10 +4,10 @@ import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.services.ApplicationService;
-import com.foreach.imageserver.core.services.ImageVariantService;
+import com.foreach.imageserver.core.services.ImageModificationService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
-import com.foreach.imageserver.core.web.dto.ImageModifierDto;
+import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
 import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
 import org.apache.commons.lang3.StringUtils;
@@ -28,26 +28,26 @@ public class ImageModificationController {
     private ImageService imageService;
 
     @Autowired
-    private ImageVariantService imageVariantService;
+    private ImageModificationService imageModificationService;
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     @ResponseBody
     public String register(@RequestParam(value = "aid", required = true) int applicationId,
                            @RequestParam(value = "token", required = true) String applicationKey,
                            @RequestParam(value = "key", required = true) String imageKey,
-                           ImageModifierDto modifierDto) {
+                           ImageModificationDto modificationDto) {
         Application application = applicationService.getApplicationById(applicationId);
-        ImageModification modifier = new ImageModification(modifierDto);
+        ImageModification modification = new ImageModification(modificationDto);
 
         if (application == null || !application.canBeManaged(applicationKey)) {
             throw new ApplicationDeniedException();
         }
 
-        if (modifier.getVariant().getHeight() == 0 && modifier.getVariant().getWidth() == 0) {
+        if (modification.getVariant().getHeight() == 0 && modification.getVariant().getWidth() == 0) {
             throw new ImageModificationException("No target width or height specified.");
         }
 
-        if (modifier.getCrop().isEmpty()) {
+        if (modification.getCrop().isEmpty()) {
             throw new ImageModificationException("No crop specified");
         }
 
@@ -57,7 +57,7 @@ public class ImageModificationController {
             throw new ImageNotFoundException();
         }
 
-        imageVariantService.registerVariant(image, modifier);
+        imageModificationService.saveModification(image, modification);
 
         return StringUtils.EMPTY;
     }

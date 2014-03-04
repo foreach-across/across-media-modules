@@ -9,11 +9,11 @@ public interface ImageStoreService {
 
     String generateFullImagePath(Image image);
 
-    String generateFullImagePath(Image image, ImageModification modifier);
+    String generateFullImagePath(Image image, ImageModification modification);
 
     ImageFile saveImage(Image image, ImageFile imageFile);
 
-    ImageFile saveImage(Image image, ImageModification modifier, ImageFile file);
+    ImageFile saveImage(Image image, ImageModification modification, ImageFile file);
 
     void delete(Image image);
 
@@ -21,5 +21,5 @@ public interface ImageStoreService {
 
     ImageFile getImageFile(Image image);
 
-    ImageFile getImageFile(Image image, ImageModification modifier);
+    ImageFile getImageFile(Image image, ImageModification modification);
 }

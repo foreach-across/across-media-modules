@@ -28,7 +28,7 @@ public class ImageServiceImpl implements ImageService {
     private TempFileService tempFileService;
 
     @Autowired
-    private ImageVariantService imageVariantService;
+    private ImageModificationService imageModificationService;
 
     @Override
     public Image getImageByKey(String key, int applicationId) {
@@ -66,25 +66,25 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
-    public ImageFile fetchImageFile(Image image, ImageModification modifier) {
+    public ImageFile fetchImageFile(Image image, ImageModification modification) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Requesting image {} with modifier {}", image.getId(), modifier);
+            LOG.debug("Requesting image {} with modification {}", image.getId(), modification);
         }
 
-        if (modifier.getCrop().isEmpty()) {
+        if (modification.getCrop().isEmpty()) {
             //No crop given, compute or fetch one
-            modifier.setCrop(imageVariantService.getCropForModifier(image, modifier.getVariant()));
+            modification.setCrop(imageModificationService.getCropForVariant(image, modification.getVariant()));
         }
 
-        ImageFile file = imageStoreService.getImageFile(image, modifier);
+        ImageFile file = imageStoreService.getImageFile(image, modification);
 
         if (file == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Generating image {} for modifier {}", image.getId(), modifier);
+                LOG.debug("Generating image {} for modification {}", image.getId(), modification);
             }
             //File was not yet created, do that now and save it
-            ImageFile modified = imageTransformService.apply(image, modifier);
-            file = imageStoreService.saveImage(image, modifier, modified);
+            ImageFile modified = imageTransformService.apply(image, modification);
+            file = imageStoreService.saveImage(image, modification, modified);
         }
 
         return file;

@@ -10,7 +10,7 @@ public interface ImageService {
 
     void save(Image image, RepositoryLookupResult lookupResult);
 
-    ImageFile fetchImageFile(Image image, ImageModification modifier);
+    ImageFile fetchImageFile(Image image, ImageModification modification);
 
     void delete(Image image, boolean variantsOnly);
 }
