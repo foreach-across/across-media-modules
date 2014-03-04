@@ -6,11 +6,12 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface StoredImageModificationDao {
 
-    Collection<StoredImageModification> getModificationsForImage(int imageId);
+    List<StoredImageModification> getModificationsForImage(int imageId);
 
     void insertModification(StoredImageModification variant);
 

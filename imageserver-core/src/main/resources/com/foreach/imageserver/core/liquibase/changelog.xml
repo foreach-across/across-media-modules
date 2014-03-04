@@ -7,4 +7,5 @@
 	<include file="com/foreach/imageserver/core/liquibase/base/create_001.xml"/>
     <include file="com/foreach/imageserver/core/liquibase/base/create_002.xml"/>
     <include file="com/foreach/imageserver/core/liquibase/base/create_003.xml"/>
+    <include file="com/foreach/imageserver/core/liquibase/base/create_004.xml"/>
 </databaseChangeLog>

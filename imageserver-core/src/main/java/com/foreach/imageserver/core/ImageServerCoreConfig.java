@@ -3,6 +3,7 @@ package com.foreach.imageserver.core;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.business.StoredImageModification;
 import com.foreach.imageserver.core.web.interceptors.GlobalVariableInterceptor;
 import liquibase.integration.spring.SpringLiquibase;

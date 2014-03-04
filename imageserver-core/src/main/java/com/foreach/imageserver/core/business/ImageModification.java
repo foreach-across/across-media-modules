@@ -24,19 +24,9 @@ public class ImageModification {
 
     }
 
-    public ImageModification(ImageModificationDto imageModificationDto) {
-        crop.setX(imageModificationDto.getCrop().getX());
-        crop.setY(imageModificationDto.getCrop().getY());
-        crop.setWidth(imageModificationDto.getCrop().getWidth());
-        crop.setHeight(imageModificationDto.getCrop().getHeight());
-        crop.setSourceHeight(imageModificationDto.getCrop().getSourceHeight());
-        crop.setSourceWidth(imageModificationDto.getCrop().getSourceWidth());
-        variant.setHeight(imageModificationDto.getHeight());
-        variant.setWidth(imageModificationDto.getWidth());
-        variant.setDensity(new Dimensions(imageModificationDto.getDensity()));
-        variant.setKeepAspect(imageModificationDto.isKeepAspect());
-        variant.setStretch(imageModificationDto.isStretch());
-        variant.setOutput(imageModificationDto.getOutput());
+    public ImageModification(ImageVariant variant, Crop crop) {
+        this.crop = crop ;
+        this.variant = variant;
     }
 
     public ImageModification normalize(Dimensions dimensions) {

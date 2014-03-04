@@ -11,7 +11,7 @@ public interface ApplicationDao {
 
     List<Application> getAllApplications();
 
-    void insertApplication(Application application);
+    int insertApplication(Application application);
 
     void updateApplication(Application application);
 

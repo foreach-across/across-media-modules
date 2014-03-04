@@ -1,11 +1,10 @@
 package com.foreach.imageserver.core.web.controllers;
 
-import com.foreach.imageserver.core.business.Application;
-import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageModification;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.services.ImageVariantService;
+import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
 import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import com.foreach.imageserver.core.web.exceptions.ImageLookupException;
 import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
@@ -32,15 +31,21 @@ public class ImageStreamingController {
 
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private ImageVariantService imageVariantService;
 
     @RequestMapping(value = "/view", method = RequestMethod.GET)
     public void view(@RequestParam(value = "aid", required = true) int applicationId,
                      @RequestParam(value = "key", required = true) String imageKey,
-                     ImageModificationDto imageModificationDto,
+                     ImageModificationDto modificationDto,
                      HttpServletResponse response) {
 
         Application application = applicationService.getApplicationById(applicationId);
-        ImageModification modifier = new ImageModification(imageModificationDto);
+        ImageVariant imageVariant = imageVariantService.getVariantForModification(application, modificationDto);
+        if (imageVariant == null) {
+            throw new ImageModificationException("Could not find image variant!");
+        }
+        ImageModification modification = new ImageModification(imageVariant, modificationDto.getCrop());
 
         if (application == null || !application.isActive()) {
             LOG.debug("Application not found or inactive {}", applicationId);
@@ -53,7 +58,7 @@ public class ImageStreamingController {
             throw new ImageNotFoundException();
         }
 
-        ImageFile imageFile = imageService.fetchImageFile(image, modifier);
+        ImageFile imageFile = imageService.fetchImageFile(image, modification);
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(imageFile.getImageType().getContentType());

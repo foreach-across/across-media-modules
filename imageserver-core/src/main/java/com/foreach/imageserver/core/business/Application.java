@@ -13,9 +13,6 @@ public class Application {
 
     private Date dateCreated, dateUpdated;
 
-    @Deprecated
-    private String callbackUrl;
-
     public int getId() {
         return id;
     }
@@ -30,14 +27,6 @@ public class Application {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCallbackUrl() {
-        return callbackUrl;
-    }
-
-    public void setCallbackUrl(String callbackUrl) {
-        this.callbackUrl = callbackUrl;
     }
 
     public boolean isActive() {
@@ -80,7 +69,6 @@ public class Application {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         Application that = (Application) o;
 
         if (id != that.id) {

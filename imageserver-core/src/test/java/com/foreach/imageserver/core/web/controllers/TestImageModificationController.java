@@ -118,7 +118,10 @@ public class TestImageModificationController {
         Dimensions dimensions = new Dimensions(800, 0);
 
         ImageModificationDto modifierDto = createModifierDto(dimensions);
-        ImageModification modifier = new ImageModification(modifierDto);
+        ImageModification modifier = new ImageModification();
+        modifier.setCrop(modifierDto.getCrop());
+        modifier.getVariant().setHeight(modifierDto.getHeight());
+        modifier.getVariant().setWidth(modifierDto.getWidth());
 
         when(imageService.getImageByKey("somekey", 1)).thenReturn(image);
 

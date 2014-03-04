@@ -10,7 +10,7 @@
         A.created as application_created,
         A.updated as application_updated
     </sql>
-	
+
 	<resultMap id="applicationMap" type="Application">
 		<id property="id" column="application_id"/>
 		<result property="name" column="application_name"/>
@@ -23,9 +23,9 @@
 	<select id="getApplicationById" parameterType="int" resultMap="applicationMap">
 		SELECT <include refid="applicationColumns"/>
 		FROM Application A
-		WHERE A.id = #{value}
+		WHERE id = #{value}
 	</select>
-	
+
 	<select id="getAllApplications" resultMap="applicationMap">
 		SELECT
 		<include refid="applicationColumns"/>
@@ -35,11 +35,9 @@
 
     <insert id="insertApplication" parameterType="Application" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO Application (
-            name,
-            callbackurl
+            name, code, active, created, updated
         ) VALUES (
-            #{name},
-            #{callbackUrl}
+            #{name},#{code}, #{active}, GETDATE(), GETDATE()
         )
     </insert>
 
@@ -47,7 +45,9 @@
         UPDATE Application
         SET
             name = #{name},
-            callbackurl = #{callbackUrl}
+            code = #{code},
+            active= #{active}
+            updated = GETDATE()
         WHERE id = #{id}
     </update>
 

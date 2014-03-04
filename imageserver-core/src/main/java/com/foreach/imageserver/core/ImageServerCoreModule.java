@@ -5,13 +5,14 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
+import com.foreach.imageserver.core.installers.RegisterTijdImageVariantsInstaller;
 
 import java.util.Set;
 
 public class ImageServerCoreModule extends AcrossModule {
 
     public ImageServerCoreModule() {
-        setExposeFilter(new AnnotationBeanFilter( true, Exposed.class ));
+        setExposeFilter(new AnnotationBeanFilter(true, Exposed.class));
     }
 
     @Override
@@ -25,8 +26,13 @@ public class ImageServerCoreModule extends AcrossModule {
     }
 
     @Override
-    protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-        contextConfigurers.add( new AnnotatedClassConfigurer( ImageServerCoreConfig.class ) );
+    protected void registerDefaultApplicationContextConfigurers(Set<ApplicationContextConfigurer> contextConfigurers) {
+        contextConfigurers.add(new AnnotatedClassConfigurer(ImageServerCoreConfig.class));
     }
 
+    @Override
+    public Object[] getInstallers() {
+        //TODO: move this to another module
+        return new Object[]{new RegisterTijdImageVariantsInstaller()};
+    }
 }

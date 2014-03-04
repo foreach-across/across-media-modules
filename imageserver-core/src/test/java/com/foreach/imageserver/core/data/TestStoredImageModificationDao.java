@@ -10,7 +10,8 @@ import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
-public class TestImageVariantDao extends AbstractDaoTest {
+public class TestStoredImageModificationDao extends AbstractDaoTest {
+
     @Autowired
     private StoredImageModificationDao storedImageModificationDao;
 
