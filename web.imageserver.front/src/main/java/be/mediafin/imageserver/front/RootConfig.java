@@ -18,18 +18,6 @@ import javax.sql.DataSource;
 @EnableWebMvc
 public class RootConfig {
 
-    @Value("${jdbc.driver}")
-    private String driver;
-
-    @Value("${jdbc.url}")
-    private String url;
-
-    @Value("${jdbc.username}")
-    private String userName;
-
-    @Value("${jdbc.password}")
-    private String password;
-
     @Bean
     public LogbackConfigurer logbackConfigurer(@Value("${log.dir}") String logDir,
                                                @Value("${log.config}") Resource baseConfig,
@@ -49,7 +37,10 @@ public class RootConfig {
     }
 
     @Bean
-    public DataSource dataSource() {
+    public DataSource dataSource(@Value("${jdbc.driver}") String driver,
+                                 @Value("${jdbc.url}") String url,
+                                 @Value("${jdbc.username}") String userName,
+                                 @Value("${jdbc.password}") String password) {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(driver);
         ds.setUrl(url);
