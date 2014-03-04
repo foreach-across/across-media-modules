@@ -1,9 +1,6 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageModifier;
-import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
 import com.foreach.imageserver.core.services.transformers.*;
 import com.foreach.test.MockedLoader;
@@ -34,9 +31,15 @@ public abstract class TestImageTransformService<T extends ImageTransformerAction
         @Override
         protected ActionTestItem<ImageModifyAction, ImageFile> createTestItem() {
             return new ActionTestItem<ImageModifyAction, ImageFile>() {
+                private Image image = new Image();
+
+                {
+                    image.setId(10);
+                }
+
                 private ImageFile original = new ImageFile(ImageType.JPEG, 0, null);
                 private ImageFile modified = new ImageFile(ImageType.PNG, 10, null);
-                private ImageModifier modifier = new ImageModifier();
+                private ImageVariant modifier = new ImageVariant();
 
                 @Override
                 public ImageModifyAction getAction() {
@@ -45,7 +48,7 @@ public abstract class TestImageTransformService<T extends ImageTransformerAction
 
                 @Override
                 public ImageFile execute() {
-                    return transformService.apply(original, modifier);
+                    return transformService.apply(image, modifier);
                 }
 
                 @Override

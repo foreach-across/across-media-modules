@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.data.ImageDao;
-import com.foreach.imageserver.core.data.ImageModificationDao;
+import com.foreach.imageserver.core.data.ImageVariantDao;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -43,7 +43,10 @@ public class TestImageService {
     private ImageDao imageDao;
 
     @Autowired
-    private ImageModificationDao modificationDao;
+    private ImageVariantDao modificationDao;
+
+    @Autowired
+    private ImageVariantService imageVariantService;
 
     @Test
     public void getImageByKey() {
@@ -134,11 +137,11 @@ public class TestImageService {
         image.setDimensions(new Dimensions(100, 200));
 
         ImageFile imageFile = new ImageFile(ImageType.JPEG, 0, null);
-        ImageModifier modifier = mock(ImageModifier.class);
+        ImageVariant modifier = mock(ImageVariant.class);
 
-        ImageModifier normalized = new ImageModifier();
-        normalized.setWidth(20);
-        normalized.setHeight(20);
+        ImageVariant normalized = new ImageVariant();
+        normalized.getModifier().setWidth(20);
+        normalized.getModifier().setHeight(20);
 
         when(modifier.normalize(image.getDimensions())).thenReturn(normalized);
         when(imageStoreService.getImageFile(image, normalized)).thenReturn(imageFile);
@@ -148,8 +151,8 @@ public class TestImageService {
 
         verify(modifier, times(1)).normalize(image.getDimensions());
         verify(imageStoreService, never()).getImageFile(any(Image.class));
-        verify(imageTransformService, never()).apply(any(ImageFile.class), any(ImageModifier.class));
-        verify(imageStoreService, never()).saveImage(any(Image.class), any(ImageModifier.class),
+        verify(imageTransformService, never()).apply(any(Image.class), any(ImageVariant.class));
+        verify(imageStoreService, never()).saveImage(any(Image.class), any(ImageVariant.class),
                 any(ImageFile.class));
     }
 
@@ -158,12 +161,12 @@ public class TestImageService {
         Image image = new Image();
         image.setDimensions(new Dimensions(100, 200));
 
-        ImageModifier modifier = mock(ImageModifier.class);
-        when(modifier.isOnlyDimensions()).thenReturn(false);
+        ImageVariant modifier = mock(ImageVariant.class);
+        when(modifier.getModifier().isOnlyDimensions()).thenReturn(false);
 
-        ImageModifier normalized = new ImageModifier();
-        normalized.setWidth(20);
-        normalized.setHeight(20);
+        ImageVariant normalized = new ImageVariant();
+        normalized.getModifier().setWidth(20);
+        normalized.getModifier().setHeight(20);
 
         ImageFile original = new ImageFile(ImageType.GIF, 0, null);
         ImageFile renderedFile = new ImageFile(ImageType.JPEG, 0, null);
@@ -172,13 +175,13 @@ public class TestImageService {
         when(modifier.normalize(image.getDimensions())).thenReturn(normalized);
         when(imageStoreService.getImageFile(image, normalized)).thenReturn(null);
         when(imageStoreService.getImageFile(image)).thenReturn(original);
-        when(imageTransformService.apply(original, normalized)).thenReturn(renderedFile);
+        when(imageTransformService.apply(image, normalized)).thenReturn(renderedFile);
         when(imageStoreService.saveImage(image, normalized, renderedFile)).thenReturn(storedFile);
 
         ImageFile returned = imageService.fetchImageFile(image, modifier);
 
         assertSame(storedFile, returned);
-        verify(modificationDao, times(1)).getModification(anyInt(), any(Dimensions.class));
+        verify(modificationDao, times(1)).getVariant(anyInt(), any(ImageModifier.class));
     }
 
     @Test
@@ -189,25 +192,25 @@ public class TestImageService {
 
         ImageFile imageFile = new ImageFile(ImageType.JPEG, 0, null);
         ImageFile originalImageFile = new ImageFile(ImageType.JPEG, 0, null);
-        ImageModifier modifier = mock(ImageModifier.class);
-        when(modifier.isOnlyDimensions()).thenReturn(true);
+        ImageVariant modifier = mock(ImageVariant.class);
+        when(modifier.getModifier().isOnlyDimensions()).thenReturn(true);
 
-        ImageModifier normalized = new ImageModifier();
-        normalized.setWidth(20);
-        normalized.setHeight(20);
+        ImageVariant normalized = new ImageVariant();
+        normalized.getModifier().setWidth(20);
+        normalized.getModifier().setHeight(20);
 
         when(modifier.normalize(image.getDimensions())).thenReturn(normalized);
         when(imageStoreService.getImageFile(image, normalized)).thenReturn(null);
 
         when(imageStoreService.getImageFile(image)).thenReturn(originalImageFile);
-        when(imageTransformService.apply(originalImageFile, normalized)).thenReturn(imageFile);
+        when(imageTransformService.apply(image, normalized)).thenReturn(imageFile);
         when(imageStoreService.saveImage(image, normalized, imageFile)).thenReturn(imageFile);
 
         ImageFile returned = imageService.fetchImageFile(image, modifier);
         assertSame(imageFile, returned);
 
         verify(modifier, times(1)).normalize(image.getDimensions());
-        verify(modificationDao, times(1)).getModification(123, new Dimensions(20, 20));
+        verify(modificationDao, times(1)).getVariant(123, normalized.getModifier());
     }
 
     @Test
@@ -218,21 +221,21 @@ public class TestImageService {
 
         ImageFile imageFile = new ImageFile(ImageType.JPEG, 0, null);
 
-        ImageModifier modifier = mock(ImageModifier.class);
-        when(modifier.isOnlyDimensions()).thenReturn(true);
+        ImageVariant modifier = mock(ImageVariant.class);
+        when(modifier.getModifier().isOnlyDimensions()).thenReturn(true);
 
-        ImageModifier normalized = new ImageModifier();
-        normalized.setWidth(20);
-        normalized.setHeight(20);
+        ImageVariant normalized = new ImageVariant();
+        normalized.getModifier().setWidth(20);
+        normalized.getModifier().setHeight(20);
 
         when(modifier.normalize(image.getDimensions())).thenReturn(normalized);
         when(imageStoreService.getImageFile(image, normalized)).thenReturn(null);
 
-        ImageModification modification = mock(ImageModification.class);
-        when(modificationDao.getModification(image.getId(), new Dimensions(20, 20))).thenReturn(modification);
+        StoredImageVariant modification = mock(StoredImageVariant.class);
+        when(modificationDao.getVariant(image.getId(), normalized.getModifier())).thenReturn(modification);
 
-        ImageModifier registeredModifier = mock(ImageModifier.class);
-        when(modification.getModifier()).thenReturn(registeredModifier);
+        ImageVariant registeredModifier = mock(ImageVariant.class);
+        when(modification.getVariant()).thenReturn(registeredModifier);
         when(registeredModifier.normalize(any(Dimensions.class))).thenReturn(registeredModifier);
 
         when(imageStoreService.getImageFile(image, registeredModifier)).thenReturn(imageFile);
@@ -241,10 +244,10 @@ public class TestImageService {
         assertSame(imageFile, returned);
 
         verify(modifier, times(1)).normalize(image.getDimensions());
-        verify(modificationDao, times(1)).getModification(123, new Dimensions(20, 20));
+        verify(modificationDao, times(1)).getVariant(123, normalized.getModifier());
         verify(imageStoreService, never()).getImageFile(any(Image.class));
-        verify(imageTransformService, never()).apply(any(ImageFile.class), any(ImageModifier.class));
-        verify(imageStoreService, never()).saveImage(any(Image.class), any(ImageModifier.class),
+        verify(imageTransformService, never()).apply(any(Image.class), any(ImageVariant.class));
+        verify(imageStoreService, never()).saveImage(any(Image.class), any(ImageVariant.class),
                 any(ImageFile.class));
     }
 
@@ -257,25 +260,25 @@ public class TestImageService {
         ImageFile imageFile = new ImageFile(ImageType.JPEG, 0, null);
         ImageFile originalImageFile = new ImageFile(ImageType.JPEG, 0, null);
 
-        ImageModifier modifier = mock(ImageModifier.class);
-        when(modifier.isOnlyDimensions()).thenReturn(true);
+        ImageVariant modifier = mock(ImageVariant.class);
+        when(modifier.getModifier().isOnlyDimensions()).thenReturn(true);
 
-        ImageModifier normalized = new ImageModifier();
-        normalized.setWidth(20);
-        normalized.setHeight(20);
+        ImageVariant normalized = new ImageVariant();
+        normalized.getModifier().setWidth(20);
+        normalized.getModifier().setHeight(20);
 
         when(modifier.normalize(image.getDimensions())).thenReturn(normalized);
         when(imageStoreService.getImageFile(image, normalized)).thenReturn(null);
 
-        ImageModification modification = mock(ImageModification.class);
-        when(modificationDao.getModification(image.getId(), new Dimensions(20, 20))).thenReturn(modification);
+        StoredImageVariant modification = mock(StoredImageVariant.class);
+        when(modificationDao.getVariant(image.getId(), normalized.getModifier())).thenReturn(modification);
 
-        ImageModifier registeredModifier = mock(ImageModifier.class);
-        when(modification.getModifier()).thenReturn(registeredModifier);
+        ImageVariant registeredModifier = mock(ImageVariant.class);
+        when(modification.getVariant()).thenReturn(registeredModifier);
         when(registeredModifier.normalize(any(Dimensions.class))).thenReturn(registeredModifier);
 
         when(imageStoreService.getImageFile(image)).thenReturn(originalImageFile);
-        when(imageTransformService.apply(originalImageFile, registeredModifier)).thenReturn(imageFile);
+        when(imageTransformService.apply(image, registeredModifier)).thenReturn(imageFile);
         when(imageStoreService.saveImage(image, normalized, imageFile)).thenReturn(imageFile);
 
         ImageFile returned = imageService.fetchImageFile(image, modifier);
@@ -310,26 +313,26 @@ public class TestImageService {
         Image image = new Image();
         image.setId(123);
 
-        final Dimensions dimensions = mock(Dimensions.class);
-        final ImageModifier modifier = mock(ImageModifier.class);
+        ImageModifier imageModifier = new ImageModifier();
+        imageModifier.setWidth(800);
+        imageModifier.setHeight(600);
 
-        when(dimensions.normalize(any(Dimensions.class))).thenReturn(new Dimensions(800, 600));
+        final ImageVariant modifier = mock(ImageVariant.class);
 
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                ImageModification modification = (ImageModification) invocation.getArguments()[0];
+                StoredImageVariant modification = (StoredImageVariant) invocation.getArguments()[0];
                 assertEquals(123, modification.getImageId());
-                assertEquals(new Dimensions(800, 600), modification.getDimensions());
-                assertSame(modifier, modification.getModifier());
+                assertSame(modifier, modification.getVariant());
                 return null;
             }
-        }).when(modificationDao).insertModification(any(ImageModification.class));
+        }).when(modificationDao).insertVariant(any(StoredImageVariant.class));
 
-        imageService.registerModification(image, dimensions, modifier);
+        imageVariantService.registerVariant(image, modifier);
 
-        verify(modificationDao, times(1)).getModification(123, new Dimensions(800, 600));
-        verify(modificationDao, times(1)).insertModification(any(ImageModification.class));
+        verify(modificationDao, times(1)).getVariant(123, imageModifier);
+        verify(modificationDao, times(1)).insertVariant(any(StoredImageVariant.class));
     }
 
     @Test
@@ -337,21 +340,25 @@ public class TestImageService {
         Image image = new Image();
         image.setId(123);
 
-        final Dimensions dimensions = mock(Dimensions.class);
-        final ImageModifier modifier = mock(ImageModifier.class);
+        ImageModifier imageModifier = new ImageModifier();
+        imageModifier.setHeight(800);
+        imageModifier.setWidth(600);
 
-        final ImageModification existing = new ImageModification();
+        final Dimensions dimensions = mock(Dimensions.class);
+        final ImageVariant modifier = mock(ImageVariant.class);
+
+        final StoredImageVariant existing = new StoredImageVariant();
 
         when(dimensions.normalize(any(Dimensions.class))).thenReturn(new Dimensions(800, 600));
-        when(modificationDao.getModification(123, new Dimensions(800, 600))).thenReturn(existing);
+        when(modificationDao.getVariant(123, imageModifier)).thenReturn(existing);
 
-        imageService.registerModification(image, dimensions, modifier);
+        imageVariantService.registerVariant(image, modifier);
 
-        verify(modificationDao, times(1)).getModification(123, new Dimensions(800, 600));
-        verify(modificationDao, never()).insertModification(any(ImageModification.class));
-        verify(modificationDao, times(1)).updateModification(existing);
+        verify(modificationDao, times(1)).getVariant(123, imageModifier);
+        verify(modificationDao, never()).insertVariant(any(StoredImageVariant.class));
+        verify(modificationDao, times(1)).updateVariant(existing);
 
-        assertSame(modifier, existing.getModifier());
+        assertSame(modifier, existing.getVariant());
     }
 
     @Configuration

@@ -14,6 +14,11 @@ public class Dimensions {
     public Dimensions() {
     }
 
+    public Dimensions(Dimensions dimensions) {
+        this.width = dimensions.getWidth();
+        this.height = dimensions.getHeight();
+    }
+
     public int getWidth() {
         return width;
     }

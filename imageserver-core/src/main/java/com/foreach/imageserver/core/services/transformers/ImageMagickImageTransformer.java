@@ -88,7 +88,8 @@ public class ImageMagickImageTransformer implements ImageTransformer {
 
     private void executeModification(ImageModifyAction action) {
         try {
-            ImageModifier modifier = action.getModifier();
+            ImageVariant variant = action.getVariant();
+            ImageModifier modifier = variant.getModifier();
 
             ConvertCmd cmd = new ConvertCmd();
 
@@ -101,10 +102,8 @@ public class ImageMagickImageTransformer implements ImageTransformer {
                 op.flatten();
             }
 
-            if (modifier.hasCrop()) {
-                Crop crop = applyDensity(modifier.getCrop(), appliedDensity);
-                op.crop(crop.getWidth(), crop.getHeight(), crop.getX(), crop.getY());
-            }
+            Crop crop = applyDensity(variant.getCrop(), appliedDensity);
+            op.crop(crop.getWidth(), crop.getHeight(), crop.getX(), crop.getY());
 
             op.resize(modifier.getWidth(), modifier.getHeight(), "!");
             op.colorspace("sRGB");
@@ -119,7 +118,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
 
             byte[] bytes = os.toByteArray();
             ImageFile result =
-                    new ImageFile(action.getModifier().getOutput(), bytes.length, new ByteArrayInputStream(bytes));
+                    new ImageFile(modifier.getOutput(), bytes.length, new ByteArrayInputStream(bytes));
             action.setResult(result);
         } catch (Exception e) {
             LOG.error("Failed to apply modification {}: {}", action, e);
@@ -141,9 +140,9 @@ public class ImageMagickImageTransformer implements ImageTransformer {
         return crop;
     }
 
-    private Dimensions setDensityIfRequired(IMOperation operation, ImageFile original, ImageModifier modifier) {
+    private Dimensions setDensityIfRequired(IMOperation operation, ImageFile original, ImageModifier imageModifier) {
         if (original.getImageType().isScalable()) {
-            Dimensions density = modifier.getDensity();
+            Dimensions density = imageModifier.getDensity();
 
             if (density != null && !Dimensions.EMPTY.equals(
                     density) && (density.getHeight() > 1 || density.getWidth() > 1)) {

@@ -12,12 +12,6 @@
 			<column name="imageid" type="int">
 				<constraints primaryKey="true" nullable="false" references="image(id)" foreignKeyName="fk_imageid_image_id"/>
 			</column>
-			<column name="savewidth" type="int">
-				<constraints primaryKey="true" nullable="false"/>
-			</column>
-			<column name="saveheight" type="int">
-				<constraints primaryKey="true" nullable="false"/>
-			</column>
 			<column name="width" type="int" defaultValueNumeric="0">
 				<constraints nullable="false"/>
 			</column>

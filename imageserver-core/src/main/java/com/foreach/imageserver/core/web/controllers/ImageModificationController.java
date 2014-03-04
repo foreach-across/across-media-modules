@@ -1,12 +1,13 @@
 package com.foreach.imageserver.core.web.controllers;
 
 import com.foreach.imageserver.core.business.Application;
-import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageModifier;
+import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.services.ApplicationService;
+import com.foreach.imageserver.core.services.ImageVariantService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
+import com.foreach.imageserver.core.web.dto.ImageModifierDto;
 import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
 import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
 import org.apache.commons.lang3.StringUtils;
@@ -26,20 +27,28 @@ public class ImageModificationController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private ImageVariantService imageVariantService;
+
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     @ResponseBody
     public String register(@RequestParam(value = "aid", required = true) int applicationId,
                            @RequestParam(value = "token", required = true) String applicationKey,
                            @RequestParam(value = "key", required = true) String imageKey,
-                           ModifierWithTargetDimensions modifier) {
+                           ImageModifierDto modifierDto) {
         Application application = applicationService.getApplicationById(applicationId);
+        ImageVariant modifier = new ImageVariant(modifierDto);
 
         if (application == null || !application.canBeManaged(applicationKey)) {
             throw new ApplicationDeniedException();
         }
 
-        if (modifier == null || modifier.getTarget() == null || Dimensions.EMPTY.equals(modifier.getTarget())) {
+        if (modifier.getModifier().getHeight() == 0 && modifier.getModifier().getWidth() == 0) {
             throw new ImageModificationException("No target width or height specified.");
+        }
+
+        if (modifier.getCrop().isEmpty()) {
+            throw new ImageModificationException("No crop specified");
         }
 
         Image image = imageService.getImageByKey(imageKey, application.getId());
@@ -48,20 +57,9 @@ public class ImageModificationController {
             throw new ImageNotFoundException();
         }
 
-        imageService.registerModification(image, modifier.getTarget(), modifier);
+        imageVariantService.registerVariant(image, modifier);
 
         return StringUtils.EMPTY;
     }
 
-    public static class ModifierWithTargetDimensions extends ImageModifier {
-        private Dimensions target = new Dimensions();
-
-        public Dimensions getTarget() {
-            return target;
-        }
-
-        public void setTarget(Dimensions target) {
-            this.target = target;
-        }
-    }
 }

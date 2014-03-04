@@ -6,37 +6,38 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class TestImageModifier {
-    private ImageModifier modifier, normalized;
+public class TestImageVariant {
+
+    private ImageVariant modifier, normalized;
     private Dimensions original;
 
     @Before
     public void createModifier() {
-        modifier = new ImageModifier();
+        modifier = new ImageVariant();
         normalized = null;
         original = new Dimensions(1024, 768);
     }
 
     @Test
     public void defaultIsEmptyModifier() {
-        assertTrue(ImageModifier.EMPTY.isEmpty());
-        assertEquals(ImageModifier.EMPTY, modifier);
+        assertTrue(ImageVariant.EMPTY.isEmpty());
+        assertEquals(ImageVariant.EMPTY, modifier);
         assertTrue(modifier.isEmpty());
     }
 
     @Test
     public void densityZeroIsIgnoredForEquality() {
-        ImageModifier left = new ImageModifier();
-        ImageModifier right = new ImageModifier();
+        ImageVariant left = new ImageVariant();
+        ImageVariant right = new ImageVariant();
         assertEquals(left, right);
 
-        right.setDensity(100);
+        right.getModifier().setDensity(100);
         assertEquals(left, right);
 
-        left.setDensity(100, 100);
+        left.getModifier().setDensity(100, 100);
         assertEquals(left, right);
 
-        right.getDensity().setHeight(105);
+        right.getModifier().getDensity().setHeight(105);
         assertFalse(left.equals(right));
     }
 
@@ -58,31 +59,28 @@ public class TestImageModifier {
         assertTrue(modifier.hasCrop());
     }
 
-    @Test
-    public void normalizeOnInvalidDimensionsHasNoEffect() {
-        modifier.setWidth(1200);
-        modifier.setHeight(100);
+    @Test(expected = RuntimeException.class)
+    public void normalizeOnInvalidDimensionsFailsWithException() {
+        modifier.getModifier().setWidth(1200);
+        modifier.getModifier().setHeight(100);
         modifier.setCrop(new Crop(0, 0, 50, 500));
-        modifier.setOutput(ImageType.PNG);
-        modifier.setStretch(true);
+        modifier.getModifier().setOutput(ImageType.PNG);
+        modifier.getModifier().setStretch(true);
 
-        assertEquals(modifier, modifier.normalize(null));
-        assertEquals(modifier, modifier.normalize(new Dimensions(0, 0)));
         assertEquals(modifier, modifier.normalize(new Dimensions(-5, 500)));
-        assertEquals(modifier, modifier.normalize(new Dimensions(5, -500)));
     }
 
     @Test
     public void emptyModifierStaysEmpty() {
         normalized = modifier.normalize(original);
         assertNotNull(normalized);
-        assertEquals(ImageModifier.EMPTY, normalized);
+        assertEquals(ImageVariant.EMPTY, normalized);
     }
 
     @Test
     public void validDimensionsAreKept() {
-        modifier.setWidth(800);
-        modifier.setHeight(700);
+        modifier.getModifier().setWidth(800);
+        modifier.getModifier().setHeight(700);
 
         assertEquals(modifier, modifier.normalize(original));
 
@@ -127,17 +125,17 @@ public class TestImageModifier {
                               Crop crop,
                               int expectedHorizontalDensity,
                               int expectedVerticalDensity) {
-        modifier.setWidth(requestedWidth);
-        modifier.setHeight(requestedHeight);
-        modifier.setStretch(true);
+        modifier.getModifier().setWidth(requestedWidth);
+        modifier.getModifier().setHeight(requestedHeight);
+        modifier.getModifier().setStretch(true);
 
         if (crop != null) {
             modifier.setCrop(crop);
         }
 
-        ImageModifier normalized = modifier.normalize(original);
+        ImageVariant normalized = modifier.normalize(original);
 
-        Dimensions density = normalized.getDensity();
+        Dimensions density = normalized.getModifier().getDensity();
         assertEquals(expectedHorizontalDensity, density.getWidth());
         assertEquals(expectedVerticalDensity, density.getHeight());
     }
@@ -191,12 +189,12 @@ public class TestImageModifier {
 
     @Test
     public void noDimensionsAndNoCropIsAnEmptyModifier() {
-        modifier.setWidth(0);
-        modifier.setHeight(0);
-        assertEquals(ImageModifier.EMPTY, modifier.normalize(original));
+        modifier.getModifier().setWidth(0);
+        modifier.getModifier().setHeight(0);
+        assertEquals(ImageVariant.EMPTY, modifier.normalize(original));
 
-        modifier.setStretch(true);
-        assertEquals(ImageModifier.EMPTY, modifier.normalize(original));
+        modifier.getModifier().setStretch(true);
+        assertEquals(ImageVariant.EMPTY, modifier.normalize(original));
     }
 
     @Test
@@ -231,16 +229,16 @@ public class TestImageModifier {
                                      boolean keepAspect,
                                      int normalizedWidth,
                                      int normalizedHeight) {
-        modifier = new ImageModifier();
-        modifier.setWidth(requestedWidth);
-        modifier.setHeight(requestedHeight);
-        modifier.setStretch(stretch);
-        modifier.setKeepAspect(keepAspect);
+        modifier = new ImageVariant();
+        modifier.getModifier().setWidth(requestedWidth);
+        modifier.getModifier().setHeight(requestedHeight);
+        modifier.getModifier().setStretch(stretch);
+        modifier.getModifier().setKeepAspect(keepAspect);
 
         normalized = modifier.normalize(original);
-        assertEquals(normalizedWidth, normalized.getWidth());
-        assertEquals(normalizedHeight, normalized.getHeight());
-        assertEquals(stretch, normalized.isStretch());
+        assertEquals(normalizedWidth, normalized.getModifier().getWidth());
+        assertEquals(normalizedHeight, normalized.getModifier().getHeight());
+        assertEquals(stretch, normalized.getModifier().isStretch());
     }
 
     @Test
@@ -248,8 +246,8 @@ public class TestImageModifier {
         modifier.setCrop(new Crop(50, 50, 700, 700));
 
         normalized = modifier.normalize(original);
-        assertEquals(700, normalized.getWidth());
-        assertEquals(700, normalized.getHeight());
+        assertEquals(700, normalized.getModifier().getWidth());
+        assertEquals(700, normalized.getModifier().getHeight());
     }
 
     @Test
@@ -260,23 +258,6 @@ public class TestImageModifier {
 
         normalized = modifier.normalize(original);
         assertEquals(expected, normalized.getCrop());
-    }
-
-    @Test
-    public void cropThatEqualsOriginalDimensionsIsRemoved() {
-        modifier.setCrop(new Crop(0, 0, 1024, 768));
-        assertTrue(modifier.hasCrop());
-
-        normalized = modifier.normalize(original);
-        assertFalse(normalized.hasCrop());
-    }
-
-    @Test
-    public void cropThatExceedsTheEntireImageResultsInNoCrop() {
-        modifier.setCrop(new Crop(-1, -1, 2000, 2000));
-
-        normalized = modifier.normalize(original);
-        assertFalse(normalized.hasCrop());
     }
 
     @Test
@@ -294,30 +275,30 @@ public class TestImageModifier {
     @Test
     public void withoutStretchDimensionsAreLimitedToCropDimensions() {
         modifier.setCrop(new Crop(50, 50, 300, 200));
-        modifier.setWidth(600);
-        modifier.setHeight(400);
-        modifier.setStretch(false);
+        modifier.getModifier().setWidth(600);
+        modifier.getModifier().setHeight(400);
+        modifier.getModifier().setStretch(false);
 
         normalized = modifier.normalize(original);
-        assertEquals(300, normalized.getWidth());
-        assertEquals(200, normalized.getHeight());
+        assertEquals(300, normalized.getModifier().getWidth());
+        assertEquals(200, normalized.getModifier().getHeight());
     }
 
     @Test
     public void withStretchDimensionsAreScaledAccordingToCrop() {
         modifier.setCrop(new Crop(50, 50, 300, 200));
-        modifier.setWidth(600);
-        modifier.setStretch(true);
+        modifier.getModifier().setWidth(600);
+        modifier.getModifier().setStretch(true);
 
         normalized = modifier.normalize(original);
-        assertEquals(600, normalized.getWidth());
-        assertEquals(400, normalized.getHeight());
+        assertEquals(600, normalized.getModifier().getWidth());
+        assertEquals(400, normalized.getModifier().getHeight());
 
-        modifier.setWidth(0);
-        modifier.setHeight(400);
+        modifier.getModifier().setWidth(0);
+        modifier.getModifier().setHeight(400);
 
         normalized = modifier.normalize(original);
-        assertEquals(600, normalized.getWidth());
-        assertEquals(400, normalized.getHeight());
+        assertEquals(600, normalized.getModifier().getWidth());
+        assertEquals(400, normalized.getModifier().getHeight());
     }
 }

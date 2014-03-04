@@ -2,10 +2,10 @@ package com.foreach.imageserver.core.business;
 
 import java.util.Date;
 
-public class ImageModification {
+public class StoredImageVariant {
+
     private int imageId;
-    private ImageModifier modifier = new ImageModifier();
-    private Dimensions dimensions = new Dimensions();
+    private ImageVariant variant = new ImageVariant();
     private Date dateCreated;
     private Date dateUpdated;
 
@@ -17,20 +17,12 @@ public class ImageModification {
         this.imageId = imageId;
     }
 
-    public ImageModifier getModifier() {
-        return modifier;
+    public ImageVariant getVariant() {
+        return variant;
     }
 
-    public void setModifier(ImageModifier modifier) {
-        this.modifier = modifier;
-    }
-
-    public Dimensions getDimensions() {
-        return dimensions;
-    }
-
-    public void setDimensions(Dimensions dimensions) {
-        this.dimensions = dimensions;
+    public void setVariant(ImageVariant variant) {
+        this.variant = variant;
     }
 
     public Date getDateCreated() {

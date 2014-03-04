@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.config;
 
 import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageModification;
+import com.foreach.imageserver.core.business.StoredImageVariant;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -50,7 +50,7 @@ public class DataConfig {
     public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setTypeAliases(new Class[]{Application.class, Image.class, ImageModification.class});
+        sessionFactory.setTypeAliases(new Class[]{Application.class, Image.class, StoredImageVariant.class});
         return sessionFactory.getObject();
     }
 

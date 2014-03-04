@@ -1,8 +1,6 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageModifier;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
 import com.foreach.imageserver.core.services.transformers.*;
 import org.slf4j.Logger;
@@ -25,6 +23,8 @@ public class ImageTransformServiceImpl implements ImageTransformService {
 
     @Autowired
     private List<ImageTransformer> transformerList;
+    @Autowired
+    private ImageStoreService imageStoreService;
 
     @PostConstruct
     protected void sortTransformers() {
@@ -51,8 +51,17 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     }
 
     @Override
-    public ImageFile apply(ImageFile original, ImageModifier modifier) {
-        return execute(new ImageModifyAction(original, modifier));
+    public ImageFile apply(Image image, ImageVariant modifier) {
+        ImageFile originalFile = imageStoreService.getImageFile(image);
+        ImageVariant normalized = modifier.normalize(image.getDimensions());
+        verifyOutputType(originalFile.getImageType(), normalized.getModifier());
+        return execute(new ImageModifyAction(originalFile, normalized));
+    }
+
+    private void verifyOutputType(ImageType original, ImageModifier modifier) {
+        if (modifier.getOutput() == null) {
+            modifier.setOutput(ImageType.getPreferredOutputType(original));
+        }
     }
 
     private <T> T execute(ImageTransformerAction<T> action) {
@@ -88,8 +97,8 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     }
 
     private <T> List<ImageTransformer> findTransformersForAction(ImageTransformerAction<T> action) {
-        List<ImageTransformer> transformers = new LinkedList<ImageTransformer>();
-        List<ImageTransformer> fallback = new LinkedList<ImageTransformer>();
+        List<ImageTransformer> transformers = new LinkedList<>();
+        List<ImageTransformer> fallback = new LinkedList<>();
 
         for (ImageTransformer candidate : transformerList) {
             if (candidate.isEnabled()) {

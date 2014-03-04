@@ -1,8 +1,9 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageFile;
+import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.data.ImageDao;
-import com.foreach.imageserver.core.data.ImageModificationDao;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +19,6 @@ public class ImageServiceImpl implements ImageService {
     private ImageDao imageDao;
 
     @Autowired
-    private ImageModificationDao modificationDao;
-
-    @Autowired
     private ImageStoreService imageStoreService;
 
     @Autowired
@@ -28,6 +26,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Autowired
     private TempFileService tempFileService;
+
+    @Autowired
+    private ImageVariantService imageVariantService;
 
     @Override
     public Image getImageByKey(String key, int applicationId) {
@@ -63,70 +64,30 @@ public class ImageServiceImpl implements ImageService {
         return image.getId() <= 0;
     }
 
-    @Transactional
-    @Override
-    public void registerModification(Image image, Dimensions dimensions, ImageModifier modifier) {
-        //ImageFile imageFile = fetchImageFile( image, modifier );
-
-        Dimensions normalized = dimensions.normalize(image.getDimensions());
-        ImageModification modification = modificationDao.getModification(image.getId(), normalized);
-
-        if (modification == null) {
-            modification = new ImageModification();
-            modification.setImageId(image.getId());
-            modification.setDimensions(normalized);
-            modification.setModifier(modifier);
-
-            modificationDao.insertModification(modification);
-        } else {
-            modification.setModifier(modifier);
-            modificationDao.updateModification(modification);
-        }
-    }
 
     @Override
-    public ImageFile fetchImageFile(Image image, ImageModifier modifier) {
+    public ImageFile fetchImageFile(Image image, ImageVariant modifier) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Requesting image {} with modifier {}", image.getId(), modifier);
         }
 
-        ImageModifier normalized = modifier.normalize(image.getDimensions());
-        ImageModifier saveAsModifier = normalized;
-        verifyOutputType(image.getImageType(), normalized);
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Requesting image {} with normalized modifier {}", image.getId(), normalized);
+        if (modifier.getCrop().isEmpty()) {
+            //No crop given, compute or fetch one
+            modifier.setCrop(imageVariantService.getCropForModifier(image, modifier.getModifier()));
         }
 
-        ImageFile file = imageStoreService.getImageFile(image, normalized);
+        ImageFile file = imageStoreService.getImageFile(image, modifier);
 
         if (file == null) {
-            ImageModification modification = modificationDao.getModification(image.getId(),
-                    new Dimensions(normalized.getWidth(),
-                            normalized.getHeight()));
-
-            if (modification != null) {
-                normalized = modification.getModifier().normalize(image.getDimensions());
-                verifyOutputType(image.getImageType(), normalized);
-
-                file = imageStoreService.getImageFile(image, normalized);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Generating image {} for modifier {}", image.getId(), modifier);
             }
-        }
-
-        if (file == null) {
-            ImageFile original = imageStoreService.getImageFile(image);
-            ImageFile modified = imageTransformService.apply(original, normalized);
-
-            file = imageStoreService.saveImage(image, saveAsModifier, modified);
+            //File was not yet created, do that now and save it
+            ImageFile modified = imageTransformService.apply(image, modifier);
+            file = imageStoreService.saveImage(image, modifier, modified);
         }
 
         return file;
-    }
-
-    private void verifyOutputType(ImageType original, ImageModifier modifier) {
-        if (modifier.getOutput() == null && !modifier.isEmpty()) {
-            modifier.setOutput(ImageType.getPreferredOutputType(original));
-        }
     }
 
     @Transactional
@@ -138,9 +99,10 @@ public class ImageServiceImpl implements ImageService {
         } else {
             // First delete the database entry - this avoids requests coming in
             imageDao.deleteImage(image.getId());
-
             // Delete the actual physical files
             imageStoreService.delete(image);
         }
     }
+
+
 }

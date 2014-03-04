@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.web.controllers;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.web.dto.ImageModifierDto;
 import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -48,7 +49,7 @@ public class TestImageStreamingController {
 
         when(applicationService.getApplicationById(1)).thenReturn(inactive);
 
-        streamingController.view(1, RandomStringUtils.randomAlphanumeric(50), new ImageModifier(),
+        streamingController.view(1, RandomStringUtils.randomAlphanumeric(50), new ImageModifierDto(),
                 new MockHttpServletResponse());
     }
 
@@ -69,7 +70,11 @@ public class TestImageStreamingController {
         application.setActive(true);
 
         Image image = new Image();
-        ImageModifier modifier = new ImageModifier();
+        ImageVariant modifier = new ImageVariant();
+        modifier.getModifier().setWidth(100);
+
+        ImageModifierDto modifierDto = new ImageModifierDto();
+        modifierDto.setWidth(100);
 
         byte[] contentBytes = new byte[]{'A', 'B', 'C'};
 
@@ -81,7 +86,7 @@ public class TestImageStreamingController {
 
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        streamingController.view(1, "myimagekey", modifier, mockResponse);
+        streamingController.view(1, "myimagekey", modifierDto, mockResponse);
 
         assertEquals(HttpStatus.OK.value(), mockResponse.getStatus());
         assertEquals(imageFile.getImageType().getContentType(), mockResponse.getContentType());

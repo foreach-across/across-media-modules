@@ -4,22 +4,12 @@ package com.foreach.imageserver.core.business;
  * Specifies a single set of modifications to be done to an image.
  */
 public class ImageModifier {
-    public static final ImageModifier EMPTY = new ImageModifier();
-    private static final ImageModifier EMPTY_WITH_STRETCH;
-
-    static {
-        EMPTY_WITH_STRETCH = new ImageModifier();
-        EMPTY_WITH_STRETCH.setStretch(true);
-    }
 
     private int width, height;
-    private Crop crop = new Crop();
     private ImageType output;
     private boolean stretch;
     private boolean keepAspect;
     private Dimensions density = new Dimensions();
-    //private Dimensions min = new Dimensions();
-    //private Dimensions max = new Dimensions();
 
     public int getWidth() {
         return width;
@@ -35,14 +25,6 @@ public class ImageModifier {
 
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    public Crop getCrop() {
-        return crop;
-    }
-
-    public void setCrop(Crop crop) {
-        this.crop = crop;
     }
 
     public ImageType getOutput() {
@@ -102,14 +84,6 @@ public class ImageModifier {
         return this.equals(other);
     }
 
-    public boolean isEmpty() {
-        return this.equals(EMPTY) || this.equals(EMPTY_WITH_STRETCH);
-    }
-
-    public boolean hasCrop() {
-        return crop != null && !crop.isEmpty();
-    }
-
     /**
      * Will normalize the modifier based on the dimensions of the original passed in.
      *
@@ -117,18 +91,11 @@ public class ImageModifier {
      * @return Normalized ImageModifier fitting the original image.
      */
     public ImageModifier normalize(Dimensions dimensions) {
-        if (isEmpty()) {
-            return new ImageModifier();
-        }
-
         ImageModifier normalized = new ImageModifier();
-        adjustCrop(normalized, dimensions);
         adjustWidthAndHeight(normalized, dimensions);
         normalized.setOutput(output);
         normalized.setDensity(density);
-
         calculateDensity(normalized, dimensions);
-
         return normalized;
     }
 
@@ -139,8 +106,8 @@ public class ImageModifier {
             int requestedWidth = normalized.getWidth();
             int requestedHeight = normalized.getHeight();
 
-            int originalWidth = normalized.hasCrop() ? normalized.getCrop().getWidth() : original.getWidth();
-            int originalHeight = normalized.hasCrop() ? normalized.getCrop().getHeight() : original.getHeight();
+            int originalWidth = original.getWidth();
+            int originalHeight = original.getHeight();
 
             if (originalWidth >= requestedWidth) {
                 calculated.setWidth(1);
@@ -157,24 +124,8 @@ public class ImageModifier {
         }
     }
 
-    private void adjustCrop(ImageModifier normalized, Dimensions dimensions) {
-        if (crop != null && !crop.isEmpty()) {
-            if (dimensions != null && dimensions.getWidth() > 0 && dimensions.getHeight() > 0) {
-                Crop normalizedCrop = crop.normalize(dimensions);
-
-                if (!dimensions.equals(new Dimensions(normalizedCrop.getWidth(), normalizedCrop.getHeight()))) {
-                    normalized.setCrop(normalizedCrop);
-                }
-            } else {
-                normalized.setCrop(new Crop(crop.getX(), crop.getY(), crop.getWidth(), crop.getHeight()));
-            }
-        }
-    }
-
-    private void adjustWidthAndHeight(ImageModifier normalized, Dimensions dimensions) {
+    private void adjustWidthAndHeight(ImageModifier normalized, Dimensions maxDimensions) {
         normalized.setStretch(stretch);
-
-        Dimensions maxDimensions = normalized.hasCrop() ? normalized.getCrop().getDimensions() : dimensions;
 
         Dimensions dimensionsToUse = new Dimensions();
         dimensionsToUse.setWidth(width);
@@ -216,9 +167,6 @@ public class ImageModifier {
         if (width != modifier.width) {
             return false;
         }
-        if (crop != null ? !crop.equals(modifier.crop) : modifier.crop != null) {
-            return false;
-        }
         if (output != modifier.output) {
             return false;
         }
@@ -235,7 +183,6 @@ public class ImageModifier {
     public int hashCode() {
         int result = width;
         result = 31 * result + height;
-        result = 31 * result + (crop != null ? crop.hashCode() : 0);
         result = 31 * result + (output != null ? output.hashCode() : 0);
         result = 31 * result + (stretch ? 1 : 0);
         return result;
@@ -246,7 +193,6 @@ public class ImageModifier {
         return "ImageModifier{" +
                 "width=" + width +
                 ", height=" + height +
-                ", crop=" + crop +
                 ", output=" + output +
                 ", stretch=" + stretch +
                 '}';

@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.services.transformers;
 
 import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageModifier;
+import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.services.ImageTestData;
 import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.Imaging;
@@ -59,12 +59,12 @@ public abstract class AbstractImageTransformerTest {
 
     protected void modify(String label,
                           ImageTestData image,
-                          ImageModifier modifier,
+                          ImageVariant modifier,
                           ImageTransformerPriority expectedPriority,
                           boolean shouldSucceed) {
         long start = System.currentTimeMillis();
 
-        ImageModifier normalized = modifier.normalize(image.getDimensions());
+        ImageVariant normalized = modifier.normalize(image.getDimensions());
         ImageModifyAction action = new ImageModifyAction(image.getImageFile(), normalized);
 
         ImageTransformerPriority priority = transformer.canExecute(action);
@@ -89,7 +89,7 @@ public abstract class AbstractImageTransformerTest {
                 }
 
                 File output = new File(dir,
-                        image.name() + "." + label + "." + transformer.getName() + "." + normalized.getOutput().getExtension());
+                        image.name() + "." + label + "." + transformer.getName() + "." + normalized.getModifier().getOutput().getExtension());
 
                 FileOutputStream fos = new FileOutputStream(output);
                 IOUtils.copy(modified.openContentStream(), fos);
@@ -110,13 +110,13 @@ public abstract class AbstractImageTransformerTest {
 
     private void verifyUsingImageMagickThatImageMatchesModifier(File file,
                                                                 ImageTestData image,
-                                                                ImageModifier modifier) throws Exception {
+                                                                ImageVariant modifier) throws Exception {
         Info info = new Info(file.getAbsolutePath(), true);
-        assertEquals(modifier.getWidth(), info.getImageWidth());
-        assertEquals(modifier.getHeight(), info.getImageHeight());
-        assertEquals(StringUtils.upperCase(modifier.getOutput().getExtension()), info.getImageFormat());
+        assertEquals(modifier.getModifier().getWidth(), info.getImageWidth());
+        assertEquals(modifier.getModifier().getHeight(), info.getImageHeight());
+        assertEquals(StringUtils.upperCase(modifier.getModifier().getOutput().getExtension()), info.getImageFormat());
 
-        if (image.isTransparent() && modifier.getOutput().hasTransparency()) {
+        if (image.isTransparent() && modifier.getModifier().getOutput().hasTransparency()) {
             verifyTransparency(file);
         }
     }

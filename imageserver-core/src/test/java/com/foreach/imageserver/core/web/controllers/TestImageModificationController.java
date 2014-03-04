@@ -3,9 +3,12 @@ package com.foreach.imageserver.core.web.controllers;
 import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.services.ApplicationService;
+import com.foreach.imageserver.core.services.ImageVariantService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
+import com.foreach.imageserver.core.web.dto.ImageModifierDto;
 import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
 import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
 import com.foreach.test.MockedLoader;
@@ -36,12 +39,15 @@ public class TestImageModificationController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private ImageVariantService imageVariantService;
+
     @Test
     public void unknownApplicationReturnsPermissionDenied() {
         boolean exceptionWasThrown = false;
 
         try {
-            modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifier());
+            modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifierDto());
         } catch (ApplicationDeniedException ade) {
             exceptionWasThrown = true;
         }
@@ -60,7 +66,7 @@ public class TestImageModificationController {
         when(application.canBeManaged(anyString())).thenReturn(false);
 
         try {
-            modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifier());
+            modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifierDto());
         } catch (ApplicationDeniedException ade) {
             exceptionWasThrown = true;
         }
@@ -76,7 +82,7 @@ public class TestImageModificationController {
 
         when(applicationService.getApplicationById(1)).thenReturn(inactive);
 
-        modificationController.register(1, inactive.getCode(), "somekey", createModifier());
+        modificationController.register(1, inactive.getCode(), "somekey", createModifierDto());
     }
 
     @Test(expected = ImageNotFoundException.class)
@@ -86,7 +92,7 @@ public class TestImageModificationController {
         when(applicationService.getApplicationById(1)).thenReturn(application);
         when(application.canBeManaged(anyString())).thenReturn(true);
 
-        modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifier());
+        modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifierDto());
     }
 
     @Test(expected = ImageModificationException.class)
@@ -97,7 +103,7 @@ public class TestImageModificationController {
         when(application.canBeManaged(anyString())).thenReturn(true);
 
         modificationController.register(1, UUID.randomUUID().toString(), "somekey",
-                createModifier(new Dimensions()));
+                createModifierDto(new Dimensions()));
     }
 
     @Test
@@ -111,24 +117,25 @@ public class TestImageModificationController {
         Image image = mock(Image.class);
         Dimensions dimensions = new Dimensions(800, 0);
 
-        ImageModificationController.ModifierWithTargetDimensions modifier = createModifier(dimensions);
+        ImageModifierDto modifierDto = createModifierDto(dimensions);
+        ImageVariant modifier = new ImageVariant(modifierDto);
 
         when(imageService.getImageByKey("somekey", 1)).thenReturn(image);
 
-        modificationController.register(1, UUID.randomUUID().toString(), "somekey", modifier);
+        modificationController.register(1, UUID.randomUUID().toString(), "somekey", modifierDto);
 
-        verify(imageService, times(1)).registerModification(image, dimensions, modifier);
+        verify(imageVariantService, times(1)).registerVariant(image, modifier);
     }
 
-    private ImageModificationController.ModifierWithTargetDimensions createModifier() {
-        return createModifier(new Dimensions(800, 600));
+    private ImageModifierDto createModifierDto() {
+        return createModifierDto(new Dimensions(800, 600));
     }
 
-    private ImageModificationController.ModifierWithTargetDimensions createModifier(Dimensions dimensions) {
-        ImageModificationController.ModifierWithTargetDimensions mod =
-                new ImageModificationController.ModifierWithTargetDimensions();
-        mod.setTarget(dimensions);
-
+    private ImageModifierDto createModifierDto(Dimensions dimensions) {
+        ImageModifierDto mod =
+                new ImageModifierDto();
+        mod.setHeight(dimensions.getHeight());
+        mod.setWidth(dimensions.getWidth());
         return mod;
     }
 

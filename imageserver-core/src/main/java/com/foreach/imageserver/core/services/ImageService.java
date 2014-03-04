@@ -1,9 +1,8 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageModifier;
+import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 
 public interface ImageService {
@@ -11,9 +10,7 @@ public interface ImageService {
 
     void save(Image image, RepositoryLookupResult lookupResult);
 
-    ImageFile fetchImageFile(Image image, ImageModifier modifier);
-
-    void registerModification(Image image, Dimensions dimensions, ImageModifier modifier);
+    ImageFile fetchImageFile(Image image, ImageVariant modifier);
 
     void delete(Image image, boolean variantsOnly);
 }

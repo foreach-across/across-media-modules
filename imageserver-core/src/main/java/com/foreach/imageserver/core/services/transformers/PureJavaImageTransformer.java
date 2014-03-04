@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.services.transformers;
 
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageModifier;
+import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
 import org.apache.commons.imaging.ImageInfo;
@@ -113,13 +113,16 @@ public class PureJavaImageTransformer implements ImageTransformer {
     }
 
     private void executeModification(ImageModifyAction action) {
+        if (true) {
+            throw new RuntimeException("Unfinished, I should use the given crop");
+        }
         try {
             ImageFile original = action.getImageFile();
-            ImageModifier modifier = action.getModifier();
+            ImageVariant modifier = action.getVariant();
 
             BufferedImage bufferedImage = readImage(original);
 
-            bufferedImage = getScaledInstance(bufferedImage, modifier.getWidth(), modifier.getHeight(),
+            bufferedImage = getScaledInstance(bufferedImage, modifier.getModifier().getWidth(), modifier.getModifier().getHeight(),
                     RenderingHints.VALUE_INTERPOLATION_BILINEAR, false);
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();

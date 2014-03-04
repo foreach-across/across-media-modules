@@ -106,18 +106,18 @@ public class TestImageStoreService {
         image.setFilePath("/2013/07/06/");
         image.setImageType(ImageType.JPEG);
 
-        ImageModifier modifier = new ImageModifier();
-        modifier.setWidth(1600);
-        modifier.setHeight(200);
+        ImageVariant modifier = new ImageVariant();
+        modifier.getModifier().setWidth(1600);
+        modifier.getModifier().setHeight(200);
 
         saveAndVerify(image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/6.1600x200.jpeg", false);
         saveAndVerify(image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/6.1600x200.jpeg", true);
 
-        modifier.setWidth(0);
+        modifier.getModifier().setWidth(0);
         saveAndVerify(image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/6.0x200.jpeg", false);
         saveAndVerify(image, modifier, ImageTestData.EARTH, VARIANT_STORE, "/10/2013/07/06/6.0x200.jpeg", true);
 
-        modifier.setOutput(ImageType.PNG);
+        modifier.getModifier().setOutput(ImageType.PNG);
         modifier.setCrop(new Crop(10, 5, 50, 75));
         saveAndVerify(image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/6.0x200.[50x75+10+5].png",
                 false);
@@ -133,9 +133,9 @@ public class TestImageStoreService {
         image.setFilePath("/2013/07/06/");
         image.setImageType(ImageType.JPEG);
 
-        ImageModifier modifier = new ImageModifier();
-        modifier.setWidth(1600);
-        modifier.setHeight(200);
+        ImageVariant modifier = new ImageVariant();
+        modifier.getModifier().setWidth(1600);
+        modifier.getModifier().setHeight(200);
 
         saveAndVerify(image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg", false);
         saveAndVerify(image, modifier, ImageTestData.SUNSET, VARIANT_STORE, "/10/2013/07/06/7.1600x200.jpeg", true);
@@ -144,7 +144,7 @@ public class TestImageStoreService {
     }
 
     private void saveAndVerify(Image image,
-                               ImageModifier modifier,
+                               ImageVariant modifier,
                                ImageTestData testData,
                                String path,
                                String expectedFileName,
@@ -285,7 +285,7 @@ public class TestImageStoreService {
 
         assertEquals(expected, imageStoreService.generateFullImagePath(image));
         assertEquals(expected, imageStoreService.generateFullImagePath(image, null));
-        assertEquals(expected, imageStoreService.generateFullImagePath(image, new ImageModifier()));
+        assertEquals(expected, imageStoreService.generateFullImagePath(image, new ImageVariant()));
     }
 
     @Test
@@ -298,11 +298,11 @@ public class TestImageStoreService {
 
         String root = new File(VARIANT_STORE, "/10/2013/07/06/").getAbsolutePath();
 
-        ImageModifier modifier = new ImageModifier();
-        modifier.setWidth(1600);
+        ImageVariant modifier = new ImageVariant();
+        modifier.getModifier().setWidth(1600);
         assertEquals(variant(root, "3.1600x0.jpeg"), imageStoreService.generateFullImagePath(image, modifier));
 
-        modifier.setHeight(1200);
+        modifier.getModifier().setHeight(1200);
         assertEquals(variant(root, "3.1600x1200.jpeg"), imageStoreService.generateFullImagePath(image, modifier));
     }
 
@@ -324,7 +324,7 @@ public class TestImageStoreService {
 
         verifyImageFile(imageStoreService.getImageFile(image), ImageType.JPEG, ImageTestData.SUNSET, actual);
         verifyImageFile(imageStoreService.getImageFile(image, null), ImageType.JPEG, ImageTestData.SUNSET, actual);
-        verifyImageFile(imageStoreService.getImageFile(image, new ImageModifier()), ImageType.JPEG,
+        verifyImageFile(imageStoreService.getImageFile(image, new ImageVariant()), ImageType.JPEG,
                 ImageTestData.SUNSET, actual);
     }
 
@@ -336,10 +336,10 @@ public class TestImageStoreService {
         image.setFilePath("/2013/07/06/");
         image.setImageType(ImageType.JPEG);
 
-        ImageModifier modifier = new ImageModifier();
-        modifier.setOutput(ImageType.PNG);
-        modifier.setWidth(1600);
-        modifier.setHeight(200);
+        ImageVariant modifier = new ImageVariant();
+        modifier.getModifier().setOutput(ImageType.PNG);
+        modifier.getModifier().setWidth(1600);
+        modifier.getModifier().setHeight(200);
 
         new File(VARIANT_STORE, "/10/2013/07/06/").mkdirs();
 
