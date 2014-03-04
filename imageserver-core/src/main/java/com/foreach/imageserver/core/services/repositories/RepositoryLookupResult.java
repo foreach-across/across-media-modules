@@ -33,4 +33,8 @@ public final class RepositoryLookupResult {
     public void setContent(InputStream content) {
         this.content = content;
     }
+
+    public boolean isSuccess() {
+        return getStatus() == RepositoryLookupStatus.SUCCESS;
+    }
 }

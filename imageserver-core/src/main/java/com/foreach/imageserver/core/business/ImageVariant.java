@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.business;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 /**
  * Describes a variant to be created from the original image
  */
@@ -74,6 +76,7 @@ public class ImageVariant {
         density.setHeight(vertical);
     }
 
+    @JsonIgnore
     public boolean isOnlyDimensions() {
         ImageVariant other = new ImageVariant();
         other.setStretch(stretch);

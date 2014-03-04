@@ -4,8 +4,7 @@ import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
-import org.apache.commons.lang3.StringUtils;
+import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/delete")
-public class ImageDeleteController {
+public class ImageDeleteController extends BaseImageAPIController {
+
     @Autowired
     private ApplicationService applicationService;
 
@@ -23,25 +23,25 @@ public class ImageDeleteController {
 
     @RequestMapping("/all")
     @ResponseBody
-    public String delete(@RequestParam(value = "aid", required = true) int applicationId,
-                         @RequestParam(value = "token", required = true) String applicationKey,
-                         @RequestParam(value = "key", required = true) String imageKey) {
+    public JsonResponse<Void> delete(@RequestParam(value = "aid", required = true) int applicationId,
+                                      @RequestParam(value = "token", required = true) String applicationKey,
+                                      @RequestParam(value = "key", required = true) String imageKey) {
         return delete(applicationId, applicationKey, imageKey, false);
     }
 
     @RequestMapping("/variants")
     @ResponseBody
-    public String deleteVariants(@RequestParam(value = "aid", required = true) int applicationId,
-                                 @RequestParam(value = "token", required = true) String applicationKey,
-                                 @RequestParam(value = "key", required = true) String imageKey) {
+    public JsonResponse<Void> deleteVariants(@RequestParam(value = "aid", required = true) int applicationId,
+                                              @RequestParam(value = "token", required = true) String applicationKey,
+                                              @RequestParam(value = "key", required = true) String imageKey) {
         return delete(applicationId, applicationKey, imageKey, true);
     }
 
-    private String delete(int applicationId, String applicationKey, String imageKey, boolean variantsOnly) {
+    private JsonResponse<Void> delete(int applicationId, String applicationKey, String imageKey, boolean variantsOnly) {
         Application application = applicationService.getApplicationById(applicationId);
 
         if (application == null || !application.canBeManaged(applicationKey)) {
-            throw new ApplicationDeniedException();
+            return error("Unknown application id=" + applicationId);
         }
 
         Image image = imageService.getImageByKey(imageKey, application.getId());
@@ -50,6 +50,6 @@ public class ImageDeleteController {
             imageService.delete(image, variantsOnly);
         }
 
-        return StringUtils.EMPTY;
+        return success();
     }
 }

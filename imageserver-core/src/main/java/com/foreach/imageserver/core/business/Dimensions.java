@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.business;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class Dimensions {
     public static final Dimensions EMPTY = new Dimensions();
 
@@ -112,6 +114,7 @@ public class Dimensions {
         return scaled;
     }
 
+    @JsonIgnore
     public Fraction getAspectRatio() {
         return new Fraction(width, height);
     }

@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.business;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class Crop {
     private int x, y, width, height, sourceWidth, sourceHeight;
 
@@ -67,6 +69,7 @@ public class Crop {
         this.sourceHeight = sourceHeight;
     }
 
+    @JsonIgnore
     public boolean isEmpty() {
         return height <= 0 || width <= 0;
     }
