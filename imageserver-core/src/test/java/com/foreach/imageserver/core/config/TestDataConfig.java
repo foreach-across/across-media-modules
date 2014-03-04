@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import javax.sql.DataSource;
 
 @Configuration
-@Import(DataConfig.class)
+//@Import(DataConfig.class)
 public class TestDataConfig {
     @Bean
     public DataSource dataSource() {

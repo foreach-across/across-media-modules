@@ -14,7 +14,7 @@
     </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>com.foreach.imageserver.core.config.WebConfig</param-value>
+        <param-value>be.mediafin.imageserver.front.RootConfig</param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

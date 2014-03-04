@@ -1,0 +1,80 @@
+package be.mediafin.imageserver.front;
+
+import com.foreach.across.core.AcrossContext;
+import com.foreach.imageserver.core.ImageServerCoreModule;
+import com.foreach.spring.logging.LogbackConfigurer;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import javax.sql.DataSource;
+
+@Configuration
+@EnableWebMvc
+public class RootConfig {
+
+    @Value("${jdbc.driver}")
+    private String driver;
+
+    @Value("${jdbc.url}")
+    private String url;
+
+    @Value("${jdbc.username}")
+    private String userName;
+
+    @Value("${jdbc.password}")
+    private String password;
+
+    @Bean
+    public LogbackConfigurer logbackConfigurer(@Value("${log.dir}") String logDir,
+                                               @Value("${log.config}") Resource baseConfig,
+                                               @Value("${log.config.extend}") Resource envConfig) {
+        return new LogbackConfigurer(logDir, baseConfig, envConfig);
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer(
+            @Value("classpath:be/mediafin/imageserver/config/${environment.type}/common.properties") Resource defaultProperties) {
+        PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
+        propertySources.setLocation(defaultProperties);
+        propertySources.setIgnoreResourceNotFound(true);
+        propertySources.setIgnoreUnresolvablePlaceholders(true);
+
+        return propertySources;
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName(driver);
+        ds.setUrl(url);
+        ds.setUsername(userName);
+        ds.setPassword(password);
+        ds.setDefaultAutoCommit(true);
+
+        return ds;
+    }
+
+    @Bean
+    public AcrossContext acrossContext(ApplicationContext parentContext, PropertySourcesPlaceholderConfigurer propertyConfigurer, DataSource dataSource) {
+        AcrossContext context = new AcrossContext(parentContext);
+        context.setAllowInstallers(true);
+        context.setDataSource(dataSource);
+        context.addPropertySources(propertyConfigurer);
+
+        context.addModule(imageServerCoreModule());
+
+        return context;
+    }
+
+    @Bean
+    public ImageServerCoreModule imageServerCoreModule() {
+        return new ImageServerCoreModule();
+    }
+
+}
