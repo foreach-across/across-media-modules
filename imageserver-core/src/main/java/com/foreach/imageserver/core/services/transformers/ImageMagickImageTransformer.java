@@ -34,6 +34,9 @@ public class ImageMagickImageTransformer implements ImageTransformer {
     @Value("${transformer.imagemagick.enabled}")
     private boolean enabled;
 
+    @Value("${transformer.imagemagick.usegraphicsmagick}")
+    private boolean useGraphicsMagick;
+
     @Override
     public String getName() {
         return "imagemagick";
@@ -91,7 +94,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
             ImageModification variant = action.getVariant();
             ImageVariant modifier = variant.getVariant();
 
-            ConvertCmd cmd = new ConvertCmd();
+            ConvertCmd cmd = new ConvertCmd(useGraphicsMagick);
 
             IMOperation op = new IMOperation();
             Dimensions appliedDensity = setDensityIfRequired(op, action.getImageFile(), modifier);
