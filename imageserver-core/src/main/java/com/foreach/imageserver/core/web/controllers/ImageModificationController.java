@@ -46,9 +46,9 @@ public class ImageModificationController extends BaseImageAPIController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     @ResponseBody
     public JsonResponse register(@RequestParam(value = "aid", required = true) int applicationId,
-                                  @RequestParam(value = "token", required = true) String applicationKey,
-                                  @RequestParam(value = "key", required = true) String imageKey,
-                                  ImageModificationDto modificationDto) {
+                                 @RequestParam(value = "token", required = true) String applicationKey,
+                                 @RequestParam(value = "key", required = true) String imageKey,
+                                 ImageModificationDto modificationDto) {
         Application application = applicationService.getApplicationById(applicationId);
         if (application == null || !application.canBeManaged(applicationKey)) {
             throw new ApplicationDeniedException();
@@ -74,11 +74,11 @@ public class ImageModificationController extends BaseImageAPIController {
         return result;
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/listRegistered", method = RequestMethod.GET)
     @ResponseBody
-    public JsonResponse list(@RequestParam(value = "aid", required = true) int applicationId,
-                              @RequestParam(value = "token", required = true) String applicationKey,
-                              @RequestParam(value = "key", required = true) String imageKey) {
+    public JsonResponse listRegistered(@RequestParam(value = "aid", required = true) int applicationId,
+                                       @RequestParam(value = "token", required = true) String applicationKey,
+                                       @RequestParam(value = "key", required = true) String imageKey) {
         Application application = applicationService.getApplicationById(applicationId);
         if (application == null || !application.canBeManaged(applicationKey)) {
             return error("Unknown application id=" + application);
@@ -89,6 +89,18 @@ public class ImageModificationController extends BaseImageAPIController {
         }
         List<StoredImageModification> modifications = imageModificationService.getModificationsForImage(image);
         return success(unpackModifications(modifications));
+    }
+
+    @RequestMapping(value = "/listVariants", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResponse listVariants(@RequestParam(value = "aid", required = true) int applicationId,
+                                     @RequestParam(value = "token", required = true) String applicationKey) {
+        Application application = applicationService.getApplicationById(applicationId);
+        if (application == null || !application.canBeManaged(applicationKey)) {
+            return error("Unknown application id=" + application);
+        }
+        List<ImageVariant> variants = imageVariantService.getRegisteredVariantsForApplication(application);
+        return success(variants);
     }
 
     private List<ImageModification> unpackModifications(List<StoredImageModification> modifications) {
