@@ -30,11 +30,11 @@
 	</select>
 
     <select id="getModification" parameterType="map" resultMap="imageModificationMap">
-		SELECT *
-		FROM imagemodification
-		WHERE imageid = #{imageId} AND width = #{variant.width} AND height = #{variant.height}
-		<!-- TODO: Add more parameters from the variant in the select clause ? -->
-	</select>
+        SELECT *
+        FROM imagemodification
+        WHERE imageid = #{imageId} AND width = #{variant.width} AND height = #{variant.height}
+        <!-- TODO: Add more parameters from the variant in the select clause ? -->
+    </select>
 
     <insert id="insertModification" parameterType="StoredImageModification">
         INSERT INTO imagemodification (
@@ -80,6 +80,6 @@
 
     <delete id="deleteModification" parameterType="map">
 		DELETE FROM imagemodification
-	    WHERE imageid = #{imageId} AND width = #{modification.variant.width} AND height = #{modification.variant.height}
+	    WHERE imageid = #{imageId} AND width = #{variant.width} AND height = #{variant.height}
 	</delete>
 </mapper>

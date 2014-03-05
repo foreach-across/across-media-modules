@@ -37,7 +37,6 @@ public class TestApplicationDao extends AbstractDaoTest {
         assertTrue(applications.contains(existing));
     }
 
-    @Ignore
     @Test
     public void applicationCrud() {
         Application app = createApplication();
@@ -57,7 +56,8 @@ public class TestApplicationDao extends AbstractDaoTest {
 
     private Application createApplication() {
         Application app = new Application();
-        app.setName("zeName ");
+        app.setName("name");
+        app.setCode("code");
         return app;
     }
 

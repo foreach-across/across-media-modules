@@ -77,7 +77,7 @@ public class TestStoredImageModificationDao extends AbstractDaoTest {
 
     private StoredImageModification createModification() {
         StoredImageModification mod = new StoredImageModification();
-        mod.setImageId(9999001);
+        mod.setImageId(9999002);
 
         ImageModification modifier = new ImageModification();
         modifier.getVariant().setWidth(500);
@@ -93,16 +93,10 @@ public class TestStoredImageModificationDao extends AbstractDaoTest {
     }
 
     private StoredImageModification modify(StoredImageModification modification) {
-        ImageModification modifier = new ImageModification();
-        modifier.getVariant().setWidth(1900);
-        modifier.getVariant().setHeight(1440);
-        modifier.setCrop(new Crop());
-        modifier.getVariant().setDensity(900, 1200);
-        modifier.getVariant().setKeepAspect(true);
-        modifier.getVariant().setStretch(false);
-        modifier.getVariant().setOutput(ImageType.PNG);
-
-        modification.setModification(modifier);
+        modification.getModification().getCrop().setX(10);
+        modification.getModification().getCrop().setY(10);
+        modification.getModification().getCrop().setWidth(100);
+        modification.getModification().getCrop().setHeight(100);
         return modification;
     }
 

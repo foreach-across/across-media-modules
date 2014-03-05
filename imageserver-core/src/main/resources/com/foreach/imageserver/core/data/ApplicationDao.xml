@@ -46,7 +46,7 @@
         SET
             name = #{name},
             code = #{code},
-            active= #{active}
+            active= #{active},
             updated = GETDATE()
         WHERE id = #{id}
     </update>

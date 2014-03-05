@@ -10,7 +10,7 @@
 		<comment>Creates imagemodification table</comment>
 		<createTable tableName="imagemodification">
 			<column name="imageid" type="int">
-				<constraints primaryKey="true" nullable="false" references="image(id)" foreignKeyName="fk_imageid_image_id"/>
+				<constraints nullable="false" references="image(id)" foreignKeyName="fk_imageid_image_id"/>
 			</column>
 			<column name="width" type="int" defaultValueNumeric="0">
 				<constraints nullable="false"/>
@@ -56,6 +56,10 @@
 			</column>
 			<column name="updated" type="datetime"/>
 		</createTable>
+        <addUniqueConstraint
+                columnNames="imageid, width, height, outputtype, densityx, densityy, stretch, keepaspect"
+                constraintName="unique_modification" deferrable="false" disabled="false" initiallyDeferred="false"
+                tableName="imagemodification"/>
 	</changeSet>
 
 </databaseChangeLog>
