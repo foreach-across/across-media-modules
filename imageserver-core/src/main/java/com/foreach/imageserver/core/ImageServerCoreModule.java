@@ -27,7 +27,7 @@ public class ImageServerCoreModule extends AcrossModule {
 
     @Override
     protected void registerDefaultApplicationContextConfigurers(Set<ApplicationContextConfigurer> contextConfigurers) {
-        contextConfigurers.add(new AnnotatedClassConfigurer(ImageServerCoreConfig.class));
+        contextConfigurers.add(new AnnotatedClassConfigurer(ImageServerCoreConfig.class, ImageServerAcrossConfig.class));
     }
 
     @Override

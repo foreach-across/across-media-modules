@@ -83,6 +83,8 @@
     <orderEntry type="library" name="Maven: org.apache.pdfbox:jempbox:1.8.2" level="project" />
     <orderEntry type="library" name="Maven: com.foreach.libs:common-web:0.7" level="project" />
     <orderEntry type="library" name="Maven: javax.servlet:jstl:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.10" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.10" level="project" />
     <orderEntry type="module" module-name="imageserver-dpp-connector" />
     <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:3.1" level="project" />
     <orderEntry type="library" name="Maven: be.persgroep.red.diocontent.webservice:diocontent-webservice-client:2.13" level="project" />
