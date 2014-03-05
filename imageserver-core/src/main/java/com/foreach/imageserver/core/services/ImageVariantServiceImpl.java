@@ -21,9 +21,35 @@ public class ImageVariantServiceImpl implements ImageVariantService {
     }
 
     @Override
-    public ImageVariant getVariantForModification(Application application, ImageModificationDto modificationDto) {
+    public ImageVariant getBestVariantForModification(Application application, ImageModificationDto modificationDto) {
         List<ImageVariant> allVariants = imageVariantDao.getVariantsForApplication(application.getId());
         return findBestVariant(allVariants, modificationDto);
+    }
+
+    @Override
+    public ImageVariant getExactVariantForModification(Application application, ImageModificationDto modificationDto) {
+        List<ImageVariant> allVariants = imageVariantDao.getVariantsForApplication(application.getId());
+        for (ImageVariant variant : allVariants) {
+            if (matches(modificationDto, variant)) {
+                return variant;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check whether the variant matches with the given parameters, we take into account width, height, density,
+     * keepAspect and stretch. We don't take into account output type
+     */
+
+    private boolean matches(ImageModificationDto modificationDto, ImageVariant variant) {
+        return modificationDto.getHeight() == variant.getHeight() &&
+                modificationDto.getWidth() == variant.getWidth() &&
+                modificationDto.getDensity().equals(variant.getDensity()) &&
+                modificationDto.isKeepAspect() == variant.isKeepAspect() &&
+                modificationDto.isStretch() == variant.isStretch()
+                ;
+
     }
 
     private ImageVariant findBestVariant(List<ImageVariant> allVariants, ImageModificationDto modificationDto) {

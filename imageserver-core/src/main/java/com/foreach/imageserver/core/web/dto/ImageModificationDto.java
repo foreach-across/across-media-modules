@@ -10,8 +10,8 @@ public class ImageModificationDto {
     private Dimensions density = new Dimensions();
     private int width, height;
     private ImageType output;
-    private boolean stretch;
-    private boolean keepAspect;
+    private boolean stretch = false;
+    private boolean keepAspect = true;
 
     public Crop getCrop() {
         return crop;

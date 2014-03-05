@@ -36,13 +36,6 @@ public class ImageModificationController extends BaseImageAPIController {
     @Autowired
     private ImageVariantService imageVariantService;
 
-    /*
-        TODO:
-        je mag enkel een crop registreren voor een formaat dat we toelaten
-        MME vraagt aan image server welke crop formaten mogen
-        En daarvoor kan je crops definieren
-     */
-
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     @ResponseBody
     public JsonResponse register(@RequestParam(value = "aid", required = true) int applicationId,
@@ -59,7 +52,7 @@ public class ImageModificationController extends BaseImageAPIController {
         if (modificationDto.getCrop().isEmpty()) {
             throw new ImageModificationException("No crop specified");
         }
-        ImageVariant imageVariant = imageVariantService.getVariantForModification(application, modificationDto);
+        ImageVariant imageVariant = imageVariantService.getExactVariantForModification(application, modificationDto);
         if (imageVariant == null) {
             throw new ImageModificationException("Could not find image variant!");
         }

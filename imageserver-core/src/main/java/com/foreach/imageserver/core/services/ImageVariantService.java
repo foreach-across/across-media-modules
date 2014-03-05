@@ -10,5 +10,7 @@ public interface ImageVariantService {
 
     List<ImageVariant> getRegisteredVariantsForApplication(Application application);
 
-    ImageVariant getVariantForModification(Application application, ImageModificationDto modificationDto);
+    ImageVariant getBestVariantForModification(Application application, ImageModificationDto modificationDto);
+
+    ImageVariant getExactVariantForModification(Application application, ImageModificationDto modificationDto);
 }

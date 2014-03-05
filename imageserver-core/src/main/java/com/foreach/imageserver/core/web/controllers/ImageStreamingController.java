@@ -41,7 +41,7 @@ public class ImageStreamingController {
                      HttpServletResponse response) {
 
         Application application = applicationService.getApplicationById(applicationId);
-        ImageVariant imageVariant = imageVariantService.getVariantForModification(application, modificationDto);
+        ImageVariant imageVariant = imageVariantService.getBestVariantForModification(application, modificationDto);
         if (imageVariant == null) {
             throw new ImageModificationException("Could not find image variant!");
         }
