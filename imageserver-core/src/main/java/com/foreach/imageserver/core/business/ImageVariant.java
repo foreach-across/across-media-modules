@@ -1,10 +1,12 @@
 package com.foreach.imageserver.core.business;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  * Describes a variant to be created from the original image
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class ImageVariant {
 
     private int width, height;

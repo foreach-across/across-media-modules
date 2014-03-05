@@ -1,5 +1,8 @@
 package com.foreach.imageserver.core.web.displayables;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class JsonResponse<T extends Object> {
 
     public boolean success;

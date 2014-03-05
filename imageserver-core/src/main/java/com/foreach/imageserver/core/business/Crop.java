@@ -1,7 +1,9 @@
 package com.foreach.imageserver.core.business;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class Crop {
     private int x, y, width, height, sourceWidth, sourceHeight;
 
@@ -74,6 +76,7 @@ public class Crop {
         return height <= 0 || width <= 0;
     }
 
+    @JsonIgnore
     public Dimensions getDimensions() {
         return new Dimensions(width, height);
     }

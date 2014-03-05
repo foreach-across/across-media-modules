@@ -1,12 +1,14 @@
 package com.foreach.imageserver.core.business;
 
-import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  * Specifies a single set of modifications to be done to an image.
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class ImageModification {
 
     public static final ImageModification EMPTY = new ImageModification();
@@ -25,7 +27,7 @@ public class ImageModification {
     }
 
     public ImageModification(ImageVariant variant, Crop crop) {
-        this.crop = crop ;
+        this.crop = crop;
         this.variant = variant;
     }
 
@@ -49,7 +51,7 @@ public class ImageModification {
         return result;
     }
 
-
+    @JsonIgnore
     public boolean isEmpty() {
         return this.equals(EMPTY) || this.equals(EMPTY_WITH_STRETCH);
     }

@@ -1,7 +1,9 @@
 package com.foreach.imageserver.core.business;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class Dimensions {
     public static final Dimensions EMPTY = new Dimensions();
 
