@@ -92,17 +92,19 @@ public class ImageServiceImpl implements ImageService {
 
     @Transactional
     @Override
-    public void delete(Image image, boolean variantsOnly) {
-        if (variantsOnly) {
-            // Delete physical variant files
-            imageStoreService.deleteVariants(image);
-        } else {
-            // First delete the database entry - this avoids requests coming in
-            imageDao.deleteImage(image.getId());
-            // Delete the actual physical files
-            imageStoreService.delete(image);
-        }
+    public void deleteImageAndVariants(Image image) {
+        // First delete the database entry - this avoids requests coming in
+        imageDao.deleteImage(image.getId());
+        imageModificationService.deleteModifications(image);
+        // Delete the actual physical files
+        imageStoreService.delete(image);
     }
 
-
+    @Transactional
+    @Override
+    public void deleteVariantsOfImage(Image image) {
+        imageModificationService.deleteModifications(image);
+        // Delete the actual physical files
+        imageStoreService.deleteVariants(image);
+    }
 }

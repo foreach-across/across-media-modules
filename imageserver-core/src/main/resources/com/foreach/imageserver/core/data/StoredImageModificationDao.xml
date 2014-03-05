@@ -82,4 +82,10 @@
 		DELETE FROM imagemodification
 	    WHERE imageid = #{imageId} AND width = #{variant.width} AND height = #{variant.height}
 	</delete>
+
+    <delete id="deleteModifications" parameterType="int">
+		DELETE FROM imagemodification
+	    WHERE imageid = #{value}
+	</delete>
+
 </mapper>

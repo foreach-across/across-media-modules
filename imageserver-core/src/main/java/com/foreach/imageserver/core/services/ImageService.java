@@ -12,5 +12,7 @@ public interface ImageService {
 
     ImageFile fetchImageFile(Image image, ImageModification modification);
 
-    void delete(Image image, boolean variantsOnly);
+    void deleteImageAndVariants(Image image);
+
+    void deleteVariantsOfImage(Image image);
 }

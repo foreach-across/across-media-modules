@@ -53,6 +53,11 @@ public class ImageModificationServiceImpl implements ImageModificationService {
         return new Crop(0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight());
     }
 
+    @Override
+    public void deleteModifications(Image image) {
+        modificationDao.deleteModifications(image.getId());
+    }
+
     private class DistanceToVariant implements Comparator<StoredImageModification> {
         public DistanceToVariant(ImageVariant variant) {
         }

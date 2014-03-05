@@ -24,16 +24,16 @@ public class ImageDeleteController extends BaseImageAPIController {
     @RequestMapping("/all")
     @ResponseBody
     public JsonResponse<Void> delete(@RequestParam(value = "aid", required = true) int applicationId,
-                                      @RequestParam(value = "token", required = true) String applicationKey,
-                                      @RequestParam(value = "key", required = true) String imageKey) {
+                                     @RequestParam(value = "token", required = true) String applicationKey,
+                                     @RequestParam(value = "key", required = true) String imageKey) {
         return delete(applicationId, applicationKey, imageKey, false);
     }
 
     @RequestMapping("/variants")
     @ResponseBody
     public JsonResponse<Void> deleteVariants(@RequestParam(value = "aid", required = true) int applicationId,
-                                              @RequestParam(value = "token", required = true) String applicationKey,
-                                              @RequestParam(value = "key", required = true) String imageKey) {
+                                             @RequestParam(value = "token", required = true) String applicationKey,
+                                             @RequestParam(value = "key", required = true) String imageKey) {
         return delete(applicationId, applicationKey, imageKey, true);
     }
 
@@ -47,9 +47,16 @@ public class ImageDeleteController extends BaseImageAPIController {
         Image image = imageService.getImageByKey(imageKey, application.getId());
 
         if (image != null) {
-            imageService.delete(image, variantsOnly);
+            if (variantsOnly) {
+                imageService.deleteVariantsOfImage(image);
+            } else {
+                imageService.deleteImageAndVariants(image);
+            }
+            return success();
+        } else {
+            return error("Unknown image key " + imageKey);
         }
 
-        return success();
+
     }
 }

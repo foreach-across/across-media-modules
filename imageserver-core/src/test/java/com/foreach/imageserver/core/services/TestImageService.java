@@ -290,7 +290,7 @@ public class TestImageService {
         Image image = new Image();
         image.setId(123);
 
-        imageService.delete(image, false);
+        imageService.deleteImageAndVariants(image);
 
         verify(imageDao, times(1)).deleteImage(image.getId());
         verify(imageStoreService, times(1)).delete(image);
@@ -301,7 +301,7 @@ public class TestImageService {
         Image image = new Image();
         image.setId(123);
 
-        imageService.delete(image, true);
+        imageService.deleteVariantsOfImage(image);
 
         verify(imageDao, never()).deleteImage(image.getId());
         verify(imageStoreService, never()).delete(image);

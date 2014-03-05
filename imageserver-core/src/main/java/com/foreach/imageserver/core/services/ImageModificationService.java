@@ -13,4 +13,5 @@ public interface ImageModificationService {
 
     Crop getCropForVariant(Image image, ImageVariant variant);
 
+    void deleteModifications(Image image);
 }

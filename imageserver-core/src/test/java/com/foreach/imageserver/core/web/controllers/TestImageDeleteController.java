@@ -4,7 +4,7 @@ import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
+import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -23,7 +22,6 @@ import java.util.Random;
 import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(classes = TestImageDeleteController.TestConfig.class, loader = MockedLoader.class)
 public class TestImageDeleteController {
     @Autowired
@@ -37,35 +35,20 @@ public class TestImageDeleteController {
 
     @Test
     public void unknownApplicationReturnsPermissionDeniedForDelete() {
-        boolean exceptionWasThrown = false;
-
-        try {
-            deleteController.delete(1, UUID.randomUUID().toString(), "somekey");
-        } catch (ApplicationDeniedException ade) {
-            exceptionWasThrown = true;
-        }
-
-        Assert.assertTrue(exceptionWasThrown);
+        JsonResponse response = deleteController.delete(1, UUID.randomUUID().toString(), "somekey");
+        Assert.assertFalse(response.isSuccess());
         Mockito.verify(applicationService).getApplicationById(1);
     }
 
     @Test
     public void unknownApplicationReturnsPermissionDeniedForDeleteVariants() {
-        boolean exceptionWasThrown = false;
-
-        try {
-            deleteController.deleteVariants(1, UUID.randomUUID().toString(), "somekey");
-        } catch (ApplicationDeniedException ade) {
-            exceptionWasThrown = true;
-        }
-
-        Assert.assertTrue(exceptionWasThrown);
-        Mockito.verify(applicationService).getApplicationById(1);
+        JsonResponse response = deleteController.deleteVariants(201, UUID.randomUUID().toString(), "somekey");
+        Assert.assertFalse(response.isSuccess());
+        Mockito.verify(applicationService).getApplicationById(201);
     }
 
     @Test
     public void ifApplicationManagementNotAllowedThenPermissionDeniedForDelete() {
-        boolean exceptionWasThrown = false;
 
         Application application = createApplication(true);
         Mockito.when(applicationService.getApplicationById(Matchers.anyInt())).thenReturn(application);
@@ -73,19 +56,14 @@ public class TestImageDeleteController {
         String code = RandomStringUtils.random(10);
         Assert.assertFalse("Precondition on test data failed", application.canBeManaged(code));
 
-        try {
-            deleteController.delete(application.getId(), code, "somekey");
-        } catch (ApplicationDeniedException ade) {
-            exceptionWasThrown = true;
-        }
+        JsonResponse response = deleteController.delete(application.getId(), code, "somekey");
 
-        Assert.assertTrue(exceptionWasThrown);
+        Assert.assertFalse(response.isSuccess());
         Mockito.verify(applicationService).getApplicationById(application.getId());
     }
 
     @Test
     public void ifApplicationManagementNotAllowedThenPermissionDeniedForDeleteVariants() {
-        boolean exceptionWasThrown = false;
 
         Application application = createApplication(true);
         Mockito.when(applicationService.getApplicationById(Matchers.anyInt())).thenReturn(application);
@@ -93,13 +71,9 @@ public class TestImageDeleteController {
         String code = RandomStringUtils.random(10);
         Assert.assertFalse("Precondition on test data failed", application.canBeManaged(code));
 
-        try {
-            deleteController.deleteVariants(application.getId(), code, "somekey");
-        } catch (ApplicationDeniedException ade) {
-            exceptionWasThrown = true;
-        }
+        JsonResponse response = deleteController.deleteVariants(application.getId(), code, "somekey");
 
-        Assert.assertTrue(exceptionWasThrown);
+        Assert.assertFalse(response.isSuccess());
         Mockito.verify(applicationService).getApplicationById(application.getId());
     }
 
@@ -108,10 +82,11 @@ public class TestImageDeleteController {
         Application application = createApplication(true);
         Mockito.when(applicationService.getApplicationById(Matchers.anyInt())).thenReturn(application);
 
-        deleteController.delete(application.getId(), application.getCode(), "someimagekey");
+        JsonResponse response = deleteController.delete(application.getId(), application.getCode(), "someimagekey");
 
         Mockito.verify(imageService, Mockito.times(1)).getImageByKey("someimagekey", application.getId());
-        Mockito.verify(imageService, Mockito.never()).delete(Matchers.any(Image.class), Matchers.anyBoolean());
+        Mockito.verify(imageService, Mockito.never()).deleteImageAndVariants(Matchers.any(Image.class));
+        Assert.assertFalse(response.isSuccess());
     }
 
     @Test
@@ -122,7 +97,7 @@ public class TestImageDeleteController {
         deleteController.deleteVariants(application.getId(), application.getCode(), "someimagekey");
 
         Mockito.verify(imageService, Mockito.times(1)).getImageByKey("someimagekey", application.getId());
-        Mockito.verify(imageService, Mockito.never()).delete(Matchers.any(Image.class), Matchers.anyBoolean());
+        Mockito.verify(imageService, Mockito.never()).deleteVariantsOfImage(Matchers.any(Image.class));
     }
 
     @Test
@@ -135,7 +110,7 @@ public class TestImageDeleteController {
 
         deleteController.delete(application.getId(), application.getCode(), "validimagekey");
 
-        Mockito.verify(imageService, Mockito.times(1)).delete(image, false);
+        Mockito.verify(imageService, Mockito.times(1)).deleteImageAndVariants(image);
     }
 
     @Test
@@ -148,7 +123,7 @@ public class TestImageDeleteController {
 
         deleteController.deleteVariants(application.getId(), application.getCode(), "validimagekey");
 
-        Mockito.verify(imageService, Mockito.times(1)).delete(image, true);
+        Mockito.verify(imageService, Mockito.times(1)).deleteVariantsOfImage(image);
     }
 
     private Application createApplication(boolean active) {
