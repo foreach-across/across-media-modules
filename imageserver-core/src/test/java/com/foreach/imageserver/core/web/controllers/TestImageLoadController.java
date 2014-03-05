@@ -25,8 +25,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -57,7 +56,7 @@ public class TestImageLoadController {
 
     @Before
     public void before() {
-        when(repositoryOne.isValidURI(anyString())).thenReturn(true);
+        when(repositoryOne.getCode()).thenReturn("web");
     }
 
     @Test
@@ -65,7 +64,7 @@ public class TestImageLoadController {
         boolean exceptionWasThrown = false;
 
         try {
-            loadController.load(1, UUID.randomUUID().toString(), "http://someimageurl", null);
+            loadController.load(1, UUID.randomUUID().toString(), "web", null, map("web.url", "http://someimageurl"));
         } catch (ApplicationDeniedException ade) {
             exceptionWasThrown = true;
         }
@@ -85,7 +84,7 @@ public class TestImageLoadController {
         assertFalse("Precondition on test data failed", application.canBeManaged(code));
 
         try {
-            loadController.load(application.getId(), code, "http://someimageurl", null);
+            loadController.load(application.getId(), code, "web", null, map("web.url", "http://someimageurl"));
         } catch (ApplicationDeniedException ade) {
             exceptionWasThrown = true;
         }
@@ -120,43 +119,43 @@ public class TestImageLoadController {
 
         RepositoryLookupResult lookupResult = new RepositoryLookupResult();
         lookupResult.setStatus(status);
-        when(repositoryOne.fetchImage(imageURI)).thenReturn(lookupResult);
+        when(repositoryOne.fetchImage(map("url", imageURI))).thenReturn(lookupResult);
 
-        loadController.load(application.getId(), application.getCode(), imageURI, null);
+        loadController.load(application.getId(), application.getCode(), "web", null, map("web.url", imageURI));
 
-        verify(repositoryOne, times(1)).isValidURI(imageURI);
-        verify(repositoryOne).fetchImage(imageURI);
-        verify(repositoryTwo, never()).fetchImage(anyString());
+        verify(repositoryOne, times(1)).getCode();
+        verify(repositoryOne).fetchImage(map("url", imageURI));
+        verify(repositoryTwo, never()).fetchImage(anyMap());
     }
 
     @Test(expected = ImageLookupException.class)
     public void noRepositoriesForURI() {
-        when(repositoryOne.isValidURI(anyString())).thenReturn(false);
-        when(repositoryTwo.isValidURI(anyString())).thenReturn(false);
+        when(repositoryOne.getCode()).thenReturn("foo");
+        when(repositoryTwo.getCode()).thenReturn("bar");
 
         Application application = prepareValidApplication();
         String imageURI = RandomStringUtils.random(30);
 
-        loadController.load(application.getId(), application.getCode(), imageURI, null);
+        loadController.load(application.getId(), application.getCode(), "web", null, map("web.url", imageURI));
     }
 
     @Test
     public void firstRepositoryThatMatchesURIWillBeUsed() {
-        when(repositoryOne.isValidURI(anyString())).thenReturn(false);
-        when(repositoryTwo.isValidURI(anyString())).thenReturn(true);
+        when(repositoryOne.getCode()).thenReturn("foo");
+        when(repositoryTwo.getCode()).thenReturn("web");
 
         Application application = prepareValidApplication();
         String imageURI = RandomStringUtils.random(30);
 
         RepositoryLookupResult lookupResult = new RepositoryLookupResult();
         lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
-        when(repositoryTwo.fetchImage(imageURI)).thenReturn(lookupResult);
+        when(repositoryTwo.fetchImage(map("url", imageURI))).thenReturn(lookupResult);
 
-        loadController.load(application.getId(), application.getCode(), imageURI, null);
+        loadController.load(application.getId(), application.getCode(), "web", null, map("web.url", imageURI));
 
-        verify(repositoryTwo, times(1)).isValidURI(imageURI);
-        verify(repositoryOne, never()).fetchImage(anyString());
-        verify(repositoryTwo).fetchImage(imageURI);
+        verify(repositoryTwo, times(1)).getCode();
+        verify(repositoryOne, never()).fetchImage(anyMap());
+        verify(repositoryTwo).fetchImage(map("url", imageURI));
     }
 
     @Test
@@ -166,7 +165,7 @@ public class TestImageLoadController {
 
         final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
         lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
-        when(repositoryOne.fetchImage(imageURI)).thenReturn(lookupResult);
+        when(repositoryOne.fetchImage(map("url", imageURI))).thenReturn(lookupResult);
 
         Image expectedImageToSave = new Image();
         expectedImageToSave.setKey(imageURI);
@@ -185,9 +184,9 @@ public class TestImageLoadController {
             }
         }).when(imageService).save(any(Image.class), any(RepositoryLookupResult.class));
 
-        loadController.load(application.getId(), application.getCode(), imageURI, null);
+        loadController.load(application.getId(), application.getCode(), "web", null, map("web.url", imageURI));
 
-        verify(repositoryOne).fetchImage(imageURI);
+        verify(repositoryOne).fetchImage(map("url", imageURI));
         verify(imageService).getImageByKey(imageURI, application.getId());
         verify(imageService).save(any(Image.class), any(RepositoryLookupResult.class));
     }
@@ -200,7 +199,7 @@ public class TestImageLoadController {
 
         final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
         lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
-        when(repositoryOne.fetchImage(imageURI)).thenReturn(lookupResult);
+        when(repositoryOne.fetchImage(map("url", imageURI))).thenReturn(lookupResult);
 
         Image expectedImageToSave = new Image();
         expectedImageToSave.setKey(imageURI);
@@ -219,9 +218,9 @@ public class TestImageLoadController {
             }
         }).when(imageService).save(any(Image.class), any(RepositoryLookupResult.class));
 
-        loadController.load(application.getId(), application.getCode(), imageURI, imageKey);
+        loadController.load(application.getId(), application.getCode(), "web", imageKey, map("web.url", imageURI));
 
-        verify(repositoryOne).fetchImage(imageURI);
+        verify(repositoryOne).fetchImage(map("url", imageURI));
         verify(imageService).getImageByKey(imageKey, application.getId());
         verify(imageService).save(any(Image.class), any(RepositoryLookupResult.class));
     }
@@ -233,7 +232,7 @@ public class TestImageLoadController {
 
         final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
         lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
-        when(repositoryOne.fetchImage(imageURI)).thenReturn(lookupResult);
+        when(repositoryOne.fetchImage(map("url", imageURI))).thenReturn(lookupResult);
 
         final Image existing = new Image();
         when(imageService.getImageByKey(imageURI, application.getId())).thenReturn(existing);
@@ -250,9 +249,9 @@ public class TestImageLoadController {
             }
         }).when(imageService).save(any(Image.class), any(RepositoryLookupResult.class));
 
-        loadController.load(application.getId(), application.getCode(), imageURI, null);
+        loadController.load(application.getId(), application.getCode(), "web", null, map("web.url", imageURI));
 
-        verify(repositoryOne).fetchImage(imageURI);
+        verify(repositoryOne).fetchImage(map("url", imageURI));
         verify(imageService).getImageByKey(imageURI, application.getId());
         verify(imageService).save(existing, lookupResult);
     }
@@ -265,7 +264,7 @@ public class TestImageLoadController {
 
         final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
         lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
-        when(repositoryOne.fetchImage(imageURI)).thenReturn(lookupResult);
+        when(repositoryOne.fetchImage(map("url", imageURI))).thenReturn(lookupResult);
 
         final Image existing = new Image();
         when(imageService.getImageByKey(imageKey, application.getId())).thenReturn(existing);
@@ -282,9 +281,9 @@ public class TestImageLoadController {
             }
         }).when(imageService).save(any(Image.class), any(RepositoryLookupResult.class));
 
-        loadController.load(application.getId(), application.getCode(), imageURI, imageKey);
+        loadController.load(application.getId(), application.getCode(), "web", imageKey, map("web.url", imageURI));
 
-        verify(repositoryOne).fetchImage(imageURI);
+        verify(repositoryOne).fetchImage(map("web.url", imageURI));
         verify(imageService).getImageByKey(imageKey, application.getId());
         verify(imageService).save(existing, lookupResult);
     }
@@ -304,6 +303,10 @@ public class TestImageLoadController {
         application.setActive(active);
 
         return application;
+    }
+
+    private Map<String, String> map(String key, String value) {
+        return Collections.singletonMap(key, value);
     }
 
     @Configuration

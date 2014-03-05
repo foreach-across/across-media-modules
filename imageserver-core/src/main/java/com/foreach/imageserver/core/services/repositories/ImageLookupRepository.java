@@ -1,20 +1,18 @@
 package com.foreach.imageserver.core.services.repositories;
 
+import java.util.Map;
+
 public interface ImageLookupRepository {
     /**
-     * Verifies that a URI specified identifies an image in the repository.
-     * This only checks the format of the URI, does not check the repository if the image exists.
-     *
-     * @param uri URI of the image.
-     * @return True if URI is recognized by the repository.
+     * Get the code for this repository (e.g. url, dio, ...)
      */
-    boolean isValidURI(String uri);
+    String getCode();
 
     /**
      * Looks up the image matching the given URI in the repository.
      *
-     * @param uri URI of the image.
+     * @param parameters to fetch the image
      * @return RepositoryLookupResult contaning status and image data (if found).
      */
-    RepositoryLookupResult fetchImage(String uri);
+    RepositoryLookupResult fetchImage(Map<String,String> parameters);
 }

@@ -8,7 +8,6 @@ import com.foreach.imageserver.core.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
-import com.foreach.imageserver.core.web.exceptions.ImageLookupException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class ImageLoadController extends BaseImageAPIController {
@@ -32,23 +33,28 @@ public class ImageLoadController extends BaseImageAPIController {
     @RequestMapping("/load")
     @ResponseBody
     public JsonResponse load(@RequestParam(value = "aid", required = true) int applicationId,
-                              @RequestParam(value = "token", required = true) String applicationKey,
-                              @RequestParam(value = "uri", required = true) String repositoryURI,
-                              @RequestParam(value = "key", required = false) String targetKey) {
+                             @RequestParam(value = "token", required = true) String applicationKey,
+                             @RequestParam(value = "repo", required = true) String repositoryCode,
+                             @RequestParam(value = "key", required = false) String targetKey,
+                             @RequestParam java.util.Map<String, String> allParameters) {
         Application application = applicationService.getApplicationById(applicationId);
 
         if (application == null || !application.canBeManaged(applicationKey)) {
             throw new ApplicationDeniedException();
         }
 
-        ImageLookupRepository imageLookupRepository = determineLookupRepository(repositoryURI);
+        ImageLookupRepository imageLookupRepository = determineLookupRepository(repositoryCode);
+        if (imageLookupRepository == null) {
+            return error("Unknown repository " + repositoryCode);
+        }
 
-        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(repositoryURI);
+        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(getRepoParameters(repositoryCode, allParameters));
         if (!lookupResult.isSuccess()) {
             return error("Failed to retrieve image " + lookupResult.getStatus());
         }
 
-        String imageKey = StringUtils.defaultIfEmpty(targetKey, repositoryURI);
+        String imageKey = StringUtils.defaultIfEmpty(targetKey, lookupResult.getDefaultKey());
+
         Image image = imageService.getImageByKey(imageKey, application.getId());
 
         if (image == null) {
@@ -56,17 +62,27 @@ public class ImageLoadController extends BaseImageAPIController {
         }
 
         imageService.save(image, lookupResult);
-        return success();
+        return success(imageKey);
     }
 
-    private ImageLookupRepository determineLookupRepository(String uri) {
+    private Map<String, String> getRepoParameters(String repositoryCode, Map<String, String> requestParameters) {
+        String repositoryPrefix = repositoryCode + ".";
+        Map<String, String> result = new HashMap<>();
+        for (String key : requestParameters.keySet()) {
+            if (key.startsWith(repositoryPrefix)) {
+                result.put(key.substring(repositoryPrefix.length()), requestParameters.get(key));
+            }
+        }
+        return result;
+    }
+
+    private ImageLookupRepository determineLookupRepository(String connectorCode) {
         for (ImageLookupRepository repository : imageLookupRepositories) {
-            if (repository.isValidURI(uri)) {
+            if (repository.getCode().equals(connectorCode)) {
                 return repository;
             }
         }
-
-        throw new ImageLookupException("Did not find any lookup repositories that can handle uri: " + uri);
+        return null;
     }
 
     private Image createNewImage(Application application, String imageKey) {

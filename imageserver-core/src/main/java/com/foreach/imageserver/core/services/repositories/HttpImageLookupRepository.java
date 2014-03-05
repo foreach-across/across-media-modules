@@ -13,22 +13,31 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.net.UnknownHostException;
+import java.util.Map;
 
 /**
  * Will fetch an image from a specific url.
  */
 @Service
 public class HttpImageLookupRepository implements ImageLookupRepository {
+
     private static final Logger LOG = LoggerFactory.getLogger(HttpImageLookupRepository.class);
 
     @Override
-    public boolean isValidURI(String uri) {
-        return StringUtils.startsWithIgnoreCase(uri, "http://") || StringUtils.startsWithIgnoreCase(uri,
-                "https://");
+    public String getCode() {
+        return "web";
     }
 
-    public RepositoryLookupResult fetchImage(String uri) {
+    public RepositoryLookupResult fetchImage(Map<String, String> parameters) {
         RepositoryLookupResult result = new RepositoryLookupResult();
+
+        String uri = parameters.get("url");
+        if (StringUtils.isEmpty(uri)) {
+            LOG.info("No url parameter passed ");
+            result.setStatus(RepositoryLookupStatus.ERROR);
+            return result;
+        }
+        result.setDefaultKey(uri);
 
         try {
             LOG.info("Fetching remote image with url " + uri);

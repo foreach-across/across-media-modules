@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 public final class RepositoryLookupResult {
     private ImageType imageType;
-
+    private String defaultKey;
     private RepositoryLookupStatus status;
     private InputStream content;
 
@@ -32,6 +32,14 @@ public final class RepositoryLookupResult {
 
     public void setContent(InputStream content) {
         this.content = content;
+    }
+
+    public void setDefaultKey(String defaultKey) {
+        this.defaultKey = defaultKey;
+    }
+
+    public String getDefaultKey() {
+        return defaultKey;
     }
 
     public boolean isSuccess() {

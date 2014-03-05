@@ -23,6 +23,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/modification")
 public class ImageModificationController extends BaseImageAPIController {
+
     @Autowired
     private ApplicationService applicationService;
 
@@ -34,6 +35,13 @@ public class ImageModificationController extends BaseImageAPIController {
 
     @Autowired
     private ImageVariantService imageVariantService;
+
+    /*
+        TODO:
+        je mag enkel een crop registreren voor een formaat dat we toelaten
+        MME vraagt aan image server welke crop formaten mogen
+        En daarvoor kan je crops definieren
+     */
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     @ResponseBody

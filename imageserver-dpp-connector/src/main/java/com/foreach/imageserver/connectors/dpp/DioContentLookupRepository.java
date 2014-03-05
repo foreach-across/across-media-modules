@@ -10,12 +10,12 @@ import com.foreach.imageserver.core.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupStatus;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 public class DioContentLookupRepository implements ImageLookupRepository {
     private static final Logger LOG = LoggerFactory.getLogger(DioContentLookupRepository.class);
@@ -33,16 +33,27 @@ public class DioContentLookupRepository implements ImageLookupRepository {
     }
 
     @Override
-    public boolean isValidURI(String uri) {
-        return StringUtils.startsWithIgnoreCase(uri, "dc:");
+    public String getCode() {
+        return "dc";
     }
 
     @Override
-    public RepositoryLookupResult fetchImage(String uri) {
+    public RepositoryLookupResult fetchImage(Map<String, String> params) {
         try {
             DioContentClient client = new DefaultRestDioContentClient(serverUrl, login, password);
-            int dcId = Integer.valueOf(StringUtils.replace(uri, "dc:", ""));
-
+            RepositoryLookupResult lookupResult = new RepositoryLookupResult();
+            String idAsString = params.get("id");
+            if (idAsString == null) {
+                lookupResult.setStatus(RepositoryLookupStatus.ERROR);
+                return lookupResult;
+            }
+            int dcId;
+            try {
+                dcId = Integer.valueOf(idAsString);
+            } catch (NumberFormatException exp) {
+                lookupResult.setStatus(RepositoryLookupStatus.ERROR);
+                return lookupResult;
+            }
             LOG.debug("Requesting ORIGINAL image with dio:content id {}", dcId);
 
             Attachment attachment = client.getAttachmentWithRole(dcId, AttachmentRole.ORIGINAL);
@@ -57,7 +68,7 @@ public class DioContentLookupRepository implements ImageLookupRepository {
                 IOUtils.closeQuietly(data);
             }
 
-            RepositoryLookupResult lookupResult = new RepositoryLookupResult();
+
             lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
             lookupResult.setImageType(imageType);
             lookupResult.setContent(new ByteArrayInputStream(data.toByteArray()));

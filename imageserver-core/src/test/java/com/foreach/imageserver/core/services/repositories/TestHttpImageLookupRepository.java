@@ -8,6 +8,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 public class TestHttpImageLookupRepository {
@@ -31,31 +34,20 @@ public class TestHttpImageLookupRepository {
     }
 
     @Test
-    public void validURI() {
-        assertTrue(imageLookupRepository.isValidURI("http://www.google.be:80/"));
-        assertTrue(imageLookupRepository.isValidURI("https://www.foreach.com/sdfqsdfsd?test=boe&kipe=jio"));
-    }
-
-    @Test
-    public void invalidURI() {
-        assertFalse(imageLookupRepository.isValidURI("somerandomstring"));
-    }
-
-    @Test
     public void imageNotFoundStatusCode() {
-        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(webServer.notFoundUrl());
+        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(map("url", webServer.notFoundUrl()));
         assertEquals(RepositoryLookupStatus.NOT_FOUND, lookupResult.getStatus());
     }
 
     @Test
     public void permissionDeniedStatusCode() {
-        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(webServer.permissionDeniedUrl());
+        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(map("url", webServer.permissionDeniedUrl()));
         assertEquals(RepositoryLookupStatus.ACCESS_DENIED, lookupResult.getStatus());
     }
 
     @Test
     public void errorStatusCode() {
-        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(webServer.errorUrl());
+        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(map("url", webServer.errorUrl()));
         assertEquals(RepositoryLookupStatus.ERROR, lookupResult.getStatus());
     }
 
@@ -67,12 +59,16 @@ public class TestHttpImageLookupRepository {
     }
 
     private void getValidImage(ImageTestData imageTestData) throws Exception {
-        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(webServer.imageUrl(imageTestData));
+        RepositoryLookupResult lookupResult = imageLookupRepository.fetchImage(map("url", webServer.imageUrl(imageTestData)));
 
         assertEquals(RepositoryLookupStatus.SUCCESS, lookupResult.getStatus());
         assertEquals(imageTestData.getImageType(), lookupResult.getImageType());
         assertNotNull(lookupResult.getContent());
         assertTrue(IOUtils.contentEquals(getClass().getResourceAsStream(imageTestData.getResourcePath()),
                 lookupResult.getContent()));
+    }
+
+    private Map<String, String> map(String key, String value) {
+        return Collections.singletonMap(key, value);
     }
 }
