@@ -8,6 +8,7 @@ import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -21,6 +22,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Random;
 import java.util.UUID;
 
+import static org.mockito.Mockito.reset;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestImageDeleteController.TestConfig.class, loader = MockedLoader.class)
 public class TestImageDeleteController {
@@ -32,6 +35,11 @@ public class TestImageDeleteController {
 
     @Autowired
     private ImageService imageService;
+
+    @Before
+    public void setup() {
+        reset(imageService);
+    }
 
     @Test
     public void unknownApplicationReturnsPermissionDeniedForDelete() {

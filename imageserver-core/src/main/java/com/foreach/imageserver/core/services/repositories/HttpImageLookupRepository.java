@@ -1,7 +1,6 @@
 package com.foreach.imageserver.core.services.repositories;
 
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.services.exceptions.RepositoryLookupException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -54,7 +53,8 @@ public class HttpImageLookupRepository implements ImageLookupRepository {
                 ImageType imageType = ImageType.getForContentType(entity.getContentType().getValue());
 
                 if (imageType == null) {
-                    throw new RepositoryLookupException("Unknown Content-Type: " + entity.getContentType());
+                    result.setStatus(RepositoryLookupStatus.ERROR);
+                    return result;
                 }
                 result.setImageType(imageType);
                 result.setContent(entity.getContent());

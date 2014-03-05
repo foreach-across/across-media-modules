@@ -7,10 +7,7 @@ import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupStatus;
-import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
-import com.foreach.imageserver.core.web.exceptions.ImageForbiddenException;
-import com.foreach.imageserver.core.web.exceptions.ImageLookupException;
-import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
+import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
@@ -57,40 +54,28 @@ public class TestImageLoadController {
 
     @Before
     public void before() {
+        reset(repositoryOne, repositoryTwo, imageService);
         when(repositoryOne.getCode()).thenReturn("web");
     }
 
     @Test
     public void unknownApplicationReturnsPermissionDenied() {
-        boolean exceptionWasThrown = false;
-
-        try {
-            loadController.load(1, UUID.randomUUID().toString(), "web", null, map("web.url", "http://someimageurl"));
-        } catch (ApplicationDeniedException ade) {
-            exceptionWasThrown = true;
-        }
-
-        assertTrue(exceptionWasThrown);
+        JsonResponse response = loadController.load(1, UUID.randomUUID().toString(), "web", null, map("web.url", "http://someimageurl"));
+        assertFalse(response.isSuccess());
         verify(applicationService).getApplicationById(1);
     }
 
     @Test
     public void ifApplicationManagementNotAllowedThenPermissionDenied() {
-        boolean exceptionWasThrown = false;
-
         Application application = createApplication(true);
         when(applicationService.getApplicationById(anyInt())).thenReturn(application);
 
         String code = RandomStringUtils.random(10);
         assertFalse("Precondition on test data failed", application.canBeManaged(code));
 
-        try {
-            loadController.load(application.getId(), code, "web", null, map("web.url", "http://someimageurl"));
-        } catch (ApplicationDeniedException ade) {
-            exceptionWasThrown = true;
-        }
+        JsonResponse jsonResponse = loadController.load(application.getId(), code, "web", null, map("web.url", "http://someimageurl"));
 
-        assertTrue(exceptionWasThrown);
+        assertFalse(jsonResponse.isSuccess());
         verify(applicationService).getApplicationById(application.getId());
     }
 
@@ -99,22 +84,19 @@ public class TestImageLoadController {
         lookupWithStatus(RepositoryLookupStatus.SUCCESS);
     }
 
-    @Test(expected = ImageNotFoundException.class)
     public void lookupNotFound() {
-        lookupWithStatus(RepositoryLookupStatus.NOT_FOUND);
+        assertFalse(lookupWithStatus(RepositoryLookupStatus.NOT_FOUND).isSuccess());
     }
 
-    @Test(expected = ImageForbiddenException.class)
     public void lookupPermissionDenied() {
-        lookupWithStatus(RepositoryLookupStatus.ACCESS_DENIED);
+        assertFalse(lookupWithStatus(RepositoryLookupStatus.ACCESS_DENIED).isSuccess());
     }
 
-    @Test(expected = ImageLookupException.class)
     public void lookupError() {
-        lookupWithStatus(RepositoryLookupStatus.ERROR);
+        assertFalse(lookupWithStatus(RepositoryLookupStatus.ERROR).isSuccess());
     }
 
-    private void lookupWithStatus(RepositoryLookupStatus status) {
+    private JsonResponse lookupWithStatus(RepositoryLookupStatus status) {
         Application application = prepareValidApplication();
         String imageURI = RandomStringUtils.random(30);
 
@@ -122,14 +104,15 @@ public class TestImageLoadController {
         lookupResult.setStatus(status);
         when(repositoryOne.fetchImage(map("url", imageURI))).thenReturn(lookupResult);
 
-        loadController.load(application.getId(), application.getCode(), "web", null, map("web.url", imageURI));
+        JsonResponse response = loadController.load(application.getId(), application.getCode(), "web", null, map("web.url", imageURI));
 
         verify(repositoryOne, times(1)).getCode();
         verify(repositoryOne).fetchImage(map("url", imageURI));
         verify(repositoryTwo, never()).fetchImage(anyMap());
+
+        return response;
     }
 
-    @Test(expected = ImageLookupException.class)
     public void noRepositoriesForURI() {
         when(repositoryOne.getCode()).thenReturn("foo");
         when(repositoryTwo.getCode()).thenReturn("bar");
@@ -137,7 +120,8 @@ public class TestImageLoadController {
         Application application = prepareValidApplication();
         String imageURI = RandomStringUtils.random(30);
 
-        loadController.load(application.getId(), application.getCode(), "web", null, map("web.url", imageURI));
+        JsonResponse response = loadController.load(application.getId(), application.getCode(), "web", null, map("web.url", imageURI));
+        assertFalse(response.isSuccess());
     }
 
     @Test
@@ -166,6 +150,7 @@ public class TestImageLoadController {
 
         final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
         lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
+        lookupResult.setDefaultKey(imageURI);
         when(repositoryOne.fetchImage(map("url", imageURI))).thenReturn(lookupResult);
 
         Image expectedImageToSave = new Image();
@@ -233,9 +218,12 @@ public class TestImageLoadController {
 
         final RepositoryLookupResult lookupResult = new RepositoryLookupResult();
         lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
+        lookupResult.setDefaultKey(imageURI);
         when(repositoryOne.fetchImage(map("url", imageURI))).thenReturn(lookupResult);
 
         final Image existing = new Image();
+        existing.setId(0);
+        existing.setApplicationId(application.getId());
         when(imageService.getImageByKey(imageURI, application.getId())).thenReturn(existing);
 
         doAnswer(new Answer() {
@@ -243,7 +231,7 @@ public class TestImageLoadController {
                 Image actualImage = (Image) invocation.getArguments()[0];
                 RepositoryLookupResult actualLookupResult = (RepositoryLookupResult) invocation.getArguments()[1];
 
-                assertSame(existing, actualImage);
+                assertEquals(existing, actualImage);
                 assertSame(lookupResult, actualLookupResult);
 
                 return null;
@@ -284,7 +272,7 @@ public class TestImageLoadController {
 
         loadController.load(application.getId(), application.getCode(), "web", imageKey, map("web.url", imageURI));
 
-        verify(repositoryOne).fetchImage(map("web.url", imageURI));
+        verify(repositoryOne).fetchImage(map("url", imageURI));
         verify(imageService).getImageByKey(imageKey, application.getId());
         verify(imageService).save(existing, lookupResult);
     }

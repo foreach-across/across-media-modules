@@ -1,33 +1,28 @@
 package com.foreach.imageserver.core.web.controllers;
 
-import com.foreach.imageserver.core.business.Application;
-import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageModification;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageModificationService;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
+import com.foreach.imageserver.core.services.ImageVariantService;
+import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import com.foreach.imageserver.core.web.dto.ImageModificationDto;
-import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
-import com.foreach.imageserver.core.web.exceptions.ImageNotFoundException;
 import com.foreach.test.MockedLoader;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.UUID;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(classes = TestImageModificationController.TestConfig.class, loader = MockedLoader.class)
 public class TestImageModificationController {
     @Autowired
@@ -42,39 +37,34 @@ public class TestImageModificationController {
     @Autowired
     private ImageModificationService imageModificationService;
 
+    @Autowired
+    private ImageVariantService imageVariantService;
+
+    @Before
+    public void setup() {
+        reset(applicationService, imageService, imageModificationService, imageVariantService);
+    }
+
     @Test
     public void unknownApplicationReturnsPermissionDenied() {
-        boolean exceptionWasThrown = false;
 
-        try {
-            modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifierDto());
-        } catch (ApplicationDeniedException ade) {
-            exceptionWasThrown = true;
-        }
-
-        assertTrue(exceptionWasThrown);
+        JsonResponse response = modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifierDto());
+        assertFalse(response.isSuccess());
         verify(applicationService).getApplicationById(1);
     }
 
     @Test
     public void ifApplicationManagementNotAllowedThenPermissionDenied() {
-        boolean exceptionWasThrown = false;
-
         Application application = mock(Application.class);
 
         when(applicationService.getApplicationById(anyInt())).thenReturn(application);
         when(application.canBeManaged(anyString())).thenReturn(false);
 
-        try {
-            modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifierDto());
-        } catch (ApplicationDeniedException ade) {
-            exceptionWasThrown = true;
-        }
+        JsonResponse response = modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifierDto());
 
-        assertTrue(exceptionWasThrown);
+        assertFalse(response.isSuccess());
     }
 
-    @Test(expected = ApplicationDeniedException.class)
     public void requestInactiveApplication() {
         Application inactive = new Application();
         inactive.setCode(UUID.randomUUID().toString());
@@ -82,20 +72,21 @@ public class TestImageModificationController {
 
         when(applicationService.getApplicationById(1)).thenReturn(inactive);
 
-        modificationController.register(1, inactive.getCode(), "somekey", createModifierDto());
+        JsonResponse response = modificationController.register(1, inactive.getCode(), "somekey", createModifierDto());
+        assertFalse(response.isSuccess());
     }
 
-    @Test(expected = ImageNotFoundException.class)
     public void requestUnknownImageForApplication() {
         Application application = mock(Application.class);
 
         when(applicationService.getApplicationById(1)).thenReturn(application);
         when(application.canBeManaged(anyString())).thenReturn(true);
 
-        modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifierDto());
+        JsonResponse response = modificationController.register(1, UUID.randomUUID().toString(), "somekey", createModifierDto());
+        assertFalse(response.isSuccess());
     }
 
-    @Test(expected = ImageModificationException.class)
+    @Test
     public void requestEmptyTargetDimensions() {
         Application application = mock(Application.class);
 
@@ -125,6 +116,10 @@ public class TestImageModificationController {
 
         when(imageService.getImageByKey("somekey", 1)).thenReturn(image);
 
+        ImageVariant existingVariant = new ImageVariant();
+        existingVariant.setWidth(800);
+        when(imageVariantService.getExactVariantForModification(eq(application), eq(modifierDto))).thenReturn(existingVariant);
+
         modificationController.register(1, UUID.randomUUID().toString(), "somekey", modifierDto);
 
         verify(imageModificationService, times(1)).saveModification(image, modifier);
@@ -139,6 +134,8 @@ public class TestImageModificationController {
                 new ImageModificationDto();
         mod.setHeight(dimensions.getHeight());
         mod.setWidth(dimensions.getWidth());
+        mod.getCrop().setHeight(100);
+        mod.getCrop().setWidth(100);
         return mod;
     }
 

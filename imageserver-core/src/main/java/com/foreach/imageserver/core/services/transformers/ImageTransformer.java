@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.services.transformers;
 
+import com.foreach.imageserver.core.services.exceptions.ImageModificationException;
+
 public interface ImageTransformer {
     /**
      * @return Short name of the transformer implementation.
@@ -22,7 +24,7 @@ public interface ImageTransformer {
      *
      * @param action ImageTransformerAction to execute.
      */
-    void execute(ImageTransformerAction action);
+    void execute(ImageTransformerAction action) throws ImageModificationException;
 
     /**
      * Determines the preferred order into which this transformer is applied, if it can

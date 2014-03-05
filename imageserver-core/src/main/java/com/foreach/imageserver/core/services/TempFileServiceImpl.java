@@ -2,7 +2,6 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.ImageFile;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.services.exceptions.TempStoreOperationException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,7 @@ public class TempFileServiceImpl implements TempFileService {
 
             return new TempImageFile(imageType, physical);
         } catch (IOException ioe) {
-            throw new TempStoreOperationException(ioe);
+            throw new RuntimeException(ioe);
         } finally {
             IOUtils.closeQuietly(fos);
             IOUtils.closeQuietly(stream);
@@ -61,7 +60,7 @@ public class TempFileServiceImpl implements TempFileService {
     @Override
     public ImageFile move(ImageFile file, File physicalDestination) {
         if (!isTempFile(file)) {
-            throw new TempStoreOperationException("Trying to move a non temporary ImageFile is not allowed");
+            throw new RuntimeException("Trying to move a non temporary ImageFile is not allowed");
         }
 
         File physical = ((TempImageFile) file).getPhysicalFile();
@@ -79,7 +78,7 @@ public class TempFileServiceImpl implements TempFileService {
 
                 IOUtils.copy(imageData, fos);
             } catch (IOException ioe) {
-                throw new TempStoreOperationException(ioe);
+                throw new RuntimeException(ioe);
             } finally {
                 IOUtils.closeQuietly(fos);
                 IOUtils.closeQuietly(imageData);

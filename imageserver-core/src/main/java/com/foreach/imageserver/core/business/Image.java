@@ -82,4 +82,17 @@ public class Image {
     public void setImageType(ImageType imageType) {
         this.imageType = imageType;
     }
+
+    public String toString() {
+        return "Image[id=" + id + ",aid=" + applicationId + "]";
+    }
+
+    public boolean equals(Object other) {
+        if (other instanceof Image) {
+            Image otherImage = (Image) other;
+            return getId() == otherImage.getId() && getApplicationId() == otherImage.getApplicationId();
+        } else {
+            return false;
+        }
+    }
 }

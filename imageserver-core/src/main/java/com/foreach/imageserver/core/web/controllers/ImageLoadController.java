@@ -8,7 +8,6 @@ import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
-import com.foreach.imageserver.core.web.exceptions.ApplicationDeniedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +41,7 @@ public class ImageLoadController extends BaseImageAPIController {
         Application application = applicationService.getApplicationById(applicationId);
 
         if (application == null || !application.canBeManaged(applicationKey)) {
-            throw new ApplicationDeniedException();
+            return error("Unknown application " + applicationId);
         }
 
         ImageLookupRepository imageLookupRepository = determineLookupRepository(repositoryCode);

@@ -2,7 +2,6 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.ImageFile;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.services.exceptions.TempStoreOperationException;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -73,7 +72,7 @@ public class TestTempFileService {
         IOUtils.closeQuietly(tempStream);
     }
 
-    @Test(expected = TempStoreOperationException.class)
+    @Test(expected = RuntimeException.class)
     public void moveOnNonTempFileShouldFail() {
         File destination = new File(TEMP_DIR, "destination.jpeg");
         tempFileService.move(new ImageFile(ImageType.JPEG, 0, null), destination);

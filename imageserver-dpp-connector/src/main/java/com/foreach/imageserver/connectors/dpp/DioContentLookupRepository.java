@@ -6,7 +6,6 @@ import be.persgroep.red.diocontent.api.client.DioContentClient;
 import be.persgroep.red.diocontent.webservice.client.DefaultRestDioContentClient;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.services.exceptions.RepositoryLookupException;
 import com.foreach.imageserver.core.services.repositories.ImageLookupRepository;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupResult;
 import com.foreach.imageserver.core.services.repositories.RepositoryLookupStatus;
@@ -40,9 +39,10 @@ public class DioContentLookupRepository implements ImageLookupRepository {
 
     @Override
     public RepositoryLookupResult fetchImage(Map<String, String> params) {
+        RepositoryLookupResult lookupResult = new RepositoryLookupResult();
+
         try {
             DioContentClient client = new DefaultRestDioContentClient(serverUrl, login, password);
-            RepositoryLookupResult lookupResult = new RepositoryLookupResult();
             String idAsString = params.get("id");
             if (idAsString == null) {
                 lookupResult.setStatus(RepositoryLookupStatus.ERROR);
@@ -73,10 +73,9 @@ public class DioContentLookupRepository implements ImageLookupRepository {
             lookupResult.setStatus(RepositoryLookupStatus.SUCCESS);
             lookupResult.setImageType(imageType);
             lookupResult.setContent(new ByteArrayInputStream(data.toByteArray()));
-
-            return lookupResult;
         } catch (Exception e) {
-            throw new RepositoryLookupException(e);
+            lookupResult.setStatus(RepositoryLookupStatus.ERROR);
         }
+        return lookupResult;
     }
 }
