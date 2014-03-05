@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.web.controllers;
 
+import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.services.ApplicationService;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
+@Refreshable
 public class ImageLoadController extends BaseImageAPIController {
     @Autowired
     private ApplicationService applicationService;

@@ -1,6 +1,8 @@
 package be.mediafin.imageserver.front;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
+import com.foreach.imageserver.connectors.dpp.DioContentModule;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.spring.logging.LogbackConfigurer;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -59,8 +61,15 @@ public class RootConfig {
         context.addPropertySources(propertyConfigurer);
 
         context.addModule(imageServerCoreModule());
+        //TODO: we probably don't want this dependency here:
+        context.addModule(dioContentModule());
 
         return context;
+    }
+
+    @Bean
+    public AcrossModule dioContentModule() {
+        return new DioContentModule();
     }
 
     @Bean

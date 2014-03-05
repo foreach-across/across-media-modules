@@ -4,6 +4,7 @@ import be.persgroep.red.diocontent.api.attachment.Attachment;
 import be.persgroep.red.diocontent.api.attachment.AttachmentRole;
 import be.persgroep.red.diocontent.api.client.DioContentClient;
 import be.persgroep.red.diocontent.webservice.client.DefaultRestDioContentClient;
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.exceptions.RepositoryLookupException;
 import com.foreach.imageserver.core.services.repositories.ImageLookupRepository;
@@ -17,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
+@Exposed
 public class DioContentLookupRepository implements ImageLookupRepository {
     private static final Logger LOG = LoggerFactory.getLogger(DioContentLookupRepository.class);
 
@@ -28,7 +30,6 @@ public class DioContentLookupRepository implements ImageLookupRepository {
         this.serverUrl = serverUrl;
         this.login = login;
         this.password = password;
-
         LOG.info("Registered DioContentLookupRepository on endpoint {}", serverUrl);
     }
 

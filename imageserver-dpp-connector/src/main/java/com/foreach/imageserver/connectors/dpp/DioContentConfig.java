@@ -1,14 +1,17 @@
 package com.foreach.imageserver.connectors.dpp;
 
 import com.foreach.imageserver.core.services.repositories.ImageLookupRepository;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:com/foreach/imageserver/connectors/dpp/config/${environment.type}/dpp-connector.properties")
-public class DppConfig {
+@ComponentScan(basePackages = "com.foreach.imageserver.connectors.dpp", excludeFilters = @ComponentScan.Filter(Configuration.class))
+public class DioContentConfig {
     @Bean
     public ImageLookupRepository dioContentLookupRepository(@Value(
             "${repository.diocontent.http.url}") String serverUrl, @Value(
