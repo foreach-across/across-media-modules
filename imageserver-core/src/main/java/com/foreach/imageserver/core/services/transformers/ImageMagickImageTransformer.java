@@ -91,7 +91,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
 
     private void executeModification(ImageModifyAction action) {
         try {
-            ImageModification variant = action.getVariant();
+            ImageModification variant = action.getModification();
             ImageVariant modifier = variant.getVariant();
 
             ConvertCmd cmd = new ConvertCmd(useGraphicsMagick);

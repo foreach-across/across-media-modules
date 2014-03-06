@@ -58,7 +58,7 @@ public class AssetConversionImageTransformer implements ImageTransformer {
         ImageModifyAction action = (ImageModifyAction) transformerAction;
 
         try {
-            ImageModification modifier = action.getVariant();
+            ImageModification modifier = action.getModification();
 
             byte[] sourceData = IOUtils.toByteArray(action.getImageFile().openContentStream());
 

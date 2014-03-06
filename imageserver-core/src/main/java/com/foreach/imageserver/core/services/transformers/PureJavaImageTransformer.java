@@ -118,7 +118,7 @@ public class PureJavaImageTransformer implements ImageTransformer {
         }
         try {
             ImageFile original = action.getImageFile();
-            ImageModification modifier = action.getVariant();
+            ImageModification modifier = action.getModification();
 
             BufferedImage bufferedImage = readImage(original);
 

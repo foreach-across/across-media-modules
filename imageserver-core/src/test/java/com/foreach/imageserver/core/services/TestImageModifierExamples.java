@@ -1,6 +1,10 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.services.transformers.ImageModifyAction;
+import com.foreach.imageserver.core.services.transformers.ImageTransformer;
+import com.foreach.imageserver.core.services.transformers.ImageTransformerAction;
+import com.foreach.imageserver.core.services.transformers.ImageTransformerPriority;
 import com.foreach.test.MockedLoader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,11 +18,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the reference set of examples of image modifier normalization,
@@ -26,10 +27,16 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ContextConfiguration(classes = {TestImageService.TestConfig.class}, loader = MockedLoader.class)
+@ContextConfiguration(classes = {TestImageModifierExamples.TestConfig.class}, loader = MockedLoader.class)
 public class TestImageModifierExamples {
     @Autowired
     private ImageService imageService;
+
+    @Autowired
+    private ImageTransformer imageTransformer;
+
+    @Autowired
+    private ImageModificationService imageModificationService;
 
     @Autowired
     private ImageStoreService imageStoreService;
@@ -84,8 +91,7 @@ public class TestImageModifierExamples {
     }
 
     private ImageModification response(ImageType output) {
-        return modifier(original.getDimensions().getWidth(), original.getDimensions().getHeight(), false, false,
-                output);
+        return modifier(original.getDimensions().getWidth(), original.getDimensions().getHeight(), false, false, output);
     }
 
     private ImageModification response(int width, int height) {
@@ -107,27 +113,29 @@ public class TestImageModifierExamples {
         modifier.getVariant().setOutput(output);
         modifier.getVariant().setStretch(stretch);
         modifier.getVariant().setKeepAspect(keepAspect);
-
         return modifier;
     }
 
     private void verify(ImageModification request, final ImageModification expectedModifier) {
         final ImageFile expectedImageFile = mock(ImageFile.class);
 
-        when(imageStoreService.getImageFile(eq(original), any(ImageModification.class))).thenAnswer(
-                new Answer<ImageFile>() {
-                    @Override
-                    public ImageFile answer(InvocationOnMock invocation) throws Throwable {
-                        ImageModification normalized = (ImageModification) invocation.getArguments()[1];
+        when(imageTransformer.canExecute(any(ImageTransformerAction.class))).thenReturn(ImageTransformerPriority.PREFERRED);
+        when(imageStoreService.getImageFile(any(Image.class))).thenReturn(expectedImageFile);
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                ImageModifyAction imageModifyAction = (ImageModifyAction) invocation.getArguments()[0];
+                ImageModification normalized = imageModifyAction.getModification();
 
-                        assertEquals(expectedModifier, normalized);
+                //THIS IS THE ACTUAL TEST!
+                assertEquals(expectedModifier, normalized);
 
-                        return expectedImageFile;
-                    }
-                });
-
-        ImageFile imageFile = imageService.fetchImageFile(original, request);
-        assertSame(expectedImageFile, imageFile);
+                imageModifyAction.setResult(expectedImageFile);
+                return null;
+            }
+        }).when(imageTransformer).execute(any(ImageTransformerAction.class));
+        when(imageModificationService.getCropForVariant(any(Image.class), any(ImageVariant.class))).thenReturn(new Crop());
+        imageService.fetchImageFile(original, request);
     }
 
     private Image originalWithKnownDimensionsAndImageType() {
@@ -144,5 +152,18 @@ public class TestImageModifierExamples {
         public ImageService imageService() {
             return new ImageServiceImpl();
         }
+
+        @Bean
+        public ImageTransformer imageTransformer() {
+            ImageTransformer transformer = mock(ImageTransformer.class);
+            when(transformer.isEnabled()).thenReturn(true);
+            return transformer;
+        }
+
+        @Bean
+        public ImageTransformService imageTransformService() {
+            return new ImageTransformServiceImpl();
+        }
+
     }
 }

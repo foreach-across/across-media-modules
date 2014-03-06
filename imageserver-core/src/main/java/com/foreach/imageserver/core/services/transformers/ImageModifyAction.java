@@ -4,15 +4,15 @@ import com.foreach.imageserver.core.business.ImageFile;
 import com.foreach.imageserver.core.business.ImageModification;
 
 public class ImageModifyAction extends ImageTransformerAction<ImageFile> {
-    private final ImageModification variant;
+    private final ImageModification modification;
 
-    public ImageModifyAction(ImageFile original, ImageModification variant) {
+    public ImageModifyAction(ImageFile original, ImageModification modification) {
         super(original);
-        this.variant = variant;
+        this.modification = modification;
     }
 
-    public ImageModification getVariant() {
-        return variant;
+    public ImageModification getModification() {
+        return modification;
     }
 
     @SuppressWarnings("all")
@@ -30,7 +30,7 @@ public class ImageModifyAction extends ImageTransformerAction<ImageFile> {
 
         ImageModifyAction that = (ImageModifyAction) o;
 
-        if (variant != null ? !variant.equals(that.variant) : that.variant != null) {
+        if (modification != null ? !modification.equals(that.modification) : that.modification != null) {
             return false;
         }
 
@@ -40,7 +40,7 @@ public class ImageModifyAction extends ImageTransformerAction<ImageFile> {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (variant != null ? variant.hashCode() : 0);
+        result = 31 * result + (modification != null ? modification.hashCode() : 0);
         return result;
     }
 
@@ -48,7 +48,7 @@ public class ImageModifyAction extends ImageTransformerAction<ImageFile> {
     public String toString() {
         return "ImageModifyAction{" +
                 "original=" + getImageFile() +
-                ", variant=" + variant +
+                ", variant=" + modification +
                 '}';
     }
 }
