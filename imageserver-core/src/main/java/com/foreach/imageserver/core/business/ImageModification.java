@@ -19,11 +19,11 @@ public class ImageModification {
         EMPTY_WITH_STRETCH.getVariant().setStretch(true);
     }
 
-    private Crop crop = new Crop();
-    private ImageVariant variant = new ImageVariant();
+    private Crop crop;
+    private ImageVariant variant;
 
     public ImageModification() {
-
+        this(new ImageVariant(), new Crop());
     }
 
     public ImageModification(ImageVariant variant, Crop crop) {

@@ -7,7 +7,6 @@ import com.foreach.imageserver.core.services.ImageVariantService;
 import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import com.foreach.test.MockedLoader;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -23,10 +23,10 @@ import java.io.ByteArrayInputStream;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(classes = TestImageStreamingController.TestConfig.class, loader = MockedLoader.class)
 public class TestImageStreamingController {
     @Autowired
@@ -40,11 +40,6 @@ public class TestImageStreamingController {
 
     @Autowired
     private ImageVariantService imageVariantService;
-
-    @Before
-    public void setup() {
-        reset(applicationService, imageService, imageVariantService);
-    }
 
     @Test
     public void requestUnknownApplication() {

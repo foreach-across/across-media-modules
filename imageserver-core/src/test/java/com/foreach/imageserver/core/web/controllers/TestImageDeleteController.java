@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.reset;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(classes = TestImageDeleteController.TestConfig.class, loader = MockedLoader.class)
 public class TestImageDeleteController {
     @Autowired
@@ -36,12 +38,7 @@ public class TestImageDeleteController {
     @Autowired
     private ImageService imageService;
 
-    @Before
-    public void setup() {
-        reset(imageService);
-    }
-
-    @Test
+   @Test
     public void unknownApplicationReturnsPermissionDeniedForDelete() {
         JsonResponse response = deleteController.delete(1, UUID.randomUUID().toString(), "somekey");
         Assert.assertFalse(response.isSuccess());

@@ -41,6 +41,12 @@ public abstract class TestImageTransformService<T extends ImageTransformerAction
                 private ImageFile modified = new ImageFile(ImageType.PNG, 10, null);
                 private ImageModification modifier = new ImageModification();
 
+                {
+                    modifier.getVariant().setHeight(100);
+                    modifier.getVariant().setWidth(100);
+                    modifier.getVariant().setOutput(ImageType.JPEG);
+                }
+
                 @Override
                 public ImageModifyAction getAction() {
                     return new ImageModifyAction(original, modifier);
@@ -49,6 +55,11 @@ public abstract class TestImageTransformService<T extends ImageTransformerAction
                 @Override
                 public ImageFile execute() {
                     return transformService.apply(image, modifier);
+                }
+
+                @Override
+                public ImageFile getOriginalImage() {
+                    return original;
                 }
 
                 @Override
@@ -80,6 +91,11 @@ public abstract class TestImageTransformService<T extends ImageTransformerAction
                 }
 
                 @Override
+                public ImageFile getOriginalImage() {
+                    return original;
+                }
+
+                @Override
                 public Dimensions getExpectedValue() {
                     return result;
                 }
@@ -99,6 +115,9 @@ public abstract class TestImageTransformService<T extends ImageTransformerAction
     @Autowired
     protected ImageTransformService transformService;
 
+    @Autowired
+    private ImageStoreService imageStoreService;
+
     private ActionTestItem<T, Y> actionTestItem;
 
     public static interface ActionTestItem<T extends ImageTransformerAction<Y>, Y> {
@@ -107,11 +126,14 @@ public abstract class TestImageTransformService<T extends ImageTransformerAction
         Y execute();
 
         Y getExpectedValue();
+
+        ImageFile getOriginalImage();
     }
 
     @Before
     public void prepareForTest() throws Exception {
         actionTestItem = createTestItem();
+        when(imageStoreService.getImageFile(any(Image.class))).thenReturn(actionTestItem.getOriginalImage());
     }
 
     protected abstract ActionTestItem<T, Y> createTestItem();

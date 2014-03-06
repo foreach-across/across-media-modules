@@ -8,12 +8,12 @@ import com.foreach.imageserver.core.services.ImageVariantService;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import com.foreach.test.MockedLoader;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(classes = TestImageModificationController.TestConfig.class, loader = MockedLoader.class)
 public class TestImageModificationController {
     @Autowired
@@ -39,11 +40,6 @@ public class TestImageModificationController {
 
     @Autowired
     private ImageVariantService imageVariantService;
-
-    @Before
-    public void setup() {
-        reset(applicationService, imageService, imageModificationService, imageVariantService);
-    }
 
     @Test
     public void unknownApplicationReturnsPermissionDenied() {

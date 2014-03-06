@@ -15,7 +15,7 @@ public enum ImageTestData {
     KAAIMAN_JPEG("/images/kaaimangrootkleur.jpg", "image/jpeg", ImageType.JPEG, false, 166746L, 900, 900),
     KAAIMAN_GIF("/images/kaaimangrootkleur.gif", "image/gif", ImageType.GIF, true, 152568L, 900, 900),
     KAAIMAN_PNG("/images/kaaimangrootkleur.png", "image/png", ImageType.PNG, true, 436783L, 900, 900),
-    KAAIMAN_SVG("/images/kaaimangrootkleur.svg", "image/svg+xml", ImageType.SVG, true, 327030L, 1125, 1125),
+    KAAIMAN_SVG("/images/kaaimangrootkleur.svg", "image/svg+xml", ImageType.SVG, true, 410672L, 900, 900),
     KAAIMAN_EPS("/images/kaaimangrootkleur.eps", "image/x-eps", ImageType.EPS, true, 410057L, 900, 900),
     TEST_PNG("/images/test.png", "image/png", ImageType.PNG, true, 163L, 100, 55),
     TEST_EPS("/images/test.eps", "application/eps", ImageType.EPS, false, 1521754L, 321, 583),
