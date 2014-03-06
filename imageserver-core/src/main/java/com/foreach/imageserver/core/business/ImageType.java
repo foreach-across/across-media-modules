@@ -64,6 +64,15 @@ public enum ImageType implements IdLookup<String> {
         return null;
     }
 
+    public static ImageType getForExtension(String uri) {
+        for (ImageType imageType : values()) {
+            if (StringUtils.endsWithIgnoreCase(uri, "." + imageType.getExtension())) {
+                return imageType;
+            }
+        }
+        return null;
+    }
+
     public static ImageType getPreferredOutputType(ImageType imageType) {
         if (imageType == null) {
             return JPEG;

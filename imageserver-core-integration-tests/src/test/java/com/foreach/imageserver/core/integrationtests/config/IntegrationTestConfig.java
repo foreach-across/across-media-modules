@@ -1,18 +1,20 @@
 package com.foreach.imageserver.core.integrationtests.config;
 
-import com.foreach.imageserver.core.ImageServerCoreConfig;
+import com.foreach.across.core.AcrossContext;
+import com.foreach.imageserver.core.ImageServerCoreModule;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 
 @Configuration
-@Import(ImageServerCoreConfig.class)
+@EnableWebMvc
 public class IntegrationTestConfig {
 
     @Bean
@@ -39,6 +41,23 @@ public class IntegrationTestConfig {
         ds.setDefaultAutoCommit(true);
 
         return ds;
+    }
+
+    @Bean
+    public AcrossContext acrossContext(ApplicationContext parentContext, PropertySourcesPlaceholderConfigurer propertyConfigurer, DataSource dataSource) {
+        AcrossContext context = new AcrossContext(parentContext);
+        context.setAllowInstallers(true);
+        context.setDataSource(dataSource);
+        context.addPropertySources(propertyConfigurer);
+
+        context.addModule(imageServerCoreModule());
+
+        return context;
+    }
+
+    @Bean
+    public ImageServerCoreModule imageServerCoreModule() {
+        return new ImageServerCoreModule();
     }
 
 }

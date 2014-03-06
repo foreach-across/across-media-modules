@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core;
 
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.StoredImageModification;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.sql.DataSource;
 
@@ -22,6 +24,14 @@ public class ImageServerCoreConfig {
 
     @Autowired
     private DataSource dataSource;
+
+    @Bean
+    @Exposed
+    public RequestMappingHandlerMapping imageServerCoreHandlerMapping() {
+        RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
+        handlerMapping.setInterceptors(new Object[]{globalVariableInterceptor()});
+        return handlerMapping;
+    }
 
     @Bean
     public GlobalVariableInterceptor globalVariableInterceptor() {
