@@ -75,6 +75,19 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.sun.xml.bind:jaxb-impl:2.1.12" level="project" />
     <orderEntry type="library" name="Maven: xerces:xercesImpl:2.9.1" level="project" />
     <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.3.04" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:4.0.0.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.9.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-server:7.6.11.v20130520" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty.orbit:javax.servlet:2.5.0.v201103041518" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-continuation:7.6.11.v20130520" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-http:7.6.11.v20130520" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-io:7.6.11.v20130520" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.eclipse.jetty:jetty-util:7.6.11.v20130520" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.h2database:h2:1.3.172" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.foreach.libs:common-test:0.7" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.jayway.jsonpath:json-path:0.9.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: net.minidev:json-smart:1.2" level="project" />
   </component>
 </module>
 
