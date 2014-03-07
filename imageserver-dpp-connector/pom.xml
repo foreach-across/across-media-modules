@@ -9,6 +9,13 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
+    <repositories>
+        <repository>
+            <id>mediafin-nexus</id>
+            <url>http://repository.ict.mediafin.be/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+
 	<artifactId>imageserver-dpp-connector</artifactId>
     <name>ImageServer DPP Connector</name>
 

@@ -10,13 +10,6 @@
         <version>2.0-SNAPSHOT</version>
     </parent>
 
-    <repositories>
-        <repository>
-            <id>mediafin</id>
-            <url>http://repository.ict.mediafin.be/nexus/content/groups/public</url>
-        </repository>
-    </repositories>
-
     <groupId>com.foreach.imageserver</groupId>
     <artifactId>imageserver-core-integration-tests</artifactId>
     <name>ImageServer Core Integration Tests</name>
