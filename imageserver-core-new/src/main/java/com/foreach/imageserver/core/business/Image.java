@@ -11,18 +11,19 @@ import java.util.Date;
  * application id.
  */
 public class Image {
-    private int id, applicationId;
+    private int imageId;
+    private int applicationId;
     private Dimensions dimensions;
     private ImageType imageType;
     private Date dateCreated;
     private String repositoryCode;
 
-    public int getId() {
-        return id;
+    public int getImageId() {
+        return imageId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
     }
 
     public int getApplicationId() {

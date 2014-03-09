@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foreach.imageserver.core.data.ImageDao">
+
+    <sql id="columns">
+		I.imageId as image_id,
+        I.applicationId as image_applicationid,
+        I.width as image_width,
+        I.height as image_height,
+        I.imageTypeId as image_imagetype,
+        I.created as image_datecreated,
+        I.repositoryCode as image_repository_code
+	</sql>
+
+    <resultMap id="imageMap" type="Image">
+        <id property="imageId" column="image_id"/>
+        <id property="applicationId" column="image_applicationid"/>
+        <result property="dimensions.width" column="image_width"/>
+        <result property="dimensions.height" column="image_height"/>
+        <result property="imageType" column="image_imagetype" typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
+        <result property="dateCreated" column="image_datecreated"/>
+        <result property="repositoryCode" column="image_repository_code"/>
+    </resultMap>
+
+    <select id="getById" parameterType="map" resultMap="imageMap">
+        SELECT
+        <include refid="columns"/>
+        FROM Image I
+        WHERE I.imageId = #{imageId} AND I.applicationId = #{applicationId}
+    </select>
+
+    <insert id="insert" parameterType="Image">
+        INSERT INTO Image (
+            imageId,
+            applicationId,
+            width,
+            height,
+            imageTypeId,
+            repositoryCode
+        ) VALUES (
+            #{imageId},
+            #{applicationId},
+            #{dimensions.width},
+            #{dimensions.height},
+            #{imageType.id},
+            #{repositoryCode}
+        )
+    </insert>
+
+</mapper>
