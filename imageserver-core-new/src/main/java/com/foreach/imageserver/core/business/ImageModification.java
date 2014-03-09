@@ -11,21 +11,12 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class ImageModification {
-    private Integer id;
     private int imageId;
     private int resolutionId;
     private Crop crop;
     private boolean stretch;
     private boolean keepAspect;
     private Dimensions density;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public int getImageId() {
         return imageId;

@@ -53,7 +53,7 @@
         </createTable>
         <addPrimaryKey tableName="IMAGE"
                        columnNames="applicationId,imageId"
-                       constraintName="pk_image" />
+                       constraintName="pk_image"/>
     </changeSet>
 
     <changeSet id="201403091327" author="ovh">
@@ -70,12 +70,57 @@
         </createTable>
         <createTable tableName="APPLICATION_IMAGE_RESOLUTIONS">
             <column name="applicationId" type="int">
-                <constraints nullable="false" references="APPLICATION(id)" foreignKeyName="fk_application_resolution_1"/>
+                <constraints nullable="false" references="APPLICATION(id)"
+                             foreignKeyName="fk_application_resolution_1"/>
             </column>
             <column name="imageResolutionId" type="int">
-                <constraints nullable="false" references="IMAGE_RESOLUTION(id)" foreignKeyName="fk_application_resolution_2"/>
+                <constraints nullable="false" references="IMAGE_RESOLUTION(id)"
+                             foreignKeyName="fk_application_resolution_2"/>
             </column>
         </createTable>
     </changeSet>
 
+    <changeSet id="201403091352" author="ovh">
+        <createTable tableName="IMAGE_MODIFICATION">
+            <column name="imageId" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resolutionId" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="densityX" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="densityY" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stretch" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="keepAspect" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropX" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropY" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropWidth" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropHeight" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropSourceWidth" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropSourceHeight" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="IMAGE_MODIFICATION"
+                       columnNames="imageId,resolutionId"
+                       constraintName="pk_image_modification"/>
+    </changeSet>
 </databaseChangeLog>
