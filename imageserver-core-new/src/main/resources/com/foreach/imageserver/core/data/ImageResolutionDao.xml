@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foreach.imageserver.core.data.ImageResolutionDao">
+
+    <sql id="columns">
+		IR.id as image_resolution_id,
+        IR.width as image_resolution_width,
+        IR.height as image_resolution_height,
+	</sql>
+
+    <resultMap id="imageResolutionMap" type="ImageResolution">
+        <id property="id" column="image_resolution_id"/>
+        <result property="width" column="image_resolution_width"/>
+        <result property="height" column="image_resolution_height"/>
+    </resultMap>
+
+    <select id="getForApplication" parameterType="map" resultMap="imageResolutionMap">
+        SELECT
+        <include refid="imageResolutionColumns"/>
+        FROM APPLICATION_IMAGE_RESOLUTIONS AIR
+        LEFT JOIN IMAGE_RESOLUTION IR ON IR.id = AIR.imageResolutionId
+        WHERE AIR.applicationId = #{applicationId}
+    </select>
+
+</mapper>

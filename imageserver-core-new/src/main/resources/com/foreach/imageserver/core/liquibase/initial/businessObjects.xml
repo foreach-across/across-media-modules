@@ -56,4 +56,26 @@
                        constraintName="pk_image" />
     </changeSet>
 
+    <changeSet id="201403091327" author="ovh">
+        <createTable tableName="IMAGE_RESOLUTION">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="width" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="height" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <createTable tableName="APPLICATION_IMAGE_RESOLUTIONS">
+            <column name="applicationId" type="int">
+                <constraints nullable="false" references="APPLICATION(id)" foreignKeyName="fk_application_resolution_1"/>
+            </column>
+            <column name="imageResolutionId" type="int">
+                <constraints nullable="false" references="IMAGE_RESOLUTION(id)" foreignKeyName="fk_application_resolution_2"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
