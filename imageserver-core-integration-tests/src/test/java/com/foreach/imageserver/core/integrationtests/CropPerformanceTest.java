@@ -1,3 +1,4 @@
+/*
 package com.foreach.imageserver.core.integrationtests;
 
 import com.foreach.imageserver.core.business.*;
@@ -86,3 +87,4 @@ public class CropPerformanceTest extends AbstractIntegrationTest {
     }
 
 }
+*/

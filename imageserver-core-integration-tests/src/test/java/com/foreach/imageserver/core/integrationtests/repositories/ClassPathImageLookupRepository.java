@@ -1,3 +1,4 @@
+/*
 package com.foreach.imageserver.core.integrationtests.repositories;
 
 import com.foreach.imageserver.core.business.ImageType;
@@ -56,3 +57,4 @@ public class ClassPathImageLookupRepository implements ImageLookupRepository {
     }
 
 }
+*/
