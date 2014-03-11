@@ -5,8 +5,8 @@
     <sql id="columns">
 		IM.imageId as image_id,
         IM.resolutionId as resolution_id,
-        IM.densityX as density_x,
-        IM.densityY as density_y,
+        IM.densityWidth as density_width,
+        IM.densityHeight as density_height,
         IM.stretch as stretch,
         IM.keepAspect as keepaspect,
         IM.cropX as crop_x,
@@ -14,14 +14,14 @@
         IM.cropWidth as crop_width,
         IM.cropHeight as crop_height,
         IM.cropSourceWidth as crop_source_width,
-        IM.cropSourceHeight as crop_source_height,
+        IM.cropSourceHeight as crop_source_height
 	</sql>
 
     <resultMap id="imageModificationMap" type="ImageModification">
         <id property="imageId" column="image_id"/>
         <id property="resolutionId" column="resolution_id"/>
-        <result property="density.x" column="density_x"/>
-        <result property="density.y" column="density_y"/>
+        <result property="density.width" column="density_width"/>
+        <result property="density.height" column="density_height"/>
         <result property="stretch" column="stretch"/>
         <result property="keepAspect" column="keepaspect"/>
         <result property="crop.x" column="crop_x"/>
@@ -43,8 +43,8 @@
         INSERT INTO IMAGE_MODIFICATION (
           imageId,
           resolutionId,
-          densityX,
-          densityY,
+          densityWidth,
+          densityHeight,
           stretch,
           keepAspect,
           cropX,
@@ -52,12 +52,12 @@
           cropWidth,
           cropHeight,
           cropSourceWidth,
-          cropSourcHeight
+          cropSourceHeight
         ) VALUES (
           #{imageId},
           #{resolutionId},
-          #{density.x},
-          #{density.y},
+          #{density.width},
+          #{density.height},
           #{stretch},
           #{keepAspect},
           #{crop.x},

@@ -88,10 +88,10 @@
             <column name="resolutionId" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="densityX" type="int" defaultValueNumeric="0">
+            <column name="densityWidth" type="int" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="densityY" type="int" defaultValueNumeric="0">
+            <column name="densityHeight" type="int" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
             <column name="stretch" type="boolean" defaultValueBoolean="false">
