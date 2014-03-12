@@ -1,0 +1,187 @@
+package com.foreach.imageserver.core.integrationtests.transformers;
+
+import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.integrationtests.AbstractIntegrationTest;
+import com.foreach.imageserver.core.transformers.*;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.InputStream;
+
+import static com.foreach.imageserver.core.integrationtests.utils.ImageUtils.*;
+import static org.junit.Assert.*;
+
+public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
+
+    @Autowired
+    private ImageMagickImageTransformer imageTransformer;
+
+    @Test
+    public void canExecute() {
+        for (ImageType imageType : ImageType.values()) {
+            ImageTransformerPriority expectedPriority = (imageType == ImageType.EPS || imageType == ImageType.PDF) ? ImageTransformerPriority.UNABLE : ImageTransformerPriority.PREFERRED;
+            assertEquals(expectedPriority, imageTransformer.canExecute(calculateDimensionsAction(imageType)));
+            assertEquals(expectedPriority, imageTransformer.canExecute(modifyAction(imageType)));
+        }
+    }
+
+    @Test
+    public void calculateDimensionsJpeg() {
+        Dimensions dimensions = imageTransformer.execute(calculateDimensionsAction(ImageType.JPEG, "images/cropCorrectness.jpeg"));
+        assertEquals(2000, dimensions.getWidth());
+        assertEquals(1000, dimensions.getHeight());
+    }
+
+    @Test
+    public void calculateDimensionsPng() {
+        Dimensions dimensions = imageTransformer.execute(calculateDimensionsAction(ImageType.PNG, "images/cropCorrectness.png"));
+        assertEquals(2000, dimensions.getWidth());
+        assertEquals(1000, dimensions.getHeight());
+    }
+
+    @Test
+    public void cropJpgToJpg() throws Exception {
+        ImageModifyAction action = modifyAction(
+                ImageType.JPEG,
+                "images/cropCorrectness.jpeg",
+                270,
+                580,
+                1000,
+                140,
+                270,
+                580,
+                ImageType.JPEG);
+        ImageSource result = imageTransformer.execute(action);
+        assertNotNull(result);
+        assertNotNull(result.getImageStream());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/cropJpgToJpg.jpeg")));
+    }
+
+    @Test
+    public void cropPngToPng() throws Exception {
+        ImageModifyAction action = modifyAction(
+                ImageType.PNG,
+                "images/cropCorrectness.png",
+                270,
+                580,
+                1000,
+                140,
+                270,
+                580,
+                ImageType.PNG);
+        ImageSource result = imageTransformer.execute(action);
+        assertNotNull(result);
+        assertNotNull(result.getImageStream());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/cropPngToPng.png")));
+    }
+
+    @Test
+    public void cropJpgToPng() throws Exception {
+        ImageModifyAction action = modifyAction(
+                ImageType.JPEG,
+                "images/cropCorrectness.jpeg",
+                270,
+                580,
+                1000,
+                140,
+                270,
+                580,
+                ImageType.PNG);
+        ImageSource result = imageTransformer.execute(action);
+        assertNotNull(result);
+        assertNotNull(result.getImageStream());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/cropJpgToPng.png")));
+    }
+
+    @Test
+    public void cropPngToJpg() throws Exception {
+        ImageModifyAction action = modifyAction(
+                ImageType.PNG,
+                "images/cropCorrectness.png",
+                270,
+                580,
+                1000,
+                140,
+                270,
+                580,
+                ImageType.JPEG);
+        ImageSource result = imageTransformer.execute(action);
+        assertNotNull(result);
+        assertNotNull(result.getImageStream());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/cropPngToJpg.jpeg")));
+    }
+
+    @Test
+    public void transparentPngToPng() throws Exception {
+        ImageModifyAction action = modifyAction(
+                ImageType.PNG,
+                "images/transparency.png",
+                100,
+                100,
+                0,
+                0,
+                100,
+                100,
+                ImageType.PNG);
+        ImageSource result = imageTransformer.execute(action);
+        assertNotNull(result);
+        assertNotNull(result.getImageStream());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/transparentPngToPng.png")));
+    }
+
+    @Test
+    public void transparentPngToJpg() throws Exception {
+        ImageModifyAction action = modifyAction(
+                ImageType.PNG,
+                "images/transparency.png",
+                100,
+                100,
+                0,
+                0,
+                100,
+                100,
+                ImageType.JPEG);
+        ImageSource result = imageTransformer.execute(action);
+        assertNotNull(result);
+        assertNotNull(result.getImageStream());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/transparentPngToJpg.jpg")));
+    }
+
+    @Test
+    public void isEnabled() {
+        assertTrue(imageTransformer.isEnabled());
+    }
+
+    @Test
+    public void getOrder() throws Exception {
+        assertEquals(3, imageTransformer.getOrder());
+    }
+
+    private ImageCalculateDimensionsAction calculateDimensionsAction(ImageType imageType) {
+        return new ImageCalculateDimensionsAction(new ImageSource(imageType, null));
+    }
+
+    private ImageModifyAction modifyAction(ImageType sourceType, String classPath, int outputWidth, int outputHeight, int cropX, int cropY, int cropWidth, int cropHeight, ImageType outputType) {
+        InputStream imageStream = getClass().getClassLoader().getResourceAsStream(classPath);
+        return new ImageModifyAction(
+                new ImageSource(sourceType, imageStream),
+                outputWidth,
+                outputHeight,
+                cropX,
+                cropY,
+                cropWidth,
+                cropHeight,
+                0,
+                0,
+                outputType);
+    }
+
+    private ImageModifyAction modifyAction(ImageType imageType) {
+        return new ImageModifyAction(new ImageSource(imageType, null), 0, 0, 0, 0, 0, 0, 0, 0, null);
+    }
+
+    private ImageCalculateDimensionsAction calculateDimensionsAction(ImageType imageType, String classPath) {
+        InputStream imageStream = getClass().getClassLoader().getResourceAsStream(classPath);
+        return new ImageCalculateDimensionsAction(new ImageSource(imageType, imageStream));
+    }
+}

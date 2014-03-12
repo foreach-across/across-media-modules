@@ -24,6 +24,18 @@ public class ImageUtils {
         return image;
     }
 
+    public static BufferedImage bufferedImage(InputStream imageStream) throws IOException {
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(imageStream);
+        } finally {
+            IOUtils.closeQuietly(imageStream);
+        }
+
+        return image;
+    }
+
     public static BufferedImage bufferedImageFromClassPath(String classPath) throws IOException {
         BufferedImage image = null;
 
