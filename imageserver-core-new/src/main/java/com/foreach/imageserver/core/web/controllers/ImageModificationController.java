@@ -16,7 +16,11 @@ import java.util.List;
 @RequestMapping("/modification")
 public class ImageModificationController extends BaseImageAPIController {
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public static final String REGISTER_PATH = "register";
+    public static final String LIST_REGISTERED_PATH = "listRegistered";
+    public static final String LIST_RESOLUTIONS_PATH = "listResolutions";
+
+    @RequestMapping(value = "/" + REGISTER_PATH, method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse register(@RequestParam(value = "aid", required = true) int applicationId,
                                  @RequestParam(value = "token", required = true) String applicationKey,
@@ -27,7 +31,7 @@ public class ImageModificationController extends BaseImageAPIController {
         return success();
     }
 
-    @RequestMapping(value = "/listRegistered", method = RequestMethod.GET)
+    @RequestMapping(value = "/" + LIST_REGISTERED_PATH, method = RequestMethod.GET)
     @ResponseBody
     public JsonResponse<List<RegisteredImageModificationDto>> listRegistered(@RequestParam(value = "aid", required = true) int applicationId,
                                                                              @RequestParam(value = "token", required = true) String applicationKey,
@@ -36,7 +40,7 @@ public class ImageModificationController extends BaseImageAPIController {
         return success();
     }
 
-    @RequestMapping(value = "/listResolutions", method = RequestMethod.GET)
+    @RequestMapping(value = "/" + LIST_RESOLUTIONS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public JsonResponse<List<ImageResolutionDto>> listVariants(@RequestParam(value = "aid", required = true) int applicationId,
                                                                @RequestParam(value = "token", required = true) String applicationKey) {

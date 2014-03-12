@@ -29,6 +29,7 @@
         <module>imageserver-core</module>
         <module>imageserver-core-new</module>
         <module>imageserver-core-integration-tests</module>
+        <module>imageserver-client</module>
 	</modules>
     <dependencies>
         <dependency>

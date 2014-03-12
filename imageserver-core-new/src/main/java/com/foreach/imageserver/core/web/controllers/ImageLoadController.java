@@ -13,7 +13,9 @@ import java.util.Map;
 @Refreshable
 public class ImageLoadController extends BaseImageAPIController {
 
-    @RequestMapping("/load")
+    public static final String LOAD_IMAGE_PATH = "load";
+
+    @RequestMapping("/" + LOAD_IMAGE_PATH)
     @ResponseBody
     public JsonResponse load(@RequestParam(value = "aid", required = true) int applicationId,
                              @RequestParam(value = "token", required = true) String applicationKey,
