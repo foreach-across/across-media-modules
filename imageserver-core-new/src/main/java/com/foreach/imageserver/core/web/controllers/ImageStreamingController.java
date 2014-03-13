@@ -17,9 +17,11 @@ import java.io.IOException;
 
 @Controller
 public class ImageStreamingController {
+
+    public static final String VIEW_PATH = "view";
     private static final Logger LOG = LoggerFactory.getLogger(ImageStreamingController.class);
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/" + VIEW_PATH, method = RequestMethod.GET)
     public void view(@RequestParam(value = "aid", required = true) int applicationId,
                      @RequestParam(value = "iid", required = true) int imageId,
                      ImageResolutionDto imageResolutionDto,

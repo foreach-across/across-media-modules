@@ -2,6 +2,7 @@ package com.foreach.imageserver.client;
 
 import com.foreach.imageserver.core.web.controllers.ImageLoadController;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
+import com.foreach.imageserver.core.web.dto.LoadedImageDto;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.Client;
@@ -12,7 +13,7 @@ import javax.ws.rs.client.WebTarget;
 public class DppImageServerClientImpl extends BaseImageServerClientImpl implements DppImageServerClient {
 
     @Override
-    public void loadImage(String imageServerUrl, int applicationId, String applicationToken, int dioContentId) {
+    public LoadedImageDto loadImage(String imageServerUrl, int applicationId, String applicationToken, int dioContentId) {
         Client client = ClientBuilder.newBuilder().newClient();
         WebTarget target = client.target(imageServerUrl).path(ImageLoadController.LOAD_IMAGE_PATH);
         target = addApplicationParams(applicationId, applicationToken, target);
@@ -23,5 +24,6 @@ public class DppImageServerClientImpl extends BaseImageServerClientImpl implemen
         if (!response.isSuccess()) {
             throw new RuntimeException("Unexpected exception while registering image modification " + response.getErrorMessage());
         }
+        return (LoadedImageDto) response.getResult();
     }
 }
