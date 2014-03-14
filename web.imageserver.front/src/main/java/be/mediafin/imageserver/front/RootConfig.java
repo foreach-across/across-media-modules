@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -19,6 +20,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebMvc
+@PropertySource("classpath:be/mediafin/imageserver/config/${environment.type}/common.properties")
 public class RootConfig {
 
     @Bean
@@ -29,10 +31,8 @@ public class RootConfig {
     }
 
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer(
-            @Value("classpath:be/mediafin/imageserver/config/${environment.type}/common.properties") Resource defaultProperties) {
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
-        propertySources.setLocation(defaultProperties);
         propertySources.setIgnoreResourceNotFound(true);
         propertySources.setIgnoreUnresolvablePlaceholders(true);
 
