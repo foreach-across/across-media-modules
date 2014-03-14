@@ -26,8 +26,8 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         String applicationSql = "INSERT INTO APPLICATION ( id, name, active, code, created, updated ) VALUES ( ?, ?, ?, ?, ?, ? )";
         jdbcTemplate.update(applicationSql, 1010, "the_application_name", true, "the_application_code", new Date(2012, 11, 13), new Date(2012, 11, 14));
 
-        String imageSql = "INSERT INTO IMAGE ( imageId, applicationId, width, height, imageTypeId, created, repositoryCode ) VALUES ( ?, ?, ?, ?, ?, ?, ? )";
-        jdbcTemplate.update(imageSql, 9998, 1010, 1212, 3131, 1, new Date(2012, 11, 13), "the_repository_code");
+        String imageSql = "INSERT INTO IMAGE ( imageId, applicationId, created, repositoryCode, originalImageId ) VALUES ( ?, ?, ?, ?, ? )";
+        jdbcTemplate.update(imageSql, 9998, 1010, new Date(2012, 11, 13), "the_repository_code", 3131);
 
         String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageResolutionSql, 8, 1111, 2222);

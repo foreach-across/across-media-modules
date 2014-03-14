@@ -1,8 +1,6 @@
 package com.foreach.imageserver.core.integrationtests.data;
 
-import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.data.ImageDao;
 import com.foreach.imageserver.core.integrationtests.AbstractIntegrationTest;
 import org.junit.Test;
@@ -30,26 +28,16 @@ public class ImageDaoTest extends AbstractIntegrationTest {
         Image writtenImage = new Image();
         writtenImage.setImageId(3216);
         writtenImage.setApplicationId(1010);
-        writtenImage.setDimensions(dimensions(1122, 2211));
-        writtenImage.setImageType(ImageType.SVG);
         writtenImage.setRepositoryCode("the_repository_code");
+        writtenImage.setOriginalImageId(121212);
         imageDao.insert(writtenImage);
 
         Image readImage = imageDao.getById(1010, 3216);
         assertEquals(writtenImage.getImageId(), readImage.getImageId());
         assertEquals(writtenImage.getApplicationId(), readImage.getApplicationId());
-        assertEquals(writtenImage.getDimensions().getWidth(), readImage.getDimensions().getWidth());
-        assertEquals(writtenImage.getDimensions().getHeight(), readImage.getDimensions().getHeight());
-        assertEquals(writtenImage.getImageType(), readImage.getImageType());
         assertTrue(momentsAgo(readImage.getDateCreated()));
         assertEquals(writtenImage.getRepositoryCode(), readImage.getRepositoryCode());
-    }
-
-    private Dimensions dimensions(int width, int height) {
-        Dimensions dimensions = new Dimensions();
-        dimensions.setWidth(width);
-        dimensions.setHeight(height);
-        return dimensions;
+        assertEquals(writtenImage.getOriginalImageId(), readImage.getOriginalImageId());
     }
 
     private boolean momentsAgo(Date date) {

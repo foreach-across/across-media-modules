@@ -35,19 +35,13 @@
             <column name="applicationId" type="int">
                 <constraints nullable="false" references="Application(id)" foreignKeyName="fk_image_application_id"/>
             </column>
-            <column name="width" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="height" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="imageTypeId" type="int">
-                <constraints nullable="false"/>
-            </column>
             <column name="created" type="datetime" defaultValueComputed="${now}">
                 <constraints nullable="false"/>
             </column>
             <column name="repositoryCode" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="originalImageId" type="int">
                 <constraints nullable="false"/>
             </column>
         </createTable>

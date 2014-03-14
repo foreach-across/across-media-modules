@@ -5,21 +5,17 @@
     <sql id="columns">
 		I.imageId as image_id,
         I.applicationId as image_applicationid,
-        I.width as image_width,
-        I.height as image_height,
-        I.imageTypeId as image_imagetype,
         I.created as image_datecreated,
-        I.repositoryCode as image_repository_code
+        I.repositoryCode as image_repository_code,
+        I.originalImageId as image_original_image_id
 	</sql>
 
     <resultMap id="imageMap" type="Image">
         <id property="imageId" column="image_id"/>
         <id property="applicationId" column="image_applicationid"/>
-        <result property="dimensions.width" column="image_width"/>
-        <result property="dimensions.height" column="image_height"/>
-        <result property="imageType" column="image_imagetype" typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
         <result property="dateCreated" column="image_datecreated"/>
         <result property="repositoryCode" column="image_repository_code"/>
+        <result property="originalImageId" column="image_original_image_id"/>
     </resultMap>
 
     <select id="getById" parameterType="map" resultMap="imageMap">
@@ -33,17 +29,13 @@
         INSERT INTO Image (
             imageId,
             applicationId,
-            width,
-            height,
-            imageTypeId,
-            repositoryCode
+            repositoryCode,
+            originalImageId
         ) VALUES (
             #{imageId},
             #{applicationId},
-            #{dimensions.width},
-            #{dimensions.height},
-            #{imageType.id},
-            #{repositoryCode}
+            #{repositoryCode},
+            #{originalImageId}
         )
     </insert>
 
