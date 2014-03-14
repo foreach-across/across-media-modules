@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 
 // TODO Support for vector formats using Ghostscript is untested.
 @Component
+@Conditional(ImageMagickImageTransformerConditional.class)
 public class ImageMagickImageTransformer implements ImageTransformer {
     public static final int GS_MAX_DENSITY = 1200;
     public static final int GS_DEFAULT_DENSITY = 72;
@@ -30,9 +32,6 @@ public class ImageMagickImageTransformer implements ImageTransformer {
 
     private final int order;
     private final boolean ghostScriptEnabled;
-
-    @Value("${transformer.imagemagick.enabled}")
-    private boolean enabled;
 
     @Autowired
     public ImageMagickImageTransformer(@Value("${transformer.imagemagick.priority}") int order,
@@ -123,16 +122,10 @@ public class ImageMagickImageTransformer implements ImageTransformer {
         } catch (Exception e) {
             LOG.error("Failed to apply modification: {}", e);
             throw new ImageModificationException(e);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(imageStream);
             IOUtils.closeQuietly(os);
         }
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
     }
 
     @Override

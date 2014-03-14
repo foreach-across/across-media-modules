@@ -23,6 +23,4 @@ public interface ImageTransformer {
      * Multiple ImageTransformer beans will be ordered using this value.
      */
     int getOrder();
-
-    boolean isEnabled();
 }

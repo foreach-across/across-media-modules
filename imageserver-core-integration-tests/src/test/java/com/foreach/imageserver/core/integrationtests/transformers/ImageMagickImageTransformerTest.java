@@ -148,11 +148,6 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void isEnabled() {
-        assertTrue(imageTransformer.isEnabled());
-    }
-
-    @Test
     public void getOrder() throws Exception {
         assertEquals(3, imageTransformer.getOrder());
     }
