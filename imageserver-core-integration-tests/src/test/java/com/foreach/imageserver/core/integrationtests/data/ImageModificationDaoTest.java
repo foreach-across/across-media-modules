@@ -45,16 +45,16 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         writtenDensity.setHeight(107);
 
         ImageModification writtenImageModification = new ImageModification();
+        writtenImageModification.setApplicationId(112233);
         writtenImageModification.setImageId(9998);
         writtenImageModification.setResolutionId(8);
         writtenImageModification.setCrop(writtenCrop);
-        writtenImageModification.setStretch(true);
-        writtenImageModification.setKeepAspect(true);
         writtenImageModification.setDensity(writtenDensity);
 
         imageModificationDao.insert(writtenImageModification);
 
-        ImageModification readImageModification = imageModificationDao.getById(9998, 8);
+        ImageModification readImageModification = imageModificationDao.getById(112233, 9998, 8);
+        assertEquals(writtenImageModification.getApplicationId(), readImageModification.getApplicationId());
         assertEquals(writtenImageModification.getImageId(), readImageModification.getImageId());
         assertEquals(writtenImageModification.getResolutionId(), readImageModification.getResolutionId());
         assertEquals(writtenImageModification.getCrop().getX(), readImageModification.getCrop().getX());
@@ -63,8 +63,6 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         assertEquals(writtenImageModification.getCrop().getHeight(), readImageModification.getCrop().getHeight());
         assertEquals(writtenImageModification.getCrop().getSourceWidth(), readImageModification.getCrop().getSourceWidth());
         assertEquals(writtenImageModification.getCrop().getSourceHeight(), readImageModification.getCrop().getSourceHeight());
-        assertEquals(writtenImageModification.isStretch(), readImageModification.isStretch());
-        assertEquals(writtenImageModification.isKeepAspect(), readImageModification.isKeepAspect());
         assertEquals(writtenImageModification.getDensity().getWidth(), readImageModification.getDensity().getWidth());
         assertEquals(writtenImageModification.getDensity().getHeight(), readImageModification.getDensity().getHeight());
     }

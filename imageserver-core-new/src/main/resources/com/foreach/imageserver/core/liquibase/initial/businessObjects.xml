@@ -76,6 +76,9 @@
 
     <changeSet id="201403091352" author="ovh">
         <createTable tableName="IMAGE_MODIFICATION">
+            <column name="applicationId" type="int">
+                <constraints nullable="false"/>
+            </column>
             <column name="imageId" type="int">
                 <constraints nullable="false"/>
             </column>
@@ -86,12 +89,6 @@
                 <constraints nullable="false"/>
             </column>
             <column name="densityHeight" type="int" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="stretch" type="boolean" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="keepAspect" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="cropX" type="int" defaultValueNumeric="0">
@@ -114,7 +111,7 @@
             </column>
         </createTable>
         <addPrimaryKey tableName="IMAGE_MODIFICATION"
-                       columnNames="imageId,resolutionId"
+                       columnNames="applicationId,imageId,resolutionId"
                        constraintName="pk_image_modification"/>
     </changeSet>
     <changeSet id="201403141650" author="ovh">
