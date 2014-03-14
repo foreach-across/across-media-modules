@@ -18,6 +18,13 @@
                 typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
     </resultMap>
 
+    <select id="getById" parameterType="int" resultMap="webOriginalImageParametersMap">
+        SELECT
+        <include refid="columns"/>
+        FROM WEB_ORIGINAL_IMAGES WOI
+        WHERE WOI.id = #{value}
+    </select>
+
     <select id="getByParameters" parameterType="String" resultMap="webOriginalImageParametersMap">
         SELECT
         <include refid="columns"/>
