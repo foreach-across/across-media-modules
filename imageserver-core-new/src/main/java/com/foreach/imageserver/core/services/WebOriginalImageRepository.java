@@ -38,7 +38,8 @@ public class WebOriginalImageRepository implements OriginalImageRepository {
     @Override
     public OriginalImage getOriginalImage(Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
-        return new WebOriginalImage(webOriginalImageParametersDao.getByParameters(url));
+        WebOriginalImageParameters parameters = webOriginalImageParametersDao.getByParameters(url);
+        return parameters != null ? new WebOriginalImage(parameters) : null;
     }
 
     @Override
@@ -78,6 +79,13 @@ public class WebOriginalImageRepository implements OriginalImageRepository {
         } finally {
             IOUtils.closeQuietly(imageStream);
         }
+    }
+
+    @Override
+    public boolean parametersAreEqual(int originalImageId, Map<String, String> repositoryParameters) {
+        WebOriginalImageParameters storedParameters = webOriginalImageParametersDao.getById(originalImageId);
+        String suppliedUrl = extractUrl(repositoryParameters);
+        return storedParameters.getUrl().equals(suppliedUrl);
     }
 
     private String extractUrl(Map<String, String> repositoryParameters) {

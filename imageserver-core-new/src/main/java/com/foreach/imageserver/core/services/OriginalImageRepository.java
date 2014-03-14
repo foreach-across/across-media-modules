@@ -10,4 +10,6 @@ public interface OriginalImageRepository {
     OriginalImage getOriginalImage(Map<String, String> repositoryParameters);
 
     RetrievedOriginalImage insertAndRetrieveOriginalImage(Map<String, String> repositoryParameters);
+
+    boolean parametersAreEqual(int originalImageId, Map<String, String> repositoryParameters);
 }
