@@ -117,4 +117,23 @@
                        columnNames="imageId,resolutionId"
                        constraintName="pk_image_modification"/>
     </changeSet>
+    <changeSet id="201403141650" author="ovh">
+        <createTable tableName="WEB_ORIGINAL_IMAGES">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="url" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="width" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="height" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="imageTypeId" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>
