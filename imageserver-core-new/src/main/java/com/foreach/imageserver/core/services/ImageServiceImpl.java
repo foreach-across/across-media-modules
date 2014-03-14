@@ -1,8 +1,10 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.business.OriginalImage;
 import com.foreach.imageserver.core.data.ImageDao;
+import com.foreach.imageserver.core.data.ImageModificationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Autowired
     private ImageStoreService imageStoreService;
+
+    @Autowired
+    private ImageModificationDao imageModificationDao;
 
     @Override
     public Image getById(int applicationId, int imageId) {
@@ -46,6 +51,12 @@ public class ImageServiceImpl implements ImageService {
         if (retrievedOriginalImage != null) {
             imageStoreService.storeOriginalImage(originalImage, retrievedOriginalImage.getImageBytes());
         }
+    }
+
+    // TODO Support editing existing crops. (Don't forget to remove all the variants from disk!)
+    @Override
+    public void saveImageModification(ImageModification modification) {
+        imageModificationDao.insert(modification);
     }
 
 }
