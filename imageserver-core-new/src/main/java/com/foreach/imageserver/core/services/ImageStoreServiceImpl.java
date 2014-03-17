@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.OriginalImage;
+import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.transformers.StreamImageSource;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import java.nio.file.StandardCopyOption;
 public class ImageStoreServiceImpl implements ImageStoreService {
     private final Path tempFolder;
     private final Path originalsFolder;
+    private final Path variantsFolder;
 
     @Autowired
     public ImageStoreServiceImpl(@Value("${imagestore.folder}") File imageStoreFolder) throws IOException {
@@ -33,9 +35,11 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
         tempFolder = imageStoreFolderPath.resolve("temp");
         originalsFolder = imageStoreFolderPath.resolve("originals");
+        variantsFolder = imageStoreFolderPath.resolve("variants");
 
         Files.createDirectories(tempFolder);
         Files.createDirectories(originalsFolder);
+        Files.createDirectories(variantsFolder);
     }
 
     @Override
@@ -55,6 +59,25 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         writeSafely(imageStream, targetPath);
     }
 
+    @Override
+    public StreamImageSource getOriginalImage(OriginalImage originalImage) {
+        Path targetPath = setupTargetPath(originalImage);
+        return read(targetPath, originalImage.getImageType());
+    }
+
+
+    @Override
+    public void storeVariantImage(Image image, ImageResolution imageResolution, ImageVariant imageVariant, StreamImageSource imageSource) {
+        Path targetPath = setupTargetPath(image, imageResolution, imageVariant);
+        writeSafely(imageSource.getImageStream(), targetPath);
+    }
+
+    @Override
+    public StreamImageSource getVariantImage(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
+        Path targetPath = setupTargetPath(image, imageResolution, imageVariant);
+        return read(targetPath, imageVariant.getOutputType());
+    }
+
     private Path setupTargetPath(OriginalImage originalImage) {
         try {
             String fileName = originalImage.getUniqueFileName();
@@ -69,6 +92,39 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         }
     }
 
+    private Path setupTargetPath(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
+        try {
+            String fileName = constructFileName(image, imageResolution, imageVariant);
+            String applicationId = Integer.valueOf(image.getApplicationId()).toString();
+
+            Path targetFolder = variantsFolder.resolve(applicationId);
+            Files.createDirectories(targetFolder);
+
+            return targetFolder.resolve(fileName);
+        } catch (IOException e) {
+            throw new ImageStoreException(e);
+        }
+    }
+
+    private String constructFileName(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
+        StringBuilder fileNameBuilder = new StringBuilder();
+        fileNameBuilder.append(image.getImageId());
+        fileNameBuilder.append('-');
+        if (imageResolution.getWidth() != null) {
+            fileNameBuilder.append('w');
+            fileNameBuilder.append(imageResolution.getWidth());
+            fileNameBuilder.append('-');
+        }
+        if (imageResolution.getHeight() != null) {
+            fileNameBuilder.append('h');
+            fileNameBuilder.append(imageResolution.getHeight());
+        }
+        fileNameBuilder.append('.');
+        fileNameBuilder.append(imageVariant.getOutputType().getExtension());
+
+        return fileNameBuilder.toString();
+    }
+
     private void writeSafely(InputStream inputStream, Path targetPath) {
         try {
             Path temporaryPath = Files.createTempFile(tempFolder, "image", ".tmp");
@@ -78,4 +134,25 @@ public class ImageStoreServiceImpl implements ImageStoreService {
             throw new ImageStoreException(e);
         }
     }
+
+    private StreamImageSource read(Path targetPath, ImageType imageType) {
+        // Do not use .exists() kind of logic here! Open the file and check for an exception instead.
+        // This will ensure that we can read the full file contents, even should the file be deleted or replaced while
+        // we are busy with it.
+
+        InputStream imageStream = null;
+        try {
+            imageStream = Files.newInputStream(targetPath);
+        } catch (IOException e) {
+            // Let imageStream be null.
+        }
+
+        StreamImageSource imageSource = null;
+        if (imageStream != null) {
+            imageSource = new StreamImageSource(imageType, imageStream);
+        }
+
+        return imageSource;
+    }
+
 }
