@@ -2,10 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.transformers.ImageCalculateDimensionsAction;
-import com.foreach.imageserver.core.transformers.ImageSource;
-import com.foreach.imageserver.core.transformers.ImageTransformer;
-import com.foreach.imageserver.core.transformers.ImageTransformerPriority;
+import com.foreach.imageserver.core.transformers.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +25,7 @@ public class ImageTransformServiceImpl implements ImageTransformService {
 
     @Override
     public Dimensions computeDimensions(ImageType imageType, byte[] imageBytes) {
-        final ImageSource imageSource = new ImageSource(imageType, new ByteArrayInputStream(imageBytes));
+        final StreamImageSource imageSource = new StreamImageSource(imageType, new ByteArrayInputStream(imageBytes));
         final ImageCalculateDimensionsAction action = new ImageCalculateDimensionsAction(imageSource);
 
         ImageTransformer imageTransformer = findAbleTransformer(new CanExecute() {
@@ -44,6 +41,35 @@ public class ImageTransformServiceImpl implements ImageTransformService {
             dimensions = translateDimensions(imageTransformer.execute(action));
         }
         return dimensions;
+    }
+
+    @Override
+    public InMemoryImageSource modify(StreamImageSource imageSource, int outputWidth, int outputHeight, int cropX, int cropY, int cropWidth, int cropHeight, int densityWidth, int densityHeight, ImageType outputType) {
+        final ImageModifyAction action = new ImageModifyAction(
+                imageSource,
+                outputWidth,
+                outputHeight,
+                cropX,
+                cropY,
+                cropWidth,
+                cropHeight,
+                densityWidth,
+                densityHeight,
+                outputType);
+
+        ImageTransformer imageTransformer = findAbleTransformer(new CanExecute() {
+            @Override
+            public ImageTransformerPriority consider(ImageTransformer imageTransformer) {
+                return imageTransformer.canExecute(action);
+            }
+        });
+
+        // TODO I'm opting for returning null in case of failure now, maybe raise an exception instead?
+        InMemoryImageSource result = null;
+        if (imageTransformer != null) {
+            result = imageTransformer.execute(action);
+        }
+        return result;
     }
 
     private ImageTransformer findAbleTransformer(CanExecute canExecute) {

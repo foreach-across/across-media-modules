@@ -3,13 +3,13 @@ package com.foreach.imageserver.core.transformers;
 import com.foreach.imageserver.core.business.ImageType;
 
 public class ImageModifyAction {
-    private final ImageSource sourceImageSource;
+    private final StreamImageSource sourceImageSource;
     private final Dimensions outputDimensions;
     private final Crop crop;
     private final Dimensions density;
     private final ImageType outputType;
 
-    public ImageModifyAction(ImageSource sourceImageSource,
+    public ImageModifyAction(StreamImageSource sourceImageSource,
                              int outputWidth,
                              int outputHeight,
                              int cropX,
@@ -26,7 +26,7 @@ public class ImageModifyAction {
         this.outputType = outputType;
     }
 
-    public ImageSource getSourceImageSource() {
+    public StreamImageSource getSourceImageSource() {
         return sourceImageSource;
     }
 

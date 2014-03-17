@@ -4,11 +4,11 @@ import com.foreach.imageserver.core.business.ImageType;
 
 import java.io.InputStream;
 
-public class ImageSource {
+public class StreamImageSource {
     private final ImageType imageType;
     private final InputStream imageStream;
 
-    public ImageSource(ImageType imageType, InputStream imageStream) {
+    public StreamImageSource(ImageType imageType, InputStream imageStream) {
         this.imageType = imageType;
         this.imageStream = imageStream;
     }

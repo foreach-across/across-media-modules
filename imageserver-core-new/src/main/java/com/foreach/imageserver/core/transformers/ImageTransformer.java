@@ -17,7 +17,7 @@ public interface ImageTransformer {
 
     Dimensions execute(ImageCalculateDimensionsAction action);
 
-    ImageSource execute(ImageModifyAction action);
+    InMemoryImageSource execute(ImageModifyAction action);
 
     /**
      * Multiple ImageTransformer beans will be ordered using this value.

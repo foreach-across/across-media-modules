@@ -51,10 +51,10 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
                 270,
                 580,
                 ImageType.JPEG);
-        ImageSource result = imageTransformer.execute(action);
+        InMemoryImageSource result = imageTransformer.execute(action);
         assertNotNull(result);
-        assertNotNull(result.getImageStream());
-        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/cropJpgToJpg.jpeg")));
+        assertNotNull(result.getImageBytes());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageBytes()), bufferedImageFromClassPath("images/cropJpgToJpg.jpeg")));
     }
 
     @Test
@@ -69,10 +69,10 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
                 270,
                 580,
                 ImageType.PNG);
-        ImageSource result = imageTransformer.execute(action);
+        InMemoryImageSource result = imageTransformer.execute(action);
         assertNotNull(result);
-        assertNotNull(result.getImageStream());
-        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/cropPngToPng.png")));
+        assertNotNull(result.getImageBytes());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageBytes()), bufferedImageFromClassPath("images/cropPngToPng.png")));
     }
 
     @Test
@@ -87,10 +87,10 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
                 270,
                 580,
                 ImageType.PNG);
-        ImageSource result = imageTransformer.execute(action);
+        InMemoryImageSource result = imageTransformer.execute(action);
         assertNotNull(result);
-        assertNotNull(result.getImageStream());
-        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/cropJpgToPng.png")));
+        assertNotNull(result.getImageBytes());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageBytes()), bufferedImageFromClassPath("images/cropJpgToPng.png")));
     }
 
     @Test
@@ -105,10 +105,10 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
                 270,
                 580,
                 ImageType.JPEG);
-        ImageSource result = imageTransformer.execute(action);
+        InMemoryImageSource result = imageTransformer.execute(action);
         assertNotNull(result);
-        assertNotNull(result.getImageStream());
-        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/cropPngToJpg.jpeg")));
+        assertNotNull(result.getImageBytes());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageBytes()), bufferedImageFromClassPath("images/cropPngToJpg.jpeg")));
     }
 
     @Test
@@ -123,10 +123,10 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
                 100,
                 100,
                 ImageType.PNG);
-        ImageSource result = imageTransformer.execute(action);
+        InMemoryImageSource result = imageTransformer.execute(action);
         assertNotNull(result);
-        assertNotNull(result.getImageStream());
-        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/transparentPngToPng.png")));
+        assertNotNull(result.getImageBytes());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageBytes()), bufferedImageFromClassPath("images/transparentPngToPng.png")));
     }
 
     @Test
@@ -141,10 +141,10 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
                 100,
                 100,
                 ImageType.JPEG);
-        ImageSource result = imageTransformer.execute(action);
+        InMemoryImageSource result = imageTransformer.execute(action);
         assertNotNull(result);
-        assertNotNull(result.getImageStream());
-        assertTrue(imagesAreEqual(bufferedImage(result.getImageStream()), bufferedImageFromClassPath("images/transparentPngToJpg.jpg")));
+        assertNotNull(result.getImageBytes());
+        assertTrue(imagesAreEqual(bufferedImage(result.getImageBytes()), bufferedImageFromClassPath("images/transparentPngToJpg.jpg")));
     }
 
     @Test
@@ -153,13 +153,13 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     }
 
     private ImageCalculateDimensionsAction calculateDimensionsAction(ImageType imageType) {
-        return new ImageCalculateDimensionsAction(new ImageSource(imageType, null));
+        return new ImageCalculateDimensionsAction(new StreamImageSource(imageType, null));
     }
 
     private ImageModifyAction modifyAction(ImageType sourceType, String classPath, int outputWidth, int outputHeight, int cropX, int cropY, int cropWidth, int cropHeight, ImageType outputType) {
         InputStream imageStream = getClass().getClassLoader().getResourceAsStream(classPath);
         return new ImageModifyAction(
-                new ImageSource(sourceType, imageStream),
+                new StreamImageSource(sourceType, imageStream),
                 outputWidth,
                 outputHeight,
                 cropX,
@@ -172,11 +172,11 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     }
 
     private ImageModifyAction modifyAction(ImageType imageType) {
-        return new ImageModifyAction(new ImageSource(imageType, null), 0, 0, 0, 0, 0, 0, 0, 0, null);
+        return new ImageModifyAction(new StreamImageSource(imageType, null), 0, 0, 0, 0, 0, 0, 0, 0, null);
     }
 
     private ImageCalculateDimensionsAction calculateDimensionsAction(ImageType imageType, String classPath) {
         InputStream imageStream = getClass().getClassLoader().getResourceAsStream(classPath);
-        return new ImageCalculateDimensionsAction(new ImageSource(imageType, imageStream));
+        return new ImageCalculateDimensionsAction(new StreamImageSource(imageType, imageStream));
     }
 }

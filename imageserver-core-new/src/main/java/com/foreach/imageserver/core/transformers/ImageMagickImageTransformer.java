@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -68,7 +67,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
             throw new UnsupportedOperationException();
         }
 
-        ImageSource imageSource = action.getImageSource();
+        StreamImageSource imageSource = action.getImageSource();
         InputStream stream = null;
         try {
             stream = imageSource.getImageStream();
@@ -83,7 +82,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public ImageSource execute(ImageModifyAction action) {
+    public InMemoryImageSource execute(ImageModifyAction action) {
         if (canExecute(action) == ImageTransformerPriority.UNABLE) {
             throw new UnsupportedOperationException();
         }
@@ -118,7 +117,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
             cmd.run(op);
 
             byte[] bytes = os.toByteArray();
-            return new ImageSource(action.getOutputType(), new ByteArrayInputStream(bytes));
+            return new InMemoryImageSource(action.getOutputType(), bytes);
         } catch (Exception e) {
             LOG.error("Failed to apply modification: {}", e);
             throw new ImageModificationException(e);
