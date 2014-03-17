@@ -36,6 +36,12 @@ public class WebOriginalImageRepository implements OriginalImageRepository {
     }
 
     @Override
+    public OriginalImage getOriginalImage(int id) {
+        WebOriginalImageParameters parameters = webOriginalImageParametersDao.getById(id);
+        return parameters != null ? new WebOriginalImage(parameters) : null;
+    }
+
+    @Override
     public OriginalImage getOriginalImage(Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
         WebOriginalImageParameters parameters = webOriginalImageParametersDao.getByParameters(url);

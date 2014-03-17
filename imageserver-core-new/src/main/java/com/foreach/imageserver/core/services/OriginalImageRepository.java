@@ -7,6 +7,8 @@ import java.util.Map;
 public interface OriginalImageRepository {
     String getRepositoryCode();
 
+    OriginalImage getOriginalImage(int id);
+
     OriginalImage getOriginalImage(Map<String, String> repositoryParameters);
 
     RetrievedOriginalImage insertAndRetrieveOriginalImage(Map<String, String> repositoryParameters);
