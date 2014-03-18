@@ -11,19 +11,11 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class ImageModification {
-    private int applicationId;
     private int imageId;
+    private int contextId;
     private int resolutionId;
     private Crop crop;
     private Dimensions density;
-
-    public int getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(int applicationId) {
-        this.applicationId = applicationId;
-    }
 
     public int getImageId() {
         return imageId;
@@ -31,6 +23,14 @@ public class ImageModification {
 
     public void setImageId(int imageId) {
         this.imageId = imageId;
+    }
+
+    public int getContextId() {
+        return contextId;
+    }
+
+    public void setContextId(int contextId) {
+        this.contextId = contextId;
     }
 
     public int getResolutionId() {

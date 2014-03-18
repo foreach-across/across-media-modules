@@ -14,12 +14,12 @@
         <result property="height" column="image_resolution_height"/>
     </resultMap>
 
-    <select id="getForApplication" parameterType="map" resultMap="imageResolutionMap">
+    <select id="getForContext" parameterType="map" resultMap="imageResolutionMap">
         SELECT
         <include refid="columns"/>
-        FROM APPLICATION_IMAGE_RESOLUTIONS AIR
-        LEFT JOIN IMAGE_RESOLUTION IR ON IR.id = AIR.imageResolutionId
-        WHERE AIR.applicationId = #{applicationId}
+        FROM CONTEXT_IMAGE_RESOLUTIONS CIR
+        LEFT JOIN IMAGE_RESOLUTION IR ON IR.id = CIR.imageResolutionId
+        WHERE CIR.contextId = #{contextId}
     </select>
 
 </mapper>

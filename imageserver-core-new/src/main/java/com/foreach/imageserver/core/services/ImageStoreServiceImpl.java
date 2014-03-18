@@ -67,14 +67,14 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
 
     @Override
-    public void storeVariantImage(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant, StreamImageSource imageSource) {
-        Path targetPath = setupTargetPath(image, applicationId, imageResolution, imageVariant);
+    public void storeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant, StreamImageSource imageSource) {
+        Path targetPath = setupTargetPath(image, context, imageResolution, imageVariant);
         writeSafely(imageSource.getImageStream(), targetPath);
     }
 
     @Override
-    public StreamImageSource getVariantImage(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant) {
-        Path targetPath = setupTargetPath(image, applicationId, imageResolution, imageVariant);
+    public StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
+        Path targetPath = setupTargetPath(image, context, imageResolution, imageVariant);
         return read(targetPath, imageVariant.getOutputType());
     }
 
@@ -92,12 +92,12 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         }
     }
 
-    private Path setupTargetPath(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant) {
+    private Path setupTargetPath(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
         try {
             String fileName = constructFileName(image, imageResolution, imageVariant);
-            String applicationIdString = Integer.valueOf(applicationId).toString();
+            String contextIdString = Integer.valueOf(context.getId()).toString();
 
-            Path targetFolder = variantsFolder.resolve(applicationIdString);
+            Path targetFolder = variantsFolder.resolve(contextIdString);
             Files.createDirectories(targetFolder);
 
             return targetFolder.resolve(fileName);

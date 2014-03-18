@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.foreach.imageserver.core.data.ContextDao">
+
+    <sql id="columns">
+        C.id as context_id,
+        C.name as context_name
+    </sql>
+
+    <resultMap id="contextMap" type="Context">
+        <id property="id" column="context_id"/>
+        <result property="name" column="context_name"/>
+    </resultMap>
+
+    <select id="getById" parameterType="int" resultMap="contextMap">
+        SELECT
+        <include refid="columns"/>
+        FROM CONTEXT C
+        WHERE C.id = #{value}
+    </select>
+
+</mapper>

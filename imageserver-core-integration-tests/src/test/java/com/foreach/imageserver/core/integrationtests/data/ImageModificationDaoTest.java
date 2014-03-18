@@ -23,8 +23,8 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
 
     @Test
     public void insertAndGetById() {
-        String applicationSql = "INSERT INTO APPLICATION ( id, name, active, code, created, updated ) VALUES ( ?, ?, ?, ?, ?, ? )";
-        jdbcTemplate.update(applicationSql, 1010, "the_application_name", true, "the_application_code", new Date(2012, 11, 13), new Date(2012, 11, 14));
+        String applicationSql = "INSERT INTO CONTEXT ( id, name ) VALUES ( ?, ? )";
+        jdbcTemplate.update(applicationSql, 1010, "the_application_name");
 
         String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code");
@@ -43,17 +43,17 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         writtenDensity.setHeight(107);
 
         ImageModification writtenImageModification = new ImageModification();
-        writtenImageModification.setApplicationId(1010);
         writtenImageModification.setImageId(9998);
+        writtenImageModification.setContextId(1010);
         writtenImageModification.setResolutionId(8);
         writtenImageModification.setCrop(writtenCrop);
         writtenImageModification.setDensity(writtenDensity);
 
         imageModificationDao.insert(writtenImageModification);
 
-        ImageModification readImageModification = imageModificationDao.getById(1010, 9998, 8);
-        assertEquals(writtenImageModification.getApplicationId(), readImageModification.getApplicationId());
+        ImageModification readImageModification = imageModificationDao.getById(9998, 1010, 8);
         assertEquals(writtenImageModification.getImageId(), readImageModification.getImageId());
+        assertEquals(writtenImageModification.getContextId(), readImageModification.getContextId());
         assertEquals(writtenImageModification.getResolutionId(), readImageModification.getResolutionId());
         assertEquals(writtenImageModification.getCrop().getX(), readImageModification.getCrop().getX());
         assertEquals(writtenImageModification.getCrop().getY(), readImageModification.getCrop().getY());

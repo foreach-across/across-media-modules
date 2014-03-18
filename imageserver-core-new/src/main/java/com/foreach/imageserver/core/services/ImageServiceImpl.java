@@ -63,10 +63,10 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public StreamImageSource getVariantImage(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant) {
-        StreamImageSource imageSource = imageStoreService.getVariantImage(image, applicationId, imageResolution, imageVariant);
+    public StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
+        StreamImageSource imageSource = imageStoreService.getVariantImage(image, context, imageResolution, imageVariant);
         if (imageSource == null) {
-            ImageModification imageModification = imageModificationDao.getById(applicationId, image.getImageId(), imageResolution.getId());
+            ImageModification imageModification = imageModificationDao.getById(image.getImageId(), context.getId(), imageResolution.getId());
             if (imageModification == null) {
                 throw new ImageCouldNotBeRetrievedException("No image modification was registered for this image.");
             }
@@ -96,7 +96,7 @@ public class ImageServiceImpl implements ImageService {
 
             // TODO Extra locking is needed here to ensure that the modification wasn't altered behind our back.
             // TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
-            imageStoreService.storeVariantImage(image, applicationId, imageResolution, imageVariant, variantImageSource.stream());
+            imageStoreService.storeVariantImage(image, context, imageResolution, imageVariant, variantImageSource.stream());
 
             return variantImageSource.stream();
         }

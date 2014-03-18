@@ -1,9 +1,6 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageModification;
-import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 
 import java.util.Map;
@@ -15,5 +12,5 @@ public interface ImageService {
 
     void saveImageModification(ImageModification modification);
 
-    StreamImageSource getVariantImage(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant);
+    StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);
 }

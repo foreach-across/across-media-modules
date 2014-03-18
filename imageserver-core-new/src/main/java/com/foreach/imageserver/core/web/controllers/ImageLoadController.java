@@ -1,7 +1,6 @@
 package com.foreach.imageserver.core.web.controllers;
 
 import com.foreach.across.core.annotations.Refreshable;
-import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageRepository;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
@@ -24,9 +23,6 @@ public class ImageLoadController extends BaseImageAPIController {
 
     @Value("${accessToken}")
     private String accessToken;
-
-    @Autowired
-    private ApplicationService applicationService;
 
     @Autowired
     private ImageService imageService;

@@ -3,8 +3,8 @@
 <mapper namespace="com.foreach.imageserver.core.data.ImageModificationDao">
 
     <sql id="columns">
-		IM.applicationId as application_id,
 		IM.imageId as image_id,
+		IM.contextId as context_id,
         IM.resolutionId as resolution_id,
         IM.densityWidth as density_width,
         IM.densityHeight as density_height,
@@ -15,8 +15,8 @@
 	</sql>
 
     <resultMap id="imageModificationMap" type="ImageModification">
-        <id property="applicationId" column="application_id"/>
         <id property="imageId" column="image_id"/>
+        <id property="contextId" column="context_id"/>
         <id property="resolutionId" column="resolution_id"/>
         <result property="density.width" column="density_width"/>
         <result property="density.height" column="density_height"/>
@@ -30,13 +30,13 @@
         SELECT
         <include refid="columns"/>
         FROM IMAGE_MODIFICATION IM
-        WHERE IM.applicationId = #{applicationId} AND IM.imageId = #{imageId} AND IM.resolutionId = #{imageResolutionId}
+        WHERE IM.imageId = #{imageId} AND IM.contextId = #{contextId} AND IM.resolutionId = #{imageResolutionId}
     </select>
 
     <insert id="insert" parameterType="ImageModification">
         INSERT INTO IMAGE_MODIFICATION (
-          applicationId,
           imageId,
+          contextId,
           resolutionId,
           densityWidth,
           densityHeight,
@@ -45,8 +45,8 @@
           cropWidth,
           cropHeight
         ) VALUES (
-          #{applicationId},
           #{imageId},
+          #{contextId},
           #{resolutionId},
           #{density.width},
           #{density.height},

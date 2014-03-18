@@ -9,21 +9,13 @@
     <property name="now" value="NOW" dbms="hsqldb"/>
 
     <changeSet id="201403091254" author="ovh">
-        <createTable tableName="APPLICATION">
+        <createTable tableName="CONTEXT">
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="active" type="boolean" defaultValueBoolean="false"/>
-            <column name="code" type="varchar(36)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created" type="datetime" defaultValueComputed="${now}">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="datetime"/>
         </createTable>
     </changeSet>
 
@@ -53,26 +45,25 @@
                 <constraints nullable="true"/>
             </column>
         </createTable>
-        <createTable tableName="APPLICATION_IMAGE_RESOLUTIONS">
-            <column name="applicationId" type="int">
-                <constraints nullable="false" references="APPLICATION(id)"
-                             foreignKeyName="fk_application_resolution_1"/>
+        <createTable tableName="CONTEXT_IMAGE_RESOLUTIONS">
+            <column name="contextId" type="int">
+                <constraints nullable="false" references="CONTEXT(id)"
+                             foreignKeyName="fk_context_resolution_1"/>
             </column>
             <column name="imageResolutionId" type="int">
                 <constraints nullable="false" references="IMAGE_RESOLUTION(id)"
-                             foreignKeyName="fk_application_resolution_2"/>
+                             foreignKeyName="fk_context_resolution_2"/>
             </column>
         </createTable>
     </changeSet>
 
     <changeSet id="201403091352" author="ovh">
         <createTable tableName="IMAGE_MODIFICATION">
-            <column name="applicationId" type="int">
-                <constraints references="APPLICATION(id)" foreignKeyName="fk_modification_application"
-                             nullable="false"/>
-            </column>
             <column name="imageId" type="int">
                 <constraints references="IMAGE(imageId)" foreignKeyName="fk_modification_image" nullable="false"/>
+            </column>
+            <column name="contextId" type="int">
+                <constraints references="CONTEXT(id)" foreignKeyName="fk_modification_context" nullable="false"/>
             </column>
             <column name="resolutionId" type="int">
                 <constraints references="IMAGE_RESOLUTION(id)" foreignKeyName="fk_web_resolution" nullable="false"/>
@@ -97,7 +88,7 @@
             </column>
         </createTable>
         <addPrimaryKey tableName="IMAGE_MODIFICATION"
-                       columnNames="applicationId,imageId,resolutionId"
+                       columnNames="imageId, contextId, resolutionId"
                        constraintName="pk_image_modification"/>
     </changeSet>
     <changeSet id="201403141650" author="ovh">

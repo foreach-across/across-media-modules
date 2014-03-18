@@ -1,10 +1,10 @@
 package com.foreach.imageserver.core.web.controllers;
 
-import com.foreach.imageserver.core.business.Application;
+import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
-import com.foreach.imageserver.core.services.ApplicationService;
+import com.foreach.imageserver.core.services.ContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.core.web.dto.ImageResolutionDto;
@@ -32,25 +32,18 @@ public class ImageStreamingController {
     private static final Logger LOG = LoggerFactory.getLogger(ImageStreamingController.class);
 
     @Autowired
-    private ApplicationService applicationService;
+    private ContextService contextService;
 
     @Autowired
     private ImageService imageService;
 
     @RequestMapping(value = "/" + VIEW_PATH, method = RequestMethod.GET)
-    public void view(@RequestParam(value = "aid", required = true) int applicationId,
-                     @RequestParam(value = "iid", required = true) int imageId,
+    public void view(@RequestParam(value = "iid", required = true) int imageId,
+                     @RequestParam(value = "cid", required = true) int contextId,
                      ImageResolutionDto imageResolutionDto,
                      ImageVariantDto imageVariantDto,
                      HttpServletResponse response) {
         // TODO Make sure we only rely on objects that can be long-term cached for retrieving the image.
-        // TODO We may want to remove an application's active flag; we want applications to be long-term cacheable.
-
-        Application application = applicationService.getById(applicationId);
-        if (application == null || !application.isActive()) {
-            error(response, HttpStatus.NOT_FOUND, "No such application.");
-            return;
-        }
 
         Image image = imageService.getById(imageId);
         if (image == null) {
@@ -58,14 +51,20 @@ public class ImageStreamingController {
             return;
         }
 
+        Context context = contextService.getById(contextId);
+        if (context == null) {
+            error(response, HttpStatus.NOT_FOUND, "No such context.");
+            return;
+        }
+
         // TODO Implement best-effort matching.
-        ImageResolution imageResolution = applicationService.getImageResolution(applicationId, imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
+        ImageResolution imageResolution = contextService.getImageResolution(contextId, imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
         if (imageResolution == null) {
             error(response, HttpStatus.NOT_FOUND, "No such resolution.");
             return;
         }
 
-        StreamImageSource imageSource = imageService.getVariantImage(image, applicationId, imageResolution, imageVariant(imageVariantDto));
+        StreamImageSource imageSource = imageService.getVariantImage(image, context, imageResolution, imageVariant(imageVariantDto));
         if (imageSource == null) {
             error(response, HttpStatus.NOT_FOUND, "Could not create variant.");
             return;
