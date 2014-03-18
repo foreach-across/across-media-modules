@@ -67,14 +67,14 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
 
     @Override
-    public void storeVariantImage(Image image, ImageResolution imageResolution, ImageVariant imageVariant, StreamImageSource imageSource) {
-        Path targetPath = setupTargetPath(image, imageResolution, imageVariant);
+    public void storeVariantImage(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant, StreamImageSource imageSource) {
+        Path targetPath = setupTargetPath(image, applicationId, imageResolution, imageVariant);
         writeSafely(imageSource.getImageStream(), targetPath);
     }
 
     @Override
-    public StreamImageSource getVariantImage(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
-        Path targetPath = setupTargetPath(image, imageResolution, imageVariant);
+    public StreamImageSource getVariantImage(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant) {
+        Path targetPath = setupTargetPath(image, applicationId, imageResolution, imageVariant);
         return read(targetPath, imageVariant.getOutputType());
     }
 
@@ -92,12 +92,12 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         }
     }
 
-    private Path setupTargetPath(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
+    private Path setupTargetPath(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant) {
         try {
             String fileName = constructFileName(image, imageResolution, imageVariant);
-            String applicationId = Integer.valueOf(image.getApplicationId()).toString();
+            String applicationIdString = Integer.valueOf(applicationId).toString();
 
-            Path targetFolder = variantsFolder.resolve(applicationId);
+            Path targetFolder = variantsFolder.resolve(applicationIdString);
             Files.createDirectories(targetFolder);
 
             return targetFolder.resolve(fileName);

@@ -33,7 +33,7 @@ public class ImageModificationController extends BaseImageAPIController {
     @Autowired
     private ImageService imageService;
 
-    @RequestMapping(value = "/" + REGISTER_PATH, method = { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value = "/" + REGISTER_PATH, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public JsonResponse register(@RequestParam(value = "aid", required = true) int applicationId,
                                  @RequestParam(value = "token", required = true) String applicationKey,
@@ -45,7 +45,7 @@ public class ImageModificationController extends BaseImageAPIController {
             return error(String.format("Unknown application %s.", applicationId));
         }
 
-        Image image = imageService.getById(applicationId, imageId);
+        Image image = imageService.getById(imageId);
         if (image == null) {
             return error(String.format("No image exists for application id %d and image id %d.", applicationId, imageId));
         }

@@ -64,7 +64,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public StreamImageSource getVariantImage(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant) {
-        StreamImageSource imageSource = imageStoreService.getVariantImage(image, imageResolution, imageVariant);
+        StreamImageSource imageSource = imageStoreService.getVariantImage(image, applicationId, imageResolution, imageVariant);
         if (imageSource == null) {
             ImageModification imageModification = imageModificationDao.getById(applicationId, image.getImageId(), imageResolution.getId());
             if (imageModification == null) {
@@ -96,7 +96,7 @@ public class ImageServiceImpl implements ImageService {
 
             // TODO Extra locking is needed here to ensure that the modification wasn't altered behind our back.
             // TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
-            imageStoreService.storeVariantImage(image, imageResolution, imageVariant, variantImageSource.stream());
+            imageStoreService.storeVariantImage(image, applicationId, imageResolution, imageVariant, variantImageSource.stream());
 
             return variantImageSource.stream();
         }

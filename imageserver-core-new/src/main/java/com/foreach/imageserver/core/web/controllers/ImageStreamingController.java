@@ -52,7 +52,7 @@ public class ImageStreamingController {
             return;
         }
 
-        Image image = imageService.getById(applicationId, imageId);
+        Image image = imageService.getById(imageId);
         if (image == null) {
             error(response, HttpStatus.NOT_FOUND, "No such image.");
             return;
@@ -65,7 +65,7 @@ public class ImageStreamingController {
             return;
         }
 
-        StreamImageSource imageSource = imageService.getVariantImage(image, imageResolution, imageVariant(imageVariantDto));
+        StreamImageSource imageSource = imageService.getVariantImage(image, applicationId, imageResolution, imageVariant(imageVariantDto));
         if (imageSource == null) {
             error(response, HttpStatus.NOT_FOUND, "Could not create variant.");
             return;
