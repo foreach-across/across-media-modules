@@ -17,7 +17,7 @@
     <select id="getForContext" parameterType="map" resultMap="imageResolutionMap">
         SELECT
         <include refid="columns"/>
-        FROM CONTEXT_IMAGE_RESOLUTIONS CIR
+        FROM CONTEXT_IMAGE_RESOLUTION CIR
         LEFT JOIN IMAGE_RESOLUTION IR ON IR.id = CIR.imageResolutionId
         WHERE CIR.contextId = #{contextId}
     </select>

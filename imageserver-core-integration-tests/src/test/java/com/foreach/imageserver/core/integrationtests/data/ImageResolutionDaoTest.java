@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -33,7 +32,7 @@ public class ImageResolutionDaoTest extends AbstractIntegrationTest {
         jdbcTemplate.update(resolutionSql, 12, 444, null);
         jdbcTemplate.update(resolutionSql, 14, 555, 666);
 
-        String linkSql = "INSERT INTO CONTEXT_IMAGE_RESOLUTIONS ( contextId, imageResolutionId ) VALUES ( ?, ? )";
+        String linkSql = "INSERT INTO CONTEXT_IMAGE_RESOLUTION ( contextId, imageResolutionId ) VALUES ( ?, ? )";
         jdbcTemplate.update(linkSql, 10, 10);
         jdbcTemplate.update(linkSql, 10, 11);
         jdbcTemplate.update(linkSql, 10, 12);

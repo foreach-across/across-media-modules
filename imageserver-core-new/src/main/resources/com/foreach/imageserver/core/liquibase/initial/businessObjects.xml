@@ -45,7 +45,7 @@
                 <constraints nullable="true"/>
             </column>
         </createTable>
-        <createTable tableName="CONTEXT_IMAGE_RESOLUTIONS">
+        <createTable tableName="CONTEXT_IMAGE_RESOLUTION">
             <column name="contextId" type="int">
                 <constraints nullable="false" references="CONTEXT(id)"
                              foreignKeyName="fk_context_resolution_1"/>
