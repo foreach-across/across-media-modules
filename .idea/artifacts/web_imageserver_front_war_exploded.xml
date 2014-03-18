@@ -56,6 +56,9 @@
           <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.10" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.10" />
+          <element id="archive" name="imageserver-diocontent-2.0-SNAPSHOT.jar">
+            <element id="module-output" name="imageserver-diocontent" />
+          </element>
         </element>
       </element>
     </root>
