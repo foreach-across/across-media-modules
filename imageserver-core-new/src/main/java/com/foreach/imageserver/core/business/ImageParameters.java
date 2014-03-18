@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.business;
 
-public interface OriginalImage {
+public interface ImageParameters {
     int getId();
 
     String getRepositoryCode();

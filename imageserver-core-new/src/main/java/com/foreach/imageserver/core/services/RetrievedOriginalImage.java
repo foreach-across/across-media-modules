@@ -1,18 +1,18 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.OriginalImage;
+import com.foreach.imageserver.core.business.ImageParameters;
 
 public class RetrievedOriginalImage {
-    private final OriginalImage originalImage;
+    private final ImageParameters imageParameters;
     private final byte[] imageBytes;
 
-    public RetrievedOriginalImage(OriginalImage originalImage, byte[] imageBytes) {
-        this.originalImage = originalImage;
+    public RetrievedOriginalImage(ImageParameters imageParameters, byte[] imageBytes) {
+        this.imageParameters = imageParameters;
         this.imageBytes = imageBytes;
     }
 
-    public OriginalImage getOriginalImage() {
-        return originalImage;
+    public ImageParameters getImageParameters() {
+        return imageParameters;
     }
 
     public byte[] getImageBytes() {

@@ -43,26 +43,26 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     }
 
     @Override
-    public void storeOriginalImage(OriginalImage originalImage, byte[] imageBytes) {
+    public void storeOriginalImage(ImageParameters imageParameters, byte[] imageBytes) {
         InputStream imageStream = null;
         try {
             imageStream = new ByteArrayInputStream(imageBytes);
-            this.storeOriginalImage(originalImage, imageStream);
+            this.storeOriginalImage(imageParameters, imageStream);
         } finally {
             IOUtils.closeQuietly(imageStream);
         }
     }
 
     @Override
-    public void storeOriginalImage(OriginalImage originalImage, InputStream imageStream) {
-        Path targetPath = setupTargetPath(originalImage);
+    public void storeOriginalImage(ImageParameters imageParameters, InputStream imageStream) {
+        Path targetPath = setupTargetPath(imageParameters);
         writeSafely(imageStream, targetPath);
     }
 
     @Override
-    public StreamImageSource getOriginalImage(OriginalImage originalImage) {
-        Path targetPath = setupTargetPath(originalImage);
-        return read(targetPath, originalImage.getImageType());
+    public StreamImageSource getOriginalImage(ImageParameters imageParameters) {
+        Path targetPath = setupTargetPath(imageParameters);
+        return read(targetPath, imageParameters.getImageType());
     }
 
 
@@ -78,10 +78,10 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         return read(targetPath, imageVariant.getOutputType());
     }
 
-    private Path setupTargetPath(OriginalImage originalImage) {
+    private Path setupTargetPath(ImageParameters imageParameters) {
         try {
-            String fileName = originalImage.getUniqueFileName();
-            String repositoryCode = originalImage.getRepositoryCode();
+            String fileName = imageParameters.getUniqueFileName();
+            String repositoryCode = imageParameters.getRepositoryCode();
 
             Path targetFolder = originalsFolder.resolve(repositoryCode);
             Files.createDirectories(targetFolder);

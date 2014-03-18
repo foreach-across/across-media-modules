@@ -42,21 +42,21 @@ public class ImageServiceImpl implements ImageService {
     public void saveImage(int applicationId, int imageId, OriginalImageRepository imageRepository, Map<String, String> repositoryParameters) {
         RetrievedOriginalImage retrievedOriginalImage = null;
 
-        OriginalImage originalImage = imageRepository.getOriginalImage(repositoryParameters);
-        if (originalImage == null) {
+        ImageParameters imageParameters = imageRepository.getOriginalImage(repositoryParameters);
+        if (imageParameters == null) {
             retrievedOriginalImage = imageRepository.insertAndRetrieveOriginalImage(repositoryParameters);
-            originalImage = retrievedOriginalImage.getOriginalImage();
+            imageParameters = retrievedOriginalImage.getImageParameters();
         }
 
         Image image = new Image();
         image.setApplicationId(applicationId);
         image.setImageId(imageId);
         image.setRepositoryCode(imageRepository.getRepositoryCode());
-        image.setOriginalImageId(originalImage.getId());
+        image.setOriginalImageId(imageParameters.getId());
         imageDao.insert(image);
 
         if (retrievedOriginalImage != null) {
-            imageStoreService.storeOriginalImage(originalImage, retrievedOriginalImage.getImageBytes());
+            imageStoreService.storeOriginalImage(imageParameters, retrievedOriginalImage.getImageBytes());
         }
     }
 
@@ -81,10 +81,10 @@ public class ImageServiceImpl implements ImageService {
             }
 
             // TODO We'll assume for now that the original image is guaranteed to be available on disk.
-            OriginalImage originalImage = imageRepository.getOriginalImage(image.getOriginalImageId());
-            StreamImageSource originalImageSource = imageStoreService.getOriginalImage(originalImage);
+            ImageParameters imageParameters = imageRepository.getOriginalImage(image.getOriginalImageId());
+            StreamImageSource originalImageSource = imageStoreService.getOriginalImage(imageParameters);
 
-            Dimensions outputResolution = computeOutputResolution(originalImage, imageResolution);
+            Dimensions outputResolution = computeOutputResolution(imageParameters, imageResolution);
 
             InMemoryImageSource variantImageSource = imageTransformService.modify(
                     originalImageSource,
@@ -108,15 +108,15 @@ public class ImageServiceImpl implements ImageService {
         return imageSource;
     }
 
-    private Dimensions computeOutputResolution(OriginalImage originalImage, ImageResolution imageResolution) {
+    private Dimensions computeOutputResolution(ImageParameters imageParameters, ImageResolution imageResolution) {
         Integer resolutionWidth = imageResolution.getWidth();
         Integer resolutionHeight = imageResolution.getHeight();
 
         if (resolutionWidth != null && resolutionHeight != null) {
             return dimensions(resolutionWidth, resolutionHeight);
         } else {
-            double originalWidth = originalImage.getDimensions().getWidth();
-            double originalHeight = originalImage.getDimensions().getHeight();
+            double originalWidth = imageParameters.getDimensions().getWidth();
+            double originalHeight = imageParameters.getDimensions().getHeight();
 
             if (resolutionWidth != null) {
                 return dimensions(resolutionWidth, (int) Math.round(resolutionWidth * (originalHeight / originalWidth)));

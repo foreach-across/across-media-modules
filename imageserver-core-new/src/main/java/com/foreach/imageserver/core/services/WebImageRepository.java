@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.business.OriginalImage;
+import com.foreach.imageserver.core.business.ImageParameters;
 import com.foreach.imageserver.core.business.WebImageParameters;
 import com.foreach.imageserver.core.data.WebImageParametersDao;
 import org.apache.commons.io.IOUtils;
@@ -39,12 +39,12 @@ public class WebImageRepository implements OriginalImageRepository {
     }
 
     @Override
-    public OriginalImage getOriginalImage(int id) {
+    public ImageParameters getOriginalImage(int id) {
         return webImageParametersDao.getById(id);
     }
 
     @Override
-    public OriginalImage getOriginalImage(Map<String, String> repositoryParameters) {
+    public ImageParameters getOriginalImage(Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
         return webImageParametersDao.getByParameters(url);
     }

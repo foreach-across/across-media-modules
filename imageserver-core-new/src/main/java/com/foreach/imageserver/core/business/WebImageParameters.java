@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.business;
 
 import com.foreach.imageserver.core.services.WebImageRepository;
 
-public class WebImageParameters implements OriginalImage {
+public class WebImageParameters implements ImageParameters {
     private int id;
     private String url;
     private Dimensions dimensions;
