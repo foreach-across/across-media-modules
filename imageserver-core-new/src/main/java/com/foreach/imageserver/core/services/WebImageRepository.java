@@ -74,13 +74,13 @@ public class WebImageRepository implements ImageRepository {
 
             Dimensions dimensions = imageTransformService.computeDimensions(imageType, imageBytes);
 
-            WebImageParameters originalImage = new WebImageParameters();
-            originalImage.setUrl(url);
-            originalImage.setDimensions(dimensions);
-            originalImage.setImageType(imageType);
-            webImageParametersDao.insert(originalImage);
+            WebImageParameters imageParameters = new WebImageParameters();
+            imageParameters.setUrl(url);
+            imageParameters.setDimensions(dimensions);
+            imageParameters.setImageType(imageType);
+            webImageParametersDao.insert(imageParameters);
 
-            return new RetrievedImage(originalImage, imageBytes);
+            return new RetrievedImage(imageParameters, imageBytes);
         } catch (IOException e) {
             throw new ImageCouldNotBeRetrievedException(e);
         } finally {
