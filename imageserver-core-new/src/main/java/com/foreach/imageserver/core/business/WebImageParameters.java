@@ -1,8 +1,8 @@
 package com.foreach.imageserver.core.business;
 
-import com.foreach.imageserver.core.services.WebOriginalImageRepository;
+import com.foreach.imageserver.core.services.WebImageRepository;
 
-public class WebOriginalImage implements OriginalImage {
+public class WebImageParameters implements OriginalImage {
     private int id;
     private String url;
     private Dimensions dimensions;
@@ -27,7 +27,7 @@ public class WebOriginalImage implements OriginalImage {
 
     @Override
     public String getRepositoryCode() {
-        return WebOriginalImageRepository.CODE;
+        return WebImageRepository.CODE;
     }
 
     @Override

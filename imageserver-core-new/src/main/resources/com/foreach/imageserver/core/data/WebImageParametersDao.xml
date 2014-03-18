@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.foreach.imageserver.core.data.WebOriginalImageDao">
+<mapper namespace="com.foreach.imageserver.core.data.WebImageParametersDao">
     <sql id="columns">
 		WOI.id as web_original_images_id,
         WOI.url as web_original_images_url,
@@ -9,7 +9,7 @@
         WOI.imageTypeId as web_original_images_imagetype
 	</sql>
 
-    <resultMap id="webOriginalImageMap" type="WebOriginalImage">
+    <resultMap id="webImageParametersMap" type="WebImageParameters">
         <id property="id" column="web_original_images_id"/>
         <result property="url" column="web_original_images_url"/>
         <result property="dimensions.width" column="web_original_images_width"/>
@@ -18,21 +18,21 @@
                 typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
     </resultMap>
 
-    <select id="getById" parameterType="int" resultMap="webOriginalImageMap">
+    <select id="getById" parameterType="int" resultMap="webImageParametersMap">
         SELECT
         <include refid="columns"/>
         FROM WEB_ORIGINAL_IMAGES WOI
         WHERE WOI.id = #{value}
     </select>
 
-    <select id="getByParameters" parameterType="String" resultMap="webOriginalImageMap">
+    <select id="getByParameters" parameterType="String" resultMap="webImageParametersMap">
         SELECT
         <include refid="columns"/>
         FROM WEB_ORIGINAL_IMAGES WOI
         WHERE WOI.url = #{value}
     </select>
 
-    <insert id="insert" parameterType="WebOriginalImage">
+    <insert id="insert" parameterType="WebImageParameters">
         INSERT INTO WEB_ORIGINAL_IMAGES (
             id,
             url,
