@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Service
 @Conditional(WebImageRepositoryConditional.class)
-public class WebImageRepository implements OriginalImageRepository {
+public class WebImageRepository implements ImageRepository {
 
     public static final String CODE = "web";
 
@@ -34,23 +34,23 @@ public class WebImageRepository implements OriginalImageRepository {
     private ImageTransformService imageTransformService;
 
     @Override
-    public String getRepositoryCode() {
+    public String getCode() {
         return CODE;
     }
 
     @Override
-    public ImageParameters getOriginalImage(int id) {
+    public ImageParameters getImageParameters(int id) {
         return webImageParametersDao.getById(id);
     }
 
     @Override
-    public ImageParameters getOriginalImage(Map<String, String> repositoryParameters) {
+    public ImageParameters getImageParameters(Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
         return webImageParametersDao.getByParameters(url);
     }
 
     @Override
-    public RetrievedOriginalImage insertAndRetrieveOriginalImage(Map<String, String> repositoryParameters) {
+    public RetrievedOriginalImage retrieveImage(Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
 
         InputStream imageStream = null;
@@ -89,8 +89,8 @@ public class WebImageRepository implements OriginalImageRepository {
     }
 
     @Override
-    public boolean parametersAreEqual(int originalImageId, Map<String, String> repositoryParameters) {
-        WebImageParameters storedImage = webImageParametersDao.getById(originalImageId);
+    public boolean parametersAreEqual(int imageId, Map<String, String> repositoryParameters) {
+        WebImageParameters storedImage = webImageParametersDao.getById(imageId);
         String suppliedUrl = extractUrl(repositoryParameters);
         return storedImage.getUrl().equals(suppliedUrl);
     }

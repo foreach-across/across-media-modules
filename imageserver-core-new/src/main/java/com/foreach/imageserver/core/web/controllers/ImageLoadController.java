@@ -4,8 +4,8 @@ import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.imageserver.core.business.Application;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.services.ApplicationService;
+import com.foreach.imageserver.core.services.ImageRepository;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.core.services.OriginalImageRepository;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,7 +30,7 @@ public class ImageLoadController extends BaseImageAPIController {
     private ImageService imageService;
 
     @Autowired
-    private Collection<OriginalImageRepository> imageRepositories;
+    private Collection<ImageRepository> imageRepositories;
 
     @RequestMapping("/" + LOAD_IMAGE_PATH)
     @ResponseBody
@@ -44,7 +44,7 @@ public class ImageLoadController extends BaseImageAPIController {
             return error(String.format("Unknown application %s.", applicationId));
         }
 
-        OriginalImageRepository imageRepository = determineImageRepository(repositoryCode);
+        ImageRepository imageRepository = determineImageRepository(repositoryCode);
         if (imageRepository == null) {
             return error(String.format("Unknown original image repository %s.", repositoryCode));
         }
@@ -80,9 +80,9 @@ public class ImageLoadController extends BaseImageAPIController {
         return result;
     }
 
-    private OriginalImageRepository determineImageRepository(String code) {
-        for (OriginalImageRepository repository : imageRepositories) {
-            if (repository.getRepositoryCode().equals(code)) {
+    private ImageRepository determineImageRepository(String code) {
+        for (ImageRepository repository : imageRepositories) {
+            if (repository.getCode().equals(code)) {
                 return repository;
             }
         }

@@ -11,7 +11,7 @@ import java.util.Map;
 public interface ImageService {
     Image getById(int applicationId, int imageId);
 
-    void saveImage(int applicationId, int imageId, OriginalImageRepository imageRepository, Map<String, String> repositoryParameters);
+    void saveImage(int applicationId, int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters);
 
     void saveImageModification(ImageModification modification);
 
