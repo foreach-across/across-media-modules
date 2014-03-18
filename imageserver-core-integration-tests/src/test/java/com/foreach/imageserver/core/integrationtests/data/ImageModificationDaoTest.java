@@ -37,8 +37,6 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         writtenCrop.setY(101);
         writtenCrop.setWidth(102);
         writtenCrop.setHeight(103);
-        writtenCrop.setSourceWidth(104);
-        writtenCrop.setSourceHeight(105);
 
         Dimensions writtenDensity = new Dimensions();
         writtenDensity.setWidth(106);
@@ -61,8 +59,6 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         assertEquals(writtenImageModification.getCrop().getY(), readImageModification.getCrop().getY());
         assertEquals(writtenImageModification.getCrop().getWidth(), readImageModification.getCrop().getWidth());
         assertEquals(writtenImageModification.getCrop().getHeight(), readImageModification.getCrop().getHeight());
-        assertEquals(writtenImageModification.getCrop().getSourceWidth(), readImageModification.getCrop().getSourceWidth());
-        assertEquals(writtenImageModification.getCrop().getSourceHeight(), readImageModification.getCrop().getSourceHeight());
         assertEquals(writtenImageModification.getDensity().getWidth(), readImageModification.getDensity().getWidth());
         assertEquals(writtenImageModification.getDensity().getHeight(), readImageModification.getDensity().getHeight());
     }

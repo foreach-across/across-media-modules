@@ -11,9 +11,7 @@
         IM.cropX as crop_x,
         IM.cropY as crop_y,
         IM.cropWidth as crop_width,
-        IM.cropHeight as crop_height,
-        IM.cropSourceWidth as crop_source_width,
-        IM.cropSourceHeight as crop_source_height
+        IM.cropHeight as crop_height
 	</sql>
 
     <resultMap id="imageModificationMap" type="ImageModification">
@@ -26,8 +24,6 @@
         <result property="crop.y" column="crop_y"/>
         <result property="crop.width" column="crop_width"/>
         <result property="crop.height" column="crop_height"/>
-        <result property="crop.sourceWidth" column="crop_source_width"/>
-        <result property="crop.sourceHeight" column="crop_source_height"/>
     </resultMap>
 
     <select id="getById" parameterType="map" resultMap="imageModificationMap">
@@ -47,9 +43,7 @@
           cropX,
           cropY,
           cropWidth,
-          cropHeight,
-          cropSourceWidth,
-          cropSourceHeight
+          cropHeight
         ) VALUES (
           #{applicationId},
           #{imageId},
@@ -59,9 +53,7 @@
           #{crop.x},
           #{crop.y},
           #{crop.width},
-          #{crop.height},
-          #{crop.sourceWidth},
-          #{crop.sourceHeight}
+          #{crop.height}
         )
     </insert>
 

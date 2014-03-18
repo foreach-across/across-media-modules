@@ -4,7 +4,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class Crop {
-    private int x, y, width, height, sourceWidth, sourceHeight;
+    private int x, y, width, height;
 
     public int getX() {
         return x;
@@ -36,21 +36,5 @@ public class Crop {
 
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    public int getSourceWidth() {
-        return sourceWidth;
-    }
-
-    public void setSourceWidth(int sourceWidth) {
-        this.sourceWidth = sourceWidth;
-    }
-
-    public int getSourceHeight() {
-        return sourceHeight;
-    }
-
-    public void setSourceHeight(int sourceHeight) {
-        this.sourceHeight = sourceHeight;
     }
 }

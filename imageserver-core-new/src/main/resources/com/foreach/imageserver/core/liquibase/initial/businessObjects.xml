@@ -95,12 +95,6 @@
             <column name="cropHeight" type="int" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="cropSourceWidth" type="int" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropSourceHeight" type="int" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
         <addPrimaryKey tableName="IMAGE_MODIFICATION"
                        columnNames="applicationId,imageId,resolutionId"
