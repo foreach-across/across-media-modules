@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.foreach.imageserver.core.data.WebImageParametersDao">
     <sql id="columns">
-		WIP.id as web_image_parameters_id,
+		WIP.imageId as web_image_parameters_imageId,
         WIP.url as web_image_parameters_url,
         WIP.width as web_image_parameters_width,
         WIP.height as web_image_parameters_height,
@@ -10,7 +10,7 @@
 	</sql>
 
     <resultMap id="webImageParametersMap" type="WebImageParameters">
-        <id property="id" column="web_image_parameters_id"/>
+        <id property="imageId" column="web_image_parameters_imageId"/>
         <result property="url" column="web_image_parameters_url"/>
         <result property="dimensions.width" column="web_image_parameters_width"/>
         <result property="dimensions.height" column="web_image_parameters_height"/>
@@ -22,7 +22,7 @@
         SELECT
         <include refid="columns"/>
         FROM WEB_IMAGE_PARAMETERS WIP
-        WHERE WIP.id = #{value}
+        WHERE WIP.imageId = #{value}
     </select>
 
     <select id="getByParameters" parameterType="String" resultMap="webImageParametersMap">
@@ -34,13 +34,13 @@
 
     <insert id="insert" parameterType="WebImageParameters">
         INSERT INTO WEB_IMAGE_PARAMETERS (
-            id,
+            imageId,
             url,
             width,
             height,
             imageTypeId
         ) VALUES (
-            #{id},
+            #{imageId},
             #{url},
             #{dimensions.width},
             #{dimensions.height},

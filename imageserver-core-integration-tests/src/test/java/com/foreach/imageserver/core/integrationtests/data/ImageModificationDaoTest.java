@@ -26,8 +26,8 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         String applicationSql = "INSERT INTO APPLICATION ( id, name, active, code, created, updated ) VALUES ( ?, ?, ?, ?, ?, ? )";
         jdbcTemplate.update(applicationSql, 1010, "the_application_name", true, "the_application_code", new Date(2012, 11, 13), new Date(2012, 11, 14));
 
-        String imageSql = "INSERT INTO IMAGE ( imageId, applicationId, created, repositoryCode, originalImageId ) VALUES ( ?, ?, ?, ?, ? )";
-        jdbcTemplate.update(imageSql, 9998, 1010, new Date(2012, 11, 13), "the_repository_code", 3131);
+        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
+        jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code");
 
         String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageResolutionSql, 8, 1111, 2222);
@@ -45,7 +45,7 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         writtenDensity.setHeight(107);
 
         ImageModification writtenImageModification = new ImageModification();
-        writtenImageModification.setApplicationId(112233);
+        writtenImageModification.setApplicationId(1010);
         writtenImageModification.setImageId(9998);
         writtenImageModification.setResolutionId(8);
         writtenImageModification.setCrop(writtenCrop);
@@ -53,7 +53,7 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
 
         imageModificationDao.insert(writtenImageModification);
 
-        ImageModification readImageModification = imageModificationDao.getById(112233, 9998, 8);
+        ImageModification readImageModification = imageModificationDao.getById(1010, 9998, 8);
         assertEquals(writtenImageModification.getApplicationId(), readImageModification.getApplicationId());
         assertEquals(writtenImageModification.getImageId(), readImageModification.getImageId());
         assertEquals(writtenImageModification.getResolutionId(), readImageModification.getResolutionId());

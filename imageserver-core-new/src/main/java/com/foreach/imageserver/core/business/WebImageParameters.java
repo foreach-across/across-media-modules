@@ -3,18 +3,18 @@ package com.foreach.imageserver.core.business;
 import com.foreach.imageserver.core.services.WebImageRepository;
 
 public class WebImageParameters implements ImageParameters {
-    private int id;
+    private int imageId;
     private String url;
     private Dimensions dimensions;
     private ImageType imageType;
 
     @Override
-    public int getId() {
-        return id;
+    public int getImageId() {
+        return imageId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
     }
 
     public String getUrl() {
@@ -50,6 +50,6 @@ public class WebImageParameters implements ImageParameters {
 
     @Override
     public String getUniqueFileName() {
-        return getId() + "." + getImageType().getExtension();
+        return getImageId() + "." + getImageType().getExtension();
     }
 }

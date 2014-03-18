@@ -4,38 +4,30 @@
 
     <sql id="columns">
 		I.imageId as image_id,
-        I.applicationId as image_applicationid,
         I.created as image_datecreated,
-        I.repositoryCode as image_repository_code,
-        I.originalImageId as image_original_image_id
+        I.repositoryCode as image_repository_code
 	</sql>
 
     <resultMap id="imageMap" type="Image">
         <id property="imageId" column="image_id"/>
-        <id property="applicationId" column="image_applicationid"/>
         <result property="dateCreated" column="image_datecreated"/>
         <result property="repositoryCode" column="image_repository_code"/>
-        <result property="originalImageId" column="image_original_image_id"/>
     </resultMap>
 
     <select id="getById" parameterType="map" resultMap="imageMap">
         SELECT
         <include refid="columns"/>
         FROM Image I
-        WHERE I.imageId = #{imageId} AND I.applicationId = #{applicationId}
+        WHERE I.imageId = #{imageId}
     </select>
 
     <insert id="insert" parameterType="Image">
         INSERT INTO Image (
             imageId,
-            applicationId,
-            repositoryCode,
-            originalImageId
+            repositoryCode
         ) VALUES (
             #{imageId},
-            #{applicationId},
-            #{repositoryCode},
-            #{originalImageId}
+            #{repositoryCode}
         )
     </insert>
 

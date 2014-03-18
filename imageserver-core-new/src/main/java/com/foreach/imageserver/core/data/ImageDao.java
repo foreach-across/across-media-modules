@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ImageDao {
-    Image getById(@Param("applicationId") int applicationId, @Param("imageId") int imageId);
+    Image getById(@Param("imageId") int imageId);
+
     void insert(Image image);
 }

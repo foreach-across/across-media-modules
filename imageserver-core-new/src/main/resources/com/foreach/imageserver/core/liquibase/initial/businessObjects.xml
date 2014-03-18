@@ -30,10 +30,7 @@
     <changeSet id="201403091310" author="ovh">
         <createTable tableName="IMAGE">
             <column name="imageId" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="applicationId" type="int">
-                <constraints nullable="false" references="Application(id)" foreignKeyName="fk_image_application_id"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="created" type="datetime" defaultValueComputed="${now}">
                 <constraints nullable="false"/>
@@ -41,13 +38,7 @@
             <column name="repositoryCode" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="originalImageId" type="int">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
-        <addPrimaryKey tableName="IMAGE"
-                       columnNames="applicationId,imageId"
-                       constraintName="pk_image"/>
     </changeSet>
 
     <changeSet id="201403091327" author="ovh">
@@ -77,13 +68,14 @@
     <changeSet id="201403091352" author="ovh">
         <createTable tableName="IMAGE_MODIFICATION">
             <column name="applicationId" type="int">
-                <constraints nullable="false"/>
+                <constraints references="APPLICATION(id)" foreignKeyName="fk_modification_application"
+                             nullable="false"/>
             </column>
             <column name="imageId" type="int">
-                <constraints nullable="false"/>
+                <constraints references="IMAGE(imageId)" foreignKeyName="fk_modification_image" nullable="false"/>
             </column>
             <column name="resolutionId" type="int">
-                <constraints nullable="false"/>
+                <constraints references="IMAGE_RESOLUTION(id)" foreignKeyName="fk_web_resolution" nullable="false"/>
             </column>
             <column name="densityWidth" type="int" defaultValueNumeric="0">
                 <constraints nullable="false"/>
@@ -116,8 +108,9 @@
     </changeSet>
     <changeSet id="201403141650" author="ovh">
         <createTable tableName="WEB_IMAGE_PARAMETERS">
-            <column name="id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="imageId" type="int">
+                <constraints primaryKey="true" references="IMAGE(imageId)" foreignKeyName="fk_web_image"
+                             nullable="false"/>
             </column>
             <column name="url" type="varchar(255)">
                 <constraints nullable="false"/>

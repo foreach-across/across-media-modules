@@ -9,11 +9,11 @@ import com.foreach.imageserver.core.transformers.StreamImageSource;
 import java.util.Map;
 
 public interface ImageService {
-    Image getById(int applicationId, int imageId);
+    Image getById(int imageId);
 
-    void saveImage(int applicationId, int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters);
+    void saveImage(int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException;
 
     void saveImageModification(ImageModification modification);
 
-    StreamImageSource getVariantImage(Image image, ImageResolution imageResolution, ImageVariant imageVariant);
+    StreamImageSource getVariantImage(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant);
 }

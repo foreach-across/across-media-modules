@@ -9,9 +9,7 @@ public interface ImageRepository {
 
     ImageParameters getImageParameters(int id);
 
-    ImageParameters getImageParameters(Map<String, String> repositoryParameters);
-
-    RetrievedImage retrieveImage(Map<String, String> repositoryParameters);
+    RetrievedImage retrieveImage(int imageId, Map<String, String> repositoryParameters);
 
     boolean parametersAreEqual(int imageId, Map<String, String> repositoryParameters);
 }

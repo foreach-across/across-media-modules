@@ -1,13 +1,12 @@
 package com.foreach.imageserver.core.web.controllers;
 
 import com.foreach.across.core.annotations.Refreshable;
-import com.foreach.imageserver.core.business.Application;
-import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.services.ApplicationService;
 import com.foreach.imageserver.core.services.ImageRepository;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +22,9 @@ public class ImageLoadController extends BaseImageAPIController {
 
     public static final String LOAD_IMAGE_PATH = "load";
 
+    @Value("${accessToken}")
+    private String accessToken;
+
     @Autowired
     private ApplicationService applicationService;
 
@@ -34,36 +36,22 @@ public class ImageLoadController extends BaseImageAPIController {
 
     @RequestMapping("/" + LOAD_IMAGE_PATH)
     @ResponseBody
-    public JsonResponse load(@RequestParam(value = "aid", required = true) int applicationId,
-                             @RequestParam(value = "token", required = true) String applicationKey,
-                             @RequestParam(value = "repo", required = true) String repositoryCode,
+    public JsonResponse load(@RequestParam(value = "token", required = true) String accessToken,
                              @RequestParam(value = "iid", required = true) int imageId,
+                             @RequestParam(value = "repo", required = true) String repositoryCode,
                              @RequestParam Map<String, String> allParameters) {
-        Application application = applicationService.getById(applicationId);
-        if (application == null || !application.canBeManaged(applicationKey)) {
-            return error(String.format("Unknown application %s.", applicationId));
+        if (!this.accessToken.equals(accessToken)) {
+            return error("Access denied.");
         }
 
         ImageRepository imageRepository = determineImageRepository(repositoryCode);
         if (imageRepository == null) {
-            return error(String.format("Unknown original image repository %s.", repositoryCode));
+            return error(String.format("Unknown image repository %s.", repositoryCode));
         }
 
         Map<String, String> repositoryParameters = getRepositoryParameters(repositoryCode, allParameters);
 
-        Image existingImage = imageService.getById(applicationId, imageId);
-        if (existingImage != null) {
-            // We silently allow this, provided that the same original image is loaded.
-            if (!existingImage.getRepositoryCode().equals(repositoryCode)) {
-                return error(String.format("A different image exists for application id %d and image id %d.", applicationId, imageId));
-            }
-
-            if (!imageRepository.parametersAreEqual(existingImage.getOriginalImageId(), repositoryParameters)) {
-                return error(String.format("A different image exists for application id %d and image id %d.", applicationId, imageId));
-            }
-        } else {
-            imageService.saveImage(applicationId, imageId, imageRepository, repositoryParameters);
-        }
+        imageService.saveImage(imageId, imageRepository, repositoryParameters);
 
         return success();
     }

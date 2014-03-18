@@ -1,8 +1,8 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.business.ImageParameters;
+import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.business.WebImageParameters;
 import com.foreach.imageserver.core.data.WebImageParametersDao;
 import org.apache.commons.io.IOUtils;
@@ -44,13 +44,7 @@ public class WebImageRepository implements ImageRepository {
     }
 
     @Override
-    public ImageParameters getImageParameters(Map<String, String> repositoryParameters) {
-        String url = extractUrl(repositoryParameters);
-        return webImageParametersDao.getByParameters(url);
-    }
-
-    @Override
-    public RetrievedImage retrieveImage(Map<String, String> repositoryParameters) {
+    public RetrievedImage retrieveImage(int imageId, Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
 
         InputStream imageStream = null;
@@ -75,6 +69,7 @@ public class WebImageRepository implements ImageRepository {
             Dimensions dimensions = imageTransformService.computeDimensions(imageType, imageBytes);
 
             WebImageParameters imageParameters = new WebImageParameters();
+            imageParameters.setImageId(imageId);
             imageParameters.setUrl(url);
             imageParameters.setDimensions(dimensions);
             imageParameters.setImageType(imageType);

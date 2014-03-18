@@ -31,32 +31,28 @@ public class ImageServiceImpl implements ImageService {
     private Collection<ImageRepository> imageRepositories;
 
     @Override
-    public Image getById(int applicationId, int imageId) {
-        return imageDao.getById(applicationId, imageId);
+    public Image getById(int imageId) {
+        return imageDao.getById(imageId);
     }
 
     // TODO Verify that transactional has been setup properly !
     // TODO I'm not taking care of errors right now, make sure to tackle this later on!
     @Override
     @Transactional
-    public void saveImage(int applicationId, int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters) {
-        RetrievedImage retrievedImage = null;
+    public void saveImage(int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException {
+        Image existingImage = getById(imageId);
+        if (existingImage != null) {
+            // We silently allow this, provided that the same original image is loaded.
+            verifySameParameters(existingImage, imageRepository, repositoryParameters);
+        } else {
+            Image image = new Image();
+            image.setImageId(imageId);
+            image.setRepositoryCode(imageRepository.getCode());
+            imageDao.insert(image);
 
-        ImageParameters imageParameters = imageRepository.getImageParameters(repositoryParameters);
-        if (imageParameters == null) {
-            retrievedImage = imageRepository.retrieveImage(repositoryParameters);
-            imageParameters = retrievedImage.getImageParameters();
-        }
+            RetrievedImage retrievedImage = imageRepository.retrieveImage(imageId, repositoryParameters);
 
-        Image image = new Image();
-        image.setApplicationId(applicationId);
-        image.setImageId(imageId);
-        image.setRepositoryCode(imageRepository.getCode());
-        image.setOriginalImageId(imageParameters.getId());
-        imageDao.insert(image);
-
-        if (retrievedImage != null) {
-            imageStoreService.storeOriginalImage(imageParameters, retrievedImage.getImageBytes());
+            imageStoreService.storeOriginalImage(retrievedImage.getImageParameters(), retrievedImage.getImageBytes());
         }
     }
 
@@ -67,10 +63,10 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public StreamImageSource getVariantImage(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
+    public StreamImageSource getVariantImage(Image image, int applicationId, ImageResolution imageResolution, ImageVariant imageVariant) {
         StreamImageSource imageSource = imageStoreService.getVariantImage(image, imageResolution, imageVariant);
         if (imageSource == null) {
-            ImageModification imageModification = imageModificationDao.getById(image.getApplicationId(), image.getImageId(), imageResolution.getId());
+            ImageModification imageModification = imageModificationDao.getById(applicationId, image.getImageId(), imageResolution.getId());
             if (imageModification == null) {
                 throw new ImageCouldNotBeRetrievedException("No image modification was registered for this image.");
             }
@@ -81,7 +77,7 @@ public class ImageServiceImpl implements ImageService {
             }
 
             // TODO We'll assume for now that the original image is guaranteed to be available on disk.
-            ImageParameters imageParameters = imageRepository.getImageParameters(image.getOriginalImageId());
+            ImageParameters imageParameters = imageRepository.getImageParameters(image.getImageId());
             StreamImageSource originalImageSource = imageStoreService.getOriginalImage(imageParameters);
 
             Dimensions outputResolution = computeOutputResolution(imageParameters, imageResolution);
@@ -140,6 +136,16 @@ public class ImageServiceImpl implements ImageService {
             }
         }
         return null;
+    }
+
+    private void verifySameParameters(Image existingImage, ImageRepository imageRepository, Map<String, String> repositoryParameters) {
+        if (!existingImage.getRepositoryCode().equals(imageRepository.getCode())) {
+            throw new ImageStoreException(String.format("Image with id %d already exists.", existingImage.getImageId()));
+        }
+
+        if (!imageRepository.parametersAreEqual(existingImage.getImageId(), repositoryParameters)) {
+            throw new ImageStoreException(String.format("Image with id %d already exists.", existingImage.getImageId()));
+        }
     }
 
 }
