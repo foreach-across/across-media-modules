@@ -1,7 +1,10 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.*;
-import com.foreach.imageserver.core.data.WebOriginalImageParametersDao;
+import com.foreach.imageserver.core.business.Dimensions;
+import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.business.OriginalImage;
+import com.foreach.imageserver.core.business.WebOriginalImage;
+import com.foreach.imageserver.core.data.WebOriginalImageDao;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -25,7 +28,7 @@ public class WebOriginalImageRepository implements OriginalImageRepository {
     public static final String CODE = "web";
 
     @Autowired
-    private WebOriginalImageParametersDao webOriginalImageParametersDao;
+    private WebOriginalImageDao webOriginalImageDao;
 
     @Autowired
     private ImageTransformService imageTransformService;
@@ -37,15 +40,13 @@ public class WebOriginalImageRepository implements OriginalImageRepository {
 
     @Override
     public OriginalImage getOriginalImage(int id) {
-        WebOriginalImageParameters parameters = webOriginalImageParametersDao.getById(id);
-        return parameters != null ? new WebOriginalImage(parameters) : null;
+        return webOriginalImageDao.getById(id);
     }
 
     @Override
     public OriginalImage getOriginalImage(Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
-        WebOriginalImageParameters parameters = webOriginalImageParametersDao.getByParameters(url);
-        return parameters != null ? new WebOriginalImage(parameters) : null;
+        return webOriginalImageDao.getByParameters(url);
     }
 
     @Override
@@ -73,13 +74,13 @@ public class WebOriginalImageRepository implements OriginalImageRepository {
 
             Dimensions dimensions = imageTransformService.computeDimensions(imageType, imageBytes);
 
-            WebOriginalImageParameters originalImageParameters = new WebOriginalImageParameters();
-            originalImageParameters.setUrl(url);
-            originalImageParameters.setDimensions(dimensions);
-            originalImageParameters.setImageType(imageType);
-            webOriginalImageParametersDao.insert(originalImageParameters);
+            WebOriginalImage originalImage = new WebOriginalImage();
+            originalImage.setUrl(url);
+            originalImage.setDimensions(dimensions);
+            originalImage.setImageType(imageType);
+            webOriginalImageDao.insert(originalImage);
 
-            return new RetrievedOriginalImage(new WebOriginalImage(originalImageParameters), imageBytes);
+            return new RetrievedOriginalImage(originalImage, imageBytes);
         } catch (IOException e) {
             throw new ImageCouldNotBeRetrievedException(e);
         } finally {
@@ -89,9 +90,9 @@ public class WebOriginalImageRepository implements OriginalImageRepository {
 
     @Override
     public boolean parametersAreEqual(int originalImageId, Map<String, String> repositoryParameters) {
-        WebOriginalImageParameters storedParameters = webOriginalImageParametersDao.getById(originalImageId);
+        WebOriginalImage storedImage = webOriginalImageDao.getById(originalImageId);
         String suppliedUrl = extractUrl(repositoryParameters);
-        return storedParameters.getUrl().equals(suppliedUrl);
+        return storedImage.getUrl().equals(suppliedUrl);
     }
 
     private String extractUrl(Map<String, String> repositoryParameters) {

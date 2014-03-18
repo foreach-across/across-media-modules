@@ -3,15 +3,26 @@ package com.foreach.imageserver.core.business;
 import com.foreach.imageserver.core.services.WebOriginalImageRepository;
 
 public class WebOriginalImage implements OriginalImage {
-    private final WebOriginalImageParameters parameters;
-
-    public WebOriginalImage(WebOriginalImageParameters parameters) {
-        this.parameters = parameters;
-    }
+    private int id;
+    private String url;
+    private Dimensions dimensions;
+    private ImageType imageType;
 
     @Override
     public int getId() {
-        return parameters.getId();
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
@@ -21,16 +32,24 @@ public class WebOriginalImage implements OriginalImage {
 
     @Override
     public ImageType getImageType() {
-        return parameters.getImageType();
+        return imageType;
+    }
+
+    public void setImageType(ImageType imageType) {
+        this.imageType = imageType;
     }
 
     @Override
     public Dimensions getDimensions() {
-        return parameters.getDimensions();
+        return dimensions;
+    }
+
+    public void setDimensions(Dimensions dimensions) {
+        this.dimensions = dimensions;
     }
 
     @Override
     public String getUniqueFileName() {
-        return parameters.getId() + "." + getImageType().getExtension();
+        return getId() + "." + getImageType().getExtension();
     }
 }
