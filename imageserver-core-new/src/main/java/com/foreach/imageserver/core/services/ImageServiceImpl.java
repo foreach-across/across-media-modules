@@ -40,12 +40,12 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void saveImage(int applicationId, int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters) {
-        RetrievedOriginalImage retrievedOriginalImage = null;
+        RetrievedImage retrievedImage = null;
 
         ImageParameters imageParameters = imageRepository.getImageParameters(repositoryParameters);
         if (imageParameters == null) {
-            retrievedOriginalImage = imageRepository.retrieveImage(repositoryParameters);
-            imageParameters = retrievedOriginalImage.getImageParameters();
+            retrievedImage = imageRepository.retrieveImage(repositoryParameters);
+            imageParameters = retrievedImage.getImageParameters();
         }
 
         Image image = new Image();
@@ -55,8 +55,8 @@ public class ImageServiceImpl implements ImageService {
         image.setOriginalImageId(imageParameters.getId());
         imageDao.insert(image);
 
-        if (retrievedOriginalImage != null) {
-            imageStoreService.storeOriginalImage(imageParameters, retrievedOriginalImage.getImageBytes());
+        if (retrievedImage != null) {
+            imageStoreService.storeOriginalImage(imageParameters, retrievedImage.getImageBytes());
         }
     }
 

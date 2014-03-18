@@ -50,7 +50,7 @@ public class WebImageRepository implements ImageRepository {
     }
 
     @Override
-    public RetrievedOriginalImage retrieveImage(Map<String, String> repositoryParameters) {
+    public RetrievedImage retrieveImage(Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
 
         InputStream imageStream = null;
@@ -80,7 +80,7 @@ public class WebImageRepository implements ImageRepository {
             originalImage.setImageType(imageType);
             webImageParametersDao.insert(originalImage);
 
-            return new RetrievedOriginalImage(originalImage, imageBytes);
+            return new RetrievedImage(originalImage, imageBytes);
         } catch (IOException e) {
             throw new ImageCouldNotBeRetrievedException(e);
         } finally {

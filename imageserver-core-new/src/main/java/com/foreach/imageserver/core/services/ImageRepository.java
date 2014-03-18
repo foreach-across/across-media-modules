@@ -11,7 +11,7 @@ public interface ImageRepository {
 
     ImageParameters getImageParameters(Map<String, String> repositoryParameters);
 
-    RetrievedOriginalImage retrieveImage(Map<String, String> repositoryParameters);
+    RetrievedImage retrieveImage(Map<String, String> repositoryParameters);
 
     boolean parametersAreEqual(int imageId, Map<String, String> repositoryParameters);
 }
