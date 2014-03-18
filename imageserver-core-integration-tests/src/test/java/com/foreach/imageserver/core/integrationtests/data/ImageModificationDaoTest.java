@@ -23,8 +23,8 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
 
     @Test
     public void insertAndGetById() {
-        String applicationSql = "INSERT INTO CONTEXT ( id, name ) VALUES ( ?, ? )";
-        jdbcTemplate.update(applicationSql, 1010, "the_application_name");
+        String applicationSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
+        jdbcTemplate.update(applicationSql, 1010, "the_application_code");
 
         String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code");

@@ -2,7 +2,12 @@ package com.foreach.imageserver.core.business;
 
 public class Context {
     private int id;
-    private String name;
+
+    /**
+     * Careful: We use the code to generate an intelligible folder structure. Make sure that it can be used as a valid
+     * folder name.
+     */
+    private String code;
 
     public int getId() {
         return id;
@@ -12,11 +17,11 @@ public class Context {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getCode() {
+        return code;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCode(String code) {
+        this.code = code;
     }
 }

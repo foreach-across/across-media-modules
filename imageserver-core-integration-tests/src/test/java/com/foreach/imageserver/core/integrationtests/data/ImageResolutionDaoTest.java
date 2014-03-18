@@ -22,9 +22,9 @@ public class ImageResolutionDaoTest extends AbstractIntegrationTest {
 
     @Test
     public void getForContext() {
-        String contextSql = "INSERT INTO CONTEXT ( id, name ) VALUES ( ?, ? )";
-        jdbcTemplate.update(contextSql, 10, "the_application_name");
-        jdbcTemplate.update(contextSql, 11, "the_other_application_name");
+        String contextSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
+        jdbcTemplate.update(contextSql, 10, "the_application_code");
+        jdbcTemplate.update(contextSql, 11, "the_other_application_code");
 
         String resolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(resolutionSql, 10, 111, 222);

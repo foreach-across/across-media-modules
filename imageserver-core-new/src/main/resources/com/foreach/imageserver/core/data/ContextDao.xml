@@ -4,12 +4,12 @@
 
     <sql id="columns">
         C.id as context_id,
-        C.name as context_name
+        C.code as context_code
     </sql>
 
     <resultMap id="contextMap" type="Context">
         <id property="id" column="context_id"/>
-        <result property="name" column="context_name"/>
+        <result property="code" column="context_code"/>
     </resultMap>
 
     <select id="getById" parameterType="int" resultMap="contextMap">

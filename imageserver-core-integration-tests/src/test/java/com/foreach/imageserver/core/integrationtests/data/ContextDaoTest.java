@@ -19,12 +19,12 @@ public class ContextDaoTest extends AbstractIntegrationTest {
 
     @Test
     public void getById() {
-        String sql = "INSERT INTO CONTEXT ( id, name ) VALUES ( ?, ? )";
-        jdbcTemplate.update(sql, 10, "the_application_name");
+        String sql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
+        jdbcTemplate.update(sql, 10, "the_application_code");
 
         Context context = contextDao.getById(10);
 
         assertEquals(10, context.getId());
-        assertEquals("the_application_name", context.getName());
+        assertEquals("the_application_code", context.getCode());
     }
 }

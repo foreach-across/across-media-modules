@@ -95,9 +95,8 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     private Path setupTargetPath(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
         try {
             String fileName = constructFileName(image, imageResolution, imageVariant);
-            String contextIdString = Integer.valueOf(context.getId()).toString();
 
-            Path targetFolder = variantsFolder.resolve(contextIdString);
+            Path targetFolder = variantsFolder.resolve(context.getCode());
             Files.createDirectories(targetFolder);
 
             return targetFolder.resolve(fileName);
