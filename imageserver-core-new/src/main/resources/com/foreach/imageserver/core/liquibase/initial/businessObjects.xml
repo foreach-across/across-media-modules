@@ -115,7 +115,7 @@
                        constraintName="pk_image_modification"/>
     </changeSet>
     <changeSet id="201403141650" author="ovh">
-        <createTable tableName="WEB_ORIGINAL_IMAGES">
+        <createTable tableName="WEB_IMAGE_PARAMETERS">
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

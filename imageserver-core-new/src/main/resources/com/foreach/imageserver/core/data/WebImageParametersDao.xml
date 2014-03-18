@@ -2,38 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.foreach.imageserver.core.data.WebImageParametersDao">
     <sql id="columns">
-		WOI.id as web_original_images_id,
-        WOI.url as web_original_images_url,
-        WOI.width as web_original_images_width,
-        WOI.height as web_original_images_height,
-        WOI.imageTypeId as web_original_images_imagetype
+		WIP.id as web_image_parameters_id,
+        WIP.url as web_image_parameters_url,
+        WIP.width as web_image_parameters_width,
+        WIP.height as web_image_parameters_height,
+        WIP.imageTypeId as web_image_parameters_imagetype
 	</sql>
 
     <resultMap id="webImageParametersMap" type="WebImageParameters">
-        <id property="id" column="web_original_images_id"/>
-        <result property="url" column="web_original_images_url"/>
-        <result property="dimensions.width" column="web_original_images_width"/>
-        <result property="dimensions.height" column="web_original_images_height"/>
-        <result property="imageType" column="web_original_images_imagetype"
+        <id property="id" column="web_image_parameters_id"/>
+        <result property="url" column="web_image_parameters_url"/>
+        <result property="dimensions.width" column="web_image_parameters_width"/>
+        <result property="dimensions.height" column="web_image_parameters_height"/>
+        <result property="imageType" column="web_image_parameters_imagetype"
                 typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
     </resultMap>
 
     <select id="getById" parameterType="int" resultMap="webImageParametersMap">
         SELECT
         <include refid="columns"/>
-        FROM WEB_ORIGINAL_IMAGES WOI
-        WHERE WOI.id = #{value}
+        FROM WEB_IMAGE_PARAMETERS WIP
+        WHERE WIP.id = #{value}
     </select>
 
     <select id="getByParameters" parameterType="String" resultMap="webImageParametersMap">
         SELECT
         <include refid="columns"/>
-        FROM WEB_ORIGINAL_IMAGES WOI
-        WHERE WOI.url = #{value}
+        FROM WEB_IMAGE_PARAMETERS WIP
+        WHERE WIP.url = #{value}
     </select>
 
     <insert id="insert" parameterType="WebImageParameters">
-        INSERT INTO WEB_ORIGINAL_IMAGES (
+        INSERT INTO WEB_IMAGE_PARAMETERS (
             id,
             url,
             width,
