@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.web.controllers;
 
 import com.foreach.across.core.annotations.Refreshable;
+import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.services.ImageRepository;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
@@ -47,9 +48,9 @@ public class ImageLoadController extends BaseImageAPIController {
 
         Map<String, String> repositoryParameters = getRepositoryParameters(repositoryCode, allParameters);
 
-        imageService.saveImage(imageId, imageRepository, repositoryParameters);
+        Dimensions dimensions = imageService.saveImage(imageId, imageRepository, repositoryParameters);
 
-        return success();
+        return success(dimensions);
     }
 
     private Map<String, String> getRepositoryParameters(String code, Map<String, String> requestParameters) {

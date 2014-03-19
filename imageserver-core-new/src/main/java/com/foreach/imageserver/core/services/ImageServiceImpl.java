@@ -39,11 +39,13 @@ public class ImageServiceImpl implements ImageService {
     // TODO I'm not taking care of errors right now, make sure to tackle this later on!
     @Override
     @Transactional
-    public void saveImage(int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException {
+    public Dimensions saveImage(int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException {
         Image existingImage = getById(imageId);
+        ImageParameters imageParameters = null;
         if (existingImage != null) {
             // We silently allow this, provided that the same original image is loaded.
             verifySameParameters(existingImage, imageRepository, repositoryParameters);
+            imageParameters = imageRepository.getImageParameters(existingImage.getImageId());
         } else {
             Image image = new Image();
             image.setImageId(imageId);
@@ -51,9 +53,12 @@ public class ImageServiceImpl implements ImageService {
             imageDao.insert(image);
 
             RetrievedImage retrievedImage = imageRepository.retrieveImage(imageId, repositoryParameters);
+            imageParameters = retrievedImage.getImageParameters();
 
             imageStoreService.storeOriginalImage(retrievedImage.getImageParameters(), retrievedImage.getImageBytes());
         }
+
+        return imageParameters.getDimensions();
     }
 
     // TODO Support editing existing crops. (Don't forget to remove all the variants from disk!)
