@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="be.mediafin.imageserver.imagerepositories.diocontent.data.DioContentImageParametersDao">
+    <sql id="columns">
+		DIP.imageId as diocontent_image_parameters_imageId,
+        DIP.dioContentId as diocontent_image_parameters_diocontentid,
+        DIP.width as diocontent_image_parameters_width,
+        DIP.height as diocontent_image_parameters_height,
+        DIP.imageTypeId as diocontent_image_parameters_imagetype
+	</sql>
+
+    <resultMap id="dioContentImageParametersMap" type="DioContentImageParameters">
+        <id property="imageId" column="diocontent_image_parameters_imageId"/>
+        <result property="dioContentId" column="diocontent_image_parameters_diocontentid"/>
+        <result property="dimensions.width" column="diocontent_image_parameters_width"/>
+        <result property="dimensions.height" column="diocontent_image_parameters_height"/>
+        <result property="imageType" column="diocontent_image_parameters_imagetype"
+                typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
+    </resultMap>
+
+    <select id="getById" parameterType="int" resultMap="dioContentImageParametersMap">
+        SELECT
+        <include refid="columns"/>
+        FROM DIO_CONTENT_IMAGE_PARAMETERS DIP
+        WHERE DIP.imageId = #{value}
+    </select>
+
+    <insert id="insert" parameterType="DioContentImageParameters">
+        INSERT INTO DIO_CONTENT_IMAGE_PARAMETERS (
+            imageId,
+            dioContentId,
+            width,
+            height,
+            imageTypeId
+        ) VALUES (
+            #{imageId},
+            #{dioContentId},
+            #{dimensions.width},
+            #{dimensions.height},
+            #{imageType.id}
+        )
+    </insert>
+</mapper>
+
