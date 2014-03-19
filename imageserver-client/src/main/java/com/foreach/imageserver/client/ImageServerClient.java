@@ -17,7 +17,7 @@ public interface ImageServerClient {
 
     void registerImageModification(String imageServerUrl, int applicationId, String applicationToken, int imageId, ImageResolutionDto imageResolutionDto, ImageModificationDto imageModificationDto);
 
-    List<RegisteredImageModificationDto> listRegisteredModifications(String imageServerUrl, int applicationId, String applicationToken, int imageId);
+    //List<RegisteredImageModificationDto> listRegisteredModifications(String imageServerUrl, int applicationId, String applicationToken, int imageId);
 
     List<ImageResolutionDto> listAllowedResolutions(String imageServerUrl, int applicationId, String applicationToken);
 

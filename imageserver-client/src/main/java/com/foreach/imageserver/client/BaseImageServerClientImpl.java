@@ -61,12 +61,12 @@ public abstract class BaseImageServerClientImpl implements ImageServerClient {
             throw new RuntimeException("Unexpected exception while registering image modification " + response.getErrorMessage());
         }
     }
-
+/*
     @Override
     public List<RegisteredImageModificationDto> listRegisteredModifications(String imageServerUrl, int applicationId, String applicationToken, int imageId) {
         Client client = ClientBuilder.newBuilder().newClient();
-        WebTarget target = client.target(imageServerUrl).path(ImageModificationController.LIST_REGISTERED_PATH);
-        target = addApplicationParams(applicationId, applicationToken, target);
+          WebTarget target = client.target(imageServerUrl).path(ImageModificationController.LIST_REGISTERED_PATH);
+      target = addApplicationParams(applicationId, applicationToken, target);
         target = target.queryParam("iid", imageId);
         JsonResponse<List<RegisteredImageModificationDto>> response = target.request().get(JsonResponse.class);
         if (!response.isSuccess()) {
@@ -74,7 +74,7 @@ public abstract class BaseImageServerClientImpl implements ImageServerClient {
         }
         return response.getResult();
     }
-
+*/
     @Override
     public List<ImageResolutionDto> listAllowedResolutions(String imageServerUrl, int applicationId, String applicationToken) {
         Client client = ClientBuilder.newBuilder().newClient();
