@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.config;
 
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -14,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 @PropertySource("classpath:integrationtests.properties")
@@ -54,19 +56,21 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    public AcrossContext acrossContext(ApplicationContext parentContext, PropertySourcesPlaceholderConfigurer propertyConfigurer, DataSource dataSource) {
+    public AcrossContext acrossContext(ApplicationContext parentContext, PropertySourcesPlaceholderConfigurer propertyConfigurer, DataSource dataSource, List<AcrossModule> acrossModules) {
         AcrossContext context = new AcrossContext(parentContext);
         context.setAllowInstallers(true);
         context.setDataSource(dataSource);
         context.addPropertySources(propertyConfigurer);
 
-        context.addModule(imageServerCoreModule());
+        for (AcrossModule acrossModule : acrossModules) {
+            context.addModule(acrossModule);
+        }
 
         return context;
     }
 
     @Bean
-    public ImageServerCoreModule imageServerCoreModule() {
+    public AcrossModule imageServerCoreModule() {
         ImageServerCoreModule module = new ImageServerCoreModule();
         module.setExposeFilter(new PackageBeanFilter("com.foreach.imageserver.core", "org.mybatis.spring.mapper"));
         return module;
