@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.Map;
 
 @Service
@@ -28,7 +27,7 @@ public class ImageServiceImpl implements ImageService {
     private ImageTransformService imageTransformService;
 
     @Autowired
-    private Collection<ImageRepository> imageRepositories;
+    private ImageRepositoryService imageRepositoryService;
 
     @Override
     public Image getById(int imageId) {
@@ -76,7 +75,7 @@ public class ImageServiceImpl implements ImageService {
                 throw new ImageCouldNotBeRetrievedException("No image modification was registered for this image.");
             }
 
-            ImageRepository imageRepository = determineImageRepository(image.getRepositoryCode());
+            ImageRepository imageRepository = imageRepositoryService.determineImageRepository(image.getRepositoryCode());
             if (imageRepository == null) {
                 throw new ImageCouldNotBeRetrievedException("Missing image repository.");
             }
@@ -137,15 +136,6 @@ public class ImageServiceImpl implements ImageService {
         dimensions.setWidth(width);
         dimensions.setHeight(height);
         return dimensions;
-    }
-
-    private ImageRepository determineImageRepository(String code) {
-        for (ImageRepository repository : imageRepositories) {
-            if (repository.getCode().equals(code)) {
-                return repository;
-            }
-        }
-        return null;
     }
 
     private void verifySameParameters(Image existingImage, ImageRepository imageRepository, Map<String, String> repositoryParameters) {

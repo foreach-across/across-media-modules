@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.web.controllers;
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.services.ImageRepository;
+import com.foreach.imageserver.core.services.ImageRepositoryService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class ImageLoadController extends BaseImageAPIController {
     private ImageService imageService;
 
     @Autowired
-    private Collection<ImageRepository> imageRepositories;
+    private ImageRepositoryService imageRepositoryService;
 
     @RequestMapping("/" + LOAD_IMAGE_PATH)
     @ResponseBody
@@ -41,7 +41,7 @@ public class ImageLoadController extends BaseImageAPIController {
             return error("Access denied.");
         }
 
-        ImageRepository imageRepository = determineImageRepository(repositoryCode);
+        ImageRepository imageRepository = imageRepositoryService.determineImageRepository(repositoryCode);
         if (imageRepository == null) {
             return error(String.format("Unknown image repository %s.", repositoryCode));
         }
@@ -63,15 +63,6 @@ public class ImageLoadController extends BaseImageAPIController {
             }
         }
         return result;
-    }
-
-    private ImageRepository determineImageRepository(String code) {
-        for (ImageRepository repository : imageRepositories) {
-            if (repository.getCode().equals(code)) {
-                return repository;
-            }
-        }
-        return null;
     }
 
 }
