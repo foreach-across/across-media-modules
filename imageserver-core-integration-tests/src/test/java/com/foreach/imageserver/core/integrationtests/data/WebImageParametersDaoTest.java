@@ -23,7 +23,7 @@ public class WebImageParametersDaoTest extends AbstractIntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    public void insertAndGetByParameters() {
+    public void insertAndGetById() {
         String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageSql, 121212, new Date(2012, 11, 13), "the_repository_code");
 
@@ -35,7 +35,7 @@ public class WebImageParametersDaoTest extends AbstractIntegrationTest {
 
         webImageParametersDao.insert(writtenParameters);
 
-        WebImageParameters readParameters = webImageParametersDao.getByParameters("dit_is_een_url");
+        WebImageParameters readParameters = webImageParametersDao.getById(121212);
         assertNotNull(readParameters);
         assertEquals(writtenParameters.getImageId(), readParameters.getImageId());
         assertEquals(writtenParameters.getUrl(), readParameters.getUrl());

@@ -7,7 +7,5 @@ import org.springframework.stereotype.Repository;
 public interface WebImageParametersDao {
     WebImageParameters getById(int id);
 
-    WebImageParameters getByParameters(String url);
-
     void insert(WebImageParameters parameters);
 }

@@ -25,13 +25,6 @@
         WHERE WIP.imageId = #{value}
     </select>
 
-    <select id="getByParameters" parameterType="String" resultMap="webImageParametersMap">
-        SELECT
-        <include refid="columns"/>
-        FROM WEB_IMAGE_PARAMETERS WIP
-        WHERE WIP.url = #{value}
-    </select>
-
     <insert id="insert" parameterType="WebImageParameters">
         INSERT INTO WEB_IMAGE_PARAMETERS (
             imageId,
