@@ -24,8 +24,8 @@ public class IntegrationTestConfig {
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
-        propertySources.setIgnoreResourceNotFound(true);
-        propertySources.setIgnoreUnresolvablePlaceholders(true);
+        propertySources.setIgnoreResourceNotFound(false);
+        propertySources.setIgnoreUnresolvablePlaceholders(false);
 
         return propertySources;
     }
