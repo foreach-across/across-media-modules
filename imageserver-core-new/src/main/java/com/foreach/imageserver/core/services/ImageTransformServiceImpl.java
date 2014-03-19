@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.services;
 
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.*;
@@ -13,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
+@Exposed
 public class ImageTransformServiceImpl implements ImageTransformService {
 
     @Autowired
