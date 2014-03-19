@@ -36,4 +36,9 @@ public class ContextServiceImpl implements ContextService {
         return null;
     }
 
+    @Override
+    public List<ImageResolution> getImageResolutions(int contextId) {
+        return imageResolutionDao.getForContext(contextId);
+    }
+
 }

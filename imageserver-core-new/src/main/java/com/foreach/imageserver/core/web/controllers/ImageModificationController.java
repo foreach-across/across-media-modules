@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -87,10 +88,31 @@ public class ImageModificationController extends BaseImageAPIController {
 
     @RequestMapping(value = "/" + LIST_RESOLUTIONS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public JsonResponse<List<ImageResolutionDto>> listResolutions(@RequestParam(value = "token", required = true) String accessToken,
-                                                                  @RequestParam(value = "cid", required = true) int contextId) {
-        //TODO
-        return success();
+    public JsonResponse listResolutions(@RequestParam(value = "token", required = true) String accessToken,
+                                        @RequestParam(value = "cid", required = true) int contextId) {
+        if (!this.accessToken.equals(accessToken)) {
+            return error("Access denied.");
+        }
+
+        Context context = contextService.getById(contextId);
+        if (context == null) {
+            return error("No such context.");
+        }
+
+        List<ImageResolution> imageResolutions = contextService.getImageResolutions(contextId);
+
+        return success(imageResolutionDtoList(imageResolutions));
+    }
+
+    private List<ImageResolutionDto> imageResolutionDtoList(List<ImageResolution> imageResolutions) {
+        List<ImageResolutionDto> dtos = new ArrayList<>(imageResolutions.size());
+        for (ImageResolution imageResolution : imageResolutions) {
+            ImageResolutionDto dto = new ImageResolutionDto();
+            dto.setWidth(imageResolution.getWidth());
+            dto.setHeight(imageResolution.getHeight());
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
 }
