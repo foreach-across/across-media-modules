@@ -28,7 +28,7 @@ public class ContextServiceImpl implements ContextService {
     public ImageResolution getImageResolution(int contextId, Integer width, Integer height) {
         List<ImageResolution> imageResolutions = imageResolutionDao.getForContext(contextId);
         for (ImageResolution imageResolution : imageResolutions) {
-            if (imageResolution.getWidth() == width && imageResolution.getHeight() == height) {
+            if (imageResolution.getWidth().equals(width) && imageResolution.getHeight().equals(height)) {
                 return imageResolution;
             }
         }
