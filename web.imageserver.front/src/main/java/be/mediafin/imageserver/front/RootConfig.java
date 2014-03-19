@@ -1,5 +1,6 @@
 package be.mediafin.imageserver.front;
 
+import be.mediafin.imageserver.imagerepositories.diocontent.ImageServerDioContentModule;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.spring.logging.LogbackConfigurer;
@@ -65,16 +66,15 @@ public class RootConfig {
         context.addPropertySources(propertyConfigurer);
 
         context.addModule(imageServerCoreModule());
-        //TODO: we probably don't want this dependency here:
-//        context.addModule(dioContentModule());
+        context.addModule(dioContentModule());
 
         return context;
     }
 
-//    @Bean
-//    public AcrossModule dioContentModule() {
-//        return new DioContentModule();
-//    }
+    @Bean
+    public ImageServerDioContentModule dioContentModule() {
+        return new ImageServerDioContentModule();
+    }
 
     @Bean
     public ImageServerCoreModule imageServerCoreModule() {
