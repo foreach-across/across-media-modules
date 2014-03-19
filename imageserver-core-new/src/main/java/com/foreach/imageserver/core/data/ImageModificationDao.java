@@ -9,4 +9,6 @@ public interface ImageModificationDao {
     ImageModification getById(@Param("imageId") int imageId, @Param("contextId") int contextId, @Param("imageResolutionId") int imageResolutionId);
 
     void insert(ImageModification imageModification);
+
+    boolean hasModification(int imageId);
 }

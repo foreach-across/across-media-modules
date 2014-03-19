@@ -9,7 +9,7 @@ import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.web.displayables.JsonResponse;
 import com.foreach.imageserver.core.web.dto.ImageModificationDto;
 import com.foreach.imageserver.core.web.dto.ImageResolutionDto;
-import com.foreach.imageserver.core.web.dto.RegisteredImageModificationDto;
+import com.foreach.imageserver.core.web.dto.ModificationStatusDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -26,8 +26,8 @@ import java.util.List;
 public class ImageModificationController extends BaseImageAPIController {
 
     public static final String REGISTER_PATH = "register";
-    public static final String LIST_REGISTERED_PATH = "listRegistered";
     public static final String LIST_RESOLUTIONS_PATH = "listResolutions";
+    public static final String LIST_MODIFICATION_STATUS_PATH = "listModificationStatus";
 
     @Value("${accessToken}")
     private String accessToken;
@@ -76,16 +76,6 @@ public class ImageModificationController extends BaseImageAPIController {
         return success();
     }
 
-    @RequestMapping(value = "/" + LIST_REGISTERED_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public JsonResponse<List<RegisteredImageModificationDto>> listRegistered(@RequestParam(value = "token", required = true) String accessToken,
-                                                                             @RequestParam(value = "iid", required = true) int imageId,
-                                                                             @RequestParam(value = "cid", required = true) int contextId) {
-
-        //TODO
-        return success();
-    }
-
     @RequestMapping(value = "/" + LIST_RESOLUTIONS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public JsonResponse listResolutions(@RequestParam(value = "token", required = true) String accessToken,
@@ -102,6 +92,28 @@ public class ImageModificationController extends BaseImageAPIController {
         List<ImageResolution> imageResolutions = contextService.getImageResolutions(contextId);
 
         return success(imageResolutionDtoList(imageResolutions));
+    }
+
+    @RequestMapping(value = "/" + LIST_MODIFICATION_STATUS_PATH, method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResponse listModificationStatus(@RequestParam(value = "token", required = true) String accessToken,
+                                               @RequestParam(value = "iid", required = true) List<Integer> imageIds) {
+        if (!this.accessToken.equals(accessToken)) {
+            return error("Access denied.");
+        }
+
+        List<ModificationStatusDto> modificationStatusList = new ArrayList<>(imageIds.size());
+        for (int imageId : imageIds) {
+            boolean hasModification = imageService.hasModification(imageId);
+
+            ModificationStatusDto modificationStatus = new ModificationStatusDto();
+            modificationStatus.setImageId(imageId);
+            modificationStatus.setHasModification(hasModification);
+
+            modificationStatusList.add(modificationStatus);
+        }
+
+        return success(modificationStatusList);
     }
 
     private List<ImageResolutionDto> imageResolutionDtoList(List<ImageResolution> imageResolutions) {

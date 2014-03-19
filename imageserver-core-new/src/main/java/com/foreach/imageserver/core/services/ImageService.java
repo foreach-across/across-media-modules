@@ -13,4 +13,6 @@ public interface ImageService {
     void saveImageModification(ImageModification modification);
 
     StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);
+
+    boolean hasModification(int imageId);
 }

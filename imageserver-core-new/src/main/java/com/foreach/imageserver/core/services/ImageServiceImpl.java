@@ -109,6 +109,11 @@ public class ImageServiceImpl implements ImageService {
         return imageSource;
     }
 
+    @Override
+    public boolean hasModification(int imageId) {
+        return imageModificationDao.hasModification(imageId);
+    }
+
     private Dimensions computeOutputResolution(ImageParameters imageParameters, ImageResolution imageResolution) {
         Integer resolutionWidth = imageResolution.getWidth();
         Integer resolutionHeight = imageResolution.getHeight();

@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ImageModificationDaoTest extends AbstractIntegrationTest {
 
@@ -61,6 +61,45 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         assertEquals(writtenImageModification.getCrop().getHeight(), readImageModification.getCrop().getHeight());
         assertEquals(writtenImageModification.getDensity().getWidth(), readImageModification.getDensity().getWidth());
         assertEquals(writtenImageModification.getDensity().getHeight(), readImageModification.getDensity().getHeight());
+    }
+
+    @Test
+    public void hasModification() {
+        String applicationSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
+        jdbcTemplate.update(applicationSql, 1, "the_application_code");
+
+        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
+        jdbcTemplate.update(imageSql, 1, new Date(2012, 11, 13), "the_repository_code");
+        jdbcTemplate.update(imageSql, 2, new Date(2012, 11, 13), "the_repository_code");
+
+        String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
+        jdbcTemplate.update(imageResolutionSql, 1, 100, 200);
+
+        imageModificationDao.insert(someModification(1, 1, 1));
+
+        assertTrue(imageModificationDao.hasModification(1));
+        assertFalse(imageModificationDao.hasModification(2));
+    }
+
+    private ImageModification someModification(int contextId, int imageId, int imageResolutionId) {
+        Crop crop = new Crop();
+        crop.setX(100);
+        crop.setY(101);
+        crop.setWidth(102);
+        crop.setHeight(103);
+
+        Dimensions density = new Dimensions();
+        density.setWidth(106);
+        density.setHeight(107);
+
+        ImageModification modification = new ImageModification();
+        modification.setImageId(imageId);
+        modification.setContextId(contextId);
+        modification.setResolutionId(imageResolutionId);
+        modification.setCrop(crop);
+        modification.setDensity(density);
+
+        return modification;
     }
 
 }
