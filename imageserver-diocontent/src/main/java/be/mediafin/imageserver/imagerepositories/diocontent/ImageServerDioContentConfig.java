@@ -1,4 +1,4 @@
-package com.foreach.imageserver.imagerepositories.diocontent;
+package be.mediafin.imageserver.imagerepositories.diocontent;
 
 import org.springframework.context.annotation.Configuration;
 

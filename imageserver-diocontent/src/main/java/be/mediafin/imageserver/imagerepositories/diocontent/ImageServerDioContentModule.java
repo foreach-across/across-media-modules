@@ -1,4 +1,4 @@
-package com.foreach.imageserver.imagerepositories.diocontent;
+package be.mediafin.imageserver.imagerepositories.diocontent;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.Exposed;
