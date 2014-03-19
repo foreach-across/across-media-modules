@@ -1,8 +1,7 @@
-package com.foreach.imageserver.core.integrationtests.data;
+package com.foreach.imageserver.core.data;
 
+import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.data.ImageDao;
-import com.foreach.imageserver.core.integrationtests.AbstractIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,8 +1,7 @@
-package com.foreach.imageserver.core.integrationtests.data;
+package com.foreach.imageserver.core.data;
 
+import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.Context;
-import com.foreach.imageserver.core.data.ContextDao;
-import com.foreach.imageserver.core.integrationtests.AbstractIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

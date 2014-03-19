@@ -1,14 +1,13 @@
-package com.foreach.imageserver.core.integrationtests.transformers;
+package com.foreach.imageserver.core.transformers;
 
+import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.integrationtests.AbstractIntegrationTest;
-import com.foreach.imageserver.core.transformers.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.InputStream;
 
-import static com.foreach.imageserver.core.integrationtests.utils.ImageUtils.*;
+import static com.foreach.imageserver.core.utils.ImageUtils.*;
 import static org.junit.Assert.*;
 
 public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {

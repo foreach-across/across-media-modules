@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.integrationtests.utils;
+package com.foreach.imageserver.core.utils;
 
 import org.junit.Test;
 

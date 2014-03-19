@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.integrationtests.config;
+package com.foreach.imageserver.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.filters.PackageBeanFilter;
@@ -12,12 +12,10 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 
 @Configuration
-@EnableWebMvc
 @PropertySource("classpath:integrationtests.properties")
 public class IntegrationTestConfig {
 

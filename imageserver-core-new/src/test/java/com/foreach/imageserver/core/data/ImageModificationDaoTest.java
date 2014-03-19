@@ -1,10 +1,9 @@
-package com.foreach.imageserver.core.integrationtests.data;
+package com.foreach.imageserver.core.data;
 
+import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.Crop;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageModification;
-import com.foreach.imageserver.core.data.ImageModificationDao;
-import com.foreach.imageserver.core.integrationtests.AbstractIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
