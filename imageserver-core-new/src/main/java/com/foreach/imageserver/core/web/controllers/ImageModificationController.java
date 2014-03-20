@@ -42,7 +42,7 @@ public class ImageModificationController extends BaseImageAPIController {
     @ResponseBody
     public JsonResponse register(@RequestParam(value = "token", required = true) String accessToken,
                                  @RequestParam(value = "iid", required = true) int imageId,
-                                 @RequestParam(value = "cid", required = true) int contextId,
+                                 @RequestParam(value = "context", required = true) String contextCode,
                                  ImageResolutionDto imageResolutionDto,
                                  ImageModificationDto imageModificationDto) {
         if (!this.accessToken.equals(accessToken)) {
@@ -54,19 +54,19 @@ public class ImageModificationController extends BaseImageAPIController {
             return error("No such image.");
         }
 
-        Context context = contextService.getById(contextId);
+        Context context = contextService.getByCode(contextCode);
         if (context == null) {
             return error("No such context.");
         }
 
-        ImageResolution imageResolution = contextService.getImageResolution(contextId, imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
+        ImageResolution imageResolution = contextService.getImageResolution(context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
         if (imageResolution == null) {
             return error("No such image resolution.");
         }
 
         ImageModification modification = new ImageModification();
         modification.setImageId(imageId);
-        modification.setContextId(contextId);
+        modification.setContextId(context.getId());
         modification.setResolutionId(imageResolution.getId());
         modification.setCrop(imageModificationDto.getCrop());
         modification.setDensity(imageModificationDto.getDensity());
@@ -79,17 +79,17 @@ public class ImageModificationController extends BaseImageAPIController {
     @RequestMapping(value = "/" + LIST_RESOLUTIONS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public JsonResponse listResolutions(@RequestParam(value = "token", required = true) String accessToken,
-                                        @RequestParam(value = "cid", required = true) int contextId) {
+                                        @RequestParam(value = "context", required = true) String contextCode) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
         }
 
-        Context context = contextService.getById(contextId);
+        Context context = contextService.getByCode(contextCode);
         if (context == null) {
             return error("No such context.");
         }
 
-        List<ImageResolution> imageResolutions = contextService.getImageResolutions(contextId);
+        List<ImageResolution> imageResolutions = contextService.getImageResolutions(context.getId());
 
         return success(imageResolutionDtoList(imageResolutions));
     }

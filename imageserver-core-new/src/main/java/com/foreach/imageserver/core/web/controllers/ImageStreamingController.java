@@ -39,7 +39,7 @@ public class ImageStreamingController {
 
     @RequestMapping(value = "/" + VIEW_PATH, method = RequestMethod.GET)
     public void view(@RequestParam(value = "iid", required = true) int imageId,
-                     @RequestParam(value = "cid", required = true) int contextId,
+                     @RequestParam(value = "context", required = true) String contextCode,
                      ImageResolutionDto imageResolutionDto,
                      ImageVariantDto imageVariantDto,
                      HttpServletResponse response) {
@@ -51,14 +51,14 @@ public class ImageStreamingController {
             return;
         }
 
-        Context context = contextService.getById(contextId);
+        Context context = contextService.getByCode(contextCode);
         if (context == null) {
             error(response, HttpStatus.NOT_FOUND, "No such context.");
             return;
         }
 
         // TODO Implement best-effort matching.
-        ImageResolution imageResolution = contextService.getImageResolution(contextId, imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
+        ImageResolution imageResolution = contextService.getImageResolution(context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
         if (imageResolution == null) {
             error(response, HttpStatus.NOT_FOUND, "No such resolution.");
             return;

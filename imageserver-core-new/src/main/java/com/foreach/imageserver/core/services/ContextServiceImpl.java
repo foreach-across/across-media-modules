@@ -19,8 +19,8 @@ public class ContextServiceImpl implements ContextService {
     private ImageResolutionDao imageResolutionDao;
 
     @Override
-    public Context getById(int id) {
-        return contextDao.getById(id);
+    public Context getByCode(String contextCode) {
+        return contextDao.getByCode(contextCode);
     }
 
     // TODO Move logic directly into the data layer please; let's not iterate.

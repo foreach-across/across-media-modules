@@ -6,7 +6,7 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import java.util.List;
 
 public interface ContextService {
-    Context getById(int id);
+    Context getByCode(String contextCode);
 
     ImageResolution getImageResolution(int contextId, Integer width, Integer height);
 
