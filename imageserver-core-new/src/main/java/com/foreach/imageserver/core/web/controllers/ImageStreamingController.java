@@ -1,14 +1,12 @@
 package com.foreach.imageserver.core.web.controllers;
 
-import com.foreach.imageserver.core.business.Context;
-import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
-import com.foreach.imageserver.core.web.dto.ImageResolutionDto;
-import com.foreach.imageserver.core.web.dto.ImageVariantDto;
+import com.foreach.imageserver.dto.ImageResolutionDto;
+import com.foreach.imageserver.dto.ImageTypeDto;
+import com.foreach.imageserver.dto.ImageVariantDto;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +62,7 @@ public class ImageStreamingController {
             return;
         }
 
-        StreamImageSource imageSource = imageService.getVariantImage(image, context, imageResolution, imageVariant(imageVariantDto));
+        StreamImageSource imageSource = imageService.getVariantImage(image, context, imageResolution, toBusiness(imageVariantDto));
         if (imageSource == null) {
             error(response, HttpStatus.NOT_FOUND, "Could not create variant.");
             return;
@@ -87,12 +85,6 @@ public class ImageStreamingController {
         }
     }
 
-    private ImageVariant imageVariant(ImageVariantDto imageVariantDto) {
-        ImageVariant imageVariant = new ImageVariant();
-        imageVariant.setOutputType(imageVariantDto.getImageType());
-        return imageVariant;
-    }
-
     private void error(HttpServletResponse response, HttpStatus status, String errorMessage) {
         response.setStatus(status.value());
         response.setContentType("text/plain");
@@ -103,6 +95,33 @@ public class ImageStreamingController {
             LOG.error("Failed to write error message to output stream");
         } finally {
             IOUtils.closeQuietly(bis);
+        }
+    }
+
+    private ImageVariant toBusiness(ImageVariantDto dto) {
+        ImageVariant imageVariant = new ImageVariant();
+        imageVariant.setOutputType(toBusiness(dto.getImageType()));
+        return imageVariant;
+    }
+
+    private ImageType toBusiness(ImageTypeDto dto) {
+        switch (dto) {
+            case JPEG:
+                return ImageType.JPEG;
+            case PNG:
+                return ImageType.PNG;
+            case GIF:
+                return ImageType.GIF;
+            case SVG:
+                return ImageType.SVG;
+            case EPS:
+                return ImageType.EPS;
+            case PDF:
+                return ImageType.PDF;
+            case TIFF:
+                return ImageType.TIFF;
+            default:
+                throw new RuntimeException( "Unknown image type." );
         }
     }
 }

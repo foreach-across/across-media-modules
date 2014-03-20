@@ -1,18 +1,8 @@
-package com.foreach.imageserver.core.web.dto;
+package com.foreach.imageserver.dto;
 
-public class LoadedImageDto {
-
-    private int imageId;
+public class DimensionsDto {
     private int width;
     private int height;
-
-    public int getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
-    }
 
     public int getWidth() {
         return width;

@@ -1,8 +1,6 @@
-package com.foreach.imageserver.core.web.dto;
-
+package com.foreach.imageserver.dto;
 
 public class ImageResolutionDto {
-
     private Integer width;
     private Integer height;
 

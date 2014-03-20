@@ -1,21 +1,18 @@
 package com.foreach.imageserver.client;
 
-import com.foreach.imageserver.core.web.controllers.ImageLoadController;
-import com.foreach.imageserver.core.web.displayables.JsonResponse;
-import com.foreach.imageserver.core.web.dto.LoadedImageDto;
-import org.springframework.stereotype.Service;
+import com.foreach.imageserver.dto.DimensionsDto;
+import com.foreach.imageserver.dto.JsonResponse;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
-@Service
 public class DppImageServerClientImpl extends BaseImageServerClientImpl implements DppImageServerClient {
 
     @Override
-    public LoadedImageDto loadImage(String imageServerUrl, int applicationId, String applicationToken, int dioContentId) {
+    public DimensionsDto loadImage(String imageServerUrl, int applicationId, String applicationToken, int dioContentId) {
         Client client = ClientBuilder.newBuilder().newClient();
-        WebTarget target = client.target(imageServerUrl).path(ImageLoadController.LOAD_IMAGE_PATH);
+        WebTarget target = client.target(imageServerUrl).path("load");
         target = addApplicationParams(applicationId, applicationToken, target);
         target = target.queryParam("iid", dioContentId);
         target = target.queryParam("repo", "dio");
@@ -24,6 +21,6 @@ public class DppImageServerClientImpl extends BaseImageServerClientImpl implemen
         if (!response.isSuccess()) {
             throw new RuntimeException("Unexpected exception while registering image modification " + response.getErrorMessage());
         }
-        return (LoadedImageDto) response.getResult();
+        return (DimensionsDto) response.getResult();
     }
 }

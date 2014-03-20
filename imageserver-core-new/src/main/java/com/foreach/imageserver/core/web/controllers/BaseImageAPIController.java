@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.web.controllers;
 
 
-import com.foreach.imageserver.core.web.displayables.JsonResponse;
+import com.foreach.imageserver.dto.JsonResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

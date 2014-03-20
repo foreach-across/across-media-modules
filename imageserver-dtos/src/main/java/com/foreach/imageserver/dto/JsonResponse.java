@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.web.displayables;
+package com.foreach.imageserver.dto;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 

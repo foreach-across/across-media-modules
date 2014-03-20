@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.web.dto;
+package com.foreach.imageserver.dto;
 
 public class ModificationStatusDto {
     private int imageId;

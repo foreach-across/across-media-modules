@@ -5,7 +5,8 @@ import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.services.ImageRepository;
 import com.foreach.imageserver.core.services.ImageRepositoryService;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.core.web.displayables.JsonResponse;
+import com.foreach.imageserver.dto.DimensionsDto;
+import com.foreach.imageserver.dto.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -50,7 +51,7 @@ public class ImageLoadController extends BaseImageAPIController {
 
         Dimensions dimensions = imageService.saveImage(imageId, imageRepository, repositoryParameters);
 
-        return success(dimensions);
+        return success(dto(dimensions));
     }
 
     private Map<String, String> getRepositoryParameters(String code, Map<String, String> requestParameters) {
@@ -63,6 +64,13 @@ public class ImageLoadController extends BaseImageAPIController {
             }
         }
         return result;
+    }
+
+    private DimensionsDto dto(Dimensions dimensions) {
+        DimensionsDto dto = new DimensionsDto();
+        dto.setWidth(dimensions.getWidth());
+        dto.setHeight(dimensions.getHeight());
+        return dto;
     }
 
 }

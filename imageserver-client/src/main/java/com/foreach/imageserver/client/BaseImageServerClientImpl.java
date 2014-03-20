@@ -1,12 +1,9 @@
 package com.foreach.imageserver.client;
 
-import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.web.controllers.ImageModificationController;
-import com.foreach.imageserver.core.web.controllers.ImageStreamingController;
-import com.foreach.imageserver.core.web.displayables.JsonResponse;
-import com.foreach.imageserver.core.web.dto.ImageModificationDto;
-import com.foreach.imageserver.core.web.dto.ImageResolutionDto;
-import com.foreach.imageserver.core.web.dto.RegisteredImageModificationDto;
+import com.foreach.imageserver.dto.ImageModificationDto;
+import com.foreach.imageserver.dto.ImageResolutionDto;
+import com.foreach.imageserver.dto.ImageTypeDto;
+import com.foreach.imageserver.dto.JsonResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.ws.rs.client.Client;
@@ -20,8 +17,8 @@ import java.util.Map;
 public abstract class BaseImageServerClientImpl implements ImageServerClient {
 
     @Override
-    public String createImageUrl(String imageServerUrl, int applicationId, int imageId, Integer width, Integer height, ImageType imageType) {
-        String result = "http://" + imageServerUrl + "/" + ImageStreamingController.VIEW_PATH + "?aid=" + applicationId + "&iid=" + imageId;
+    public String createImageUrl(String imageServerUrl, int applicationId, int imageId, Integer width, Integer height, ImageTypeDto imageType) {
+        String result = "http://" + imageServerUrl + "/view?aid=" + applicationId + "&iid=" + imageId;
         if (imageType != null) {
             result += "&type=" + imageType.name();
         }
@@ -35,9 +32,9 @@ public abstract class BaseImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
-    public InputStream fetchImage(String imageServerUrl, int applicationId, int imageId, Integer width, Integer height, ImageType imageType) {
+    public InputStream fetchImage(String imageServerUrl, int applicationId, int imageId, Integer width, Integer height, ImageTypeDto imageType) {
         Client client = ClientBuilder.newBuilder().newClient();
-        WebTarget target = client.target(imageServerUrl).path(ImageStreamingController.VIEW_PATH);
+        WebTarget target = client.target(imageServerUrl).path("view");
         target = target.queryParam("aid", applicationId);
         target = target.queryParam("iid", imageId);
         target = target.queryParam("width", width);
@@ -51,7 +48,7 @@ public abstract class BaseImageServerClientImpl implements ImageServerClient {
     @Override
     public void registerImageModification(String imageServerUrl, int applicationId, String applicationToken, int imageId, ImageResolutionDto imageResolutionDto, ImageModificationDto imageModificationDto) {
         Client client = ClientBuilder.newBuilder().newClient();
-        WebTarget target = client.target(imageServerUrl).path(ImageModificationController.REGISTER_PATH);
+        WebTarget target = client.target(imageServerUrl).path("modification/register");
         target = addApplicationParams(applicationId, applicationToken, target);
         target = target.queryParam("iid", imageId);
         target = addObjectFields(target, imageResolutionDto);
@@ -61,24 +58,25 @@ public abstract class BaseImageServerClientImpl implements ImageServerClient {
             throw new RuntimeException("Unexpected exception while registering image modification " + response.getErrorMessage());
         }
     }
-/*
-    @Override
-    public List<RegisteredImageModificationDto> listRegisteredModifications(String imageServerUrl, int applicationId, String applicationToken, int imageId) {
-        Client client = ClientBuilder.newBuilder().newClient();
-          WebTarget target = client.target(imageServerUrl).path(ImageModificationController.LIST_REGISTERED_PATH);
-      target = addApplicationParams(applicationId, applicationToken, target);
-        target = target.queryParam("iid", imageId);
-        JsonResponse<List<RegisteredImageModificationDto>> response = target.request().get(JsonResponse.class);
-        if (!response.isSuccess()) {
-            throw new RuntimeException("Unexpected exception while getting the list of registered modifications for image " + imageId + " " + response.getErrorMessage());
+
+    /*
+        @Override
+        public List<RegisteredImageModificationDto> listRegisteredModifications(String imageServerUrl, int applicationId, String applicationToken, int imageId) {
+            Client client = ClientBuilder.newBuilder().newClient();
+              WebTarget target = client.target(imageServerUrl).path(ImageModificationController.LIST_REGISTERED_PATH);
+          target = addApplicationParams(applicationId, applicationToken, target);
+            target = target.queryParam("iid", imageId);
+            JsonResponse<List<RegisteredImageModificationDto>> response = target.request().get(JsonResponse.class);
+            if (!response.isSuccess()) {
+                throw new RuntimeException("Unexpected exception while getting the list of registered modifications for image " + imageId + " " + response.getErrorMessage());
+            }
+            return response.getResult();
         }
-        return response.getResult();
-    }
-*/
+    */
     @Override
     public List<ImageResolutionDto> listAllowedResolutions(String imageServerUrl, int applicationId, String applicationToken) {
         Client client = ClientBuilder.newBuilder().newClient();
-        WebTarget target = client.target(imageServerUrl).path(ImageModificationController.LIST_RESOLUTIONS_PATH);
+        WebTarget target = client.target(imageServerUrl).path("listResolutions");
         target = addApplicationParams(applicationId, applicationToken, target);
         JsonResponse<List<ImageResolutionDto>> response = target.request().get(JsonResponse.class);
         if (!response.isSuccess()) {

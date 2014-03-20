@@ -1,7 +1,10 @@
-package com.foreach.imageserver.core.business;
+package com.foreach.imageserver.dto;
 
-public class Crop {
-    private int x, y, width, height;
+public class CropDto {
+    private int x;
+    private int y;
+    private int width;
+    private int height;
 
     public int getX() {
         return x;
