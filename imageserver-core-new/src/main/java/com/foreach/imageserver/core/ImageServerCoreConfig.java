@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.sql.DataSource;
@@ -16,6 +17,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan(basePackages = "com.foreach.imageserver.core", excludeFilters = @ComponentScan.Filter(Configuration.class))
 @MapperScan("com.foreach.imageserver.core.data")
+@EnableTransactionManagement
 public class ImageServerCoreConfig {
 
     @Autowired
