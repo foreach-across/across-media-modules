@@ -19,4 +19,11 @@
         WHERE C.id = #{value}
     </select>
 
+    <select id="getByCode" parameterType="string" resultMap="contextMap">
+        SELECT
+        <include refid="columns"/>
+        FROM CONTEXT C
+        WHERE C.code = #{value}
+    </select>
+
 </mapper>

@@ -17,6 +17,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <createIndex indexName="idx_context_code" tableName="CONTEXT" unique="true">
+            <column name="code"/>
+        </createIndex>
     </changeSet>
 
     <changeSet id="201403091310" author="ovh">
