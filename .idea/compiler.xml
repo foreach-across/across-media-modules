@@ -30,6 +30,7 @@
         <module name="imageserver-core-new" />
         <module name="imageserver-diocontent" />
         <module name="imageserver-dpp-connector" />
+        <module name="imageserver-dtos" />
         <module name="imageserver-imagerepository-diocontent" />
         <module name="web.imageserver.front" />
       </profile>
@@ -47,6 +48,7 @@
       <module name="imageserver-core-new" target="1.7" />
       <module name="imageserver-diocontent" target="1.7" />
       <module name="imageserver-dpp-connector" target="1.7" />
+      <module name="imageserver-dtos" target="1.7" />
       <module name="imageserver-imagerepository-diocontent" target="1.7" />
       <module name="platform" target="1.7" />
       <module name="rendering" target="1.6" />

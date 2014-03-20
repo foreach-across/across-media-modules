@@ -10,16 +10,17 @@
         <version>2.0-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <jacksonVersion>1.9.10</jacksonVersion>
-    </properties>
-
     <groupId>com.foreach.imageserver</groupId>
     <artifactId>imageserver-core-new</artifactId>
     <name>ImageServer Core Module</name>
     <version>2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
+        <dependency>
+            <groupId>com.foreach.imageserver</groupId>
+            <artifactId>imageserver-dtos</artifactId>
+            <version>2.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.foreach.libs</groupId>
             <artifactId>common-spring</artifactId>
