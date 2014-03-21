@@ -7,6 +7,8 @@
 
     <property name="now" value="GETDATE()" dbms="mssql"/>
     <property name="now" value="NOW" dbms="hsqldb"/>
+    <property name="now" value="SYSDATE" dbms="oracle"/>
+
 
     <changeSet id="201403091254" author="ovh">
         <createTable tableName="CONTEXT">

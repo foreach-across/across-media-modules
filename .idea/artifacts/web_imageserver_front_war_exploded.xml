@@ -76,6 +76,7 @@
           <element id="library" level="project" name="Maven: be.persgroep.red.utils.jaxrs:jaxrs-utils-core:1.1" />
           <element id="library" level="project" name="Maven: javax.ws.rs:jsr311-api:1.1.1" />
           <element id="library" level="project" name="Maven: com.sun.xml.bind:jaxb-impl:2.1.12" />
+          <element id="library" level="project" name="Maven: oracle:ojdbc:10.2.0.3" />
         </element>
       </element>
     </root>
