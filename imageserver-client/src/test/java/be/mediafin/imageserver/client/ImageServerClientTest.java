@@ -26,13 +26,13 @@ public class ImageServerClientTest {
 
     @Test
     public void imageUrl() {
-        String url = imageServerClient.imageUrl(10, ImageServerContext.SITE, 1000, 2000, ImageTypeDto.TIFF);
+        String url = imageServerClient.imageUrl(10, ImageServerContext.ONLINE, 1000, 2000, ImageTypeDto.TIFF);
         assertEquals("http://localhost:8080/view?height=2000&imageType=TIFF&iid=10&width=1000&context=SITE", url);
 
-        url = imageServerClient.imageUrl(10, ImageServerContext.SITE, null, 2000, ImageTypeDto.TIFF);
+        url = imageServerClient.imageUrl(10, ImageServerContext.ONLINE, null, 2000, ImageTypeDto.TIFF);
         assertEquals("http://localhost:8080/view?height=2000&imageType=TIFF&iid=10&context=SITE", url);
 
-        url = imageServerClient.imageUrl(10, ImageServerContext.SITE, 1000, null, ImageTypeDto.TIFF);
+        url = imageServerClient.imageUrl(10, ImageServerContext.ONLINE, 1000, null, ImageTypeDto.TIFF);
         assertEquals("http://localhost:8080/view?imageType=TIFF&iid=10&width=1000&context=SITE", url);
     }
 
@@ -44,7 +44,7 @@ public class ImageServerClientTest {
         assertEquals(1842, dimensions.getWidth());
         assertEquals(3082, dimensions.getHeight());
 
-        imageServerClient.registerImageModification(imageId, ImageServerContext.SITE, 1000, 1000, 500, 0, 1000, 1000, 0, 0);
+        imageServerClient.registerImageModification(imageId, ImageServerContext.ONLINE, 1000, 1000, 500, 0, 1000, 1000, 0, 0);
 
         List<ModificationStatusDto> modificationStatusList = imageServerClient.listModificationStatus(Arrays.asList(imageId, 10000001));
         assertEquals(2, modificationStatusList.size());
@@ -54,7 +54,7 @@ public class ImageServerClientTest {
         assertFalse(modificationStatusList.get(1).isModified());
 
         Path tempFile = File.createTempFile("test", ".jpg").toPath();
-        InputStream imageStream = imageServerClient.imageStream(imageId, ImageServerContext.SITE, 1000, 1000, ImageTypeDto.JPEG);
+        InputStream imageStream = imageServerClient.imageStream(imageId, ImageServerContext.ONLINE, 1000, 1000, ImageTypeDto.JPEG);
         Files.copy(imageStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
         imageStream.close();
 
@@ -63,7 +63,7 @@ public class ImageServerClientTest {
 
     @Test
     public void listAllowedResolutions() {
-        List<ImageResolutionDto> resolutions = imageServerClient.listAllowedResolutions(ImageServerContext.SITE);
+        List<ImageResolutionDto> resolutions = imageServerClient.listAllowedResolutions(ImageServerContext.ONLINE);
         assertEquals(3, resolutions.size());
 
         assertEquals(1000, resolutions.get(0).getWidth().intValue());
