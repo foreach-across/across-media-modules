@@ -1,5 +1,6 @@
 package be.mediafin.imageserver.front;
 
+import be.mediafin.imageserver.front.mfn.MfnImageServerFrontModule;
 import be.mediafin.imageserver.imagerepositories.diocontent.ImageServerDioContentModule;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.imageserver.core.ImageServerCoreModule;
@@ -64,10 +65,9 @@ public class RootConfig {
         context.setAllowInstallers(true);
         context.setDataSource(dataSource);
         context.addPropertySources(propertyConfigurer);
-
         context.addModule(imageServerCoreModule());
         context.addModule(dioContentModule());
-
+        context.addModule(mfnImageServerFrontModule());
         return context;
     }
 
@@ -79,6 +79,11 @@ public class RootConfig {
     @Bean
     public ImageServerCoreModule imageServerCoreModule() {
         return new ImageServerCoreModule();
+    }
+
+    @Bean
+    public MfnImageServerFrontModule mfnImageServerFrontModule() {
+        return new MfnImageServerFrontModule();
     }
 
 }

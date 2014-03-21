@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.installers;
+package be.mediafin.imageserver.front.mfn.installers;
 
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.installers.AcrossLiquibaseInstaller;

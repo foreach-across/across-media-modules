@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="201403211229" author="kds">
+        <comment>Install MFN contexts</comment>
+        <insert tableName="CONTEXT">
+            <column name="ID">1</column>
+            <column name="CODE">ONLINE</column>
+        </insert>
+        <insert tableName="CONTEXT">
+            <column name="ID">2</column>
+            <column name="CODE">DIGITAL</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="201403211037" author="kds">
+
+        <comment>Install the resolutions used by MFN applications</comment>
+
+        <sql>
+            insert into IMAGE_RESOLUTION
+
+                          select 2, 80, 53 from dual
+                union all select 4, 88, 66 from dual
+                union all select 5, 110, 73 from dual
+                union all select 6, 120, 80 from dual
+                union all select 7, 140, 93 from dual
+                union all select 9, 170, 113 from dual
+                union all select 10, 250, 167 from dual
+                union all select 11, 300, 200 from dual
+                union all select 12, 80, 60 from dual
+                union all select 15, 60, 45 from dual
+                union all select 16, 80, 60 from dual
+                union all select 22, 369, 246 from dual
+                union all select 23, 568, 274 from dual
+                union all select 24, 568, 378 from dual
+                union all select 25, 170, 51 from dual
+                union all select 26, 966, 282 from dual
+                union all select 27, 600, 400 from dual
+                union all select 28, 767, 511 from dual
+                union all select 29, 0, 100 from dual
+                union all select 30, 0, 280 from dual
+                union all select 31, 0, 511 from dual
+                union all select 32, 0, 76 from dual
+                union all select 33, 0, 246 from dual
+                union all select 34, 0, 378 from dual
+                union all select 35, 1024, 768 from dual
+                union all select 36, 2048, 1536 from dual
+                union all select 37, 568, 237 from dual
+                union all select 38, 1136, 473 from dual
+                union all select 39, 100, 120 from dual
+                union all select 40, 200, 240 from dual
+                union all select 41, 972, 768 from dual
+                union all select 42, 1944, 1536 from dual
+                union all select 43, 230, 153 from dual
+                union all select 44, 1024, 683 from dual
+                union all select 45, 2048, 1365 from dual
+                union all select 46, 468, 351 from dual
+                union all select 47, 170, 120 from dual
+                union all select 48, 87, 56 from dual
+        </sql>
+
+
+    </changeSet>
+
+</databaseChangeLog>

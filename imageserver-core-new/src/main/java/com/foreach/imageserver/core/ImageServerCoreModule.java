@@ -16,7 +16,7 @@ public class ImageServerCoreModule extends AcrossModule {
 
     @Override
     public String getName() {
-        return "ImageServerCore";
+        return "ImageServerCoreModule";
     }
 
     @Override
