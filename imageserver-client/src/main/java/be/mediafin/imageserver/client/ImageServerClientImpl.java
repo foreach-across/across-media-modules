@@ -19,14 +19,15 @@ public class ImageServerClientImpl implements ImageServerClient {
 
     private final String imageServerEndpoint;
     private final String imageServerAccessToken;
-    private final ClientConfig clientConfig;
+    private final Client client;
 
     public ImageServerClientImpl(String imageServerEndpoint, String imageServerAccessToken) {
         this.imageServerEndpoint = imageServerEndpoint;
         this.imageServerAccessToken = imageServerAccessToken;
 
-        clientConfig = new DefaultClientConfig();
+        ClientConfig clientConfig = new DefaultClientConfig();
         clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+        this.client = Client.create(clientConfig);
     }
 
     @Override
@@ -165,7 +166,7 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     private WebResource getResource(String path, MultivaluedMap<String, String> queryParams) {
-        return Client.create(clientConfig).resource(imageServerEndpoint).path(path).queryParams(queryParams);
+        return this.client.resource(imageServerEndpoint).path(path).queryParams(queryParams);
     }
 
 }
