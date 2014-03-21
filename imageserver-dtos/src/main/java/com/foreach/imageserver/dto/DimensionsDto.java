@@ -4,6 +4,14 @@ public class DimensionsDto {
     private int width;
     private int height;
 
+    public DimensionsDto() {
+    }
+
+    public DimensionsDto(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
     public int getWidth() {
         return width;
     }

@@ -4,6 +4,14 @@ public class ImageResolutionDto {
     private Integer width;
     private Integer height;
 
+    public ImageResolutionDto() {
+    }
+
+    public ImageResolutionDto(Integer width, Integer height) {
+        this.width = width;
+        this.height = height;
+    }
+
     public Integer getWidth() {
         return width;
     }

@@ -2,7 +2,7 @@ package com.foreach.imageserver.dto;
 
 public class ModificationStatusDto {
     private int imageId;
-    private boolean hasCrop;
+    private boolean modified;
 
     public int getImageId() {
         return imageId;
@@ -12,11 +12,11 @@ public class ModificationStatusDto {
         this.imageId = imageId;
     }
 
-    public boolean isHasCrop() {
-        return hasCrop;
+    public boolean isModified() {
+        return modified;
     }
 
-    public void setHasModification(boolean hasCrop) {
-        this.hasCrop = hasCrop;
+    public void setModified(boolean modified) {
+        this.modified = modified;
     }
 }

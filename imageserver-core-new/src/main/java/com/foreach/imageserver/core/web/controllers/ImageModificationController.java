@@ -102,7 +102,7 @@ public class ImageModificationController extends BaseImageAPIController {
 
             ModificationStatusDto modificationStatus = new ModificationStatusDto();
             modificationStatus.setImageId(imageId);
-            modificationStatus.setHasModification(hasModification);
+            modificationStatus.setModified(hasModification);
 
             modificationStatusList.add(modificationStatus);
         }

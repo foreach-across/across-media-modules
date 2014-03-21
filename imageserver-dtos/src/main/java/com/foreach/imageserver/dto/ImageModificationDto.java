@@ -4,6 +4,14 @@ public class ImageModificationDto {
     private CropDto crop = new CropDto();
     private DimensionsDto density = new DimensionsDto();
 
+    public ImageModificationDto() {
+    }
+
+    public ImageModificationDto(CropDto crop, DimensionsDto density) {
+        this.crop = crop;
+        this.density = density;
+    }
+
     public CropDto getCrop() {
         return crop;
     }
