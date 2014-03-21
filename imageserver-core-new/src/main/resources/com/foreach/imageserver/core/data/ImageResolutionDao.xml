@@ -3,15 +3,15 @@
 <mapper namespace="com.foreach.imageserver.core.data.ImageResolutionDao">
 
     <sql id="columns">
-		IR.id as image_resolution_id,
-        IR.width as image_resolution_width,
-        IR.height as image_resolution_height
+		IR.id as ir_id,
+        IR.width as ir_width,
+        IR.height as ir_height
 	</sql>
 
     <resultMap id="imageResolutionMap" type="ImageResolution">
-        <id property="id" column="image_resolution_id"/>
-        <result property="width" column="image_resolution_width"/>
-        <result property="height" column="image_resolution_height"/>
+        <id property="id" column="ir_id"/>
+        <result property="width" column="ir_width"/>
+        <result property="height" column="ir_height"/>
     </resultMap>
 
     <select id="getForContext" parameterType="map" resultMap="imageResolutionMap">

@@ -2,19 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.foreach.imageserver.core.data.WebImageParametersDao">
     <sql id="columns">
-		WIP.imageId as web_image_parameters_imageId,
-        WIP.url as web_image_parameters_url,
-        WIP.width as web_image_parameters_width,
-        WIP.height as web_image_parameters_height,
-        WIP.imageTypeId as web_image_parameters_imagetype
+		WIP.imageId as wip_imageId,
+        WIP.url as wip_url,
+        WIP.width as wip_width,
+        WIP.height as wip_height,
+        WIP.imageTypeId as wip_imagetype
 	</sql>
 
     <resultMap id="webImageParametersMap" type="WebImageParameters">
-        <id property="imageId" column="web_image_parameters_imageId"/>
-        <result property="url" column="web_image_parameters_url"/>
-        <result property="dimensions.width" column="web_image_parameters_width"/>
-        <result property="dimensions.height" column="web_image_parameters_height"/>
-        <result property="imageType" column="web_image_parameters_imagetype"
+        <id property="imageId" column="wip_imageId"/>
+        <result property="url" column="wip_url"/>
+        <result property="dimensions.width" column="wip_width"/>
+        <result property="dimensions.height" column="wip_height"/>
+        <result property="imageType" column="wip_imagetype"
                 typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
     </resultMap>
 
