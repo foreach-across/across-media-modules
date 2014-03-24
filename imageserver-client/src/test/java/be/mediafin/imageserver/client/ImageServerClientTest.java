@@ -1,9 +1,6 @@
 package be.mediafin.imageserver.client;
 
-import com.foreach.imageserver.dto.DimensionsDto;
-import com.foreach.imageserver.dto.ImageResolutionDto;
-import com.foreach.imageserver.dto.ImageTypeDto;
-import com.foreach.imageserver.dto.ModificationStatusDto;
+import com.foreach.imageserver.dto.*;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -38,13 +35,13 @@ public class ImageServerClientTest {
 
     @Test
     public void loadModifyRetrieve() throws Exception {
-        int imageId = 20;
+        int imageId = 22222;
 
         DimensionsDto dimensions = imageServerClient.loadImage(imageId, 2513082);
         assertEquals(1842, dimensions.getWidth());
         assertEquals(3082, dimensions.getHeight());
 
-        imageServerClient.registerImageModification(imageId, ImageServerContext.ONLINE, 1000, 1000, 500, 0, 1000, 1000, 0, 0);
+        imageServerClient.registerImageModification(imageId, ImageServerContext.DIGITAL, 1024, 768, 500, 100, 1024, 768, 0, 0);
 
         List<ModificationStatusDto> modificationStatusList = imageServerClient.listModificationStatus(Arrays.asList(imageId, 10000001));
         assertEquals(2, modificationStatusList.size());
@@ -53,8 +50,19 @@ public class ImageServerClientTest {
         assertEquals(10000001, modificationStatusList.get(1).getImageId());
         assertFalse(modificationStatusList.get(1).isModified());
 
+        List<ImageModificationDto> modifications = imageServerClient.listModifications(imageId, ImageServerContext.DIGITAL);
+        assertEquals(1, modifications.size());
+        assertEquals(1024, modifications.get(0).getResolution().getWidth().intValue());
+        assertEquals(768, modifications.get(0).getResolution().getHeight().intValue());
+        assertEquals(500, modifications.get(0).getCrop().getX());
+        assertEquals(100, modifications.get(0).getCrop().getY());
+        assertEquals(1024, modifications.get(0).getCrop().getWidth());
+        assertEquals(768, modifications.get(0).getCrop().getHeight());
+        assertEquals(0, modifications.get(0).getDensity().getWidth());
+        assertEquals(0, modifications.get(0).getDensity().getHeight());
+
         Path tempFile = File.createTempFile("test", ".jpg").toPath();
-        InputStream imageStream = imageServerClient.imageStream(imageId, ImageServerContext.ONLINE, 1000, 1000, ImageTypeDto.JPEG);
+        InputStream imageStream = imageServerClient.imageStream(imageId, ImageServerContext.DIGITAL, 1024, 768, ImageTypeDto.JPEG);
         Files.copy(imageStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
         imageStream.close();
 

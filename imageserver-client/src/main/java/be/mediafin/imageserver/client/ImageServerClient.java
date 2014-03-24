@@ -25,4 +25,6 @@ public interface ImageServerClient {
 
     List<ModificationStatusDto> listModificationStatus(List<Integer> imageIds);
 
+    List<ImageModificationDto> listModifications(int imageId, ImageServerContext context);
+
 }
