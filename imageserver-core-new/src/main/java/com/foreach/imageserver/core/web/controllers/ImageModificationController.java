@@ -55,7 +55,7 @@ public class ImageModificationController extends BaseImageAPIController {
 
         ImageResolution imageResolution = contextService.getImageResolution(context.getId(), imageModificationDto.getResolution().getWidth(), imageModificationDto.getResolution().getHeight());
         if (imageResolution == null) {
-            return error("No such image resolution.");
+            return error("No such image resolution : " + imageModificationDto.getResolution().getWidth() + "x" + imageModificationDto.getResolution().getHeight());
         }
 
         ImageModification modification = new ImageModification();
