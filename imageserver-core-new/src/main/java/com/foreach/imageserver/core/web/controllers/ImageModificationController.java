@@ -37,7 +37,6 @@ public class ImageModificationController extends BaseImageAPIController {
     public JsonResponse register(@RequestParam(value = "token", required = true) String accessToken,
                                  @RequestParam(value = "iid", required = true) int imageId,
                                  @RequestParam(value = "context", required = true) String contextCode,
-                                 ImageResolutionDto imageResolutionDto,
                                  ImageModificationDto imageModificationDto) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
@@ -53,7 +52,7 @@ public class ImageModificationController extends BaseImageAPIController {
             return error("No such context.");
         }
 
-        ImageResolution imageResolution = contextService.getImageResolution(context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
+        ImageResolution imageResolution = contextService.getImageResolution(context.getId(), imageModificationDto.getResolution().getWidth(), imageModificationDto.getResolution().getHeight());
         if (imageResolution == null) {
             return error("No such image resolution.");
         }

@@ -1,15 +1,28 @@
 package com.foreach.imageserver.dto;
 
 public class ImageModificationDto {
-    private CropDto crop = new CropDto();
-    private DimensionsDto density = new DimensionsDto();
+    private ImageResolutionDto resolution;
+    private CropDto crop;
+    private DimensionsDto density;
 
     public ImageModificationDto() {
+        this.resolution = new ImageResolutionDto();
+        this.crop = new CropDto();
+        this.density = new DimensionsDto();
     }
 
-    public ImageModificationDto(CropDto crop, DimensionsDto density) {
+    public ImageModificationDto(ImageResolutionDto resolution, CropDto crop, DimensionsDto density) {
+        this.resolution = resolution;
         this.crop = crop;
         this.density = density;
+    }
+
+    public ImageResolutionDto getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(ImageResolutionDto resolution) {
+        this.resolution = resolution;
     }
 
     public CropDto getCrop() {

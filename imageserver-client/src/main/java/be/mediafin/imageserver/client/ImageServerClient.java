@@ -17,7 +17,7 @@ public interface ImageServerClient {
 
     DimensionsDto loadImage(int imageId, int dioContentId);
 
-    void registerImageModification(int imageId, ImageServerContext context, ImageResolutionDto imageResolutionDto, ImageModificationDto imageModificationDto);
+    void registerImageModification(int imageId, ImageServerContext context, ImageModificationDto imageModificationDto);
 
     void registerImageModification(int imageId, ImageServerContext context, Integer width, Integer height, int cropX, int cropY, int cropWidth, int croptHeight, int densityWidth, int densityHeight);
 
