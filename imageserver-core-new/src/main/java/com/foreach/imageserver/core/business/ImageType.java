@@ -3,22 +3,24 @@ package com.foreach.imageserver.core.business;
 import com.foreach.spring.enums.IdLookup;
 import org.apache.commons.lang3.StringUtils;
 
-public enum ImageType implements IdLookup<Integer> {
-    JPEG(0, "image/jpeg", "jpeg", false, false),
-    PNG(1, "image/png", "png", true, false),
-    GIF(2, "image/gif", "gif", true, false),
-    SVG(3, "image/svg+xml", "svg", true, true),
-    EPS(4, "application/postscript", "eps", true, true, "image/eps", "image/x-eps", "application/eps",
-            "application/x-eps"),
-    PDF(5, "application/pdf", "pdf", false, false, "application/x-pdf"),
-    TIFF(6, "image/tiff", "tif", false, false);
+import java.math.BigDecimal;
 
-    private final int id;
+public enum ImageType implements IdLookup<BigDecimal> {
+    JPEG(BigDecimal.valueOf(0), "image/jpeg", "jpeg", false, false),
+    PNG(BigDecimal.valueOf(1), "image/png", "png", true, false),
+    GIF(BigDecimal.valueOf(2), "image/gif", "gif", true, false),
+    SVG(BigDecimal.valueOf(3), "image/svg+xml", "svg", true, true),
+    EPS(BigDecimal.valueOf(4), "application/postscript", "eps", true, true, "image/eps", "image/x-eps", "application/eps",
+            "application/x-eps"),
+    PDF(BigDecimal.valueOf(5), "application/pdf", "pdf", false, false, "application/x-pdf"),
+    TIFF(BigDecimal.valueOf(6), "image/tiff", "tif", false, false);
+
+    private final BigDecimal id;
     private final String contentType, extension;
     private final String[] alternativeContentTypes;
     private final boolean transparency, scalable;
 
-    private ImageType(int id,
+    private ImageType(BigDecimal id,
                       String contentType,
                       String extension,
                       boolean transparency,
@@ -49,7 +51,7 @@ public enum ImageType implements IdLookup<Integer> {
     }
 
     @Override
-    public Integer getId() {
+    public BigDecimal getId() {
         return id;
     }
 

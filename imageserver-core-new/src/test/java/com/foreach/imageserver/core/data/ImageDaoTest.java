@@ -18,11 +18,10 @@ public class ImageDaoTest extends AbstractIntegrationTest {
     @Test
     public void insertAndGetById() {
         Image writtenImage = new Image();
-        writtenImage.setImageId(3216);
         writtenImage.setRepositoryCode("the_repository_code");
         imageDao.insert(writtenImage);
 
-        Image readImage = imageDao.getById(3216);
+        Image readImage = imageDao.getById(writtenImage.getImageId());
         assertEquals(writtenImage.getImageId(), readImage.getImageId());
         assertTrue(momentsAgo(readImage.getDateCreated()));
         assertEquals(writtenImage.getRepositoryCode(), readImage.getRepositoryCode());
