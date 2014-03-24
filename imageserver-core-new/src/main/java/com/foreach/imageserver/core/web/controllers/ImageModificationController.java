@@ -22,6 +22,7 @@ public class ImageModificationController extends BaseImageAPIController {
     public static final String REGISTER_PATH = "register";
     public static final String LIST_RESOLUTIONS_PATH = "listResolutions";
     public static final String LIST_MODIFICATION_STATUS_PATH = "listModificationStatus";
+    public static final String LIST_MODIFICATIONS = "listModifications";
 
     @Value("${accessToken}")
     private String accessToken;
@@ -107,6 +108,47 @@ public class ImageModificationController extends BaseImageAPIController {
         }
 
         return success(modificationStatusList);
+    }
+
+    @RequestMapping(value = "/" + LIST_MODIFICATIONS, method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResponse listModifications(@RequestParam(value = "token", required = true) String accessToken,
+                                          @RequestParam(value = "iid", required = true) int imageId,
+                                          @RequestParam(value = "context", required = true) String contextCode) {
+        if (!this.accessToken.equals(accessToken)) {
+            return error("Access denied.");
+        }
+
+        Context context = contextService.getByCode(contextCode);
+        if (context == null) {
+            return error("No such context.");
+        }
+
+        List<ImageModification> modifications = imageService.getModifications(imageId, context.getId());
+
+        return success(toModificationDtos(modifications));
+    }
+
+    private List<ImageModificationDto> toModificationDtos(List<ImageModification> modifications) {
+        List<ImageModificationDto> dtos = new ArrayList<>(modifications.size());
+        for (ImageModification modification : modifications) {
+            dtos.add(toDto(modification));
+        }
+        return dtos;
+    }
+
+    private ImageModificationDto toDto(ImageModification modification) {
+        ImageResolution resolution = imageService.getResolution(modification.getResolutionId());
+        ImageModificationDto dto = new ImageModificationDto();
+        dto.getResolution().setWidth(resolution.getWidth());
+        dto.getResolution().setHeight(resolution.getHeight());
+        dto.getCrop().setX(modification.getCrop().getX());
+        dto.getCrop().setY(modification.getCrop().getY());
+        dto.getCrop().setWidth(modification.getCrop().getWidth());
+        dto.getCrop().setHeight(modification.getCrop().getHeight());
+        dto.getDensity().setWidth(modification.getDensity().getWidth());
+        dto.getDensity().setHeight(modification.getDensity().getHeight());
+        return dto;
     }
 
     private List<ImageResolutionDto> imageResolutionDtoList(List<ImageResolution> imageResolutions) {

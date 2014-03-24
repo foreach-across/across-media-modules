@@ -3,12 +3,14 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.data.ImageDao;
 import com.foreach.imageserver.core.data.ImageModificationDao;
+import com.foreach.imageserver.core.data.ImageResolutionDao;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,6 +30,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Autowired
     private ImageRepositoryService imageRepositoryService;
+
+    @Autowired
+    private ImageResolutionDao imageResolutionDao;
 
     @Override
     public Image getById(int imageId) {
@@ -111,6 +116,16 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public boolean hasModification(int imageId) {
         return imageModificationDao.hasModification(imageId);
+    }
+
+    @Override
+    public ImageResolution getResolution(int resolutionId) {
+        return imageResolutionDao.getById(resolutionId);
+    }
+
+    @Override
+    public List<ImageModification> getModifications(int imageId, int contextId) {
+        return imageModificationDao.getModifications(imageId, contextId);
     }
 
     private Dimensions computeOutputResolution(ImageParameters imageParameters, ImageResolution imageResolution) {
