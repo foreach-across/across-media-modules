@@ -43,26 +43,18 @@ public class ImageServiceImpl implements ImageService {
     // TODO I'm not taking care of errors right now, make sure to tackle this later on!
     @Override
     @Transactional
-    public Dimensions saveImage(int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException {
-        Image existingImage = getById(imageId);
-        ImageParameters imageParameters = null;
-        if (existingImage != null) {
-            // We silently allow this, provided that the same original image is loaded.
-            verifySameParameters(existingImage, imageRepository, repositoryParameters);
-            imageParameters = imageRepository.getImageParameters(existingImage.getImageId());
-        } else {
-            Image image = new Image();
-            image.setImageId(imageId);
-            image.setRepositoryCode(imageRepository.getCode());
-            imageDao.insert(image);
+    public ImageSaveResult saveImage(ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException {
+        Image image = new Image();
+        image.setRepositoryCode(imageRepository.getCode());
+        imageDao.insert(image);
 
-            RetrievedImage retrievedImage = imageRepository.retrieveImage(imageId, repositoryParameters);
-            imageParameters = retrievedImage.getImageParameters();
+        RetrievedImage retrievedImage = imageRepository.retrieveImage(image.getImageId(), repositoryParameters);
+        imageStoreService.storeOriginalImage(retrievedImage.getImageParameters(), retrievedImage.getImageBytes());
 
-            imageStoreService.storeOriginalImage(retrievedImage.getImageParameters(), retrievedImage.getImageBytes());
-        }
-
-        return imageParameters.getDimensions();
+        ImageSaveResult result = new ImageSaveResult();
+        result.setImageId(image.getImageId());
+        result.setDimensions(retrievedImage.getImageParameters().getDimensions());
+        return result;
     }
 
     // TODO Support editing existing crops. (Don't forget to remove all the variants from disk!)

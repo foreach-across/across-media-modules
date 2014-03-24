@@ -24,7 +24,7 @@ public class ImageServerClientTest {
     @Test
     public void imageUrl() {
         String url = imageServerClient.imageUrl(10, ImageServerContext.ONLINE, 1000, 2000, ImageTypeDto.TIFF);
-        assertEquals("http://localhost:8080/view?height=2000&imageType=TIFF&iid=10&width=1000&context=SITE", url);
+        assertEquals("http://localhost:8080/view?height=2000&imageType=TIFF&iid=10&width=1000&context=ONLINE", url);
 
         url = imageServerClient.imageUrl(10, ImageServerContext.ONLINE, null, 2000, ImageTypeDto.TIFF);
         assertEquals("http://localhost:8080/view?height=2000&imageType=TIFF&iid=10&context=SITE", url);
@@ -37,7 +37,9 @@ public class ImageServerClientTest {
     public void loadModifyRetrieve() throws Exception {
         int imageId = 22222;
 
-        DimensionsDto dimensions = imageServerClient.loadImage(imageId, 2513082);
+        ImageSaveResultDto saveResult = imageServerClient.loadImage(imageId, 2513082);
+        assertTrue(saveResult.getImageId() > 0);
+        DimensionsDto dimensions = saveResult.getDimensionsDto() ;
         assertEquals(1842, dimensions.getWidth());
         assertEquals(3082, dimensions.getHeight());
 
@@ -72,7 +74,7 @@ public class ImageServerClientTest {
     @Test
     public void listAllowedResolutions() {
         List<ImageResolutionDto> resolutions = imageServerClient.listAllowedResolutions(ImageServerContext.ONLINE);
-        assertEquals(3, resolutions.size());
+        assertEquals(28, resolutions.size());
 
         assertEquals(1000, resolutions.get(0).getWidth().intValue());
         assertEquals(1000, resolutions.get(0).getHeight().intValue());

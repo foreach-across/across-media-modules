@@ -22,6 +22,9 @@
     </select>
 
     <insert id="insert" parameterType="Image">
+        <selectKey keyProperty="imageId" resultType="int" order="BEFORE">
+            SELECT SEQ_IMAGES.nextval AS ID FROM DUAL
+        </selectKey>
         INSERT INTO Image (
             imageId,
             repositoryCode

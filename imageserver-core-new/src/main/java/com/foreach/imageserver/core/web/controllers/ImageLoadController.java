@@ -2,10 +2,12 @@ package com.foreach.imageserver.core.web.controllers;
 
 import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.imageserver.core.business.Dimensions;
+import com.foreach.imageserver.core.business.ImageSaveResult;
 import com.foreach.imageserver.core.services.ImageRepository;
 import com.foreach.imageserver.core.services.ImageRepositoryService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.DimensionsDto;
+import com.foreach.imageserver.dto.ImageSaveResultDto;
 import com.foreach.imageserver.dto.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +37,6 @@ public class ImageLoadController extends BaseImageAPIController {
     @RequestMapping("/" + LOAD_IMAGE_PATH)
     @ResponseBody
     public JsonResponse load(@RequestParam(value = "token", required = true) String accessToken,
-                             @RequestParam(value = "iid", required = true) int imageId,
                              @RequestParam(value = "repo", required = true) String repositoryCode,
                              @RequestParam Map<String, String> allParameters) {
         if (!this.accessToken.equals(accessToken)) {
@@ -49,9 +50,9 @@ public class ImageLoadController extends BaseImageAPIController {
 
         Map<String, String> repositoryParameters = getRepositoryParameters(repositoryCode, allParameters);
 
-        Dimensions dimensions = imageService.saveImage(imageId, imageRepository, repositoryParameters);
+        ImageSaveResult imageSaveResult = imageService.saveImage(imageRepository, repositoryParameters);
 
-        return success(dto(dimensions));
+        return success(dto(imageSaveResult));
     }
 
     private Map<String, String> getRepositoryParameters(String code, Map<String, String> requestParameters) {
@@ -64,6 +65,13 @@ public class ImageLoadController extends BaseImageAPIController {
             }
         }
         return result;
+    }
+
+    private ImageSaveResultDto dto(ImageSaveResult imageSaveResult) {
+        ImageSaveResultDto dto = new ImageSaveResultDto();
+        dto.setDimensionsDto(dto(imageSaveResult.getDimensions()));
+        dto.setImageId(imageSaveResult.getImageId());
+        return dto;
     }
 
     private DimensionsDto dto(Dimensions dimensions) {

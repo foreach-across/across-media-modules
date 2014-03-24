@@ -9,7 +9,7 @@ import java.util.Map;
 public interface ImageService {
     Image getById(int imageId);
 
-    Dimensions saveImage(int imageId, ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException;
+    ImageSaveResult saveImage(ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException;
 
     void saveImageModification(ImageModification modification);
 

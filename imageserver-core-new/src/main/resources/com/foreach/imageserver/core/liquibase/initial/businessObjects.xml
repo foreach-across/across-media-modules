@@ -119,4 +119,7 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="201403241240" author="kds">
+        <createSequence sequenceName="SEQ_IMAGES" />
+    </changeSet>
 </databaseChangeLog>
