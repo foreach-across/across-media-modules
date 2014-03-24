@@ -7,20 +7,20 @@
 
     <changeSet id="201403191111" author="ovh">
         <createTable tableName="DIO_CONTENT_IMAGE_PARAMETERS">
-            <column name="imageId" type="int">
+            <column name="imageId" type="realOracleInteger">
                 <constraints primaryKey="true" references="IMAGE(imageId)" foreignKeyName="fk_dio_image"
                              nullable="false"/>
             </column>
-            <column name="dioContentId" type="int">
+            <column name="dioContentId" type="realOracleInteger">
                 <constraints nullable="false"/>
             </column>
-            <column name="width" type="int">
+            <column name="width" type="realOracleInteger">
                 <constraints nullable="false"/>
             </column>
-            <column name="height" type="int">
+            <column name="height" type="realOracleInteger">
                 <constraints nullable="false"/>
             </column>
-            <column name="imageTypeId" type="int">
+            <column name="imageTypeId" type="realOracleInteger">
                 <constraints nullable="false"/>
             </column>
         </createTable>
