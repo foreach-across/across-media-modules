@@ -61,6 +61,7 @@
         SELECT CASE WHEN EXISTS (
           SELECT 1 FROM IMAGE_MODIFICATION IM WHERE IM.imageId = #{value}
         ) THEN 1 ELSE 0 END
+        FROM DUAL
     </select>
 
 </mapper>

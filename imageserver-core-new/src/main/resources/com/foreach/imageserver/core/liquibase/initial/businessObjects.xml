@@ -9,6 +9,9 @@
     <property name="now" value="NOW" dbms="hsqldb"/>
     <property name="now" value="SYSDATE" dbms="oracle"/>
 
+    <changeSet id="201403211601" author="ovh" dbms="hsqldb">
+        <sql>SET DATABASE SQL SYNTAX ORA TRUE;</sql>
+    </changeSet>
 
     <changeSet id="201403091254" author="ovh">
         <createTable tableName="CONTEXT">
