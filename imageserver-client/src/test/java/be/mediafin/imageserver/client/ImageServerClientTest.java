@@ -35,10 +35,11 @@ public class ImageServerClientTest {
 
     @Test
     public void loadModifyRetrieve() throws Exception {
-        int imageId = 22222;
 
-        ImageSaveResultDto saveResult = imageServerClient.loadImage(imageId, 2513082);
-        assertTrue(saveResult.getImageId() > 0);
+        ImageSaveResultDto saveResult = imageServerClient.loadImage(2513082);
+        int imageId = saveResult.getImageId() ;
+
+        assertTrue(imageId > 0);
         DimensionsDto dimensions = saveResult.getDimensionsDto() ;
         assertEquals(1842, dimensions.getWidth());
         assertEquals(3082, dimensions.getHeight());
