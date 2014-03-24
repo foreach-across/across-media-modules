@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface ImageResolutionDao {
+    ImageResolution getById(int resolutionId);
+
     List<ImageResolution> getForContext(@Param("contextId") int contextId);
 }

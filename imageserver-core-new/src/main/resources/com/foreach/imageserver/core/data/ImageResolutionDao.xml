@@ -14,6 +14,13 @@
         <result property="height" column="ir_height"/>
     </resultMap>
 
+    <select id="getById" parameterType="int" resultMap="imageResolutionMap">
+        SELECT
+        <include refid="columns"/>
+        FROM IMAGE_RESOLUTION IR
+        WHERE IR.id = #{value}
+    </select>
+
     <select id="getForContext" parameterType="map" resultMap="imageResolutionMap">
         SELECT
         <include refid="columns"/>

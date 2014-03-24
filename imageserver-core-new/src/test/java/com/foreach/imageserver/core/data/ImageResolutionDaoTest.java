@@ -8,8 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ImageResolutionDaoTest extends AbstractIntegrationTest {
 
@@ -18,6 +17,18 @@ public class ImageResolutionDaoTest extends AbstractIntegrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Test
+    public void getById() {
+        String resolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
+        jdbcTemplate.update(resolutionSql, 101010, 111, 222);
+
+        ImageResolution imageResolution = imageResolutionDao.getById(101010);
+        assertNotNull(imageResolution);
+        assertEquals(101010, imageResolution.getId().intValue());
+        assertEquals(111, imageResolution.getWidth().intValue());
+        assertEquals(222, imageResolution.getHeight().intValue());
+    }
 
     @Test
     public void getForContext() {
