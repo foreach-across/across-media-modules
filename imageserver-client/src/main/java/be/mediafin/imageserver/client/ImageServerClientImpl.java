@@ -65,10 +65,9 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
-    public ImageSaveResultDto loadImage(int imageId, int dioContentId) {
+    public ImageSaveResultDto loadImage(int dioContentId) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
-        queryParams.putSingle("iid", "" + imageId);
         queryParams.putSingle("repo", "dc");
         queryParams.putSingle("dc.id", "" + dioContentId);
 

@@ -15,7 +15,7 @@ public interface ImageServerClient {
 
     InputStream imageStream(int imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant);
 
-    ImageSaveResultDto loadImage(int imageId, int dioContentId);
+    ImageSaveResultDto loadImage(int dioContentId);
 
     void registerImageModification(int imageId, ImageServerContext context, ImageModificationDto imageModificationDto);
 
