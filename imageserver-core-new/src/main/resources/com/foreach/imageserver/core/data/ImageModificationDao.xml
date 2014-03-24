@@ -33,6 +33,13 @@
         WHERE IM.imageId = #{imageId} AND IM.contextId = #{contextId} AND IM.resolutionId = #{imageResolutionId}
     </select>
 
+    <select id="getModifications" parameterType="map" resultMap="imageModificationMap">
+        SELECT
+        <include refid="columns"/>
+        FROM IMAGE_MODIFICATION IM
+        WHERE IM.imageId = #{imageId} AND IM.contextId = #{contextId}
+    </select>
+
     <insert id="insert" parameterType="ImageModification">
         INSERT INTO IMAGE_MODIFICATION (
           imageId,

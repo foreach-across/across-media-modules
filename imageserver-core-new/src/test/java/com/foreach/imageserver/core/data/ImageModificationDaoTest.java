@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -60,6 +61,39 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         assertEquals(writtenImageModification.getCrop().getHeight(), readImageModification.getCrop().getHeight());
         assertEquals(writtenImageModification.getDensity().getWidth(), readImageModification.getDensity().getWidth());
         assertEquals(writtenImageModification.getDensity().getHeight(), readImageModification.getDensity().getHeight());
+    }
+
+    @Test
+    public void getModifications() {
+        String contextSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
+        jdbcTemplate.update(contextSql, 1010, "the_application_code");
+        jdbcTemplate.update(contextSql, 1011, "the_application_code_1");
+
+        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
+        jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code");
+        jdbcTemplate.update(imageSql, 9999, new Date(2012, 11, 13), "the_repository_code");
+
+        String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
+        jdbcTemplate.update(imageResolutionSql, 8, 1111, 2222);
+        jdbcTemplate.update(imageResolutionSql, 9, 1111, 2222);
+        jdbcTemplate.update(imageResolutionSql, 10, 1111, 2222);
+        jdbcTemplate.update(imageResolutionSql, 11, 1111, 2222);
+
+        imageModificationDao.insert(someModification(1010, 9998, 8));
+        imageModificationDao.insert(someModification(1010, 9998, 9));
+        imageModificationDao.insert(someModification(1011, 9998, 8));
+        imageModificationDao.insert(someModification(1010, 9999, 8));
+
+        List<ImageModification> modifications = imageModificationDao.getModifications(9998, 1010);
+        assertEquals(2, modifications.size());
+
+        assertEquals(1010, modifications.get(0).getContextId());
+        assertEquals(9998, modifications.get(0).getImageId());
+        assertEquals(8, modifications.get(0).getResolutionId());
+
+        assertEquals(1010, modifications.get(1).getContextId());
+        assertEquals(9998, modifications.get(1).getImageId());
+        assertEquals(9, modifications.get(1).getResolutionId());
     }
 
     @Test
