@@ -137,7 +137,7 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     private List<String> stringList(List<Integer> integers) {
-        List<String> strings = new ArrayList<>(integers.size());
+        List<String> strings = new ArrayList<String>(integers.size());
         for (Integer i : integers) {
             strings.add(i.toString());
         }
