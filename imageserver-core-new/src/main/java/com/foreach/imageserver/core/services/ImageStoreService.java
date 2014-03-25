@@ -12,7 +12,7 @@ public interface ImageStoreService {
 
     StreamImageSource getOriginalImage(ImageParameters imageParameters);
 
-    void storeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant, StreamImageSource imageSource);
+    void storeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant, InputStream imageStream);
 
     StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);
 }

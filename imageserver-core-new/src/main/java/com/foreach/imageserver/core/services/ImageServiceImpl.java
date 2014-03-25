@@ -77,9 +77,13 @@ public class ImageServiceImpl implements ImageService {
                 throw new ImageCouldNotBeRetrievedException("Missing image repository.");
             }
 
-            // TODO We'll assume for now that the original image is guaranteed to be available on disk.
             ImageParameters imageParameters = imageRepository.getImageParameters(image.getImageId());
             StreamImageSource originalImageSource = imageStoreService.getOriginalImage(imageParameters);
+            if (originalImageSource == null) {
+                RetrievedImage retrievedImage = imageRepository.retrieveImage(image.getImageId());
+                imageStoreService.storeOriginalImage(retrievedImage.getImageParameters(), retrievedImage.getImageBytes());
+                originalImageSource = new StreamImageSource(imageParameters.getImageType(), retrievedImage.getImageBytes());
+            }
 
             Dimensions outputResolution = computeOutputResolution(imageParameters, imageResolution);
 
@@ -97,7 +101,7 @@ public class ImageServiceImpl implements ImageService {
 
             // TODO Extra locking is needed here to ensure that the modification wasn't altered behind our back.
             // TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
-            imageStoreService.storeVariantImage(image, context, imageResolution, imageVariant, variantImageSource.stream());
+            imageStoreService.storeVariantImage(image, context, imageResolution, imageVariant, variantImageSource.byteStream());
 
             return variantImageSource.stream();
         }

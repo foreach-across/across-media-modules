@@ -67,9 +67,9 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
 
     @Override
-    public void storeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant, StreamImageSource imageSource) {
+    public void storeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant, InputStream imageStream) {
         Path targetPath = setupTargetPath(image, context, imageResolution, imageVariant);
-        writeSafely(imageSource.getImageStream(), targetPath);
+        writeSafely(imageStream, targetPath);
     }
 
     @Override
