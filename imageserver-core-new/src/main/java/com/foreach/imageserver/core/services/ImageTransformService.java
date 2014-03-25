@@ -6,7 +6,7 @@ import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 
 public interface ImageTransformService {
-    Dimensions computeDimensions(ImageType imageType, byte[] imageBytes);
+    Dimensions computeDimensions(StreamImageSource imageSource);
 
     InMemoryImageSource modify(StreamImageSource imageSource,
                                int outputWidth,

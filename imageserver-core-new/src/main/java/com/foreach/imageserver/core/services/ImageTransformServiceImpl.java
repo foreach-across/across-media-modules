@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -26,8 +25,7 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     }
 
     @Override
-    public Dimensions computeDimensions(ImageType imageType, byte[] imageBytes) {
-        final StreamImageSource imageSource = new StreamImageSource(imageType, new ByteArrayInputStream(imageBytes));
+    public Dimensions computeDimensions(StreamImageSource imageSource) {
         final ImageCalculateDimensionsAction action = new ImageCalculateDimensionsAction(imageSource);
 
         ImageTransformer imageTransformer = findAbleTransformer(new CanExecute() {

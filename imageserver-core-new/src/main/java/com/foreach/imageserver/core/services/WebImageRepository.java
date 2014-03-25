@@ -5,6 +5,7 @@ import com.foreach.imageserver.core.business.ImageParameters;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.business.WebImageParameters;
 import com.foreach.imageserver.core.data.WebImageParametersDao;
+import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -47,40 +48,25 @@ public class WebImageRepository implements ImageRepository {
     public RetrievedImage retrieveImage(int imageId, Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
 
-        InputStream imageStream = null;
-        try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url);
-            HttpResponse response = httpClient.execute(httpGet);
-            HttpEntity entity = response.getEntity();
-            imageStream = entity.getContent();
+        InMemoryImageSource imageSource = retrieveImageFromWeb(url);
+        Dimensions dimensions = imageTransformService.computeDimensions(imageSource.stream());
 
-            if (response.getStatusLine().getStatusCode() != HttpServletResponse.SC_OK) {
-                throw new ImageCouldNotBeRetrievedException("Received HTTP error response code when trying to retrieve image.");
-            }
+        WebImageParameters imageParameters = new WebImageParameters();
+        imageParameters.setImageId(imageId);
+        imageParameters.setUrl(url);
+        imageParameters.setDimensions(dimensions);
+        imageParameters.setImageType(imageSource.getImageType());
+        webImageParametersDao.insert(imageParameters);
 
-            ImageType imageType = ImageType.getForContentType(entity.getContentType().getValue());
-            if (imageType == null) {
-                throw new ImageCouldNotBeRetrievedException("Retrieved image has unknown content type.");
-            }
+        return new RetrievedImage(imageParameters, imageSource.getImageBytes());
+    }
 
-            byte[] imageBytes = IOUtils.toByteArray(imageStream);
-
-            Dimensions dimensions = imageTransformService.computeDimensions(imageType, imageBytes);
-
-            WebImageParameters imageParameters = new WebImageParameters();
-            imageParameters.setImageId(imageId);
-            imageParameters.setUrl(url);
-            imageParameters.setDimensions(dimensions);
-            imageParameters.setImageType(imageType);
-            webImageParametersDao.insert(imageParameters);
-
-            return new RetrievedImage(imageParameters, imageBytes);
-        } catch (IOException e) {
-            throw new ImageCouldNotBeRetrievedException(e);
-        } finally {
-            IOUtils.closeQuietly(imageStream);
-        }
+    @Override
+    public RetrievedImage retrieveImage(int imageId) {
+        // TODO We blindly assume that the image hasn't changed since we first downloaded it.
+        WebImageParameters imageParameters = webImageParametersDao.getById(imageId);
+        InMemoryImageSource imageSource = retrieveImageFromWeb(imageParameters.getUrl());
+        return new RetrievedImage(imageParameters, imageSource.getImageBytes());
     }
 
     @Override
@@ -101,6 +87,34 @@ public class WebImageRepository implements ImageRepository {
         }
 
         return url;
+    }
+
+    private InMemoryImageSource retrieveImageFromWeb(String url) {
+        InputStream imageStream = null;
+        try {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(url);
+            HttpResponse response = httpClient.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            imageStream = entity.getContent();
+
+            if (response.getStatusLine().getStatusCode() != HttpServletResponse.SC_OK) {
+                throw new ImageCouldNotBeRetrievedException("Received HTTP error response code when trying to retrieve image.");
+            }
+
+            ImageType imageType = ImageType.getForContentType(entity.getContentType().getValue());
+            if (imageType == null) {
+                throw new ImageCouldNotBeRetrievedException("Retrieved image has unknown content type.");
+            }
+
+            byte[] imageBytes = IOUtils.toByteArray(imageStream);
+
+            return new InMemoryImageSource(imageType, imageBytes);
+        } catch (IOException e) {
+            throw new ImageCouldNotBeRetrievedException(e);
+        } finally {
+            IOUtils.closeQuietly(imageStream);
+        }
     }
 
 }

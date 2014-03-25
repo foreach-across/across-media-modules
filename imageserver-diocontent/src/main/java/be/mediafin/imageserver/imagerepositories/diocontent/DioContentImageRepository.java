@@ -11,6 +11,7 @@ import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageParameters;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.*;
+import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,6 +57,35 @@ public class DioContentImageRepository implements ImageRepository {
     public RetrievedImage retrieveImage(int imageId, Map<String, String> repositoryParameters) {
         int dioContentId = extractId(repositoryParameters);
 
+        InMemoryImageSource imageSource = retrieveImageFromDioContent(dioContentId);
+        Dimensions dimensions = imageTransformService.computeDimensions(imageSource.stream());
+
+        DioContentImageParameters imageParameters = new DioContentImageParameters();
+        imageParameters.setImageId(imageId);
+        imageParameters.setDioContentId(dioContentId);
+        imageParameters.setDimensions(dimensions);
+        imageParameters.setImageType(imageSource.getImageType());
+        dioContentImageParametersDao.insert(imageParameters);
+
+        return new RetrievedImage(imageParameters, imageSource.getImageBytes());
+    }
+
+    @Override
+    public RetrievedImage retrieveImage(int imageId) {
+        // TODO We blindly assume that the image has not changed since we last downloaded it.
+        DioContentImageParameters imageParameters = dioContentImageParametersDao.getById(imageId);
+        InMemoryImageSource imageSource = retrieveImageFromDioContent(imageParameters.getDioContentId());
+        return new RetrievedImage(imageParameters, imageSource.getImageBytes());
+    }
+
+    @Override
+    public boolean parametersAreEqual(int imageId, Map<String, String> repositoryParameters) {
+        DioContentImageParameters storedImage = dioContentImageParametersDao.getById(imageId);
+        int suppliedId = extractId(repositoryParameters);
+        return (storedImage.getDioContentId() == suppliedId);
+    }
+
+    private InMemoryImageSource retrieveImageFromDioContent(int dioContentId) {
         ByteArrayOutputStream data = null;
         try {
             DioContentClient client = new DefaultRestDioContentClient(serverUrl, username, password);
@@ -66,29 +96,12 @@ public class DioContentImageRepository implements ImageRepository {
             client.downloadAttachment(attachment.getId(), data);
             data.flush();
 
-            byte[] imageBytes = data.toByteArray();
-            Dimensions dimensions = imageTransformService.computeDimensions(imageType, imageBytes);
-
-            DioContentImageParameters imageParameters = new DioContentImageParameters();
-            imageParameters.setImageId(imageId);
-            imageParameters.setDioContentId(dioContentId);
-            imageParameters.setDimensions(dimensions);
-            imageParameters.setImageType(imageType);
-            dioContentImageParametersDao.insert(imageParameters);
-
-            return new RetrievedImage(imageParameters, imageBytes);
+            return new InMemoryImageSource(imageType, data.toByteArray());
         } catch (Exception e) {
             throw new ImageCouldNotBeRetrievedException(e);
         } finally {
             IOUtils.closeQuietly(data);
         }
-    }
-
-    @Override
-    public boolean parametersAreEqual(int imageId, Map<String, String> repositoryParameters) {
-        DioContentImageParameters storedImage = dioContentImageParametersDao.getById(imageId);
-        int suppliedId = extractId(repositoryParameters);
-        return (storedImage.getDioContentId() == suppliedId);
     }
 
     private int extractId(Map<String, String> repositoryParameters) {
