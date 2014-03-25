@@ -152,7 +152,7 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     }
 
     private ImageCalculateDimensionsAction calculateDimensionsAction(ImageType imageType) {
-        return new ImageCalculateDimensionsAction(new StreamImageSource(imageType, null));
+        return new ImageCalculateDimensionsAction(new StreamImageSource(imageType, (InputStream)null));
     }
 
     private ImageModifyAction modifyAction(ImageType sourceType, String classPath, int outputWidth, int outputHeight, int cropX, int cropY, int cropWidth, int cropHeight, ImageType outputType) {
@@ -171,7 +171,7 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     }
 
     private ImageModifyAction modifyAction(ImageType imageType) {
-        return new ImageModifyAction(new StreamImageSource(imageType, null), 0, 0, 0, 0, 0, 0, 0, 0, null);
+        return new ImageModifyAction(new StreamImageSource(imageType, (InputStream)null), 0, 0, 0, 0, 0, 0, 0, 0, null);
     }
 
     private ImageCalculateDimensionsAction calculateDimensionsAction(ImageType imageType, String classPath) {
