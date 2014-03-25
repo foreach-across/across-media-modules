@@ -7,7 +7,7 @@ import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.spring.logging.LogbackConfigurer;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -60,11 +60,11 @@ public class RootConfig {
     }
 
     @Bean
-    public AcrossContext acrossContext(ApplicationContext parentContext, PropertySourcesPlaceholderConfigurer propertyConfigurer, DataSource dataSource) {
+    public AcrossContext acrossContext(ConfigurableApplicationContext parentContext, DataSource dataSource) {
         AcrossContext context = new AcrossContext(parentContext);
         context.setAllowInstallers(true);
         context.setDataSource(dataSource);
-        context.addPropertySources(propertyConfigurer);
+        context.addPropertySources(parentContext.getEnvironment().getPropertySources());
         context.addModule(imageServerCoreModule());
         context.addModule(dioContentModule());
         context.addModule(mfnImageServerFrontModule());

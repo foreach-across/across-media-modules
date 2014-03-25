@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import javax.sql.DataSource;
 
@@ -18,6 +19,15 @@ public class ImageServerDioContentConfig {
 
     @Autowired
     private DataSource dataSource;
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
+        propertySources.setIgnoreResourceNotFound(false);
+        propertySources.setIgnoreUnresolvablePlaceholders(false);
+
+        return propertySources;
+    }
 
     @Bean
     public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {

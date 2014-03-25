@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -29,6 +30,15 @@ public class ImageServerCoreConfig {
         RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
         handlerMapping.setInterceptors(new Object[]{});
         return handlerMapping;
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
+        propertySources.setIgnoreResourceNotFound(false);
+        propertySources.setIgnoreUnresolvablePlaceholders(false);
+
+        return propertySources;
     }
 
     @Bean
