@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermissions;
 
 /**
  * Still to verify and/or implement:
@@ -29,17 +32,25 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     private final Path originalsFolder;
     private final Path variantsFolder;
 
+    private final FileAttribute[] folderAttributes;
+    private final FileAttribute[] fileAttributes;
+
     @Autowired
-    public ImageStoreServiceImpl(@Value("${imagestore.folder}") File imageStoreFolder) throws IOException {
+    public ImageStoreServiceImpl(@Value("${imagestore.folder}") File imageStoreFolder,
+                                 @Value("${imagestore.permissions.folders}") String folderPermissions,
+                                 @Value("${imagestore.permissions.files}") String filePermissions) throws IOException {
+        folderAttributes = toFileAttributes(folderPermissions);
+        fileAttributes = toFileAttributes(filePermissions);
+
         Path imageStoreFolderPath = imageStoreFolder.toPath();
 
         tempFolder = imageStoreFolderPath.resolve("temp");
         originalsFolder = imageStoreFolderPath.resolve("originals");
         variantsFolder = imageStoreFolderPath.resolve("variants");
 
-        Files.createDirectories(tempFolder);
-        Files.createDirectories(originalsFolder);
-        Files.createDirectories(variantsFolder);
+        Files.createDirectories(tempFolder, folderAttributes);
+        Files.createDirectories(originalsFolder, folderAttributes);
+        Files.createDirectories(variantsFolder, folderAttributes);
     }
 
     @Override
@@ -84,7 +95,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
             String repositoryCode = imageParameters.getRepositoryCode();
 
             Path targetFolder = originalsFolder.resolve(repositoryCode);
-            Files.createDirectories(targetFolder);
+            Files.createDirectories(targetFolder, folderAttributes);
 
             return targetFolder.resolve(fileName);
         } catch (IOException e) {
@@ -97,7 +108,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
             String fileName = constructFileName(image, imageResolution, imageVariant);
 
             Path targetFolder = variantsFolder.resolve(context.getCode());
-            Files.createDirectories(targetFolder);
+            Files.createDirectories(targetFolder, folderAttributes);
 
             return targetFolder.resolve(fileName);
         } catch (IOException e) {
@@ -126,7 +137,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
     private void writeSafely(InputStream inputStream, Path targetPath) {
         try {
-            Path temporaryPath = Files.createTempFile(tempFolder, "image", ".tmp");
+            Path temporaryPath = Files.createTempFile(tempFolder, "image", ".tmp", fileAttributes);
             Files.copy(inputStream, temporaryPath, StandardCopyOption.REPLACE_EXISTING);
             Files.move(temporaryPath, targetPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException e) {
@@ -152,6 +163,18 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         }
 
         return imageSource;
+    }
+
+    private FileAttribute[] toFileAttributes(String permissions) {
+        FileAttribute[] attributes = null;
+        if (StringUtils.isNotBlank(permissions)) {
+            FileAttribute attribute = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString(permissions));
+            attributes = new FileAttribute[1];
+            attributes[0] = attribute;
+        } else {
+            attributes = new FileAttribute[0];
+        }
+        return attributes;
     }
 
 }
