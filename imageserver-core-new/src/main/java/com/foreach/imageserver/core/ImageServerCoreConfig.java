@@ -2,6 +2,8 @@ package com.foreach.imageserver.core;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.services.ImageRepositoryRegistry;
+import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
 import liquibase.integration.spring.SpringLiquibase;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -56,6 +58,16 @@ public class ImageServerCoreConfig {
         springLiquibase.setDataSource(dataSource);
         springLiquibase.setChangeLog("classpath:com/foreach/imageserver/core/liquibase/changelog.xml");
         return springLiquibase;
+    }
+
+    @Bean
+    public ImageTransformerRegistry imageTransformerRegistry() {
+        return new ImageTransformerRegistry();
+    }
+
+    @Bean
+    public ImageRepositoryRegistry imageRepositoryRegistry() {
+        return new ImageRepositoryRegistry();
     }
 
 }

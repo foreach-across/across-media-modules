@@ -1,13 +1,14 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -17,10 +18,13 @@ import java.util.List;
 public class ImageTransformServiceImpl implements ImageTransformService {
 
     @Autowired
+    private ImageTransformerRegistry imageTransformerRegistry;
+
     private List<ImageTransformer> imageTransformers;
 
-    @PostConstruct
+    @PostRefresh
     public void init() {
+        imageTransformers = new ArrayList<>(imageTransformerRegistry.getMembers());
         Collections.sort(imageTransformers, new ImageTransformerComparator());
     }
 
