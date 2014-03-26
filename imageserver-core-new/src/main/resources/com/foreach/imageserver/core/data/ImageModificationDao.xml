@@ -64,6 +64,18 @@
         )
     </insert>
 
+    <update id="update" parameterType="ImageModification">
+        UPDATE IMAGE_MODIFICATION
+        SET
+            densityWidth = #{density.width},
+            densityHeight = #{density.height},
+            cropX = #{crop.x},
+            cropY = #{crop.y},
+            cropWidth = #{crop.width},
+            cropHeight = #{crop.height}
+        WHERE imageId = #{imageId} AND contextId = #{contextId} AND resolutionId = #{resolutionId}
+    </update>
+
     <select id="hasModification" parameterType="int" resultType="boolean">
         SELECT CASE WHEN EXISTS (
           SELECT 1 FROM IMAGE_MODIFICATION IM WHERE IM.imageId = #{value}

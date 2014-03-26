@@ -97,6 +97,34 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void updateAndGetById() {
+        String contextSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
+        jdbcTemplate.update(contextSql, 1010, "code");
+
+        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
+        jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code");
+
+        String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
+        jdbcTemplate.update(imageResolutionSql, 8, 1111, 2222);
+
+        String modificationSql = "INSERT INTO IMAGE_MODIFICATION ( imageId, contextId, resolutionId, densityWidth, densityHeight, cropX, cropY, cropWidth, cropHeight ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+        jdbcTemplate.update(modificationSql, 9998, 1010, 8, 0, 1, 2, 3, 4, 5);
+
+        imageModificationDao.update(modification(9998, 1010, 8, 10, 11, 12, 13, 14, 15));
+
+        ImageModification readImageModification = imageModificationDao.getById(9998, 1010, 8);
+        assertEquals(9998, readImageModification.getImageId());
+        assertEquals(1010, readImageModification.getContextId());
+        assertEquals(8, readImageModification.getResolutionId());
+        assertEquals(10, readImageModification.getCrop().getX());
+        assertEquals(11, readImageModification.getCrop().getY());
+        assertEquals(12, readImageModification.getCrop().getWidth());
+        assertEquals(13, readImageModification.getCrop().getHeight());
+        assertEquals(14, readImageModification.getDensity().getWidth());
+        assertEquals(15, readImageModification.getDensity().getHeight());
+    }
+
+    @Test
     public void hasModification() {
         String applicationSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
         jdbcTemplate.update(applicationSql, 1, "the_application_code");
@@ -129,6 +157,27 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         modification.setImageId(imageId);
         modification.setContextId(contextId);
         modification.setResolutionId(imageResolutionId);
+        modification.setCrop(crop);
+        modification.setDensity(density);
+
+        return modification;
+    }
+
+    private ImageModification modification(int imageId, int contextId, int resolutionId, int cropX, int cropY, int cropWidth, int cropHeight, int densityWidth, int densityHeight) {
+        Crop crop = new Crop();
+        crop.setX(cropX);
+        crop.setY(cropY);
+        crop.setWidth(cropWidth);
+        crop.setHeight(cropHeight);
+
+        Dimensions density = new Dimensions();
+        density.setWidth(densityWidth);
+        density.setHeight(densityHeight);
+
+        ImageModification modification = new ImageModification();
+        modification.setImageId(imageId);
+        modification.setContextId(contextId);
+        modification.setResolutionId(resolutionId);
         modification.setCrop(crop);
         modification.setDensity(density);
 

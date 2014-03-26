@@ -14,5 +14,7 @@ public interface ImageModificationDao {
 
     void insert(ImageModification imageModification);
 
+    void update(ImageModification imageModification);
+
     boolean hasModification(int imageId);
 }
