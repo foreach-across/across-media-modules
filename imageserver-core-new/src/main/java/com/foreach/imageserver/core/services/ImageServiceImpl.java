@@ -57,10 +57,21 @@ public class ImageServiceImpl implements ImageService {
         return result;
     }
 
-    // TODO Support editing existing crops. (Don't forget to remove all the variants from disk!)
+    /**
+     * DO NOT MAKE THIS METHOD TRANSACTIONAL! If we are updating an existing modification, we need to make sure that
+     * the changes are committed to the database *before* we clean up the filesystem. Otherwise a different instance
+     * might recreate variants on disk using the old values.
+     */
     @Override
     public void saveImageModification(ImageModification modification) {
-        imageModificationDao.insert(modification);
+        ImageModification existingModification = imageModificationDao.getById(modification.getImageId(), modification.getContextId(), modification.getResolutionId());
+        if (existingModification == null) {
+            imageModificationDao.insert(modification);
+        } else {
+            imageModificationDao.update(modification);
+        }
+
+        imageStoreService.removeVariants(modification.getImageId());
     }
 
     @Override
