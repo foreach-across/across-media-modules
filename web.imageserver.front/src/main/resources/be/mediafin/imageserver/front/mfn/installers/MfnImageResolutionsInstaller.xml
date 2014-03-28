@@ -42,12 +42,6 @@
             union all select 26, 966, 282 from dual
             union all select 27, 600, 400 from dual
             union all select 28, 767, 511 from dual
-            union all select 29, 0, 100 from dual
-            union all select 30, 0, 280 from dual
-            union all select 31, 0, 511 from dual
-            union all select 32, 0, 76 from dual
-            union all select 33, 0, 246 from dual
-            union all select 34, 0, 378 from dual
             union all select 35, 1024, 768 from dual
             union all select 36, 2048, 1536 from dual
             union all select 37, 568, 237 from dual
@@ -92,12 +86,6 @@
             union all select 26, 1 from dual
             union all select 27, 1 from dual
             union all select 28, 1 from dual
-            union all select 29, 1 from dual
-            union all select 30, 1 from dual
-            union all select 31, 1 from dual
-            union all select 32, 1 from dual
-            union all select 33, 1 from dual
-            union all select 34, 1 from dual
             union all select 35, 2 from dual
             union all select 36, 2 from dual
             union all select 37, 2 from dual
