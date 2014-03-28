@@ -1,7 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ImageServer JBoss" type="JBossConfiguration" factoryName="Local" APPLICATION_SERVER_NAME="JBoss 7.2.0.Final-redhat-8" ALTERNATIVE_JRE_ENABLED="false" ALTERNATIVE_JRE_PATH="">
     <option name="OPEN_IN_BROWSER" value="false" />
-    <option name="COMMON_VM_ARGUMENTS" value="-Denvironment.type=development -Xmx1024m -XX:MaxPermSize=256M" />
+    <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8122/web.imageserver.front/" />
+    <option name="COMMON_VM_ARGUMENTS" value="-Denvironment.type=development -Xmx1024m -XX:MaxPermSize=256M -Djboss.socket.binding.port-offset=42" />
     <option name="UPDATING_POLICY" value="restart-server" />
     <deployment>
       <artifact name="web.imageserver.front:war">
