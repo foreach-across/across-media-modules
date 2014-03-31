@@ -6,12 +6,14 @@ import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.*;
 
 @Service
 @Exposed
@@ -21,6 +23,19 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     private ImageTransformerRegistry imageTransformerRegistry;
 
     private List<ImageTransformer> imageTransformers;
+    private Semaphore semaphore;
+
+    @Autowired
+    public ImageTransformServiceImpl( @Value( "${transformer.concurrentTransformLimit}" ) int concurrentTransformLimit) {
+        /**
+         * Right now, we have only one ImageTransformer implementation and it runs on the local machine. In theory,
+         * however, we could have implementations that off-load the actual computations to other machines. Should this
+         * ever get to be the case, we may want to provide more fine-grained control over the number of concurrent
+         * transformations. For now, a single limit will suffice.
+         */
+
+        this.semaphore = new Semaphore(concurrentTransformLimit, true);
+    }
 
     @PostRefresh
     public void init() {
@@ -42,7 +57,12 @@ public class ImageTransformServiceImpl implements ImageTransformService {
         // TODO I'm opting for returning null in case of failure now, maybe raise an exception instead?
         Dimensions dimensions = null;
         if (imageTransformer != null) {
-            dimensions = translateDimensions(imageTransformer.execute(action));
+            semaphore.acquireUninterruptibly();
+            try {
+                dimensions = translateDimensions(imageTransformer.execute(action));
+            } finally {
+                semaphore.release();
+            }
         }
         return dimensions;
     }
@@ -71,7 +91,12 @@ public class ImageTransformServiceImpl implements ImageTransformService {
         // TODO I'm opting for returning null in case of failure now, maybe raise an exception instead?
         InMemoryImageSource result = null;
         if (imageTransformer != null) {
-            result = imageTransformer.execute(action);
+            semaphore.acquireUninterruptibly();
+            try {
+                result = imageTransformer.execute(action);
+            } finally {
+                semaphore.release();
+            }
         }
         return result;
     }
