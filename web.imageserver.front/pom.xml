@@ -23,11 +23,6 @@
             <artifactId>imageserver-diocontent</artifactId>
             <version>2.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>oracle</groupId>
-            <artifactId>ojdbc</artifactId>
-            <version>10.2.0.3</version>
-        </dependency>
     </dependencies>
     <build>
         <finalName>web.imageserver.front</finalName>
