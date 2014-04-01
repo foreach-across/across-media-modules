@@ -21,6 +21,11 @@ public class ImageServerDioContentConfig {
     private DataSource dataSource;
 
     @Bean
+    public static DioContentImageRepositoryCreator dioContentImageRepositoryCreator() {
+        return new DioContentImageRepositoryCreator();
+    }
+
+    @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
         propertySources.setIgnoreResourceNotFound(false);

@@ -13,28 +13,16 @@ import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
-@Service
 @Exposed
-@Conditional(DioContentRepositoryConditional.class)
 public class DioContentImageRepository implements ImageRepository {
-
-    public static final String CODE = "dc";
-
-    @Value("${imagerepository.diocontent.serverUrl}")
-    private String serverUrl;
-
-    @Value("${imagerepository.diocontent.username}")
-    private String username;
-
-    @Value("${imagerepository.diocontent.password}")
-    private String password;
+    private final String serverUrl;
+    private final String username;
+    private final String password;
+    private final String code;
 
     @Autowired
     private DioContentImageParametersDao dioContentImageParametersDao;
@@ -42,9 +30,16 @@ public class DioContentImageRepository implements ImageRepository {
     @Autowired
     private ImageTransformService imageTransformService;
 
+    public DioContentImageRepository(String serverUrl, String username, String password, String code) {
+        this.serverUrl = serverUrl;
+        this.username = username;
+        this.password = password;
+        this.code = code;
+    }
+
     @Override
     public String getCode() {
-        return CODE;
+        return code;
     }
 
     @Override
