@@ -1,8 +1,6 @@
 package com.foreach.imageserver.core.data;
 
 import com.foreach.imageserver.core.AbstractIntegrationTest;
-import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.business.WebImageParameters;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +21,12 @@ public class WebImageParametersDaoTest extends AbstractIntegrationTest {
 
     @Test
     public void insertAndGetById() {
-        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
-        jdbcTemplate.update(imageSql, 121212, new Date(2012, 11, 13), "the_repository_code");
+        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode, width, height, imageTypeId ) VALUES ( ?, ?, ?, ?, ?, ? )";
+        jdbcTemplate.update(imageSql, 121212, new Date(2012, 11, 13), "the_repository_code", 111, 222, 1);
 
         WebImageParameters writtenParameters = new WebImageParameters();
         writtenParameters.setImageId(121212);
         writtenParameters.setUrl("dit_is_een_url");
-        writtenParameters.setDimensions(dimensions(123, 321));
-        writtenParameters.setImageType(ImageType.TIFF);
 
         webImageParametersDao.insert(writtenParameters);
 
@@ -38,16 +34,6 @@ public class WebImageParametersDaoTest extends AbstractIntegrationTest {
         assertNotNull(readParameters);
         assertEquals(writtenParameters.getImageId(), readParameters.getImageId());
         assertEquals(writtenParameters.getUrl(), readParameters.getUrl());
-        assertEquals(writtenParameters.getDimensions().getWidth(), readParameters.getDimensions().getWidth());
-        assertEquals(writtenParameters.getDimensions().getHeight(), readParameters.getDimensions().getHeight());
-        assertEquals(writtenParameters.getImageType(), readParameters.getImageType());
-    }
-
-    private Dimensions dimensions(int width, int height) {
-        Dimensions dimensions = new Dimensions();
-        dimensions.setWidth(width);
-        dimensions.setHeight(height);
-        return dimensions;
     }
 
 }

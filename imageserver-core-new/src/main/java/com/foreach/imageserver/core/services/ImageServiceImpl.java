@@ -39,7 +39,6 @@ public class ImageServiceImpl implements ImageService {
         return imageDao.getById(imageId);
     }
 
-    // TODO Verify that transactional has been setup properly !
     // TODO I'm not taking care of errors right now, make sure to tackle this later on!
     @Override
     @Transactional
@@ -49,11 +48,14 @@ public class ImageServiceImpl implements ImageService {
         imageDao.insert(image);
 
         RetrievedImage retrievedImage = imageRepository.retrieveImage(image.getImageId(), repositoryParameters);
-        imageStoreService.storeOriginalImage(retrievedImage.getImageParameters(), retrievedImage.getImageBytes());
+        image.setDimensions(retrievedImage.getDimensions());
+        image.setImageType(retrievedImage.getImageType());
+        imageDao.updateParameters(image);
+        imageStoreService.storeOriginalImage(image, retrievedImage.getImageBytes());
 
         ImageSaveResult result = new ImageSaveResult();
         result.setImageId(image.getImageId());
-        result.setDimensions(retrievedImage.getImageParameters().getDimensions());
+        result.setDimensions(image.getDimensions());
         return result;
     }
 
@@ -88,15 +90,14 @@ public class ImageServiceImpl implements ImageService {
                 throw new ImageCouldNotBeRetrievedException("Missing image repository.");
             }
 
-            ImageParameters imageParameters = imageRepository.getImageParameters(image.getImageId());
-            StreamImageSource originalImageSource = imageStoreService.getOriginalImage(imageParameters);
+            StreamImageSource originalImageSource = imageStoreService.getOriginalImage(image);
             if (originalImageSource == null) {
-                RetrievedImage retrievedImage = imageRepository.retrieveImage(image.getImageId());
-                imageStoreService.storeOriginalImage(retrievedImage.getImageParameters(), retrievedImage.getImageBytes());
-                originalImageSource = new StreamImageSource(imageParameters.getImageType(), retrievedImage.getImageBytes());
+                byte[] imageBytes = imageRepository.retrieveImage(image.getImageId());
+                imageStoreService.storeOriginalImage(image, imageBytes);
+                originalImageSource = new StreamImageSource(image.getImageType(), imageBytes);
             }
 
-            Dimensions outputResolution = computeOutputResolution(imageParameters, imageResolution);
+            Dimensions outputResolution = computeOutputResolution(image, imageResolution);
 
             InMemoryImageSource variantImageSource = imageTransformService.modify(
                     originalImageSource,
@@ -135,15 +136,15 @@ public class ImageServiceImpl implements ImageService {
         return imageModificationDao.getModifications(imageId, contextId);
     }
 
-    private Dimensions computeOutputResolution(ImageParameters imageParameters, ImageResolution imageResolution) {
+    private Dimensions computeOutputResolution(Image image, ImageResolution imageResolution) {
         Integer resolutionWidth = imageResolution.getWidth();
         Integer resolutionHeight = imageResolution.getHeight();
 
         if (resolutionWidth != null && resolutionHeight != null) {
             return dimensions(resolutionWidth, resolutionHeight);
         } else {
-            double originalWidth = imageParameters.getDimensions().getWidth();
-            double originalHeight = imageParameters.getDimensions().getHeight();
+            double originalWidth = image.getDimensions().getWidth();
+            double originalHeight = image.getDimensions().getHeight();
 
             if (resolutionWidth != null) {
                 return dimensions(resolutionWidth, (int) Math.round(resolutionWidth * (originalHeight / originalWidth)));
@@ -158,16 +159,6 @@ public class ImageServiceImpl implements ImageService {
         dimensions.setWidth(width);
         dimensions.setHeight(height);
         return dimensions;
-    }
-
-    private void verifySameParameters(Image existingImage, ImageRepository imageRepository, Map<String, String> repositoryParameters) {
-        if (!existingImage.getRepositoryCode().equals(imageRepository.getCode())) {
-            throw new ImageStoreException(String.format("Image with id %d already exists.", existingImage.getImageId()));
-        }
-
-        if (!imageRepository.parametersAreEqual(existingImage.getImageId(), repositoryParameters)) {
-            throw new ImageStoreException(String.format("Image with id %d already exists.", existingImage.getImageId()));
-        }
     }
 
 }

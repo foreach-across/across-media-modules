@@ -57,26 +57,26 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     }
 
     @Override
-    public void storeOriginalImage(ImageParameters imageParameters, byte[] imageBytes) {
+    public void storeOriginalImage(Image image, byte[] imageBytes) {
         InputStream imageStream = null;
         try {
             imageStream = new ByteArrayInputStream(imageBytes);
-            this.storeOriginalImage(imageParameters, imageStream);
+            this.storeOriginalImage(image, imageStream);
         } finally {
             IOUtils.closeQuietly(imageStream);
         }
     }
 
     @Override
-    public void storeOriginalImage(ImageParameters imageParameters, InputStream imageStream) {
-        Path targetPath = setupTargetPath(imageParameters);
+    public void storeOriginalImage(Image image, InputStream imageStream) {
+        Path targetPath = setupTargetPath(image);
         writeSafely(imageStream, targetPath);
     }
 
     @Override
-    public StreamImageSource getOriginalImage(ImageParameters imageParameters) {
-        Path targetPath = setupTargetPath(imageParameters);
-        return read(targetPath, imageParameters.getImageType());
+    public StreamImageSource getOriginalImage(Image image) {
+        Path targetPath = setupTargetPath(image);
+        return read(targetPath, image.getImageType());
     }
 
     @Override
@@ -131,10 +131,15 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         }
     }
 
-    private Path setupTargetPath(ImageParameters imageParameters) {
+    private Path setupTargetPath(Image image) {
+        /**
+         * We may at some point need image repositories that cannot re-retrieve their images. For this reason we
+         * create a per-repository parent folder, so we can easily distinguish between repositories.
+         */
+
         try {
-            String fileName = imageParameters.getUniqueFileName();
-            String repositoryCode = imageParameters.getRepositoryCode();
+            String fileName = constructFileName(image);
+            String repositoryCode = image.getRepositoryCode();
 
             Path targetFolder = originalsFolder.resolve(repositoryCode);
             Files.createDirectories(targetFolder, folderAttributes);
@@ -172,6 +177,15 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         }
         fileNameBuilder.append('.');
         fileNameBuilder.append(imageVariant.getOutputType().getExtension());
+
+        return fileNameBuilder.toString();
+    }
+
+    private String constructFileName(Image image) {
+        StringBuilder fileNameBuilder = new StringBuilder();
+        fileNameBuilder.append(image.getImageId());
+        fileNameBuilder.append('.');
+        fileNameBuilder.append(image.getImageType().getExtension());
 
         return fileNameBuilder.toString();
     }

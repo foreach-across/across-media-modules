@@ -1,18 +1,25 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.ImageParameters;
+import com.foreach.imageserver.core.business.Dimensions;
+import com.foreach.imageserver.core.business.ImageType;
 
 public class RetrievedImage {
-    private final ImageParameters imageParameters;
+    private final Dimensions dimensions;
+    private final ImageType imageType;
     private final byte[] imageBytes;
 
-    public RetrievedImage(ImageParameters imageParameters, byte[] imageBytes) {
-        this.imageParameters = imageParameters;
+    public RetrievedImage(Dimensions dimensions, ImageType imageType, byte[] imageBytes) {
+        this.dimensions = dimensions;
+        this.imageType = imageType;
         this.imageBytes = imageBytes;
     }
 
-    public ImageParameters getImageParameters() {
-        return imageParameters;
+    public Dimensions getDimensions() {
+        return dimensions;
+    }
+
+    public ImageType getImageType() {
+        return imageType;
     }
 
     public byte[] getImageBytes() {

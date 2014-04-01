@@ -3,19 +3,12 @@
 <mapper namespace="be.mediafin.imageserver.imagerepositories.diocontent.data.DioContentImageParametersDao">
     <sql id="columns">
 		DIP.imageId as dip_imageId,
-        DIP.dioContentId as dip_diocontentid,
-        DIP.width as dip_width,
-        DIP.height as dip_height,
-        DIP.imageTypeId as dip_imagetype
+        DIP.dioContentId as dip_diocontentid
 	</sql>
 
     <resultMap id="dioContentImageParametersMap" type="DioContentImageParameters">
         <id property="imageId" column="dip_imageId"/>
         <result property="dioContentId" column="dip_diocontentid"/>
-        <result property="dimensions.width" column="dip_width"/>
-        <result property="dimensions.height" column="dip_height"/>
-        <result property="imageType" column="dip_imagetype"
-                typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
     </resultMap>
 
     <select id="getById" parameterType="int" resultMap="dioContentImageParametersMap">
@@ -28,16 +21,10 @@
     <insert id="insert" parameterType="DioContentImageParameters">
         INSERT INTO DIO_CONTENT_IMAGE_PARAMETERS (
             imageId,
-            dioContentId,
-            width,
-            height,
-            imageTypeId
+            dioContentId
         ) VALUES (
             #{imageId},
-            #{dioContentId},
-            #{dimensions.width},
-            #{dimensions.height},
-            #{imageType.id}
+            #{dioContentId}
         )
     </insert>
 </mapper>

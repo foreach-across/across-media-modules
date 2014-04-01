@@ -14,15 +14,6 @@
             <column name="dioContentId" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="width" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="height" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="imageTypeId" type="int">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
     </changeSet>
 

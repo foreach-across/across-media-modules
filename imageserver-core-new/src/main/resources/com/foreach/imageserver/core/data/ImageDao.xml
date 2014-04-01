@@ -5,13 +5,20 @@
     <sql id="columns">
 		I.imageId as image_id,
         I.created as image_datecreated,
-        I.repositoryCode as image_repository_code
+        I.repositoryCode as image_repository_code,
+        I.width as image_width,
+        I.height as image_height,
+        I.imageTypeId as image_imagetype
 	</sql>
 
     <resultMap id="imageMap" type="Image">
         <id property="imageId" column="image_id"/>
         <result property="dateCreated" column="image_datecreated"/>
         <result property="repositoryCode" column="image_repository_code"/>
+        <result property="dimensions.width" column="image_width"/>
+        <result property="dimensions.height" column="image_height"/>
+        <result property="imageType" column="image_imagetype"
+                typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
     </resultMap>
 
     <select id="getById" parameterType="map" resultMap="imageMap">
@@ -26,12 +33,27 @@
             SELECT SEQ_IMAGES.nextval AS ID FROM DUAL
         </selectKey>
         INSERT INTO Image (
-            imageId,
-            repositoryCode
+        imageId,
+        repositoryCode,
+        width,
+        height,
+        imageTypeId
         ) VALUES (
-            #{imageId},
-            #{repositoryCode}
+        #{imageId},
+        #{repositoryCode},
+        #{dimensions.width,jdbcType=INTEGER},
+        #{dimensions.height,jdbcType=INTEGER},
+        #{imageType.id,jdbcType=INTEGER}
         )
     </insert>
+
+    <update id="updateParameters" parameterType="Image">
+        UPDATE IMAGE
+        SET
+          width = #{dimensions.width},
+          height = #{dimensions.height},
+          imageTypeId = #{imageType.id}
+        WHERE imageId = #{imageId}
+    </update>
 
 </mapper>

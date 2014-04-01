@@ -1,7 +1,6 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageParameters;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.business.WebImageParameters;
 import com.foreach.imageserver.core.data.WebImageParametersDao;
@@ -40,11 +39,6 @@ public class WebImageRepository implements ImageRepository {
     }
 
     @Override
-    public ImageParameters getImageParameters(int id) {
-        return webImageParametersDao.getById(id);
-    }
-
-    @Override
     public RetrievedImage retrieveImage(int imageId, Map<String, String> repositoryParameters) {
         String url = extractUrl(repositoryParameters);
 
@@ -54,26 +48,17 @@ public class WebImageRepository implements ImageRepository {
         WebImageParameters imageParameters = new WebImageParameters();
         imageParameters.setImageId(imageId);
         imageParameters.setUrl(url);
-        imageParameters.setDimensions(dimensions);
-        imageParameters.setImageType(imageSource.getImageType());
         webImageParametersDao.insert(imageParameters);
 
-        return new RetrievedImage(imageParameters, imageSource.getImageBytes());
+        return new RetrievedImage(dimensions, imageSource.getImageType(), imageSource.getImageBytes());
     }
 
     @Override
-    public RetrievedImage retrieveImage(int imageId) {
+    public byte[] retrieveImage(int imageId) {
         // TODO We blindly assume that the image hasn't changed since we first downloaded it.
         WebImageParameters imageParameters = webImageParametersDao.getById(imageId);
         InMemoryImageSource imageSource = retrieveImageFromWeb(imageParameters.getUrl());
-        return new RetrievedImage(imageParameters, imageSource.getImageBytes());
-    }
-
-    @Override
-    public boolean parametersAreEqual(int imageId, Map<String, String> repositoryParameters) {
-        WebImageParameters storedImage = webImageParametersDao.getById(imageId);
-        String suppliedUrl = extractUrl(repositoryParameters);
-        return storedImage.getUrl().equals(suppliedUrl);
+        return imageSource.getImageBytes();
     }
 
     private String extractUrl(Map<String, String> repositoryParameters) {

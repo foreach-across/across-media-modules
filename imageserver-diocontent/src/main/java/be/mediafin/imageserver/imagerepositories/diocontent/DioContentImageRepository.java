@@ -8,7 +8,6 @@ import be.persgroep.red.diocontent.api.client.DioContentClient;
 import be.persgroep.red.diocontent.webservice.client.DefaultRestDioContentClient;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageParameters;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
@@ -49,11 +48,6 @@ public class DioContentImageRepository implements ImageRepository {
     }
 
     @Override
-    public ImageParameters getImageParameters(int id) {
-        return dioContentImageParametersDao.getById(id);
-    }
-
-    @Override
     public RetrievedImage retrieveImage(int imageId, Map<String, String> repositoryParameters) {
         int dioContentId = extractId(repositoryParameters);
 
@@ -63,26 +57,17 @@ public class DioContentImageRepository implements ImageRepository {
         DioContentImageParameters imageParameters = new DioContentImageParameters();
         imageParameters.setImageId(imageId);
         imageParameters.setDioContentId(dioContentId);
-        imageParameters.setDimensions(dimensions);
-        imageParameters.setImageType(imageSource.getImageType());
         dioContentImageParametersDao.insert(imageParameters);
 
-        return new RetrievedImage(imageParameters, imageSource.getImageBytes());
+        return new RetrievedImage(dimensions, imageSource.getImageType(), imageSource.getImageBytes());
     }
 
     @Override
-    public RetrievedImage retrieveImage(int imageId) {
+    public byte[] retrieveImage(int imageId) {
         // TODO We blindly assume that the image has not changed since we last downloaded it.
         DioContentImageParameters imageParameters = dioContentImageParametersDao.getById(imageId);
         InMemoryImageSource imageSource = retrieveImageFromDioContent(imageParameters.getDioContentId());
-        return new RetrievedImage(imageParameters, imageSource.getImageBytes());
-    }
-
-    @Override
-    public boolean parametersAreEqual(int imageId, Map<String, String> repositoryParameters) {
-        DioContentImageParameters storedImage = dioContentImageParametersDao.getById(imageId);
-        int suppliedId = extractId(repositoryParameters);
-        return (storedImage.getDioContentId() == suppliedId);
+        return imageSource.getImageBytes();
     }
 
     private InMemoryImageSource retrieveImageFromDioContent(int dioContentId) {
