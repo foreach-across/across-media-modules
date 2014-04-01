@@ -85,13 +85,13 @@ public class ImageServiceImpl implements ImageService {
                 throw new ImageCouldNotBeRetrievedException("No image modification was registered for this image.");
             }
 
-            ImageRepository imageRepository = imageRepositoryService.determineImageRepository(image.getRepositoryCode());
-            if (imageRepository == null) {
-                throw new ImageCouldNotBeRetrievedException("Missing image repository.");
-            }
-
             StreamImageSource originalImageSource = imageStoreService.getOriginalImage(image);
             if (originalImageSource == null) {
+                ImageRepository imageRepository = imageRepositoryService.determineImageRepository(image.getRepositoryCode());
+                if (imageRepository == null) {
+                    throw new ImageCouldNotBeRetrievedException("Missing image repository.");
+                }
+
                 byte[] imageBytes = imageRepository.retrieveImage(image.getImageId());
                 imageStoreService.storeOriginalImage(image, imageBytes);
                 originalImageSource = new StreamImageSource(image.getImageType(), imageBytes);
