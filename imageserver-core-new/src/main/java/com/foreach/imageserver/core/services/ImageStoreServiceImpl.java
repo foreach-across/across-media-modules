@@ -69,25 +69,27 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
     @Override
     public void storeOriginalImage(Image image, InputStream imageStream) {
-        Path targetPath = setupTargetPath(image);
+        Path targetPath = getTargetPath(image);
+        createFoldersSafely(targetPath.getParent());
         writeSafely(imageStream, targetPath);
     }
 
     @Override
     public StreamImageSource getOriginalImage(Image image) {
-        Path targetPath = setupTargetPath(image);
+        Path targetPath = getTargetPath(image);
         return read(targetPath, image.getImageType());
     }
 
     @Override
     public void storeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant, InputStream imageStream) {
-        Path targetPath = setupTargetPath(image, context, imageResolution, imageVariant);
+        Path targetPath = getTargetPath(image, context, imageResolution, imageVariant);
+        createFoldersSafely(targetPath.getParent());
         writeSafely(imageStream, targetPath);
     }
 
     @Override
     public StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
-        Path targetPath = setupTargetPath(image, context, imageResolution, imageVariant);
+        Path targetPath = getTargetPath(image, context, imageResolution, imageVariant);
         return read(targetPath, imageVariant.getOutputType());
     }
 
@@ -131,36 +133,26 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         }
     }
 
-    private Path setupTargetPath(Image image) {
+    private Path getTargetPath(Image image) {
         /**
          * We may at some point need image repositories that cannot re-retrieve their images. For this reason we
          * create a per-repository parent folder, so we can easily distinguish between repositories.
          */
 
-        try {
-            String fileName = constructFileName(image);
-            String repositoryCode = image.getRepositoryCode();
+        String fileName = constructFileName(image);
+        String repositoryCode = image.getRepositoryCode();
 
-            Path targetFolder = originalsFolder.resolve(repositoryCode);
-            Files.createDirectories(targetFolder, folderAttributes);
+        Path targetFolder = originalsFolder.resolve(repositoryCode);
 
-            return targetFolder.resolve(fileName);
-        } catch (IOException e) {
-            throw new ImageStoreException(e);
-        }
+        return targetFolder.resolve(fileName);
     }
 
-    private Path setupTargetPath(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
-        try {
-            String fileName = constructFileName(image, imageResolution, imageVariant);
+    private Path getTargetPath(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
+        String fileName = constructFileName(image, imageResolution, imageVariant);
 
-            Path targetFolder = variantsFolder.resolve(context.getCode());
-            Files.createDirectories(targetFolder, folderAttributes);
+        Path targetFolder = variantsFolder.resolve(context.getCode());
 
-            return targetFolder.resolve(fileName);
-        } catch (IOException e) {
-            throw new ImageStoreException(e);
-        }
+        return targetFolder.resolve(fileName);
     }
 
     private String constructFileName(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
@@ -237,6 +229,55 @@ public class ImageStoreServiceImpl implements ImageStoreService {
             attributes = new FileAttribute[0];
         }
         return attributes;
+    }
+
+    private void createFoldersSafely(Path path) {
+        /**
+         * Although I'm not entirely sure of this, I suspect that createDirectories might cause issues when multiple
+         * actors try to create the same folder structure simultaneously. For this reason, we will simply retry
+         * the creation a few times. This will most likely suffice as we know the folder structure will just be created
+         * once and will be left untouched afterwards.
+         */
+
+        boolean done = false;
+
+        for (int i = 0; i < 3 && !done; ++i) {
+            done = createFoldersWithoutFailing(path);
+            if (!done) {
+                sleep(20);
+            }
+        }
+
+        if (!done) {
+            createFoldersAndFail(path);
+        }
+    }
+
+    private boolean createFoldersWithoutFailing(Path path) {
+        boolean done = false;
+        try {
+            Files.createDirectories(path, folderAttributes);
+            done = true;
+        } catch (IOException e) {
+            // Ignore failure.
+        }
+        return done;
+    }
+
+    private void createFoldersAndFail(Path path) {
+        try {
+            Files.createDirectories(path, folderAttributes);
+        } catch (IOException e) {
+            throw new ImageStoreException(e);
+        }
+    }
+
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ie) {
+            // Ignore.
+        }
     }
 
 }
