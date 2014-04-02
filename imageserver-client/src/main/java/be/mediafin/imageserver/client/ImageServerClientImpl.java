@@ -68,8 +68,8 @@ public class ImageServerClientImpl implements ImageServerClient {
     public ImageSaveResultDto loadImage(int dioContentId) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
-        queryParams.putSingle("repo", "dc");
-        queryParams.putSingle("dc.id", "" + dioContentId);
+        queryParams.putSingle("repo", "dio");
+        queryParams.putSingle("dio.id", "" + dioContentId);
 
         GenericType<JsonResponse<ImageSaveResultDto>> responseType = new GenericType<JsonResponse<ImageSaveResultDto>>() {
         };
