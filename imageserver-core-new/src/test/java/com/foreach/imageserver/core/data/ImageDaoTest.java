@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ImageDaoTest extends AbstractIntegrationTest {
 
@@ -24,6 +23,7 @@ public class ImageDaoTest extends AbstractIntegrationTest {
     @Test
     public void insertAndGetById() {
         Image writtenImage = new Image();
+        writtenImage.setDateCreated(new Date());
         writtenImage.setRepositoryCode("the_repository_code");
         writtenImage.setDimensions(dimensions(111, 222));
         writtenImage.setImageType(ImageType.EPS);
@@ -31,7 +31,7 @@ public class ImageDaoTest extends AbstractIntegrationTest {
 
         Image readImage = imageDao.getById(writtenImage.getImageId());
         assertEquals(writtenImage.getImageId(), readImage.getImageId());
-        assertTrue(momentsAgo(readImage.getDateCreated()));
+        assertEquals(writtenImage.getDateCreated(), readImage.getDateCreated());
         assertEquals(writtenImage.getRepositoryCode(), readImage.getRepositoryCode());
         assertEquals(writtenImage.getDimensions().getWidth(), readImage.getDimensions().getWidth());
         assertEquals(writtenImage.getDimensions().getHeight(), readImage.getDimensions().getHeight());
@@ -60,11 +60,6 @@ public class ImageDaoTest extends AbstractIntegrationTest {
         dimensions.setWidth(width);
         dimensions.setHeight(height);
         return dimensions;
-    }
-
-    private boolean momentsAgo(Date date) {
-        Date now = new Date();
-        return (now.getTime() - date.getTime()) < 1000;
     }
 
 }

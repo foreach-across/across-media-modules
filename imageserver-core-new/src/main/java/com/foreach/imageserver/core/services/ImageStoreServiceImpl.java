@@ -141,18 +141,27 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
         String fileName = constructFileName(image);
         String repositoryCode = image.getRepositoryCode();
+        String year = image.getDateCreatedYearString();
+        String month = image.getDateCreatedMonthString();
+        String day = image.getDateCreatedDayString();
 
-        Path targetFolder = originalsFolder.resolve(repositoryCode);
-
-        return targetFolder.resolve(fileName);
+        return originalsFolder.resolve(repositoryCode).resolve(year).resolve(month).resolve(day).resolve(fileName);
     }
 
     private Path getTargetPath(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
+        /**
+         * We may at some point need image repositories that cannot re-create their images. For this reason we
+         * create a per-repository parent folder, so we can easily distinguish between repositories.
+         */
+
         String fileName = constructFileName(image, imageResolution, imageVariant);
+        String repositoryCode = image.getRepositoryCode();
+        String year = image.getDateCreatedYearString();
+        String month = image.getDateCreatedMonthString();
+        String day = image.getDateCreatedDayString();
 
-        Path targetFolder = variantsFolder.resolve(context.getCode());
-
-        return targetFolder.resolve(fileName);
+        return variantsFolder.resolve(repositoryCode).resolve(context.getCode()).resolve(year).resolve(month)
+                .resolve(day).resolve(fileName);
     }
 
     private String constructFileName(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {

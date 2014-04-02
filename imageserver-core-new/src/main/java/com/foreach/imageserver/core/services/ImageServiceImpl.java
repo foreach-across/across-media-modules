@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     public ImageSaveResult saveImage(ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException {
         Image image = new Image();
+        image.setDateCreated(new Date());
         image.setRepositoryCode(imageRepository.getCode());
         imageDao.insert(image);
 

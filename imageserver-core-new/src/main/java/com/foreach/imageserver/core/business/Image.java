@@ -1,5 +1,8 @@
 package com.foreach.imageserver.core.business;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -11,6 +14,10 @@ public class Image {
     private String repositoryCode;
     private Dimensions dimensions;
     private ImageType imageType;
+
+    private String dateCreatedYearString;
+    private String dateCreatedMonthString;
+    private String dateCreatedDayString;
 
     public int getImageId() {
         return imageId;
@@ -26,6 +33,19 @@ public class Image {
 
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
+
+        if (dateCreated != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dateCreated);
+
+            dateCreatedYearString = Integer.toString(cal.get(Calendar.YEAR));
+            dateCreatedMonthString = StringUtils.leftPad(Integer.toString(cal.get(Calendar.MONTH) + 1), 2, '0');
+            dateCreatedDayString = StringUtils.leftPad(Integer.toString(cal.get(Calendar.DAY_OF_MONTH)), 2, '0');
+        } else {
+            dateCreatedYearString = null;
+            dateCreatedMonthString = null;
+            dateCreatedDayString = null;
+        }
     }
 
     public String getRepositoryCode() {
@@ -50,5 +70,17 @@ public class Image {
 
     public void setImageType(ImageType imageType) {
         this.imageType = imageType;
+    }
+
+    public String getDateCreatedYearString() {
+        return dateCreatedYearString;
+    }
+
+    public String getDateCreatedMonthString() {
+        return dateCreatedMonthString;
+    }
+
+    public String getDateCreatedDayString() {
+        return dateCreatedDayString;
     }
 }

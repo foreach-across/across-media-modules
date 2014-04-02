@@ -34,12 +34,14 @@
         </selectKey>
         INSERT INTO Image (
         imageId,
+        created,
         repositoryCode,
         width,
         height,
         imageTypeId
         ) VALUES (
         #{imageId},
+        #{dateCreated},
         #{repositoryCode},
         #{dimensions.width,jdbcType=INTEGER},
         #{dimensions.height,jdbcType=INTEGER},
