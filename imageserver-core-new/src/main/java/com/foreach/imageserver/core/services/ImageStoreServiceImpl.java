@@ -16,8 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
 
 /**
  * Still to verify and/or implement:
@@ -35,15 +36,15 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     private final Path originalsFolder;
     private final Path variantsFolder;
 
-    private final FileAttribute[] folderAttributes;
-    private final FileAttribute[] fileAttributes;
+    private final Set<PosixFilePermission> folderPermissions;
+    private final Set<PosixFilePermission> filePermissions;
 
     @Autowired
     public ImageStoreServiceImpl(@Value("${imagestore.folder}") File imageStoreFolder,
-                                 @Value("${imagestore.permissions.folders}") String folderPermissions,
-                                 @Value("${imagestore.permissions.files}") String filePermissions) throws IOException {
-        folderAttributes = toFileAttributes(folderPermissions);
-        fileAttributes = toFileAttributes(filePermissions);
+                                 @Value("${imagestore.permissions.folders}") String folderPermissionsString,
+                                 @Value("${imagestore.permissions.files}") String filePermissionsString) throws IOException {
+        folderPermissions = toPermissions(folderPermissionsString);
+        filePermissions = toPermissions(filePermissionsString);
 
         Path imageStoreFolderPath = imageStoreFolder.toPath();
 
@@ -51,9 +52,9 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         originalsFolder = imageStoreFolderPath.resolve("originals");
         variantsFolder = imageStoreFolderPath.resolve("variants");
 
-        Files.createDirectories(tempFolder, folderAttributes);
-        Files.createDirectories(originalsFolder, folderAttributes);
-        Files.createDirectories(variantsFolder, folderAttributes);
+        createDirectories(tempFolder);
+        createDirectories(originalsFolder);
+        createDirectories(variantsFolder);
     }
 
     @Override
@@ -200,7 +201,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
     private void writeSafely(InputStream inputStream, Path targetPath) {
         try {
-            Path temporaryPath = Files.createTempFile(tempFolder, "image", ".tmp", fileAttributes);
+            Path temporaryPath = createTempFile(tempFolder, "image", ".tmp");
             Files.copy(inputStream, temporaryPath, StandardCopyOption.REPLACE_EXISTING);
             Files.move(temporaryPath, targetPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException e) {
@@ -228,18 +229,6 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         return imageSource;
     }
 
-    private FileAttribute[] toFileAttributes(String permissions) {
-        FileAttribute[] attributes = null;
-        if (StringUtils.isNotBlank(permissions)) {
-            FileAttribute attribute = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString(permissions));
-            attributes = new FileAttribute[1];
-            attributes[0] = attribute;
-        } else {
-            attributes = new FileAttribute[0];
-        }
-        return attributes;
-    }
-
     private void createFoldersSafely(Path path) {
         /**
          * Although I'm not entirely sure of this, I suspect that createDirectories might cause issues when multiple
@@ -265,7 +254,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     private boolean createFoldersWithoutFailing(Path path) {
         boolean done = false;
         try {
-            Files.createDirectories(path, folderAttributes);
+            createDirectories(path);
             done = true;
         } catch (IOException e) {
             // Ignore failure.
@@ -275,7 +264,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
     private void createFoldersAndFail(Path path) {
         try {
-            Files.createDirectories(path, folderAttributes);
+            createDirectories(path);
         } catch (IOException e) {
             throw new ImageStoreException(e);
         }
@@ -286,6 +275,41 @@ public class ImageStoreServiceImpl implements ImageStoreService {
             Thread.sleep(millis);
         } catch (InterruptedException ie) {
             // Ignore.
+        }
+    }
+
+    private Path createTempFile(Path folder, String prefix, String suffix) throws IOException {
+        /**
+         * The variant of Files::createTempFile that allows for setting the file permissions in one go doesn't seem
+         * to work on an NFS volume. Since a temporary file is used exclusively by one thread, we can safely use two
+         * separate calls here.
+         */
+
+        Path tempFile = Files.createTempFile(folder, prefix, suffix);
+        if (filePermissions != null) {
+            Files.setPosixFilePermissions(tempFile, filePermissions);
+        }
+        return tempFile;
+    }
+
+    private void createDirectories(Path path) throws IOException {
+        /**
+         * The variant of Files::createDirectories that allows for setting the file permissions in one go doesn't seem
+         * to work on an NFS volume. Since folders are always created once and then left untouched, we can safely use
+         * two separate calls here.
+         */
+
+        Files.createDirectories(path);
+        if (folderPermissions != null) {
+            Files.setPosixFilePermissions(path, folderPermissions);
+        }
+    }
+
+    private Set<PosixFilePermission> toPermissions(String permissionsString) {
+        if (StringUtils.isNotBlank(permissionsString)) {
+            return PosixFilePermissions.fromString(permissionsString);
+        } else {
+            return null;
         }
     }
 
