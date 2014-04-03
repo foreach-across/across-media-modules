@@ -45,7 +45,6 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-orm:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-jdbc:4.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-tx:4.0.0.RELEASE" />
-          <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.2" />
           <element id="library" level="project" name="Maven: commons-io:commons-io:2.4" />
           <element id="library" level="project" name="Maven: org.apache.httpcomponents:httpclient:4.2.5" />
           <element id="library" level="project" name="Maven: org.apache.httpcomponents:httpcore:4.2.4" />
