@@ -201,9 +201,10 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
     private void writeSafely(InputStream inputStream, Path targetPath) {
         try {
-            Path temporaryPath = createTempFile(tempFolder, "image", ".tmp");
+            Path temporaryPath = Files.createTempFile(tempFolder, "image", ".tmp");
             Files.copy(inputStream, temporaryPath, StandardCopyOption.REPLACE_EXISTING);
             Files.move(temporaryPath, targetPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            setFilePermissionsWithoutFailing(targetPath);
         } catch (IOException e) {
             throw new ImageStoreException(e);
         }
@@ -278,20 +279,6 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         }
     }
 
-    private Path createTempFile(Path folder, String prefix, String suffix) throws IOException {
-        /**
-         * The variant of Files::createTempFile that allows for setting the file permissions in one go doesn't seem
-         * to work on an NFS volume. Since a temporary file is used exclusively by one thread, we can safely use two
-         * separate calls here.
-         */
-
-        Path tempFile = Files.createTempFile(folder, prefix, suffix);
-        if (filePermissions != null) {
-            Files.setPosixFilePermissions(tempFile, filePermissions);
-        }
-        return tempFile;
-    }
-
     private void createDirectories(Path path) throws IOException {
         /**
          * The variant of Files::createDirectories that allows for setting the file permissions in one go doesn't seem
@@ -302,6 +289,23 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         Files.createDirectories(path);
         if (folderPermissions != null) {
             Files.setPosixFilePermissions(path, folderPermissions);
+        }
+    }
+
+    private void setFilePermissionsWithoutFailing(Path path) {
+        /**
+         * The variant of Files::createTempFile that allows for setting the file permissions in one go doesn't seem
+         * to work on an NFS volume. Fixing the permissions of the temp file before moving it to its final destination
+         * also fails. As a last resort, we blindly try to fix the permissions on the target file. As it may have been
+         * manipulated by external actors in the mean time, we ignore all errors.
+         */
+
+        if (filePermissions != null) {
+            try {
+                Files.setPosixFilePermissions(path, filePermissions);
+            } catch (IOException e) {
+                // Must be ignored, see comment above.
+            }
         }
     }
 
