@@ -3,11 +3,9 @@
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/imageserver-client" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/imageserver-core" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/imageserver-core-integration-tests" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/imageserver-core-new" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/imageserver-diocontent" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/imageserver-dpp-connector" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/imageserver-dtos" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/web.imageserver.front" charset="UTF-8" />
   </component>

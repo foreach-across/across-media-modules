@@ -26,8 +26,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>web.imageserver.front</module>
-        <module>imageserver-dpp-connector</module>
-        <module>imageserver-core</module>
         <module>imageserver-core-new</module>
         <module>imageserver-core-integration-tests</module>
         <module>imageserver-client</module>
