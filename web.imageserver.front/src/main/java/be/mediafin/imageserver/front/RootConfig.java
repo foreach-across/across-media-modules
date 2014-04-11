@@ -4,6 +4,7 @@ import be.mediafin.imageserver.front.mfn.MfnImageServerFrontModule;
 import be.mediafin.imageserver.imagerepositories.diocontent.DioContentImageRepositoryModule;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.imageserver.core.ImageServerCoreModule;
+import com.foreach.imageserver.imagerepositories.web.WebImageRepositoryModule;
 import com.foreach.spring.logging.LogbackConfigurer;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,6 +69,7 @@ public class RootConfig {
         context.addModule(imageServerCoreModule());
         context.addModule(dioContentModule());
         context.addModule(mfnImageServerFrontModule());
+        context.addModule(webModule());
         return context;
     }
 
@@ -79,6 +81,11 @@ public class RootConfig {
     @Bean
     public ImageServerCoreModule imageServerCoreModule() {
         return new ImageServerCoreModule();
+    }
+
+    @Bean
+    public WebImageRepositoryModule webModule() {
+        return new WebImageRepositoryModule();
     }
 
     @Bean
