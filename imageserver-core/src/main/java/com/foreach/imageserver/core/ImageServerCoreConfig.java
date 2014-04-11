@@ -4,7 +4,6 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ImageRepositoryRegistry;
 import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
-import liquibase.integration.spring.SpringLiquibase;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,15 +48,6 @@ public class ImageServerCoreConfig {
         sessionFactory.setDataSource(dataSource);
         sessionFactory.setTypeAliases(new Class[]{Context.class, Image.class, ImageResolution.class, ImageModification.class, WebImageParameters.class});
         return sessionFactory.getObject();
-    }
-
-    @Bean
-    public SpringLiquibase springLiquibase(DataSource dataSource) {
-        // TODO Should become an Across installer.
-        SpringLiquibase springLiquibase = new SpringLiquibase();
-        springLiquibase.setDataSource(dataSource);
-        springLiquibase.setChangeLog("classpath:com/foreach/imageserver/core/liquibase/changelog.xml");
-        return springLiquibase;
     }
 
     @Bean
