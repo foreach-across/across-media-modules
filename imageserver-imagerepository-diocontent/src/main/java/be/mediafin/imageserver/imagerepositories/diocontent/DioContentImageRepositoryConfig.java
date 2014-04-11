@@ -1,7 +1,6 @@
 package be.mediafin.imageserver.imagerepositories.diocontent;
 
 import be.mediafin.imageserver.imagerepositories.diocontent.business.DioContentImageParameters;
-import liquibase.integration.spring.SpringLiquibase;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +39,6 @@ public class DioContentImageRepositoryConfig {
         sessionFactory.setDataSource(dataSource);
         sessionFactory.setTypeAliases(new Class[]{DioContentImageParameters.class});
         return sessionFactory.getObject();
-    }
-
-    @Bean
-    public SpringLiquibase springLiquibase(DataSource dataSource) {
-        // TODO Should become an Across installer.
-        SpringLiquibase springLiquibase = new SpringLiquibase();
-        springLiquibase.setDataSource(dataSource);
-        springLiquibase.setChangeLog("classpath:be/mediafin/imageserver/imagerepositories/diocontent/liquibase/changelog.xml");
-        return springLiquibase;
     }
 
 }
