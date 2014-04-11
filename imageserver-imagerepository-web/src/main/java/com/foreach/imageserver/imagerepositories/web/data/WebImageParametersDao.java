@@ -1,6 +1,6 @@
-package com.foreach.imageserver.core.data;
+package com.foreach.imageserver.imagerepositories.web.data;
 
-import com.foreach.imageserver.core.business.WebImageParameters;
+import com.foreach.imageserver.imagerepositories.web.business.WebImageParameters;
 import org.springframework.stereotype.Repository;
 
 @Repository

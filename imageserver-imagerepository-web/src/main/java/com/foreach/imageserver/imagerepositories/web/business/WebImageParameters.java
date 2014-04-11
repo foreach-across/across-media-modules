@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.business;
+package com.foreach.imageserver.imagerepositories.web.business;
 
 public class WebImageParameters {
     private int imageId;

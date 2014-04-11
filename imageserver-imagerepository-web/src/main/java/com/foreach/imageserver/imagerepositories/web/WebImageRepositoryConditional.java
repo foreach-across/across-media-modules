@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.services;
+package com.foreach.imageserver.imagerepositories.web;
 
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;

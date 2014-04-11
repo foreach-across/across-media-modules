@@ -1,7 +1,7 @@
-package com.foreach.imageserver.core.data;
+package com.foreach.imageserver.imagerepositories.web.data;
 
-import com.foreach.imageserver.core.AbstractIntegrationTest;
-import com.foreach.imageserver.core.business.WebImageParameters;
+import com.foreach.imageserver.imagerepositories.web.WebAbstractIntegrationTest;
+import com.foreach.imageserver.imagerepositories.web.business.WebImageParameters;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +11,7 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class WebImageParametersDaoTest extends AbstractIntegrationTest {
+public class WebImageParametersDaoTest extends WebAbstractIntegrationTest {
 
     @Autowired
     private WebImageParametersDao webImageParametersDao;

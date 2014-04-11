@@ -1,10 +1,12 @@
-package com.foreach.imageserver.core.services;
+package com.foreach.imageserver.imagerepositories.web;
 
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.business.WebImageParameters;
-import com.foreach.imageserver.core.data.WebImageParametersDao;
+import com.foreach.imageserver.imagerepositories.web.business.WebImageParameters;
+import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
+import com.foreach.imageserver.imagerepositories.web.data.WebImageParametersDao;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -22,6 +24,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 @Service
+@Exposed
 @Conditional(WebImageRepositoryConditional.class)
 public class WebImageRepository implements ImageRepository {
 

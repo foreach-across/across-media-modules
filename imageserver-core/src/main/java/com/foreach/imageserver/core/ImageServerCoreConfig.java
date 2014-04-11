@@ -46,7 +46,7 @@ public class ImageServerCoreConfig {
     public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setTypeAliases(new Class[]{Context.class, Image.class, ImageResolution.class, ImageModification.class, WebImageParameters.class});
+        sessionFactory.setTypeAliases(new Class[]{Context.class, Image.class, ImageResolution.class, ImageModification.class});
         return sessionFactory.getObject();
     }
 
