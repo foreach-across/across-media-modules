@@ -30,6 +30,7 @@
         <module>imageserver-core-integration-tests</module>
         <module>imageserver-client</module>
         <module>imageserver-imagerepository-diocontent</module>
+        <module>imageserver-imagerepository-web</module>
         <module>imageserver-dtos</module>
     </modules>
     <dependencies>
