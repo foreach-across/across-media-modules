@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.foreach.imageserver</groupId>
-    <artifactId>imageserver-diocontent</artifactId>
+    <artifactId>imageserver-imagerepository-diocontent</artifactId>
     <name>ImageServer DioContent Image Repository Module</name>
     <version>2.0-SNAPSHOT</version>
     <packaging>jar</packaging>

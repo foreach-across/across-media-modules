@@ -5,9 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/imageserver-client/imageserver-client.iml" filepath="$PROJECT_DIR$/imageserver-client/imageserver-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-core/imageserver-core.iml" filepath="$PROJECT_DIR$/imageserver-core/imageserver-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-core-integration-tests/imageserver-core-integration-tests.iml" filepath="$PROJECT_DIR$/imageserver-core-integration-tests/imageserver-core-integration-tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imageserver-core-new/imageserver-core-new.iml" filepath="$PROJECT_DIR$/imageserver-core-new/imageserver-core-new.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imageserver-diocontent/imageserver-diocontent.iml" filepath="$PROJECT_DIR$/imageserver-diocontent/imageserver-diocontent.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-dtos/imageserver-dtos.iml" filepath="$PROJECT_DIR$/imageserver-dtos/imageserver-dtos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imageserver-imagerepository-diocontent/imageserver-imagerepository-diocontent.iml" filepath="$PROJECT_DIR$/imageserver-imagerepository-diocontent/imageserver-imagerepository-diocontent.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />
       <module fileurl="file://$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" filepath="$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" />
     </modules>

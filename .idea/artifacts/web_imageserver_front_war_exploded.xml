@@ -58,8 +58,8 @@
           <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.10" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.10" />
-          <element id="archive" name="imageserver-diocontent-2.0-SNAPSHOT.jar">
-            <element id="module-output" name="imageserver-diocontent" />
+          <element id="archive" name="imageserver-imagerepository-diocontent-2.0-SNAPSHOT.jar">
+            <element id="module-output" name="imageserver-imagerepository-diocontent" />
           </element>
           <element id="library" level="project" name="Maven: be.persgroep.red.diocontent.webservice:diocontent-webservice-client:2.13" />
           <element id="library" level="project" name="Maven: be.persgroep.red.diocontent.api:diocontent-api-client:1.13" />

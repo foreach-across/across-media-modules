@@ -85,7 +85,7 @@
     <orderEntry type="library" name="Maven: javax.servlet:jstl:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.10" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.10" level="project" />
-    <orderEntry type="module" module-name="imageserver-diocontent" />
+    <orderEntry type="module" module-name="imageserver-imagerepository-diocontent" />
     <orderEntry type="library" name="Maven: be.persgroep.red.diocontent.webservice:diocontent-webservice-client:2.13" level="project" />
     <orderEntry type="library" name="Maven: be.persgroep.red.diocontent.api:diocontent-api-client:1.13" level="project" />
     <orderEntry type="library" name="Maven: be.persgroep.red.diocontent.api:diocontent-api-core:1.13" level="project" />
