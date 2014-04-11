@@ -1,6 +1,6 @@
 package be.mediafin.imageserver.imagerepositories.diocontent.config;
 
-import be.mediafin.imageserver.imagerepositories.diocontent.ImageServerDioContentModule;
+import be.mediafin.imageserver.imagerepositories.diocontent.DioContentImageRepositoryModule;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,7 @@ public class DioContentIntegrationTestConfig {
 
     @Bean
     public AcrossModule dioContentModule() {
-        ImageServerDioContentModule module = new ImageServerDioContentModule();
+        DioContentImageRepositoryModule module = new DioContentImageRepositoryModule();
         module.setExposeFilter(new PackageBeanFilter("be.mediafin.imageserver.imagerepositories.diocontent", "org.mybatis.spring.mapper"));
         return module;
     }

@@ -8,9 +8,9 @@ import com.foreach.across.core.filters.AnnotationBeanFilter;
 
 import java.util.Set;
 
-public class ImageServerDioContentModule extends AcrossModule {
+public class DioContentImageRepositoryModule extends AcrossModule {
 
-    public ImageServerDioContentModule() {
+    public DioContentImageRepositoryModule() {
         setExposeFilter(new AnnotationBeanFilter(true, Exposed.class));
     }
 
@@ -26,7 +26,7 @@ public class ImageServerDioContentModule extends AcrossModule {
 
     @Override
     protected void registerDefaultApplicationContextConfigurers(Set<ApplicationContextConfigurer> contextConfigurers) {
-        contextConfigurers.add(new AnnotatedClassConfigurer(ImageServerDioContentConfig.class));
+        contextConfigurers.add(new AnnotatedClassConfigurer(DioContentImageRepositoryConfig.class));
     }
 
 }

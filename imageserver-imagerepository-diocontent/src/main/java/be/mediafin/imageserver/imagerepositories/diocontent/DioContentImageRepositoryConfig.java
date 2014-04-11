@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan(basePackages = "be.mediafin.imageserver.imagerepositories.diocontent", excludeFilters = @ComponentScan.Filter(Configuration.class))
 @MapperScan("be.mediafin.imageserver.imagerepositories.diocontent.data")
-public class ImageServerDioContentConfig {
+public class DioContentImageRepositoryConfig {
 
     @Autowired
     private DataSource dataSource;
