@@ -16,7 +16,7 @@ public class DioContentImageRepositoryModule extends AcrossModule {
 
     @Override
     public String getName() {
-        return "ImageServerDioContent";
+        return "ImageServerDioContentImageRepository";
     }
 
     @Override
