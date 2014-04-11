@@ -25,6 +25,7 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="imageserver-client" />
+        <module name="imageserver-core" />
         <module name="imageserver-core-integration-tests" />
         <module name="imageserver-core-new" />
         <module name="imageserver-diocontent" />

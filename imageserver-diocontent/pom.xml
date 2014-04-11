@@ -27,7 +27,7 @@
     <dependencies>
         <dependency>
             <groupId>com.foreach.imageserver</groupId>
-            <artifactId>imageserver-core-new</artifactId>
+            <artifactId>imageserver-core</artifactId>
             <version>2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>com.foreach.imageserver</groupId>
-            <artifactId>imageserver-core-new</artifactId>
+            <artifactId>imageserver-core</artifactId>
             <version>2.0-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>

@@ -8,8 +8,8 @@
           <element id="module-output" name="web.imageserver.front" />
         </element>
         <element id="directory" name="lib">
-          <element id="archive" name="imageserver-core-new-2.0-SNAPSHOT.jar">
-            <element id="module-output" name="imageserver-core-new" />
+          <element id="archive" name="imageserver-core-2.0-SNAPSHOT.jar">
+            <element id="module-output" name="imageserver-core" />
           </element>
           <element id="archive" name="imageserver-dtos-2.0-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-dtos" />

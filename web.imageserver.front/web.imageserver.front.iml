@@ -39,7 +39,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="imageserver-core-new" />
+    <orderEntry type="module" module-name="imageserver-core" />
     <orderEntry type="module" module-name="imageserver-dtos" />
     <orderEntry type="library" name="Maven: com.foreach.libs:common-spring:0.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.1" level="project" />
