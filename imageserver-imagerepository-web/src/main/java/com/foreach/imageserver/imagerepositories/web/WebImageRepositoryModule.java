@@ -6,6 +6,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
+import com.foreach.imageserver.imagerepositories.web.installers.InitialSchemaInstaller;
 
 import java.util.Set;
 
@@ -29,5 +30,10 @@ public class WebImageRepositoryModule extends AcrossModule {
     @Override
     protected void registerDefaultApplicationContextConfigurers(Set<ApplicationContextConfigurer> contextConfigurers) {
         contextConfigurers.add(new AnnotatedClassConfigurer(WebImageRepositoryConfig.class));
+    }
+
+    @Override
+    public Object[] getInstallers() {
+        return new Object[]{new InitialSchemaInstaller()};
     }
 }

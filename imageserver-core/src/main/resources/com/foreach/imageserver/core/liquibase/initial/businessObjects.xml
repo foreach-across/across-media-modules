@@ -118,17 +118,6 @@
                        columnNames="imageId, contextId, resolutionId"
                        constraintName="pk_image_modification"/>
     </changeSet>
-    <changeSet id="201403141650" author="ovh">
-        <createTable tableName="WEB_IMAGE_PARAMETERS">
-            <column name="imageId" type="int">
-                <constraints primaryKey="true" references="IMAGE(imageId)" foreignKeyName="fk_web_image"
-                             nullable="false"/>
-            </column>
-            <column name="url" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
     <changeSet id="201403241240" author="kds">
         <createSequence sequenceName="SEQ_IMAGES"/>
     </changeSet>
