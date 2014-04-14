@@ -12,6 +12,8 @@ public interface ImageModificationDao {
 
     List<ImageModification> getModifications(@Param("imageId") int imageId, @Param("contextId") int contextId);
 
+    List<ImageModification> getAllModifications(@Param("imageId") int imageId);
+
     void insert(ImageModification imageModification);
 
     void update(ImageModification imageModification);
