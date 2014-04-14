@@ -55,7 +55,6 @@ public class ImageStreamingController {
             return;
         }
 
-        // TODO Implement best-effort matching.
         ImageResolution imageResolution = contextService.getImageResolution(context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
         if (imageResolution == null) {
             error(response, HttpStatus.NOT_FOUND, "No such resolution.");
