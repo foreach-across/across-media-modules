@@ -19,5 +19,7 @@ public interface ImageStoreService {
 
     StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);
 
+    void removeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);
+
     void removeVariants(int imageId);
 }

@@ -24,8 +24,7 @@ import java.util.Set;
  * Still to verify and/or implement:
  * - Files.createTempPath needs to be atomic.
  * - Files.copy with option REPLACE_EXISTING should never cause the temp file to not exist.
- * - We should not store all images in one big folder. A hashing mechanism should be set up for this.
- * <p/>
+  * <p/>
  * TODO Resolve the above.
  */
 @Service
@@ -92,6 +91,25 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     public StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
         Path targetPath = getTargetPath(image, context, imageResolution, imageVariant);
         return read(targetPath, imageVariant.getOutputType());
+    }
+
+    @Override
+    public void removeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
+        Path targetPath = getTargetPath(image, context, imageResolution, imageVariant);
+
+        try {
+            Files.deleteIfExists(targetPath);
+        } catch (IOException e) {
+            /**
+             * Unfortunately, we need to ignore this error.
+             *
+             * Experiments have revealed that removing the same file from different threads concurrently should work,
+             * provided that we ignore all IOExceptions. I could not quickly find a good way around this;
+             * Files::deleteIfExists raises exceptions when the file it is trying to consider is suddenly missing.
+             *
+             * This was also tested on a linux server on an NFS mount.
+             */
+        }
     }
 
     @Override
