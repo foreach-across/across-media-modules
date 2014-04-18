@@ -33,4 +33,24 @@ public class Dimensions {
     public void setHeight(int height) {
         this.height = height;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Dimensions that = (Dimensions) o;
+
+        if (height != that.height) return false;
+        if (width != that.width) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = width;
+        result = 31 * result + height;
+        return result;
+    }
 }
