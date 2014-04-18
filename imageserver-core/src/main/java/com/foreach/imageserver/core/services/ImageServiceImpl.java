@@ -113,9 +113,22 @@ public class ImageServiceImpl implements ImageService {
                     imageModification.getDensity().getHeight(),
                     imageVariant.getOutputType());
 
-            // TODO Extra locking is needed here to ensure that the modification wasn't altered behind our back.
             // TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
             imageStoreService.storeVariantImage(image, context, imageResolution, imageVariant, variantImageSource.byteStream());
+
+            /**
+             * The ImageModification objects we used to determine the Crop may have changed while we were busy
+             * generating it. On the other hand, we expect the chances of this actually happening to be pretty low. To
+             * avoid having to keep database locking in mind whenever we work with ImageModification-s, we employ some
+             * semi-optimistic concurrency control. Specifically: we always write the file without any advance
+             * checking. This may cause us to serve stale variants for a very short while. Then we check that the
+             * ImageModification was not altered behind our back. Should this be the case we delete the variant from
+             * disk; it will then be recreated during the next request.
+             */
+            ImageModification reviewImageModification = imageModificationDao.getById(image.getImageId(), context.getId(), imageResolution.getId());
+            if (!imageModification.equals(reviewImageModification)) {
+                imageStoreService.removeVariantImage(image, context, imageResolution, imageVariant);
+            }
 
             return variantImageSource.stream();
         }
