@@ -34,6 +34,9 @@ public class ImageServiceImpl implements ImageService {
     private ImageRepositoryService imageRepositoryService;
 
     @Autowired
+    private CropGenerator cropGenerator;
+
+    @Autowired
     private ImageResolutionDao imageResolutionDao;
 
     @Override
@@ -137,10 +140,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private InMemoryImageSource generateVariantImageInCurrentThread(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
-        ImageModification imageModification = imageModificationDao.getById(image.getImageId(), context.getId(), imageResolution.getId());
-        if (imageModification == null) {
-            throw new ImageCouldNotBeRetrievedException("No image modification was registered for this image.");
-        }
+        Crop crop = obtainCrop(image, context, imageResolution);
 
         StreamImageSource originalImageSource = imageStoreService.getOriginalImage(image);
         if (originalImageSource == null) {
@@ -160,12 +160,12 @@ public class ImageServiceImpl implements ImageService {
                 originalImageSource,
                 outputResolution.getWidth(),
                 outputResolution.getHeight(),
-                imageModification.getCrop().getX(),
-                imageModification.getCrop().getY(),
-                imageModification.getCrop().getWidth(),
-                imageModification.getCrop().getHeight(),
-                imageModification.getDensity().getWidth(),
-                imageModification.getDensity().getHeight(),
+                crop.getX(),
+                crop.getY(),
+                crop.getWidth(),
+                crop.getHeight(),
+                0,
+                0,
                 imageVariant.getOutputType());
 
         // TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
@@ -180,12 +180,30 @@ public class ImageServiceImpl implements ImageService {
          * ImageModification was not altered behind our back. Should this be the case we delete the variant from
          * disk; it will then be recreated during the next request.
          */
-        ImageModification reviewImageModification = imageModificationDao.getById(image.getImageId(), context.getId(), imageResolution.getId());
-        if (!imageModification.equals(reviewImageModification)) {
+        Crop reviewCrop = obtainCrop(image, context, imageResolution);
+        if (!crop.equals(reviewCrop)) {
             imageStoreService.removeVariantImage(image, context, imageResolution, imageVariant);
         }
 
         return variantImageSource;
+    }
+
+    private Crop obtainCrop(Image image, Context context, ImageResolution imageResolution) {
+        Crop result;
+
+        ImageModification imageModification = imageModificationDao.getById(image.getImageId(), context.getId(), imageResolution.getId());
+        if (imageModification != null) {
+            result = imageModification.getCrop();
+        } else {
+            List<ImageModification> modifications = imageModificationDao.getAllModifications(image.getImageId());
+            result = cropGenerator.generateCrop(image, context, imageResolution, modifications);
+        }
+
+        if (result == null) {
+            throw new ImageCouldNotBeRetrievedException("No crop could be determined for this image.");
+        }
+
+        return result;
     }
 
     @Override
