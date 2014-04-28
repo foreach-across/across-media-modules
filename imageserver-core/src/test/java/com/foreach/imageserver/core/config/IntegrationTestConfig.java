@@ -72,7 +72,7 @@ public class IntegrationTestConfig {
     @Bean
     public AcrossModule imageServerCoreModule() {
         ImageServerCoreModule module = new ImageServerCoreModule();
-        module.setExposeFilter(new PackageBeanFilter("com.foreach.imageserver.core", "org.mybatis.spring.mapper"));
+        module.setExposeFilter(new PackageBeanFilter("com.foreach.imageserver.core", "org.mybatis.spring.mapper", "net.sf.ehcache"));
         return module;
     }
 
