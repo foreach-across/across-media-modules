@@ -3,7 +3,7 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.data.ImageDao;
 import com.foreach.imageserver.core.data.ImageModificationDao;
-import com.foreach.imageserver.core.data.ImageResolutionDao;
+import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import org.apache.commons.io.IOUtils;
@@ -352,6 +352,11 @@ public class ImageServiceGetVariantSynchronizationTest {
         }
 
         @Bean
+        public CropGenerator cropGenerator() {
+            return mock(CropGenerator.class);
+        }
+
+        @Bean
         public ImageDao imageDao() {
             return mock(ImageDao.class);
         }
@@ -377,8 +382,8 @@ public class ImageServiceGetVariantSynchronizationTest {
         }
 
         @Bean
-        public ImageResolutionDao imageResolutionDao() {
-            return mock(ImageResolutionDao.class);
+        public ImageResolutionManager imageResolutionManager() {
+            return mock(ImageResolutionManager.class);
         }
 
     }

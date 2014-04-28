@@ -3,7 +3,7 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.data.ImageDao;
 import com.foreach.imageserver.core.data.ImageModificationDao;
-import com.foreach.imageserver.core.data.ImageResolutionDao;
+import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class ImageServiceImpl implements ImageService {
     private CropGenerator cropGenerator;
 
     @Autowired
-    private ImageResolutionDao imageResolutionDao;
+    private ImageResolutionManager imageResolutionManager;
 
     @Override
     public Image getById(int imageId) {
@@ -213,7 +213,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public ImageResolution getResolution(int resolutionId) {
-        return imageResolutionDao.getById(resolutionId);
+        return imageResolutionManager.getById(resolutionId);
     }
 
     @Override

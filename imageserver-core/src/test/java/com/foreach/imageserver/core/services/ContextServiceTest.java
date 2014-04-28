@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.data.ImageResolutionDao;
+import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class ContextServiceTest {
     @Before
     public void setUp() {
         contextService = new ContextServiceImpl();
-        ImageResolutionDao imageResolutionDao = Mockito.mock(ImageResolutionDao.class);
+        ImageResolutionManager imageResolutionManager = Mockito.mock(ImageResolutionManager.class);
 
         List<ImageResolution> imageResolutions = new ArrayList<ImageResolution>();
         imageResolutions.add(createImageResolution(1, 10, 20));
@@ -40,8 +40,8 @@ public class ContextServiceTest {
         imageResolutions.add(createImageResolution(14, 40, 70));
         imageResolutions.add(createImageResolution(15, 50, 70));
 
-        Mockito.doReturn(imageResolutions).when(imageResolutionDao).getForContext(CONTEXT_ID);
-        ReflectionTestUtils.setField(contextService, "imageResolutionDao", imageResolutionDao);
+        Mockito.doReturn(imageResolutions).when(imageResolutionManager).getForContext(CONTEXT_ID);
+        ReflectionTestUtils.setField(contextService, "imageResolutionManager", imageResolutionManager);
     }
 
     @Test

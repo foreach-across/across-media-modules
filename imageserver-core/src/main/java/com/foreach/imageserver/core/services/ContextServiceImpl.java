@@ -3,7 +3,7 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ContextManager;
-import com.foreach.imageserver.core.data.ImageResolutionDao;
+import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class ContextServiceImpl implements ContextService {
     private ContextManager contextManager;
 
     @Autowired
-    private ImageResolutionDao imageResolutionDao;
+    private ImageResolutionManager imageResolutionManager;
 
     @Override
     public Context getByCode(String contextCode) {
@@ -46,7 +46,7 @@ public class ContextServiceImpl implements ContextService {
 
         ImageResolution selectedResolution = null;
 
-        List<ImageResolution> imageResolutions = imageResolutionDao.getForContext(contextId);
+        List<ImageResolution> imageResolutions = imageResolutionManager.getForContext(contextId);
         for (ImageResolution imageResolution : imageResolutions) {
 
             // image resolution is large enough to contain (width, height)  (or only with, if height is zero)
@@ -81,7 +81,7 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public List<ImageResolution> getImageResolutions(int contextId) {
-        return imageResolutionDao.getForContext(contextId);
+        return imageResolutionManager.getForContext(contextId);
     }
 
 }
