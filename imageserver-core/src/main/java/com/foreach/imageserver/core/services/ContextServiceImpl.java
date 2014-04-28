@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.data.ContextDao;
+import com.foreach.imageserver.core.managers.ContextManager;
 import com.foreach.imageserver.core.data.ImageResolutionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,14 +16,14 @@ public class ContextServiceImpl implements ContextService {
     public static final double DEFAULT_ASPECT_RATIO = 3.0 / 2.0;
 
     @Autowired
-    private ContextDao contextDao;
+    private ContextManager contextManager;
 
     @Autowired
     private ImageResolutionDao imageResolutionDao;
 
     @Override
     public Context getByCode(String contextCode) {
-        return contextDao.getByCode(contextCode);
+        return contextManager.getByCode(contextCode);
     }
 
     /**
