@@ -70,6 +70,7 @@ public class ImageServerCoreConfig {
     @Bean
     public net.sf.ehcache.CacheManager ehCacheManager() {
         net.sf.ehcache.config.Configuration configuration = new net.sf.ehcache.config.Configuration();
+        configuration.addCache(cacheConfiguration("contexts", 50, true));
         return net.sf.ehcache.CacheManager.newInstance(configuration);
     }
 
