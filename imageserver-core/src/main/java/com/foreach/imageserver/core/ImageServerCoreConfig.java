@@ -32,6 +32,9 @@ public class ImageServerCoreConfig {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private ImageServerCoreModule imageServerCoreModule;
+
     @Bean
     @Exposed
     public RequestMappingHandlerMapping imageServerCoreHandlerMapping() {
@@ -70,8 +73,10 @@ public class ImageServerCoreConfig {
     @Bean
     public net.sf.ehcache.CacheManager ehCacheManager() {
         net.sf.ehcache.config.Configuration configuration = new net.sf.ehcache.config.Configuration();
+        configuration.setName(imageServerCoreModule.getName());
         configuration.addCache(cacheConfiguration("contexts", 50, true));
         configuration.addCache(cacheConfiguration("imageResolutions", 100, true));
+        configuration.addCache(cacheConfiguration("images", 5000, true));
         return net.sf.ehcache.CacheManager.newInstance(configuration);
     }
 
