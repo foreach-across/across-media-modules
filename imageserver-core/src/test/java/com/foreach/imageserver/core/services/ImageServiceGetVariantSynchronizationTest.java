@@ -1,8 +1,8 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
-import com.foreach.imageserver.core.data.ImageModificationDao;
 import com.foreach.imageserver.core.managers.ImageManager;
+import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
@@ -41,7 +41,7 @@ public class ImageServiceGetVariantSynchronizationTest {
     public ImageStoreService imageStoreService;
 
     @Autowired
-    private ImageModificationDao imageModificationDao;
+    private ImageModificationManager imageModificationManager;
 
     @Autowired
     private ImageTransformService imageTransformService;
@@ -156,8 +156,8 @@ public class ImageServiceGetVariantSynchronizationTest {
         when(imageStoreService.getVariantImage(firstImage, context, imageResolution, imageVariant)).thenReturn(null);
         when(imageStoreService.getVariantImage(secondImage, context, imageResolution, imageVariant)).thenReturn(null);
 
-        when(imageModificationDao.getById(1, 10, 20)).thenReturn(imageModification());
-        when(imageModificationDao.getById(2, 10, 20)).thenReturn(imageModification());
+        when(imageModificationManager.getById(1, 10, 20)).thenReturn(imageModification());
+        when(imageModificationManager.getById(2, 10, 20)).thenReturn(imageModification());
 
         StreamImageSource firstOriginalImageSource = new StreamImageSource(null, (InputStream) null);
         StreamImageSource secondOriginalImageSource = new StreamImageSource(null, (InputStream) null);
@@ -367,8 +367,8 @@ public class ImageServiceGetVariantSynchronizationTest {
         }
 
         @Bean
-        public ImageModificationDao imageModificationDao() {
-            return mock(ImageModificationDao.class);
+        public ImageModificationManager imageModificationManager() {
+            return mock(ImageModificationManager.class);
         }
 
         @Bean

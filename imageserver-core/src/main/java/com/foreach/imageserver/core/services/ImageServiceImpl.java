@@ -1,8 +1,8 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
-import com.foreach.imageserver.core.data.ImageModificationDao;
 import com.foreach.imageserver.core.managers.ImageManager;
+import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
@@ -25,7 +25,7 @@ public class ImageServiceImpl implements ImageService {
     private ImageStoreService imageStoreService;
 
     @Autowired
-    private ImageModificationDao imageModificationDao;
+    private ImageModificationManager imageModificationManager;
 
     @Autowired
     private ImageTransformService imageTransformService;
@@ -75,11 +75,11 @@ public class ImageServiceImpl implements ImageService {
      */
     @Override
     public void saveImageModification(ImageModification modification) {
-        ImageModification existingModification = imageModificationDao.getById(modification.getImageId(), modification.getContextId(), modification.getResolutionId());
+        ImageModification existingModification = imageModificationManager.getById(modification.getImageId(), modification.getContextId(), modification.getResolutionId());
         if (existingModification == null) {
-            imageModificationDao.insert(modification);
+            imageModificationManager.insert(modification);
         } else {
-            imageModificationDao.update(modification);
+            imageModificationManager.update(modification);
         }
 
         imageStoreService.removeVariants(modification.getImageId());
@@ -191,11 +191,11 @@ public class ImageServiceImpl implements ImageService {
     private Crop obtainCrop(Image image, Context context, ImageResolution imageResolution) {
         Crop result;
 
-        ImageModification imageModification = imageModificationDao.getById(image.getImageId(), context.getId(), imageResolution.getId());
+        ImageModification imageModification = imageModificationManager.getById(image.getImageId(), context.getId(), imageResolution.getId());
         if (imageModification != null) {
             result = imageModification.getCrop();
         } else {
-            List<ImageModification> modifications = imageModificationDao.getAllModifications(image.getImageId());
+            List<ImageModification> modifications = imageModificationManager.getAllModifications(image.getImageId());
             result = cropGenerator.generateCrop(image, context, imageResolution, modifications);
         }
 
@@ -208,7 +208,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public boolean hasModification(int imageId) {
-        return imageModificationDao.hasModification(imageId);
+        return imageModificationManager.hasModification(imageId);
     }
 
     @Override
@@ -218,7 +218,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public List<ImageModification> getModifications(int imageId, int contextId) {
-        return imageModificationDao.getModifications(imageId, contextId);
+        return imageModificationManager.getModifications(imageId, contextId);
     }
 
     private Dimensions computeOutputResolution(Image image, ImageResolution imageResolution) {
