@@ -1,8 +1,8 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
-import com.foreach.imageserver.core.data.ImageDao;
 import com.foreach.imageserver.core.data.ImageModificationDao;
+import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
@@ -357,8 +357,8 @@ public class ImageServiceGetVariantSynchronizationTest {
         }
 
         @Bean
-        public ImageDao imageDao() {
-            return mock(ImageDao.class);
+        public ImageManager imageManager() {
+            return mock(ImageManager.class);
         }
 
         @Bean

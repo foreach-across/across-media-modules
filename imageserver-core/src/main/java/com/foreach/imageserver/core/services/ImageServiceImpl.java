@@ -1,8 +1,8 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
-import com.foreach.imageserver.core.data.ImageDao;
 import com.foreach.imageserver.core.data.ImageModificationDao;
+import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class ImageServiceImpl implements ImageService {
 
     @Autowired
-    private ImageDao imageDao;
+    private ImageManager imageManager;
 
     @Autowired
     private ImageStoreService imageStoreService;
@@ -41,7 +41,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image getById(int imageId) {
-        return imageDao.getById(imageId);
+        return imageManager.getById(imageId);
     }
 
     // Used concurrently from multiple threads.
@@ -54,12 +54,12 @@ public class ImageServiceImpl implements ImageService {
         Image image = new Image();
         image.setDateCreated(new Date());
         image.setRepositoryCode(imageRepository.getCode());
-        imageDao.insert(image);
+        imageManager.insert(image);
 
         RetrievedImage retrievedImage = imageRepository.retrieveImage(image.getImageId(), repositoryParameters);
         image.setDimensions(retrievedImage.getDimensions());
         image.setImageType(retrievedImage.getImageType());
-        imageDao.updateParameters(image);
+        imageManager.updateParameters(image);
         imageStoreService.storeOriginalImage(image, retrievedImage.getImageBytes());
 
         ImageSaveResult result = new ImageSaveResult();
