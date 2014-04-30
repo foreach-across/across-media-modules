@@ -5,6 +5,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.statistics.StatisticsGateway;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +23,17 @@ public class CacheController {
     @Autowired
     private CacheManager cacheManager;
 
+    @Value("${accessToken}")
+    private String accessToken;
+
     @RequestMapping("/cacheStats")
     @ResponseBody
-    public void cacheStats(HttpServletResponse response) {
+    public void cacheStats(HttpServletResponse response, @RequestParam(value = "token", required = false) String accessToken) {
+        if (!this.accessToken.equals(accessToken)) {
+            respond("Access denied.", response);
+            return;
+        }
+
         StringBuilder output = new StringBuilder();
         String[] cacheNames = cacheManager.getCacheNames();
         for (String cacheName : cacheNames) {
@@ -49,7 +58,12 @@ public class CacheController {
 
     @RequestMapping("/cacheKeys")
     @ResponseBody
-    public void cacheKeys(HttpServletResponse response, @RequestParam(value = "cacheName") String cacheName) {
+    public void cacheKeys(HttpServletResponse response, @RequestParam(value = "cacheName") String cacheName, @RequestParam(value = "token", required = false) String accessToken) {
+        if (!this.accessToken.equals(accessToken)) {
+            respond("Access denied.", response);
+            return;
+        }
+
         Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
             List<String> cacheKeys = cache.getKeys();
@@ -69,7 +83,12 @@ public class CacheController {
 
     @RequestMapping("/flushAllCaches")
     @ResponseBody
-    public void flushAllCaches(HttpServletResponse response) {
+    public void flushAllCaches(HttpServletResponse response, @RequestParam(value = "token", required = false) String accessToken) {
+        if (!this.accessToken.equals(accessToken)) {
+            respond("Access denied.", response);
+            return;
+        }
+
         String[] cacheNames = cacheManager.getCacheNames();
         for (String cacheName : cacheNames) {
             cacheManager.getCache(cacheName).removeAll();
@@ -79,7 +98,12 @@ public class CacheController {
 
     @RequestMapping("/flushCache")
     @ResponseBody
-    public void flushCache(HttpServletResponse response, @RequestParam(value = "cacheName") String cacheName) {
+    public void flushCache(HttpServletResponse response, @RequestParam(value = "cacheName") String cacheName, @RequestParam(value = "token", required = false) String accessToken) {
+        if (!this.accessToken.equals(accessToken)) {
+            respond("Access denied.", response);
+            return;
+        }
+
         Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
             cache.removeAll();
