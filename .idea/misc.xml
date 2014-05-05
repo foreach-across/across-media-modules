@@ -4,7 +4,6 @@
     <entry_points version="2.0" />
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$/web.imageserver.api" />
     <file type="web" url="file://$PROJECT_DIR$/web.imageserver.front" />
   </component>
   <component name="IdProvider" IDEtalkID="989463DB677548F09EE25D0E72A55DFC" />
