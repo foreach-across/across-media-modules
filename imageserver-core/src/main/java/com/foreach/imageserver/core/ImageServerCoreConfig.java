@@ -43,7 +43,7 @@ public class ImageServerCoreConfig {
     @PostConstruct
     public void init() {
         if (multipartResolver == null) {
-            throw new RuntimeException("A MultipartResolver bean be set up in the root application context.");
+            throw new RuntimeException("A MultipartResolver bean should be set up in the root application context.");
         }
     }
 
