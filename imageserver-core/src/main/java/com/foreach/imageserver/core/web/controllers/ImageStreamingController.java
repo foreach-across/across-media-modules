@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,9 @@ public class ImageStreamingController {
 
     @Autowired
     private ImageService imageService;
+
+    @Value("${imagestreaming.caching.maxAgeInSeconds}")
+    private int maxCacheAgeInSeconds;
 
     @RequestMapping(value = "/" + VIEW_PATH, method = RequestMethod.GET)
     public void view(@RequestParam(value = "iid", required = true) int imageId,
@@ -69,6 +73,10 @@ public class ImageStreamingController {
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(imageSource.getImageType().getContentType());
+
+        if (maxCacheAgeInSeconds > 0) {
+            response.setHeader("Cache-Control", String.format("max-age=%d", maxCacheAgeInSeconds));
+        }
 
         InputStream imageStream = null;
         OutputStream responseStream = null;
@@ -120,7 +128,7 @@ public class ImageStreamingController {
             case TIFF:
                 return ImageType.TIFF;
             default:
-                throw new RuntimeException( "Unknown image type." );
+                throw new RuntimeException("Unknown image type.");
         }
     }
 }
