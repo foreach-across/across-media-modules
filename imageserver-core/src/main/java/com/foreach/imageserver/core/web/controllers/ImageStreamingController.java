@@ -95,6 +95,7 @@ public class ImageStreamingController {
     private void error(HttpServletResponse response, HttpStatus status, String errorMessage) {
         response.setStatus(status.value());
         response.setContentType("text/plain");
+        response.setHeader("Cache-Control", "no-cache");
         ByteArrayInputStream bis = new ByteArrayInputStream(errorMessage.getBytes());
         try {
             IOUtils.copy(bis, response.getOutputStream());
