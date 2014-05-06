@@ -18,8 +18,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 @Configuration
@@ -34,6 +36,16 @@ public class ImageServerCoreConfig {
 
     @Autowired
     private ImageServerCoreModule imageServerCoreModule;
+
+    @Autowired(required = false)
+    private MultipartResolver multipartResolver;
+
+    @PostConstruct
+    public void init() {
+        if (multipartResolver == null) {
+            throw new RuntimeException("A MultipartResolver bean be set up in the root application context.");
+        }
+    }
 
     @Bean
     @Exposed
