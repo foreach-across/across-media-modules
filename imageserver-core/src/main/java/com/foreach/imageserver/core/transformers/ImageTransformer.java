@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.transformers;
 
+import com.foreach.imageserver.core.business.Dimensions;
+
 public interface ImageTransformer {
     /**
      * Checks whether the implementation can execute this action. The implementation will indicate that it is

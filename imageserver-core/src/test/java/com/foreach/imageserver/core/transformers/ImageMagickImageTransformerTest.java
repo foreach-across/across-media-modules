@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.transformers;
 
 import com.foreach.imageserver.core.AbstractIntegrationTest;
+import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

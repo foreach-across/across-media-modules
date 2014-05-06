@@ -59,7 +59,7 @@ public class ImageTransformServiceImpl implements ImageTransformService {
         if (imageTransformer != null) {
             semaphore.acquireUninterruptibly();
             try {
-                dimensions = translateDimensions(imageTransformer.execute(action));
+                dimensions = imageTransformer.execute(action);
             } finally {
                 semaphore.release();
             }
@@ -114,16 +114,6 @@ public class ImageTransformServiceImpl implements ImageTransformService {
         }
 
         return firstFallback;
-    }
-
-    private Dimensions translateDimensions(com.foreach.imageserver.core.transformers.Dimensions inDimensions) {
-        Dimensions outDimensions = null;
-        if (inDimensions != null) {
-            outDimensions = new Dimensions();
-            outDimensions.setWidth(inDimensions.getWidth());
-            outDimensions.setHeight(inDimensions.getHeight());
-        }
-        return outDimensions;
     }
 
     private interface CanExecute {

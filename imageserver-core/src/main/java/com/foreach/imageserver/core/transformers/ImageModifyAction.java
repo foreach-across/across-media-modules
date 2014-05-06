@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.transformers;
 
+import com.foreach.imageserver.core.business.Crop;
+import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 
 public class ImageModifyAction {

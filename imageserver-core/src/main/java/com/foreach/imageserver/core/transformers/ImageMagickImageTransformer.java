@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.transformers;
 
+import com.foreach.imageserver.core.business.Crop;
+import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import org.apache.commons.io.IOUtils;
 import org.im4java.core.ConvertCmd;
