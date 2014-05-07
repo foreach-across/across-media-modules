@@ -62,11 +62,30 @@ public class ImageMagickImageTransformer implements ImageTransformer {
         magickToImageType = new HashMap<>(7);
         magickToImageType.put("JPEG", ImageType.JPEG);
         magickToImageType.put("PNG", ImageType.PNG);
+        magickToImageType.put("PNG8", ImageType.PNG);
+        magickToImageType.put("PNG00", ImageType.PNG);
+        magickToImageType.put("PNG24", ImageType.PNG);
+        magickToImageType.put("PNG32", ImageType.PNG);
+        magickToImageType.put("PNG48", ImageType.PNG);
+        magickToImageType.put("PNG64", ImageType.PNG);
         magickToImageType.put("GIF", ImageType.GIF);
         magickToImageType.put("SVG", ImageType.SVG);
         magickToImageType.put("EPS", ImageType.EPS);
+        magickToImageType.put("EPI", ImageType.EPS);
+        magickToImageType.put("EPS2", ImageType.EPS);
+        magickToImageType.put("EPS3", ImageType.EPS);
+        magickToImageType.put("EPSF", ImageType.EPS);
+        magickToImageType.put("EPSI", ImageType.EPS);
+        magickToImageType.put("EPT", ImageType.EPS);
+        magickToImageType.put("PS", ImageType.EPS);
+        magickToImageType.put("PS2", ImageType.EPS);
+        magickToImageType.put("PS3", ImageType.EPS);
         magickToImageType.put("PDF", ImageType.PDF);
+        magickToImageType.put("EPDF", ImageType.PDF);
         magickToImageType.put("TIFF", ImageType.TIFF);
+
+        // This seems to be a bug in GraphicsMagick.
+        magickToImageType.put("MVG", ImageType.SVG);
 
         for (ImageType imageType : ImageType.values()) {
             if (!magickToImageType.containsValue(imageType)) {
