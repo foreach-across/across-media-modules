@@ -57,6 +57,46 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void getImageAttributesGif() {
+        ImageAttributes attributes = imageTransformer.execute(getImageAttributesAction("images/getAttributes.gif"));
+        assertEquals(ImageType.GIF, attributes.getType());
+        assertEquals(640, attributes.getDimensions().getWidth());
+        assertEquals(125, attributes.getDimensions().getHeight());
+    }
+
+    @Test
+    public void getImageAttributesSvg() {
+        ImageAttributes attributes = imageTransformer.execute(getImageAttributesAction("images/getAttributes.svg"));
+        assertEquals(ImageType.SVG, attributes.getType());
+        assertEquals(600, attributes.getDimensions().getWidth());
+        assertEquals(600, attributes.getDimensions().getHeight());
+    }
+
+    @Test
+    public void getImageAttributesEps() {
+        ImageAttributes attributes = imageTransformer.execute(getImageAttributesAction("images/getAttributes.eps"));
+        assertEquals(ImageType.EPS, attributes.getType());
+        assertEquals(641, attributes.getDimensions().getWidth());
+        assertEquals(126, attributes.getDimensions().getHeight());
+    }
+
+    @Test
+    public void getImageAttributesPdf() {
+        ImageAttributes attributes = imageTransformer.execute(getImageAttributesAction("images/getAttributes.pdf"));
+        assertEquals(ImageType.PDF, attributes.getType());
+        assertEquals(640, attributes.getDimensions().getWidth());
+        assertEquals(125, attributes.getDimensions().getHeight());
+    }
+
+    @Test
+    public void getImageAttributesTiff() {
+        ImageAttributes attributes = imageTransformer.execute(getImageAttributesAction("images/getAttributes.tiff"));
+        assertEquals(ImageType.TIFF, attributes.getType());
+        assertEquals(640, attributes.getDimensions().getWidth());
+        assertEquals(125, attributes.getDimensions().getHeight());
+    }
+
+    @Test
     public void cropJpgToJpg() throws Exception {
         ImageModifyAction action = modifyAction(
                 ImageType.JPEG,
