@@ -61,7 +61,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:4.0.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:4.0.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-web:4.0.0.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: across:across-core:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: across:across-core:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: net.engio:mbassador:1.1.9" level="project" />
     <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.5.4" level="project" />
