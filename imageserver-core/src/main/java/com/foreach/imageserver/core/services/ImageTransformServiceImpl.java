@@ -9,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Semaphore;
 
 @Service
 @Exposed
@@ -26,7 +27,7 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     private Semaphore semaphore;
 
     @Autowired
-    public ImageTransformServiceImpl( @Value( "${transformer.concurrentTransformLimit}" ) int concurrentTransformLimit) {
+    public ImageTransformServiceImpl(@Value("${transformer.concurrentTransformLimit}") int concurrentTransformLimit) {
         /**
          * Right now, we have only one ImageTransformer implementation and it runs on the local machine. In theory,
          * however, we could have implementations that off-load the actual computations to other machines. Should this
@@ -65,6 +66,30 @@ public class ImageTransformServiceImpl implements ImageTransformService {
             }
         }
         return dimensions;
+    }
+
+    @Override
+    public ImageAttributes getAttributes(InputStream imageStream) {
+        final GetImageAttributesAction action = new GetImageAttributesAction(imageStream);
+
+        ImageTransformer imageTransformer = findAbleTransformer(new CanExecute() {
+            @Override
+            public ImageTransformerPriority consider(ImageTransformer imageTransformer) {
+                return imageTransformer.canExecute(action);
+            }
+        });
+
+        // TODO I'm opting for returning null in case of failure now, maybe raise an exception instead?
+        ImageAttributes imageAttributes = null;
+        if (imageTransformer != null) {
+            semaphore.acquireUninterruptibly();
+            try {
+                imageAttributes = imageTransformer.execute(action);
+            } finally {
+                semaphore.release();
+            }
+        }
+        return imageAttributes;
     }
 
     @Override

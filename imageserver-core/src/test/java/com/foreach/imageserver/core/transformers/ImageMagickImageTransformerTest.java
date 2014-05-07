@@ -22,6 +22,7 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
             ImageTransformerPriority expectedPriority = (imageType == ImageType.EPS || imageType == ImageType.PDF) ? ImageTransformerPriority.UNABLE : ImageTransformerPriority.PREFERRED;
             assertEquals(expectedPriority, imageTransformer.canExecute(calculateDimensionsAction(imageType)));
             assertEquals(expectedPriority, imageTransformer.canExecute(modifyAction(imageType)));
+            assertEquals(ImageTransformerPriority.PREFERRED, imageTransformer.canExecute(getImageAttributesAction()));
         }
     }
 
@@ -37,6 +38,22 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
         Dimensions dimensions = imageTransformer.execute(calculateDimensionsAction(ImageType.PNG, "images/cropCorrectness.png"));
         assertEquals(2000, dimensions.getWidth());
         assertEquals(1000, dimensions.getHeight());
+    }
+
+    @Test
+    public void getImageAttributesJpeg() {
+        ImageAttributes attributes = imageTransformer.execute(getImageAttributesAction("images/cropCorrectness.jpeg"));
+        assertEquals(ImageType.JPEG, attributes.getType());
+        assertEquals(2000, attributes.getDimensions().getWidth());
+        assertEquals(1000, attributes.getDimensions().getHeight());
+    }
+
+    @Test
+    public void getImageAttributesPng() {
+        ImageAttributes attributes = imageTransformer.execute(getImageAttributesAction("images/cropCorrectness.png"));
+        assertEquals(ImageType.PNG, attributes.getType());
+        assertEquals(2000, attributes.getDimensions().getWidth());
+        assertEquals(1000, attributes.getDimensions().getHeight());
     }
 
     @Test
@@ -153,7 +170,11 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     }
 
     private ImageCalculateDimensionsAction calculateDimensionsAction(ImageType imageType) {
-        return new ImageCalculateDimensionsAction(new StreamImageSource(imageType, (InputStream)null));
+        return new ImageCalculateDimensionsAction(new StreamImageSource(imageType, (InputStream) null));
+    }
+
+    private GetImageAttributesAction getImageAttributesAction() {
+        return new GetImageAttributesAction(null);
     }
 
     private ImageModifyAction modifyAction(ImageType sourceType, String classPath, int outputWidth, int outputHeight, int cropX, int cropY, int cropWidth, int cropHeight, ImageType outputType) {
@@ -172,11 +193,16 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     }
 
     private ImageModifyAction modifyAction(ImageType imageType) {
-        return new ImageModifyAction(new StreamImageSource(imageType, (InputStream)null), 0, 0, 0, 0, 0, 0, 0, 0, null);
+        return new ImageModifyAction(new StreamImageSource(imageType, (InputStream) null), 0, 0, 0, 0, 0, 0, 0, 0, null);
     }
 
     private ImageCalculateDimensionsAction calculateDimensionsAction(ImageType imageType, String classPath) {
         InputStream imageStream = getClass().getClassLoader().getResourceAsStream(classPath);
         return new ImageCalculateDimensionsAction(new StreamImageSource(imageType, imageStream));
+    }
+
+    private GetImageAttributesAction getImageAttributesAction(String classPath) {
+        InputStream imageStream = getClass().getClassLoader().getResourceAsStream(classPath);
+        return new GetImageAttributesAction(imageStream);
     }
 }

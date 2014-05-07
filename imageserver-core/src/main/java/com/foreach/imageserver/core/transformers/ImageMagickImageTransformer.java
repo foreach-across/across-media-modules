@@ -4,6 +4,7 @@ import com.foreach.imageserver.core.business.Crop;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
 import org.im4java.core.Info;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 // TODO Support for vector formats using Ghostscript is untested.
 @Component
@@ -33,6 +36,10 @@ public class ImageMagickImageTransformer implements ImageTransformer {
 
     private final int order;
     private final boolean ghostScriptEnabled;
+
+    // ImageMagick uses an ASCII string known as magick (e.g. GIF) to identify file formats, algorithms acting as
+    // formats, built-in patterns, and embedded profile types (See: http://www.imagemagick.org/script/formats.php).
+    private final Map<String, ImageType> magickToImageType;
 
     @Autowired
     public ImageMagickImageTransformer(@Value("${transformer.imagemagick.priority}") int order,
@@ -51,11 +58,31 @@ public class ImageMagickImageTransformer implements ImageTransformer {
         if (useGraphicsMagick) {
             System.setProperty("im4java.useGM", "true");
         }
+
+        magickToImageType = new HashMap<>(7);
+        magickToImageType.put("JPEG", ImageType.JPEG);
+        magickToImageType.put("PNG", ImageType.PNG);
+        magickToImageType.put("GIF", ImageType.GIF);
+        magickToImageType.put("SVG", ImageType.SVG);
+        magickToImageType.put("EPS", ImageType.EPS);
+        magickToImageType.put("PDF", ImageType.PDF);
+        magickToImageType.put("TIFF", ImageType.TIFF);
+
+        for (ImageType imageType : ImageType.values()) {
+            if (!magickToImageType.containsValue(imageType)) {
+                throw new RuntimeException(String.format("No magick known for image type %s", imageType));
+            }
+        }
     }
 
     @Override
     public ImageTransformerPriority canExecute(ImageCalculateDimensionsAction action) {
         return canExecute(action.getImageSource().getImageType());
+    }
+
+    @Override
+    public ImageTransformerPriority canExecute(GetImageAttributesAction action) {
+        return ImageTransformerPriority.PREFERRED;
     }
 
     @Override
@@ -77,6 +104,27 @@ public class ImageMagickImageTransformer implements ImageTransformer {
             return new Dimensions(info.getImageWidth(), info.getImageHeight());
         } catch (Exception e) {
             LOG.error("Failed to get image dimensions: {}", e);
+            throw new ImageModificationException(e);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
+    }
+
+    @Override
+    public ImageAttributes execute(GetImageAttributesAction action) {
+        if (canExecute(action) == ImageTransformerPriority.UNABLE) {
+            throw new UnsupportedOperationException();
+        }
+
+        InputStream stream = null;
+        try {
+            stream = action.getImageStream();
+            Info info = new Info("-", stream, false);
+            ImageType imageType = toImageType(info);
+            Dimensions dimensions = new Dimensions(info.getImageWidth(), info.getImageHeight());
+            return new ImageAttributes(imageType, dimensions);
+        } catch (Exception e) {
+            LOG.error("Failed to get image attributes: {}", e);
             throw new ImageModificationException(e);
         } finally {
             IOUtils.closeQuietly(stream);
@@ -185,5 +233,22 @@ public class ImageMagickImageTransformer implements ImageTransformer {
 
     private boolean shouldRemoveTransparency(ImageModifyAction action) {
         return action.getSourceImageSource().getImageType().hasTransparency() && !action.getOutputType().hasTransparency();
+    }
+
+    private ImageType toImageType(Info imageInfo) {
+        String reportedFormatString = imageInfo.getImageFormat();
+        if (StringUtils.isBlank(reportedFormatString)) {
+            throw new ImageModificationException("The image format could not be determined.");
+        }
+
+        // The image format is written out in full next to the magick.
+        String magick = reportedFormatString.split("\\s")[0];
+
+        ImageType imageType = magickToImageType.get(magick);
+        if (imageType == null) {
+            throw new ImageModificationException(String.format("Image type %s is not supported.", magick));
+        }
+
+        return imageType;
     }
 }
