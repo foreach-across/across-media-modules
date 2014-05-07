@@ -89,6 +89,7 @@ public class ImageServerCoreConfig {
         configuration.addCache(cacheConfiguration("contexts", 50, true));
         configuration.addCache(cacheConfiguration("imageResolutions", 100, true));
         configuration.addCache(cacheConfiguration("images", 5000, true));
+        configuration.setUpdateCheck(false);
         return net.sf.ehcache.CacheManager.newInstance(configuration);
     }
 
