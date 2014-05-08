@@ -6,6 +6,7 @@ import com.foreach.imageserver.core.business.ImageType;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static com.foreach.imageserver.core.utils.ImageUtils.*;
@@ -22,8 +23,9 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
             ImageTransformerPriority expectedPriority = (imageType == ImageType.EPS || imageType == ImageType.PDF) ? ImageTransformerPriority.UNABLE : ImageTransformerPriority.PREFERRED;
             assertEquals(expectedPriority, imageTransformer.canExecute(calculateDimensionsAction(imageType)));
             assertEquals(expectedPriority, imageTransformer.canExecute(modifyAction(imageType)));
-            assertEquals(ImageTransformerPriority.PREFERRED, imageTransformer.canExecute(getImageAttributesAction()));
         }
+
+        assertEquals(ImageTransformerPriority.PREFERRED, imageTransformer.canExecute(getImageAttributesAction()));
     }
 
     @Test
@@ -94,6 +96,11 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
         assertEquals(ImageType.TIFF, attributes.getType());
         assertEquals(640, attributes.getDimensions().getWidth());
         assertEquals(125, attributes.getDimensions().getHeight());
+    }
+
+    @Test(expected = ImageModificationException.class)
+    public void getImageAttributesForUnrecognizedByteStream() {
+        imageTransformer.execute(new GetImageAttributesAction(new ByteArrayInputStream("This is not an image.".getBytes())));
     }
 
     @Test

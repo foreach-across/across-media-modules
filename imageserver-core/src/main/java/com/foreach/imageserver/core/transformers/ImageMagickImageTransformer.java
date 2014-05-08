@@ -59,7 +59,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
             System.setProperty("im4java.useGM", "true");
         }
 
-        magickToImageType = new HashMap<>(7);
+        magickToImageType = new HashMap<>(24);
         magickToImageType.put("JPEG", ImageType.JPEG);
         magickToImageType.put("PNG", ImageType.PNG);
         magickToImageType.put("PNG8", ImageType.PNG);
