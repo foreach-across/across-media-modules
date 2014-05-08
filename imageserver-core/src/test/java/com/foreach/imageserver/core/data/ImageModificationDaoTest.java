@@ -26,8 +26,8 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         String applicationSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
         jdbcTemplate.update(applicationSql, 1010, "the_application_code");
 
-        String imageSql = "INSERT INTO IMAGE ( id, created, width, height, imageTypeId ) VALUES ( ?, ?, 1, 1, 1 )";
-        jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13));
+        String imageSql = "INSERT INTO IMAGE ( id, externalId, created, width, height, imageTypeId ) VALUES ( ?, ?, ?, 100, 100, 1 )";
+        jdbcTemplate.update(imageSql, 9998, "externalId", new Date(2012, 11, 13));
 
         String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageResolutionSql, 8, 1111, 2222);
@@ -69,9 +69,9 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         jdbcTemplate.update(contextSql, 1010, "the_application_code");
         jdbcTemplate.update(contextSql, 1011, "the_application_code_1");
 
-        String imageSql = "INSERT INTO IMAGE ( id, created, width, height, imageTypeId ) VALUES ( ?, ?, 1, 1, 1 )";
-        jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13));
-        jdbcTemplate.update(imageSql, 9999, new Date(2012, 11, 13));
+        String imageSql = "INSERT INTO IMAGE ( id, externalId, created, width, height, imageTypeId ) VALUES ( ?, ?, ?, 100, 100, 1 )";
+        jdbcTemplate.update(imageSql, 9998, "externalId1", new Date(2012, 11, 13));
+        jdbcTemplate.update(imageSql, 9999, "externalId2", new Date(2012, 11, 13));
 
         String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageResolutionSql, 8, 1111, 2222);
@@ -102,9 +102,9 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         jdbcTemplate.update(contextSql, 1010, "the_application_code");
         jdbcTemplate.update(contextSql, 1011, "the_application_code_1");
 
-        String imageSql = "INSERT INTO IMAGE ( id, created, width, height, imageTypeId ) VALUES ( ?, ?, 1, 1, 1 )";
-        jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13));
-        jdbcTemplate.update(imageSql, 9999, new Date(2012, 11, 13));
+        String imageSql = "INSERT INTO IMAGE ( id, externalId, created, width, height, imageTypeId ) VALUES ( ?, ?, ?, 100, 100, 1 )";
+        jdbcTemplate.update(imageSql, 9998, "externalId1", new Date(2012, 11, 13));
+        jdbcTemplate.update(imageSql, 9999, "externalId2", new Date(2012, 11, 13));
 
         String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageResolutionSql, 8, 1111, 2222);
@@ -136,8 +136,8 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         String contextSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
         jdbcTemplate.update(contextSql, 1010, "code");
 
-        String imageSql = "INSERT INTO IMAGE ( id, created, width, height, imageTypeId ) VALUES ( ?, ?, 1, 1, 1 )";
-        jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13));
+        String imageSql = "INSERT INTO IMAGE ( id, externalId, created, width, height, imageTypeId ) VALUES ( ?, ?, ?, 100, 100, 1 )";
+        jdbcTemplate.update(imageSql, 9998, "externalId", new Date(2012, 11, 13));
 
         String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageResolutionSql, 8, 1111, 2222);
@@ -164,9 +164,9 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         String applicationSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
         jdbcTemplate.update(applicationSql, 1, "the_application_code");
 
-        String imageSql = "INSERT INTO IMAGE ( id, created, width, height, imageTypeId ) VALUES ( ?, ?, 1, 1, 1 )";
-        jdbcTemplate.update(imageSql, 1, new Date(2012, 11, 13));
-        jdbcTemplate.update(imageSql, 2, new Date(2012, 11, 13));
+        String imageSql = "INSERT INTO IMAGE ( id, externalId, created, width, height, imageTypeId ) VALUES ( ?, ?, ?, 100, 100, 1 )";
+        jdbcTemplate.update(imageSql, 1, "externalId1", new Date(2012, 11, 13));
+        jdbcTemplate.update(imageSql, 2, "externalId2", new Date(2012, 11, 13));
 
         String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageResolutionSql, 1, 100, 200);
