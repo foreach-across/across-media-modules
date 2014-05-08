@@ -32,6 +32,9 @@
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="externalId" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
             <column name="created" type="datetime" defaultValueComputed="${now}">
                 <constraints nullable="false"/>
             </column>

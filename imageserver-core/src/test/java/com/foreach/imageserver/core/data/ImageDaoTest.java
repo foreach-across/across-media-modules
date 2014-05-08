@@ -19,6 +19,7 @@ public class ImageDaoTest extends AbstractIntegrationTest {
     @Test
     public void insertAndGetById() {
         Image writtenImage = new Image();
+        writtenImage.setExternalId("external_id");
         writtenImage.setDateCreated(new Date());
         writtenImage.setDimensions(dimensions(111, 222));
         writtenImage.setImageType(ImageType.EPS);
@@ -26,6 +27,25 @@ public class ImageDaoTest extends AbstractIntegrationTest {
 
         Image readImage = imageDao.getById(writtenImage.getId());
         assertEquals(writtenImage.getId(), readImage.getId());
+        assertEquals(writtenImage.getExternalId(), readImage.getExternalId());
+        assertEquals(writtenImage.getDateCreated(), readImage.getDateCreated());
+        assertEquals(writtenImage.getDimensions().getWidth(), readImage.getDimensions().getWidth());
+        assertEquals(writtenImage.getDimensions().getHeight(), readImage.getDimensions().getHeight());
+        assertEquals(writtenImage.getImageType(), readImage.getImageType());
+    }
+
+    @Test
+    public void insertAndGetByExternalId() {
+        Image writtenImage = new Image();
+        writtenImage.setExternalId("external_id");
+        writtenImage.setDateCreated(new Date());
+        writtenImage.setDimensions(dimensions(111, 222));
+        writtenImage.setImageType(ImageType.EPS);
+        imageDao.insert(writtenImage);
+
+        Image readImage = imageDao.getByExternalId(writtenImage.getExternalId());
+        assertEquals(writtenImage.getId(), readImage.getId());
+        assertEquals(writtenImage.getExternalId(), readImage.getExternalId());
         assertEquals(writtenImage.getDateCreated(), readImage.getDateCreated());
         assertEquals(writtenImage.getDimensions().getWidth(), readImage.getDimensions().getWidth());
         assertEquals(writtenImage.getDimensions().getHeight(), readImage.getDimensions().getHeight());

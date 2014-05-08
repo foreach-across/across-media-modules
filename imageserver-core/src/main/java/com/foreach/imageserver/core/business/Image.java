@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class Image {
     private int id;
+    private String externalId;
     private Date dateCreated;
     private Dimensions dimensions;
     private ImageType imageType;
@@ -24,6 +25,14 @@ public class Image {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public Date getDateCreated() {

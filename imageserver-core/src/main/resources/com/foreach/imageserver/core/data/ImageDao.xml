@@ -4,6 +4,7 @@
 
     <sql id="columns">
 		I.id as image_id,
+		I.externalId as image_external_id,
         I.created as image_datecreated,
         I.width as image_width,
         I.height as image_height,
@@ -12,6 +13,7 @@
 
     <resultMap id="imageMap" type="Image">
         <id property="id" column="image_id"/>
+        <result property="externalId" column="image_external_id"/>
         <result property="dateCreated" column="image_datecreated"/>
         <result property="dimensions.width" column="image_width"/>
         <result property="dimensions.height" column="image_height"/>
@@ -26,18 +28,27 @@
         WHERE I.id = #{id}
     </select>
 
+    <select id="getByExternalId" parameterType="map" resultMap="imageMap">
+        SELECT
+        <include refid="columns"/>
+        FROM Image I
+        WHERE I.externalId = #{externalId}
+    </select>
+
     <insert id="insert" parameterType="Image">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             SELECT SEQ_IMAGES.nextval AS ID FROM DUAL
         </selectKey>
         INSERT INTO Image (
         id,
+        externalId,
         created,
         width,
         height,
         imageTypeId
         ) VALUES (
         #{id},
+        #{externalId},
         #{dateCreated},
         #{dimensions.width,jdbcType=INTEGER},
         #{dimensions.height,jdbcType=INTEGER},
