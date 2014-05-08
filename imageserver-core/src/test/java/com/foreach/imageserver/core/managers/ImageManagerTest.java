@@ -8,6 +8,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Date;
 
@@ -21,8 +22,11 @@ public class ImageManagerTest extends AbstractIntegrationTest {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Test
-    public void insertUpdateGet() {
+    public void insertGet() {
         Image insertedImage = image(new Date(2013, 0, 1), 100, 200, ImageType.GIF);
         imageManager.insert(insertedImage);
 
@@ -34,15 +38,11 @@ public class ImageManagerTest extends AbstractIntegrationTest {
         shouldBeEqual(insertedImage, retrievedImage);
         assertSame(retrievedImage, cache.get("byId-" + insertedImage.getId()).getObjectValue());
 
-        insertedImage.setDimensions(new Dimensions(500, 600));
-        insertedImage.setImageType(ImageType.EPS);
-        imageManager.updateParameters(insertedImage);
-
-        assertNull(cache.get("byId-" + insertedImage.getId()));
+        jdbcTemplate.execute("DELETE FROM IMAGE");
 
         Image retrievedAgainImage = imageManager.getById(insertedImage.getId());
         shouldBeEqual(insertedImage, retrievedAgainImage);
-        assertSame(retrievedAgainImage, cache.get("byId-" + insertedImage.getId()).getObjectValue());
+        assertSame(retrievedImage, retrievedAgainImage);
     }
 
     private Image image(Date date, int width, int height, ImageType imageType) {

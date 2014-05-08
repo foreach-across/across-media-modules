@@ -6,6 +6,4 @@ public interface ImageManager {
     Image getById(int imageId);
 
     void insert(Image image);
-
-    void updateParameters(Image image);
 }

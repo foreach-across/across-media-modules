@@ -5,7 +5,6 @@ import com.foreach.imageserver.core.data.ImageDao;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -34,12 +33,6 @@ public class ImageManagerImpl implements ImageManager {
     @Override
     public void insert(Image image) {
         imageDao.insert(image);
-    }
-
-    @Override
-    @CacheEvict(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#image.id)")
-    public void updateParameters(Image image) {
-        imageDao.updateParameters(image);
     }
 
     public static String byIdKey(int imageId) {
