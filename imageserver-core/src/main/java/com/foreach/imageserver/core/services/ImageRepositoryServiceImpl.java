@@ -1,11 +1,9 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.across.core.annotations.Refreshable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@Refreshable
 public class ImageRepositoryServiceImpl implements ImageRepositoryService {
 
     @Autowired

@@ -1,6 +1,5 @@
 package com.foreach.imageserver.core.web.controllers;
 
-import com.foreach.across.core.annotations.Refreshable;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageSaveResult;
 import com.foreach.imageserver.core.services.ImageService;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 @Controller
-@Refreshable
 public class ImageLoadController extends BaseImageAPIController {
 
     public static final String LOAD_IMAGE_PATH = "load";
