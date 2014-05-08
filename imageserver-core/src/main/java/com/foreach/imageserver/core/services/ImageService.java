@@ -8,7 +8,9 @@ import java.util.List;
 public interface ImageService {
     Image getById(int imageId);
 
-    ImageSaveResult saveImage(byte[] imageBytes) throws ImageStoreException;
+    Image getByExternalId(String externalId);
+
+    Dimensions saveImage(String externalId, byte[] imageBytes) throws ImageStoreException;
 
     void saveImageModification(ImageModification modification);
 

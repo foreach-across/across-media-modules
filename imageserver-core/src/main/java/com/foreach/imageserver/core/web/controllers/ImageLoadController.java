@@ -1,10 +1,8 @@
 package com.foreach.imageserver.core.web.controllers;
 
 import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageSaveResult;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.DimensionsDto;
-import com.foreach.imageserver.dto.ImageSaveResultDto;
 import com.foreach.imageserver.dto.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,21 +30,15 @@ public class ImageLoadController extends BaseImageAPIController {
     @RequestMapping(value = "/" + LOAD_IMAGE_PATH, method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse load(@RequestParam(value = "token", required = true) String accessToken,
+                             @RequestParam(value = "iid", required = true) String externalId,
                              @RequestParam(value = "imageData", required = true) byte[] imageData) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
         }
 
-        ImageSaveResult imageSaveResult = imageService.saveImage(imageData);
+        Dimensions imageDimensions = imageService.saveImage(externalId, imageData);
 
-        return success(dto(imageSaveResult));
-    }
-
-    private ImageSaveResultDto dto(ImageSaveResult imageSaveResult) {
-        ImageSaveResultDto dto = new ImageSaveResultDto();
-        dto.setDimensionsDto(dto(imageSaveResult.getDimensions()));
-        dto.setImageId(imageSaveResult.getImageId());
-        return dto;
+        return success(dto(imageDimensions));
     }
 
     private DimensionsDto dto(Dimensions dimensions) {

@@ -43,16 +43,22 @@ public class ImageServiceImpl implements ImageService {
         return imageManager.getById(imageId);
     }
 
+    @Override
+    public Image getByExternalId(String externalId) {
+        return imageManager.getByExternalId(externalId);
+    }
+
     // Used concurrently from multiple threads.
     private Map<VariantImageRequest, FutureVariantImage> futureVariantImages = new HashMap<>();
 
     // TODO I'm not taking care of errors right now, make sure to tackle this later on!
     @Override
     @Transactional
-    public ImageSaveResult saveImage(byte[] imageBytes) throws ImageStoreException {
+    public Dimensions saveImage(String externalId, byte[] imageBytes) throws ImageStoreException {
         ImageAttributes imageAttributes = imageTransformService.getAttributes(new ByteArrayInputStream(imageBytes));
 
         Image image = new Image();
+        image.setExternalId(externalId);
         image.setDateCreated(new Date());
         image.setDimensions(imageAttributes.getDimensions());
         image.setImageType(imageAttributes.getType());
@@ -60,10 +66,7 @@ public class ImageServiceImpl implements ImageService {
 
         imageStoreService.storeOriginalImage(image, imageBytes);
 
-        ImageSaveResult result = new ImageSaveResult();
-        result.setImageId(image.getId());
-        result.setDimensions(image.getDimensions());
-        return result;
+        return image.getDimensions();
     }
 
     /**
