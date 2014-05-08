@@ -23,7 +23,7 @@ public class ImageManagerTest extends AbstractIntegrationTest {
 
     @Test
     public void insertUpdateGet() {
-        Image insertedImage = image(new Date(2013, 0, 1), "repoCode", 100, 200, ImageType.GIF);
+        Image insertedImage = image(new Date(2013, 0, 1), 100, 200, ImageType.GIF);
         imageManager.insert(insertedImage);
 
         Cache cache = cacheManager.getCache("images");
@@ -45,10 +45,9 @@ public class ImageManagerTest extends AbstractIntegrationTest {
         assertSame(retrievedAgainImage, cache.get("byId-" + insertedImage.getId()).getObjectValue());
     }
 
-    private Image image(Date date, String repositoryCode, int width, int height, ImageType imageType) {
+    private Image image(Date date, int width, int height, ImageType imageType) {
         Image image = new Image();
         image.setDateCreated(date);
-        image.setRepositoryCode(repositoryCode);
         image.setDimensions(new Dimensions(width, height));
         image.setImageType(imageType);
         return image;
@@ -57,7 +56,6 @@ public class ImageManagerTest extends AbstractIntegrationTest {
     private void shouldBeEqual(Image lhsImage, Image rhsImage) {
         assertEquals(lhsImage.getId(), rhsImage.getId());
         assertEquals(lhsImage.getDateCreated(), rhsImage.getDateCreated());
-        assertEquals(lhsImage.getRepositoryCode(), rhsImage.getRepositoryCode());
         assertEquals(lhsImage.getDimensions().getWidth(), rhsImage.getDimensions().getWidth());
         assertEquals(lhsImage.getDimensions().getHeight(), rhsImage.getDimensions().getHeight());
         assertEquals(lhsImage.getImageType(), rhsImage.getImageType());

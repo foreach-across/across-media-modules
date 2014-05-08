@@ -35,9 +35,6 @@
             <column name="created" type="datetime" defaultValueComputed="${now}">
                 <constraints nullable="false"/>
             </column>
-            <column name="repositoryCode" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
             <column name="width" type="int">
                 <constraints nullable="true"/>
             </column>

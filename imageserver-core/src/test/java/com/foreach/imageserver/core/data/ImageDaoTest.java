@@ -24,7 +24,6 @@ public class ImageDaoTest extends AbstractIntegrationTest {
     public void insertAndGetById() {
         Image writtenImage = new Image();
         writtenImage.setDateCreated(new Date());
-        writtenImage.setRepositoryCode("the_repository_code");
         writtenImage.setDimensions(dimensions(111, 222));
         writtenImage.setImageType(ImageType.EPS);
         imageDao.insert(writtenImage);
@@ -32,7 +31,6 @@ public class ImageDaoTest extends AbstractIntegrationTest {
         Image readImage = imageDao.getById(writtenImage.getId());
         assertEquals(writtenImage.getId(), readImage.getId());
         assertEquals(writtenImage.getDateCreated(), readImage.getDateCreated());
-        assertEquals(writtenImage.getRepositoryCode(), readImage.getRepositoryCode());
         assertEquals(writtenImage.getDimensions().getWidth(), readImage.getDimensions().getWidth());
         assertEquals(writtenImage.getDimensions().getHeight(), readImage.getDimensions().getHeight());
         assertEquals(writtenImage.getImageType(), readImage.getImageType());
@@ -40,8 +38,8 @@ public class ImageDaoTest extends AbstractIntegrationTest {
 
     @Test
     public void updateParameters() {
-        String imageSql = "INSERT INTO IMAGE ( id, created, repositoryCode, width, height, imageTypeId ) VALUES ( ?, ?, ?, ?, ?, ? )";
-        jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code", 6543, 3456, 1);
+        String imageSql = "INSERT INTO IMAGE ( id, created, width, height, imageTypeId ) VALUES ( ?, ?, ?, ?, ? )";
+        jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), 6543, 3456, 1);
 
         Image updatedImage = new Image();
         updatedImage.setId(9998);

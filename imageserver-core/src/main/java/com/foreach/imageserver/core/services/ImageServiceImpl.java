@@ -50,7 +50,6 @@ public class ImageServiceImpl implements ImageService {
     public ImageSaveResult saveImage(ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException {
         Image image = new Image();
         image.setDateCreated(new Date());
-        image.setRepositoryCode(imageRepository.getCode());
         imageManager.insert(image);
 
         RetrievedImage retrievedImage = imageRepository.retrieveImage(image.getId(), repositoryParameters);

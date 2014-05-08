@@ -5,7 +5,6 @@
     <sql id="columns">
 		I.id as image_id,
         I.created as image_datecreated,
-        I.repositoryCode as image_repository_code,
         I.width as image_width,
         I.height as image_height,
         I.imageTypeId as image_imagetype
@@ -14,7 +13,6 @@
     <resultMap id="imageMap" type="Image">
         <id property="id" column="image_id"/>
         <result property="dateCreated" column="image_datecreated"/>
-        <result property="repositoryCode" column="image_repository_code"/>
         <result property="dimensions.width" column="image_width"/>
         <result property="dimensions.height" column="image_height"/>
         <result property="imageType" column="image_imagetype"
@@ -35,14 +33,12 @@
         INSERT INTO Image (
         id,
         created,
-        repositoryCode,
         width,
         height,
         imageTypeId
         ) VALUES (
         #{id},
         #{dateCreated},
-        #{repositoryCode},
         #{dimensions.width,jdbcType=INTEGER},
         #{dimensions.height,jdbcType=INTEGER},
         #{imageType.id,jdbcType=INTEGER}

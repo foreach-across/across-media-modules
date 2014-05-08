@@ -11,7 +11,6 @@ import java.util.Date;
 public class Image {
     private int id;
     private Date dateCreated;
-    private String repositoryCode;
     private Dimensions dimensions;
     private ImageType imageType;
 
@@ -46,14 +45,6 @@ public class Image {
             dateCreatedMonthString = null;
             dateCreatedDayString = null;
         }
-    }
-
-    public String getRepositoryCode() {
-        return repositoryCode;
-    }
-
-    public void setRepositoryCode(String repositoryCode) {
-        this.repositoryCode = repositoryCode;
     }
 
     public Dimensions getDimensions() {
