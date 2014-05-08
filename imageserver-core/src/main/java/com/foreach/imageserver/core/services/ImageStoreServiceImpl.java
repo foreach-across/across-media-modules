@@ -24,7 +24,7 @@ import java.util.Set;
  * Still to verify and/or implement:
  * - Files.createTempPath needs to be atomic.
  * - Files.copy with option REPLACE_EXISTING should never cause the temp file to not exist.
-  * <p/>
+ * <p/>
  * TODO Resolve the above.
  */
 @Service
@@ -159,12 +159,11 @@ public class ImageStoreServiceImpl implements ImageStoreService {
          */
 
         String fileName = constructFileName(image);
-        String repositoryCode = image.getRepositoryCode();
         String year = image.getDateCreatedYearString();
         String month = image.getDateCreatedMonthString();
         String day = image.getDateCreatedDayString();
 
-        return originalsFolder.resolve(repositoryCode).resolve(year).resolve(month).resolve(day).resolve(fileName);
+        return originalsFolder.resolve(year).resolve(month).resolve(day).resolve(fileName);
     }
 
     private Path getTargetPath(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
@@ -174,13 +173,11 @@ public class ImageStoreServiceImpl implements ImageStoreService {
          */
 
         String fileName = constructFileName(image, imageResolution, imageVariant);
-        String repositoryCode = image.getRepositoryCode();
         String year = image.getDateCreatedYearString();
         String month = image.getDateCreatedMonthString();
         String day = image.getDateCreatedDayString();
 
-        return variantsFolder.resolve(repositoryCode).resolve(context.getCode()).resolve(year).resolve(month)
-                .resolve(day).resolve(fileName);
+        return variantsFolder.resolve(context.getCode()).resolve(year).resolve(month).resolve(day).resolve(fileName);
     }
 
     private String constructFileName(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
