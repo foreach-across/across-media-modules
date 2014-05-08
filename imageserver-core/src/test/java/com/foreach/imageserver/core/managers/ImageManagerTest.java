@@ -28,21 +28,21 @@ public class ImageManagerTest extends AbstractIntegrationTest {
 
         Cache cache = cacheManager.getCache("images");
         assertNotNull(cache);
-        assertNull(cache.get("byId-" + insertedImage.getImageId()));
+        assertNull(cache.get("byId-" + insertedImage.getId()));
 
-        Image retrievedImage = imageManager.getById(insertedImage.getImageId());
+        Image retrievedImage = imageManager.getById(insertedImage.getId());
         shouldBeEqual(insertedImage, retrievedImage);
-        assertSame(retrievedImage, cache.get("byId-" + insertedImage.getImageId()).getObjectValue());
+        assertSame(retrievedImage, cache.get("byId-" + insertedImage.getId()).getObjectValue());
 
         insertedImage.setDimensions(new Dimensions(500, 600));
         insertedImage.setImageType(ImageType.EPS);
         imageManager.updateParameters(insertedImage);
 
-        assertNull(cache.get("byId-" + insertedImage.getImageId()));
+        assertNull(cache.get("byId-" + insertedImage.getId()));
 
-        Image retrievedAgainImage = imageManager.getById(insertedImage.getImageId());
+        Image retrievedAgainImage = imageManager.getById(insertedImage.getId());
         shouldBeEqual(insertedImage, retrievedAgainImage);
-        assertSame(retrievedAgainImage, cache.get("byId-" + insertedImage.getImageId()).getObjectValue());
+        assertSame(retrievedAgainImage, cache.get("byId-" + insertedImage.getId()).getObjectValue());
     }
 
     private Image image(Date date, String repositoryCode, int width, int height, ImageType imageType) {
@@ -55,7 +55,7 @@ public class ImageManagerTest extends AbstractIntegrationTest {
     }
 
     private void shouldBeEqual(Image lhsImage, Image rhsImage) {
-        assertEquals(lhsImage.getImageId(), rhsImage.getImageId());
+        assertEquals(lhsImage.getId(), rhsImage.getId());
         assertEquals(lhsImage.getDateCreated(), rhsImage.getDateCreated());
         assertEquals(lhsImage.getRepositoryCode(), rhsImage.getRepositoryCode());
         assertEquals(lhsImage.getDimensions().getWidth(), rhsImage.getDimensions().getWidth());

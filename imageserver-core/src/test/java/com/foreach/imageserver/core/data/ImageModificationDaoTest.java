@@ -26,7 +26,7 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         String applicationSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
         jdbcTemplate.update(applicationSql, 1010, "the_application_code");
 
-        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
+        String imageSql = "INSERT INTO IMAGE ( id, created, repositoryCode ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code");
 
         String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
@@ -69,7 +69,7 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         jdbcTemplate.update(contextSql, 1010, "the_application_code");
         jdbcTemplate.update(contextSql, 1011, "the_application_code_1");
 
-        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
+        String imageSql = "INSERT INTO IMAGE ( id, created, repositoryCode ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code");
         jdbcTemplate.update(imageSql, 9999, new Date(2012, 11, 13), "the_repository_code");
 
@@ -102,7 +102,7 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         jdbcTemplate.update(contextSql, 1010, "the_application_code");
         jdbcTemplate.update(contextSql, 1011, "the_application_code_1");
 
-        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
+        String imageSql = "INSERT INTO IMAGE ( id, created, repositoryCode ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code");
         jdbcTemplate.update(imageSql, 9999, new Date(2012, 11, 13), "the_repository_code");
 
@@ -136,7 +136,7 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         String contextSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
         jdbcTemplate.update(contextSql, 1010, "code");
 
-        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
+        String imageSql = "INSERT INTO IMAGE ( id, created, repositoryCode ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageSql, 9998, new Date(2012, 11, 13), "the_repository_code");
 
         String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
@@ -164,7 +164,7 @@ public class ImageModificationDaoTest extends AbstractIntegrationTest {
         String applicationSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
         jdbcTemplate.update(applicationSql, 1, "the_application_code");
 
-        String imageSql = "INSERT INTO IMAGE ( imageId, created, repositoryCode ) VALUES ( ?, ?, ? )";
+        String imageSql = "INSERT INTO IMAGE ( id, created, repositoryCode ) VALUES ( ?, ?, ? )";
         jdbcTemplate.update(imageSql, 1, new Date(2012, 11, 13), "the_repository_code");
         jdbcTemplate.update(imageSql, 2, new Date(2012, 11, 13), "the_repository_code");
 

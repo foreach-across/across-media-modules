@@ -3,7 +3,7 @@
 <mapper namespace="com.foreach.imageserver.core.data.ImageDao">
 
     <sql id="columns">
-		I.imageId as image_id,
+		I.id as image_id,
         I.created as image_datecreated,
         I.repositoryCode as image_repository_code,
         I.width as image_width,
@@ -12,7 +12,7 @@
 	</sql>
 
     <resultMap id="imageMap" type="Image">
-        <id property="imageId" column="image_id"/>
+        <id property="id" column="image_id"/>
         <result property="dateCreated" column="image_datecreated"/>
         <result property="repositoryCode" column="image_repository_code"/>
         <result property="dimensions.width" column="image_width"/>
@@ -25,22 +25,22 @@
         SELECT
         <include refid="columns"/>
         FROM Image I
-        WHERE I.imageId = #{imageId}
+        WHERE I.id = #{id}
     </select>
 
     <insert id="insert" parameterType="Image">
-        <selectKey keyProperty="imageId" resultType="int" order="BEFORE">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
             SELECT SEQ_IMAGES.nextval AS ID FROM DUAL
         </selectKey>
         INSERT INTO Image (
-        imageId,
+        id,
         created,
         repositoryCode,
         width,
         height,
         imageTypeId
         ) VALUES (
-        #{imageId},
+        #{id},
         #{dateCreated},
         #{repositoryCode},
         #{dimensions.width,jdbcType=INTEGER},
@@ -55,7 +55,7 @@
           width = #{dimensions.width},
           height = #{dimensions.height},
           imageTypeId = #{imageType.id}
-        WHERE imageId = #{imageId}
+        WHERE id = #{id}
     </update>
 
 </mapper>

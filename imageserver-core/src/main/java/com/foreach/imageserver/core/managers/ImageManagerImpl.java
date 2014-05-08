@@ -37,7 +37,7 @@ public class ImageManagerImpl implements ImageManager {
     }
 
     @Override
-    @CacheEvict(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#image.imageId)")
+    @CacheEvict(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#image.id)")
     public void updateParameters(Image image) {
         imageDao.updateParameters(image);
     }

@@ -182,7 +182,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
     private String constructFileName(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
         StringBuilder fileNameBuilder = new StringBuilder();
-        fileNameBuilder.append(variantFileNamePrefix(image.getImageId()));
+        fileNameBuilder.append(variantFileNamePrefix(image.getId()));
         if (imageResolution.getWidth() != null) {
             fileNameBuilder.append('w');
             fileNameBuilder.append(imageResolution.getWidth());
@@ -200,7 +200,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
     private String constructFileName(Image image) {
         StringBuilder fileNameBuilder = new StringBuilder();
-        fileNameBuilder.append(image.getImageId());
+        fileNameBuilder.append(image.getId());
         fileNameBuilder.append('.');
         fileNameBuilder.append(image.getImageType().getExtension());
 

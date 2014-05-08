@@ -9,7 +9,7 @@ import java.util.Date;
  * TODO Re-document this after I'm through refactoring.
  */
 public class Image {
-    private int imageId;
+    private int id;
     private Date dateCreated;
     private String repositoryCode;
     private Dimensions dimensions;
@@ -19,12 +19,12 @@ public class Image {
     private String dateCreatedMonthString;
     private String dateCreatedDayString;
 
-    public int getImageId() {
-        return imageId;
+    public int getId() {
+        return id;
     }
 
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Date getDateCreated() {

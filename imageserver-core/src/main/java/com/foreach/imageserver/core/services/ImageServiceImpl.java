@@ -53,14 +53,14 @@ public class ImageServiceImpl implements ImageService {
         image.setRepositoryCode(imageRepository.getCode());
         imageManager.insert(image);
 
-        RetrievedImage retrievedImage = imageRepository.retrieveImage(image.getImageId(), repositoryParameters);
+        RetrievedImage retrievedImage = imageRepository.retrieveImage(image.getId(), repositoryParameters);
         image.setDimensions(retrievedImage.getDimensions());
         image.setImageType(retrievedImage.getImageType());
         imageManager.updateParameters(image);
         imageStoreService.storeOriginalImage(image, retrievedImage.getImageBytes());
 
         ImageSaveResult result = new ImageSaveResult();
-        result.setImageId(image.getImageId());
+        result.setImageId(image.getId());
         result.setDimensions(image.getDimensions());
         return result;
     }
@@ -96,7 +96,7 @@ public class ImageServiceImpl implements ImageService {
      * will block and re-use the same result.
      */
     private StreamImageSource generateVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
-        VariantImageRequest request = new VariantImageRequest(image.getImageId(), context.getId(), imageResolution.getId(), imageVariant.getOutputType());
+        VariantImageRequest request = new VariantImageRequest(image.getId(), context.getId(), imageResolution.getId(), imageVariant.getOutputType());
 
         FutureVariantImage futureVariantImage;
         boolean otherThreadIsCreatingVariant;
@@ -181,11 +181,11 @@ public class ImageServiceImpl implements ImageService {
     private Crop obtainCrop(Image image, Context context, ImageResolution imageResolution) {
         Crop result;
 
-        ImageModification imageModification = imageModificationManager.getById(image.getImageId(), context.getId(), imageResolution.getId());
+        ImageModification imageModification = imageModificationManager.getById(image.getId(), context.getId(), imageResolution.getId());
         if (imageModification != null) {
             result = imageModification.getCrop();
         } else {
-            List<ImageModification> modifications = imageModificationManager.getAllModifications(image.getImageId());
+            List<ImageModification> modifications = imageModificationManager.getAllModifications(image.getId());
             result = cropGenerator.generateCrop(image, context, imageResolution, modifications);
         }
 

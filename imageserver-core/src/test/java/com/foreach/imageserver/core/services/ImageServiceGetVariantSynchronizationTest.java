@@ -187,7 +187,7 @@ public class ImageServiceGetVariantSynchronizationTest {
         dimensions.setHeight(100);
 
         Image image = new Image();
-        image.setImageId(id);
+        image.setId(id);
         image.setDimensions(dimensions);
         return image;
     }

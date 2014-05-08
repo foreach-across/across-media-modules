@@ -29,7 +29,7 @@
 
     <changeSet id="201403091310" author="ovh">
         <createTable tableName="IMAGE">
-            <column name="imageId" type="int">
+            <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="created" type="datetime" defaultValueComputed="${now}">
@@ -87,7 +87,7 @@
     <changeSet id="201403091352" author="ovh">
         <createTable tableName="IMAGE_MODIFICATION">
             <column name="imageId" type="int">
-                <constraints references="IMAGE(imageId)" foreignKeyName="fk_modification_image" nullable="false"/>
+                <constraints references="IMAGE(id)" foreignKeyName="fk_modification_image" nullable="false"/>
             </column>
             <column name="contextId" type="int">
                 <constraints references="CONTEXT(id)" foreignKeyName="fk_modification_context" nullable="false"/>
