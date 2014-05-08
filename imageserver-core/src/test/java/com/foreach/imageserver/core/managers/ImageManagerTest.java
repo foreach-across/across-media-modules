@@ -26,8 +26,8 @@ public class ImageManagerTest extends AbstractIntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    public void insertGet() {
-        Image insertedImage = image(new Date(2013, 0, 1), 100, 200, ImageType.GIF);
+    public void insertGetById() {
+        Image insertedImage = image("externalId", new Date(2013, 0, 1), 100, 200, ImageType.GIF);
         imageManager.insert(insertedImage);
 
         Cache cache = cacheManager.getCache("images");
@@ -45,8 +45,29 @@ public class ImageManagerTest extends AbstractIntegrationTest {
         assertSame(retrievedImage, retrievedAgainImage);
     }
 
-    private Image image(Date date, int width, int height, ImageType imageType) {
+    @Test
+    public void insertGetByExternalId() {
+        Image insertedImage = image("externalId", new Date(2013, 0, 1), 100, 200, ImageType.GIF);
+        imageManager.insert(insertedImage);
+
+        Cache cache = cacheManager.getCache("images");
+        assertNotNull(cache);
+        assertNull(cache.get("byExternalId-" + insertedImage.getExternalId()));
+
+        Image retrievedImage = imageManager.getByExternalId(insertedImage.getExternalId());
+        shouldBeEqual(insertedImage, retrievedImage);
+        assertSame(retrievedImage, cache.get("byExternalId-" + insertedImage.getExternalId()).getObjectValue());
+
+        jdbcTemplate.execute("DELETE FROM IMAGE");
+
+        Image retrievedAgainImage = imageManager.getByExternalId(insertedImage.getExternalId());
+        shouldBeEqual(insertedImage, retrievedAgainImage);
+        assertSame(retrievedImage, retrievedAgainImage);
+    }
+
+    private Image image(String externalId, Date date, int width, int height, ImageType imageType) {
         Image image = new Image();
+        image.setExternalId(externalId);
         image.setDateCreated(date);
         image.setDimensions(new Dimensions(width, height));
         image.setImageType(imageType);
@@ -55,6 +76,7 @@ public class ImageManagerTest extends AbstractIntegrationTest {
 
     private void shouldBeEqual(Image lhsImage, Image rhsImage) {
         assertEquals(lhsImage.getId(), rhsImage.getId());
+        assertEquals(lhsImage.getExternalId(), rhsImage.getExternalId());
         assertEquals(lhsImage.getDateCreated(), rhsImage.getDateCreated());
         assertEquals(lhsImage.getDimensions().getWidth(), rhsImage.getDimensions().getWidth());
         assertEquals(lhsImage.getDimensions().getHeight(), rhsImage.getDimensions().getHeight());

@@ -31,11 +31,21 @@ public class ImageManagerImpl implements ImageManager {
     }
 
     @Override
+    @Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byExternalIdKey(#externalId)")
+    public Image getByExternalId(String externalId) {
+        return imageDao.getByExternalId(externalId);
+    }
+
+    @Override
     public void insert(Image image) {
         imageDao.insert(image);
     }
 
     public static String byIdKey(int imageId) {
         return "byId-" + imageId;
+    }
+
+    public static String byExternalIdKey(String externalId) {
+        return "byExternalId-" + externalId;
     }
 }
