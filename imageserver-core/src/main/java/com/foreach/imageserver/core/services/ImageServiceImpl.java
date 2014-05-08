@@ -4,12 +4,14 @@ import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
+import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,16 +49,16 @@ public class ImageServiceImpl implements ImageService {
     // TODO I'm not taking care of errors right now, make sure to tackle this later on!
     @Override
     @Transactional
-    public ImageSaveResult saveImage(ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException {
+    public ImageSaveResult saveImage(byte[] imageBytes) throws ImageStoreException {
+        ImageAttributes imageAttributes = imageTransformService.getAttributes(new ByteArrayInputStream(imageBytes));
+
         Image image = new Image();
         image.setDateCreated(new Date());
+        image.setDimensions(imageAttributes.getDimensions());
+        image.setImageType(imageAttributes.getType());
         imageManager.insert(image);
 
-        RetrievedImage retrievedImage = imageRepository.retrieveImage(image.getId(), repositoryParameters);
-        image.setDimensions(retrievedImage.getDimensions());
-        image.setImageType(retrievedImage.getImageType());
-        imageManager.updateParameters(image);
-        imageStoreService.storeOriginalImage(image, retrievedImage.getImageBytes());
+        imageStoreService.storeOriginalImage(image, imageBytes);
 
         ImageSaveResult result = new ImageSaveResult();
         result.setImageId(image.getId());

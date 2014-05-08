@@ -36,25 +36,15 @@
                 <constraints nullable="false"/>
             </column>
             <column name="width" type="int">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="height" type="int">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="imageTypeId" type="int">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
-    </changeSet>
-
-    <changeSet id="201403311604" author="ovh" dbms="oracle">
-        <sql>
-            <![CDATA[
-                ALTER TABLE IMAGE MODIFY width NOT NULL DEFERRABLE INITIALLY DEFERRED;
-                ALTER TABLE IMAGE MODIFY height NOT NULL DEFERRABLE INITIALLY DEFERRED;
-                ALTER TABLE IMAGE MODIFY imageTypeId NOT NULL DEFERRABLE INITIALLY DEFERRED;
-            ]]>
-        </sql>
     </changeSet>
 
     <changeSet id="201403091327" author="ovh">

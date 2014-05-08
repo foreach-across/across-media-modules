@@ -4,12 +4,11 @@ import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ImageService {
     Image getById(int imageId);
 
-    ImageSaveResult saveImage(ImageRepository imageRepository, Map<String, String> repositoryParameters) throws ImageStoreException;
+    ImageSaveResult saveImage(byte[] imageBytes) throws ImageStoreException;
 
     void saveImageModification(ImageModification modification);
 
