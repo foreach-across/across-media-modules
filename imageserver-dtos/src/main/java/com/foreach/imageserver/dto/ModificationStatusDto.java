@@ -1,14 +1,14 @@
 package com.foreach.imageserver.dto;
 
 public class ModificationStatusDto {
-    private int imageId;
+    private String imageId;
     private boolean modified;
 
-    public int getImageId() {
+    public String getImageId() {
         return imageId;
     }
 
-    public void setImageId(int imageId) {
+    public void setImageId(String imageId) {
         this.imageId = imageId;
     }
 

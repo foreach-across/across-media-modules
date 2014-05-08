@@ -36,14 +36,14 @@ public class ImageModificationController extends BaseImageAPIController {
     @RequestMapping(value = "/" + REGISTER_PATH, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public JsonResponse register(@RequestParam(value = "token", required = true) String accessToken,
-                                 @RequestParam(value = "iid", required = true) int imageId,
+                                 @RequestParam(value = "iid", required = true) String externalId,
                                  @RequestParam(value = "context", required = true) String contextCode,
                                  ImageModificationDto imageModificationDto) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
         }
 
-        Image image = imageService.getById(imageId);
+        Image image = imageService.getByExternalId(externalId);
         if (image == null) {
             return error("No such image.");
         }
@@ -59,7 +59,7 @@ public class ImageModificationController extends BaseImageAPIController {
         }
 
         ImageModification modification = new ImageModification();
-        modification.setImageId(imageId);
+        modification.setImageId(image.getId());
         modification.setContextId(context.getId());
         modification.setResolutionId(imageResolution.getId());
         modification.setCrop(toBusiness(imageModificationDto.getCrop()));
@@ -91,17 +91,22 @@ public class ImageModificationController extends BaseImageAPIController {
     @RequestMapping(value = "/" + LIST_MODIFICATION_STATUS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public JsonResponse listModificationStatus(@RequestParam(value = "token", required = true) String accessToken,
-                                               @RequestParam(value = "iid", required = true) List<Integer> imageIds) {
+                                               @RequestParam(value = "iid", required = true) List<String> externalIds) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
         }
 
-        List<ModificationStatusDto> modificationStatusList = new ArrayList<>(imageIds.size());
-        for (int imageId : imageIds) {
-            boolean hasModification = imageService.hasModification(imageId);
+        List<ModificationStatusDto> modificationStatusList = new ArrayList<>(externalIds.size());
+        for (String externalId : externalIds) {
+            Image image = imageService.getByExternalId(externalId);
+            if (image == null) {
+                return error(String.format("No image available for identifier %s.", externalId));
+            }
+
+            boolean hasModification = imageService.hasModification(image.getId());
 
             ModificationStatusDto modificationStatus = new ModificationStatusDto();
-            modificationStatus.setImageId(imageId);
+            modificationStatus.setImageId(externalId);
             modificationStatus.setModified(hasModification);
 
             modificationStatusList.add(modificationStatus);
@@ -113,7 +118,7 @@ public class ImageModificationController extends BaseImageAPIController {
     @RequestMapping(value = "/" + LIST_MODIFICATIONS, method = RequestMethod.GET)
     @ResponseBody
     public JsonResponse listModifications(@RequestParam(value = "token", required = true) String accessToken,
-                                          @RequestParam(value = "iid", required = true) int imageId,
+                                          @RequestParam(value = "iid", required = true) String externalId,
                                           @RequestParam(value = "context", required = true) String contextCode) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
@@ -124,7 +129,12 @@ public class ImageModificationController extends BaseImageAPIController {
             return error("No such context.");
         }
 
-        List<ImageModification> modifications = imageService.getModifications(imageId, context.getId());
+        Image image = imageService.getByExternalId(externalId);
+        if (image == null) {
+            return error(String.format("No image available for identifier %s.", externalId));
+        }
+
+        List<ImageModification> modifications = imageService.getModifications(image.getId(), context.getId());
 
         return success(toModificationDtos(modifications));
     }

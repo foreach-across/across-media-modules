@@ -40,14 +40,14 @@ public class ImageStreamingController {
     private int maxCacheAgeInSeconds;
 
     @RequestMapping(value = "/" + VIEW_PATH, method = RequestMethod.GET)
-    public void view(@RequestParam(value = "iid", required = true) int imageId,
+    public void view(@RequestParam(value = "iid", required = true) String externalId,
                      @RequestParam(value = "context", required = true) String contextCode,
                      ImageResolutionDto imageResolutionDto,
                      ImageVariantDto imageVariantDto,
                      HttpServletResponse response) {
         // TODO Make sure we only rely on objects that can be long-term cached for retrieving the image.
 
-        Image image = imageService.getById(imageId);
+        Image image = imageService.getByExternalId(externalId);
         if (image == null) {
             error(response, HttpStatus.NOT_FOUND, "No such image.");
             return;
