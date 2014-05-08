@@ -45,13 +45,4 @@
         )
     </insert>
 
-    <update id="updateParameters" parameterType="Image">
-        UPDATE IMAGE
-        SET
-          width = #{dimensions.width},
-          height = #{dimensions.height},
-          imageTypeId = #{imageType.id}
-        WHERE id = #{id}
-    </update>
-
 </mapper>

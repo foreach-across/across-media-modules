@@ -9,6 +9,4 @@ public interface ImageDao {
     Image getById(@Param("id") int id);
 
     void insert(Image image);
-
-    void updateParameters(Image image);
 }
