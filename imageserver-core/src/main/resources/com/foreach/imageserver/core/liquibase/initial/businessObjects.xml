@@ -18,7 +18,7 @@
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="code" type="varchar(100)">
+            <column name="code" type="varchar(100 char)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -35,7 +35,7 @@
             <column name="created" type="datetime" defaultValueComputed="${now}">
                 <constraints nullable="false"/>
             </column>
-            <column name="repositoryCode" type="varchar(255)">
+            <column name="repositoryCode" type="varchar(255 char)">
                 <constraints nullable="false"/>
             </column>
             <column name="width" type="int">
@@ -121,4 +121,20 @@
     <changeSet id="201403241240" author="kds">
         <createSequence sequenceName="SEQ_IMAGES"/>
     </changeSet>
+
+	<changeSet id="201405080755" author="arne">
+		<comment>Add unique uri id and default to image id</comment>
+		<addColumn tableName="IMAGE">
+			<column name="imageUri" type="varchar(500 char)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<sql>
+			UPDATE IMAGE SET imageUri = imageId
+		</sql>
+		<addNotNullConstraint tableName="IMAGE" columnName="imageUri" />
+		<createIndex tableName="IMAGE" indexName="ix_image_imageuri" unique="true">
+			<column name="imageUri" />
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>
