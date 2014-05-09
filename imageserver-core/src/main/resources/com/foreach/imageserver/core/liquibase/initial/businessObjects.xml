@@ -32,8 +32,8 @@
 			<column name="id" type="int">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="externalId" type="varchar(255)">
-				<constraints nullable="false" unique="true"/>
+			<column name="externalId" type="varchar(500 char)">
+				<constraints nullable="false"/>
 			</column>
 			<column name="created" type="datetime" defaultValueComputed="${now}">
 				<constraints nullable="false"/>
@@ -45,7 +45,7 @@
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
-		<createIndex tableName="IMAGE" indexName="ix_image_externalid">
+		<createIndex tableName="IMAGE" indexName="ix_image_externalid" unique="true">
 			<column name="externalId"/>
 		</createIndex>
 	</changeSet>
