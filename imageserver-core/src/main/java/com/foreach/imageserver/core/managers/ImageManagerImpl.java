@@ -25,13 +25,13 @@ public class ImageManagerImpl implements ImageManager {
     }
 
     @Override
-    @Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#imageId)")
+    @Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#imageId)", unless = "#result == null")
     public Image getById(int imageId) {
         return imageDao.getById(imageId);
     }
 
     @Override
-    @Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byExternalIdKey(#externalId)")
+    @Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byExternalIdKey(#externalId)", unless = "#result == null")
     public Image getByExternalId(String externalId) {
         return imageDao.getByExternalId(externalId);
     }

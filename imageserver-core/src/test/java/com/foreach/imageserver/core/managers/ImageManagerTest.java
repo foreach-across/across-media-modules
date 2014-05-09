@@ -47,6 +47,9 @@ public class ImageManagerTest extends AbstractIntegrationTest {
 
     @Test
     public void insertGetByExternalId() {
+        // Things will go wrong if this null result is cached.
+        assertNull(imageManager.getByExternalId("externalId"));
+
         Image insertedImage = image("externalId", new Date(2013, 0, 1), 100, 200, ImageType.GIF);
         imageManager.insert(insertedImage);
 
