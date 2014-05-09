@@ -8,10 +8,10 @@
           <element id="module-output" name="web.imageserver.front" />
         </element>
         <element id="directory" name="lib">
-          <element id="archive" name="imageserver-core-2.0-SNAPSHOT.jar">
+          <element id="archive" name="imageserver-core-2.1-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-core" />
           </element>
-          <element id="archive" name="imageserver-dtos-2.0-SNAPSHOT.jar">
+          <element id="archive" name="imageserver-dtos-2.1-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-dtos" />
           </element>
           <element id="library" level="project" name="Maven: com.foreach.libs:common-spring:0.7" />
@@ -61,7 +61,7 @@
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.10" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.10" />
           <element id="library" level="project" name="Maven: net.sf.ehcache:ehcache:2.8.1" />
-          <element id="archive" name="imageserver-imagerepository-diocontent-2.0-SNAPSHOT.jar">
+          <element id="archive" name="imageserver-imagerepository-diocontent-2.1-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-imagerepository-diocontent" />
           </element>
           <element id="library" level="project" name="Maven: be.persgroep.red.diocontent.webservice:diocontent-webservice-client:2.13" />
@@ -78,7 +78,7 @@
           <element id="library" level="project" name="Maven: be.persgroep.red.utils.jaxrs:jaxrs-utils-core:1.1" />
           <element id="library" level="project" name="Maven: javax.ws.rs:jsr311-api:1.1.1" />
           <element id="library" level="project" name="Maven: com.sun.xml.bind:jaxb-impl:2.1.12" />
-          <element id="archive" name="imageserver-imagerepository-web-2.0-SNAPSHOT.jar">
+          <element id="archive" name="imageserver-imagerepository-web-2.1-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-imagerepository-web" />
           </element>
         </element>
