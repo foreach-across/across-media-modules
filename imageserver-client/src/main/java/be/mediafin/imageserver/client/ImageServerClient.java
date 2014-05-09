@@ -7,24 +7,24 @@ import java.util.List;
 
 public interface ImageServerClient {
 
-    String imageUrl(int imageId, ImageServerContext context, Integer width, Integer height, ImageTypeDto imageType);
+    String imageUrl(String imageId, ImageServerContext context, Integer width, Integer height, ImageTypeDto imageType);
 
-    String imageUrl(int imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant);
+    String imageUrl(String imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant);
 
-    InputStream imageStream(int imageId, ImageServerContext context, Integer width, Integer height, ImageTypeDto imageType);
+    InputStream imageStream(String imageId, ImageServerContext context, Integer width, Integer height, ImageTypeDto imageType);
 
-    InputStream imageStream(int imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant);
+    InputStream imageStream(String imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant);
 
-    ImageSaveResultDto loadImage(int dioContentId);
+    DimensionsDto loadImage(String imageId, int dioContentId);
 
-    void registerImageModification(int imageId, ImageServerContext context, ImageModificationDto imageModificationDto);
+    void registerImageModification(String imageId, ImageServerContext context, ImageModificationDto imageModificationDto);
 
-    void registerImageModification(int imageId, ImageServerContext context, Integer width, Integer height, int cropX, int cropY, int cropWidth, int croptHeight, int densityWidth, int densityHeight);
+    void registerImageModification(String imageId, ImageServerContext context, Integer width, Integer height, int cropX, int cropY, int cropWidth, int croptHeight, int densityWidth, int densityHeight);
 
     List<ImageResolutionDto> listAllowedResolutions(ImageServerContext context);
 
-    List<ModificationStatusDto> listModificationStatus(List<Integer> imageIds);
+    List<ModificationStatusDto> listModificationStatus(List<String> imageIds);
 
-    List<ImageModificationDto> listModifications(int imageId, ImageServerContext context);
+    List<ImageModificationDto> listModifications(String imageId, ImageServerContext context);
 
 }

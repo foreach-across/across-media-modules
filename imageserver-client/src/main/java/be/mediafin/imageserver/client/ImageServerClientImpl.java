@@ -1,5 +1,9 @@
 package be.mediafin.imageserver.client;
 
+import be.persgroep.red.diocontent.api.attachment.Attachment;
+import be.persgroep.red.diocontent.api.attachment.AttachmentRole;
+import be.persgroep.red.diocontent.api.client.DioContentClient;
+import be.persgroep.red.diocontent.webservice.client.DefaultRestDioContentClient;
 import com.foreach.imageserver.dto.*;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.GenericType;
@@ -7,12 +11,17 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.json.JSONConfiguration;
+import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import org.apache.commons.io.IOUtils;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ImageServerClientImpl implements ImageServerClient {
@@ -20,10 +29,16 @@ public class ImageServerClientImpl implements ImageServerClient {
     private final String imageServerEndpoint;
     private final String imageServerAccessToken;
     private final Client client;
+    private final String dioServerUrl;
+    private final String dioUsername;
+    private final String dioPassword;
 
-    public ImageServerClientImpl(String imageServerEndpoint, String imageServerAccessToken) {
+    public ImageServerClientImpl(String imageServerEndpoint, String imageServerAccessToken, String dioServerUrl, String dioUsername, String dioPassword) {
         this.imageServerEndpoint = imageServerEndpoint;
         this.imageServerAccessToken = imageServerAccessToken;
+        this.dioServerUrl = dioServerUrl;
+        this.dioUsername = dioUsername;
+        this.dioPassword = dioPassword;
 
         ClientConfig clientConfig = new DefaultClientConfig();
         clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
@@ -31,14 +46,14 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
-    public String imageUrl(int imageId, ImageServerContext context, Integer width, Integer height, ImageTypeDto imageType) {
+    public String imageUrl(String imageId, ImageServerContext context, Integer width, Integer height, ImageTypeDto imageType) {
         return imageUrl(imageId, context, new ImageResolutionDto(width, height), new ImageVariantDto(imageType));
     }
 
     @Override
-    public String imageUrl(int imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant) {
+    public String imageUrl(String imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.putSingle("iid", "" + imageId);
+        queryParams.putSingle("iid", imageId);
         queryParams.putSingle("context", context.toString());
         addQueryParams(queryParams, imageResolution);
         addQueryParams(queryParams, imageVariant);
@@ -48,14 +63,14 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
-    public InputStream imageStream(int imageId, ImageServerContext context, Integer width, Integer height, ImageTypeDto imageType) {
+    public InputStream imageStream(String imageId, ImageServerContext context, Integer width, Integer height, ImageTypeDto imageType) {
         return imageStream(imageId, context, new ImageResolutionDto(width, height), new ImageVariantDto(imageType));
     }
 
     @Override
-    public InputStream imageStream(int imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant) {
+    public InputStream imageStream(String imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-        queryParams.putSingle("iid", "" + imageId);
+        queryParams.putSingle("iid", imageId);
         queryParams.putSingle("context", context.toString());
         addQueryParams(queryParams, imageResolution);
         addQueryParams(queryParams, imageVariant);
@@ -65,20 +80,34 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
-    public ImageSaveResultDto loadImage(int dioContentId) {
+    public DimensionsDto loadImage(String imageId, int dioContentId) {
+        byte[] imageBytes = retrieveImageFromDioContent(dioContentId);
+
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
-        queryParams.putSingle("repo", "dio");
-        queryParams.putSingle("dio.id", "" + dioContentId);
+        queryParams.putSingle("iid", imageId);
 
-        GenericType<JsonResponse<ImageSaveResultDto>> responseType = new GenericType<JsonResponse<ImageSaveResultDto>>() {
-        };
+        InputStream imageStream = null;
+        try {
+            imageStream = new ByteArrayInputStream(imageBytes);
+            FormDataMultiPart form = new FormDataMultiPart();
+            FormDataBodyPart fdp = new FormDataBodyPart("imageData", imageStream, MediaType.APPLICATION_OCTET_STREAM_TYPE);
+            FormDataContentDisposition.FormDataContentDispositionBuilder builder = FormDataContentDisposition.name("imageData").fileName("imageData").size(imageBytes.length);
+            fdp.setContentDisposition(builder.build());
+            form.bodyPart(fdp);
 
-        return getJsonResponse("load", queryParams, responseType);
+            GenericType<JsonResponse<DimensionsDto>> responseType = new GenericType<JsonResponse<DimensionsDto>>() {
+            };
+
+            return getJsonResponse("load", queryParams, form, responseType);
+        }
+        finally {
+            IOUtils.closeQuietly(imageStream);
+        }
     }
 
     @Override
-    public void registerImageModification(int imageId, ImageServerContext context, Integer width, Integer height, int cropX, int cropY, int cropWidth, int croptHeight, int densityWidth, int densityHeight) {
+    public void registerImageModification(String imageId, ImageServerContext context, Integer width, Integer height, int cropX, int cropY, int cropWidth, int croptHeight, int densityWidth, int densityHeight) {
         ImageResolutionDto resolution = new ImageResolutionDto(width, height);
         CropDto crop = new CropDto(cropX, cropY, cropWidth, croptHeight);
         DimensionsDto density = new DimensionsDto(densityWidth, densityHeight);
@@ -86,10 +115,10 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
-    public void registerImageModification(int imageId, ImageServerContext context, ImageModificationDto imageModification) {
+    public void registerImageModification(String imageId, ImageServerContext context, ImageModificationDto imageModification) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
-        queryParams.putSingle("iid", "" + imageId);
+        queryParams.putSingle("iid", imageId);
         queryParams.putSingle("context", context.toString());
         addQueryParams(queryParams, imageModification);
 
@@ -112,10 +141,10 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
-    public List<ModificationStatusDto> listModificationStatus(List<Integer> imageIds) {
+    public List<ModificationStatusDto> listModificationStatus(List<String> imageIds) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
-        queryParams.put("iid", stringList(imageIds));
+        queryParams.put("iid", imageIds);
 
         GenericType<JsonResponse<List<ModificationStatusDto>>> responseType = new GenericType<JsonResponse<List<ModificationStatusDto>>>() {
         };
@@ -124,24 +153,16 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
-    public List<ImageModificationDto> listModifications(int imageId, ImageServerContext context) {
+    public List<ImageModificationDto> listModifications(String imageId, ImageServerContext context) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
-        queryParams.putSingle("iid", Integer.toString(imageId));
+        queryParams.putSingle("iid", imageId);
         queryParams.putSingle("context", context.toString());
 
         GenericType<JsonResponse<List<ImageModificationDto>>> responseType = new GenericType<JsonResponse<List<ImageModificationDto>>>() {
         };
 
         return getJsonResponse("modification/listModifications", queryParams, responseType);
-    }
-
-    private List<String> stringList(List<Integer> integers) {
-        List<String> strings = new ArrayList<String>(integers.size());
-        for (Integer i : integers) {
-            strings.add(i.toString());
-        }
-        return strings;
     }
 
     private void addQueryParams(MultivaluedMap<String, String> queryParams, ImageResolutionDto imageResolution) {
@@ -184,8 +205,38 @@ public class ImageServerClientImpl implements ImageServerClient {
         return response.getResult();
     }
 
+    private <T> T getJsonResponse(String path, MultivaluedMap<String, String> queryParams, FormDataMultiPart form, GenericType<JsonResponse<T>> responseType) {
+        WebResource resource = getResource(path, queryParams);
+        JsonResponse<T> response = resource.type(MediaType.MULTIPART_FORM_DATA).accept(MediaType.APPLICATION_JSON).post(responseType, form);
+        if (!response.isSuccess()) {
+            throw new ImageServerException(response.getErrorMessage());
+        }
+        return response.getResult();
+    }
+
     private WebResource getResource(String path, MultivaluedMap<String, String> queryParams) {
         return this.client.resource(imageServerEndpoint).path(path).queryParams(queryParams);
+    }
+
+    private byte[] retrieveImageFromDioContent(int dioContentId) {
+        ByteArrayOutputStream data = null;
+        try {
+            DioContentClient client = new DefaultRestDioContentClient(dioServerUrl, dioUsername, dioPassword);
+            Attachment attachment = client.getAttachmentWithRole(dioContentId, AttachmentRole.ORIGINAL);
+
+            data = new ByteArrayOutputStream();
+            client.downloadAttachment(attachment.getId(), data);
+            data.flush();
+
+            return data.toByteArray();
+        } catch (Exception e) {
+            throw new ImageCouldNotBeRetrievedException();
+        } finally {
+            IOUtils.closeQuietly(data);
+        }
+    }
+
+    public static class ImageCouldNotBeRetrievedException extends RuntimeException {
     }
 
 }
