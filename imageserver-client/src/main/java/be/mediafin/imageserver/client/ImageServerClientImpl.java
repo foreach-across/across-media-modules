@@ -100,10 +100,21 @@ public class ImageServerClientImpl implements ImageServerClient {
             };
 
             return getJsonResponse("load", queryParams, form, responseType);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(imageStream);
         }
+    }
+
+    @Override
+    public boolean imageExists(String imageId) {
+        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+        queryParams.putSingle("token", imageServerAccessToken);
+        queryParams.putSingle("iid", imageId);
+
+        GenericType<JsonResponse<Boolean>> responseType = new GenericType<JsonResponse<Boolean>>() {
+        };
+
+        return getJsonResponse("imageExists", queryParams, responseType);
     }
 
     @Override

@@ -17,6 +17,8 @@ public interface ImageServerClient {
 
     DimensionsDto loadImage(String imageId, int dioContentId);
 
+    boolean imageExists(String imageId);
+
     void registerImageModification(String imageId, ImageServerContext context, ImageModificationDto imageModificationDto);
 
     void registerImageModification(String imageId, ImageServerContext context, Integer width, Integer height, int cropX, int cropY, int cropWidth, int croptHeight, int densityWidth, int densityHeight);
