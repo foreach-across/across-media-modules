@@ -1,25 +1,11 @@
 package com.foreach.imageserver.core.web.controllers;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.statistics.StatisticsGateway;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
 
 @Controller
-public class CacheController {
-
+public class CacheController
+{
+/*
     @Autowired
     private CacheManager cacheManager;
 
@@ -127,6 +113,6 @@ public class CacheController {
             IOUtils.closeQuietly(responseStream);
         }
     }
-
+*/
 }
 

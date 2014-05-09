@@ -4,10 +4,11 @@ import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageType;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Date;
@@ -36,7 +37,7 @@ public class ImageManagerTest extends AbstractIntegrationTest {
 
         Image retrievedImage = imageManager.getById(insertedImage.getId());
         shouldBeEqual(insertedImage, retrievedImage);
-        assertSame(retrievedImage, cache.get("byId-" + insertedImage.getId()).getObjectValue());
+        assertSame(retrievedImage, cache.get("byId-" + insertedImage.getId()).get());
 
         jdbcTemplate.execute("DELETE FROM IMAGE");
 
@@ -59,7 +60,7 @@ public class ImageManagerTest extends AbstractIntegrationTest {
 
         Image retrievedImage = imageManager.getByExternalId(insertedImage.getExternalId());
         shouldBeEqual(insertedImage, retrievedImage);
-        assertSame(retrievedImage, cache.get("byExternalId-" + insertedImage.getExternalId()).getObjectValue());
+        assertSame(retrievedImage, cache.get("byExternalId-" + insertedImage.getExternalId()).get());
 
         jdbcTemplate.execute("DELETE FROM IMAGE");
 

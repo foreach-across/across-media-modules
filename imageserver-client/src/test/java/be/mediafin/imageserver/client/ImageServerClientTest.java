@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 // TODO Rewrite this as a generic test against a test environment.
 @Ignore
 public class ImageServerClientTest {
-
+/*
     private ImageServerClient imageServerClient = new ImageServerClientImpl("http://localhost:8080/", "azerty");
 
     @Test
@@ -86,5 +86,5 @@ public class ImageServerClientTest {
         assertNull(resolutions.get(2).getWidth());
         assertEquals(1000, resolutions.get(2).getHeight().intValue());
     }
-
+*/
 }

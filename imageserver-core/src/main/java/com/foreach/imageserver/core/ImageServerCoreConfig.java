@@ -1,6 +1,5 @@
 package com.foreach.imageserver.core;
 
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
@@ -10,32 +9,28 @@ import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
-@ComponentScan(basePackages = "com.foreach.imageserver.core", excludeFilters = @ComponentScan.Filter(Configuration.class))
+@ComponentScan(basePackages = "com.foreach.imageserver.core",
+        excludeFilters = @ComponentScan.Filter(Configuration.class))
 @MapperScan("com.foreach.imageserver.core.data")
 @EnableTransactionManagement
-@EnableCaching
-public class ImageServerCoreConfig {
-
+public class ImageServerCoreConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
-
-    @Autowired
-    private ImageServerCoreModule imageServerCoreModule;
 
     @Autowired(required = false)
     private MultipartResolver multipartResolver;
@@ -47,12 +42,14 @@ public class ImageServerCoreConfig {
         }
     }
 
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(mappingJackson2HttpMessageConverter());
+    }
+
     @Bean
-    @Exposed
-    public RequestMappingHandlerMapping imageServerCoreHandlerMapping() {
-        RequestMappingHandlerMapping handlerMapping = new RequestMappingHandlerMapping();
-        handlerMapping.setInterceptors(new Object[]{});
-        return handlerMapping;
+    public MappingJacksonHttpMessageConverter mappingJackson2HttpMessageConverter() {
+        return new MappingJacksonHttpMessageConverter();
     }
 
     @Bean
@@ -68,7 +65,8 @@ public class ImageServerCoreConfig {
     public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setTypeAliases(new Class[]{Context.class, Image.class, ImageResolution.class, ImageModification.class});
+        sessionFactory.setTypeAliases(
+                new Class[]{Context.class, Image.class, ImageResolution.class, ImageModification.class});
         return sessionFactory.getObject();
     }
 
@@ -81,7 +79,7 @@ public class ImageServerCoreConfig {
     public ImageRepositoryRegistry imageRepositoryRegistry() {
         return new ImageRepositoryRegistry();
     }
-
+/*
     @Bean
     public net.sf.ehcache.CacheManager ehCacheManager() {
         net.sf.ehcache.config.Configuration configuration = new net.sf.ehcache.config.Configuration();
@@ -107,5 +105,5 @@ public class ImageServerCoreConfig {
         cacheConfiguration.freezeConfiguration();
         return cacheConfiguration;
     }
-
+*/
 }

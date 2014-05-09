@@ -2,10 +2,11 @@ package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.Context;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.Assert.*;
@@ -33,7 +34,7 @@ public class ContextManagerTest extends AbstractIntegrationTest {
         Context retrievedContext = contextManager.getByCode("the_application_code");
         assertEquals(10, retrievedContext.getId());
         assertEquals("the_application_code", retrievedContext.getCode());
-        assertSame(retrievedContext, cache.get("byCode-the_application_code").getObjectValue());
+        assertSame(retrievedContext, cache.get("byCode-the_application_code").get());
 
         String updateStatement = "UPDATE CONTEXT SET code = ? WHERE id = ?";
         jdbcTemplate.update(updateStatement, "the_other_application_code", 10);

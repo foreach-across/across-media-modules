@@ -28,6 +28,35 @@
             <artifactId>imageserver-imagerepository-web</artifactId>
             <version>2.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>across</groupId>
+            <artifactId>across-debug-web</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring4</artifactId>
+            <version>2.1.2.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>across</groupId>
+            <artifactId>across-ehcache</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>across</groupId>
+                    <artifactId>across-core</artifactId>
+                </exclusion>
+                    <exclusion>
+                    <groupId>across</groupId>
+                    <artifactId>across-debug-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <build>
         <finalName>web.imageserver.front</finalName>

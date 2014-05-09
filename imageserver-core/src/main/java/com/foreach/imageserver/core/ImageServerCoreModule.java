@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core;
 
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
@@ -9,6 +10,7 @@ import com.foreach.imageserver.core.installers.InitialSchemaInstaller;
 
 import java.util.Set;
 
+@AcrossDepends(required = "AcrossWebModule")
 public class ImageServerCoreModule extends AcrossModule {
 
     public ImageServerCoreModule() {

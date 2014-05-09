@@ -2,6 +2,10 @@ package be.mediafin.imageserver.front;
 
 import be.mediafin.imageserver.front.mfn.MfnImageServerFrontModule;
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.modules.debugweb.DebugWebModule;
+import com.foreach.across.modules.ehcache.EhcacheModule;
+import com.foreach.across.modules.web.AcrossWebModule;
+import com.foreach.across.modules.web.AcrossWebViewSupport;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.spring.logging.LogbackConfigurer;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -11,16 +15,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 
 @Configuration
-@EnableWebMvc
 @PropertySource("classpath:be/mediafin/imageserver/config/${environment.type}/common.properties")
 public class RootConfig {
 
@@ -73,7 +76,33 @@ public class RootConfig {
         context.addPropertySources(parentContext.getEnvironment().getPropertySources());
         context.addModule(imageServerCoreModule());
         context.addModule(mfnImageServerFrontModule());
+        context.addModule(acrossWebModule());
+        context.addModule(debugWebModule());
+        context.addModule(ehcacheModule());
+
         return context;
+    }
+
+    @Bean
+    public AcrossWebModule acrossWebModule() {
+        AcrossWebModule webModule = new AcrossWebModule();
+        webModule.setViewsResourcePath("/static");
+        webModule.setSupportViews(AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF);
+
+        return webModule;
+    }
+
+    @Bean
+    public DebugWebModule debugWebModule() {
+        return new DebugWebModule();
+    }
+
+    @Bean
+    public EhcacheModule ehcacheModule() {
+        EhcacheModule ehcacheModule = new EhcacheModule();
+        ehcacheModule.setConfigLocation(new ClassPathResource("/be/mediafin/imageserver/config/ehcache.xml"));
+
+        return ehcacheModule;
     }
 
     @Bean
