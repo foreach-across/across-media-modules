@@ -1,114 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-    <property name="now" value="GETDATE()" dbms="mssql"/>
-    <property name="now" value="NOW" dbms="hsqldb"/>
-    <property name="now" value="SYSDATE" dbms="oracle"/>
+	<property name="now" value="GETDATE()" dbms="mssql"/>
+	<property name="now" value="NOW" dbms="hsqldb"/>
+	<property name="now" value="SYSDATE" dbms="oracle"/>
 
-    <changeSet id="201403211601" author="ovh" dbms="hsqldb">
-        <sql>SET DATABASE SQL SYNTAX ORA TRUE;</sql>
-    </changeSet>
+	<changeSet id="201403211601" author="ovh" dbms="hsqldb">
+		<sql>SET DATABASE SQL SYNTAX ORA TRUE;</sql>
+	</changeSet>
 
-    <changeSet id="201403091254" author="ovh">
-        <createTable tableName="CONTEXT">
-            <column name="id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="code" type="varchar(100)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <createIndex indexName="idx_context_code" tableName="CONTEXT" unique="true">
-            <column name="code"/>
-        </createIndex>
-    </changeSet>
+	<changeSet id="201403091254" author="ovh">
+		<createTable tableName="CONTEXT">
+			<column name="id" type="int">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="code" type="varchar(100 char)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<createIndex indexName="idx_context_code" tableName="CONTEXT" unique="true">
+			<column name="code"/>
+		</createIndex>
+	</changeSet>
 
-    <changeSet id="201403091310" author="ovh">
-        <createTable tableName="IMAGE">
-            <column name="id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="externalId" type="varchar(255)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="created" type="datetime" defaultValueComputed="${now}">
-                <constraints nullable="false"/>
-            </column>
-            <column name="width" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="height" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="imageTypeId" type="int">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+	<changeSet id="201403091310" author="ovh">
+		<createTable tableName="IMAGE">
+			<column name="id" type="int">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="externalId" type="varchar(255)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+			<column name="created" type="datetime" defaultValueComputed="${now}">
+				<constraints nullable="false"/>
+			</column>
+			<column name="height" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="imageTypeId" type="int">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<createIndex tableName="IMAGE" indexName="ix_image_externalid">
+			<column name="externalId"/>
+		</createIndex>
+	</changeSet>
 
-    <changeSet id="201403091327" author="ovh">
-        <createTable tableName="IMAGE_RESOLUTION">
-            <column name="id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="width" type="int">
-                <constraints nullable="true"/>
-            </column>
-            <column name="height" type="int">
-                <constraints nullable="true"/>
-            </column>
-        </createTable>
-        <createTable tableName="CONTEXT_IMAGE_RESOLUTION">
-            <column name="contextId" type="int">
-                <constraints nullable="false" references="CONTEXT(id)"
-                             foreignKeyName="fk_context_resolution_1"/>
-            </column>
-            <column name="imageResolutionId" type="int">
-                <constraints nullable="false" references="IMAGE_RESOLUTION(id)"
-                             foreignKeyName="fk_context_resolution_2"/>
-            </column>
-        </createTable>
-    </changeSet>
+	<changeSet id="201403091327" author="ovh">
+		<createTable tableName="IMAGE_RESOLUTION">
+			<column name="id" type="int">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="width" type="int">
+				<constraints nullable="true"/>
+			</column>
+			<column name="height" type="int">
+				<constraints nullable="true"/>
+			</column>
+		</createTable>
+		<createTable tableName="CONTEXT_IMAGE_RESOLUTION">
+			<column name="contextId" type="int">
+				<constraints nullable="false" references="CONTEXT(id)"
+				             foreignKeyName="fk_context_resolution_1"/>
+			</column>
+			<column name="imageResolutionId" type="int">
+				<constraints nullable="false" references="IMAGE_RESOLUTION(id)"
+				             foreignKeyName="fk_context_resolution_2"/>
+			</column>
+		</createTable>
+	</changeSet>
 
-    <changeSet id="201403091352" author="ovh">
-        <createTable tableName="IMAGE_MODIFICATION">
-            <column name="imageId" type="int">
-                <constraints references="IMAGE(id)" foreignKeyName="fk_modification_image" nullable="false"/>
-            </column>
-            <column name="contextId" type="int">
-                <constraints references="CONTEXT(id)" foreignKeyName="fk_modification_context" nullable="false"/>
-            </column>
-            <column name="resolutionId" type="int">
-                <constraints references="IMAGE_RESOLUTION(id)" foreignKeyName="fk_web_resolution" nullable="false"/>
-            </column>
-            <column name="densityWidth" type="int" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="densityHeight" type="int" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropX" type="int" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropY" type="int" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropWidth" type="int" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropHeight" type="int" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addPrimaryKey tableName="IMAGE_MODIFICATION"
-                       columnNames="imageId, contextId, resolutionId"
-                       constraintName="pk_image_modification"/>
-    </changeSet>
-    <changeSet id="201403241240" author="kds">
-        <createSequence sequenceName="SEQ_IMAGES"/>
-    </changeSet>
+	<changeSet id="201403091352" author="ovh">
+		<createTable tableName="IMAGE_MODIFICATION">
+			<column name="imageId" type="int">
+				<constraints references="IMAGE(id)" foreignKeyName="fk_modification_image" nullable="false"/>
+			</column>
+			<column name="contextId" type="int">
+				<constraints references="CONTEXT(id)" foreignKeyName="fk_modification_context" nullable="false"/>
+			</column>
+			<column name="resolutionId" type="int">
+				<constraints references="IMAGE_RESOLUTION(id)" foreignKeyName="fk_web_resolution" nullable="false"/>
+			</column>
+			<column name="densityWidth" type="int" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="densityHeight" type="int" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropX" type="int" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropY" type="int" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropWidth" type="int" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropHeight" type="int" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<addPrimaryKey tableName="IMAGE_MODIFICATION"
+		               columnNames="imageId, contextId, resolutionId"
+		               constraintName="pk_image_modification"/>
+	</changeSet>
+	<changeSet id="201403241240" author="kds">
+		<createSequence sequenceName="SEQ_IMAGES"/>
+	</changeSet>
 </databaseChangeLog>
