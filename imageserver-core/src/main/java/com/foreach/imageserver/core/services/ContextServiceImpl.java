@@ -7,6 +7,7 @@ import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -81,7 +82,7 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public List<ImageResolution> getImageResolutions(int contextId) {
-        return imageResolutionManager.getForContext(contextId);
+        return new ArrayList<>( imageResolutionManager.getForContext(contextId) );
     }
 
 }

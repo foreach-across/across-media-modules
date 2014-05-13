@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -21,7 +22,6 @@ public class ImageModificationController extends BaseImageAPIController {
 
     public static final String REGISTER_PATH = "register";
     public static final String LIST_RESOLUTIONS_PATH = "listResolutions";
-    public static final String LIST_MODIFICATION_STATUS_PATH = "listModificationStatus";
     public static final String LIST_MODIFICATIONS = "listModifications";
 
     @Value("${accessToken}")
@@ -73,7 +73,9 @@ public class ImageModificationController extends BaseImageAPIController {
     @RequestMapping(value = "/" + LIST_RESOLUTIONS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public JsonResponse listResolutions(@RequestParam(value = "token", required = true) String accessToken,
-                                        @RequestParam(value = "context", required = true) String contextCode) {
+                                        @RequestParam(value = "context", required = true) String contextCode,
+                                        @RequestParam(value = "configurable", required = true, defaultValue = "false") boolean configurableOnly
+    ) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
         }
@@ -85,34 +87,23 @@ public class ImageModificationController extends BaseImageAPIController {
 
         List<ImageResolution> imageResolutions = contextService.getImageResolutions(context.getId());
 
+        if (configurableOnly) {
+            removeNonConfigurableResolutions(imageResolutions);
+        }
+
         return success(imageResolutionDtoList(imageResolutions));
     }
 
-    @RequestMapping(value = "/" + LIST_MODIFICATION_STATUS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public JsonResponse listModificationStatus(@RequestParam(value = "token", required = true) String accessToken,
-                                               @RequestParam(value = "iid", required = true) List<String> externalIds) {
-        if (!this.accessToken.equals(accessToken)) {
-            return error("Access denied.");
-        }
+    private void removeNonConfigurableResolutions(List<ImageResolution> imageResolutions) {
+        Iterator<ImageResolution> iterator = imageResolutions.iterator();
 
-        List<ModificationStatusDto> modificationStatusList = new ArrayList<>(externalIds.size());
-        for (String externalId : externalIds) {
-            Image image = imageService.getByExternalId(externalId);
-            if (image == null) {
-                return error(String.format("No image available for identifier %s.", externalId));
+        while (iterator.hasNext()) {
+            ImageResolution resolution = iterator.next();
+
+            if (!resolution.isConfigurable()) {
+                iterator.remove();
             }
-
-            boolean hasModification = imageService.hasModification(image.getId());
-
-            ModificationStatusDto modificationStatus = new ModificationStatusDto();
-            modificationStatus.setImageId(externalId);
-            modificationStatus.setModified(hasModification);
-
-            modificationStatusList.add(modificationStatus);
         }
-
-        return success(modificationStatusList);
     }
 
     @RequestMapping(value = "/" + LIST_MODIFICATIONS, method = RequestMethod.GET)
@@ -167,6 +158,8 @@ public class ImageModificationController extends BaseImageAPIController {
             ImageResolutionDto dto = new ImageResolutionDto();
             dto.setWidth(imageResolution.getWidth());
             dto.setHeight(imageResolution.getHeight());
+            dto.setConfigurable(imageResolution.isConfigurable());
+            dto.setName(imageResolution.getName());
             dtos.add(dto);
         }
         return dtos;

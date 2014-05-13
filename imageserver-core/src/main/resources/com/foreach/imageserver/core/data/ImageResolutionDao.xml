@@ -5,13 +5,17 @@
     <sql id="columns">
 		IR.id as ir_id,
         IR.width as ir_width,
-        IR.height as ir_height
+        IR.height as ir_height,
+        IR.configurable as ir_configurable,
+        IR.name as ir_name
 	</sql>
 
     <resultMap id="imageResolutionMap" type="ImageResolution">
         <id property="id" column="ir_id"/>
         <result property="width" column="ir_width"/>
         <result property="height" column="ir_height"/>
+        <result property="configurable" column="ir_configurable"/>
+        <result property="name" column="ir_name" />
     </resultMap>
 
     <select id="getById" parameterType="int" resultMap="imageResolutionMap">

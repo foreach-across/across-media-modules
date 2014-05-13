@@ -8,34 +8,34 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class ImageResolutionManagerImpl implements ImageResolutionManager
-{
-	private static final String CACHE_NAME = "imageResolutions";
+public class ImageResolutionManagerImpl implements ImageResolutionManager {
+    private static final String CACHE_NAME = "imageResolutions";
 
-	private final ImageResolutionDao imageResolutionDao;
+    private final ImageResolutionDao imageResolutionDao;
 
-	@Autowired
-	public ImageResolutionManagerImpl( ImageResolutionDao imageResolutionDao, CacheManager cacheManager ) {
-		this.imageResolutionDao = imageResolutionDao;
+    @Autowired
+    public ImageResolutionManagerImpl(ImageResolutionDao imageResolutionDao, CacheManager cacheManager) {
+        this.imageResolutionDao = imageResolutionDao;
 
-		Cache cache = cacheManager.getCache( CACHE_NAME );
-		if ( cache == null ) {
-			throw new RuntimeException( String.format( "Required cache %s is unavailable.", CACHE_NAME ) );
-		}
-	}
+        Cache cache = cacheManager.getCache(CACHE_NAME);
+        if (cache == null) {
+            throw new RuntimeException(String.format("Required cache %s is unavailable.", CACHE_NAME));
+        }
+    }
 
-	@Override
-	@Cacheable(value = CACHE_NAME, key = "'byId-'+#resolutionId")
-	public ImageResolution getById( int resolutionId ) {
-		return imageResolutionDao.getById( resolutionId );
-	}
+    @Override
+    @Cacheable(value = CACHE_NAME, key = "'byId-'+#resolutionId")
+    public ImageResolution getById(int resolutionId) {
+        return imageResolutionDao.getById(resolutionId);
+    }
 
-	@Override
-	@Cacheable(value = CACHE_NAME, key = "'forContext-'+#contextId")
-	public List<ImageResolution> getForContext( int contextId ) {
-		return imageResolutionDao.getForContext( contextId );
-	}
+    @Override
+    @Cacheable(value = CACHE_NAME, key = "'forContext-'+#contextId")
+    public List<ImageResolution> getForContext(int contextId) {
+        return Collections.unmodifiableList(imageResolutionDao.getForContext(contextId));
+    }
 }

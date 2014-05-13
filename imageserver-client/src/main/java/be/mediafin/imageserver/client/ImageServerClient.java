@@ -27,7 +27,7 @@ public interface ImageServerClient {
 
     List<ImageResolutionDto> listAllowedResolutions(ImageServerContext context);
 
-    List<ModificationStatusDto> listModificationStatus(List<String> imageIds);
+    List<ImageResolutionDto> listConfigurableResolutions(ImageServerContext context);
 
     List<ImageModificationDto> listModifications(String imageId, ImageServerContext context);
 

@@ -5,6 +5,7 @@ import com.foreach.imageserver.core.data.ImageModificationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,13 +28,13 @@ public class ImageModificationManagerImpl implements ImageModificationManager {
     @Override
     // Not cached -- see comments above.
     public List<ImageModification> getModifications(int imageId, int contextId) {
-        return imageModificationDao.getModifications(imageId, contextId);
+        return Collections.unmodifiableList(imageModificationDao.getModifications(imageId, contextId));
     }
 
     @Override
     // Not cached -- see comments above.
     public List<ImageModification> getAllModifications(int imageId) {
-        return imageModificationDao.getAllModifications(imageId);
+        return Collections.unmodifiableList(imageModificationDao.getAllModifications(imageId));
     }
 
     @Override

@@ -156,15 +156,16 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
-    public List<ModificationStatusDto> listModificationStatus(List<String> imageIds) {
+    public List<ImageResolutionDto> listConfigurableResolutions(ImageServerContext context) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
-        queryParams.put("iid", imageIds);
+        queryParams.putSingle("context", context.toString());
+        queryParams.putSingle("configurable", "true");
 
-        GenericType<JsonResponse<List<ModificationStatusDto>>> responseType = new GenericType<JsonResponse<List<ModificationStatusDto>>>() {
+        GenericType<JsonResponse<List<ImageResolutionDto>>> responseType = new GenericType<JsonResponse<List<ImageResolutionDto>>>() {
         };
 
-        return getJsonResponse("modification/listModificationStatus", queryParams, responseType);
+        return getJsonResponse("modification/listResolutions", queryParams, responseType);
     }
 
     @Override

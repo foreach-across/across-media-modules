@@ -89,6 +89,7 @@
           <element id="library" level="project" name="Maven: ognl:ognl:3.0.6" />
           <element id="library" level="project" name="Maven: org.javassist:javassist:3.16.1-GA" />
           <element id="library" level="project" name="Maven: across:across-ehcache:1.0.2-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: net.sf.ehcache:ehcache:2.8.2" />
         </element>
       </element>
     </root>

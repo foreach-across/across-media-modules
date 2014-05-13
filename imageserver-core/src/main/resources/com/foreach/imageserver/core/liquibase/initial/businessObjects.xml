@@ -114,4 +114,16 @@
     <changeSet id="201403241240" author="kds">
         <createSequence sequenceName="SEQ_IMAGES"/>
     </changeSet>
+
+    <changeSet id="201405130815" author="arne">
+        <comment>Add configurable boolean and optional name to allowed resolutions</comment>
+        <addColumn tableName="IMAGE_RESOLUTION">
+            <column name="configurable" type="NUMBER(1,0)" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(250 char)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -212,7 +209,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public List<ImageModification> getModifications(int imageId, int contextId) {
-        return imageModificationManager.getModifications(imageId, contextId);
+        return new ArrayList<>(imageModificationManager.getModifications(imageId, contextId));
     }
 
     private Dimensions computeOutputResolution(Image image, ImageResolution imageResolution) {
