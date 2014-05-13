@@ -36,7 +36,7 @@ public class ImageLoadController extends BaseImageAPIController {
     public JsonResponse load(@RequestParam(value = "token", required = true) String accessToken,
                              @RequestParam(value = "iid", required = true) String externalId,
                              @RequestParam(value = "imageData", required = true) byte[] imageData,
-                             @RequestParam(value = "imageTimestamp", required = false) Integer imageTimestamp) {
+                             @RequestParam(value = "imageTimestamp", required = false) Long imageTimestamp) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
         }
