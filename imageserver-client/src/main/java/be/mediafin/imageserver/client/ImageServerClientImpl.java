@@ -160,7 +160,7 @@ public class ImageServerClientImpl implements ImageServerClient {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
         queryParams.putSingle("context", context.toString());
-        queryParams.putSingle("configurable", "true");
+        queryParams.putSingle("configurableOnly", "true");
 
         GenericType<JsonResponse<List<ImageResolutionDto>>> responseType = new GenericType<JsonResponse<List<ImageResolutionDto>>>() {
         };

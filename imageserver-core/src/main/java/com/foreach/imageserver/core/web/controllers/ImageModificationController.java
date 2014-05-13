@@ -74,7 +74,7 @@ public class ImageModificationController extends BaseImageAPIController {
     @ResponseBody
     public JsonResponse listResolutions(@RequestParam(value = "token", required = true) String accessToken,
                                         @RequestParam(value = "context", required = true) String contextCode,
-                                        @RequestParam(value = "configurable", required = true, defaultValue = "false") boolean configurableOnly
+                                        @RequestParam(value = "configurableOnly", required = true, defaultValue = "false") boolean configurableOnly
     ) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
