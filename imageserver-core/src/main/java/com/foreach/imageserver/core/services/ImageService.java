@@ -11,7 +11,7 @@ public interface ImageService {
 
     Image getByExternalId(String externalId);
 
-    Dimensions saveImage(String externalId, byte[] imageBytes, Date createdDate) throws ImageStoreException;
+    Dimensions saveImage(String externalId, byte[] imageBytes, Date imageDate) throws ImageStoreException;
 
     void saveImageModification(ImageModification modification);
 

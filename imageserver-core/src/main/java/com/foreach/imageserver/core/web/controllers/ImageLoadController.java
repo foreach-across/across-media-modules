@@ -36,14 +36,14 @@ public class ImageLoadController extends BaseImageAPIController {
     public JsonResponse load(@RequestParam(value = "token", required = true) String accessToken,
                              @RequestParam(value = "iid", required = true) String externalId,
                              @RequestParam(value = "imageData", required = true) byte[] imageData,
-                             @RequestParam(value = "created", required = false) Integer createdTimestamp) {
+                             @RequestParam(value = "imageTimestamp", required = false) Integer imageTimestamp) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
         }
 
-        Date createdDate = (createdTimestamp != null) ? new Date(createdTimestamp) : new Date();
+        Date imageDate = (imageTimestamp != null) ? new Date(imageTimestamp) : new Date();
 
-        Dimensions imageDimensions = imageService.saveImage(externalId, imageData, createdDate);
+        Dimensions imageDimensions = imageService.saveImage(externalId, imageData, imageDate);
 
         return success(dto(imageDimensions));
     }
