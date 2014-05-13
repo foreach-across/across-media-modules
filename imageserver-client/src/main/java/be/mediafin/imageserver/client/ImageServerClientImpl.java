@@ -83,15 +83,23 @@ public class ImageServerClientImpl implements ImageServerClient {
 
     @Override
     public DimensionsDto loadImage(String imageId, int dioContentId) {
-        byte[] imageBytes = retrieveImageFromDioContent(dioContentId);
-        return loadImage(imageId, imageBytes);
+        DatedBuffer datedBuffer = retrieveImageFromDioContent(dioContentId);
+        return loadImage(imageId, datedBuffer.getBytes(), datedBuffer.getDate());
     }
 
     @Override
     public DimensionsDto loadImage(String imageId, byte[] imageBytes) {
+        return loadImage(imageId, imageBytes, null);
+    }
+
+    @Override
+    public DimensionsDto loadImage(String imageId, byte[] imageBytes, Date imageDate) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
         queryParams.putSingle("iid", imageId);
+        if (imageDate != null) {
+            queryParams.putSingle("imageTimestamp", Long.toString(imageDate.getTime()));
+        }
 
         InputStream imageStream = null;
         try {
@@ -236,17 +244,23 @@ public class ImageServerClientImpl implements ImageServerClient {
         return this.client.resource(imageServerEndpoint).path(path).queryParams(queryParams);
     }
 
-    private byte[] retrieveImageFromDioContent(int dioContentId) {
+    private DatedBuffer retrieveImageFromDioContent(int dioContentId) {
         ByteArrayOutputStream data = null;
         try {
             DioContentClient client = new DefaultRestDioContentClient(dioServerUrl, dioUsername, dioPassword);
+            Asset asset = client.getAsset(dioContentId);
             Attachment attachment = client.getAttachmentWithRole(dioContentId, AttachmentRole.ORIGINAL);
 
             data = new ByteArrayOutputStream();
             client.downloadAttachment(attachment.getId(), data);
             data.flush();
 
-            return data.toByteArray();
+            Date imageDate = asset.getCreateDate();
+            if (imageDate == null) {
+                imageDate = new Date();
+            }
+
+            return new DatedBuffer(data.toByteArray(), imageDate);
         } catch (Exception e) {
             throw new ImageCouldNotBeRetrievedException();
         } finally {
@@ -254,20 +268,21 @@ public class ImageServerClientImpl implements ImageServerClient {
         }
     }
 
-    private Date retrieveImageDateFromDioContent(int dioContentId) {
-        ByteArrayOutputStream data = null;
-        try {
-            DioContentClient client = new DefaultRestDioContentClient(dioServerUrl, dioUsername, dioPassword);
-            Asset asset = client.getAsset(dioContentId);
-            if (asset.getCreateDate() != null){
-                return asset.getCreateDate();
-            } else {
-                return new Date();
-            }
-        } catch (Exception e) {
-            return new Date();
-        } finally {
-            IOUtils.closeQuietly(data);
+    private static class DatedBuffer {
+        private final byte[] bytes;
+        private final Date date;
+
+        public DatedBuffer(byte[] bytes, Date date) {
+            this.bytes = bytes;
+            this.date = date;
+        }
+
+        public byte[] getBytes() {
+            return bytes;
+        }
+
+        public Date getDate() {
+            return date;
         }
     }
 

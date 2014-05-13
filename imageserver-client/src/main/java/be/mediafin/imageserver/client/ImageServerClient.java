@@ -3,6 +3,7 @@ package be.mediafin.imageserver.client;
 import com.foreach.imageserver.dto.*;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 public interface ImageServerClient {
@@ -18,6 +19,8 @@ public interface ImageServerClient {
     DimensionsDto loadImage(String imageId, int dioContentId);
 
     DimensionsDto loadImage(String imageId, byte[] imageBytes);
+
+    DimensionsDto loadImage(String imageId, byte[] imageBytes, Date imageDate);
 
     boolean imageExists(String imageId);
 
