@@ -1,5 +1,6 @@
 package be.mediafin.imageserver.client;
 
+import be.persgroep.red.diocontent.api.asset.Asset;
 import be.persgroep.red.diocontent.api.attachment.Attachment;
 import be.persgroep.red.diocontent.api.attachment.AttachmentRole;
 import be.persgroep.red.diocontent.api.client.DioContentClient;
@@ -22,6 +23,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 public class ImageServerClientImpl implements ImageServerClient {
@@ -247,6 +249,23 @@ public class ImageServerClientImpl implements ImageServerClient {
             return data.toByteArray();
         } catch (Exception e) {
             throw new ImageCouldNotBeRetrievedException();
+        } finally {
+            IOUtils.closeQuietly(data);
+        }
+    }
+
+    private Date retrieveImageDateFromDioContent(int dioContentId) {
+        ByteArrayOutputStream data = null;
+        try {
+            DioContentClient client = new DefaultRestDioContentClient(dioServerUrl, dioUsername, dioPassword);
+            Asset asset = client.getAsset(dioContentId);
+            if (asset.getCreateDate() != null){
+                return asset.getCreateDate();
+            } else {
+                return new Date();
+            }
+        } catch (Exception e) {
+            return new Date();
         } finally {
             IOUtils.closeQuietly(data);
         }
