@@ -17,6 +17,8 @@ public interface ImageServerClient {
 
     DimensionsDto loadImage(String imageId, int dioContentId);
 
+    DimensionsDto loadImage(String imageId, byte[] imageBytes);
+
     boolean imageExists(String imageId);
 
     void registerImageModification(String imageId, ImageServerContext context, ImageModificationDto imageModificationDto);

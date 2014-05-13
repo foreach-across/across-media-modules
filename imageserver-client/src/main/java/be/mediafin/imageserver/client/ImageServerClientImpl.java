@@ -82,7 +82,11 @@ public class ImageServerClientImpl implements ImageServerClient {
     @Override
     public DimensionsDto loadImage(String imageId, int dioContentId) {
         byte[] imageBytes = retrieveImageFromDioContent(dioContentId);
+        return loadImage(imageId, imageBytes);
+    }
 
+    @Override
+    public DimensionsDto loadImage(String imageId, byte[] imageBytes) {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
         queryParams.putSingle("iid", imageId);
