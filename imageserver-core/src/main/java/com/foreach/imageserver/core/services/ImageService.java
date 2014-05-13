@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ImageService {
@@ -10,7 +11,7 @@ public interface ImageService {
 
     Image getByExternalId(String externalId);
 
-    Dimensions saveImage(String externalId, byte[] imageBytes) throws ImageStoreException;
+    Dimensions saveImage(String externalId, byte[] imageBytes, Date createdDate) throws ImageStoreException;
 
     void saveImageModification(ImageModification modification);
 

@@ -12,6 +12,8 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import java.util.Date;
+
 @Controller
 public class ImageLoadController extends BaseImageAPIController {
 
@@ -33,12 +35,15 @@ public class ImageLoadController extends BaseImageAPIController {
     @ResponseBody
     public JsonResponse load(@RequestParam(value = "token", required = true) String accessToken,
                              @RequestParam(value = "iid", required = true) String externalId,
-                             @RequestParam(value = "imageData", required = true) byte[] imageData) {
+                             @RequestParam(value = "imageData", required = true) byte[] imageData,
+                             @RequestParam(value = "created", required = false) Integer createdTimestamp) {
         if (!this.accessToken.equals(accessToken)) {
             return error("Access denied.");
         }
 
-        Dimensions imageDimensions = imageService.saveImage(externalId, imageData);
+        Date createdDate = (createdTimestamp != null) ? new Date(createdTimestamp) : new Date();
+
+        Dimensions imageDimensions = imageService.saveImage(externalId, imageData, createdDate);
 
         return success(dto(imageDimensions));
     }

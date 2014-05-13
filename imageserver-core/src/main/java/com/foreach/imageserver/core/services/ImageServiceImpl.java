@@ -51,12 +51,12 @@ public class ImageServiceImpl implements ImageService {
     // TODO I'm not taking care of errors right now, make sure to tackle this later on!
     @Override
     @Transactional
-    public Dimensions saveImage(String externalId, byte[] imageBytes) throws ImageStoreException {
+    public Dimensions saveImage(String externalId, byte[] imageBytes, Date createdDate) throws ImageStoreException {
         ImageAttributes imageAttributes = imageTransformService.getAttributes(new ByteArrayInputStream(imageBytes));
 
         Image image = new Image();
         image.setExternalId(externalId);
-        image.setDateCreated(new Date());
+        image.setDateCreated(createdDate);
         image.setDimensions(imageAttributes.getDimensions());
         image.setImageType(imageAttributes.getType());
         imageManager.insert(image);
