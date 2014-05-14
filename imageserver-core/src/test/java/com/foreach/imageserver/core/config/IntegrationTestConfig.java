@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.config;
 
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -74,6 +75,11 @@ public class IntegrationTestConfig {
         }
 
         return context;
+    }
+
+    @Bean
+    public AcrossModule dummyWebModule() {
+        return new EmptyAcrossModule( "AcrossWebModule" );
     }
 
     @Bean

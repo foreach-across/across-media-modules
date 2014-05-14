@@ -8,7 +8,7 @@ import java.util.List;
 public interface ContextService {
     Context getByCode(String contextCode);
 
-    ImageResolution getImageResolution(int contextId, Integer width, Integer height);
+    ImageResolution getImageResolution(int contextId, int width, int height);
 
     List<ImageResolution> getImageResolutions(int contextId);
 }

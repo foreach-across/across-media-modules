@@ -21,14 +21,14 @@ public class CropGeneratorUtilTest {
 
     @Test
     public void applyUnboundedWidthResolution() {
-        Dimensions result = applyResolution(image(1000, 2000), resolution(null, 4000));
+        Dimensions result = applyResolution(image(1000, 2000), resolution(0, 4000));
         assertEquals(2000, result.getWidth());
         assertEquals(4000, result.getHeight());
     }
 
     @Test
     public void applyUnboundedHeightResolution() {
-        Dimensions result = applyResolution(image(1000, 2000), resolution(3000, null));
+        Dimensions result = applyResolution(image(1000, 2000), resolution(3000, 0));
         assertEquals(3000, result.getWidth());
         assertEquals(6000, result.getHeight());
     }
@@ -65,7 +65,7 @@ public class CropGeneratorUtilTest {
         return image;
     }
 
-    private ImageResolution resolution(Integer w, Integer h) {
+    private ImageResolution resolution(int w, int h) {
         ImageResolution resolution = new ImageResolution();
         resolution.setWidth(w);
         resolution.setHeight(h);

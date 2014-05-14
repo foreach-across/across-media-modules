@@ -34,8 +34,8 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 
 		ImageResolution retrievedResolution = imageResolutionManager.getById( 10 );
 		assertEquals( 10, retrievedResolution.getId().intValue() );
-		assertEquals( 111, retrievedResolution.getWidth().intValue() );
-		assertEquals( 222, retrievedResolution.getHeight().intValue() );
+		assertEquals( 111, retrievedResolution.getWidth());
+		assertEquals( 222, retrievedResolution.getHeight() );
 		assertSame( retrievedResolution, cache.get( "byId-10" ).get() );
 
 		jdbcTemplate.execute( "DELETE FROM IMAGE_RESOLUTION" );
@@ -43,8 +43,8 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 		ImageResolution retrievedAgainResolution = imageResolutionManager.getById( 10 );
 		assertSame( retrievedResolution, retrievedAgainResolution );
 		assertEquals( 10, retrievedAgainResolution.getId().intValue() );
-		assertEquals( 111, retrievedAgainResolution.getWidth().intValue() );
-		assertEquals( 222, retrievedAgainResolution.getHeight().intValue() );
+		assertEquals( 111, retrievedAgainResolution.getWidth());
+		assertEquals( 222, retrievedAgainResolution.getHeight() );
 	}
 
 	@Test

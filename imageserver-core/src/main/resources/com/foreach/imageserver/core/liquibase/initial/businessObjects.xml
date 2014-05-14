@@ -126,4 +126,10 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="201405140834" author="arne">
+        <comment>Image resolution and height are no longer nullable</comment>
+        <addNotNullConstraint tableName="IMAGE_RESOLUTION" columnName="width" />
+        <addNotNullConstraint tableName="IMAGE_RESOLUTION" columnName="height" />
+    </changeSet>
 </databaseChangeLog>

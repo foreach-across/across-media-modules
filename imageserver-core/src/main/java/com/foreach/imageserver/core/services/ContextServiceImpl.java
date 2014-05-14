@@ -40,17 +40,23 @@ public class ContextServiceImpl implements ContextService {
      * @return An image resolution
      */
     @Override
-    public ImageResolution getImageResolution(int contextId, Integer width, Integer height) {
-        if (width <= 0) {
-            throw new ImageResolutionException("No image resolution width is specified.");
+    public ImageResolution getImageResolution(int contextId, int width, int height) {
+        if (width < 0 || height < 0) {
+            throw new ImageResolutionException("Invalid image dimensions specified.");
+        } else if (width == 0 && height == 0) {
+            throw new ImageResolutionException("At least one valid dimension is required.");
         }
 
         ImageResolution selectedResolution = null;
 
         List<ImageResolution> imageResolutions = imageResolutionManager.getForContext(contextId);
         for (ImageResolution imageResolution : imageResolutions) {
+            // Exact fit will return immediately
+            if (imageResolution.getWidth() == width && imageResolution.getHeight() == height) {
+                return imageResolution;
+            }
 
-            // image resolution is large enough to contain (width, height)  (or only with, if height is zero)
+            // image resolution is large enough to contain (width, height)  (or only width, if height is zero)
             if (imageResolution.getWidth() >= width && (imageResolution.getHeight() >= height || height == 0)) {
 
                 // image resolution is larger (in width) than previously selected image resolution
@@ -82,7 +88,7 @@ public class ContextServiceImpl implements ContextService {
 
     @Override
     public List<ImageResolution> getImageResolutions(int contextId) {
-        return new ArrayList<>( imageResolutionManager.getForContext(contextId) );
+        return new ArrayList<>(imageResolutionManager.getForContext(contextId));
     }
 
 }

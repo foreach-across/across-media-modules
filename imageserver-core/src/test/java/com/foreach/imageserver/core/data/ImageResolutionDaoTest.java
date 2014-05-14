@@ -26,8 +26,8 @@ public class ImageResolutionDaoTest extends AbstractIntegrationTest {
         ImageResolution imageResolution = imageResolutionDao.getById(101010);
         assertNotNull(imageResolution);
         assertEquals(101010, imageResolution.getId().intValue());
-        assertEquals(111, imageResolution.getWidth().intValue());
-        assertEquals(222, imageResolution.getHeight().intValue());
+        assertEquals(111, imageResolution.getWidth());
+        assertEquals(222, imageResolution.getHeight());
     }
 
     @Test
@@ -54,15 +54,15 @@ public class ImageResolutionDaoTest extends AbstractIntegrationTest {
         assertEquals(3, imageResolutions.size());
 
         assertEquals(10, imageResolutions.get(0).getId().intValue());
-        assertEquals(111, imageResolutions.get(0).getWidth().intValue());
-        assertEquals(222, imageResolutions.get(0).getHeight().intValue());
+        assertEquals(111, imageResolutions.get(0).getWidth());
+        assertEquals(222, imageResolutions.get(0).getHeight());
 
         assertEquals(11, imageResolutions.get(1).getId().intValue());
         assertNull(imageResolutions.get(1).getWidth());
-        assertEquals(333, imageResolutions.get(1).getHeight().intValue());
+        assertEquals(333, imageResolutions.get(1).getHeight());
 
         assertEquals(12, imageResolutions.get(2).getId().intValue());
-        assertEquals(444, imageResolutions.get(2).getWidth().intValue());
+        assertEquals(444, imageResolutions.get(2).getWidth());
         assertNull(imageResolutions.get(2).getHeight());
     }
 

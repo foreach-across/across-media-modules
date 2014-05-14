@@ -138,6 +138,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private InMemoryImageSource generateVariantImageInCurrentThread(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
+        Dimensions outputDimensions = computeOutputResolution(image, imageResolution);
         Crop crop = obtainCrop(image, context, imageResolution);
 
         StreamImageSource originalImageSource = imageStoreService.getOriginalImage(image);
@@ -145,12 +146,10 @@ public class ImageServiceImpl implements ImageService {
             throw new ImageCouldNotBeRetrievedException("The original image is not available on disk.");
         }
 
-        Dimensions outputResolution = computeOutputResolution(image, imageResolution);
-
         InMemoryImageSource variantImageSource = imageTransformService.modify(
                 originalImageSource,
-                outputResolution.getWidth(),
-                outputResolution.getHeight(),
+                outputDimensions.getWidth(),
+                outputDimensions.getHeight(),
                 crop.getX(),
                 crop.getY(),
                 crop.getWidth(),
@@ -179,15 +178,15 @@ public class ImageServiceImpl implements ImageService {
         return variantImageSource;
     }
 
-    private Crop obtainCrop(Image image, Context context, ImageResolution imageResolution) {
+    private Crop obtainCrop(Image image, Context context, ImageResolution requestedResolution) {
         Crop result;
 
-        ImageModification imageModification = imageModificationManager.getById(image.getId(), context.getId(), imageResolution.getId());
+        ImageModification imageModification = imageModificationManager.getById(image.getId(), context.getId(), requestedResolution.getId());
         if (imageModification != null) {
             result = imageModification.getCrop();
         } else {
             List<ImageModification> modifications = imageModificationManager.getAllModifications(image.getId());
-            result = cropGenerator.generateCrop(image, context, imageResolution, modifications);
+            result = cropGenerator.generateCrop(image, context, requestedResolution, modifications);
         }
 
         if (result == null) {
@@ -213,6 +212,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private Dimensions computeOutputResolution(Image image, ImageResolution imageResolution) {
+        return imageResolution.getDimensions().normalize(image.getDimensions());
+/*
         Integer resolutionWidth = imageResolution.getWidth();
         Integer resolutionHeight = imageResolution.getHeight();
 
@@ -228,14 +229,17 @@ public class ImageServiceImpl implements ImageService {
                 return dimensions((int) Math.round(resolutionHeight * (originalWidth / originalHeight)), resolutionHeight);
             }
         }
+        */
     }
 
+    /*
     private Dimensions dimensions(int width, int height) {
         Dimensions dimensions = new Dimensions();
         dimensions.setWidth(width);
         dimensions.setHeight(height);
         return dimensions;
     }
+    */
 
     private static class VariantImageRequest {
         private final int imageId;

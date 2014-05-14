@@ -48,12 +48,22 @@ public class CropGeneratorImpl implements CropGenerator {
 
     @Override
     public Crop generateCrop(Image image, Context context, ImageResolution resolution, List<ImageModification> modifications) {
+        Dimensions requestedDimensions = resolution.getDimensions();
         Dimensions targetDimensions = applyResolution(image, resolution);
+        /*
         if (targetDimensions.getWidth() > image.getDimensions().getWidth()) {
             return null;
         }
         if (targetDimensions.getHeight() > image.getDimensions().getHeight()) {
             return null;
+        }*/
+
+        // If requested resolution is larger than original image, return the largest possible image according to aspect
+        targetDimensions = targetDimensions.scaleToFitIn(image.getDimensions());
+
+        // If the requested dimensions dont defined their own aspect ratio, we consider it a scale instead of an actual crop
+        if (requestedDimensions.getAspectRatio().isUndefined()) {
+            return new Crop(0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight());
         }
 
         Crops crops = obtainCrops(image, context, modifications);

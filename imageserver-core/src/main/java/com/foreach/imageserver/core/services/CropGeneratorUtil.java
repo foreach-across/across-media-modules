@@ -8,6 +8,8 @@ import com.foreach.imageserver.core.business.ImageResolution;
 public class CropGeneratorUtil {
 
     public static Dimensions applyResolution(Image image, ImageResolution resolution) {
+        return resolution.getDimensions().normalize(image.getDimensions());
+        /*
         Integer resolutionWidth = resolution.getWidth();
         Integer resolutionHeight = resolution.getHeight();
 
@@ -22,7 +24,7 @@ public class CropGeneratorUtil {
             } else {
                 return new Dimensions((int) Math.round(resolutionHeight * (originalWidth / originalHeight)), resolutionHeight);
             }
-        }
+        }*/
     }
 
     public static int area(Crop crop) {

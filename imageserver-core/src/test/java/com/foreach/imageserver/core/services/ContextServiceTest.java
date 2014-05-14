@@ -2,14 +2,16 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static junit.framework.Assert.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 public class ContextServiceTest {
 
@@ -19,7 +21,7 @@ public class ContextServiceTest {
     @Before
     public void setUp() {
         contextService = new ContextServiceImpl();
-        ImageResolutionManager imageResolutionManager = Mockito.mock(ImageResolutionManager.class);
+        ImageResolutionManager imageResolutionManager = mock(ImageResolutionManager.class);
 
         List<ImageResolution> imageResolutions = new ArrayList<ImageResolution>();
         imageResolutions.add(createImageResolution(1, 10, 20));
@@ -40,69 +42,86 @@ public class ContextServiceTest {
         imageResolutions.add(createImageResolution(14, 40, 70));
         imageResolutions.add(createImageResolution(15, 50, 70));
 
-        Mockito.doReturn(imageResolutions).when(imageResolutionManager).getForContext(CONTEXT_ID);
+        imageResolutions.add(createImageResolution(16, 45, 0));
+        imageResolutions.add(createImageResolution(17, 0, 45));
+
+        doReturn(imageResolutions).when(imageResolutionManager).getForContext(CONTEXT_ID);
         ReflectionTestUtils.setField(contextService, "imageResolutionManager", imageResolutionManager);
     }
 
     @Test
     public void getImageResolution_forWidthHeight() {
         ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 28, 48); //-> 30,50
-        Assert.assertNotNull(imageResolution);
-        Assert.assertEquals(8, (int) imageResolution.getId());
+        assertNotNull(imageResolution);
+        assertEquals(8, (int) imageResolution.getId());
     }
 
     @Test
     public void getImageResolution_ExactWidthHeight() {
         ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 30, 48); //-> 30,50
-        Assert.assertNotNull(imageResolution);
-        Assert.assertEquals(8, (int) imageResolution.getId());
+        assertNotNull(imageResolution);
+        assertEquals(8, (int) imageResolution.getId());
     }
 
     @Test
     public void getImageResolution_ExactWidthExactHeight() {
         ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 30, 50); //-> 30,50
-        Assert.assertNotNull(imageResolution);
-        Assert.assertEquals(8, (int) imageResolution.getId());
+        assertNotNull(imageResolution);
+        assertEquals(8, (int) imageResolution.getId());
     }
 
     @Test
     public void getImageResolution_TooBigWidthHeight() {
         ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 70, 48); //-> null
-        Assert.assertNull(imageResolution);
+        assertNull(imageResolution);
     }
 
     @Test
     public void getImageResolution_TooBigWidthExactHeight() {
         ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 70, 50); //-> null
-        Assert.assertNull(imageResolution);
+        assertNull(imageResolution);
     }
 
     @Test
     public void getImageResolution_WidthAndTooBigHeight() {
         ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 30, 80); //-> null
-        Assert.assertNull(imageResolution);
+        assertNull(imageResolution);
     }
 
     @Test
     public void getImageResolution_ExactWidthAndTooBigHeight() {
         ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 30, 80); //-> null
-        Assert.assertNull(imageResolution);
+        assertNull(imageResolution);
     }
 
     @Test
     public void getImageResolution_WidthNoHeight() {
         // gets resolution closest to 3/2 width/height ratio: : 50/50=2.5 is closer than 50/20 or 50/70=0.71
         ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 48, 0); //-> 50,50
-        Assert.assertNotNull(imageResolution);
-        Assert.assertEquals(10, (int) imageResolution.getId());
+        assertNotNull(imageResolution);
+        assertEquals(10, (int) imageResolution.getId());
     }
 
     @Test
     public void getImageResolution_ExactWidthNoHeight() {
         // gets resolution closest to 3/2 width/height ratio: 50/50=2.5 is closer than 50/20 or 50/70=0.71
         ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 50, 0); //-> 50,50
-        Assert.assertNotNull(imageResolution);
-        Assert.assertEquals(10, (int) imageResolution.getId());
+        assertNotNull(imageResolution);
+        assertEquals(10, (int) imageResolution.getId());
+    }
+
+    @Test
+    public void getImageResolution_WidthNoHeightAllowed() {
+        ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 45, 0); //-> 45,0
+        assertNotNull(imageResolution);
+        assertEquals(16, (int) imageResolution.getId());
+    }
+
+    @Test
+    public void getImageResolution_HeightNoWidthAllowed() {
+        ImageResolution imageResolution = contextService.getImageResolution(CONTEXT_ID, 0, 45); //-> 0,45
+        assertNotNull(imageResolution);
+        assertEquals(17, (int) imageResolution.getId());
     }
 
     @Test(expected = ImageResolutionException.class)

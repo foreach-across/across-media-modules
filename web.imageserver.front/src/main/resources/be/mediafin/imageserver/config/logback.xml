@@ -1,19 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<appender name="PAGES" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<File>${log.dir}/main.log</File>
-		<encoder>
-			<pattern>%date D%m%n</pattern>
-		</encoder>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<maxIndex>10</maxIndex>
-			<FileNamePattern>${log.dir}/boe/pages.log.%i</FileNamePattern>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<MaxFileSize>10240KB</MaxFileSize>
-		</triggeringPolicy>
-	</appender>
-	<logger name="com.foreach" level="DEBUG">
-		<appender-ref ref="PAGES"/>
-	</logger>
-	<root level="DEBUG"/>
+    <appender name="across" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}/today/across.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/daily/%d{yyyy/MM/dd,aux}/across.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{ISO8601} [%t] %-5p - %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="pages" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}/today/pages.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/daily/%d{yyyy/MM/dd,aux}/pages.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{ISO8601} [%t] %-5p - %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir}/today/debug.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/daily/%d{yyyy/MM/dd,aux}/debug.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{ISO8601} [%t] [%X{requestId}] %-5p %c{1} - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- External libraries -->
+    <logger name="org.springframework" level="warn" additivity="false">
+        <appender-ref ref="debug"/>
+    </logger>
+
+    <logger name="com.foreach.across" level="debug" additivity="false">
+        <appender-ref ref="across"/>
+    </logger>
+
+    <logger name="com.foreach.web.logging.RequestLogInterceptor" level="debug" additivity="false">
+        <appender-ref ref="pages"/>
+    </logger>
+
+    <!-- Default logger -->
+    <root level="debug">
+        <appender-ref ref="debug"/>
+    </root>
 </configuration>

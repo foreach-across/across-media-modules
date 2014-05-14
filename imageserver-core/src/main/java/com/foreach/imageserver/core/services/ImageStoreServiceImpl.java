@@ -77,6 +77,10 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     @Override
     public StreamImageSource getOriginalImage(Image image) {
         Path targetPath = getTargetPath(image);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Original image {} - expected location {}", image.getId(), targetPath);
+        }
         return read(targetPath, image.getImageType());
     }
 
@@ -183,15 +187,15 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     private String constructFileName(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
         StringBuilder fileNameBuilder = new StringBuilder();
         fileNameBuilder.append(variantFileNamePrefix(image.getId()));
-        if (imageResolution.getWidth() != null) {
-            fileNameBuilder.append('w');
-            fileNameBuilder.append(imageResolution.getWidth());
-            fileNameBuilder.append('-');
-        }
-        if (imageResolution.getHeight() != null) {
-            fileNameBuilder.append('h');
-            fileNameBuilder.append(imageResolution.getHeight());
-        }
+        //if (imageResolution.getWidth() != null) {
+        fileNameBuilder.append('w');
+        fileNameBuilder.append(imageResolution.getWidth());
+        fileNameBuilder.append('-');
+        //}
+        //if (imageResolution.getHeight() != null) {
+        fileNameBuilder.append('h');
+        fileNameBuilder.append(imageResolution.getHeight());
+        //}
         fileNameBuilder.append('.');
         fileNameBuilder.append(imageVariant.getOutputType().getExtension());
 

@@ -17,8 +17,8 @@ package com.foreach.imageserver.core.business;
  */
 public class ImageResolution {
     private Integer id;
-    private Integer width;
-    private Integer height;
+    private int width;
+    private int height;
 
     private boolean configurable;
     private String name;
@@ -31,20 +31,24 @@ public class ImageResolution {
         this.id = id;
     }
 
-    public Integer getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
-    public Integer getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(int height) {
         this.height = height;
+    }
+
+    public Dimensions getDimensions() {
+        return new Dimensions(getWidth(), getHeight());
     }
 
     public boolean isConfigurable() {
