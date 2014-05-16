@@ -9,6 +9,7 @@ import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class ImageStreamingController {
 
     @Value("${accessToken}")
     private String accessToken;
+
+    @Value("${image.404.fallback:}")
+    private String fallbackImageKey;
 
     @Autowired
     private ContextService contextService;
@@ -81,6 +85,11 @@ public class ImageStreamingController {
         // TODO Make sure we only rely on objects that can be long-term cached for retrieving the image.
 
         Image image = imageService.getByExternalId(externalId);
+
+        if (image == null && StringUtils.isNotBlank(fallbackImageKey) && !StringUtils.equals(externalId, fallbackImageKey)) {
+            image = imageService.getByExternalId(fallbackImageKey);
+        }
+
         if (image == null) {
             error(response, HttpStatus.NOT_FOUND, "No such image.");
             return;

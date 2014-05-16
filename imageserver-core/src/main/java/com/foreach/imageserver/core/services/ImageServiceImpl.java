@@ -10,9 +10,7 @@ import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +19,6 @@ import java.util.*;
 
 @Service
 public class ImageServiceImpl implements ImageService {
-
-    @Value("${image.404.fallback:}")
-    private String fallbackImageKey;
 
     @Autowired
     private ImageManager imageManager;
@@ -50,21 +45,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image getByExternalId(String externalId) {
-        Image actual = imageManager.getByExternalId(externalId);
-
-        if (actual == null) {
-            actual = getFallbackImage(externalId);
-        }
-
-        return actual;
-    }
-
-    private Image getFallbackImage(String externalId) {
-        if (StringUtils.isNotBlank(fallbackImageKey) && !StringUtils.equals(externalId, fallbackImageKey)) {
-            return imageManager.getByExternalId(fallbackImageKey);
-        }
-
-        return null;
+        return imageManager.getByExternalId(externalId);
     }
 
     // Used concurrently from multiple threads.
