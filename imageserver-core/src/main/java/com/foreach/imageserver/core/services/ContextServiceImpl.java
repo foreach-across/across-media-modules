@@ -44,6 +44,14 @@ public class ContextServiceImpl implements ContextService {
         if (width < 0 || height < 0) {
             throw new ImageResolutionException("Invalid image dimensions specified.");
         } else if (width == 0 && height == 0) {
+            // We won't try to match different resolutions in this case.
+            List<ImageResolution> imageResolutions = imageResolutionManager.getForContext(contextId);
+            for (ImageResolution imageResolution : imageResolutions) {
+                if (imageResolution.getWidth() == width && imageResolution.getHeight() == height) {
+                    return imageResolution;
+                }
+            }
+
             throw new ImageResolutionException("At least one valid dimension is required.");
         }
 

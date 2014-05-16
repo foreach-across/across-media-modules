@@ -59,6 +59,7 @@ public class CropGeneratorImpl implements CropGenerator {
     public ImageModificationDto buildModificationDto(Image image, Context context, ImageResolution imageResolution) {
         ImageModificationDto modificationDto = new ImageModificationDto(imageResolution.getWidth(), imageResolution.getHeight());
         modificationDto.setCrop(DtoUtil.toDto(obtainCrop(image, context, imageResolution)));
+        CropGeneratorUtil.normalizeModificationDto(image, modificationDto);
 
         return modificationDto;
     }
