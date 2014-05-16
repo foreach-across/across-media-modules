@@ -166,6 +166,7 @@ public class ImageModificationController extends BaseImageAPIController {
             dto.setHeight(imageResolution.getHeight());
             dto.setConfigurable(imageResolution.isConfigurable());
             dto.setName(imageResolution.getName());
+            dto.setTags(imageResolution.getTags());
             dtos.add(dto);
         }
         return dtos;

@@ -122,14 +122,23 @@
                 <constraints nullable="false"/>
             </column>
             <column name="name" type="varchar(250 char)">
-                <constraints nullable="true" />
+                <constraints nullable="true"/>
             </column>
         </addColumn>
     </changeSet>
 
     <changeSet id="201405140834" author="arne">
         <comment>Image resolution and height are no longer nullable</comment>
-        <addNotNullConstraint tableName="IMAGE_RESOLUTION" columnName="width" />
-        <addNotNullConstraint tableName="IMAGE_RESOLUTION" columnName="height" />
+        <addNotNullConstraint tableName="IMAGE_RESOLUTION" columnName="width"/>
+        <addNotNullConstraint tableName="IMAGE_RESOLUTION" columnName="height"/>
+    </changeSet>
+
+    <changeSet id="201405160845" author="arne">
+        <comment>Add tags to resolution</comment>
+        <addColumn tableName="IMAGE_RESOLUTION">
+            <column name="tags" type="varchar(500 char)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

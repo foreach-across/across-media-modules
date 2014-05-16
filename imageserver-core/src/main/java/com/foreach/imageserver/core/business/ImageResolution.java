@@ -1,5 +1,8 @@
 package com.foreach.imageserver.core.business;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * <p>An ImageResolution specifies a permitted output resolution. Every Application has an associated list of
  * ImageResolution-s for which ImageModification-s can be registered.</p>
@@ -22,6 +25,7 @@ public class ImageResolution {
 
     private boolean configurable;
     private String name;
+    private Set<String> tags = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -65,6 +69,14 @@ public class ImageResolution {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 
     @Override

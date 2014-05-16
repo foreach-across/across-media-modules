@@ -1,10 +1,14 @@
 package com.foreach.imageserver.dto;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ImageResolutionDto {
     private boolean configurable;
     private String name;
     private int width;
     private int height;
+    private Set<String> tags = new HashSet<String>();
 
     public ImageResolutionDto() {
     }
@@ -44,5 +48,13 @@ public class ImageResolutionDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 }

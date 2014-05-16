@@ -215,6 +215,7 @@ public class ImageServerClientImpl implements ImageServerClient {
 
     private void addQueryParams(MultivaluedMap<String, String> queryParams, ImageModificationDto imageModification) {
         ImageResolutionDto resolution = imageModification.getResolution();
+        DimensionsDto boundaries = imageModification.getBoundaries();
         CropDto crop = imageModification.getCrop();
         DimensionsDto density = imageModification.getDensity();
 
@@ -225,8 +226,13 @@ public class ImageServerClientImpl implements ImageServerClient {
         queryParams.putSingle("crop.y", Integer.toString(crop.getY()));
         queryParams.putSingle("crop.width", Integer.toString(crop.getWidth()));
         queryParams.putSingle("crop.height", Integer.toString(crop.getHeight()));
+        queryParams.putSingle("crop.sourceWidth", Integer.toString(crop.getSourceWidth()));
+        queryParams.putSingle("crop.sourceHeight", Integer.toString(crop.getSourceHeight()));
         queryParams.putSingle("density.width", Integer.toString(density.getWidth()));
         queryParams.putSingle("density.height", Integer.toString(density.getHeight()));
+
+        queryParams.putSingle("boundaries.width", Integer.toString(boundaries.getWidth()));
+        queryParams.putSingle("boundaries.height", Integer.toString(boundaries.getHeight()));
     }
 
     private <T> T getJsonResponse(String path, MultivaluedMap<String, String> queryParams, GenericType<JsonResponse<T>> responseType) {
