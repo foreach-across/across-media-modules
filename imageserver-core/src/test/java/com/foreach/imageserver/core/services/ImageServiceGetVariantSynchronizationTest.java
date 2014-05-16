@@ -6,6 +6,7 @@ import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.dto.ImageModificationDto;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -153,8 +154,11 @@ public class ImageServiceGetVariantSynchronizationTest {
         ImageResolution imageResolution = imageResolution(20);
         ImageVariant imageVariant = imageVariant(ImageType.PNG);
 
-        when(imageStoreService.getVariantImage(firstImage, context, imageResolution, imageVariant)).thenReturn(null);
-        when(imageStoreService.getVariantImage(secondImage, context, imageResolution, imageVariant)).thenReturn(null);
+        ImageModificationDto modificationDto = new ImageModificationDto();
+        modificationDto.setResolution(DtoUtil.toDto(imageResolution));
+
+        when(imageStoreService.getVariantImage(firstImage, context, modificationDto, imageVariant)).thenReturn(null);
+        when(imageStoreService.getVariantImage(secondImage, context, modificationDto, imageVariant)).thenReturn(null);
 
         when(imageModificationManager.getById(1, 10, 20)).thenReturn(imageModification());
         when(imageModificationManager.getById(2, 10, 20)).thenReturn(imageModification());

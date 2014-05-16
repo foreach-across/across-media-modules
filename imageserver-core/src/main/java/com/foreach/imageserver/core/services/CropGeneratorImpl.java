@@ -1,6 +1,12 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.managers.ImageModificationManager;
+import com.foreach.imageserver.dto.CropDto;
+import com.foreach.imageserver.dto.DimensionsDto;
+import com.foreach.imageserver.dto.ImageModificationDto;
+import com.foreach.imageserver.dto.ImageResolutionDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -46,6 +52,61 @@ import static com.foreach.imageserver.core.services.CropGeneratorUtil.*;
 @Service
 public class CropGeneratorImpl implements CropGenerator {
 
+    @Autowired
+    private ImageModificationManager imageModificationManager;
+
+    @Override
+    public ImageModificationDto buildModificationDto(Image image, Context context, ImageResolution imageResolution) {
+        ImageModificationDto modificationDto = new ImageModificationDto(imageResolution.getWidth(), imageResolution.getHeight());
+        modificationDto.setCrop(DtoUtil.toDto(obtainCrop(image, context, imageResolution)));
+
+        //normalizeModificationDto(image, modificationDto);
+
+        return modificationDto;
+    }
+
+    private Crop obtainCrop(Image image, Context context, ImageResolution requestedResolution) {
+        Crop result;
+
+        ImageModification imageModification = imageModificationManager.getById(image.getId(), context.getId(), requestedResolution.getId());
+        if (imageModification != null) {
+            result = imageModification.getCrop();
+        } else {
+            List<ImageModification> modifications = imageModificationManager.getAllModifications(image.getId());
+            result = generateCrop(image, context, requestedResolution, modifications);
+        }
+
+        if (result == null) {
+            throw new ImageCouldNotBeRetrievedException("No crop could be determined for this image.");
+        }
+
+        return result;
+    }
+
+    @Override
+    public void normalizeModificationDto(Image image, ImageModificationDto imageModificationDto) {
+        // Determine the actual resolution requested based on the original
+        Dimensions originalDimensions = image.getDimensions();
+        Dimensions targetDimensions = new Dimensions(imageModificationDto.getResolution().getWidth(), imageModificationDto.getResolution().getHeight()).normalize(image.getDimensions());
+
+        // TODO: cropping is not yet supported
+        // Determine the crop specified - create a full picture crop if none specified
+        // Translate the crop according to the actual original
+
+        // If boundaries are specified, scale down the output to fit in the boundaries
+        if (imageModificationDto.hasBoundaries()) {
+            targetDimensions = targetDimensions.scaleToFitIn(DtoUtil.toBusiness(imageModificationDto.getBoundaries()));
+        }
+
+        if ( !imageModificationDto.hasCrop() ) {
+            // No crop is simply a scaling of the image
+            imageModificationDto.setCrop( new CropDto( 0,0, originalDimensions.getWidth(), originalDimensions.getHeight()));
+        }
+
+        imageModificationDto.setResolution(new ImageResolutionDto(targetDimensions.getWidth(), targetDimensions.getHeight()));
+        imageModificationDto.setBoundaries(new DimensionsDto());
+    }
+
     @Override
     public Crop generateCrop(Image image, Context context, ImageResolution resolution, List<ImageModification> modifications) {
         Dimensions requestedDimensions = resolution.getDimensions();
@@ -61,7 +122,7 @@ public class CropGeneratorImpl implements CropGenerator {
         // If requested resolution is larger than original image, return the largest possible image according to aspect
         targetDimensions = targetDimensions.scaleToFitIn(image.getDimensions());
 
-        // If the requested dimensions dont defined their own aspect ratio, we consider it a scale instead of an actual crop
+        // If the requested dimensions does not defined their own aspect ratio, we consider it a scale instead of an actual crop
         if (requestedDimensions.getAspectRatio().isUndefined()) {
             return new Crop(0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight());
         }

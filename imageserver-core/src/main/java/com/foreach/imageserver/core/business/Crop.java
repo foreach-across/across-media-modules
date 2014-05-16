@@ -45,6 +45,10 @@ public class Crop {
         this.height = height;
     }
 
+    public boolean isEmpty() {
+    		return height <= 0 || width <= 0;
+    	}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

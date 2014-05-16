@@ -4,6 +4,8 @@ import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.DimensionsDto;
+import com.foreach.imageserver.dto.ImageInfoDto;
+import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.imageserver.dto.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,7 @@ public class ImageLoadController extends BaseImageAPIController {
 
     public static final String LOAD_IMAGE_PATH = "load";
     public static final String IMAGE_EXISTS_PATH = "imageExists";
+    public static final String IMAGE_INFO_PATH = "imageInfo";
 
     @Value("${accessToken}")
     private String accessToken;
@@ -58,7 +61,39 @@ public class ImageLoadController extends BaseImageAPIController {
 
         Image image = imageService.getByExternalId(externalId);
 
-        return success(Boolean.valueOf(image != null));
+        return success(image != null);
+    }
+
+    @RequestMapping(value = "/" + IMAGE_INFO_PATH, method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResponse info(@RequestParam(value = "token", required = true) String accessToken,
+                             @RequestParam(value = "iid", required = true) String externalId) {
+        if (!this.accessToken.equals(accessToken)) {
+            return error("Access denied.");
+        }
+
+        Image image = imageService.getByExternalId(externalId);
+
+        if (image != null) {
+            return success(dto(image));
+        } else {
+            ImageInfoDto notExisting = new ImageInfoDto();
+            notExisting.setExternalId(externalId);
+            notExisting.setExisting(false);
+
+            return success(notExisting);
+        }
+    }
+
+    private ImageInfoDto dto(Image image) {
+        ImageInfoDto dto = new ImageInfoDto();
+        dto.setExisting(true);
+        dto.setExternalId(image.getExternalId());
+        dto.setCreated(image.getDateCreated());
+        dto.setDimensionsDto(dto(image.getDimensions()));
+        dto.setImageType(ImageTypeDto.valueOf(image.getImageType().name()));
+
+        return dto;
     }
 
     private DimensionsDto dto(Dimensions dimensions) {

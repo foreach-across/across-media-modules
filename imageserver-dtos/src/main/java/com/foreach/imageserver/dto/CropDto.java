@@ -47,4 +47,28 @@ public class CropDto {
     public void setHeight(int height) {
         this.height = height;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CropDto)) return false;
+
+        CropDto cropDto = (CropDto) o;
+
+        if (height != cropDto.height) return false;
+        if (width != cropDto.width) return false;
+        if (x != cropDto.x) return false;
+        if (y != cropDto.y) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        result = 31 * result + width;
+        result = 31 * result + height;
+        return result;
+    }
 }

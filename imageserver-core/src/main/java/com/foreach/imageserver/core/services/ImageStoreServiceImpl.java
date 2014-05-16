@@ -2,6 +2,8 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.dto.ImageModificationDto;
+import com.foreach.imageserver.dto.ImageResolutionDto;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -85,21 +87,21 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     }
 
     @Override
-    public void storeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant, InputStream imageStream) {
-        Path targetPath = getTargetPath(image, context, imageResolution, imageVariant);
+    public void storeVariantImage(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant, InputStream imageStream) {
+        Path targetPath = getTargetPath(image, context, modification, imageVariant);
         createFoldersSafely(targetPath.getParent());
         writeSafely(imageStream, targetPath);
     }
 
     @Override
-    public StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
-        Path targetPath = getTargetPath(image, context, imageResolution, imageVariant);
+    public StreamImageSource getVariantImage(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant) {
+        Path targetPath = getTargetPath(image, context, modification, imageVariant);
         return read(targetPath, imageVariant.getOutputType());
     }
 
     @Override
-    public void removeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
-        Path targetPath = getTargetPath(image, context, imageResolution, imageVariant);
+    public void removeVariantImage(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant) {
+        Path targetPath = getTargetPath(image, context, modification, imageVariant);
 
         try {
             Files.deleteIfExists(targetPath);
@@ -170,13 +172,13 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         return originalsFolder.resolve(year).resolve(month).resolve(day).resolve(fileName);
     }
 
-    private Path getTargetPath(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
+    private Path getTargetPath(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant) {
         /**
          * We may at some point need image repositories that cannot re-create their images. For this reason we
          * create a per-repository parent folder, so we can easily distinguish between repositories.
          */
 
-        String fileName = constructFileName(image, imageResolution, imageVariant);
+        String fileName = constructFileName(image, modification, imageVariant);
         String year = image.getDateCreatedYearString();
         String month = image.getDateCreatedMonthString();
         String day = image.getDateCreatedDayString();
@@ -184,7 +186,8 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         return variantsFolder.resolve(context.getCode()).resolve(year).resolve(month).resolve(day).resolve(fileName);
     }
 
-    private String constructFileName(Image image, ImageResolution imageResolution, ImageVariant imageVariant) {
+    private String constructFileName(Image image, ImageModificationDto modification, ImageVariant imageVariant) {
+        ImageResolutionDto imageResolution = modification.getResolution();
         StringBuilder fileNameBuilder = new StringBuilder();
         fileNameBuilder.append(variantFileNamePrefix(image.getId()));
         //if (imageResolution.getWidth() != null) {

@@ -24,6 +24,8 @@ public interface ImageServerClient {
 
     boolean imageExists(String imageId);
 
+    ImageInfoDto imageInfo(String imageId);
+
     void registerImageModification(String imageId, ImageServerContext context, ImageModificationDto imageModificationDto);
 
     void registerImageModification(String imageId, ImageServerContext context, Integer width, Integer height, int cropX, int cropY, int cropWidth, int croptHeight, int densityWidth, int densityHeight);

@@ -132,6 +132,19 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     @Override
+    public ImageInfoDto imageInfo(String imageId) {
+        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+        queryParams.putSingle("token", imageServerAccessToken);
+        queryParams.putSingle("iid", imageId);
+
+        GenericType<JsonResponse<ImageInfoDto>> responseType = new GenericType<JsonResponse<ImageInfoDto>>() {
+        };
+
+        return getJsonResponse("imageInfo", queryParams, responseType);
+    }
+
+    @Override
+    @Deprecated
     public void registerImageModification(String imageId, ImageServerContext context, Integer width, Integer height, int cropX, int cropY, int cropWidth, int croptHeight, int densityWidth, int densityHeight) {
         ImageResolutionDto resolution = new ImageResolutionDto(width, height);
         CropDto crop = new CropDto(cropX, cropY, cropWidth, croptHeight);
@@ -192,12 +205,8 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     private void addQueryParams(MultivaluedMap<String, String> queryParams, ImageResolutionDto imageResolution) {
-        if (imageResolution.getWidth() != null) {
-            queryParams.putSingle("width", imageResolution.getWidth().toString());
-        }
-        if (imageResolution.getHeight() != null) {
-            queryParams.putSingle("height", imageResolution.getHeight().toString());
-        }
+        queryParams.putSingle("width", Integer.toString(imageResolution.getWidth()));
+        queryParams.putSingle("height", Integer.toString(imageResolution.getHeight()));
     }
 
     private void addQueryParams(MultivaluedMap<String, String> queryParams, ImageVariantDto imageVariant) {
@@ -208,12 +217,10 @@ public class ImageServerClientImpl implements ImageServerClient {
         ImageResolutionDto resolution = imageModification.getResolution();
         CropDto crop = imageModification.getCrop();
         DimensionsDto density = imageModification.getDensity();
-        if (resolution.getWidth() != null) {
-            queryParams.putSingle("resolution.width", resolution.getWidth().toString());
-        }
-        if (resolution.getHeight() != null) {
-            queryParams.putSingle("resolution.height", resolution.getHeight().toString());
-        }
+
+        queryParams.putSingle("resolution.width", Integer.toString(resolution.getWidth()));
+        queryParams.putSingle("resolution.height", Integer.toString(resolution.getHeight()));
+
         queryParams.putSingle("crop.x", Integer.toString(crop.getX()));
         queryParams.putSingle("crop.y", Integer.toString(crop.getY()));
         queryParams.putSingle("crop.width", Integer.toString(crop.getWidth()));

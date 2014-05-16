@@ -4,6 +4,7 @@ import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
@@ -28,7 +29,11 @@ import java.io.OutputStream;
 public class ImageStreamingController {
 
     public static final String VIEW_PATH = "view";
+    public static final String RENDER_PATH = "render";
     private static final Logger LOG = LoggerFactory.getLogger(ImageStreamingController.class);
+
+    @Value("${accessToken}")
+    private String accessToken;
 
     @Autowired
     private ContextService contextService;
@@ -38,6 +43,34 @@ public class ImageStreamingController {
 
     @Value("${imagestreaming.caching.maxAgeInSeconds}")
     private int maxCacheAgeInSeconds;
+
+    @RequestMapping(value = "/" + RENDER_PATH, method = RequestMethod.GET)
+    public void render(
+            @RequestParam(value = "token", required = true) String accessToken,
+            @RequestParam(value = "iid", required = true) String externalId,
+            ImageModificationDto imageModificationDto,
+            ImageVariantDto imageVariantDto,
+            HttpServletResponse response) {
+
+        if (!this.accessToken.equals(accessToken)) {
+            error(response, HttpStatus.FORBIDDEN, "Access denied.");
+        }
+
+        Image image = imageService.getByExternalId(externalId);
+        if (image == null) {
+            error(response, HttpStatus.NOT_FOUND, "No such image.");
+            return;
+        }
+
+        StreamImageSource imageSource = imageService.generateModification(image, imageModificationDto, toBusiness(imageVariantDto));
+
+        if (imageSource == null) {
+            error(response, HttpStatus.NOT_FOUND, "Could not create variant.");
+            return;
+        }
+
+        renderImageSource(imageSource, response);
+    }
 
     @RequestMapping(value = "/" + VIEW_PATH, method = RequestMethod.GET)
     public void view(@RequestParam(value = "iid", required = true) String externalId,
@@ -71,6 +104,10 @@ public class ImageStreamingController {
             return;
         }
 
+        renderImageSource(imageSource, response);
+    }
+
+    private void renderImageSource(StreamImageSource imageSource, HttpServletResponse response) {
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(imageSource.getImageType().getContentType());
 

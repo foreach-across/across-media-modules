@@ -7,6 +7,9 @@ import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.dto.CropDto;
+import com.foreach.imageserver.dto.ImageModificationDto;
+import com.foreach.imageserver.dto.ImageResolutionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,19 +88,41 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
-        StreamImageSource imageSource = imageStoreService.getVariantImage(image, context, imageResolution, imageVariant);
+        ImageModificationDto modification = cropGenerator.buildModificationDto(image, context, imageResolution);
+        StreamImageSource imageSource = imageStoreService.getVariantImage(image, context, modification, imageVariant);
         if (imageSource == null) {
-            imageSource = generateVariantImage(image, context, imageResolution, imageVariant);
+            imageSource = generateVariantImage(image, context, modification, imageVariant, true);
+
+            /**
+             * The ImageModification objects we used to determine the Crop may have changed while we were busy
+             * generating it. On the other hand, we expect the chances of this actually happening to be pretty low. To
+             * avoid having to keep database locking in mind whenever we work with ImageModification-s, we employ some
+             * semi-optimistic concurrency control. Specifically: we always write the file without any advance
+             * checking. This may cause us to serve stale variants for a very short while. Then we check that the
+             * ImageModification was not altered behind our back. Should this be the case we delete the variant from
+             * disk; it will then be recreated during the next request.
+             */
+            ImageModificationDto reviewModification = cropGenerator.buildModificationDto(image, context, imageResolution);
+            if (!modification.equals(reviewModification)) {
+                imageStoreService.removeVariantImage(image, context, modification, imageVariant);
+            }
+
         }
         return imageSource;
+    }
+
+    @Override
+    public StreamImageSource generateModification(Image image, ImageModificationDto modificationDto, ImageVariant imageVariant) {
+        cropGenerator.normalizeModificationDto(image, modificationDto);
+        return generateVariantImage(image, null, modificationDto, imageVariant, false);
     }
 
     /**
      * We allow just one thread to generate a specific variant. Other threads that require this variant simultaneously
      * will block and re-use the same result.
      */
-    private StreamImageSource generateVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
-        VariantImageRequest request = new VariantImageRequest(image.getId(), context.getId(), imageResolution.getId(), imageVariant.getOutputType());
+    private StreamImageSource generateVariantImage(Image image, Context context, ImageModificationDto imageModification, ImageVariant imageVariant, boolean storeImage) {
+        VariantImageRequest request = new VariantImageRequest(image.getId(), context != null ? context.getId() : 0, imageModification, imageVariant);
 
         FutureVariantImage futureVariantImage;
         boolean otherThreadIsCreatingVariant;
@@ -115,7 +140,7 @@ public class ImageServiceImpl implements ImageService {
             return futureVariantImage.get();
         } else {
             try {
-                InMemoryImageSource variantImageSource = generateVariantImageInCurrentThread(image, context, imageResolution, imageVariant);
+                InMemoryImageSource variantImageSource = generateVariantImageInCurrentThread(image, context, imageModification, imageVariant, storeImage);
                 synchronized (this) {
                     futureVariantImage.setResult(variantImageSource);
                     futureVariantImages.remove(request);
@@ -137,9 +162,13 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-    private InMemoryImageSource generateVariantImageInCurrentThread(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
-        Dimensions outputDimensions = computeOutputResolution(image, imageResolution);
-        Crop crop = obtainCrop(image, context, imageResolution);
+    private InMemoryImageSource generateVariantImageInCurrentThread(Image image, Context context, ImageModificationDto modificationDto, ImageVariant imageVariant, boolean storeImage) {
+        ImageResolution imageResolution = new ImageResolution();
+        imageResolution.setWidth(modificationDto.getResolution().getWidth());
+        imageResolution.setHeight(modificationDto.getResolution().getHeight());
+
+        ImageResolutionDto outputDimensions = modificationDto.getResolution();
+        CropDto crop = modificationDto.getCrop();
 
         StreamImageSource originalImageSource = imageStoreService.getOriginalImage(image);
         if (originalImageSource == null) {
@@ -159,41 +188,11 @@ public class ImageServiceImpl implements ImageService {
                 imageVariant.getOutputType());
 
         // TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
-        imageStoreService.storeVariantImage(image, context, imageResolution, imageVariant, variantImageSource.byteStream());
-
-        /**
-         * The ImageModification objects we used to determine the Crop may have changed while we were busy
-         * generating it. On the other hand, we expect the chances of this actually happening to be pretty low. To
-         * avoid having to keep database locking in mind whenever we work with ImageModification-s, we employ some
-         * semi-optimistic concurrency control. Specifically: we always write the file without any advance
-         * checking. This may cause us to serve stale variants for a very short while. Then we check that the
-         * ImageModification was not altered behind our back. Should this be the case we delete the variant from
-         * disk; it will then be recreated during the next request.
-         */
-        Crop reviewCrop = obtainCrop(image, context, imageResolution);
-        if (!crop.equals(reviewCrop)) {
-            imageStoreService.removeVariantImage(image, context, imageResolution, imageVariant);
+        if (storeImage) {
+            imageStoreService.storeVariantImage(image, context, modificationDto, imageVariant, variantImageSource.byteStream());
         }
 
         return variantImageSource;
-    }
-
-    private Crop obtainCrop(Image image, Context context, ImageResolution requestedResolution) {
-        Crop result;
-
-        ImageModification imageModification = imageModificationManager.getById(image.getId(), context.getId(), requestedResolution.getId());
-        if (imageModification != null) {
-            result = imageModification.getCrop();
-        } else {
-            List<ImageModification> modifications = imageModificationManager.getAllModifications(image.getId());
-            result = cropGenerator.generateCrop(image, context, requestedResolution, modifications);
-        }
-
-        if (result == null) {
-            throw new ImageCouldNotBeRetrievedException("No crop could be determined for this image.");
-        }
-
-        return result;
     }
 
     @Override
@@ -211,47 +210,17 @@ public class ImageServiceImpl implements ImageService {
         return new ArrayList<>(imageModificationManager.getModifications(imageId, contextId));
     }
 
-    private Dimensions computeOutputResolution(Image image, ImageResolution imageResolution) {
-        return imageResolution.getDimensions().normalize(image.getDimensions());
-/*
-        Integer resolutionWidth = imageResolution.getWidth();
-        Integer resolutionHeight = imageResolution.getHeight();
-
-        if (resolutionWidth != null && resolutionHeight != null) {
-            return dimensions(resolutionWidth, resolutionHeight);
-        } else {
-            double originalWidth = image.getDimensions().getWidth();
-            double originalHeight = image.getDimensions().getHeight();
-
-            if (resolutionWidth != null) {
-                return dimensions(resolutionWidth, (int) Math.round(resolutionWidth * (originalHeight / originalWidth)));
-            } else {
-                return dimensions((int) Math.round(resolutionHeight * (originalWidth / originalHeight)), resolutionHeight);
-            }
-        }
-        */
-    }
-
-    /*
-    private Dimensions dimensions(int width, int height) {
-        Dimensions dimensions = new Dimensions();
-        dimensions.setWidth(width);
-        dimensions.setHeight(height);
-        return dimensions;
-    }
-    */
-
     private static class VariantImageRequest {
         private final int imageId;
         private final int contextId;
-        private final int resolutionId;
-        private final ImageType outputType;
+        private final ImageModificationDto modification;
+        private final ImageVariant variant;
 
-        public VariantImageRequest(int imageId, int contextId, int resolutionId, ImageType outputType) {
+        public VariantImageRequest(int imageId, int contextId, ImageModificationDto modification, ImageVariant variant) {
             this.imageId = imageId;
             this.contextId = contextId;
-            this.resolutionId = resolutionId;
-            this.outputType = outputType;
+            this.modification = modification;
+            this.variant = variant;
         }
 
         @Override
@@ -263,8 +232,8 @@ public class ImageServiceImpl implements ImageService {
 
             if (contextId != that.contextId) return false;
             if (imageId != that.imageId) return false;
-            if (resolutionId != that.resolutionId) return false;
-            if (outputType != that.outputType) return false;
+            if (!modification.equals(that.modification)) return false;
+            if (!variant.equals(that.variant)) return false;
 
             return true;
         }
@@ -273,8 +242,8 @@ public class ImageServiceImpl implements ImageService {
         public int hashCode() {
             int result = imageId;
             result = 31 * result + contextId;
-            result = 31 * result + resolutionId;
-            result = 31 * result + (outputType != null ? outputType.hashCode() : 0);
+            result = 31 * result + modification.hashCode();
+            result = 31 * result + (variant != null ? variant.hashCode() : 0);
             return result;
         }
     }

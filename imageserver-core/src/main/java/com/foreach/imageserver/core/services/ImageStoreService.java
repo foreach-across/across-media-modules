@@ -5,6 +5,7 @@ import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.dto.ImageModificationDto;
 
 import java.io.InputStream;
 
@@ -15,11 +16,11 @@ public interface ImageStoreService {
 
     StreamImageSource getOriginalImage(Image image);
 
-    void storeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant, InputStream imageStream);
+    void storeVariantImage(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant, InputStream imageStream);
 
-    StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);
+    StreamImageSource getVariantImage(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant);
 
-    void removeVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);
+    void removeVariantImage(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant);
 
     void removeVariants(int imageId);
 }

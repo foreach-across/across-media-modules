@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.dto.ImageModificationDto;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,8 @@ public interface ImageService {
     Dimensions saveImage(String externalId, byte[] imageBytes, Date imageDate) throws ImageStoreException;
 
     void saveImageModification(ImageModification modification);
+
+    StreamImageSource generateModification(Image image, ImageModificationDto modificationDto, ImageVariant imageVariant);
 
     StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);
 

@@ -3,30 +3,30 @@ package com.foreach.imageserver.dto;
 public class ImageResolutionDto {
     private boolean configurable;
     private String name;
-    private Integer width;
-    private Integer height;
+    private int width;
+    private int height;
 
     public ImageResolutionDto() {
     }
 
-    public ImageResolutionDto(Integer width, Integer height) {
+    public ImageResolutionDto(int width, int height) {
         this.width = width;
         this.height = height;
     }
 
-    public Integer getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
-    public Integer getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 

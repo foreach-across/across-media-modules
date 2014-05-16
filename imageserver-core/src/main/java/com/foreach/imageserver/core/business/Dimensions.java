@@ -8,6 +8,8 @@ package com.foreach.imageserver.core.business;
  * for a certain dimension.
  */
 public class Dimensions {
+    public static final Dimensions EMPTY = new Dimensions();
+
     private int width;
     private int height;
 
