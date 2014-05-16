@@ -45,10 +45,6 @@
             <exclusions>
                 <exclusion>
                     <groupId>across</groupId>
-                    <artifactId>across-core</artifactId>
-                </exclusion>
-                    <exclusion>
-                    <groupId>across</groupId>
                     <artifactId>across-debug-web</artifactId>
                 </exclusion>
                 <exclusion>

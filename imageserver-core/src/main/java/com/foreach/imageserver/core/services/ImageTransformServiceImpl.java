@@ -1,7 +1,6 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.*;
@@ -10,10 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.concurrent.Semaphore;
 
 @Service
@@ -23,7 +18,6 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     @Autowired
     private ImageTransformerRegistry imageTransformerRegistry;
 
-    private List<ImageTransformer> imageTransformers;
     private Semaphore semaphore;
 
     @Autowired
@@ -36,12 +30,6 @@ public class ImageTransformServiceImpl implements ImageTransformService {
          */
 
         this.semaphore = new Semaphore(concurrentTransformLimit, true);
-    }
-
-    @PostRefresh
-    public void init() {
-        imageTransformers = new ArrayList<>(imageTransformerRegistry.getMembers());
-        Collections.sort(imageTransformers, new ImageTransformerComparator());
     }
 
     @Override
@@ -129,7 +117,7 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     private ImageTransformer findAbleTransformer(CanExecute canExecute) {
         ImageTransformer firstFallback = null;
 
-        for (ImageTransformer imageTransformer : imageTransformers) {
+        for (ImageTransformer imageTransformer : imageTransformerRegistry) {
             ImageTransformerPriority priority = canExecute.consider(imageTransformer);
             if (priority == ImageTransformerPriority.PREFERRED) {
                 return imageTransformer;
@@ -144,15 +132,4 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     private interface CanExecute {
         ImageTransformerPriority consider(ImageTransformer imageTransformer);
     }
-
-    private class ImageTransformerComparator implements Comparator<ImageTransformer> {
-        @Override
-        public int compare(ImageTransformer left, ImageTransformer right) {
-            Integer leftOrder = left.getOrder();
-            Integer rightOrder = right.getOrder();
-
-            return leftOrder.compareTo(rightOrder);
-        }
-    }
-
 }

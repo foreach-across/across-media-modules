@@ -6,6 +6,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
+import com.foreach.imageserver.core.installers.Image404Installer;
 import com.foreach.imageserver.core.installers.InitialSchemaInstaller;
 
 import java.util.Set;
@@ -34,6 +35,6 @@ public class ImageServerCoreModule extends AcrossModule {
 
     @Override
     public Object[] getInstallers() {
-        return new Object[]{new InitialSchemaInstaller()};
+        return new Object[]{new InitialSchemaInstaller(), new Image404Installer()};
     }
 }
