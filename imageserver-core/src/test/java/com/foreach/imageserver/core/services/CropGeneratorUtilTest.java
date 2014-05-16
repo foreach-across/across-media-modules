@@ -4,6 +4,10 @@ import com.foreach.imageserver.core.business.Crop;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageResolution;
+import com.foreach.imageserver.dto.CropDto;
+import com.foreach.imageserver.dto.DimensionsDto;
+import com.foreach.imageserver.dto.ImageModificationDto;
+import com.foreach.imageserver.dto.ImageResolutionDto;
 import org.junit.Test;
 
 import static com.foreach.imageserver.core.services.CropGeneratorUtil.*;
@@ -11,6 +15,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class CropGeneratorUtilTest {
+
+    @Test
+    public void normalizeModification() {
+        ImageModificationDto mod = new ImageModificationDto();
+        CropDto crop = new CropDto(0, 0, 450, 300);
+        crop.setBox(new DimensionsDto(450, 300));
+
+        mod.setCrop(crop);
+        mod.setResolution(new ImageResolutionDto(300, 200));
+
+        Image original = new Image();
+        original.setDimensions(new Dimensions(800, 600));
+
+        CropGeneratorUtil.normalizeModificationDto(original, mod);
+
+        assertEquals(new CropDto(0, 0, 800, 600), mod.getCrop());
+    }
 
     @Test
     public void applyExactResolution() {

@@ -60,8 +60,6 @@ public class CropGeneratorImpl implements CropGenerator {
         ImageModificationDto modificationDto = new ImageModificationDto(imageResolution.getWidth(), imageResolution.getHeight());
         modificationDto.setCrop(DtoUtil.toDto(obtainCrop(image, context, imageResolution)));
 
-        //normalizeModificationDto(image, modificationDto);
-
         return modificationDto;
     }
 
@@ -81,30 +79,6 @@ public class CropGeneratorImpl implements CropGenerator {
         }
 
         return result;
-    }
-
-    @Override
-    public void normalizeModificationDto(Image image, ImageModificationDto imageModificationDto) {
-        // Determine the actual resolution requested based on the original
-        Dimensions originalDimensions = image.getDimensions();
-        Dimensions targetDimensions = new Dimensions(imageModificationDto.getResolution().getWidth(), imageModificationDto.getResolution().getHeight()).normalize(image.getDimensions());
-
-        // TODO: cropping is not yet supported
-        // Determine the crop specified - create a full picture crop if none specified
-        // Translate the crop according to the actual original
-
-        // If boundaries are specified, scale down the output to fit in the boundaries
-        if (imageModificationDto.hasBoundaries()) {
-            targetDimensions = targetDimensions.scaleToFitIn(DtoUtil.toBusiness(imageModificationDto.getBoundaries()));
-        }
-
-        if ( !imageModificationDto.hasCrop() ) {
-            // No crop is simply a scaling of the image
-            imageModificationDto.setCrop( new CropDto( 0,0, originalDimensions.getWidth(), originalDimensions.getHeight()));
-        }
-
-        imageModificationDto.setResolution(new ImageResolutionDto(targetDimensions.getWidth(), targetDimensions.getHeight()));
-        imageModificationDto.setBoundaries(new DimensionsDto());
     }
 
     @Override

@@ -17,6 +17,9 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.codehaus.jackson.map.DeserializationConfig;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -44,6 +47,13 @@ public class ImageServerClientImpl implements ImageServerClient {
 
         ClientConfig clientConfig = new DefaultClientConfig();
         clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+
+        JacksonJsonProvider jacksonJsonProvider =
+                new JacksonJaxbJsonProvider()
+                        .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        clientConfig.getSingletons().add(jacksonJsonProvider);
+
         this.client = Client.create(clientConfig);
     }
 
@@ -78,6 +88,18 @@ public class ImageServerClientImpl implements ImageServerClient {
         addQueryParams(queryParams, imageVariant);
 
         WebResource resource = getResource("view", queryParams);
+        return resource.get(InputStream.class);
+    }
+
+    @Override
+    public InputStream imageStream(String imageId, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant) {
+        MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+        queryParams.putSingle("token", imageServerAccessToken);
+        queryParams.putSingle("iid", imageId);
+        addQueryParams(queryParams, imageModificationDto);
+        addQueryParams(queryParams, imageVariant);
+
+        WebResource resource = getResource("render", queryParams);
         return resource.get(InputStream.class);
     }
 
@@ -226,8 +248,10 @@ public class ImageServerClientImpl implements ImageServerClient {
         queryParams.putSingle("crop.y", Integer.toString(crop.getY()));
         queryParams.putSingle("crop.width", Integer.toString(crop.getWidth()));
         queryParams.putSingle("crop.height", Integer.toString(crop.getHeight()));
-        queryParams.putSingle("crop.sourceWidth", Integer.toString(crop.getSourceWidth()));
-        queryParams.putSingle("crop.sourceHeight", Integer.toString(crop.getSourceHeight()));
+        queryParams.putSingle("crop.source.width", Integer.toString(crop.getSource().getWidth()));
+        queryParams.putSingle("crop.source.height", Integer.toString(crop.getSource().getHeight()));
+        queryParams.putSingle("crop.box.width", Integer.toString(crop.getBox().getWidth()));
+        queryParams.putSingle("crop.box.height", Integer.toString(crop.getBox().getHeight()));
         queryParams.putSingle("density.width", Integer.toString(density.getWidth()));
         queryParams.putSingle("density.height", Integer.toString(density.getHeight()));
 

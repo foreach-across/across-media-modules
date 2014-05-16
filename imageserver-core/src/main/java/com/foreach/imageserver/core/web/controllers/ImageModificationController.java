@@ -4,9 +4,7 @@ import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.services.ContextService;
-import com.foreach.imageserver.core.services.DtoUtil;
-import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.JsonResponse;
@@ -39,6 +37,9 @@ public class ImageModificationController extends BaseImageAPIController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private CropGenerator cropGenerator;
+
     @RequestMapping(value = "/" + REGISTER_PATH, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public JsonResponse register(@RequestParam(value = "token", required = true) String accessToken,
@@ -63,6 +64,8 @@ public class ImageModificationController extends BaseImageAPIController {
         if (imageResolution == null) {
             return error("No such image resolution : " + imageModificationDto.getResolution().getWidth() + "x" + imageModificationDto.getResolution().getHeight());
         }
+
+        CropGeneratorUtil.normalizeModificationDto(image, imageModificationDto);
 
         ImageModification modification = new ImageModification();
         modification.setImageId(image.getId());

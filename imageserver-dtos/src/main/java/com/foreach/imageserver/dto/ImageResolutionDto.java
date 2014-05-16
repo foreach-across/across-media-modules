@@ -57,4 +57,24 @@ public class ImageResolutionDto {
     public void setTags(Set<String> tags) {
         this.tags = tags;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImageResolutionDto)) return false;
+
+        ImageResolutionDto that = (ImageResolutionDto) o;
+
+        if (height != that.height) return false;
+        if (width != that.width) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = width;
+        result = 31 * result + height;
+        return result;
+    }
 }

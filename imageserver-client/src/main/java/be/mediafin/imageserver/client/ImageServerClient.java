@@ -16,6 +16,8 @@ public interface ImageServerClient {
 
     InputStream imageStream(String imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant);
 
+    InputStream imageStream(String imageId, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant);
+
     DimensionsDto loadImage(String imageId, int dioContentId);
 
     DimensionsDto loadImage(String imageId, byte[] imageBytes);

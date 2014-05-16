@@ -26,6 +26,10 @@ public final class DtoUtil {
         return dimensions;
     }
 
+    public static DimensionsDto toDto(Dimensions dimensions) {
+        return new DimensionsDto(dimensions.getWidth(), dimensions.getHeight());
+    }
+
     public static CropDto toDto(Crop crop) {
         return new CropDto(crop.getX(), crop.getY(), crop.getWidth(), crop.getHeight());
     }

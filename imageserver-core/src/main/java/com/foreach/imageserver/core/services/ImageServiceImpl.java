@@ -113,7 +113,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public StreamImageSource generateModification(Image image, ImageModificationDto modificationDto, ImageVariant imageVariant) {
-        cropGenerator.normalizeModificationDto(image, modificationDto);
+        CropGeneratorUtil.normalizeModificationDto(image, modificationDto);
         return generateVariantImage(image, null, modificationDto, imageVariant, false);
     }
 
