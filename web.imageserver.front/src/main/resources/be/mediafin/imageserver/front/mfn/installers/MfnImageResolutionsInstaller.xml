@@ -22,7 +22,7 @@
         <comment>Install the resolutions used by MFN applications</comment>
 
         <sql>
-            insert into IMAGE_RESOLUTION
+            insert into IMAGE_RESOLUTION (ID, WIDTH, HEIGHT)
 
             select 2, 80, 53 from dual
             union all select 4, 88, 66 from dual

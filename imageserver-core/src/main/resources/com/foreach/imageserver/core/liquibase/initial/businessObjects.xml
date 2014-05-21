@@ -141,4 +141,92 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="201405211215" author="arne">
+        <comment>Install ImageProfile table and assign default profile to images</comment>
+        <createTable tableName="IMAGE_PROFILE">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50 char)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+        <insert tableName="IMAGE_PROFILE">
+            <column name="id">1</column>
+            <column name="name">default</column>
+        </insert>
+        <addColumn tableName="IMAGE">
+            <column name="profileId" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="IMAGE" baseColumnNames="profileId"
+                                 constraintName="fk_image_image_profile"
+                                 referencedTableName="IMAGE_PROFILE"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="201405211236" author="arne">
+        <comment>Install ImageProfileModification table</comment>
+        <createTable tableName="IMAGE_PROFILE_MODIFICATION">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="resolutionId" type="int">
+                <constraints nullable="false" references="IMAGE_RESOLUTION(id)"
+                             foreignKeyName="fk_ipm_resolution"/>
+            </column>
+            <column name="contextId" type="int">
+                <constraints nullable="false" references="CONTEXT(id)"
+                             foreignKeyName="fk_ipm_context"/>
+            </column>
+            <column name="profileId" type="int">
+                <constraints nullable="false" references="IMAGE_PROFILE(id)"
+                             foreignKeyName="fk_ipm_profile"/>
+            </column>
+            <column name="width" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="height" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="boundariesWidth" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="boundariesHeight" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="densityX" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="densityY" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropX" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropY" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropWidth" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropHeight" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropSourceWidth" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropSourceHeight" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropBoxWidth" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cropBoxHeight" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

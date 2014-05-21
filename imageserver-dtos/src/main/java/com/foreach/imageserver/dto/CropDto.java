@@ -23,6 +23,15 @@ public class CropDto {
     public CropDto() {
     }
 
+    public CropDto(CropDto original) {
+        x = original.x;
+        y = original.y;
+        width = original.width;
+        height = original.height;
+        source = new DimensionsDto(original.getSource());
+        box = new DimensionsDto(original.getBox());
+    }
+
     public CropDto(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;

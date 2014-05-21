@@ -2,10 +2,9 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
+import com.foreach.imageserver.core.managers.ImageProfileManager;
 import com.foreach.imageserver.dto.CropDto;
-import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
-import com.foreach.imageserver.dto.ImageResolutionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,10 +54,29 @@ public class CropGeneratorImpl implements CropGenerator {
     @Autowired
     private ImageModificationManager imageModificationManager;
 
+    @Autowired
+    private ImageProfileManager imageProfileManager;
+
     @Override
     public ImageModificationDto buildModificationDto(Image image, Context context, ImageResolution imageResolution) {
-        ImageModificationDto modificationDto = new ImageModificationDto(imageResolution.getWidth(), imageResolution.getHeight());
-        modificationDto.setCrop(DtoUtil.toDto(obtainCrop(image, context, imageResolution)));
+        ImageModification registeredModification = imageModificationManager.getById(image.getId(), context.getId(), imageResolution.getId());
+
+        ImageModificationDto modificationDto;
+
+        if (registeredModification != null) {
+            modificationDto = new ImageModificationDto(imageResolution.getWidth(), imageResolution.getHeight());
+            modificationDto.setCrop(DtoUtil.toDto(registeredModification.getCrop()));
+        } else {
+            ImageProfileModification profileModification = imageProfileManager.getModification(image.getImageProfileId(), context.getId(), imageResolution.getId());
+
+            if (profileModification != null) {
+                modificationDto = new ImageModificationDto(profileModification.getModificationDto());
+            } else {
+                modificationDto = new ImageModificationDto(imageResolution.getWidth(), imageResolution.getHeight());
+                modificationDto.setCrop(DtoUtil.toDto(obtainCrop(image, context, imageResolution)));
+            }
+        }
+
         CropGeneratorUtil.normalizeModificationDto(image, modificationDto);
 
         return modificationDto;
@@ -67,13 +85,26 @@ public class CropGeneratorImpl implements CropGenerator {
     private Crop obtainCrop(Image image, Context context, ImageResolution requestedResolution) {
         Crop result;
 
+        /*
         ImageModification imageModification = imageModificationManager.getById(image.getId(), context.getId(), requestedResolution.getId());
         if (imageModification != null) {
             result = imageModification.getCrop();
         } else {
-            List<ImageModification> modifications = imageModificationManager.getAllModifications(image.getId());
-            result = generateCrop(image, context, requestedResolution, modifications);
-        }
+            // See if there is a default modification for the corresponding image profile
+            // Todo: improve to keep more parameters of the original modification
+            ImageProfileModification profileModification = imageProfileManager.getModification(image.getImageProfileId(), context.getId(), requestedResolution.getId());
+
+            if (profileModification != null) {
+                ImageModificationDto modificationDto = new ImageModificationDto();
+                CropGeneratorUtil.normalizeModificationDto(image, modificationDto);
+
+                CropDto cropDto = modificationDto.getCrop();
+                result = new Crop(cropDto.getX(), cropDto.getY(), cropDto.getWidth(), cropDto.getHeight());
+            } else {*/
+                List<ImageModification> modifications = imageModificationManager.getAllModifications(image.getId());
+                result = generateCrop(image, context, requestedResolution, modifications);
+            /*}
+        }*/
 
         if (result == null) {
             throw new ImageCouldNotBeRetrievedException("No crop could be determined for this image.");

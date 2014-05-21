@@ -13,6 +13,13 @@ public class ImageModificationDto {
         this.boundaries = new DimensionsDto();
     }
 
+    public ImageModificationDto( ImageModificationDto original ) {
+        this.resolution = new ImageResolutionDto( original.getResolution());
+        this.crop = new CropDto( original.getCrop() );
+        this.density = new DimensionsDto( original.getDensity() );
+        this.boundaries = new DimensionsDto( original.getBoundaries());
+    }
+
     public ImageModificationDto(int width, int height) {
         this();
 

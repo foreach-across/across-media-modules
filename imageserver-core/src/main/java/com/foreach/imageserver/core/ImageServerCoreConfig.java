@@ -1,9 +1,6 @@
 package com.foreach.imageserver.core;
 
-import com.foreach.imageserver.core.business.Context;
-import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageModification;
-import com.foreach.imageserver.core.business.ImageResolution;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ImageRepositoryRegistry;
 import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -66,7 +63,7 @@ public class ImageServerCoreConfig extends WebMvcConfigurerAdapter {
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
         sessionFactory.setTypeAliases(
-                new Class[]{Context.class, Image.class, ImageResolution.class, ImageModification.class});
+                new Class[]{Context.class, Image.class, ImageResolution.class, ImageModification.class, ImageProfile.class, ImageProfileModification.class});
         return sessionFactory.getObject();
     }
 

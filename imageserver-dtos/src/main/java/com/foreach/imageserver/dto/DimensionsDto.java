@@ -7,6 +7,11 @@ public class DimensionsDto {
     public DimensionsDto() {
     }
 
+    public DimensionsDto(DimensionsDto original) {
+        width = original.width;
+        height = original.height;
+    }
+
     public DimensionsDto(int width, int height) {
         this.width = width;
         this.height = height;

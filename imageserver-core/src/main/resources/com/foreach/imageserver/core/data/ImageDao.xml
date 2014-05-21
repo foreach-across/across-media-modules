@@ -8,7 +8,8 @@
         I.created as image_datecreated,
         I.width as image_width,
         I.height as image_height,
-        I.imageTypeId as image_imagetype
+        I.imageTypeId as image_imagetype,
+        I.profileId as image_profile_id
 	</sql>
 
     <resultMap id="imageMap" type="Image">
@@ -19,6 +20,7 @@
         <result property="dimensions.height" column="image_height"/>
         <result property="imageType" column="image_imagetype"
                 typeHandler="com.foreach.imageserver.core.data.handlers.ImageTypeHandler"/>
+        <result property="imageProfileId" column="image_profile_id"/>
     </resultMap>
 
     <select id="getById" parameterType="map" resultMap="imageMap">

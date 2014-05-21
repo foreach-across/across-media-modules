@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class Image {
     private int id;
+    private int imageProfileId;
     private String externalId;
     private Date dateCreated;
     private Dimensions dimensions;
@@ -82,5 +83,30 @@ public class Image {
 
     public String getDateCreatedDayString() {
         return dateCreatedDayString;
+    }
+
+    public int getImageProfileId() {
+        return imageProfileId;
+    }
+
+    public void setImageProfileId(int imageProfileId) {
+        this.imageProfileId = imageProfileId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Image image = (Image) o;
+
+        if (id != image.id) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

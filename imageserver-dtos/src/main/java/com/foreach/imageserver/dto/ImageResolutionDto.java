@@ -13,6 +13,11 @@ public class ImageResolutionDto {
     public ImageResolutionDto() {
     }
 
+    public ImageResolutionDto( ImageResolutionDto original ) {
+        width = original.width;
+        height = original.height;
+    }
+
     public ImageResolutionDto(int width, int height) {
         this.width = width;
         this.height = height;
