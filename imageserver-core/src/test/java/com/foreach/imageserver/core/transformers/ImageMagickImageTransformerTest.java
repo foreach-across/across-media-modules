@@ -1,10 +1,14 @@
 package com.foreach.imageserver.core.transformers;
 
-import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -12,7 +16,9 @@ import java.io.InputStream;
 import static com.foreach.imageserver.core.utils.ImageUtils.*;
 import static org.junit.Assert.*;
 
-public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
+@ContextConfiguration(classes = ImageMagickImageTransformerTest.Config.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+public class ImageMagickImageTransformerTest {
 
     @Autowired
     private ImageMagickImageTransformer imageTransformer;
@@ -20,7 +26,8 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     @Test
     public void canExecute() {
         for (ImageType imageType : ImageType.values()) {
-            ImageTransformerPriority expectedPriority = (imageType == ImageType.EPS || imageType == ImageType.PDF) ? ImageTransformerPriority.UNABLE : ImageTransformerPriority.PREFERRED;
+            //ImageTransformerPriority expectedPriority = (imageType == ImageType.EPS || imageType == ImageType.PDF) ? ImageTransformerPriority.UNABLE : ImageTransformerPriority.PREFERRED;
+            ImageTransformerPriority expectedPriority = ImageTransformerPriority.PREFERRED;
             assertEquals(expectedPriority, imageTransformer.canExecute(calculateDimensionsAction(imageType)));
             assertEquals(expectedPriority, imageTransformer.canExecute(modifyAction(imageType)));
         }
@@ -251,5 +258,13 @@ public class ImageMagickImageTransformerTest extends AbstractIntegrationTest {
     private GetImageAttributesAction getImageAttributesAction(String classPath) {
         InputStream imageStream = getClass().getClassLoader().getResourceAsStream(classPath);
         return new GetImageAttributesAction(imageStream);
+    }
+
+    @Configuration
+    static class Config {
+        @Bean
+        public ImageMagickImageTransformer imageMagickImageTransformer() {
+            return new ImageMagickImageTransformer(3, "c:/Program Files/GraphicsMagick-1.3.19-Q8", true, true);
+        }
     }
 }

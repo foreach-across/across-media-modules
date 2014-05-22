@@ -34,6 +34,8 @@ public class CropGeneratorUtil {
 
         imageModificationDto.setResolution(new ImageResolutionDto(targetDimensions.getWidth(), targetDimensions.getHeight()));
         imageModificationDto.setBoundaries(new DimensionsDto());
+
+        calculateDensity(imageModificationDto, originalDimensions);
     }
 
     private static void normalizeCrop(Dimensions originalDimensions, CropDto crop) {
@@ -98,6 +100,31 @@ public class CropGeneratorUtil {
             return max;
         }
         return pos;
+    }
+
+    private static void calculateDensity(ImageModificationDto normalized, Dimensions original) {
+        if (new DimensionsDto().equals(normalized.getDensity())) {
+            DimensionsDto calculated = new DimensionsDto();
+
+            int requestedWidth = normalized.getResolution().getWidth();
+            int requestedHeight = normalized.getResolution().getHeight();
+
+            int originalWidth = normalized.hasCrop() ? normalized.getCrop().getWidth() : original.getWidth();
+            int originalHeight = normalized.hasCrop() ? normalized.getCrop().getHeight() : original.getHeight();
+
+            if (originalWidth >= requestedWidth) {
+                calculated.setWidth(1);
+            } else {
+                calculated.setWidth(Double.valueOf(Math.ceil(requestedWidth / (double) originalWidth)).intValue());
+            }
+            if (originalHeight >= requestedHeight) {
+                calculated.setHeight(1);
+            } else {
+                calculated.setHeight(Double.valueOf(Math.ceil(requestedHeight / (double) originalHeight)).intValue());
+            }
+
+            normalized.setDensity(calculated);
+        }
     }
 
     public static Dimensions applyResolution(Image image, ImageResolution resolution) {

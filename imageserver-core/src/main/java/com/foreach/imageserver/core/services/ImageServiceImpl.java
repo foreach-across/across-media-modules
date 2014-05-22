@@ -8,6 +8,7 @@ import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.CropDto;
+import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +170,7 @@ public class ImageServiceImpl implements ImageService {
 
         ImageResolutionDto outputDimensions = modificationDto.getResolution();
         CropDto crop = modificationDto.getCrop();
+        DimensionsDto density = modificationDto.getDensity();
 
         StreamImageSource originalImageSource = imageStoreService.getOriginalImage(image);
         if (originalImageSource == null) {
@@ -183,8 +185,8 @@ public class ImageServiceImpl implements ImageService {
                 crop.getY(),
                 crop.getWidth(),
                 crop.getHeight(),
-                0,
-                0,
+                density.getWidth(),
+                density.getHeight(),
                 imageVariant.getOutputType());
 
         // TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.

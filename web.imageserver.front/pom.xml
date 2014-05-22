@@ -29,6 +29,11 @@
             <version>2.2-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>com.foreach.imageserver</groupId>
+            <artifactId>imageserver-admin</artifactId>
+            <version>2.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>across</groupId>
             <artifactId>across-debug-web</artifactId>
             <version>1.0.2-SNAPSHOT</version>

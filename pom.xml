@@ -32,6 +32,7 @@
         <module>imageserver-imagerepository-diocontent</module>
         <module>imageserver-imagerepository-web</module>
         <module>imageserver-dtos</module>
+        <module>imageserver-admin</module>
     </modules>
     <dependencies>
         <dependency>
@@ -83,6 +84,25 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>across</groupId>
+                <artifactId>across-core</artifactId>
+                <version>1.0.2-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>across</groupId>
+                <artifactId>across-web</artifactId>
+                <version>1.0.2-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>across</groupId>
+                <artifactId>admin-web</artifactId>
+                <version>1.0.2-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>

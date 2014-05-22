@@ -31,6 +31,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
     public static final int GS_DEFAULT_DENSITY = 72;
     public static final int GS_DENSITY_STEP = 300;
     public static final String ALPHA_BACKGROUND = "white";
+    public static final double QUALITY = 85;
 
     private static final Logger LOG = LoggerFactory.getLogger(ImageMagickImageTransformer.class);
 
@@ -165,16 +166,24 @@ public class ImageMagickImageTransformer implements ImageTransformer {
             Dimensions appliedDensity = setDensityIfRequired(op, action);
             op.addImage("-");
 
+            String colorspace = "Transparent";
+
             if (shouldRemoveTransparency(action)) {
                 op.background(ALPHA_BACKGROUND);
                 op.flatten();
+
+                colorspace = "RGB";
             }
 
             Crop crop = applyDensity(action.getCrop(), appliedDensity);
             op.crop(crop.getWidth(), crop.getHeight(), crop.getX(), crop.getY());
 
+            op.units("PixelsPerInch");
+
             op.resize(action.getOutputDimensions().getWidth(), action.getOutputDimensions().getHeight(), "!");
-            op.colorspace("RGB");
+            op.colorspace(colorspace);
+            op.strip();
+            op.quality(QUALITY);
             op.addImage(action.getOutputType().getExtension() + ":-");
 
             imageStream = action.getSourceImageSource().getImageStream();

@@ -24,6 +24,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="imageserver-admin" />
         <module name="imageserver-client" />
         <module name="imageserver-core" />
         <module name="imageserver-core-integration-tests" />
@@ -40,6 +41,7 @@
       <module name="data" target="1.7" />
       <module name="dpp-connector" target="1.7" />
       <module name="imageserver" target="1.7" />
+      <module name="imageserver-admin" target="1.7" />
       <module name="imageserver-client" target="1.6" />
       <module name="imageserver-core" target="1.7" />
       <module name="imageserver-core-integration-tests" target="1.7" />
