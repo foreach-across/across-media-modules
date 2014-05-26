@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -99,4 +100,13 @@ public class ContextServiceImpl implements ContextService {
         return new ArrayList<>(imageResolutionManager.getForContext(contextId));
     }
 
+    @Override
+    public Collection<Context> getForResolution(int resolutionId) {
+        return new ArrayList<>(contextManager.getForResolution(resolutionId));
+    }
+
+    @Override
+    public Collection<Context> getAllContexts() {
+        return new ArrayList<>(contextManager.getAllContexts());
+    }
 }

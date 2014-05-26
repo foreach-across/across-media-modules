@@ -229,4 +229,17 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="201405261411" author="arne">
+        <createSequence sequenceName="SEQ_IMAGE_RESOLUTION"/>
+    </changeSet>
+
+    <changeSet id="201405261422" author="arne">
+        <dropSequence sequenceName="SEQ_IMAGE_RESOLUTION" />
+        <createSequence sequenceName="SEQ_IMAGE_RESOLUTION" startValue="100" />
+    </changeSet>
+
+    <changeSet id="201405261528" author="arne">
+        <addUniqueConstraint tableName="IMAGE_RESOLUTION" columnNames="width, height" />
+    </changeSet>
 </databaseChangeLog>

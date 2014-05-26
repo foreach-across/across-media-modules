@@ -1,0 +1,46 @@
+<h3 ng-show="resolution.id == 0">Create a resolution</h3>
+<h3 ng-show="resolution.id">Modify resolution: {{resolution.width}}x{{resolution.height}}
+</h3>
+
+<div class="alert {{feedback.type}}" ng-show="feedback.message">
+{{feedback.message}}
+</div>
+
+<form role="form">
+<div class="formgroup">
+    <label for="resolution.width">Dimensions</label>
+    <input type="text" id="resolution.width" name="resolution.width" ng-model="resolution.width"/>x <input type="text"
+                                                                                                           name="resolution.height"
+                                                                                                           ng-model="resolution.height"/>
+</div>
+<div class="formgroup">
+    <label for="resolution.name">Name</label>
+    <input type="text" id="resolution.name" name="resolution.name" ng-model="resolution.name"/>
+</div>
+<div class="formgroup">
+    <label for="resolution.configurable">Configurable</label>
+    <input type="checkbox" id="resolution.configurable" name="resolution.configurable"
+           ng-model="resolution.configurable"/>
+</div>
+<div class="formgroup">
+    <label for="resolution.tags">Tags</label>
+
+    <div ng-repeat="tag in resolution.tags track by $index">
+        <input type="text" id="resolution.tags" name="resolution.tags" ng-model="resolution.tags[$index]"/>
+        <a href="" ng-show="$last" ng-click="resolution.tags.push('')"><span
+                class="glyphicon glyphicon-plus"></span></a>
+    </div>
+</div>
+
+<div class="formgroup">
+    <label>Context</label>
+
+    <div ng-repeat="context in contexts">
+        <label><input type="checkbox" id="contexts" name="context" ng-model="selectedContexts[context]"/>
+            {{context}}</label>
+    </div>
+</div>
+
+<button type="button" class="btn btn-default" ng-click="save()">Save</button>
+<a ng-href="#/manage/resolutions" class="btn btn-default">Cancel</a>
+</form>

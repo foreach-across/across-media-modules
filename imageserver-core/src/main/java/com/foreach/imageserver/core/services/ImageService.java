@@ -4,6 +4,7 @@ import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -25,4 +26,8 @@ public interface ImageService {
     ImageResolution getResolution(int resolutionId);
 
     List<ImageModification> getModifications(int imageId, int contextId);
+
+    List<ImageResolution> getAllResolutions();
+
+    void saveImageResolution(ImageResolution resolution, Collection<Context> contexts);
 }

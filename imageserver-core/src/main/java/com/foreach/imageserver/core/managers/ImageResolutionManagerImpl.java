@@ -5,6 +5,7 @@ import com.foreach.imageserver.core.data.ImageResolutionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -37,5 +38,20 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager {
     @Cacheable(value = CACHE_NAME, key = "'forContext-'+#contextId")
     public List<ImageResolution> getForContext(int contextId) {
         return Collections.unmodifiableList(imageResolutionDao.getForContext(contextId));
+    }
+
+    @Override
+    public List<ImageResolution> getAllResolutions() {
+        return Collections.unmodifiableList(imageResolutionDao.getAllResolutions());
+    }
+
+    @Override
+    @CacheEvict(value = CACHE_NAME, allEntries = true)
+    public void saveResolution(ImageResolution resolution) {
+        if (resolution.getId() > 0) {
+            imageResolutionDao.updateResolution(resolution);
+        } else {
+            imageResolutionDao.insertResolution(resolution);
+        }
     }
 }

@@ -11,4 +11,10 @@ public interface ImageResolutionDao {
     ImageResolution getById(int resolutionId);
 
     List<ImageResolution> getForContext(@Param("contextId") int contextId);
+
+    void insertResolution(ImageResolution resolution);
+
+    void updateResolution(ImageResolution resolution);
+
+    List<ImageResolution> getAllResolutions();
 }

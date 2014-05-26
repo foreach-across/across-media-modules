@@ -1,0 +1,70 @@
+<html>
+<head>
+</head>
+<body>
+<div th:fragment="content" ng-app="imageServerAdmin" ng-init="token='azerty'">
+    <div class="col-md-2">
+        <ul class="nav nav-pills nav-stacked">
+            <li ng-class="{active: selectedMenu == 'view'}"><a href="#/view">View image</a></li>
+            <li ng-class="{active: selectedMenu == 'upload'}"><a href="#/upload">Upload image</a></li>
+            <li ng-class="{active: selectedMenu == 'resolutions'}"><a href="#/manage/resolutions">Manage resolutions</a></li>
+        </ul>
+    </div>
+
+    <div ng-view="" class="col-md-10">
+        <!-- Angular views-->
+    </div>
+
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        //var app = angular.module('imageServerAdmin', ['ngRoute']);
+
+        angular.module('imageServerAdmin').config(['$routeProvider',
+            function ($routeProvider) {
+                $routeProvider
+                        .when('/view/:externalId?', {
+                            templateUrl: 'partial/image-view',
+                            controller: 'ImageViewController'
+                        })
+                        .when('/upload', {
+                            templateUrl: 'partial/image-upload',
+                            controller: 'ImageUploadController'
+                        })
+                        .when('/manage/resolutions', {
+                            templateUrl: 'partial/resolution-list',
+                            controller: 'ListResolutionsController'
+                        })
+                        .when('/manage/resolutions/create', {
+                            templateUrl: 'partial/resolution-form',
+                            controller: 'ManageResolutionController'
+                        })
+                        .when('/manage/resolutions/:resolutionId', {
+                            templateUrl: 'partial/resolution-form',
+                            controller: 'ManageResolutionController'
+
+                        })
+                        .otherwise({
+                            redirectTo: '/view'
+                        });
+            }]);
+
+        /*
+         app.controller('ResolutionController', function ($scope, $http) {
+         $scope.context = 'ONLINE';
+
+         $scope.change = function () {
+         $http.get('/modification/listResolutions?token=azerty&context=' + $scope.context).success(function (data) {
+         $scope.resolutions = data.result;
+         });
+         };
+
+         $scope.change();
+
+
+         });
+         */
+        /*]]>*/
+    </script>
+</div>
+</body>
+</html>

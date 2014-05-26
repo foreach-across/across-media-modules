@@ -28,12 +28,13 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
 
 @Configuration
 @PropertySource("classpath:be/mediafin/imageserver/config/${environment.type}/common.properties")
 public class RootConfig {
+
+    @Value("${environment.type}")
+    private String environmentType;
 
     @Autowired
     private ServletContext servletContext;
@@ -123,8 +124,10 @@ public class RootConfig {
         webModule.setViewsResourcePath("/static");
         webModule.setSupportViews(AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF);
 
-        webModule.setDevelopmentMode(true);
-        webModule.addDevelopmentViews("imageserver-admin", "c:/code/imageserver/imageserver-admin/src/main/resources/views/");
+        if (StringUtils.equals("development", environmentType)) {
+            webModule.setDevelopmentMode(true);
+            webModule.addDevelopmentViews("imageserver-admin", "c:/code/imageserver/imageserver-admin/src/main/resources/views/");
+        }
 
         return webModule;
     }

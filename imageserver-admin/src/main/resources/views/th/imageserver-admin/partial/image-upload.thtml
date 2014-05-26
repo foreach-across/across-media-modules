@@ -1,0 +1,20 @@
+<div ng-controller="ImageUploadController as image">
+    <h3>Upload an image</h3>
+
+    <div ng-if="image.existing" class="alert alert-danger">
+        Image with external id <strong>{{image.externalId}}</strong> already exists.<br />
+        Updating an image is not yet supported.
+    </div>
+
+    <label>
+        External id
+        <input type="text" ng-model="image.externalId" ng-change="image.loadImageFeedback()"/>
+    </label>
+
+    <label>
+        Image file
+        <input type="file" ng-file-select="image.selectFile($files)"/>
+    </label>
+
+    <input type="submit" value="Upload" ng-click="image.upload()" ng-if="image.canUpload()"/>
+</div>

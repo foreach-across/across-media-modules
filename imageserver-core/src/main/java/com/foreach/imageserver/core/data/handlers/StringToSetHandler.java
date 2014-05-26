@@ -16,7 +16,14 @@ import java.util.Set;
 public class StringToSetHandler implements TypeHandler<Set<String>> {
     @Override
     public void setParameter(PreparedStatement ps, int i, Set<String> parameter, JdbcType jdbcType) throws SQLException {
-        String tags = StringUtils.join(parameter, ",");
+        Set<String> nonEmpty = new HashSet<>();
+
+        for (String p : parameter) {
+            if (StringUtils.isNotBlank(p)) {
+                nonEmpty.add(p);
+            }
+        }
+        String tags = StringUtils.join(nonEmpty, ",");
 
         ps.setString(i, tags);
     }

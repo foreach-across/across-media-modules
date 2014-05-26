@@ -34,7 +34,6 @@
             union all select 11, 300, 200 from dual
             union all select 12, 80, 60 from dual
             union all select 15, 60, 45 from dual
-            union all select 16, 80, 60 from dual
             union all select 22, 369, 246 from dual
             union all select 23, 568, 274 from dual
             union all select 24, 568, 378 from dual
@@ -78,7 +77,6 @@
             union all select 11, 1 from dual
             union all select 12, 1 from dual
             union all select 15, 1 from dual
-            union all select 16, 1 from dual
             union all select 22, 1 from dual
             union all select 23, 1 from dual
             union all select 24, 1 from dual

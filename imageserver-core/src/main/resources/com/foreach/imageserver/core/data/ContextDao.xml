@@ -12,6 +12,12 @@
         <result property="code" column="context_code"/>
     </resultMap>
 
+    <select id="getAllContexts" resultMap="contextMap">
+        SELECT
+        <include refid="columns"/>
+        FROM CONTEXT C
+    </select>
+
     <select id="getById" parameterType="int" resultMap="contextMap">
         SELECT
         <include refid="columns"/>
@@ -25,5 +31,24 @@
         FROM CONTEXT C
         WHERE C.code = #{value}
     </select>
+
+    <select id="getForResolution" parameterType="int" resultMap="contextMap">
+        SELECT
+        <include refid="columns"/>
+        FROM CONTEXT C INNER JOIN CONTEXT_IMAGE_RESOLUTION CIR ON C.ID = CIR.contextId
+        WHERE CIR.imageResolutionId = #{value}
+    </select>
+
+    <update id="updateContextsForResolution" parameterType="map">
+        begin
+        DELETE FROM CONTEXT_IMAGE_RESOLUTION WHERE imageResolutionId = #{resolutionId};
+        <if test="!contexts.isEmpty">
+            <foreach item="context" index="index" collection="contexts" open="" separator="" close="">
+            INSERT INTO CONTEXT_IMAGE_RESOLUTION (contextId, imageResolutionId)
+            VALUES (#{context.id}, #{resolutionId});
+            </foreach>
+        </if>
+        end;
+    </update>
 
 </mapper>

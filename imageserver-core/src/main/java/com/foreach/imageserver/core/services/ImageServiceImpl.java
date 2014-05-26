@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.managers.ContextManager;
 import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
@@ -38,6 +39,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Autowired
     private ImageResolutionManager imageResolutionManager;
+
+    @Autowired
+    private ContextManager contextManager;
 
     @Override
     public Image getById(int imageId) {
@@ -210,6 +214,18 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public List<ImageModification> getModifications(int imageId, int contextId) {
         return new ArrayList<>(imageModificationManager.getModifications(imageId, contextId));
+    }
+
+    @Override
+    public List<ImageResolution> getAllResolutions() {
+        return imageResolutionManager.getAllResolutions();
+    }
+
+    @Override
+    @Transactional
+    public void saveImageResolution(ImageResolution resolution, Collection<Context> contexts) {
+        imageResolutionManager.saveResolution(resolution);
+        contextManager.updateContextsForResolution(resolution.getId(), contexts);
     }
 
     private static class VariantImageRequest {

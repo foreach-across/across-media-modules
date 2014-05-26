@@ -1,7 +1,9 @@
 package com.foreach.imageserver.core.web.controllers;
 
+import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.services.ContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageInfoDto;
@@ -14,7 +16,10 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class ImageLoadController extends BaseImageAPIController {
@@ -22,6 +27,7 @@ public class ImageLoadController extends BaseImageAPIController {
     public static final String LOAD_IMAGE_PATH = "load";
     public static final String IMAGE_EXISTS_PATH = "imageExists";
     public static final String IMAGE_INFO_PATH = "imageInfo";
+    public static final String CONTEXT_LIST = "/context/list";
 
     @Value("${accessToken}")
     private String accessToken;
@@ -29,9 +35,29 @@ public class ImageLoadController extends BaseImageAPIController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private ContextService contextService;
+
     @InitBinder
     public void initBinder(ServletRequestDataBinder binder) {
         binder.registerCustomEditor(byte[].class, new ByteArrayMultipartFileEditor());
+    }
+
+    @RequestMapping(value = CONTEXT_LIST, method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResponse listContexts(@RequestParam(value = "token", required = true) String accessToken) {
+        if (!this.accessToken.equals(accessToken)) {
+            return error("Access denied.");
+        }
+
+        Collection<Context> contexts = contextService.getAllContexts();
+        List<String> contextNames = new ArrayList<>(contexts.size());
+
+        for (Context ctx : contexts) {
+            contextNames.add(ctx.getCode());
+        }
+
+        return success(contextNames);
     }
 
     @RequestMapping(value = "/" + LOAD_IMAGE_PATH, method = RequestMethod.POST)

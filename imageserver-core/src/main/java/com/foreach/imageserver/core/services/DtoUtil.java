@@ -19,6 +19,17 @@ public final class DtoUtil {
         return crop;
     }
 
+    public static ImageResolution toBusiness(ImageResolutionDto dto) {
+        ImageResolution resolution = new ImageResolution();
+        resolution.setId(dto.getId());
+        resolution.setWidth(dto.getWidth());
+        resolution.setHeight(dto.getHeight());
+        resolution.setConfigurable(dto.isConfigurable());
+        resolution.setName(dto.getName());
+        resolution.setTags(dto.getTags());
+        return resolution;
+    }
+
     public static Dimensions toBusiness(DimensionsDto dto) {
         Dimensions dimensions = new Dimensions();
         dimensions.setWidth(dto.getWidth());
@@ -34,7 +45,15 @@ public final class DtoUtil {
         return new CropDto(crop.getX(), crop.getY(), crop.getWidth(), crop.getHeight());
     }
 
-    public static ImageResolutionDto toDto(ImageResolution resolution) {
-        return new ImageResolutionDto(resolution.getWidth(), resolution.getHeight());
+    public static ImageResolutionDto toDto(ImageResolution imageResolution) {
+        ImageResolutionDto dto = new ImageResolutionDto();
+        dto.setId(imageResolution.getId());
+        dto.setWidth(imageResolution.getWidth());
+        dto.setHeight(imageResolution.getHeight());
+        dto.setConfigurable(imageResolution.isConfigurable());
+        dto.setName(imageResolution.getName());
+        dto.setTags(imageResolution.getTags());
+
+        return dto;
     }
 }

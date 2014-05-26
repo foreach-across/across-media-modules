@@ -16,8 +16,9 @@
         <result property="width" column="ir_width"/>
         <result property="height" column="ir_height"/>
         <result property="configurable" column="ir_configurable"/>
-        <result property="name" column="ir_name" />
-        <result property="tags" column="ir_tags" typeHandler="com.foreach.imageserver.core.data.handlers.StringToSetHandler" />
+        <result property="name" column="ir_name"/>
+        <result property="tags" column="ir_tags"
+                typeHandler="com.foreach.imageserver.core.data.handlers.StringToSetHandler"/>
     </resultMap>
 
     <select id="getById" parameterType="int" resultMap="imageResolutionMap">
@@ -33,6 +34,32 @@
         FROM CONTEXT_IMAGE_RESOLUTION CIR
         LEFT JOIN IMAGE_RESOLUTION IR ON IR.id = CIR.imageResolutionId
         WHERE CIR.contextId = #{contextId}
+        ORDER BY IR.width ASC, IR.height ASC
     </select>
 
+    <select id="getAllResolutions" resultMap="imageResolutionMap">
+        SELECT
+        <include refid="columns"/>
+        FROM IMAGE_RESOLUTION IR
+        ORDER BY IR.width ASC, IR.height ASC
+    </select>
+
+    <insert id="insertResolution" parameterType="ImageResolution">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            SELECT SEQ_IMAGE_RESOLUTION.nextval AS ID FROM DUAL
+        </selectKey>
+        INSERT INTO IMAGE_RESOLUTION (id, width, height, configurable, name, tags)
+        VALUES (#{id}, #{width,jdbcType=INTEGER}, #{height,jdbcType=INTEGER}, #{configurable}, #{name},
+        #{tags, typeHandler=com.foreach.imageserver.core.data.handlers.StringToSetHandler})
+    </insert>
+
+    <update id="updateResolution" parameterType="ImageResolution">
+        UPDATE IMAGE_RESOLUTION
+        SET width = #{width,jdbcType=INTEGER},
+          height = #{height,jdbcType=INTEGER},
+          configurable = #{configurable},
+          name = #{name},
+          tags = #{tags, typeHandler=com.foreach.imageserver.core.data.handlers.StringToSetHandler}
+        WHERE id = #{id}
+    </update>
 </mapper>

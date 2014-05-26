@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.business;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,7 +66,23 @@ public class ImageResolution {
     }
 
     public String getName() {
-        return name;
+        return StringUtils.isBlank( name ) ? generatedName() : name;
+    }
+
+    private String generatedName() {
+
+        if ( width == 0 && height == 0) {
+            return "original";
+        }
+        else if ( width == 0 ) {
+            return "H" + height;
+        }
+        else if ( height == 0 ) {
+            return "W" + width;
+        }
+        else {
+            return width + "x" + height;
+        }
     }
 
     public void setName(String name) {

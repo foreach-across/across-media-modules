@@ -1,0 +1,60 @@
+<div ng-controller="ImageViewController as controller">
+    <h3>View a stored image</h3>
+
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <form role="form" class="navbar-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="controller.externalId"
+                           ng-enter="controller.loadImage()" placeholder="External id"/>
+                </div>
+                <a href="" ng-click="controller.loadImage()" class="btn btn-default">load</a>
+            </form>
+        </div>
+    </nav>
+
+    <div ng-if="controller.feedback" class="alert alert-warning">
+        {{controller.feedback}}
+    </div>
+
+    <div ng-if="controller.image.existing" class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div>
+                    <strong>external id:</strong> {{controller.image.externalId}}<br/>
+                    <strong>width:</strong> {{controller.image.dimensionsDto.width}}<br/>
+                    <strong>height:</strong> {{controller.image.dimensionsDto.height}}<br/>
+                    <strong>type:</strong> {{controller.image.imageType}}<br/>
+                    <strong>created:</strong> {{controller.image.created | date:['dd MMM y hh:mm']}}
+                </div>
+
+                <select ng-model="controller.selectedContext" ng-options="context for context in controller.contexts"
+                        ng-change="controller.selectContext(controller.selectedContext)"/>
+
+                <select ng-model="controller.selectedImageType"
+                        ng-options="imageType for imageType in controller.imageTypes"
+                        ng-change="controller.selectImageType(controller.selectedImageType)"/>
+
+                <ul>
+                    <li ng-repeat="resolution in controller.resolutions | orderBy:['width','height']"
+                        ng-class="{selected: resolution == controller.selectedResolution}">
+                        <a href="" ng-click="controller.selectResolution(resolution)">{{resolution.width}}x{{resolution.height}}
+                            <span ng-if="controller.getCrop(resolution)">crop</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-9">
+                <div ng-if="controller.selectedCrop">
+                    {{controller.selectedCrop.crop.x}}
+                    {{controller.selectedCrop.crop.y}}
+                    {{controller.selectedCrop.crop.width}}
+                    {{controller.selectedCrop.crop.height}}
+                </div>
+
+                <img style="border: solid 1px black; background-color: gainsboro;"
+                     ng-src="{{controller.previewUrl}}"/>
+            </div>
+        </div>
+    </div>
+</div>
