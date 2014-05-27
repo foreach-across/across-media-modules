@@ -35,6 +35,11 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager {
     }
 
     @Override
+    public ImageResolution getByDimensions(int width, int height) {
+        return imageResolutionDao.getByDimensions( width, height );
+    }
+
+    @Override
     @Cacheable(value = CACHE_NAME, key = "'forContext-'+#contextId")
     public List<ImageResolution> getForContext(int contextId) {
         return Collections.unmodifiableList(imageResolutionDao.getForContext(contextId));
@@ -48,7 +53,7 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager {
     @Override
     @CacheEvict(value = CACHE_NAME, allEntries = true)
     public void saveResolution(ImageResolution resolution) {
-        if (resolution.getId() > 0) {
+        if (resolution.getId() != null && resolution.getId() > 0) {
             imageResolutionDao.updateResolution(resolution);
         } else {
             imageResolutionDao.insertResolution(resolution);

@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.services;
 
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.managers.ContextManager;
 import com.foreach.imageserver.core.managers.ImageManager;
@@ -20,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.util.*;
 
 @Service
+@Exposed
 public class ImageServiceImpl implements ImageService {
 
     @Autowired
@@ -209,6 +211,11 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public ImageResolution getResolution(int resolutionId) {
         return imageResolutionManager.getById(resolutionId);
+    }
+
+    @Override
+    public ImageResolution getResolution(int width, int height) {
+        return imageResolutionManager.getByDimensions(width, height);
     }
 
     @Override

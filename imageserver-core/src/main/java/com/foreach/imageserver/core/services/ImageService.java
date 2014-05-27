@@ -25,6 +25,8 @@ public interface ImageService {
 
     ImageResolution getResolution(int resolutionId);
 
+    ImageResolution getResolution( int width, int height );
+
     List<ImageModification> getModifications(int imageId, int contextId);
 
     List<ImageResolution> getAllResolutions();

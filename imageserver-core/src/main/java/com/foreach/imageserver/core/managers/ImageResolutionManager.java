@@ -13,4 +13,6 @@ public interface ImageResolutionManager {
     List<ImageResolution> getAllResolutions();
 
     void saveResolution(ImageResolution resolution);
+
+    ImageResolution getByDimensions(int width, int height);
 }

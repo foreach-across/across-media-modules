@@ -28,6 +28,13 @@
         WHERE IR.id = #{value}
     </select>
 
+    <select id="getByDimensions" parameterType="map" resultMap="imageResolutionMap">
+        SELECT
+        <include refid="columns"/>
+        FROM IMAGE_RESOLUTION IR
+        WHERE IR.width = #{width} AND IR.height = #{height}
+    </select>
+
     <select id="getForContext" parameterType="map" resultMap="imageResolutionMap">
         SELECT
         <include refid="columns"/>
@@ -49,7 +56,7 @@
             SELECT SEQ_IMAGE_RESOLUTION.nextval AS ID FROM DUAL
         </selectKey>
         INSERT INTO IMAGE_RESOLUTION (id, width, height, configurable, name, tags)
-        VALUES (#{id}, #{width,jdbcType=INTEGER}, #{height,jdbcType=INTEGER}, #{configurable}, #{name},
+        VALUES (#{id}, #{width,jdbcType=INTEGER}, #{height,jdbcType=INTEGER}, #{configurable}, #{name,jdbcType=VARCHAR},
         #{tags, typeHandler=com.foreach.imageserver.core.data.handlers.StringToSetHandler})
     </insert>
 
@@ -58,7 +65,7 @@
         SET width = #{width,jdbcType=INTEGER},
           height = #{height,jdbcType=INTEGER},
           configurable = #{configurable},
-          name = #{name},
+          name = #{name,jdbcType=VARCHAR},
           tags = #{tags, typeHandler=com.foreach.imageserver.core.data.handlers.StringToSetHandler}
         WHERE id = #{id}
     </update>

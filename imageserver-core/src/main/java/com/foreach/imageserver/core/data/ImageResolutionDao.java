@@ -17,4 +17,6 @@ public interface ImageResolutionDao {
     void updateResolution(ImageResolution resolution);
 
     List<ImageResolution> getAllResolutions();
+
+    ImageResolution getByDimensions(@Param("width") int width, @Param("height") int height);
 }
