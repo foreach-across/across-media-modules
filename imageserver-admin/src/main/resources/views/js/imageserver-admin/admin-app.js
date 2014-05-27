@@ -75,7 +75,6 @@ angular.module('imageServerAdmin')
 
         imageService.getContexts(function (data) {
             $scope.contexts = [''].concat(data);
-            console.log($scope.contexts);
 
             if (!$rootScope.preferredContext) {
                 $scope.selectContext($scope.contexts[0]);

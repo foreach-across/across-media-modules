@@ -12,13 +12,15 @@
     <th>Dimensions</th>
     <th>Name</th>
     <th>Tags</th>
+    <th></th>
 </tr>
 </thead>
 <tbody>
 <tr ng-repeat="resolution in resolutions |  orderBy:['width','height']">
-    <td><a href="#/manage/resolutions/{{resolution.id}}" ng-href="">{{resolution.width}}x{{resolution.height}}</a></td>
+    <td>{{resolution.width}}x{{resolution.height}}</td>
     <td>{{resolution.name}}</td>
     <td><span ng-repeat="tag in resolution.tags">{{tag}}{{$last ? '': ', '}}</span></td>
+    <td><a href="#/manage/resolutions/{{resolution.id}}" ng-href="" title="Modify resolution {{resolution.name}}"><span class="glyphicon glyphicon-file"></span></a></td>
 </tr>
 </tbody>
 </table>

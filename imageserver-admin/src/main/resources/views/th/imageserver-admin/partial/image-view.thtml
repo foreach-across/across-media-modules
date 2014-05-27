@@ -20,40 +20,56 @@
     <div ng-if="controller.image.existing" class="container-fluid">
         <div class="row">
             <div class="col-md-3">
-                <div>
-                    <strong>external id:</strong> {{controller.image.externalId}}<br/>
-                    <strong>width:</strong> {{controller.image.dimensionsDto.width}}<br/>
-                    <strong>height:</strong> {{controller.image.dimensionsDto.height}}<br/>
-                    <strong>type:</strong> {{controller.image.imageType}}<br/>
-                    <strong>created:</strong> {{controller.image.created | date:['dd MMM y hh:mm']}}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                     <p>   <strong>{{controller.image.externalId}}</strong><br />
+                        {{controller.image.dimensionsDto.width}} x {{controller.image.dimensionsDto.height}}<br/>
+                    {{controller.image.imageType}}<br/>
+                     </p>
+                    {{controller.image.created | date:['dd MMM y hh:mm']}}
+                    </div>
                 </div>
 
-                <select ng-model="controller.selectedContext" ng-options="context for context in controller.contexts"
+                <select class="form-control" ng-model="controller.selectedContext"
+                        ng-options="context for context in controller.contexts"
                         ng-change="controller.selectContext(controller.selectedContext)"/>
 
-                <select ng-model="controller.selectedImageType"
+                <select class="form-control" ng-model="controller.selectedImageType"
                         ng-options="imageType for imageType in controller.imageTypes"
                         ng-change="controller.selectImageType(controller.selectedImageType)"/>
 
-                <ul>
-                    <li ng-repeat="resolution in controller.resolutions | orderBy:['width','height']"
-                        ng-class="{selected: resolution == controller.selectedResolution}">
-                        <a href="" ng-click="controller.selectResolution(resolution)">{{resolution.width}}x{{resolution.height}}
-                            <span ng-if="controller.getCrop(resolution)">crop</span>
-                        </a>
-                    </li>
-                </ul>
+                <div class="clearfix">
+
+                    <table class="table table-condensed">
+                        <tr role="presentation" ng-repeat="resolution in controller.resolutions | orderBy:['width','height']"
+                            ng-class="{active: resolution == controller.selectedResolution}">
+                            <td>
+                            <span class="badge pull-right" ng-if="controller.getCrop(resolution)"
+                                                          title="Crop defined">!</span>
+                            <a href="" ng-click="controller.selectResolution(resolution)">{{resolution.name}}</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
             <div class="col-md-9">
-                <div ng-if="controller.selectedCrop">
-                    {{controller.selectedCrop.crop.x}}
-                    {{controller.selectedCrop.crop.y}}
-                    {{controller.selectedCrop.crop.width}}
-                    {{controller.selectedCrop.crop.height}}
+                <div class="alert alert-{{controller.selectedCrop ? 'success' : 'info'}}">
+                    Resolution [ <strong>{{controller.selectedResolution.width}}</strong>
+                    x
+                    <strong>{{controller.selectedResolution.height}}</strong>
+                    ]
+                    <span class="pull-right" ng-if="controller.selectedCrop">
+                    Crop
+                    [ x: <strong>{{controller.selectedCrop.crop.x}}</strong>,
+                    y: <strong>{{controller.selectedCrop.crop.y}}</strong>,
+                    width: <strong>{{controller.selectedCrop.crop.width}}</strong>,
+                    height: <strong>{{controller.selectedCrop.crop.height}}</strong> ]
+                    </span>
                 </div>
 
-                <img style="border: solid 1px black; background-color: gainsboro;"
-                     ng-src="{{controller.previewUrl}}"/>
+                <div class="col-md-12 thumbnail">
+                    <img ng-src="{{controller.previewUrl}}"/>
+                </div>
             </div>
         </div>
     </div>

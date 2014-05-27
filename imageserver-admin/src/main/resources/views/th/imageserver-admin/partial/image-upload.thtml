@@ -2,19 +2,22 @@
     <h3>Upload an image</h3>
 
     <div ng-if="image.existing" class="alert alert-danger">
-        Image with external id <strong>{{image.externalId}}</strong> already exists.<br />
+        Image with external id <strong>{{image.externalId}}</strong> already exists.<br/>
         Updating an image is not yet supported.
     </div>
 
-    <label>
-        External id
-        <input type="text" ng-model="image.externalId" ng-change="image.loadImageFeedback()"/>
-    </label>
+    <form role="form">
+        <div class="form-group">
+            <label for="externalId">External id</label>
+            <input id="externalId" class="form-control" type="text" ng-model="image.externalId"
+                   ng-change="image.loadImageFeedback()"/>
+        </div>
 
-    <label>
-        Image file
-        <input type="file" ng-file-select="image.selectFile($files)"/>
-    </label>
+        <div class="form-group">
+            <label for="imageFile">Image file</label>
+            <input id="imageFile" type="file" ng-file-select="image.selectFile($files)"/>
+        </div>
 
-    <input type="submit" value="Upload" ng-click="image.upload()" ng-if="image.canUpload()"/>
+        <input class="btn btn-default" type="submit" value="Upload" ng-click="image.upload()" ng-if="image.canUpload()"/>
+    </form>
 </div>
