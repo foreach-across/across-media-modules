@@ -22,11 +22,11 @@
             <div class="col-md-3">
                 <div class="panel panel-default">
                     <div class="panel-body">
-                     <p>   <strong>{{controller.image.externalId}}</strong><br />
-                        {{controller.image.dimensionsDto.width}} x {{controller.image.dimensionsDto.height}}<br/>
-                    {{controller.image.imageType}}<br/>
-                     </p>
-                    {{controller.image.created | date:['dd MMM y hh:mm']}}
+                        <p><strong>{{controller.image.externalId}}</strong><br/>
+                            {{controller.image.dimensionsDto.width}} x {{controller.image.dimensionsDto.height}}<br/>
+                            {{controller.image.imageType}}<br/>
+                        </p>
+                        {{controller.image.created | date:['dd MMM y hh:mm']}}
                     </div>
                 </div>
 
@@ -41,23 +41,25 @@
                 <div class="clearfix">
 
                     <table class="table table-condensed">
-                        <tr role="presentation" ng-repeat="resolution in controller.resolutions | orderBy:['width','height']"
+                        <tr role="presentation"
+                            ng-repeat="resolution in controller.resolutions | orderBy:['width','height']"
                             ng-class="{active: resolution == controller.selectedResolution}">
                             <td>
                             <span class="badge pull-right" ng-if="controller.getCrop(resolution)"
-                                                          title="Crop defined">!</span>
-                            <a href="" ng-click="controller.selectResolution(resolution)">{{resolution.name}}</a>
+                                  title="Crop defined">!</span>
+                                <a href="" ng-click="controller.selectResolution(resolution)">{{resolution.name}}</a>
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
             <div class="col-md-9">
-                <div class="alert alert-{{controller.selectedCrop ? 'success' : 'info'}}">
-                    Resolution [ <strong>{{controller.selectedResolution.width}}</strong>
-                    x
-                    <strong>{{controller.selectedResolution.height}}</strong>
-                    ]
+                <div class="fixed-preview" ui-scrollfix="190">
+                    <div class="alert alert-{{controller.selectedCrop ? 'success' : 'info'}}">
+                        {{controller.selectedResolution.name}} [ <strong>{{controller.selectedResolution.width}}</strong>
+                        x
+                        <strong>{{controller.selectedResolution.height}}</strong>
+                        ]
                     <span class="pull-right" ng-if="controller.selectedCrop">
                     Crop
                     [ x: <strong>{{controller.selectedCrop.crop.x}}</strong>,
@@ -65,10 +67,11 @@
                     width: <strong>{{controller.selectedCrop.crop.width}}</strong>,
                     height: <strong>{{controller.selectedCrop.crop.height}}</strong> ]
                     </span>
-                </div>
+                    </div>
 
-                <div class="col-md-12 thumbnail">
-                    <img ng-src="{{controller.previewUrl}}"/>
+                    <div class="col-md-12 thumbnail">
+                        <img ng-src="{{controller.previewUrl}}"/>
+                    </div>
                 </div>
             </div>
         </div>

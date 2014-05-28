@@ -52,10 +52,10 @@ public class MfnImageServerMigrationResolutionsInstaller {
 
         // Tablet resolutions
         define(DIGITAL, 2047, 1536, "Tablet fullscreen - retina", false);
-        define(DIGITAL, 200, 240, "Tablet promo header - retina", true, "teaser-default", "author-default");
-        define(DIGITAL, 100, 120, "Tablet promo header", false);
-        define(DIGITAL, 972, 768, "Tablet large photo template", false, "citation-default");
-        define(DIGITAL, 1944, 1536, "Tablet large photo template - retina", true);
+        define(DIGITAL, 200, 240, "Tablet promo header - retina", false);
+        define(DIGITAL, 100, 120, "Tablet promo header", true, "teaser-default", "author-default");
+        define(DIGITAL, 972, 768, "Tablet large photo template", true, "citation-default");
+        define(DIGITAL, 1944, 1536, "Tablet large photo template - retina", false);
 
         // New site image formats
         define(ONLINE, 0, 0, "Original size", false);

@@ -1,0 +1,8 @@
+.fixed-preview {
+  width: 678px;
+  &.ui-scrollfix {
+    position: fixed;
+    top: 5px;
+
+  }
+}

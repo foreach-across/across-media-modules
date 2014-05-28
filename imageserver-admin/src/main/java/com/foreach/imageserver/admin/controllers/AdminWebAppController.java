@@ -24,6 +24,7 @@ public class AdminWebAppController {
         resourceRegistry.addWithKey(WebResource.JAVASCRIPT, "angular", "https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.8/angular.js", WebResource.EXTERNAL);
         resourceRegistry.addWithKey(WebResource.JAVASCRIPT, "angular-route", "https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.8/angular-route.js", WebResource.EXTERNAL);
         resourceRegistry.addWithKey(WebResource.JAVASCRIPT, "angular-file-upload", "/js/imageserver-admin/angular-file-upload.js", WebResource.VIEWS);
+        resourceRegistry.addWithKey(WebResource.JAVASCRIPT, "angular-ui-utils", "/js/imageserver-admin/ui-utils-0.1.1/ui-utils.min.js", WebResource.VIEWS);
         resourceRegistry.addWithKey(WebResource.JAVASCRIPT, "ImageServerAdminWeb", "/js/imageserver-admin/admin-app.js", WebResource.VIEWS);
     }
 

@@ -1,4 +1,4 @@
-angular.module('imageServerAdmin', ['ngRoute', 'angularFileUpload']);
+angular.module('imageServerAdmin', ['ngRoute', 'angularFileUpload', 'ui.utils']);
 
 angular.module('imageServerAdmin')
     .directive('ngEnter', function () {
@@ -224,7 +224,8 @@ angular.module('imageServerAdmin')
                 this.previewUrl = '/view?iid=' + this.image.externalId + '&imageType=' + this.selectedImageType
                     + '&width=' + this.selectedResolution.width
                     + '&height=' + this.selectedResolution.height
-                    + '&context=' + this.selectedContext;
+                    + '&context=' + this.selectedContext
+                    + '&ts=' + (new Date()).valueOf();
             }
             else {
                 this.previewUrl = '';
