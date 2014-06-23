@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: across:user-module:1.0.3-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/across/user-module/1.0.3-SNAPSHOT/user-module-1.0.3-20140623.124729-2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/across/user-module/1.0.3-SNAPSHOT/user-module-1.0.3-20140623.124729-2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/across/user-module/1.0.3-SNAPSHOT/user-module-1.0.3-20140623.124729-2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

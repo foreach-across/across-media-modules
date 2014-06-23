@@ -10,7 +10,6 @@
         <version>2.2-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.foreach.imageserver</groupId>
     <artifactId>imageserver-core</artifactId>
     <name>ImageServer Core Module</name>
     <version>2.2-SNAPSHOT</version>
@@ -70,7 +69,6 @@
         <dependency>
             <groupId>across</groupId>
             <artifactId>across-core</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>

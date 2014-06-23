@@ -6,6 +6,8 @@ import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.ehcache.EhcacheModule;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
+import com.foreach.across.modules.spring.security.SpringSecurityModule;
+import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebViewSupport;
 import com.foreach.imageserver.admin.ImageServerAdminWebModule;
@@ -94,6 +96,8 @@ public class RootConfig {
         context.addModule(adminWebModule());
         context.addModule(acrossHibernateModule());
         context.addModule(imageServerAdminWebModule());
+        context.addModule(new SpringSecurityModule());
+        context.addModule(new UserModule());
 
         return context;
     }

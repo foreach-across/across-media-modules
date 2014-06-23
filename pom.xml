@@ -89,17 +89,37 @@
             <dependency>
                 <groupId>across</groupId>
                 <artifactId>across-core</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
+                <version>1.0.3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>across</groupId>
+                <artifactId>across-debug-web</artifactId>
+                <version>1.0.3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>across</groupId>
+                <artifactId>across-ehcache</artifactId>
+                <version>1.0.3-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>across</groupId>
                 <artifactId>across-web</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
+                <version>1.0.3-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>across</groupId>
                 <artifactId>admin-web</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
+                <version>1.0.3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>across</groupId>
+                <artifactId>user-module</artifactId>
+                <version>1.0.3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>across</groupId>
+                <artifactId>spring-security</artifactId>
+                <version>1.0.3-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

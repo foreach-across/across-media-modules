@@ -38,7 +38,7 @@ public class ImageServerCoreConfig extends WebMvcConfigurerAdapter {
             throw new RuntimeException("A MultipartResolver bean should be set up in the root application context.");
         }
     }
-
+/*
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(mappingJackson2HttpMessageConverter());
@@ -48,7 +48,7 @@ public class ImageServerCoreConfig extends WebMvcConfigurerAdapter {
     public MappingJacksonHttpMessageConverter mappingJackson2HttpMessageConverter() {
         return new MappingJacksonHttpMessageConverter();
     }
-
+*/
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();

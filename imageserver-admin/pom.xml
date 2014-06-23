@@ -16,5 +16,13 @@
             <groupId>across</groupId>
             <artifactId>admin-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>across</groupId>
+            <artifactId>user-module</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>across</groupId>
+            <artifactId>spring-security</artifactId>
+        </dependency>
     </dependencies>
 </project>

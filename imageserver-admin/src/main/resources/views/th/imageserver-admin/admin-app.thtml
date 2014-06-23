@@ -5,9 +5,18 @@
 <div th:fragment="content" ng-app="imageServerAdmin" ng-init="token='azerty'">
     <div class="col-md-2">
         <ul class="nav nav-pills nav-stacked">
-            <li ng-class="{active: selectedMenu == 'view'}"><a href="#/view">View image</a></li>
-            <li ng-class="{active: selectedMenu == 'upload'}"><a href="#/upload">Upload image</a></li>
-            <li ng-class="{active: selectedMenu == 'resolutions'}"><a href="#/manage/resolutions">Manage resolutions</a></li>
+            <li ng-class="{active: selectedMenu == 'view'}"
+                sec:authorize="hasAuthority('imageserver view images')">
+                <a href="#/view">View image</a>
+            </li>
+            <li ng-class="{active: selectedMenu == 'upload'}"
+                sec:authorize="hasAuthority('imageserver upload images')">
+                <a href="#/upload">Upload image</a>
+            </li>
+            <li ng-class="{active: selectedMenu == 'resolutions'}"
+                sec:authorize="hasAuthority('imageserver manage resolutions')">
+                <a href="#/manage/resolutions">Manage resolutions</a>
+            </li>
         </ul>
     </div>
 

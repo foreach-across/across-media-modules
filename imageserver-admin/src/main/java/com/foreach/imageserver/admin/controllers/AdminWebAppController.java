@@ -1,6 +1,6 @@
 package com.foreach.imageserver.admin.controllers;
 
-import com.foreach.across.modules.adminweb.controllers.AdminWebController;
+import com.foreach.across.modules.adminweb.annotations.AdminWebController;
 import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
@@ -15,7 +15,7 @@ public class AdminWebAppController {
 
     @Handler
     public void registerMenu(AdminMenuEvent adminMenuEvent) {
-        adminMenuEvent.addItem("/", "Image server");
+        adminMenuEvent.builder().item("/image-server", "Image server");
     }
 
     @ModelAttribute
@@ -28,7 +28,7 @@ public class AdminWebAppController {
         resourceRegistry.addWithKey(WebResource.JAVASCRIPT, "ImageServerAdminWeb", "/js/imageserver-admin/admin-app.js", WebResource.VIEWS);
     }
 
-    @RequestMapping
+    @RequestMapping("/image-server")
     public String bootstrapWebApp() {
         return "th/imageserver-admin/admin-app";
     }
