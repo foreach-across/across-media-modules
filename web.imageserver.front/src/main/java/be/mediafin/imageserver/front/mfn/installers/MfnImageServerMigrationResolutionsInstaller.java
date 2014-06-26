@@ -70,6 +70,7 @@ public class MfnImageServerMigrationResolutionsInstaller {
         define(ONLINE, 630, 350, "Teaser - large", true, "teaser-default");
         define(ONLINE, 310, 170, "Teaser - medium", true);
         define(ONLINE, 228, 155, "Teaser - small", true);
+        define(ONLINE, 100, 100, "Main navigation tile", true);
     }
 
     private void define(String[] contexts, int width, int height, String name, boolean configurable, String... tags) {
