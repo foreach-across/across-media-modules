@@ -1,5 +1,6 @@
 package be.mediafin.imageserver.client;
 
+import be.mediafin.imageserver.logging.LogHelper;
 import be.persgroep.red.diocontent.api.asset.Asset;
 import be.persgroep.red.diocontent.api.attachment.Attachment;
 import be.persgroep.red.diocontent.api.attachment.AttachmentRole;
@@ -17,9 +18,12 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.codehaus.jackson.map.DeserializationConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -30,6 +34,8 @@ import java.util.Date;
 import java.util.List;
 
 public class ImageServerClientImpl implements ImageServerClient {
+
+    private static Logger LOG = LoggerFactory.getLogger(ImageServerClientImpl.class);
 
     private final String imageServerEndpoint;
     private final String imageServerAccessToken;
@@ -64,6 +70,10 @@ public class ImageServerClientImpl implements ImageServerClient {
 
     @Override
     public String imageUrl(String imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant) {
+        if (StringUtils.isBlank(imageId) || context == null || imageResolution == null || imageVariant == null) {
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#imageUrl: imageId={}, context={}, imageResolution={}, imageVariant={}", LogHelper.asStringArray(imageId, context, imageResolution, imageVariant));
+        }
+
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("iid", imageId);
         queryParams.putSingle("context", context.toString());
@@ -81,6 +91,10 @@ public class ImageServerClientImpl implements ImageServerClient {
 
     @Override
     public InputStream imageStream(String imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant) {
+        if (StringUtils.isBlank(imageId) || context == null || imageResolution == null || imageVariant == null) {
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#imageStream: imageId={}, context={}, imageResolution={}, imageVariant={}", LogHelper.asStringArray(imageId, context, imageResolution, imageVariant));
+        }
+
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("iid", imageId);
         queryParams.putSingle("context", context.toString());
@@ -93,6 +107,10 @@ public class ImageServerClientImpl implements ImageServerClient {
 
     @Override
     public InputStream imageStream(String imageId, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant) {
+        if (StringUtils.isBlank(imageId) || imageModificationDto == null || imageVariant == null) {
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#imageStream: imageId={}, imageModificationDto={}, imageResolution={}, imageVariant={}", LogHelper.asStringArray(imageId, imageModificationDto, imageVariant));
+        }
+
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
         queryParams.putSingle("iid", imageId);
@@ -105,6 +123,9 @@ public class ImageServerClientImpl implements ImageServerClient {
 
     @Override
     public DimensionsDto loadImage(String imageId, int dioContentId) {
+        if (StringUtils.isBlank(imageId) || dioContentId == 0) {
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#loadImage: imageId={}, dioContentId={}", LogHelper.asStringArray(imageId, dioContentId));
+        }
         DatedBuffer datedBuffer = retrieveImageFromDioContent(dioContentId);
         return loadImage(imageId, datedBuffer.getBytes(), datedBuffer.getDate());
     }
@@ -116,6 +137,10 @@ public class ImageServerClientImpl implements ImageServerClient {
 
     @Override
     public DimensionsDto loadImage(String imageId, byte[] imageBytes, Date imageDate) {
+        if (StringUtils.isBlank(imageId) || imageBytes == null || imageDate == null) {
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#loadImage: imageId={}, imageBytes={}, imageDate={}", LogHelper.asStringArray(imageId, imageBytes, imageDate));
+        }
+
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("token", imageServerAccessToken);
         queryParams.putSingle("iid", imageId);
@@ -136,6 +161,9 @@ public class ImageServerClientImpl implements ImageServerClient {
             };
 
             return getJsonResponse("load", queryParams, form, responseType);
+        } catch (RuntimeException e){
+            LOG.error("Loading image caused exception - ImageServerClientImpl#loadImage: imageId={}, imageBytes={}, imageDate={}", LogHelper.asStringArray(imageId, imageBytes, imageDate), e);
+            throw e;
         } finally {
             IOUtils.closeQuietly(imageStream);
         }
@@ -282,6 +310,10 @@ public class ImageServerClientImpl implements ImageServerClient {
     }
 
     private DatedBuffer retrieveImageFromDioContent(int dioContentId) {
+        if (dioContentId == 0){
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#retrieveImageFromDioContent: dioContentId={}", LogHelper.asStringArray(dioContentId));
+        }
+
         ByteArrayOutputStream data = null;
         try {
             DioContentClient client = new DefaultRestDioContentClient(dioServerUrl, dioUsername, dioPassword);
@@ -299,6 +331,7 @@ public class ImageServerClientImpl implements ImageServerClient {
 
             return new DatedBuffer(data.toByteArray(), imageDate);
         } catch (Exception e) {
+            LOG.error("Image could not be retrieved from diocontent - ImageServerClientImpl#retrieveImageFromDioContent: dioContentId={}", LogHelper.asStringArray(dioContentId), e);
             throw new ImageCouldNotBeRetrievedException();
         } finally {
             IOUtils.closeQuietly(data);

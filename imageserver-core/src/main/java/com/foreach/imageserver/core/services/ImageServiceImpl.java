@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.managers.ContextManager;
 import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
@@ -13,6 +14,9 @@ import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +27,8 @@ import java.util.*;
 @Service
 @Exposed
 public class ImageServiceImpl implements ImageService {
+
+    private static Logger LOG = LoggerFactory.getLogger(ImageServiceImpl.class);
 
     @Autowired
     private ImageManager imageManager;
@@ -62,6 +68,10 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public Dimensions saveImage(String externalId, byte[] imageBytes, Date imageDate) throws ImageStoreException {
+        if (StringUtils.isBlank(externalId) || imageBytes == null || imageDate == null) {
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImage: image={}, context={}, imageDate={}", LogHelper.asStringArray(externalId, imageBytes, imageDate));
+        }
+
         ImageAttributes imageAttributes = imageTransformService.getAttributes(new ByteArrayInputStream(imageBytes));
 
         Image image = new Image();
@@ -83,6 +93,10 @@ public class ImageServiceImpl implements ImageService {
      */
     @Override
     public void saveImageModification(ImageModification modification) {
+        if (modification == null) {
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImageModification: modification={}", LogHelper.asStringArray(modification));
+        }
+
         ImageModification existingModification = imageModificationManager.getById(modification.getImageId(), modification.getContextId(), modification.getResolutionId());
         if (existingModification == null) {
             imageModificationManager.insert(modification);
@@ -95,6 +109,10 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
+        if (image == null || context == null || imageResolution == null || imageVariant == null) {
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#getVariantImage: image={}, context={}, imageResolution={}, imageVariant={}", LogHelper.asStringArray(image, context, imageResolution, imageVariant));
+        }
+
         ImageModificationDto modification = cropGenerator.buildModificationDto(image, context, imageResolution);
         StreamImageSource imageSource = imageStoreService.getVariantImage(image, context, modification, imageVariant);
         if (imageSource == null) {
@@ -129,6 +147,10 @@ public class ImageServiceImpl implements ImageService {
      * will block and re-use the same result.
      */
     private StreamImageSource generateVariantImage(Image image, Context context, ImageModificationDto imageModification, ImageVariant imageVariant, boolean storeImage) {
+        if (image == null || context == null || imageModification == null || imageVariant == null) {
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, imageVariant={}, storeImage={}", LogHelper.asStringArray(image, context, imageModification, imageVariant, storeImage));
+        }
+
         VariantImageRequest request = new VariantImageRequest(image.getId(), context != null ? context.getId() : 0, imageModification, imageVariant);
 
         FutureVariantImage futureVariantImage;
@@ -154,6 +176,7 @@ public class ImageServiceImpl implements ImageService {
                 }
                 return variantImageSource.stream();
             } catch (RuntimeException e) {
+                LOG.error("Null parameters not allowed - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, imageVariant={}, storeImage={}", LogHelper.asStringArray(image, context, imageModification, imageVariant, storeImage), e);
                 synchronized (this) {
                     futureVariantImage.setRuntimeException(e);
                     futureVariantImages.remove(request);
@@ -170,6 +193,10 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private InMemoryImageSource generateVariantImageInCurrentThread(Image image, Context context, ImageModificationDto modificationDto, ImageVariant imageVariant, boolean storeImage) {
+        if (image == null || context == null || modificationDto == null || imageVariant == null) {
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#generateVariantImageInCurrentThread: image={}, context={}, modificationDto={}, imageVariant={}, storeImage={}", LogHelper.asStringArray(image, context, modificationDto, imageVariant, storeImage));
+        }
+
         ImageResolution imageResolution = new ImageResolution();
         imageResolution.setWidth(modificationDto.getResolution().getWidth());
         imageResolution.setHeight(modificationDto.getResolution().getHeight());
@@ -231,6 +258,10 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void saveImageResolution(ImageResolution resolution, Collection<Context> contexts) {
+        if (resolution == null || contexts == null) {
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImageResolution: resolution={}, contexts={}}", LogHelper.asStringArray(resolution, contexts));
+        }
+
         imageResolutionManager.saveResolution(resolution);
         contextManager.updateContextsForResolution(resolution.getId(), contexts);
     }

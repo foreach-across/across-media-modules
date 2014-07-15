@@ -3,7 +3,10 @@ package com.foreach.imageserver.core.services;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.transformers.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,8 @@ import java.util.concurrent.Semaphore;
 @Service
 @Exposed
 public class ImageTransformServiceImpl implements ImageTransformService {
+
+    private static Logger LOG = LoggerFactory.getLogger(ImageTransformServiceImpl.class);
 
     @Autowired
     private ImageTransformerRegistry imageTransformerRegistry;
@@ -34,6 +39,10 @@ public class ImageTransformServiceImpl implements ImageTransformService {
 
     @Override
     public Dimensions computeDimensions(StreamImageSource imageSource) {
+        if (imageSource == null) {
+            LOG.warn("Null parameters not allowed - ImageTransformServiceImpl#computeDimensions: imageSource=null");
+        }
+
         final ImageCalculateDimensionsAction action = new ImageCalculateDimensionsAction(imageSource);
 
         ImageTransformer imageTransformer = findAbleTransformer(new CanExecute() {
@@ -58,6 +67,10 @@ public class ImageTransformServiceImpl implements ImageTransformService {
 
     @Override
     public ImageAttributes getAttributes(InputStream imageStream) {
+        if (imageStream == null) {
+            LOG.warn("Null parameters not allowed - ImageTransformServiceImpl#getAttributes: imageStream=null");
+        }
+
         final GetImageAttributesAction action = new GetImageAttributesAction(imageStream);
 
         ImageTransformer imageTransformer = findAbleTransformer(new CanExecute() {
@@ -73,6 +86,8 @@ public class ImageTransformServiceImpl implements ImageTransformService {
             semaphore.acquireUninterruptibly();
             try {
                 imageAttributes = imageTransformer.execute(action);
+            } catch (Exception e) {
+                LOG.error("Encounter failure during image transform - ImageTransformServiceImpl#computeDimensions: imageSource={}", imageStream, e);
             } finally {
                 semaphore.release();
             }
@@ -82,6 +97,10 @@ public class ImageTransformServiceImpl implements ImageTransformService {
 
     @Override
     public InMemoryImageSource modify(StreamImageSource imageSource, int outputWidth, int outputHeight, int cropX, int cropY, int cropWidth, int cropHeight, int densityWidth, int densityHeight, ImageType outputType) {
+        if (imageSource == null) {
+            LOG.warn("Null parameters not allowed - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}", LogHelper.asStringArray(imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight, densityWidth, densityHeight, outputType));
+        }
+
         final ImageModifyAction action = new ImageModifyAction(
                 imageSource,
                 outputWidth,
@@ -107,6 +126,8 @@ public class ImageTransformServiceImpl implements ImageTransformService {
             semaphore.acquireUninterruptibly();
             try {
                 result = imageTransformer.execute(action);
+            } catch (Exception e){
+                LOG.warn("Encountered error modifying file - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}", LogHelper.asStringArray(imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight, densityWidth, densityHeight, outputType));
             } finally {
                 semaphore.release();
             }
