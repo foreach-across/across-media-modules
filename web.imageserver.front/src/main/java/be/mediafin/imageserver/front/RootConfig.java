@@ -85,7 +85,7 @@ public class RootConfig {
     @Bean
     public AcrossContext acrossContext(ConfigurableApplicationContext parentContext, DataSource dataSource) {
         AcrossContext context = new AcrossContext(parentContext);
-        context.setAllowInstallers(true);
+        //context.setAllowInstallers(true);
         context.setDataSource(dataSource);
         context.addPropertySources(parentContext.getEnvironment().getPropertySources());
         context.addModule(imageServerCoreModule());

@@ -69,7 +69,7 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     public Dimensions saveImage(String externalId, byte[] imageBytes, Date imageDate) throws ImageStoreException {
         if (StringUtils.isBlank(externalId) || imageBytes == null || imageDate == null) {
-            LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImage: image={}, context={}, imageDate={}", LogHelper.asStringArray(externalId, imageBytes, imageDate));
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImage: image={}, context={}, imageDate={}", LogHelper.flatten(externalId, imageBytes, imageDate));
         }
 
         ImageAttributes imageAttributes = imageTransformService.getAttributes(new ByteArrayInputStream(imageBytes));
@@ -94,7 +94,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void saveImageModification(ImageModification modification) {
         if (modification == null) {
-            LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImageModification: modification={}", LogHelper.asStringArray(modification));
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImageModification: modification={}", LogHelper.flatten(modification));
         }
 
         ImageModification existingModification = imageModificationManager.getById(modification.getImageId(), modification.getContextId(), modification.getResolutionId());
@@ -110,7 +110,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
         if (image == null || context == null || imageResolution == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageServiceImpl#getVariantImage: image={}, context={}, imageResolution={}, imageVariant={}", LogHelper.asStringArray(image, context, imageResolution, imageVariant));
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#getVariantImage: image={}, context={}, imageResolution={}, imageVariant={}", LogHelper.flatten(image, context, imageResolution, imageVariant));
         }
 
         ImageModificationDto modification = cropGenerator.buildModificationDto(image, context, imageResolution);
@@ -148,7 +148,7 @@ public class ImageServiceImpl implements ImageService {
      */
     private StreamImageSource generateVariantImage(Image image, Context context, ImageModificationDto imageModification, ImageVariant imageVariant, boolean storeImage) {
         if (image == null || context == null || imageModification == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, imageVariant={}, storeImage={}", LogHelper.asStringArray(image, context, imageModification, imageVariant, storeImage));
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, imageVariant={}, storeImage={}", LogHelper.flatten(image, context, imageModification, imageVariant, storeImage));
         }
 
         VariantImageRequest request = new VariantImageRequest(image.getId(), context != null ? context.getId() : 0, imageModification, imageVariant);
@@ -176,7 +176,7 @@ public class ImageServiceImpl implements ImageService {
                 }
                 return variantImageSource.stream();
             } catch (RuntimeException e) {
-                LOG.error("Null parameters not allowed - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, imageVariant={}, storeImage={}", LogHelper.asStringArray(image, context, imageModification, imageVariant, storeImage), e);
+                LOG.error("Null parameters not allowed - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, imageVariant={}, storeImage={}", LogHelper.flatten(image), LogHelper.flatten(context), LogHelper.flatten(imageModification), LogHelper.flatten(imageVariant), storeImage, e);
                 synchronized (this) {
                     futureVariantImage.setRuntimeException(e);
                     futureVariantImages.remove(request);
@@ -194,7 +194,7 @@ public class ImageServiceImpl implements ImageService {
 
     private InMemoryImageSource generateVariantImageInCurrentThread(Image image, Context context, ImageModificationDto modificationDto, ImageVariant imageVariant, boolean storeImage) {
         if (image == null || context == null || modificationDto == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageServiceImpl#generateVariantImageInCurrentThread: image={}, context={}, modificationDto={}, imageVariant={}, storeImage={}", LogHelper.asStringArray(image, context, modificationDto, imageVariant, storeImage));
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#generateVariantImageInCurrentThread: image={}, context={}, modificationDto={}, imageVariant={}, storeImage={}", LogHelper.flatten(image, context, modificationDto, imageVariant, storeImage));
         }
 
         ImageResolution imageResolution = new ImageResolution();
@@ -259,7 +259,7 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     public void saveImageResolution(ImageResolution resolution, Collection<Context> contexts) {
         if (resolution == null || contexts == null) {
-            LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImageResolution: resolution={}, contexts={}}", LogHelper.asStringArray(resolution, contexts));
+            LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImageResolution: resolution={}, contexts={}}", LogHelper.flatten(resolution, contexts));
         }
 
         imageResolutionManager.saveResolution(resolution);

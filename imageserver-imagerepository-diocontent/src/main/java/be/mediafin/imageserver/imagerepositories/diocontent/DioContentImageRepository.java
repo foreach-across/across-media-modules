@@ -9,9 +9,12 @@ import be.persgroep.red.diocontent.webservice.client.DefaultRestDioContentClient
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayOutputStream;
@@ -19,6 +22,9 @@ import java.util.Map;
 
 @Exposed
 public class DioContentImageRepository implements ImageRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DioContentImageRepository.class);
+
     private final String serverUrl;
     private final String username;
     private final String password;
@@ -78,6 +84,7 @@ public class DioContentImageRepository implements ImageRepository {
 
             return new InMemoryImageSource(imageType, data.toByteArray());
         } catch (Exception e) {
+            LOG.error("Encountered error while retrieving image from diocontent - DioContentImageRepository#retrieveImageFromDioContent: dioContentId={}", dioContentId, e);
             throw new ImageCouldNotBeRetrievedException(e);
         } finally {
             IOUtils.closeQuietly(data);
@@ -92,6 +99,7 @@ public class DioContentImageRepository implements ImageRepository {
         try {
             return Integer.valueOf(repositoryParameters.get("id"));
         } catch (NumberFormatException e) {
+            LOG.error("Encountered error extracting id - DioContentImageRepository#extractId: repositoryParameters={}", LogHelper.flatten(repositoryParameters), e);
             throw new MissingRepositoryParameterException("Repository parameter 'id' should be an integer number.");
         }
     }

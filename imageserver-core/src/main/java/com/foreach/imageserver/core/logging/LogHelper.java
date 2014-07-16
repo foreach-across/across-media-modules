@@ -13,18 +13,21 @@ public final class LogHelper {
     private LogHelper() {
     }
 
-    public static String[] asStringArray(Object... objects) {
+    public static String[] flatten(Object... objects) {
         String[] result = new String[objects.length];
         for (int i = 0; i < objects.length; i++) {
-            Object object = objects[i];
-            if (object instanceof Number || object instanceof String || object == null) {
-                result[i] = String.valueOf(object);
-            } else if (object instanceof Date) {
-                result[i] = DATE_FORMAT.format(object);
-            } else {
-                result[i] = ToStringBuilder.reflectionToString(objects[i], ToStringStyle.SHORT_PREFIX_STYLE);
-            }
+            result[i] = flatten(objects[i]);
         }
         return result;
+    }
+
+    public static String flatten(Object object) {
+        if (object instanceof Number || object instanceof String || object == null) {
+            return String.valueOf(object);
+        }
+        if (object instanceof Date) {
+            return DATE_FORMAT.format(object);
+        }
+        return ToStringBuilder.reflectionToString(object, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

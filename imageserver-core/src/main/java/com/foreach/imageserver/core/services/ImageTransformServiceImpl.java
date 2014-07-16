@@ -58,6 +58,8 @@ public class ImageTransformServiceImpl implements ImageTransformService {
             semaphore.acquireUninterruptibly();
             try {
                 dimensions = imageTransformer.execute(action);
+            } catch(Exception e){
+                LOG.error("Error while computing dimensions - ImageTransformServiceImpl#computeDimensions: imageSource={}", LogHelper.flatten(imageSource), e);
             } finally {
                 semaphore.release();
             }
@@ -87,7 +89,7 @@ public class ImageTransformServiceImpl implements ImageTransformService {
             try {
                 imageAttributes = imageTransformer.execute(action);
             } catch (Exception e) {
-                LOG.error("Encounter failure during image transform - ImageTransformServiceImpl#computeDimensions: imageSource={}", imageStream, e);
+                LOG.error("Encountered failure during image transform - ImageTransformServiceImpl#getAttributes: imageStream={}", imageStream, e);
             } finally {
                 semaphore.release();
             }
@@ -98,7 +100,7 @@ public class ImageTransformServiceImpl implements ImageTransformService {
     @Override
     public InMemoryImageSource modify(StreamImageSource imageSource, int outputWidth, int outputHeight, int cropX, int cropY, int cropWidth, int cropHeight, int densityWidth, int densityHeight, ImageType outputType) {
         if (imageSource == null) {
-            LOG.warn("Null parameters not allowed - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}", LogHelper.asStringArray(imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight, densityWidth, densityHeight, outputType));
+            LOG.warn("Null parameters not allowed - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}", LogHelper.flatten(imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight, densityWidth, densityHeight, outputType));
         }
 
         final ImageModifyAction action = new ImageModifyAction(
@@ -127,7 +129,7 @@ public class ImageTransformServiceImpl implements ImageTransformService {
             try {
                 result = imageTransformer.execute(action);
             } catch (Exception e){
-                LOG.warn("Encountered error modifying file - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}", LogHelper.asStringArray(imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight, densityWidth, densityHeight, outputType));
+                LOG.warn("Encountered error modifying file - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}", LogHelper.flatten(imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight, densityWidth, densityHeight, outputType));
             } finally {
                 semaphore.release();
             }

@@ -146,7 +146,7 @@ public class ImageStreamingController {
         try {
             IOUtils.copy(bis, response.getOutputStream());
         } catch (IOException e) {
-            LOG.error("Failed to write error message to output stream");
+            LOG.error("Failed to write error message to output stream: errorMessage={}", errorMessage, e);
         } finally {
             IOUtils.closeQuietly(bis);
         }

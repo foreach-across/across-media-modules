@@ -68,6 +68,9 @@ public class ImageStoreServiceImpl implements ImageStoreService {
         try {
             imageStream = new ByteArrayInputStream(imageBytes);
             this.storeOriginalImage(image, imageStream);
+        } catch (Exception e){
+            LOG.error("Encountered failure while storing original image - ImageStoreServiceImpl#storeOriginalImage: image={}", LogHelper.flatten(image), e);
+            throw e;
         } finally {
             IOUtils.closeQuietly(imageStream);
         }
@@ -93,7 +96,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     @Override
     public void storeVariantImage(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant, InputStream imageStream) {
         if (image == null || context == null || modification == null || imageVariant == null || imageStream == null) {
-            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#storeVariantImage: image={}, context={}, modification={}, imageVariant={}, imageStream={}", LogHelper.asStringArray(image, context, modification, imageVariant, imageStream));
+            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#storeVariantImage: image={}, context={}, modification={}, imageVariant={}, imageStream={}", LogHelper.flatten(image, context, modification, imageVariant, imageStream));
         }
         Path targetPath = getTargetPath(image, context, modification, imageVariant);
         createFoldersSafely(targetPath.getParent());
@@ -103,7 +106,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     @Override
     public StreamImageSource getVariantImage(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant) {
         if (image == null || context == null || modification == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#getVariantImage: image={}, context={}, modification={}, imageVariant={}", LogHelper.asStringArray(image, context, modification, imageVariant));
+            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#getVariantImage: image={}, context={}, modification={}, imageVariant={}", LogHelper.flatten(image, context, modification, imageVariant));
         }
         Path targetPath = getTargetPath(image, context, modification, imageVariant);
         return read(targetPath, imageVariant.getOutputType());
@@ -112,7 +115,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
     @Override
     public void removeVariantImage(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant) {
         if (image == null || context == null || modification == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#removeVariantImage: image={}, context={}, modification={}, imageVariant={}", LogHelper.asStringArray(image, context, modification, imageVariant));
+            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#removeVariantImage: image={}, context={}, modification={}, imageVariant={}", LogHelper.flatten(image, context, modification, imageVariant));
         }
 
         Path targetPath = getTargetPath(image, context, modification, imageVariant);
@@ -192,7 +195,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
     private Path getTargetPath(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant) {
         if (image == null || context == null || modification == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#getTargetPath: image={}, context={}, modification={}, imageVariant={}", LogHelper.asStringArray(image, context, modification, imageVariant));
+            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#getTargetPath: image={}, context={}, modification={}, imageVariant={}", LogHelper.flatten(image, context, modification, imageVariant));
         }
 
         /**
@@ -210,7 +213,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
 
     private String constructFileName(Image image, ImageModificationDto modification, ImageVariant imageVariant) {
         if (image == null || modification == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#constructFileName: image={}, modification={}, imageVariant={}", LogHelper.asStringArray(image, modification, imageVariant));
+            LOG.warn("Null parameters not allowed - ImageStoreServiceImpl#constructFileName: image={}, modification={}, imageVariant={}", LogHelper.flatten(image, modification, imageVariant));
         }
 
         ImageResolutionDto imageResolution = modification.getResolution();
@@ -254,6 +257,7 @@ public class ImageStoreServiceImpl implements ImageStoreService {
             Files.move(temporaryPath, targetPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             setFilePermissionsWithoutFailing(targetPath);
         } catch (IOException e) {
+            LOG.error("Error while creating folder - ImageStoreServiceImpl#writeSafely: targetPath={}", targetPath, e);
             throw new ImageStoreException(e);
         }
     }

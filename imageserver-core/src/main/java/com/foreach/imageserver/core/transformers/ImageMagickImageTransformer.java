@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.transformers;
 import com.foreach.imageserver.core.business.Crop;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.logging.LogHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.im4java.core.ConvertCmd;
@@ -123,7 +124,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
             Info info = new Info("-", stream, false);
             return new Dimensions(info.getImageWidth(), info.getImageHeight());
         } catch (Exception e) {
-            LOG.error("Failed to get image dimensions: {}", e);
+            LOG.error("Failed to get image dimensions - ImageMagickImageTransformer#execute: action={}", LogHelper.flatten(action), e);
             throw new ImageModificationException(e);
         } finally {
             IOUtils.closeQuietly(stream);
@@ -137,14 +138,16 @@ public class ImageMagickImageTransformer implements ImageTransformer {
         }
 
         InputStream stream = null;
+        ImageType imageType = null;
+        Dimensions dimensions = null;
         try {
             stream = action.getImageStream();
             Info info = new Info("-", stream, false);
-            ImageType imageType = toImageType(info);
-            Dimensions dimensions = new Dimensions(info.getImageWidth(), info.getImageHeight());
+            imageType = toImageType(info);
+            dimensions = new Dimensions(info.getImageWidth(), info.getImageHeight());
             return new ImageAttributes(imageType, dimensions);
         } catch (Exception e) {
-            LOG.error("Failed to get image attributes: {}", e);
+            LOG.error("Failed to get image attributes - ImageMagickImageTransformer#execute: action={}, imageType={}, dimensions={}", LogHelper.flatten(action), LogHelper.flatten(imageType), LogHelper.flatten(dimensions), e);
             throw new ImageModificationException(e);
         } finally {
             IOUtils.closeQuietly(stream);
@@ -159,11 +162,13 @@ public class ImageMagickImageTransformer implements ImageTransformer {
 
         InputStream imageStream = null;
         ByteArrayOutputStream os = null;
+        Dimensions appliedDensity = null;
+        Crop crop = null;
         try {
             ConvertCmd cmd = new ConvertCmd();
 
             IMOperation op = new IMOperation();
-            Dimensions appliedDensity = setDensityIfRequired(op, action);
+            appliedDensity = setDensityIfRequired(op, action);
             op.addImage("-");
 
             String colorspace = "Transparent";
@@ -175,7 +180,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
                 colorspace = "RGB";
             }
 
-            Crop crop = applyDensity(action.getCrop(), appliedDensity);
+            crop = applyDensity(action.getCrop(), appliedDensity);
             op.crop(crop.getWidth(), crop.getHeight(), crop.getX(), crop.getY());
 
             op.units("PixelsPerInch");
@@ -197,7 +202,7 @@ public class ImageMagickImageTransformer implements ImageTransformer {
             byte[] bytes = os.toByteArray();
             return new InMemoryImageSource(action.getOutputType(), bytes);
         } catch (Exception e) {
-            LOG.error("Failed to apply modification: {}", e);
+            LOG.error("Failed to apply modification - ImageMagickImageTransformer#execute: action={}, appliedDensity={}, crop={}", LogHelper.flatten(action), LogHelper.flatten(appliedDensity), LogHelper.flatten(crop), e);
             throw new ImageModificationException(e);
         } finally {
             IOUtils.closeQuietly(imageStream);

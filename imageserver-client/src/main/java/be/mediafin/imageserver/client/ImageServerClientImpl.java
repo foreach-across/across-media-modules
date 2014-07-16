@@ -71,7 +71,7 @@ public class ImageServerClientImpl implements ImageServerClient {
     @Override
     public String imageUrl(String imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant) {
         if (StringUtils.isBlank(imageId) || context == null || imageResolution == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageServerClientImpl#imageUrl: imageId={}, context={}, imageResolution={}, imageVariant={}", LogHelper.asStringArray(imageId, context, imageResolution, imageVariant));
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#imageUrl: imageId={}, context={}, imageResolution={}, imageVariant={}", LogHelper.flatten(imageId, context, imageResolution, imageVariant));
         }
 
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
@@ -92,7 +92,7 @@ public class ImageServerClientImpl implements ImageServerClient {
     @Override
     public InputStream imageStream(String imageId, ImageServerContext context, ImageResolutionDto imageResolution, ImageVariantDto imageVariant) {
         if (StringUtils.isBlank(imageId) || context == null || imageResolution == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageServerClientImpl#imageStream: imageId={}, context={}, imageResolution={}, imageVariant={}", LogHelper.asStringArray(imageId, context, imageResolution, imageVariant));
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#imageStream: imageId={}, context={}, imageResolution={}, imageVariant={}", LogHelper.flatten(imageId, context, imageResolution, imageVariant));
         }
 
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
@@ -108,7 +108,7 @@ public class ImageServerClientImpl implements ImageServerClient {
     @Override
     public InputStream imageStream(String imageId, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant) {
         if (StringUtils.isBlank(imageId) || imageModificationDto == null || imageVariant == null) {
-            LOG.warn("Null parameters not allowed - ImageServerClientImpl#imageStream: imageId={}, imageModificationDto={}, imageResolution={}, imageVariant={}", LogHelper.asStringArray(imageId, imageModificationDto, imageVariant));
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#imageStream: imageId={}, imageModificationDto={}, imageResolution={}, imageVariant={}", LogHelper.flatten(imageId, imageModificationDto, imageVariant));
         }
 
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
@@ -124,7 +124,7 @@ public class ImageServerClientImpl implements ImageServerClient {
     @Override
     public DimensionsDto loadImage(String imageId, int dioContentId) {
         if (StringUtils.isBlank(imageId) || dioContentId == 0) {
-            LOG.warn("Null parameters not allowed - ImageServerClientImpl#loadImage: imageId={}, dioContentId={}", LogHelper.asStringArray(imageId, dioContentId));
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#loadImage: imageId={}, dioContentId={}", LogHelper.flatten(imageId, dioContentId));
         }
         DatedBuffer datedBuffer = retrieveImageFromDioContent(dioContentId);
         return loadImage(imageId, datedBuffer.getBytes(), datedBuffer.getDate());
@@ -138,7 +138,7 @@ public class ImageServerClientImpl implements ImageServerClient {
     @Override
     public DimensionsDto loadImage(String imageId, byte[] imageBytes, Date imageDate) {
         if (StringUtils.isBlank(imageId) || imageBytes == null || imageDate == null) {
-            LOG.warn("Null parameters not allowed - ImageServerClientImpl#loadImage: imageId={}, imageBytes={}, imageDate={}", LogHelper.asStringArray(imageId, imageBytes, imageDate));
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#loadImage: imageId={}, imageBytes={}, imageDate={}", LogHelper.flatten(imageId, imageBytes, imageDate));
         }
 
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
@@ -162,7 +162,7 @@ public class ImageServerClientImpl implements ImageServerClient {
 
             return getJsonResponse("load", queryParams, form, responseType);
         } catch (RuntimeException e){
-            LOG.error("Loading image caused exception - ImageServerClientImpl#loadImage: imageId={}, imageBytes={}, imageDate={}", LogHelper.asStringArray(imageId, imageBytes, imageDate), e);
+            LOG.error("Loading image caused exception - ImageServerClientImpl#loadImage: imageId={}, imageBytes={}, imageDate={}", LogHelper.flatten(imageId, imageBytes, imageDate));
             throw e;
         } finally {
             IOUtils.closeQuietly(imageStream);
@@ -311,7 +311,7 @@ public class ImageServerClientImpl implements ImageServerClient {
 
     private DatedBuffer retrieveImageFromDioContent(int dioContentId) {
         if (dioContentId == 0){
-            LOG.warn("Null parameters not allowed - ImageServerClientImpl#retrieveImageFromDioContent: dioContentId={}", LogHelper.asStringArray(dioContentId));
+            LOG.warn("Null parameters not allowed - ImageServerClientImpl#retrieveImageFromDioContent: dioContentId={}", dioContentId);
         }
 
         ByteArrayOutputStream data = null;
@@ -331,7 +331,7 @@ public class ImageServerClientImpl implements ImageServerClient {
 
             return new DatedBuffer(data.toByteArray(), imageDate);
         } catch (Exception e) {
-            LOG.error("Image could not be retrieved from diocontent - ImageServerClientImpl#retrieveImageFromDioContent: dioContentId={}", LogHelper.asStringArray(dioContentId), e);
+            LOG.error("Image could not be retrieved from diocontent - ImageServerClientImpl#retrieveImageFromDioContent: dioContentId={}", dioContentId, e);
             throw new ImageCouldNotBeRetrievedException();
         } finally {
             IOUtils.closeQuietly(data);

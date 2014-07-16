@@ -65,7 +65,7 @@ public class CropGeneratorImpl implements CropGenerator {
     @Override
     public ImageModificationDto buildModificationDto(Image image, Context context, ImageResolution imageResolution) {
         if (image == null || context == null || imageResolution == null) {
-            LOG.warn("Null parameters not allowed - CropGeneratorImpl#buildModificationDto: image={}, context={}, imageResolution={}", LogHelper.asStringArray(image, context, imageResolution));
+            LOG.warn("Null parameters not allowed - CropGeneratorImpl#buildModificationDto: image={}, context={}, imageResolution={}", LogHelper.flatten(image, context, imageResolution));
         }
 
         ImageModification registeredModification = imageModificationManager.getById(image.getId(), context.getId(), imageResolution.getId());
@@ -93,7 +93,7 @@ public class CropGeneratorImpl implements CropGenerator {
 
     private Crop obtainCrop(Image image, Context context, ImageResolution requestedResolution) {
         if (image == null || context == null || requestedResolution == null) {
-            LOG.warn("Null parameters not allowed - CropGeneratorImpl#obtainCrop: image={}, context={}, requestedResolution={}", LogHelper.asStringArray(image, context, requestedResolution));
+            LOG.warn("Null parameters not allowed - CropGeneratorImpl#obtainCrop: image={}, context={}, requestedResolution={}", LogHelper.flatten(image, context, requestedResolution));
         }
 
         Crop result;
@@ -129,7 +129,7 @@ public class CropGeneratorImpl implements CropGenerator {
     @Override
     public Crop generateCrop(Image image, Context context, ImageResolution resolution, List<ImageModification> modifications) {
         if (image == null || context == null || modifications == null) {
-            LOG.warn("Null parameters not allowed - CropGeneratorImpl#generateCrop: image={}, context={}, requestedResolution={}", LogHelper.asStringArray(image, context, modifications));
+            LOG.warn("Null parameters not allowed - CropGeneratorImpl#generateCrop: image={}, context={}, modifications={}", LogHelper.flatten(image, context, modifications));
         }
 
         Dimensions requestedDimensions = resolution.getDimensions();
@@ -247,7 +247,7 @@ public class CropGeneratorImpl implements CropGenerator {
 
     private CropCandidate calculateCropCandidateByExtending(Image image, Dimensions targetDimensions, Crop crop) {
         if (image == null || targetDimensions == null || crop == null) {
-            LOG.warn("Null parameters not allowed - CropGeneratorImpl#calculateCropCandidateByExtending: image={}, targetDimensions={}, crop={}", LogHelper.asStringArray(image, targetDimensions, crop));
+            LOG.warn("Null parameters not allowed - CropGeneratorImpl#calculateCropCandidateByExtending: image={}, targetDimensions={}, crop={}", LogHelper.flatten(image, targetDimensions, crop));
         }
 
         if (crop.getWidth() > targetDimensions.getWidth() || crop.getHeight() > targetDimensions.getHeight()) {
@@ -285,7 +285,7 @@ public class CropGeneratorImpl implements CropGenerator {
 
     private CropCandidate calculateCropCandidateByScaling(Image image, Dimensions targetDimensions, Crop crop) {
         if (image == null || targetDimensions == null || crop == null) {
-            LOG.warn("Null parameters not allowed - CropGeneratorImpl#calculateCropCandidateByScaling: image={}, targetDimensions={}, crop={}", LogHelper.asStringArray(image, targetDimensions, crop));
+            LOG.warn("Null parameters not allowed - CropGeneratorImpl#calculateCropCandidateByScaling: image={}, targetDimensions={}, crop={}", LogHelper.flatten(image, targetDimensions, crop));
         }
 
         if (targetDimensions.getWidth() > crop.getWidth() && targetDimensions.getHeight() > crop.getHeight()) {
@@ -369,7 +369,7 @@ public class CropGeneratorImpl implements CropGenerator {
 
     private Crops obtainCrops(Image image, Context context, List<ImageModification> modifications) {
         if (image == null || context == null || modifications == null) {
-            LOG.warn("Null parameters not allowed - CropGeneratorImpl#obtainCrops: image={}, context={}, modifications={}", LogHelper.asStringArray(image, context, modifications));
+            LOG.warn("Null parameters not allowed - CropGeneratorImpl#obtainCrops: image={}, context={}, modifications={}", LogHelper.flatten(image, context, modifications));
         }
 
         Set<Crop> sameContext = new HashSet<>();

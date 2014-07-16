@@ -14,6 +14,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ import java.util.Map;
 @Exposed
 @Conditional(WebImageRepositoryConditional.class)
 public class WebImageRepository implements ImageRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WebImageRepository.class);
 
     public static final String CODE = "web";
 
@@ -99,6 +103,7 @@ public class WebImageRepository implements ImageRepository {
 
             return new InMemoryImageSource(imageType, imageBytes);
         } catch (IOException e) {
+            LOG.error("Encountered error retrieving image from web - WebImageRepository#retrieveImageFromWeb: url={}", url, e);
             throw new ImageCouldNotBeRetrievedException(e);
         } finally {
             IOUtils.closeQuietly(imageStream);
