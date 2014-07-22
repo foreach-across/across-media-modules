@@ -93,8 +93,25 @@ public class ImageServiceImpl implements ImageService {
      */
     @Override
     public void saveImageModification(ImageModification modification) {
+        Image image = getById(modification.getImageId());
+        saveImageModification(modification, image);
+    }
+
+    @Override
+    public void saveImageModification(ImageModification modification, Image image) {
         if (modification == null) {
             LOG.warn("Null parameters not allowed - ImageServiceImpl#saveImageModification: modification={}", LogHelper.flatten(modification));
+        }
+
+        int imageWidth = image.getDimensions().getWidth();
+        int imageHeight = image.getDimensions().getHeight();
+        int cropX = modification.getCrop().getX();
+        int cropY = modification.getCrop().getY();
+        int cropWidth = modification.getCrop().getWidth();
+        int cropHeight = modification.getCrop().getHeight();
+
+        if (cropX < 0 || cropY < 0 ||  cropWidth + cropX > imageWidth || cropHeight + cropY > imageHeight){
+            throw new CropOutsideOfImageBoundsException("The crop fell at least partly outside the image bounds");
         }
 
         ImageModification existingModification = imageModificationManager.getById(modification.getImageId(), modification.getContextId(), modification.getResolutionId());

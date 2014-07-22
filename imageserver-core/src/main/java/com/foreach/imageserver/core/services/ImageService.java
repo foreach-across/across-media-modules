@@ -17,6 +17,8 @@ public interface ImageService {
 
     void saveImageModification(ImageModification modification);
 
+    void saveImageModification(ImageModification modification, Image image);
+
     StreamImageSource generateModification(Image image, ImageModificationDto modificationDto, ImageVariant imageVariant);
 
     StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);

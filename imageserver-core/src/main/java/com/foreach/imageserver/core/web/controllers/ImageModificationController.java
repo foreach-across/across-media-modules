@@ -4,10 +4,7 @@ import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.services.ContextService;
-import com.foreach.imageserver.core.services.CropGeneratorUtil;
-import com.foreach.imageserver.core.services.DtoUtil;
-import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.JsonResponse;
@@ -72,7 +69,11 @@ public class ImageModificationController extends BaseImageAPIController {
         modification.setCrop(DtoUtil.toBusiness(imageModificationDto.getCrop()));
         modification.setDensity(DtoUtil.toBusiness(imageModificationDto.getDensity()));
 
-        imageService.saveImageModification(modification);
+        try {
+            imageService.saveImageModification(modification, image);
+        } catch (CropOutsideOfImageBoundsException e){
+            return error("Crop dimensions fall outside image bounds.");
+        }
 
         return success();
     }
