@@ -72,7 +72,8 @@ public class MfnImageServerMigrationResolutionsInstaller {
         define(ONLINE, 228, 155, "Teaser - small", true);
         define(BOTH, 100, 100, "Main navigation tile", true, "author-default");
         define(ONLINE, 320, 210, "Main navigation tile - Sabato", false);
-        define(ONLINE, 1440, 810, "Mediamaster: 16:9", false);
+        define(ONLINE, 1440, 810, "Mediamaster: 16:9", true);
+        define(ONLINE, 1425, 594, "Mediamaster - 2.4:1", true);
     }
 
     private void define(String[] contexts, int width, int height, String name, boolean configurable, String... tags) {
