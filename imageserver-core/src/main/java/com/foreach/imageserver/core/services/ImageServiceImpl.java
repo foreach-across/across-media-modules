@@ -193,10 +193,11 @@ public class ImageServiceImpl implements ImageService {
                 }
                 return variantImageSource.stream();
             } catch (RuntimeException e) {
-                LOG.error("Null parameters not allowed - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, imageVariant={}, storeImage={}", LogHelper.flatten(image), LogHelper.flatten(context), LogHelper.flatten(imageModification), LogHelper.flatten(imageVariant), storeImage, e);
+                LOG.error("Encountered error during image variant file creation - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, imageVariant={}, storeImage={}", LogHelper.flatten(image), LogHelper.flatten(context), LogHelper.flatten(imageModification), LogHelper.flatten(imageVariant), storeImage, e);
                 synchronized (this) {
                     futureVariantImage.setRuntimeException(e);
                     futureVariantImages.remove(request);
+                    removeImageVariantFile(image, context, imageModification, imageVariant);
                 }
                 throw e;
             } catch (Error e) {
@@ -206,6 +207,17 @@ public class ImageServiceImpl implements ImageService {
                 }
                 throw e;
             }
+        }
+    }
+
+    /**
+     * Tries to remove the image variant file to avoid the possibility that a corrupt file was created and will be persisted
+     */
+    private void removeImageVariantFile(Image image, Context context, ImageModificationDto modification, ImageVariant imageVariant){
+        try {
+            imageStoreService.removeVariantImage(image, context, modification, imageVariant);
+        } catch(Exception e){
+            LOG.error("Encountered error while trying to remove an image variant file due to errors during its creation - ImageServiceImpl#generateVariantImage: image={}, context={}, modification={}, imageVariant={}, storeImage={}", LogHelper.flatten(image), LogHelper.flatten(context), LogHelper.flatten(modification), LogHelper.flatten(imageVariant), e);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.web.controllers;
 
 import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.services.ContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
@@ -45,6 +46,9 @@ public class ImageStreamingController {
     @Autowired
     private ImageService imageService;
 
+    @Value("${environment.type}")
+    private String environmentName;
+
     @Value("${imagestreaming.caching.maxAgeInSeconds}")
     private int maxCacheAgeInSeconds;
 
@@ -84,36 +88,48 @@ public class ImageStreamingController {
                      HttpServletResponse response) {
         // TODO Make sure we only rely on objects that can be long-term cached for retrieving the image.
 
-        Image image = imageService.getByExternalId(externalId);
+        try {
+            Image image = imageService.getByExternalId(externalId);
 
-        if (image == null && StringUtils.isNotBlank(fallbackImageKey) && !StringUtils.equals(externalId, fallbackImageKey)) {
-            image = imageService.getByExternalId(fallbackImageKey);
+            if (image == null && StringUtils.isNotBlank(fallbackImageKey) && !StringUtils.equals(externalId, fallbackImageKey)) {
+                image = imageService.getByExternalId(fallbackImageKey);
+            }
+
+            if (image == null) {
+                error(response, HttpStatus.NOT_FOUND, "No such image.");
+                return;
+            }
+
+            Context context = contextService.getByCode(contextCode);
+            if (context == null) {
+                error(response, HttpStatus.NOT_FOUND, "No such context.");
+                return;
+            }
+
+            ImageResolution imageResolution = contextService.getImageResolution(context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
+            if (imageResolution == null) {
+                error(response, HttpStatus.NOT_FOUND, "No such resolution.");
+                return;
+            }
+
+            StreamImageSource imageSource = imageService.getVariantImage(image, context, imageResolution, toBusiness(imageVariantDto));
+            if (imageSource == null) {
+                error(response, HttpStatus.NOT_FOUND, "Could not create variant.");
+                return;
+            }
+
+            renderImageSource(imageSource, response);
+
+        // fail-safe to avoid that stack traces are shown when an unexpected exception occurs
+        } catch (Exception e) {
+            // log the exception context and either send a clean error (in production) or rethrow the exception (anywhere else)
+            LOG.error("Retrieving image variant caused exception - ImageStreamingController#view: externalId={}, contextCode={}, imageResolutionDto={}, imageVariantDto={}", externalId, contextCode, LogHelper.flatten(imageResolutionDto), LogHelper.flatten(imageVariantDto), e);
+            if ("production".equals(environmentName)) {
+                error(response, HttpStatus.INTERNAL_SERVER_ERROR, "Error encountered while retrieving variant.");
+            } else {
+                throw e;
+            }
         }
-
-        if (image == null) {
-            error(response, HttpStatus.NOT_FOUND, "No such image.");
-            return;
-        }
-
-        Context context = contextService.getByCode(contextCode);
-        if (context == null) {
-            error(response, HttpStatus.NOT_FOUND, "No such context.");
-            return;
-        }
-
-        ImageResolution imageResolution = contextService.getImageResolution(context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight());
-        if (imageResolution == null) {
-            error(response, HttpStatus.NOT_FOUND, "No such resolution.");
-            return;
-        }
-
-        StreamImageSource imageSource = imageService.getVariantImage(image, context, imageResolution, toBusiness(imageVariantDto));
-        if (imageSource == null) {
-            error(response, HttpStatus.NOT_FOUND, "Could not create variant.");
-            return;
-        }
-
-        renderImageSource(imageSource, response);
     }
 
     private void renderImageSource(StreamImageSource imageSource, HttpServletResponse response) {
