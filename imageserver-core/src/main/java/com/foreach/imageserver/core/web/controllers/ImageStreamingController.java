@@ -46,8 +46,8 @@ public class ImageStreamingController {
     @Autowired
     private ImageService imageService;
 
-    @Value("${environment.type}")
-    private String environmentName;
+    @Value("${imagestreaming.provideStackTrace}")
+    private boolean provideStackTrade;
 
     @Value("${imagestreaming.caching.maxAgeInSeconds}")
     private int maxCacheAgeInSeconds;
@@ -124,10 +124,10 @@ public class ImageStreamingController {
         } catch (Exception e) {
             // log the exception context and either send a clean error (in production) or rethrow the exception (anywhere else)
             LOG.error("Retrieving image variant caused exception - ImageStreamingController#view: externalId={}, contextCode={}, imageResolutionDto={}, imageVariantDto={}", externalId, contextCode, LogHelper.flatten(imageResolutionDto), LogHelper.flatten(imageVariantDto), e);
-            if ("production".equals(environmentName)) {
-                error(response, HttpStatus.INTERNAL_SERVER_ERROR, "Error encountered while retrieving variant.");
-            } else {
+            if (provideStackTrade) {
                 throw e;
+            } else {
+                error(response, HttpStatus.INTERNAL_SERVER_ERROR, "Error encountered while retrieving variant.");
             }
         }
     }
