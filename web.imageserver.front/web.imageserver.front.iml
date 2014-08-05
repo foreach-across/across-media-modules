@@ -20,9 +20,7 @@
     <facet type="Spring" name="Spring">
       <configuration>
         <fileset id="fileset" name="Spring Application Context" removed="false">
-          <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/spring-config-security.xml</file>
-          <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/spring-dispatcher-servlet.xml</file>
-          <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/spring-config-admin.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/be/mediafin/imageserver/front/RootConfig.java</file>
         </fileset>
       </configuration>
     </facet>
@@ -121,6 +119,7 @@
     <orderEntry type="library" name="Maven: net.sf.ehcache:ehcache:2.8.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:4.0.6.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: across:across-test:1.0.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:4.0.6.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hsqldb:hsqldb:2.3.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: mysql:mysql-connector-java:5.1.31" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.oracle:ojdbc6:11.2.0" level="project" />

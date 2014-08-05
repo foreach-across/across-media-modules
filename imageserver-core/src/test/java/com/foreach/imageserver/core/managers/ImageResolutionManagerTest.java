@@ -33,7 +33,7 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 		assertNull( cache.get( "byId-10" ) );
 
 		ImageResolution retrievedResolution = imageResolutionManager.getById( 10 );
-		assertEquals( 10, retrievedResolution.getId().intValue() );
+		assertEquals( 10, retrievedResolution.getId() );
 		assertEquals( 111, retrievedResolution.getWidth());
 		assertEquals( 222, retrievedResolution.getHeight() );
 		assertSame( retrievedResolution, cache.get( "byId-10" ).get() );
@@ -42,7 +42,7 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 
 		ImageResolution retrievedAgainResolution = imageResolutionManager.getById( 10 );
 		assertSame( retrievedResolution, retrievedAgainResolution );
-		assertEquals( 10, retrievedAgainResolution.getId().intValue() );
+		assertEquals( 10, retrievedAgainResolution.getId() );
 		assertEquals( 111, retrievedAgainResolution.getWidth());
 		assertEquals( 222, retrievedAgainResolution.getHeight() );
 	}
@@ -60,7 +60,7 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 
 		List<ImageResolution> retrievedList = imageResolutionManager.getForContext( 10 );
 		assertEquals( 1, retrievedList.size() );
-		assertEquals( 11, retrievedList.get( 0 ).getId().intValue() );
+		assertEquals( 11, retrievedList.get( 0 ).getId() );
 		assertSame( retrievedList, cache.get( "forContext-10" ).get() );
 
 		jdbcTemplate.execute( "DELETE FROM CONTEXT_IMAGE_RESOLUTION" );
@@ -70,7 +70,7 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 		List<ImageResolution> retrievedAgainList = imageResolutionManager.getForContext( 10 );
 		assertSame( retrievedList, retrievedAgainList );
 		assertEquals( 1, retrievedAgainList.size() );
-		assertEquals( 11, retrievedAgainList.get( 0 ).getId().intValue() );
+		assertEquals( 11, retrievedAgainList.get( 0 ).getId() );
 	}
 
 }

@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: across-standard-modules:properties-module:1.0.3-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/properties-module/1.0.3-SNAPSHOT/properties-module-1.0.3-20140801.141319-12.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/properties-module/1.0.3-SNAPSHOT/properties-module-1.0.3-20140805.144351-13.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/properties-module/1.0.3-SNAPSHOT/properties-module-1.0.3-20140801.141319-12-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/properties-module/1.0.3-SNAPSHOT/properties-module-1.0.3-20140805.144351-13-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/properties-module/1.0.3-SNAPSHOT/properties-module-1.0.3-20140801.141319-12-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/properties-module/1.0.3-SNAPSHOT/properties-module-1.0.3-20140805.144351-13-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
