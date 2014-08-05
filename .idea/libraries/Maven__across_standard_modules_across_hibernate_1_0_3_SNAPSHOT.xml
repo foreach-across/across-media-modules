@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: across-standard-modules:across-hibernate:1.0.3-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/across-hibernate/1.0.3-SNAPSHOT/across-hibernate-1.0.3-20140801.141306-35.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/across-hibernate/1.0.3-SNAPSHOT/across-hibernate-1.0.3-20140801.141306-35-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/across-hibernate/1.0.3-SNAPSHOT/across-hibernate-1.0.3-20140801.141306-35-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

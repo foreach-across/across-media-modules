@@ -27,10 +27,7 @@
         <module name="imageserver-admin" />
         <module name="imageserver-client" />
         <module name="imageserver-core" />
-        <module name="imageserver-core-integration-tests" />
         <module name="imageserver-dtos" />
-        <module name="imageserver-imagerepository-diocontent" />
-        <module name="imageserver-imagerepository-web" />
         <module name="web.imageserver.front" />
       </profile>
     </annotationProcessing>

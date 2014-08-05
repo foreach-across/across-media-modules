@@ -33,6 +33,9 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/acceptance-tests/pom.xml" />
+        <option value="$PROJECT_DIR$/imageserver-core-integration-tests/pom.xml" />
+        <option value="$PROJECT_DIR$/imageserver-imagerepository-diocontent/pom.xml" />
+        <option value="$PROJECT_DIR$/imageserver-imagerepository-web/pom.xml" />
       </set>
     </option>
   </component>

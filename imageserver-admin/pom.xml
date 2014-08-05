@@ -5,7 +5,7 @@
     <parent>
         <artifactId>imageserver-platform</artifactId>
         <groupId>com.foreach.imageserver</groupId>
-        <version>2.2-SNAPSHOT</version>
+        <version>3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,15 +13,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>across</groupId>
+            <groupId>across-standard-modules</groupId>
             <artifactId>admin-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>across</groupId>
+            <groupId>across-standard-modules</groupId>
             <artifactId>user-module</artifactId>
         </dependency>
         <dependency>
-            <groupId>across</groupId>
+            <groupId>across-standard-modules</groupId>
             <artifactId>spring-security</artifactId>
         </dependency>
     </dependencies>

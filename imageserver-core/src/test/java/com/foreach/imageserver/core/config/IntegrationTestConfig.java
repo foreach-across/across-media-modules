@@ -4,6 +4,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
+import com.foreach.across.core.installers.InstallerAction;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,22 +67,20 @@ public class IntegrationTestConfig {
     @Bean
     public AcrossContext acrossContext(ConfigurableApplicationContext parentContext, DataSource dataSource, List<AcrossModule> acrossModules) {
         AcrossContext context = new AcrossContext(parentContext);
-        throw new RuntimeException("check me");
-        //TODO:check
-        //context.setAllowInstallers(true);
-//        context.setDataSource(dataSource);
-//        context.addPropertySources(parentContext.getEnvironment().getPropertySources());
-//
-//        for (AcrossModule acrossModule : acrossModules) {
-//            context.addModule(acrossModule);
-//        }
-//
-//        return context;
+        context.setInstallerAction(InstallerAction.EXECUTE);
+        context.setDataSource(dataSource);
+        context.addPropertySources(parentContext.getEnvironment().getPropertySources());
+
+        for (AcrossModule acrossModule : acrossModules) {
+            context.addModule(acrossModule);
+        }
+
+        return context;
     }
 
     @Bean
     public AcrossModule dummyWebModule() {
-        return new EmptyAcrossModule( "AcrossWebModule" );
+        return new EmptyAcrossModule("AcrossWebModule");
     }
 
     @Bean
