@@ -3,7 +3,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <property name="now" value="GETDATE()" dbms="mssql"/>
     <property name="now" value="NOW" dbms="hsqldb"/>
@@ -46,7 +46,7 @@
                 <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
-        <insert tableName="IMAGE_PROFILE">
+        <insert tableName="${table.image_profile}">
             <column name="id">1</column>
             <column name="name">default</column>
         </insert>
@@ -78,7 +78,7 @@
             </column>
         </createTable>
         <createIndex tableName="${table.image}" indexName="ix_img_image_externalid" unique="true">
-            <column name="externalId"/>
+            <column name="external_id"/>
         </createIndex>
 
         <addForeignKeyConstraint baseTableName="${table.image}" baseColumnNames="profile_id"
@@ -170,7 +170,7 @@
             </column>
         </createTable>
         <addPrimaryKey tableName="${table.image_modification}"
-                       columnNames="imageId, contextId, resolutionId"
+                       columnNames="image_id, context_id, resolution_id"
                        constraintName="pk_image_modification"/>
         <createIndex tableName="${table.image_modification}" indexName="ix_img_im_ii">
             <column name="image_id"/>
@@ -210,7 +210,7 @@
             <column name="context_id" type="java.sql.Types.BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="profileId" type="java.sql.Types.BIGINT">
+            <column name="profile_id" type="java.sql.Types.BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="width" type="int" defaultValue="0">
