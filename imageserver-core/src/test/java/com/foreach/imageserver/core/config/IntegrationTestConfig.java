@@ -5,7 +5,9 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
 import com.foreach.across.core.installers.InstallerAction;
+import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.imageserver.core.ImageServerCoreModule;
+import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -86,8 +88,15 @@ public class IntegrationTestConfig {
     @Bean
     public AcrossModule imageServerCoreModule() {
         ImageServerCoreModule module = new ImageServerCoreModule();
+	    module.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
+	                                       System.getProperty( "java.io.tmpdir" ) );
         module.setExposeFilter(new PackageBeanFilter("com.foreach.imageserver.core", "org.mybatis.spring.mapper", "net.sf.ehcache"));
         return module;
     }
+
+	@Bean
+	public AcrossModule acrossHibernateModule() {
+		return new AcrossHibernateModule();
+	}
 
 }
