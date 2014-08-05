@@ -9,7 +9,7 @@ import com.foreach.across.test.AbstractAcrossModuleConventionsTest;
 public class TestImageServerCoreModuleConventions extends AbstractAcrossModuleConventionsTest {
     @Override
     protected boolean hasSettings() {
-        return false;
+        return true;
     }
 
     @Override

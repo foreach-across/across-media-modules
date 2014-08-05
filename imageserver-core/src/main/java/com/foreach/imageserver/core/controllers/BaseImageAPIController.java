@@ -1,15 +1,28 @@
 package com.foreach.imageserver.core.controllers;
 
+import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.dto.JsonResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-public class BaseImageAPIController
+public abstract class BaseImageAPIController
 {
+	@Autowired
+	protected Environment environment;
+
+	protected String accessToken;
+
+	@PostConstruct
+	protected void initializeProperties() {
+		accessToken = ImageServerCoreModuleSettings.getAccessToken( environment );
+	}
 
 	protected JsonResponse<Void> error( String message ) {
 		JsonResponse<Void> result = new JsonResponse<>();

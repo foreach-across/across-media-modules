@@ -18,7 +18,6 @@ import java.util.concurrent.Semaphore;
 @Exposed
 public class ImageTransformServiceImpl implements ImageTransformService
 {
-
 	private static Logger LOG = LoggerFactory.getLogger( ImageTransformServiceImpl.class );
 
 	@Autowired

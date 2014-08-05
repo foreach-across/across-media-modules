@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.controllers;
 
+import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.services.ContextService;
@@ -15,12 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,16 +33,10 @@ import java.io.OutputStream;
 @Controller
 public class ImageStreamingController
 {
-
 	public static final String VIEW_PATH = "view";
 	public static final String RENDER_PATH = "render";
+
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStreamingController.class );
-
-	@Value("${accessToken}")
-	private String accessToken;
-
-	@Value("${image.404.fallback:}")
-	private String fallbackImageKey;
 
 	@Autowired
 	private ContextService contextService;
@@ -47,11 +44,21 @@ public class ImageStreamingController
 	@Autowired
 	private ImageService imageService;
 
-	@Value("${imagestreaming.provideStackTrace}")
-	private boolean provideStackTrade;
+	@Autowired
+	private Environment environment;
 
-	@Value("${imagestreaming.caching.maxAgeInSeconds}")
+	private String accessToken;
+	private String fallbackImageKey;
+	private boolean provideStackTrace;
 	private int maxCacheAgeInSeconds;
+
+	@PostConstruct
+	protected void initializeProperties() {
+		accessToken = ImageServerCoreModuleSettings.getAccessToken( environment );
+		provideStackTrace = ImageServerCoreModuleSettings.shouldProvideStackTrace( environment );
+		maxCacheAgeInSeconds = ImageServerCoreModuleSettings.getMaxBrowserCacheSeconds( environment );
+		fallbackImageKey = ImageServerCoreModuleSettings.getImageNotFoundImageKey( environment );
+	}
 
 	@RequestMapping(value = "/" + RENDER_PATH, method = RequestMethod.GET)
 	public void render( @RequestParam(value = "token", required = true) String accessToken,
@@ -133,7 +140,7 @@ public class ImageStreamingController
 					"Retrieving image variant caused exception - ImageStreamingController#view: externalId={}, contextCode={}, imageResolutionDto={}, imageVariantDto={}",
 					externalId, contextCode, LogHelper.flatten( imageResolutionDto ),
 					LogHelper.flatten( imageVariantDto ), e );
-			if ( provideStackTrade ) {
+			if ( provideStackTrace ) {
 				throw e;
 			}
 			else {

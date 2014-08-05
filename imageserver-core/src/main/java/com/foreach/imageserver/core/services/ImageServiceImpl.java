@@ -28,7 +28,6 @@ import java.util.*;
 @Exposed
 public class ImageServiceImpl implements ImageService
 {
-
 	private static Logger LOG = LoggerFactory.getLogger( ImageServiceImpl.class );
 
 	@Autowired

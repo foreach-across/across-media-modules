@@ -77,10 +77,7 @@ public class RootConfig {
         return new DataSourceTransactionManager(dataSource);
     }
 
-    @Bean
-    public MultipartResolver multipartResolver() {
-        return new CommonsMultipartResolver();
-    }
+
 
     @Bean
     public AcrossContext acrossContext(ConfigurableApplicationContext parentContext, DataSource dataSource) {

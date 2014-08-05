@@ -24,14 +24,10 @@ import java.util.List;
 @Controller
 public class ImageLoadController extends BaseImageAPIController
 {
-
 	public static final String LOAD_IMAGE_PATH = "load";
 	public static final String IMAGE_EXISTS_PATH = "imageExists";
 	public static final String IMAGE_INFO_PATH = "imageInfo";
 	public static final String CONTEXT_LIST = "/context/list";
-
-	@Value("${accessToken}")
-	private String accessToken;
 
 	@Autowired
 	private ImageService imageService;

@@ -6,6 +6,7 @@ import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,7 @@ public class ImageServerCoreConfig extends WebMvcConfigurerAdapter
 	@Autowired
 	private DataSource dataSource;
 
+	/*
 	@Autowired(required = false)
 	private MultipartResolver multipartResolver;
 
@@ -38,6 +40,7 @@ public class ImageServerCoreConfig extends WebMvcConfigurerAdapter
 			throw new RuntimeException( "A MultipartResolver bean should be set up in the root application context." );
 		}
 	}
+	*/
 
 	/*
 		@Override

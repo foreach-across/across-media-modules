@@ -20,15 +20,11 @@ import java.util.*;
 @RequestMapping("/modification")
 public class ImageModificationController extends BaseImageAPIController
 {
-
 	public static final String REGISTER_PATH = "register";
 	public static final String UPDATE_RESOLUTION = "updateResolution";
 	public static final String RESOLUTION_DETAILS = "resolutionDetails";
 	public static final String LIST_RESOLUTIONS_PATH = "listResolutions";
 	public static final String LIST_MODIFICATIONS = "listModifications";
-
-	@Value("${accessToken}")
-	private String accessToken;
 
 	@Autowired
 	private ContextService contextService;
