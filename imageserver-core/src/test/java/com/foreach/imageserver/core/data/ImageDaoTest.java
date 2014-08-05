@@ -4,6 +4,7 @@ import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.repositories.ImageRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class ImageDaoTest extends AbstractIntegrationTest {
 
     @Autowired
-    private ImageDao imageDao;
+    private ImageRepository imageRepository;
 
     @Test
     public void insertAndGetById() {
@@ -23,9 +24,9 @@ public class ImageDaoTest extends AbstractIntegrationTest {
         writtenImage.setDateCreated(new Date());
         writtenImage.setDimensions(dimensions(111, 222));
         writtenImage.setImageType(ImageType.EPS);
-        imageDao.insert(writtenImage);
+	    imageRepository.create(writtenImage);
 
-        Image readImage = imageDao.getById(writtenImage.getId());
+        Image readImage = imageRepository.getById(writtenImage.getId());
         assertEquals(writtenImage.getId(), readImage.getId());
         assertEquals(writtenImage.getExternalId(), readImage.getExternalId());
         assertEquals(writtenImage.getDateCreated(), readImage.getDateCreated());
@@ -41,9 +42,9 @@ public class ImageDaoTest extends AbstractIntegrationTest {
         writtenImage.setDateCreated(new Date());
         writtenImage.setDimensions(dimensions(111, 222));
         writtenImage.setImageType(ImageType.EPS);
-        imageDao.insert(writtenImage);
+	    imageRepository.create(writtenImage);
 
-        Image readImage = imageDao.getByExternalId(writtenImage.getExternalId());
+        Image readImage = imageRepository.getByExternalId(writtenImage.getExternalId());
         assertEquals(writtenImage.getId(), readImage.getId());
         assertEquals(writtenImage.getExternalId(), readImage.getExternalId());
         assertEquals(writtenImage.getDateCreated(), readImage.getDateCreated());

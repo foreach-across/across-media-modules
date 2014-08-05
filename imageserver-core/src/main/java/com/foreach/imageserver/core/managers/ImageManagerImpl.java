@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.data.ImageDao;
+import com.foreach.imageserver.core.repositories.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -11,18 +11,14 @@ public class ImageManagerImpl implements ImageManager
 {
 	private static final String CACHE_NAME = "images";
 
-	private final ImageDao imageDao;
-
 	@Autowired
-	public ImageManagerImpl( ImageDao imageDao ) {
-		this.imageDao = imageDao;
-	}
+	private ImageRepository imageRepository;
 
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#imageId)",
 	           unless = "#result == null")
 	public Image getById( long imageId ) {
-		return imageDao.getById( imageId );
+		return imageRepository.getById( imageId );
 	}
 
 	@Override
@@ -30,12 +26,12 @@ public class ImageManagerImpl implements ImageManager
 	           key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byExternalIdKey(#externalId)",
 	           unless = "#result == null")
 	public Image getByExternalId( String externalId ) {
-		return imageDao.getByExternalId( externalId );
+		return imageRepository.getByExternalId( externalId );
 	}
 
 	@Override
 	public void insert( Image image ) {
-		imageDao.insert( image );
+		imageRepository.create( image );
 	}
 
 	public static String byIdKey( int imageId ) {
