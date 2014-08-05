@@ -3,8 +3,6 @@ package com.foreach.imageserver.core.managers;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.data.ImageResolutionDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -20,13 +18,8 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager
 	private final ImageResolutionDao imageResolutionDao;
 
 	@Autowired
-	public ImageResolutionManagerImpl( ImageResolutionDao imageResolutionDao, CacheManager cacheManager ) {
+	public ImageResolutionManagerImpl( ImageResolutionDao imageResolutionDao ) {
 		this.imageResolutionDao = imageResolutionDao;
-
-		Cache cache = cacheManager.getCache( CACHE_NAME );
-		if ( cache == null ) {
-			throw new RuntimeException( String.format( "Required cache %s is unavailable.", CACHE_NAME ) );
-		}
 	}
 
 	@Override
