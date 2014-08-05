@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ImageService
 {
-	Image getById( int imageId );
+	Image getById( long imageId );
 
 	Image getByExternalId( String externalId );
 
@@ -31,11 +31,11 @@ public interface ImageService
 
 	boolean hasModification( int imageId );
 
-	ImageResolution getResolution( int resolutionId );
+	ImageResolution getResolution( long resolutionId );
 
 	ImageResolution getResolution( int width, int height );
 
-	List<ImageModification> getModifications( int imageId, int contextId );
+	List<ImageModification> getModifications( long imageId, long contextId );
 
 	List<ImageResolution> getAllResolutions();
 

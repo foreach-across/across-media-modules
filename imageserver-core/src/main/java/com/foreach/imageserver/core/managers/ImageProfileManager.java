@@ -4,5 +4,5 @@ import com.foreach.imageserver.core.business.ImageProfileModification;
 
 public interface ImageProfileManager
 {
-	ImageProfileModification getModification( int imageProfileId, int contextId, int resolutionId );
+	ImageProfileModification getModification( long imageProfileId, long contextId, long resolutionId );
 }

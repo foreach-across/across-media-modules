@@ -31,7 +31,7 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager
 
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "'byId-'+#resolutionId")
-	public ImageResolution getById( int resolutionId ) {
+	public ImageResolution getById( long resolutionId ) {
 		return imageResolutionDao.getById( resolutionId );
 	}
 
@@ -42,7 +42,7 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager
 
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "'forContext-'+#contextId")
-	public List<ImageResolution> getForContext( int contextId ) {
+	public List<ImageResolution> getForContext( long contextId ) {
 		return Collections.unmodifiableList( imageResolutionDao.getForContext( contextId ) );
 	}
 
@@ -54,7 +54,7 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager
 	@Override
 	@CacheEvict(value = CACHE_NAME, allEntries = true)
 	public void saveResolution( ImageResolution resolution ) {
-		if ( resolution.getId() != null && resolution.getId() > 0 ) {
+		if ( resolution.getId() > 0 ) {
 			imageResolutionDao.updateResolution( resolution );
 		}
 		else {

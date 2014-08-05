@@ -1,8 +1,11 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import com.foreach.imageserver.dto.ImageModificationDto;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import java.util.Objects;
 
 /**

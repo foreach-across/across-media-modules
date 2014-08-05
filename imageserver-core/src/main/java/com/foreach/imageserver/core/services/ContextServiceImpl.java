@@ -44,7 +44,7 @@ public class ContextServiceImpl implements ContextService
 	 * @return An image resolution
 	 */
 	@Override
-	public ImageResolution getImageResolution( int contextId, int width, int height ) {
+	public ImageResolution getImageResolution( long contextId, int width, int height ) {
 		if ( width < 0 || height < 0 ) {
 			throw new ImageResolutionException( "Invalid image dimensions specified." );
 		}
@@ -103,12 +103,12 @@ public class ContextServiceImpl implements ContextService
 	}
 
 	@Override
-	public List<ImageResolution> getImageResolutions( int contextId ) {
+	public List<ImageResolution> getImageResolutions( long contextId ) {
 		return new ArrayList<>( imageResolutionManager.getForContext( contextId ) );
 	}
 
 	@Override
-	public Collection<Context> getForResolution( int resolutionId ) {
+	public Collection<Context> getForResolution( long resolutionId ) {
 		return new ArrayList<>( contextManager.getForResolution( resolutionId ) );
 	}
 

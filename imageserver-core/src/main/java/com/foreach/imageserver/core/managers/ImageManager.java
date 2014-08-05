@@ -4,7 +4,7 @@ import com.foreach.imageserver.core.business.Image;
 
 public interface ImageManager
 {
-	Image getById( int imageId );
+	Image getById( long imageId );
 
 	Image getByExternalId( String externalId );
 

@@ -22,19 +22,19 @@ public class ImageModificationManagerImpl implements ImageModificationManager
 
 	@Override
 	// Not cached -- see comments above.
-	public ImageModification getById( int imageId, int contextId, int imageResolutionId ) {
+	public ImageModification getById( long imageId, long contextId, long imageResolutionId ) {
 		return imageModificationDao.getById( imageId, contextId, imageResolutionId );
 	}
 
 	@Override
 	// Not cached -- see comments above.
-	public List<ImageModification> getModifications( int imageId, int contextId ) {
+	public List<ImageModification> getModifications( long imageId, long contextId ) {
 		return Collections.unmodifiableList( imageModificationDao.getModifications( imageId, contextId ) );
 	}
 
 	@Override
 	// Not cached -- see comments above.
-	public List<ImageModification> getAllModifications( int imageId ) {
+	public List<ImageModification> getAllModifications( long imageId ) {
 		return Collections.unmodifiableList( imageModificationDao.getAllModifications( imageId ) );
 	}
 
@@ -50,7 +50,7 @@ public class ImageModificationManagerImpl implements ImageModificationManager
 
 	@Override
 	// Not cached -- see comments above.
-	public boolean hasModification( int imageId ) {
+	public boolean hasModification( long imageId ) {
 		return imageModificationDao.hasModification( imageId );
 	}
 

@@ -10,7 +10,7 @@ public interface ContextManager
 
 	Collection<Context> getAllContexts();
 
-	Collection<Context> getForResolution( int resolutionId );
+	Collection<Context> getForResolution( long resolutionId );
 
-	void updateContextsForResolution( int resolutionId, Collection<Context> contexts );
+	void updateContextsForResolution( long resolutionId, Collection<Context> contexts );
 }

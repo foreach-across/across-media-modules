@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ImageProfileDao
 {
-	ImageProfileModification getModification( @Param("profileId") int profileId,
-	                                          @Param("contextId") int contextId,
-	                                          @Param("resolutionId") int resolutionId );
+	ImageProfileModification getModification( @Param("profileId") long profileId,
+	                                          @Param("contextId") long contextId,
+	                                          @Param("resolutionId") long resolutionId );
 }

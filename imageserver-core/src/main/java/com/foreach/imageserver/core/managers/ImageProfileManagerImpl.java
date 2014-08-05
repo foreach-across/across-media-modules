@@ -13,7 +13,7 @@ public class ImageProfileManagerImpl implements ImageProfileManager
 	private ImageProfileDao imageProfileDao;
 
 	@Override
-	public ImageProfileModification getModification( int imageProfileId, int contextId, int resolutionId ) {
+	public ImageProfileModification getModification( long imageProfileId, long contextId, long resolutionId ) {
 		return imageProfileDao.getModification( imageProfileId, contextId, resolutionId );
 	}
 }

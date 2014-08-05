@@ -9,17 +9,17 @@ import java.util.List;
 @Repository
 public interface ImageModificationDao
 {
-	ImageModification getById( @Param("imageId") int imageId,
-	                           @Param("contextId") int contextId,
-	                           @Param("imageResolutionId") int imageResolutionId );
+	ImageModification getById( @Param("imageId") long imageId,
+	                           @Param("contextId") long contextId,
+	                           @Param("imageResolutionId") long imageResolutionId );
 
-	List<ImageModification> getModifications( @Param("imageId") int imageId, @Param("contextId") int contextId );
+	List<ImageModification> getModifications( @Param("imageId") long imageId, @Param("contextId") long contextId );
 
-	List<ImageModification> getAllModifications( @Param("imageId") int imageId );
+	List<ImageModification> getAllModifications( @Param("imageId") long imageId );
 
 	void insert( ImageModification imageModification );
 
 	void update( ImageModification imageModification );
 
-	boolean hasModification( int imageId );
+	boolean hasModification( long imageId );
 }

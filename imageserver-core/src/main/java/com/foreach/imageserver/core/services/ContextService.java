@@ -10,11 +10,11 @@ public interface ContextService
 {
 	Context getByCode( String contextCode );
 
-	ImageResolution getImageResolution( int contextId, int width, int height );
+	ImageResolution getImageResolution( long contextId, int width, int height );
 
-	List<ImageResolution> getImageResolutions( int contextId );
+	List<ImageResolution> getImageResolutions( long contextId );
 
-	Collection<Context> getForResolution( int resolutionId );
+	Collection<Context> getForResolution( long resolutionId );
 
 	Collection<Context> getAllContexts();
 }

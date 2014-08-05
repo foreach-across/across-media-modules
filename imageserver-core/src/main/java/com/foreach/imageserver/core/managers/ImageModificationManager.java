@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface ImageModificationManager
 {
-	ImageModification getById( int imageId, int contextId, int imageResolutionId );
+	ImageModification getById( long imageId, long contextId, long imageResolutionId );
 
-	List<ImageModification> getModifications( int imageId, int contextId );
+	List<ImageModification> getModifications( long imageId, long contextId );
 
-	List<ImageModification> getAllModifications( int imageId );
+	List<ImageModification> getAllModifications( long imageId );
 
 	void insert( ImageModification imageModification );
 
 	void update( ImageModification imageModification );
 
-	boolean hasModification( int imageId );
+	boolean hasModification( long imageId );
 }

@@ -1,7 +1,10 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -27,11 +30,11 @@ public class Context {
     @Column( name = "code" )
     private String code;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -42,4 +45,23 @@ public class Context {
     public void setCode(String code) {
         this.code = code;
     }
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( !( o instanceof Context ) ) {
+			return false;
+		}
+
+		Context that = (Context) o;
+
+		return Objects.equals( this.id, that.id );
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( id );
+	}
 }

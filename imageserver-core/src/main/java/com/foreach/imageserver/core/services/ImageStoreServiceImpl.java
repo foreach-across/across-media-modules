@@ -158,7 +158,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	@Override
-	public void removeVariants( int imageId ) {
+	public void removeVariants( long imageId ) {
 		if ( imageId == 0 ) {
 			LOG.warn( "Null parameters not allowed - ImageStoreServiceImpl#removeVariants: imageId={}", imageId );
 		}
@@ -269,19 +269,12 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	private String constructFileName( Image image ) {
-		StringBuilder fileNameBuilder = new StringBuilder();
-		fileNameBuilder.append( image.getId() );
-		fileNameBuilder.append( '.' );
-		fileNameBuilder.append( image.getImageType().getExtension() );
 
-		return fileNameBuilder.toString();
+		return String.valueOf( image.getId() ) + '.' + image.getImageType().getExtension();
 	}
 
-	private String variantFileNamePrefix( int imageId ) {
-		StringBuilder prefixBuilder = new StringBuilder();
-		prefixBuilder.append( imageId );
-		prefixBuilder.append( '-' );
-		return prefixBuilder.toString();
+	private String variantFileNamePrefix( long imageId ) {
+		return String.valueOf( imageId ) + '-';
 	}
 
 	private void writeSafely( InputStream inputStream, Path targetPath ) {

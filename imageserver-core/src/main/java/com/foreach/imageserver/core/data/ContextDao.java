@@ -13,9 +13,9 @@ public interface ContextDao
 
 	Context getByCode( String code );
 
-	Collection<Context> getForResolution( int resolutionId );
+	Collection<Context> getForResolution( long resolutionId );
 
-	void updateContextsForResolution( @Param("resolutionId") int resolutionId,
+	void updateContextsForResolution( @Param("resolutionId") long resolutionId,
 	                                  @Param("contexts") Collection<Context> contexts );
 
 	Collection<Context> getAllContexts();

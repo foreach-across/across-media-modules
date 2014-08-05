@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface ImageResolutionManager
 {
-	ImageResolution getById( int resolutionId );
+	ImageResolution getById( long resolutionId );
 
-	List<ImageResolution> getForContext( int contextId );
+	List<ImageResolution> getForContext( long contextId );
 
 	List<ImageResolution> getAllResolutions();
 

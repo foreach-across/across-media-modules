@@ -3,6 +3,11 @@ package com.foreach.imageserver.core.business;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.Objects;
+
 /**
  * The ImageModification specifies how an original image is to be transformed into an image conforming to a specific
  * ImageResolution.
@@ -15,35 +20,35 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @Table(name= ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
 public class ImageModification {
     @Column( name="image_id" )
-    private int imageId;
+    private long imageId;
     @Column( name="context_id" )
-    private int contextId;
+    private long contextId;
     @Column( name="resolution_id" )
-    private int resolutionId;
+    private long resolutionId;
     private Crop crop;
     private Dimensions density;
 
-	public int getImageId() {
+	public long getImageId() {
 		return imageId;
 	}
 
-	public void setImageId( int imageId ) {
+	public void setImageId( long imageId ) {
 		this.imageId = imageId;
 	}
 
-	public int getContextId() {
+	public long getContextId() {
 		return contextId;
 	}
 
-	public void setContextId( int contextId ) {
+	public void setContextId( long contextId ) {
 		this.contextId = contextId;
 	}
 
-	public int getResolutionId() {
+	public long getResolutionId() {
 		return resolutionId;
 	}
 
-	public void setResolutionId( int resolutionId ) {
+	public void setResolutionId( long resolutionId ) {
 		this.resolutionId = resolutionId;
 	}
 
@@ -95,11 +100,6 @@ public class ImageModification {
 
 	@Override
 	public int hashCode() {
-		int result = imageId;
-		result = 31 * result + contextId;
-		result = 31 * result + resolutionId;
-		result = 31 * result + ( crop != null ? crop.hashCode() : 0 );
-		result = 31 * result + ( density != null ? density.hashCode() : 0 );
-		return result;
+		return Objects.hash( imageId, contextId, resolutionId, crop, density );
 	}
 }

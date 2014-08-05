@@ -1,6 +1,10 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 
 /**
  * Represents the profile an image is linked to.
@@ -20,6 +24,8 @@ public class ImageProfile {
             }
     )
     private long id;
+
+	@Column( name = "name" )
     private String name;
 
     public long getId() {

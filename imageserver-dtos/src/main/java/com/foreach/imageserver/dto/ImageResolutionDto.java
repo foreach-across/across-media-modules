@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ImageResolutionDto {
-    private int id;
+    private long id;
     private boolean configurable;
     private String name;
     private int width;
@@ -64,11 +64,11 @@ public class ImageResolutionDto {
         this.tags = tags;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

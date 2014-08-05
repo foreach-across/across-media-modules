@@ -115,7 +115,7 @@ public class ImageModificationController extends BaseImageAPIController
 	@RequestMapping(value = "/" + RESOLUTION_DETAILS, method = RequestMethod.GET)
 	@ResponseBody
 	public JsonResponse resolutionDetails( @RequestParam(value = "token", required = true) String accessToken,
-	                                       @RequestParam(value = "id", required = true) int resolutionId ) {
+	                                       @RequestParam(value = "id", required = true) long resolutionId ) {
 		if ( !this.accessToken.equals( accessToken ) ) {
 			return error( "Access denied." );
 		}

@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface ImageResolutionDao
 {
-	ImageResolution getById( int resolutionId );
+	ImageResolution getById( long resolutionId );
 
-	List<ImageResolution> getForContext( @Param("contextId") int contextId );
+	List<ImageResolution> getForContext( @Param("contextId") long contextId );
 
 	void insertResolution( ImageResolution resolution );
 

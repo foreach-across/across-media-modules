@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ImageDao
 {
-	Image getById( @Param("id") int id );
+	Image getById( @Param("id") long id );
 
 	Image getByExternalId( @Param("externalId") String externalId );
 

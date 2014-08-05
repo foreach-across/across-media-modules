@@ -28,7 +28,7 @@ public class ImageManagerImpl implements ImageManager
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#imageId)",
 	           unless = "#result == null")
-	public Image getById( int imageId ) {
+	public Image getById( long imageId ) {
 		return imageDao.getById( imageId );
 	}
 

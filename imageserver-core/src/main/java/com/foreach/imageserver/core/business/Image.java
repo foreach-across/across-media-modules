@@ -1,8 +1,12 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
+import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -28,15 +32,21 @@ public class Image {
 
     @Column( name = "external_id" )
     private String externalId;
+
     @Column( name = "created" )
     private Date dateCreated;
+
     @Column( name = "width" )
     private int width;
+
     @Column( name = "height" )
     private int height;
+
     @Column( name = "image_type_id" )
     @Type(type = ImageTypeUserType.CLASS_NAME)
     private ImageType imageType;
+
+	private Dimensions dimensions;
 
 	private String dateCreatedYearString;
 	private String dateCreatedMonthString;

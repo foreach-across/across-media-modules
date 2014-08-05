@@ -53,7 +53,7 @@ public class ImageServiceImpl implements ImageService
 	private ContextManager contextManager;
 
 	@Override
-	public Image getById( int imageId ) {
+	public Image getById( long imageId ) {
 		return imageManager.getById( imageId );
 	}
 
@@ -304,7 +304,7 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
-	public ImageResolution getResolution( int resolutionId ) {
+	public ImageResolution getResolution( long resolutionId ) {
 		return imageResolutionManager.getById( resolutionId );
 	}
 
@@ -314,7 +314,7 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
-	public List<ImageModification> getModifications( int imageId, int contextId ) {
+	public List<ImageModification> getModifications( long imageId, long contextId ) {
 		return new ArrayList<>( imageModificationManager.getModifications( imageId, contextId ) );
 	}
 
@@ -337,13 +337,13 @@ public class ImageServiceImpl implements ImageService
 
 	private static class VariantImageRequest
 	{
-		private final int imageId;
-		private final int contextId;
+		private final long imageId;
+		private final long contextId;
 		private final ImageModificationDto modification;
 		private final ImageVariant variant;
 
-		public VariantImageRequest( int imageId,
-		                            int contextId,
+		public VariantImageRequest( long imageId,
+		                            long contextId,
 		                            ImageModificationDto modification,
 		                            ImageVariant variant ) {
 			this.imageId = imageId;
@@ -381,11 +381,7 @@ public class ImageServiceImpl implements ImageService
 
 		@Override
 		public int hashCode() {
-			int result = imageId;
-			result = 31 * result + contextId;
-			result = 31 * result + modification.hashCode();
-			result = 31 * result + ( variant != null ? variant.hashCode() : 0 );
-			return result;
+			return Objects.hash( imageId, contextId, modification, variant );
 		}
 	}
 

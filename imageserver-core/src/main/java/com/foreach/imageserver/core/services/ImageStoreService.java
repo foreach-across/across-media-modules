@@ -32,5 +32,5 @@ public interface ImageStoreService
 	                         ImageModificationDto modification,
 	                         ImageVariant imageVariant );
 
-	void removeVariants( int imageId );
+	void removeVariants( long imageId );
 }

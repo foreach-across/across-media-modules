@@ -35,7 +35,7 @@ public class ContextManagerImpl implements ContextManager
 	}
 
 	@Override
-	public Collection<Context> getForResolution( int resolutionId ) {
+	public Collection<Context> getForResolution( long resolutionId ) {
 		return contextDao.getForResolution( resolutionId );
 	}
 
@@ -47,7 +47,7 @@ public class ContextManagerImpl implements ContextManager
 
 	@Override
 	@CacheEvict(value = CACHE_NAME, allEntries = true)
-	public void updateContextsForResolution( int resolutionId, Collection<Context> contexts ) {
+	public void updateContextsForResolution( long resolutionId, Collection<Context> contexts ) {
 		contextDao.updateContextsForResolution( resolutionId, contexts );
 	}
 }
