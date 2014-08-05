@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.util.concurrent.Semaphore;
 
 @Service
-@Exposed
 public class ImageTransformServiceImpl implements ImageTransformService
 {
 	private static Logger LOG = LoggerFactory.getLogger( ImageTransformServiceImpl.class );
@@ -25,8 +24,7 @@ public class ImageTransformServiceImpl implements ImageTransformService
 
 	private Semaphore semaphore;
 
-	@Autowired
-	public ImageTransformServiceImpl( @Value("${transformer.concurrentTransformLimit}") int concurrentTransformLimit ) {
+	public ImageTransformServiceImpl( int concurrentTransformLimit ) {
 		/**
 		 * Right now, we have only one ImageTransformer implementation and it runs on the local machine. In theory,
 		 * however, we could have implementations that off-load the actual computations to other machines. Should this

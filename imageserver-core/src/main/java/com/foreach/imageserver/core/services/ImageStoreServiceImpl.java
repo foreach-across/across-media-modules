@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.services;
 
+import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageType;
@@ -13,11 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -46,13 +46,13 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private final Set<PosixFilePermission> filePermissions;
 
 	@Autowired
-	public ImageStoreServiceImpl( @Value("${imagestore.folder}") File imageStoreFolder,
-	                              @Value("${imagestore.permissions.folders}") String folderPermissionsString,
-	                              @Value("${imagestore.permissions.files}") String filePermissionsString ) throws IOException {
-		folderPermissions = toPermissions( folderPermissionsString );
-		filePermissions = toPermissions( filePermissionsString );
+	public ImageStoreServiceImpl( Environment environment ) throws IOException {
+		folderPermissions = toPermissions(
+				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER_PERMISSIONS, "" ) );
+		filePermissions = toPermissions(
+				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FILE_PERMISSIONS, "" ) );
 
-		Path imageStoreFolderPath = imageStoreFolder.toPath();
+		Path imageStoreFolderPath = ImageServerCoreModuleSettings.getImageStoreFolder( environment ).toPath();
 
 		tempFolder = imageStoreFolderPath.resolve( "temp" );
 		originalsFolder = imageStoreFolderPath.resolve( "originals" );

@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-@Exposed
 public class ContextServiceImpl implements ContextService
 {
 

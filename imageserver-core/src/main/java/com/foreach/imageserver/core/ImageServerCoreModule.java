@@ -8,7 +8,7 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.imageserver.core.config.ImageServerCoreConfig;
+import com.foreach.imageserver.core.config.*;
 import com.foreach.imageserver.core.installers.Image404Installer;
 import com.foreach.imageserver.core.installers.InitialSchemaInstaller;
 
@@ -35,7 +35,10 @@ public class ImageServerCoreModule extends AcrossModule
 
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-		contextConfigurers.add( new AnnotatedClassConfigurer( ImageServerCoreConfig.class ) );
+		contextConfigurers.add( new AnnotatedClassConfigurer( ImageServerCoreConfig.class, ServicesConfiguration.class,
+		                                                      ImageMagickTransformerConfiguration.class,
+		                                                      ControllersConfiguration.class,
+		                                                      MultipartResolverConfiguration.class ) );
 	}
 
 	@Override

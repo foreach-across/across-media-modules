@@ -13,9 +13,6 @@ import org.im4java.process.Pipe;
 import org.im4java.process.ProcessStarter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
@@ -26,7 +23,6 @@ import java.util.Map;
 
 // TODO Support for vector formats using Ghostscript is untested.
 @Component
-@Conditional(ImageMagickImageTransformerConditional.class)
 public class ImageMagickImageTransformer implements ImageTransformer
 {
 	public static final int GS_MAX_DENSITY = 1200;
@@ -44,11 +40,10 @@ public class ImageMagickImageTransformer implements ImageTransformer
 	// formats, built-in patterns, and embedded profile types (See: http://www.imagemagick.org/script/formats.php).
 	private final Map<String, ImageType> magickToImageType;
 
-	@Autowired
-	public ImageMagickImageTransformer( @Value("${transformer.imagemagick.priority}") int order,
-	                                    @Value("${transformer.imagemagick.path}") String imageMagickPath,
-	                                    @Value("${transformer.imagemagick.ghostscript}") boolean ghostScriptEnabled,
-	                                    @Value("${transformer.imagemagick.usegraphicsmagick}") boolean useGraphicsMagick ) {
+	public ImageMagickImageTransformer( int order,
+	                                    String imageMagickPath,
+	                                    boolean ghostScriptEnabled,
+	                                    boolean useGraphicsMagick ) {
 		this.order = order;
 		this.ghostScriptEnabled = ghostScriptEnabled;
 

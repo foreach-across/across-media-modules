@@ -5,12 +5,13 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.imageserver.core.ImageServerCoreModule;
+import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
+import com.foreach.imageserver.core.services.ContextService;
 import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.services.ImageTransformService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,8 +20,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import javax.servlet.ServletContext;
+
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 /**
  * @author Arne Vandamme
@@ -35,19 +37,25 @@ public class ITImageServerCoreModule
 	private ImageService imageService;
 
 	@Autowired(required = false)
-	private MultipartResolver multipartResolver;
+	private ContextService contextService;
 
-	@Autowired
-	private DispatcherServlet dispatcherServlet;
+	@Autowired(required = false)
+	private ImageTransformService imageTransformService;
+
+
+	@Autowired(required = false)
+	private MultipartResolver multipartResolver;
 
 	@Test
 	public void exposedServices() {
 		assertNotNull( imageService );
+		assertNotNull( contextService );
+		assertNotNull( imageTransformService );
 	}
 
 	@Test
-	public void multipartResolverShouldBeDetected() {
-		assertNotNull( dispatcherServlet );
+	public void multipartResolverShouldBeCreated() {
+		assertNotNull( multipartResolver );
 	}
 
 	@Configuration
@@ -56,13 +64,16 @@ public class ITImageServerCoreModule
 	{
 		@Override
 		public void configure( AcrossContext context ) {
-			context.addModule( new ImageServerCoreModule() );
+			context.addModule( imageServerCoreModule() );
 			context.addModule( new AcrossHibernateModule() );
 		}
 
-		@Bean
-		public CacheManager cacheManager() {
-			return mock( CacheManager.class );
+		private ImageServerCoreModule imageServerCoreModule() {
+			ImageServerCoreModule imageServerCoreModule = new ImageServerCoreModule();
+			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
+			                                   System.getProperty( "java.io.tmpdir" ) );
+
+			return imageServerCoreModule;
 		}
 	}
 }

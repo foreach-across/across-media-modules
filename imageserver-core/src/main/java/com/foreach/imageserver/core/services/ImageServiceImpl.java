@@ -25,7 +25,6 @@ import java.io.ByteArrayInputStream;
 import java.util.*;
 
 @Service
-@Exposed
 public class ImageServiceImpl implements ImageService
 {
 	private static Logger LOG = LoggerFactory.getLogger( ImageServiceImpl.class );

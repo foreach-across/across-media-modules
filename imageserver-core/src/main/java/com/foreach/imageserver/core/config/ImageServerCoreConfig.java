@@ -6,22 +6,17 @@ import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan(
-		basePackages = "com.foreach.imageserver.core",
-		excludeFilters = @ComponentScan.Filter(Configuration.class)
+		basePackages = {"com.foreach.imageserver.core.managers", "com.foreach.imageserver.core.data"}
 )
 @MapperScan("com.foreach.imageserver.core.data")
 @EnableTransactionManagement
@@ -53,14 +48,6 @@ public class ImageServerCoreConfig extends WebMvcConfigurerAdapter
 			return new MappingJacksonHttpMessageConverter();
 		}
 	*/
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
-		propertySources.setIgnoreResourceNotFound( false );
-		propertySources.setIgnoreUnresolvablePlaceholders( false );
-
-		return propertySources;
-	}
 
 	@Bean
 	public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
