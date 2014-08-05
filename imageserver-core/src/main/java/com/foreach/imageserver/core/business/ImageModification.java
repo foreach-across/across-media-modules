@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -10,13 +11,17 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * using an ImageVariant object.
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
-public class ImageModification
-{
-	private int imageId;
-	private int contextId;
-	private int resolutionId;
-	private Crop crop;
-	private Dimensions density;
+@Entity
+@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
+public class ImageModification {
+    @Column( name="image_id" )
+    private int imageId;
+    @Column( name="context_id" )
+    private int contextId;
+    @Column( name="resolution_id" )
+    private int resolutionId;
+    private Crop crop;
+    private Dimensions density;
 
 	public int getImageId() {
 		return imageId;

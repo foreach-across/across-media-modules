@@ -1,33 +1,54 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
-/**
- * TODO Re-document this after I'm through refactoring.
- */
-public class Image
-{
-	private int id;
-	private int imageProfileId;
-	private String externalId;
-	private Date dateCreated;
-	private Dimensions dimensions;
-	private ImageType imageType;
+@Entity
+@Table(name= ImageSchemaConfiguration.TABLE_IMAGE)
+public class Image {
+
+    @Id
+    @GeneratedValue( generator = "seq_img_image_id" )
+    @GenericGenerator(
+            name = "seq_img_image_id",
+            strategy = AcrossSequenceGenerator.STRATEGY,
+            parameters = {
+                    @org.hibernate.annotations.Parameter( name = "sequenceName", value = "seq_img_image_id" ),
+                    @org.hibernate.annotations.Parameter( name = "allocationSize", value = "10" )
+            }
+    )
+    private long id;
+
+    @Column( name = "profile_id" )
+    private int imageProfileId;
+
+    @Column( name = "external_id" )
+    private String externalId;
+    @Column( name = "created" )
+    private Date dateCreated;
+    @Column( name = "width" )
+    private int width;
+    @Column( name = "height" )
+    private int height;
+    @Column( name = "image_type_id" )
+    @Type(type = ImageTypeUserType.CLASS_NAME)
+    private ImageType imageType;
 
 	private String dateCreatedYearString;
 	private String dateCreatedMonthString;
 	private String dateCreatedDayString;
 
-	public int getId() {
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public void setId( int id ) {
-		this.id = id;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
 	public String getExternalId() {
 		return externalId;
@@ -106,15 +127,11 @@ public class Image
 
 		Image image = (Image) o;
 
-		if ( id != image.id ) {
-			return false;
-		}
+        return Objects.equals( this.id, image.id );
+    }
 
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		return id;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash( id );
+    }
 }

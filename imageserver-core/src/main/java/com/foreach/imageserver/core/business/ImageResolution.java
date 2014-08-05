@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
@@ -20,23 +21,37 @@ import java.util.Set;
  * <p>ImageResolution name is optional and can be used to provide a more meaningful description to a (mostly
  * configurable) resolution, eg. Large teaser format.</p>
  */
-public class ImageResolution
-{
-	private Integer id;
-	private int width;
-	private int height;
+@Entity
+@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
+public class ImageResolution {
+    @Id
+    @GeneratedValue( generator = "seq_img_image_resolution_id" )
+    @GenericGenerator(
+            name = "seq_img_image_resolution_id",
+            strategy = AcrossSequenceGenerator.STRATEGY,
+            parameters = {
+                    @org.hibernate.annotations.Parameter( name = "sequenceName", value = "seq_img_image_resolution_id" ),
+                    @org.hibernate.annotations.Parameter( name = "allocationSize", value = "10" )
+            }
+    )
+    private long id;
+
+    @Column( name = "width" )
+    private int width;
+    @Column( name = "height" )
+    private int height;
 
 	private boolean configurable;
 	private String name;
 	private Set<String> tags = new HashSet<>();
 
-	public Integer getId() {
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public void setId( Integer id ) {
-		this.id = id;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
 	public int getWidth() {
 		return width;

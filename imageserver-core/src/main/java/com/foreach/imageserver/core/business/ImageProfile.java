@@ -1,16 +1,30 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
+
 /**
  * Represents the profile an image is linked to.
  */
-public class ImageProfile
-{
-	private int id;
-	private String name;
+@Entity
+@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
+public class ImageProfile {
 
-	public int getId() {
-		return id;
-	}
+    @Id
+    @GeneratedValue( generator = "seq_img_image_profile_id" )
+    @GenericGenerator(
+            name = "seq_img_image_profile_id",
+            strategy = AcrossSequenceGenerator.STRATEGY,
+            parameters = {
+                    @org.hibernate.annotations.Parameter( name = "sequenceName", value = "seq_img_image_profile_id" ),
+                    @org.hibernate.annotations.Parameter( name = "allocationSize", value = "10" )
+            }
+    )
+    private long id;
+    private String name;
+
+    public long getId() {
+        return id;
+    }
 
 	public void setId( int id ) {
 		this.id = id;
