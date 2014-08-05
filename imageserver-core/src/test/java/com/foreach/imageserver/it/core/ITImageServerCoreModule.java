@@ -18,9 +18,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.servlet.DispatcherServlet;
-
-import javax.servlet.ServletContext;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -41,7 +38,6 @@ public class ITImageServerCoreModule
 
 	@Autowired(required = false)
 	private ImageTransformService imageTransformService;
-
 
 	@Autowired(required = false)
 	private MultipartResolver multipartResolver;
