@@ -46,10 +46,14 @@ public class Image {
     @Type(type = ImageTypeUserType.CLASS_NAME)
     private ImageType imageType;
 
+	@Transient //TODO: FIX
 	private Dimensions dimensions;
 
+	@Transient //TODO: FIX
 	private String dateCreatedYearString;
+	@Transient //TODO: FIX
 	private String dateCreatedMonthString;
+	@Transient //TODO: FIX
 	private String dateCreatedDayString;
 
     public long getId() {

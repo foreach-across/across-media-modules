@@ -44,8 +44,12 @@ public class ImageResolution {
     @Column( name = "height" )
     private int height;
 
+	@Transient //TODO: FIX
 	private boolean configurable;
+	@Transient //TODO: FIX
 	private String name;
+
+	@Transient //TODO: FIX
 	private Set<String> tags = new HashSet<>();
 
     public long getId() {

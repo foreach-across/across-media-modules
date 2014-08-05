@@ -3,9 +3,11 @@ package com.foreach.imageserver.core.business;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -17,15 +19,18 @@ import java.util.Objects;
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 @Entity
-@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
-public class ImageModification {
-    @Column( name="image_id" )
+@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_MODIFICATION)
+public class ImageModification implements Serializable
+{
+    @Id
     private long imageId;
-    @Column( name="context_id" )
+	@Id
     private long contextId;
-    @Column( name="resolution_id" )
+	@Id
     private long resolutionId;
+	@Transient //TODO: FIX
     private Crop crop;
+	@Transient //TODO: FIX
     private Dimensions density;
 
 	public long getImageId() {

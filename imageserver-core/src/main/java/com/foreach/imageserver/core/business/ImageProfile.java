@@ -10,7 +10,7 @@ import javax.persistence.*;
  * Represents the profile an image is linked to.
  */
 @Entity
-@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
+@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_PROFILE)
 public class ImageProfile {
 
     @Id
