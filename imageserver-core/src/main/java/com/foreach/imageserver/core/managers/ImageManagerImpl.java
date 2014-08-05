@@ -3,8 +3,6 @@ package com.foreach.imageserver.core.managers;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.data.ImageDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
@@ -16,13 +14,8 @@ public class ImageManagerImpl implements ImageManager
 	private final ImageDao imageDao;
 
 	@Autowired
-	public ImageManagerImpl( ImageDao imageDao, CacheManager cacheManager ) {
+	public ImageManagerImpl( ImageDao imageDao ) {
 		this.imageDao = imageDao;
-
-		Cache cache = cacheManager.getCache( CACHE_NAME );
-		if ( cache == null ) {
-			throw new RuntimeException( String.format( "Required cache %s is unavailable.", CACHE_NAME ) );
-		}
 	}
 
 	@Override

@@ -9,6 +9,8 @@ import com.foreach.imageserver.core.services.ImageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Arne Vandamme
@@ -55,6 +58,11 @@ public class ITImageServerCoreModule
 		public void configure( AcrossContext context ) {
 			context.addModule( new ImageServerCoreModule() );
 			context.addModule( new AcrossHibernateModule() );
+		}
+
+		@Bean
+		public CacheManager cacheManager() {
+			return mock( CacheManager.class );
 		}
 	}
 }
