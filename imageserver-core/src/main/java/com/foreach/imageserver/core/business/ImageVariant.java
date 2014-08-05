@@ -15,14 +15,15 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * at will; it will be refetched and/or recreated when necessary.
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
-public class ImageVariant {
-    private ImageType outputType;
+public class ImageVariant
+{
+	private ImageType outputType;
 
-    public ImageType getOutputType() {
-        return outputType;
-    }
+	public ImageType getOutputType() {
+		return outputType;
+	}
 
-    public void setOutputType(ImageType outputType) {
-        this.outputType = outputType;
-    }
+	public void setOutputType( ImageType outputType ) {
+		this.outputType = outputType;
+	}
 }

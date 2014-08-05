@@ -14,43 +14,44 @@ import java.util.List;
  * 'normal operation'.
  */
 @Repository
-public class ImageModificationManagerImpl implements ImageModificationManager {
+public class ImageModificationManagerImpl implements ImageModificationManager
+{
 
-    @Autowired
-    private ImageModificationDao imageModificationDao;
+	@Autowired
+	private ImageModificationDao imageModificationDao;
 
-    @Override
-    // Not cached -- see comments above.
-    public ImageModification getById(int imageId, int contextId, int imageResolutionId) {
-        return imageModificationDao.getById(imageId, contextId, imageResolutionId);
-    }
+	@Override
+	// Not cached -- see comments above.
+	public ImageModification getById( int imageId, int contextId, int imageResolutionId ) {
+		return imageModificationDao.getById( imageId, contextId, imageResolutionId );
+	}
 
-    @Override
-    // Not cached -- see comments above.
-    public List<ImageModification> getModifications(int imageId, int contextId) {
-        return Collections.unmodifiableList(imageModificationDao.getModifications(imageId, contextId));
-    }
+	@Override
+	// Not cached -- see comments above.
+	public List<ImageModification> getModifications( int imageId, int contextId ) {
+		return Collections.unmodifiableList( imageModificationDao.getModifications( imageId, contextId ) );
+	}
 
-    @Override
-    // Not cached -- see comments above.
-    public List<ImageModification> getAllModifications(int imageId) {
-        return Collections.unmodifiableList(imageModificationDao.getAllModifications(imageId));
-    }
+	@Override
+	// Not cached -- see comments above.
+	public List<ImageModification> getAllModifications( int imageId ) {
+		return Collections.unmodifiableList( imageModificationDao.getAllModifications( imageId ) );
+	}
 
-    @Override
-    public void insert(ImageModification imageModification) {
-        imageModificationDao.insert(imageModification);
-    }
+	@Override
+	public void insert( ImageModification imageModification ) {
+		imageModificationDao.insert( imageModification );
+	}
 
-    @Override
-    public void update(ImageModification imageModification) {
-        imageModificationDao.update(imageModification);
-    }
+	@Override
+	public void update( ImageModification imageModification ) {
+		imageModificationDao.update( imageModification );
+	}
 
-    @Override
-    // Not cached -- see comments above.
-    public boolean hasModification(int imageId) {
-        return imageModificationDao.hasModification(imageId);
-    }
+	@Override
+	// Not cached -- see comments above.
+	public boolean hasModification( int imageId ) {
+		return imageModificationDao.hasModification( imageId );
+	}
 
 }

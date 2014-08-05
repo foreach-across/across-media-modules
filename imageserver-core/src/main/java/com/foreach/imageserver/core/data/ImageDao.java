@@ -5,10 +5,11 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ImageDao {
-    Image getById(@Param("id") int id);
+public interface ImageDao
+{
+	Image getById( @Param("id") int id );
 
-    Image getByExternalId(@Param("externalId") String externalId);
+	Image getByExternalId( @Param("externalId") String externalId );
 
-    void insert(Image image);
+	void insert( Image image );
 }

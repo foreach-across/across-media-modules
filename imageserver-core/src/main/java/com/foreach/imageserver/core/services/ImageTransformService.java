@@ -8,19 +8,20 @@ import com.foreach.imageserver.core.transformers.StreamImageSource;
 
 import java.io.InputStream;
 
-public interface ImageTransformService {
-    Dimensions computeDimensions(StreamImageSource imageSource);
+public interface ImageTransformService
+{
+	Dimensions computeDimensions( StreamImageSource imageSource );
 
-    ImageAttributes getAttributes(InputStream imageStream);
+	ImageAttributes getAttributes( InputStream imageStream );
 
-    InMemoryImageSource modify(StreamImageSource imageSource,
-                               int outputWidth,
-                               int outputHeight,
-                               int cropX,
-                               int cropY,
-                               int cropWidth,
-                               int cropHeight,
-                               int densityWidth,
-                               int densityHeight,
-                               ImageType outputType);
+	InMemoryImageSource modify( StreamImageSource imageSource,
+	                            int outputWidth,
+	                            int outputHeight,
+	                            int cropX,
+	                            int cropY,
+	                            int cropWidth,
+	                            int cropHeight,
+	                            int densityWidth,
+	                            int densityHeight,
+	                            ImageType outputType );
 }

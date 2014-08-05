@@ -4,12 +4,13 @@ import com.foreach.imageserver.core.business.Context;
 
 import java.util.Collection;
 
-public interface ContextManager {
-    Context getByCode(String code);
+public interface ContextManager
+{
+	Context getByCode( String code );
 
-    Collection<Context> getAllContexts();
+	Collection<Context> getAllContexts();
 
-    Collection<Context> getForResolution(int resolutionId);
+	Collection<Context> getForResolution( int resolutionId );
 
-    void updateContextsForResolution(int resolutionId, Collection<Context> contexts);
+	void updateContextsForResolution( int resolutionId, Collection<Context> contexts );
 }

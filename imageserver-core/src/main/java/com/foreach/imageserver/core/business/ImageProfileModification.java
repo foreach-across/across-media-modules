@@ -5,67 +5,74 @@ import com.foreach.imageserver.dto.ImageModificationDto;
 /**
  * Specific default modification attached to an image profile.
  */
-public class ImageProfileModification {
-    private int id;
-    private int imageResolutionId;
-    private int imageProfileId;
-    private int imageContextId;
-    private ImageModificationDto modificationDto = new ImageModificationDto();
+public class ImageProfileModification
+{
+	private int id;
+	private int imageResolutionId;
+	private int imageProfileId;
+	private int imageContextId;
+	private ImageModificationDto modificationDto = new ImageModificationDto();
 
-    public int getImageResolutionId() {
-        return imageResolutionId;
-    }
+	public int getImageResolutionId() {
+		return imageResolutionId;
+	}
 
-    public void setImageResolutionId(int imageResolutionId) {
-        this.imageResolutionId = imageResolutionId;
-    }
+	public void setImageResolutionId( int imageResolutionId ) {
+		this.imageResolutionId = imageResolutionId;
+	}
 
-    public int getImageProfileId() {
-        return imageProfileId;
-    }
+	public int getImageProfileId() {
+		return imageProfileId;
+	}
 
-    public void setImageProfileId(int imageProfileId) {
-        this.imageProfileId = imageProfileId;
-    }
+	public void setImageProfileId( int imageProfileId ) {
+		this.imageProfileId = imageProfileId;
+	}
 
-    public int getImageContextId() {
-        return imageContextId;
-    }
+	public int getImageContextId() {
+		return imageContextId;
+	}
 
-    public void setImageContextId(int imageContextId) {
-        this.imageContextId = imageContextId;
-    }
+	public void setImageContextId( int imageContextId ) {
+		this.imageContextId = imageContextId;
+	}
 
-    public ImageModificationDto getModificationDto() {
-        return modificationDto;
-    }
+	public ImageModificationDto getModificationDto() {
+		return modificationDto;
+	}
 
-    public void setModificationDto(ImageModificationDto modificationDto) {
-        this.modificationDto = modificationDto;
-    }
+	public void setModificationDto( ImageModificationDto modificationDto ) {
+		this.modificationDto = modificationDto;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public void setId( int id ) {
+		this.id = id;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-        ImageProfileModification that = (ImageProfileModification) o;
+		ImageProfileModification that = (ImageProfileModification) o;
 
-        if (id != that.id) return false;
+		if ( id != that.id ) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        return id;
-    }
+	@Override
+	public int hashCode() {
+		return id;
+	}
 }

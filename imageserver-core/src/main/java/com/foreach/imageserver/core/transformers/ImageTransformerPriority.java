@@ -8,8 +8,9 @@ package com.foreach.imageserver.core.transformers;
  * <li><strong>FALLBACK</strong>: Can do this modification but only try if no preferred transformers available</li>
  * </ul></p>
  */
-public enum ImageTransformerPriority {
-    UNABLE,
-    PREFERRED,
-    FALLBACK
+public enum ImageTransformerPriority
+{
+	UNABLE,
+	PREFERRED,
+	FALLBACK
 }

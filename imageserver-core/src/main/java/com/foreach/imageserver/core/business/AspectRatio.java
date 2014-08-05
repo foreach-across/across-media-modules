@@ -8,7 +8,7 @@ public class AspectRatio
 	public static final AspectRatio ONE = new AspectRatio( 1, 1 );
 	public static final AspectRatio UNDEFINED = new AspectRatio( 0, 0 );
 
-	public AspectRatio(int p, int q) {
+	public AspectRatio( int p, int q ) {
 		int gcd = gcd( q, p );
 
 		// if q == 0, we normalize to 0/0 instead of 1/0
@@ -25,21 +25,21 @@ public class AspectRatio
 		return q;
 	}
 
-    /**
-     * Checks if this is a valid aspect ratio (1/1 or more.
-     *
-     * @return True if any of the sides is in fact 0.
-     */
+	/**
+	 * Checks if this is a valid aspect ratio (1/1 or more.
+	 *
+	 * @return True if any of the sides is in fact 0.
+	 */
 	public final boolean isUndefined() {
-        return p == 0 || q == 0;
+		return p == 0 || q == 0;
 	}
 
 	public int calculateWidthForHeight( int height ) {
-		return Math.round((((float) p) * height) / q);
+		return Math.round( ( ( (float) p ) * height ) / q );
 	}
 
 	public int calculateHeightForWidth( int width ) {
-		return Math.round((((float) q) * width) / p);
+		return Math.round( ( ( (float) q ) * width ) / p );
 	}
 
 	public boolean isLargerOnWidth() {

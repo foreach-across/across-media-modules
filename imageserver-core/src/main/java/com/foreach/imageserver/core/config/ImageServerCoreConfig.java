@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core;
+package com.foreach.imageserver.core.config;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ImageRepositoryRegistry;
@@ -10,72 +10,74 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.util.List;
 
 @Configuration
-@ComponentScan(basePackages = "com.foreach.imageserver.core",
-        excludeFilters = @ComponentScan.Filter(Configuration.class))
+@ComponentScan(
+		basePackages = "com.foreach.imageserver.core",
+		excludeFilters = @ComponentScan.Filter(Configuration.class)
+)
 @MapperScan("com.foreach.imageserver.core.data")
 @EnableTransactionManagement
-public class ImageServerCoreConfig extends WebMvcConfigurerAdapter {
-    @Autowired
-    private DataSource dataSource;
+public class ImageServerCoreConfig extends WebMvcConfigurerAdapter
+{
+	@Autowired
+	private DataSource dataSource;
 
-    @Autowired(required = false)
-    private MultipartResolver multipartResolver;
+	@Autowired(required = false)
+	private MultipartResolver multipartResolver;
 
-    @PostConstruct
-    public void init() {
-        if (multipartResolver == null) {
-            throw new RuntimeException("A MultipartResolver bean should be set up in the root application context.");
-        }
-    }
-/*
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(mappingJackson2HttpMessageConverter());
-    }
+	@PostConstruct
+	public void init() {
+		if ( multipartResolver == null ) {
+			throw new RuntimeException( "A MultipartResolver bean should be set up in the root application context." );
+		}
+	}
 
-    @Bean
-    public MappingJacksonHttpMessageConverter mappingJackson2HttpMessageConverter() {
-        return new MappingJacksonHttpMessageConverter();
-    }
-*/
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
-        propertySources.setIgnoreResourceNotFound(false);
-        propertySources.setIgnoreUnresolvablePlaceholders(false);
+	/*
+		@Override
+		public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+			converters.add(mappingJackson2HttpMessageConverter());
+		}
 
-        return propertySources;
-    }
+		@Bean
+		public MappingJacksonHttpMessageConverter mappingJackson2HttpMessageConverter() {
+			return new MappingJacksonHttpMessageConverter();
+		}
+	*/
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
+		propertySources.setIgnoreResourceNotFound( false );
+		propertySources.setIgnoreUnresolvablePlaceholders( false );
 
-    @Bean
-    public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
-        SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource);
-        sessionFactory.setTypeAliases(
-                new Class[]{Context.class, Image.class, ImageResolution.class, ImageModification.class, ImageProfile.class, ImageProfileModification.class});
-        return sessionFactory.getObject();
-    }
+		return propertySources;
+	}
 
-    @Bean
-    public ImageTransformerRegistry imageTransformerRegistry() {
-        return new ImageTransformerRegistry();
-    }
+	@Bean
+	public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
+		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+		sessionFactory.setDataSource( dataSource );
+		sessionFactory.setTypeAliases(
+				new Class[] { Context.class, Image.class, ImageResolution.class, ImageModification.class,
+				              ImageProfile.class, ImageProfileModification.class } );
+		return sessionFactory.getObject();
+	}
 
-    @Bean
-    public ImageRepositoryRegistry imageRepositoryRegistry() {
-        return new ImageRepositoryRegistry();
-    }
+	@Bean
+	public ImageTransformerRegistry imageTransformerRegistry() {
+		return new ImageTransformerRegistry();
+	}
+
+	@Bean
+	public ImageRepositoryRegistry imageRepositoryRegistry() {
+		return new ImageRepositoryRegistry();
+	}
 /*
     @Bean
     public net.sf.ehcache.CacheManager ehCacheManager() {

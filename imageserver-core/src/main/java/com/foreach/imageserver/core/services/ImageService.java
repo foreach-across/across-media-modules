@@ -8,30 +8,36 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-public interface ImageService {
-    Image getById(int imageId);
+public interface ImageService
+{
+	Image getById( int imageId );
 
-    Image getByExternalId(String externalId);
+	Image getByExternalId( String externalId );
 
-    Dimensions saveImage(String externalId, byte[] imageBytes, Date imageDate) throws ImageStoreException;
+	Dimensions saveImage( String externalId, byte[] imageBytes, Date imageDate ) throws ImageStoreException;
 
-    void saveImageModification(ImageModification modification);
+	void saveImageModification( ImageModification modification );
 
-    void saveImageModification(ImageModification modification, Image image);
+	void saveImageModification( ImageModification modification, Image image );
 
-    StreamImageSource generateModification(Image image, ImageModificationDto modificationDto, ImageVariant imageVariant);
+	StreamImageSource generateModification( Image image,
+	                                        ImageModificationDto modificationDto,
+	                                        ImageVariant imageVariant );
 
-    StreamImageSource getVariantImage(Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant);
+	StreamImageSource getVariantImage( Image image,
+	                                   Context context,
+	                                   ImageResolution imageResolution,
+	                                   ImageVariant imageVariant );
 
-    boolean hasModification(int imageId);
+	boolean hasModification( int imageId );
 
-    ImageResolution getResolution(int resolutionId);
+	ImageResolution getResolution( int resolutionId );
 
-    ImageResolution getResolution( int width, int height );
+	ImageResolution getResolution( int width, int height );
 
-    List<ImageModification> getModifications(int imageId, int contextId);
+	List<ImageModification> getModifications( int imageId, int contextId );
 
-    List<ImageResolution> getAllResolutions();
+	List<ImageResolution> getAllResolutions();
 
-    void saveImageResolution(ImageResolution resolution, Collection<Context> contexts);
+	void saveImageResolution( ImageResolution resolution, Collection<Context> contexts );
 }

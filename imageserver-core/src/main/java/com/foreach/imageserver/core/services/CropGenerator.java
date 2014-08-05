@@ -5,9 +5,13 @@ import com.foreach.imageserver.dto.ImageModificationDto;
 
 import java.util.List;
 
-public interface CropGenerator {
+public interface CropGenerator
+{
 
-    Crop generateCrop(Image image, Context context, ImageResolution resolution, List<ImageModification> modifications);
+	Crop generateCrop( Image image,
+	                   Context context,
+	                   ImageResolution resolution,
+	                   List<ImageModification> modifications );
 
-    ImageModificationDto buildModificationDto(Image image, Context context, ImageResolution imageResolution);
+	ImageModificationDto buildModificationDto( Image image, Context context, ImageResolution imageResolution );
 }

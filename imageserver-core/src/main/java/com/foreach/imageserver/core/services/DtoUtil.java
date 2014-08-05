@@ -8,52 +8,53 @@ import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 
 // TODO: review to simply business and dto objects layer
-public final class DtoUtil {
+public final class DtoUtil
+{
 
-    public static Crop toBusiness(CropDto dto) {
-        Crop crop = new Crop();
-        crop.setX(dto.getX());
-        crop.setY(dto.getY());
-        crop.setWidth(dto.getWidth());
-        crop.setHeight(dto.getHeight());
-        return crop;
-    }
+	public static Crop toBusiness( CropDto dto ) {
+		Crop crop = new Crop();
+		crop.setX( dto.getX() );
+		crop.setY( dto.getY() );
+		crop.setWidth( dto.getWidth() );
+		crop.setHeight( dto.getHeight() );
+		return crop;
+	}
 
-    public static ImageResolution toBusiness(ImageResolutionDto dto) {
-        ImageResolution resolution = new ImageResolution();
-        resolution.setId(dto.getId());
-        resolution.setWidth(dto.getWidth());
-        resolution.setHeight(dto.getHeight());
-        resolution.setConfigurable(dto.isConfigurable());
-        resolution.setName(dto.getName());
-        resolution.setTags(dto.getTags());
-        return resolution;
-    }
+	public static ImageResolution toBusiness( ImageResolutionDto dto ) {
+		ImageResolution resolution = new ImageResolution();
+		resolution.setId( dto.getId() );
+		resolution.setWidth( dto.getWidth() );
+		resolution.setHeight( dto.getHeight() );
+		resolution.setConfigurable( dto.isConfigurable() );
+		resolution.setName( dto.getName() );
+		resolution.setTags( dto.getTags() );
+		return resolution;
+	}
 
-    public static Dimensions toBusiness(DimensionsDto dto) {
-        Dimensions dimensions = new Dimensions();
-        dimensions.setWidth(dto.getWidth());
-        dimensions.setHeight(dto.getHeight());
-        return dimensions;
-    }
+	public static Dimensions toBusiness( DimensionsDto dto ) {
+		Dimensions dimensions = new Dimensions();
+		dimensions.setWidth( dto.getWidth() );
+		dimensions.setHeight( dto.getHeight() );
+		return dimensions;
+	}
 
-    public static DimensionsDto toDto(Dimensions dimensions) {
-        return new DimensionsDto(dimensions.getWidth(), dimensions.getHeight());
-    }
+	public static DimensionsDto toDto( Dimensions dimensions ) {
+		return new DimensionsDto( dimensions.getWidth(), dimensions.getHeight() );
+	}
 
-    public static CropDto toDto(Crop crop) {
-        return new CropDto(crop.getX(), crop.getY(), crop.getWidth(), crop.getHeight());
-    }
+	public static CropDto toDto( Crop crop ) {
+		return new CropDto( crop.getX(), crop.getY(), crop.getWidth(), crop.getHeight() );
+	}
 
-    public static ImageResolutionDto toDto(ImageResolution imageResolution) {
-        ImageResolutionDto dto = new ImageResolutionDto();
-        dto.setId(imageResolution.getId());
-        dto.setWidth(imageResolution.getWidth());
-        dto.setHeight(imageResolution.getHeight());
-        dto.setConfigurable(imageResolution.isConfigurable());
-        dto.setName(imageResolution.getName());
-        dto.setTags(imageResolution.getTags());
+	public static ImageResolutionDto toDto( ImageResolution imageResolution ) {
+		ImageResolutionDto dto = new ImageResolutionDto();
+		dto.setId( imageResolution.getId() );
+		dto.setWidth( imageResolution.getWidth() );
+		dto.setHeight( imageResolution.getHeight() );
+		dto.setConfigurable( imageResolution.isConfigurable() );
+		dto.setName( imageResolution.getName() );
+		dto.setTags( imageResolution.getTags() );
 
-        return dto;
-    }
+		return dto;
+	}
 }

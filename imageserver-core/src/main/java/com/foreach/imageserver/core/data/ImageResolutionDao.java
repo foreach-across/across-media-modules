@@ -7,16 +7,17 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ImageResolutionDao {
-    ImageResolution getById(int resolutionId);
+public interface ImageResolutionDao
+{
+	ImageResolution getById( int resolutionId );
 
-    List<ImageResolution> getForContext(@Param("contextId") int contextId);
+	List<ImageResolution> getForContext( @Param("contextId") int contextId );
 
-    void insertResolution(ImageResolution resolution);
+	void insertResolution( ImageResolution resolution );
 
-    void updateResolution(ImageResolution resolution);
+	void updateResolution( ImageResolution resolution );
 
-    List<ImageResolution> getAllResolutions();
+	List<ImageResolution> getAllResolutions();
 
-    ImageResolution getByDimensions(@Param("width") int width, @Param("height") int height);
+	ImageResolution getByDimensions( @Param("width") int width, @Param("height") int height );
 }

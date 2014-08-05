@@ -20,85 +20,86 @@ import java.util.Set;
  * <p>ImageResolution name is optional and can be used to provide a more meaningful description to a (mostly
  * configurable) resolution, eg. Large teaser format.</p>
  */
-public class ImageResolution {
-    private Integer id;
-    private int width;
-    private int height;
+public class ImageResolution
+{
+	private Integer id;
+	private int width;
+	private int height;
 
-    private boolean configurable;
-    private String name;
-    private Set<String> tags = new HashSet<>();
+	private boolean configurable;
+	private String name;
+	private Set<String> tags = new HashSet<>();
 
-    public Integer getId() {
-        return id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public void setId( Integer id ) {
+		this.id = id;
+	}
 
-    public int getWidth() {
-        return width;
-    }
+	public int getWidth() {
+		return width;
+	}
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
+	public void setWidth( int width ) {
+		this.width = width;
+	}
 
-    public int getHeight() {
-        return height;
-    }
+	public int getHeight() {
+		return height;
+	}
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
+	public void setHeight( int height ) {
+		this.height = height;
+	}
 
-    public Dimensions getDimensions() {
-        return new Dimensions(getWidth(), getHeight());
-    }
+	public Dimensions getDimensions() {
+		return new Dimensions( getWidth(), getHeight() );
+	}
 
-    public boolean isConfigurable() {
-        return configurable;
-    }
+	public boolean isConfigurable() {
+		return configurable;
+	}
 
-    public void setConfigurable(boolean configurable) {
-        this.configurable = configurable;
-    }
+	public void setConfigurable( boolean configurable ) {
+		this.configurable = configurable;
+	}
 
-    public String getName() {
-        return StringUtils.isBlank( name ) ? generatedName() : name;
-    }
+	public String getName() {
+		return StringUtils.isBlank( name ) ? generatedName() : name;
+	}
 
-    private String generatedName() {
+	private String generatedName() {
 
-        if ( width == 0 && height == 0) {
-            return "original";
-        }
-        else if ( width == 0 ) {
-            return "H" + height;
-        }
-        else if ( height == 0 ) {
-            return "W" + width;
-        }
-        else {
-            return width + "x" + height;
-        }
-    }
+		if ( width == 0 && height == 0 ) {
+			return "original";
+		}
+		else if ( width == 0 ) {
+			return "H" + height;
+		}
+		else if ( height == 0 ) {
+			return "W" + width;
+		}
+		else {
+			return width + "x" + height;
+		}
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName( String name ) {
+		this.name = name;
+	}
 
-    public Set<String> getTags() {
-        return tags;
-    }
+	public Set<String> getTags() {
+		return tags;
+	}
 
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
-    }
+	public void setTags( Set<String> tags ) {
+		this.tags = tags;
+	}
 
-    @Override
-    public String toString() {
-        return width + "x" + height;
-    }
+	@Override
+	public String toString() {
+		return width + "x" + height;
+	}
 }
