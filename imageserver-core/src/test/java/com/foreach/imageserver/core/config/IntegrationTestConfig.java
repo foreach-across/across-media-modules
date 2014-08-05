@@ -66,15 +66,17 @@ public class IntegrationTestConfig {
     @Bean
     public AcrossContext acrossContext(ConfigurableApplicationContext parentContext, DataSource dataSource, List<AcrossModule> acrossModules) {
         AcrossContext context = new AcrossContext(parentContext);
-        context.setAllowInstallers(true);
-        context.setDataSource(dataSource);
-        context.addPropertySources(parentContext.getEnvironment().getPropertySources());
-
-        for (AcrossModule acrossModule : acrossModules) {
-            context.addModule(acrossModule);
-        }
-
-        return context;
+        throw new RuntimeException("check me");
+        //TODO:check
+        //context.setAllowInstallers(true);
+//        context.setDataSource(dataSource);
+//        context.addPropertySources(parentContext.getEnvironment().getPropertySources());
+//
+//        for (AcrossModule acrossModule : acrossModules) {
+//            context.addModule(acrossModule);
+//        }
+//
+//        return context;
     }
 
     @Bean
