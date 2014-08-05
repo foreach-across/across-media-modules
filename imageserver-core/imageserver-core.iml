@@ -21,8 +21,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:4.0.0.RELEASE" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="module" module-name="imageserver-dtos" />
     <orderEntry type="library" name="Maven: com.foreach.libs:common-spring:0.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.1" level="project" />
