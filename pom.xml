@@ -7,7 +7,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <acrossVersion>1.0.3-SNAPSHOT</acrossVersion>
-        <foreachCommonVersion>0.7</foreachCommonVersion>
+        <foreachCommonVersion>0.8-SNAPSHOT</foreachCommonVersion>
         <jacksonVersion>1.9.10</jacksonVersion>
     </properties>
 
@@ -31,6 +31,7 @@
         <module>imageserver-dtos</module>
         <module>imageserver-admin</module>
         <module>web.imageserver.front</module>
+	    <module>imageserver-test-standalone</module>
     </modules>
 
     <dependencies>

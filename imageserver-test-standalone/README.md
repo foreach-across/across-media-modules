@@ -1,0 +1,1 @@
+Test web application that combines ImageServer API and Admin in a single web application.
