@@ -35,6 +35,10 @@ public class ImageLoadController extends BaseImageAPIController
 	@Autowired
 	private ContextService contextService;
 
+	public ImageLoadController( String accessToken ) {
+		super( accessToken );
+	}
+
 	@InitBinder
 	public void initBinder( ServletRequestDataBinder binder ) {
 		binder.registerCustomEditor( byte[].class, new ByteArrayMultipartFileEditor() );

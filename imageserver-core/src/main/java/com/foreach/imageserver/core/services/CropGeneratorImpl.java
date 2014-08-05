@@ -4,6 +4,7 @@ import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageProfileManager;
+import com.foreach.imageserver.core.services.exceptions.ImageCouldNotBeRetrievedException;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

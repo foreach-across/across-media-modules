@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
+import com.foreach.imageserver.core.services.exceptions.ImageResolutionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;

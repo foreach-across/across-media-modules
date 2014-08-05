@@ -1,10 +1,10 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ContextManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
+import com.foreach.imageserver.core.services.exceptions.ImageResolutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -5,12 +5,12 @@ import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.services.*;
+import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +31,10 @@ public class ImageModificationController extends BaseImageAPIController
 
 	@Autowired
 	private ImageService imageService;
+
+	public ImageModificationController( String accessToken ) {
+		super( accessToken );
+	}
 
 	@RequestMapping(value = "/" + REGISTER_PATH, method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody

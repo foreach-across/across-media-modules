@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 

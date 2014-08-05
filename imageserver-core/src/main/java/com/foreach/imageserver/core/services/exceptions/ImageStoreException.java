@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.services;
+package com.foreach.imageserver.core.services.exceptions;
 
 public class ImageStoreException extends RuntimeException
 {

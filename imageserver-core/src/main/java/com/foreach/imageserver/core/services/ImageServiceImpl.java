@@ -1,12 +1,14 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.managers.ContextManager;
 import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
+import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
+import com.foreach.imageserver.core.services.exceptions.ImageCouldNotBeRetrievedException;
+import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;

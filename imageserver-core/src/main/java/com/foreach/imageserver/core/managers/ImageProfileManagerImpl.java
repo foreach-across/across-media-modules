@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ImageProfileManagerImpl implements ImageProfileManager
 {
-
 	@Autowired
 	private ImageProfileDao imageProfileDao;
 

@@ -5,6 +5,7 @@ import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
+import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

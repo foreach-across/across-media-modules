@@ -1,11 +1,11 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.logging.LogHelper;
+import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
@@ -13,8 +13,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -45,18 +43,13 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private final Set<PosixFilePermission> folderPermissions;
 	private final Set<PosixFilePermission> filePermissions;
 
-	@Autowired
-	public ImageStoreServiceImpl( Environment environment ) throws IOException {
-		folderPermissions = toPermissions(
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER_PERMISSIONS, "" ) );
-		filePermissions = toPermissions(
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FILE_PERMISSIONS, "" ) );
+	public ImageStoreServiceImpl( Path imageStoreFolder, String folderPermissions, String filePermissions  ) throws IOException {
+		this.folderPermissions = toPermissions( folderPermissions );
+		this.filePermissions = toPermissions( filePermissions );
 
-		Path imageStoreFolderPath = ImageServerCoreModuleSettings.getImageStoreFolder( environment ).toPath();
-
-		tempFolder = imageStoreFolderPath.resolve( "temp" );
-		originalsFolder = imageStoreFolderPath.resolve( "originals" );
-		variantsFolder = imageStoreFolderPath.resolve( "variants" );
+		tempFolder = imageStoreFolder.resolve( "temp" );
+		originalsFolder = imageStoreFolder.resolve( "originals" );
+		variantsFolder = imageStoreFolder.resolve( "variants" );
 
 		createDirectories( tempFolder );
 		createDirectories( originalsFolder );

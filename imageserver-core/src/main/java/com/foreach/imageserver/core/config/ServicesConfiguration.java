@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -41,7 +42,11 @@ public class ServicesConfiguration
 
 	@Bean
 	public ImageStoreService imageStoreService() throws IOException {
-		return new ImageStoreServiceImpl( environment );
+		return new ImageStoreServiceImpl(
+				environment.getRequiredProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
+				                                 File.class ).toPath(),
+				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER_PERMISSIONS, "" ),
+				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FILE_PERMISSIONS, "" ) );
 	}
 
 	@Bean

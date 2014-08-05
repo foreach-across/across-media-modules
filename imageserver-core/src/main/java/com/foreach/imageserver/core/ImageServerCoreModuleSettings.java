@@ -79,25 +79,5 @@ public class ImageServerCoreModuleSettings
 	/**
 	 * Path to the ImageMagick installation.
 	 */
-	public static final String IMAGEMAGICK_PATH = "";
-
-	public static String getAccessToken( Environment environment ) {
-		return environment.getProperty( ACCESS_TOKEN, "azerty" );
-	}
-
-	public static boolean shouldProvideStackTrace( Environment environment ) {
-		return environment.getProperty( PROVIDE_STACKTRACE, Boolean.class, false );
-	}
-
-	public static int getMaxBrowserCacheSeconds( Environment environment ) {
-		return environment.getProperty( MAX_BROWSER_CACHE_SECONDS, Integer.class, 60 );
-	}
-
-	public static String getImageNotFoundImageKey( Environment environment ) {
-		return environment.getProperty( IMAGE_NOT_FOUND_IMAGEKEY );
-	}
-
-	public static File getImageStoreFolder( Environment environment ) {
-		return environment.getRequiredProperty( IMAGE_STORE_FOLDER, File.class );
-	}
+	public static final String IMAGEMAGICK_PATH = "imageServerCore.transformers.imageMagick.path";
 }

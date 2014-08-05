@@ -1,6 +1,5 @@
 package com.foreach.imageserver.core.controllers;
 
-import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.services.ContextService;
@@ -15,15 +14,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -44,20 +40,29 @@ public class ImageStreamingController
 	@Autowired
 	private ImageService imageService;
 
-	@Autowired
-	private Environment environment;
-
 	private String accessToken;
-	private String fallbackImageKey;
-	private boolean provideStackTrace;
-	private int maxCacheAgeInSeconds;
+	private String fallbackImageKey = null;
+	private boolean provideStackTrace = false;
+	private int maxCacheAgeInSeconds = 30;
 
-	@PostConstruct
-	protected void initializeProperties() {
-		accessToken = ImageServerCoreModuleSettings.getAccessToken( environment );
-		provideStackTrace = ImageServerCoreModuleSettings.shouldProvideStackTrace( environment );
-		maxCacheAgeInSeconds = ImageServerCoreModuleSettings.getMaxBrowserCacheSeconds( environment );
-		fallbackImageKey = ImageServerCoreModuleSettings.getImageNotFoundImageKey( environment );
+	public ImageStreamingController( String accessToken ) {
+		this.accessToken = accessToken;
+	}
+
+	public void setAccessToken( String accessToken ) {
+		this.accessToken = accessToken;
+	}
+
+	public void setFallbackImageKey( String fallbackImageKey ) {
+		this.fallbackImageKey = fallbackImageKey;
+	}
+
+	public void setProvideStackTrace( boolean provideStackTrace ) {
+		this.provideStackTrace = provideStackTrace;
+	}
+
+	public void setMaxCacheAgeInSeconds( int maxCacheAgeInSeconds ) {
+		this.maxCacheAgeInSeconds = maxCacheAgeInSeconds;
 	}
 
 	@RequestMapping(value = "/" + RENDER_PATH, method = RequestMethod.GET)
