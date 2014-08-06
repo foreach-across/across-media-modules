@@ -15,15 +15,31 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>reserve-network-port</id>
+						<goals>
+							<goal>reserve-network-port</goal>
+						</goals>
+						<phase>pre-integration-test</phase>
+						<configuration>
+							<portNames>
+								<portName>tomcat.http.port</portName>
+							</portNames>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
 					<path>/</path>
-					<port>8078</port>
-					<!--
-					<addContextWarDependencies>true</addContextWarDependencies>
-					-->
+					<port>${tomcat.http.port}</port>
 				</configuration>
 				<executions>
 					<execution>
@@ -44,6 +60,32 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.17</version>
+				<configuration>
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+					<systemPropertyVariables>
+						<local.tomcat.port>${tomcat.http.port}</local.tomcat.port>
+					</systemPropertyVariables>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.17</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

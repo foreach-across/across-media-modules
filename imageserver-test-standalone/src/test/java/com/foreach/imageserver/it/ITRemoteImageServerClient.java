@@ -21,7 +21,11 @@ import static org.junit.Assert.*;
  */
 public class ITRemoteImageServerClient
 {
-	private ImageServerClient imageServerClient = new RemoteImageServerClient( "http://localhost:8078/", "azerty" );
+	private ImageServerClient imageServerClient = new RemoteImageServerClient( "http://localhost:"
+			                                                                           + System.getProperty(
+			"local.tomcat.port", "8078" )
+			                                                                           +
+			                                                                           "/", "azerty" );
 
 	@Test
 	public void uploadKnownResourceImage() throws ParseException, IOException {
