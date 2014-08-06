@@ -73,7 +73,7 @@ public class ImageServerCoreModuleSettings
 	/**
 	 * True if GraphicsMagick should be used instead of regular ImageMagick.
 	 */
-	public static final String IMAGEMAGICK_USE_GRAPHICSMAGIC =
+	public static final String IMAGEMAGICK_USE_GRAPHICSMAGICK =
 			"imageServerCore.transformers.imageMagick.useGraphicsMagick";
 
 	/**

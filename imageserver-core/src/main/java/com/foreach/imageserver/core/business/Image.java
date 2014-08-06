@@ -12,40 +12,39 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name= ImageSchemaConfiguration.TABLE_IMAGE)
-public class Image {
+@Table(name = ImageSchemaConfiguration.TABLE_IMAGE)
+public class Image
+{
 
-    @Id
-    @GeneratedValue( generator = "seq_img_image_id" )
-    @GenericGenerator(
-            name = "seq_img_image_id",
-            strategy = AcrossSequenceGenerator.STRATEGY,
-            parameters = {
-                    @org.hibernate.annotations.Parameter( name = "sequenceName", value = "seq_img_image_id" ),
-                    @org.hibernate.annotations.Parameter( name = "allocationSize", value = "10" )
-            }
-    )
-    private long id;
+	@Id
+	@GeneratedValue(generator = "seq_img_image_id")
+	@GenericGenerator(
+			name = "seq_img_image_id",
+			strategy = AcrossSequenceGenerator.STRATEGY,
+			parameters = {
+					@org.hibernate.annotations.Parameter(name = "sequenceName", value = "seq_img_image_id"),
+					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "10")
+			}
+	)
+	private long id;
 
-    @Column( name = "profile_id" )
-    private long imageProfileId;
+	@Column(name = "profile_id")
+	private long imageProfileId;
 
-    @Column( name = "external_id" )
-    private String externalId;
+	@Column(name = "external_id")
+	private String externalId;
 
-    @Column( name = "created" )
-    private Date dateCreated;
+	@Column(name = "created")
+	private Date dateCreated;
 
+	@Column(name = "image_type_id")
+	@Type(type = ImageTypeUserType.CLASS_NAME)
+	private ImageType imageType;
 
-    @Column( name = "image_type_id" )
-    @Type(type = ImageTypeUserType.CLASS_NAME)
-    private ImageType imageType;
-
-
-	@AttributeOverrides( {
-             @AttributeOverride(name="width", column = @Column(name="width") ),
-             @AttributeOverride(name="height", column = @Column(name="height") )
-     })
+	@AttributeOverrides({
+			                    @AttributeOverride(name = "width", column = @Column(name = "width")),
+			                    @AttributeOverride(name = "height", column = @Column(name = "height"))
+	                    })
 	private Dimensions dimensions;
 
 	@Transient
@@ -55,13 +54,13 @@ public class Image {
 	@Transient
 	private String dateCreatedDayString;
 
-    public long getId() {
-        return id;
-    }
+	public long getId() {
+		return id;
+	}
 
-    public void setId(long id) {
-        this.id = id;
-    }
+	public void setId( long id ) {
+		this.id = id;
+	}
 
 	public String getExternalId() {
 		return externalId;
@@ -140,11 +139,11 @@ public class Image {
 
 		Image image = (Image) o;
 
-        return Objects.equals( this.id, image.id );
-    }
+		return Objects.equals( this.id, image.id );
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash( id );
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash( id );
+	}
 }

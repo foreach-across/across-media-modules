@@ -5,6 +5,8 @@ import com.foreach.imageserver.dto.ImageProfileDto;
 
 public interface ImageProfileService
 {
+	ImageProfile getDefaultProfile();
+
 	ImageProfile getById( long id );
 
 	void save( ImageProfileDto imageProfileDto );

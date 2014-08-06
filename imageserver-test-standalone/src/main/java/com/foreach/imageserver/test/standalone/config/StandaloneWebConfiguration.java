@@ -3,7 +3,6 @@ package com.foreach.imageserver.test.standalone.config;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.core.AcrossModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.adminweb.AdminWebModuleSettings;
 import com.foreach.across.modules.debugweb.DebugWebModule;
@@ -30,7 +29,7 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 	public DataSource acrossDataSource() {
 		BasicDataSource dataSource = new BasicDataSource();
 		dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-		dataSource.setUrl( "jdbc:hsqldb:/hsql/standaloneImageServer" );
+		dataSource.setUrl( "jdbc:hsqldb:mem:/hsql/standaloneImageServer" );
 		dataSource.setUsername( "sa" );
 		dataSource.setPassword( "" );
 
@@ -98,7 +97,11 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 		ImageServerCoreModule coreModule = new ImageServerCoreModule();
 		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
 		                        System.getProperty( "java.io.tmpdir" ) );
-		coreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/resources/images" );
+		coreModule.setProperty( ImageServerCoreModuleSettings.PROVIDE_STACKTRACE, true );
+		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_ENABLED, true );
+		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GRAPHICSMAGICK, true );
+		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PATH, "c:/Program Files/GraphicsMagick-1.3.19-Q8" );
+		//coreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/resources/images" );
 
 		return coreModule;
 	}

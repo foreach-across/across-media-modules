@@ -15,6 +15,11 @@ public class ImageProfileServiceImpl implements ImageProfileService
 	private ImageProfileRepository imageProfileRepository;
 
 	@Override
+	public ImageProfile getDefaultProfile() {
+		return imageProfileRepository.getAll().iterator().next();
+	}
+
+	@Override
 	public ImageProfile getById( long id ) {
 		return imageProfileRepository.getById( id );
 	}
@@ -37,5 +42,7 @@ public class ImageProfileServiceImpl implements ImageProfileService
 		} else {
 			imageProfileRepository.update( imageProfile );
 		}
+
+		BeanUtils.copyProperties( imageProfile, imageProfileDto );
 	}
 }

@@ -52,6 +52,9 @@ public class ImageServiceImpl implements ImageService
 	@Autowired
 	private ContextManager contextManager;
 
+	@Autowired
+	private ImageProfileService imageProfileService;
+
 	@Override
 	public Image getById( long imageId ) {
 		return imageManager.getById( imageId );
@@ -77,6 +80,7 @@ public class ImageServiceImpl implements ImageService
 		ImageAttributes imageAttributes = imageTransformService.getAttributes( new ByteArrayInputStream( imageBytes ) );
 
 		Image image = new Image();
+		image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
 		image.setExternalId( externalId );
 		image.setDateCreated( imageDate );
 		image.setDimensions( imageAttributes.getDimensions() );
