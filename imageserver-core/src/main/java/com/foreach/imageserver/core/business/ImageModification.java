@@ -3,10 +3,7 @@ package com.foreach.imageserver.core.business;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -23,14 +20,27 @@ import java.util.Objects;
 public class ImageModification implements Serializable
 {
 	@Id
+	@Column( name = "image_id" )
 	private long imageId;
 	@Id
+	@Column( name = "context_id" )
 	private long contextId;
 	@Id
+	@Column( name = "resolution_id" )
 	private long resolutionId;
-	@Transient //TODO: FIX
+
+	@AttributeOverrides({
+            @AttributeOverride(name = "x", column = @Column(name = "cropX")),
+            @AttributeOverride(name = "y", column = @Column(name = "cropY")),
+            @AttributeOverride(name = "width", column = @Column(name = "cropWidth")),
+			@AttributeOverride(name = "height", column = @Column(name = "cropHeight"))
+    })
 	private Crop crop;
-	@Transient //TODO: FIX
+
+	@AttributeOverrides({
+            @AttributeOverride(name = "width", column = @Column(name = "densityWidth")),
+            @AttributeOverride(name = "height", column = @Column(name = "densityHeight"))
+    })
 	private Dimensions density;
 
 	public long getImageId() {

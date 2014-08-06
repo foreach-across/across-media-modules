@@ -31,4 +31,9 @@ public class RepositoriesConfiguration
 	public ContextImageResolutionRepository contextImageResolutionRepository() {
 		return new ContextImageResolutionRepositoryImpl();
 	}
+
+	@Bean
+	public ImageModificationRepository imageModificationRepository() {
+		return new ImageModificationRepositoryImpl();
+	}
 }

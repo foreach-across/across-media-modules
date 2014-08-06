@@ -1,5 +1,9 @@
 package com.foreach.imageserver.core.business;
 
+import javax.persistence.Embeddable;
+import java.util.Objects;
+
+@Embeddable
 public class Crop
 {
 	private int x, y, width, height;
@@ -46,7 +50,7 @@ public class Crop
 		this.height = height;
 	}
 
-	public boolean isEmpty() {
+	public boolean hasEmptyHeightOrWidth() {
 		return height <= 0 || width <= 0;
 	}
 
@@ -79,10 +83,6 @@ public class Crop
 
 	@Override
 	public int hashCode() {
-		int result = x;
-		result = 31 * result + y;
-		result = 31 * result + width;
-		result = 31 * result + height;
-		return result;
+		return Objects.hash( x, y, width, height );
 	}
 }

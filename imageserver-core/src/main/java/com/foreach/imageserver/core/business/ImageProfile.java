@@ -13,6 +13,8 @@ import javax.persistence.*;
 @Table(name= ImageSchemaConfiguration.TABLE_IMAGE_PROFILE)
 public class ImageProfile {
 
+	public static final int DEFAULT_PROFILE_ID = 1;
+
     @Id
     @GeneratedValue( generator = "seq_img_image_profile_id" )
     @GenericGenerator(
