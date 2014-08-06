@@ -28,6 +28,12 @@ public class ServicesConfiguration
 
 	@Bean
 	@Exposed
+	public ImageProfileService imageProfileService() {
+		return new ImageProfileServiceImpl();
+	}
+
+	@Bean
+	@Exposed
 	public ImageTransformService imageTransformService() {
 		return new ImageTransformServiceImpl(
 				environment.getProperty( ImageServerCoreModuleSettings.TRANSFORMERS_CONCURRENT_LIMIT, Integer.class,

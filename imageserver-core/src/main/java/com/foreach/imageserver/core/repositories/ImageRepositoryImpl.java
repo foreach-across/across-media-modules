@@ -6,7 +6,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Repository
 public class ImageRepositoryImpl extends BasicRepositoryImpl<Image> implements ImageRepository
 {

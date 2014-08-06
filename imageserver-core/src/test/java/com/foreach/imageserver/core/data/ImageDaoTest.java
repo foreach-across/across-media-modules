@@ -3,7 +3,9 @@ package com.foreach.imageserver.core.data;
 import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageProfile;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.repositories.ImageProfileRepository;
 import com.foreach.imageserver.core.repositories.ImageRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +18,21 @@ public class ImageDaoTest extends AbstractIntegrationTest {
 
     @Autowired
     private ImageRepository imageRepository;
+	@Autowired
+	private ImageProfileRepository imageProfileRepository;
 
     @Test
     public void insertAndGetById() {
+	    ImageProfile imageProfile = new ImageProfile();
+	    imageProfile.setName( "dummy_profile" );
+	    imageProfileRepository.create( imageProfile );
+
         Image writtenImage = new Image();
         writtenImage.setExternalId("external_id");
         writtenImage.setDateCreated(new Date());
         writtenImage.setDimensions(dimensions(111, 222));
         writtenImage.setImageType(ImageType.EPS);
+	    writtenImage.setImageProfileId( imageProfile.getId() );
 	    imageRepository.create(writtenImage);
 
         Image readImage = imageRepository.getById(writtenImage.getId());
@@ -37,11 +46,16 @@ public class ImageDaoTest extends AbstractIntegrationTest {
 
     @Test
     public void insertAndGetByExternalId() {
+	    ImageProfile imageProfile = new ImageProfile();
+	    imageProfile.setName( "dummy_profile 2" );
+	    imageProfileRepository.create( imageProfile );
+
         Image writtenImage = new Image();
-        writtenImage.setExternalId("external_id");
+        writtenImage.setExternalId("external_id2");
         writtenImage.setDateCreated(new Date());
         writtenImage.setDimensions(dimensions(111, 222));
         writtenImage.setImageType(ImageType.EPS);
+	    writtenImage.setImageProfileId( imageProfile.getId() );
 	    imageRepository.create(writtenImage);
 
         Image readImage = imageRepository.getByExternalId(writtenImage.getExternalId());

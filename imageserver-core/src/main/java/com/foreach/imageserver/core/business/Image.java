@@ -13,7 +13,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name= ImageSchemaConfiguration.TABLE_IMAGE)
-
 public class Image {
 
     @Id
@@ -29,7 +28,7 @@ public class Image {
     private long id;
 
     @Column( name = "profile_id" )
-    private int imageProfileId;
+    private long imageProfileId;
 
     @Column( name = "external_id" )
     private String externalId;
@@ -122,11 +121,11 @@ public class Image {
 		return dateCreatedDayString;
 	}
 
-	public int getImageProfileId() {
+	public long getImageProfileId() {
 		return imageProfileId;
 	}
 
-	public void setImageProfileId( int imageProfileId ) {
+	public void setImageProfileId( long imageProfileId ) {
 		this.imageProfileId = imageProfileId;
 	}
 

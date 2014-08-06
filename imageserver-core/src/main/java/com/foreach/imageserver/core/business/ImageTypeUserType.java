@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.business;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.type.IntegerType;
+import org.hibernate.type.BigDecimalType;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class ImageTypeUserType implements UserType
 {
 	public static final String CLASS_NAME = "com.foreach.imageserver.core.business.ImageTypeUserType";
-	private final IntegerType TYPE = IntegerType.INSTANCE;
+	private final BigDecimalType TYPE = BigDecimalType.INSTANCE;
 
 	@Override
 	public int[] sqlTypes() {
@@ -38,11 +38,11 @@ public class ImageTypeUserType implements UserType
 
 	@Override
 	public Object nullSafeGet( ResultSet rs, String[] names, SessionImplementor session, Object owner ) throws HibernateException, SQLException {
-		Integer identifier = ( Integer ) TYPE.get( rs, names[0], session );
-		if ( rs.wasNull() ) {
-			//TODO: fix me
-			throw new RuntimeException( "Fix me" );
-			//return ImageType.valueOf( identifier.toString() );
+		BigDecimal id = ( BigDecimal ) TYPE.get( rs, names[0], session );
+		for ( ImageType imageType : ImageType.values() ) {
+			if ( imageType.getId().equals( id ) ) {
+				return imageType;
+			}
 		}
 		return null;
 	}
@@ -52,7 +52,7 @@ public class ImageTypeUserType implements UserType
 	public void nullSafeSet( PreparedStatement st, Object value, int index, SessionImplementor session ) throws HibernateException, SQLException {
 		try {
 			BigDecimal result = ((ImageType) value).getId();
-			TYPE.set( st, result.intValue(), index, session );
+			TYPE.set( st, result, index, session );
 		} catch ( Exception e ) {
 			throw new HibernateException( "Exception while getting ids from set", e );
 		}

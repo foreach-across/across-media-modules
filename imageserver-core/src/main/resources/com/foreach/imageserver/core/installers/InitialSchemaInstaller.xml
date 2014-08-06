@@ -40,17 +40,12 @@
         <comment>Install ImageProfile table and assign default profile to images</comment>
         <createTable tableName="${table.image_profile}">
             <column name="id" type="java.sql.Types.BIGINT">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyName="pk_img_image_profile" nullable="false"/>
             </column>
             <column name="name" type="java.sql.Types.VARCHAR(50)">
                 <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
-        <insert tableName="${table.image_profile}">
-            <column name="id">1</column>
-            <column name="name">default</column>
-        </insert>
-
     </changeSet>
 
     <changeSet id="201408051518" author="marc">

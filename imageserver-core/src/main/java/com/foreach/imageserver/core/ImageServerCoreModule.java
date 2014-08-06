@@ -8,10 +8,12 @@ import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.database.HasSchemaConfiguration;
 import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
+import com.foreach.across.core.installers.AcrossSequencesInstaller;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.*;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.imageserver.core.config.*;
+import com.foreach.imageserver.core.installers.DefaultDataInstaller;
 import com.foreach.imageserver.core.installers.Image404Installer;
 import com.foreach.imageserver.core.installers.InitialSchemaInstaller;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +51,12 @@ public class ImageServerCoreModule extends AcrossModule implements HasHibernateP
 
 	@Override
 	public Object[] getInstallers() {
-		return new Object[] { InitialSchemaInstaller.class, Image404Installer.class };
+		return new Object[] {
+				DefaultDataInstaller.class,
+				AcrossSequencesInstaller.class,
+				InitialSchemaInstaller.class,
+				Image404Installer.class
+		};
 	}
 
 	/**
