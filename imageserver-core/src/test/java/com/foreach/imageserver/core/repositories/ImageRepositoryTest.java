@@ -1,12 +1,10 @@
-package com.foreach.imageserver.core.data;
+package com.foreach.imageserver.core.repositories;
 
 import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageProfile;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.repositories.ImageProfileRepository;
-import com.foreach.imageserver.core.repositories.ImageRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +12,7 @@ import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
-public class ImageDaoTest extends AbstractIntegrationTest {
+public class ImageRepositoryTest extends AbstractIntegrationTest {
 
     @Autowired
     private ImageRepository imageRepository;

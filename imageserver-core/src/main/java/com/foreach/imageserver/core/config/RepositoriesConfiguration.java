@@ -1,9 +1,6 @@
 package com.foreach.imageserver.core.config;
 
-import com.foreach.imageserver.core.repositories.ImageProfileRepository;
-import com.foreach.imageserver.core.repositories.ImageProfileRepositoryImpl;
-import com.foreach.imageserver.core.repositories.ImageRepository;
-import com.foreach.imageserver.core.repositories.ImageRepositoryImpl;
+import com.foreach.imageserver.core.repositories.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,5 +15,10 @@ public class RepositoriesConfiguration
 	@Bean
 	public ImageProfileRepository imageProfileRepository() {
 		return new ImageProfileRepositoryImpl();
+	}
+
+	@Bean
+	public ContextRepository contextRepository() {
+		return new ContextRepositoryImpl();
 	}
 }
