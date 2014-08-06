@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.ImageContext;
-
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.Assert.*;
 
+@Ignore( "CacheManager later" )
 public class ImageContextManagerTest extends AbstractIntegrationTest {
 
     @Autowired
