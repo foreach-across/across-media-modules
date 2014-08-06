@@ -42,7 +42,7 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-web:4.0.6.RELEASE" />
           <element id="library" level="project" name="Maven: across-standard-modules:across-hibernate:1.0.3-SNAPSHOT" />
           <element id="library" level="project" name="Maven: org.springframework:spring-orm:4.0.6.RELEASE" />
-          <element id="library" level="project" name="Maven: org.jboss.logging:jboss-logging:3.1.0.GA" />
+          <element id="library" level="project" name="Maven: org.jboss.logging:jboss-logging:3.1.3.GA" />
           <element id="library" level="project" name="Maven: org.hibernate:hibernate-entitymanager:4.2.14.Final" />
           <element id="library" level="project" name="Maven: org.hibernate:hibernate-core:4.2.14.Final" />
           <element id="library" level="project" name="Maven: antlr:antlr:2.7.7" />
