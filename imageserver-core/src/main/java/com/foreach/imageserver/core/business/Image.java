@@ -15,7 +15,6 @@ import java.util.Objects;
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE)
 public class Image
 {
-
 	@Id
 	@GeneratedValue(generator = "seq_img_image_id")
 	@GenericGenerator(

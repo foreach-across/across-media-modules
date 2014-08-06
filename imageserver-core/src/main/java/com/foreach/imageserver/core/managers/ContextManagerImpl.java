@@ -3,6 +3,8 @@ package com.foreach.imageserver.core.managers;
 import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.repositories.ContextRepository;
 import com.foreach.imageserver.core.repositories.ImageResolutionRepository;
+import com.foreach.imageserver.dto.ImageContextDto;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,6 +19,7 @@ public class ContextManagerImpl implements ContextManager
 
 	@Autowired
 	private ContextRepository contextRepository;
+	
 	@Autowired
 	private ImageResolutionRepository imageResolutionRepository;
 
@@ -41,5 +44,29 @@ public class ContextManagerImpl implements ContextManager
 	@CacheEvict(value = CACHE_NAME, allEntries = true)
 	public void updateContextsForResolution( long resolutionId, Collection<Context> contexts ) {
 		imageResolutionRepository.updateContextsForResolution( resolutionId, contexts );
+	}
+
+	@Override
+	@CacheEvict(value = CACHE_NAME, allEntries = true)
+	public void save( ImageContextDto contextDto ) {
+		Context context;
+
+		if ( contextDto.isNewEntity() ) {
+			context = new Context();
+		}
+		else {
+			context = getByCode( contextDto.getCode() );
+		}
+
+		BeanUtils.copyProperties( contextDto, context );
+
+		if ( contextDto.isNewEntity() ) {
+			contextRepository.create( context );
+		}
+		else {
+			contextRepository.update( context );
+		}
+
+		BeanUtils.copyProperties( context, contextDto );
 	}
 }

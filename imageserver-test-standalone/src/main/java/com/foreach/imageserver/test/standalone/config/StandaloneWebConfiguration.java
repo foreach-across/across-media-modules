@@ -15,6 +15,7 @@ import com.foreach.across.modules.web.AcrossWebViewSupport;
 import com.foreach.imageserver.admin.ImageServerAdminWebModule;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
+import com.foreach.imageserver.test.standalone.module.StandaloneWebModule;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +48,8 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 		context.addModule( imageServerCoreModule() );
 		context.addModule( imageServerAdminModule() );
 		context.addModule( acrossHibernateModule() );
+
+		context.addModule( new StandaloneWebModule() );
 	}
 
 	private AcrossHibernateModule acrossHibernateModule() {

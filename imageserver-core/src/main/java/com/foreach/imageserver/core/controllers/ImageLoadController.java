@@ -2,17 +2,13 @@ package com.foreach.imageserver.core.controllers;
 
 import com.foreach.imageserver.core.annotations.ImageServerController;
 import com.foreach.imageserver.core.business.Context;
-import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.services.ContextService;
+import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageInfoDto;
-import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.imageserver.dto.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
@@ -73,10 +69,9 @@ public class ImageLoadController extends BaseImageAPIController
 		}
 
 		Date imageDate = ( imageTimestamp != null ) ? new Date( imageTimestamp ) : new Date();
+		Image image = imageService.saveImage( externalId, imageData, imageDate );
 
-		Dimensions imageDimensions = imageService.saveImage( externalId, imageData, imageDate );
-
-		return success( dto( imageDimensions ) );
+		return success( DtoUtil.toDto( image ) );
 	}
 
 	@RequestMapping(value = "/" + IMAGE_EXISTS_PATH, method = RequestMethod.GET)
@@ -103,7 +98,7 @@ public class ImageLoadController extends BaseImageAPIController
 		Image image = imageService.getByExternalId( externalId );
 
 		if ( image != null ) {
-			return success( dto( image ) );
+			return success( DtoUtil.toDto( image ) );
 		}
 		else {
 			ImageInfoDto notExisting = new ImageInfoDto();
@@ -113,24 +108,5 @@ public class ImageLoadController extends BaseImageAPIController
 			return success( notExisting );
 		}
 	}
-
-	private ImageInfoDto dto( Image image ) {
-		ImageInfoDto dto = new ImageInfoDto();
-		dto.setExisting( true );
-		dto.setExternalId( image.getExternalId() );
-		dto.setCreated( image.getDateCreated() );
-		dto.setDimensionsDto( dto( image.getDimensions() ) );
-		dto.setImageType( ImageTypeDto.valueOf( image.getImageType().name() ) );
-
-		return dto;
-	}
-
-	private DimensionsDto dto( Dimensions dimensions ) {
-		DimensionsDto dto = new DimensionsDto();
-		dto.setWidth( dimensions.getWidth() );
-		dto.setHeight( dimensions.getHeight() );
-		return dto;
-	}
-
 }
 

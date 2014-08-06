@@ -5,13 +5,15 @@ import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Represents the profile an image is linked to.
  */
 @Entity
-@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_PROFILE)
-public class ImageProfile {
+@Table(name = ImageSchemaConfiguration.TABLE_IMAGE_PROFILE)
+public class ImageProfile
+{
 
 	public static final int DEFAULT_PROFILE_ID = 1;
 
@@ -27,12 +29,12 @@ public class ImageProfile {
     )
     private long id;
 
-	@Column( name = "name" )
-    private String name;
+	@Column(name = "name", unique = true)
+	private String name;
 
-    public long getId() {
-        return id;
-    }
+	public long getId() {
+		return id;
+	}
 
 	public void setId( int id ) {
 		this.id = id;
@@ -57,15 +59,11 @@ public class ImageProfile {
 
 		ImageProfile that = (ImageProfile) o;
 
-		if ( name != null ? !name.equals( that.name ) : that.name != null ) {
-			return false;
-		}
-
-		return true;
+		return Objects.equals( name, that.name );
 	}
 
 	@Override
 	public int hashCode() {
-		return name != null ? name.hashCode() : 0;
+		return Objects.hash( name );
 	}
 }

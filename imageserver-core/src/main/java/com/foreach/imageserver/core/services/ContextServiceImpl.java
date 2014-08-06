@@ -5,6 +5,8 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ContextManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.services.exceptions.ImageResolutionException;
+import com.foreach.imageserver.dto.ImageContextDto;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -114,5 +116,10 @@ public class ContextServiceImpl implements ContextService
 	@Override
 	public Collection<Context> getAllContexts() {
 		return new ArrayList<>( contextManager.getAllContexts() );
+	}
+
+	@Override
+	public void save( ImageContextDto contextDto ) {
+		contextManager.save( contextDto );
 	}
 }

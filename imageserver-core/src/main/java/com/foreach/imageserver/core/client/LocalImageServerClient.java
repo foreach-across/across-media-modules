@@ -3,12 +3,14 @@ package com.foreach.imageserver.core.client;
 import be.mediafin.imageserver.client.AbstractImageServerClient;
 import be.mediafin.imageserver.client.ImageServerClient;
 import be.mediafin.imageserver.client.ImageServerException;
+import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
 import com.foreach.imageserver.core.rest.services.ResolutionRestService;
+import com.foreach.imageserver.core.services.DtoUtil;
+import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -24,6 +26,9 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 {
 	@Autowired
 	private ResolutionRestService resolutionRestService;
+
+	@Autowired
+	private ImageService imageService;
 
 	public LocalImageServerClient( String imageServerUrl ) {
 		super( imageServerUrl );
@@ -54,23 +59,36 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	}
 
 	@Override
-	public DimensionsDto loadImage( String imageId, byte[] imageBytes ) {
+	public ImageInfoDto loadImage( String imageId, byte[] imageBytes ) {
 		return null;
 	}
 
 	@Override
-	public DimensionsDto loadImage( String imageId, byte[] imageBytes, Date imageDate ) {
+	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate ) {
 		return null;
 	}
 
 	@Override
 	public boolean imageExists( String imageId ) {
-		return false;
+		Image image = imageService.getByExternalId( imageId );
+
+		return image != null;
 	}
 
 	@Override
 	public ImageInfoDto imageInfo( String imageId ) {
-		return null;
+		Image image = imageService.getByExternalId(imageId);
+
+		if ( image == null )
+		{
+			ImageInfoDto imageInfoDto = new ImageInfoDto();
+			imageInfoDto.setExternalId( imageId );
+			imageInfoDto.setExisting( false );
+
+			return imageInfoDto;
+		}
+
+		return DtoUtil.toDto( image );
 	}
 
 	@Override

@@ -71,7 +71,7 @@ public class ImageServiceImpl implements ImageService
 	// TODO I'm not taking care of errors right now, make sure to tackle this later on!
 	@Override
 	@Transactional
-	public Dimensions saveImage( String externalId, byte[] imageBytes, Date imageDate ) throws ImageStoreException {
+	public Image saveImage( String externalId, byte[] imageBytes, Date imageDate ) throws ImageStoreException {
 		if ( StringUtils.isBlank( externalId ) || imageBytes == null || imageDate == null ) {
 			LOG.warn( "Null parameters not allowed - ImageServiceImpl#saveImage: image={}, context={}, imageDate={}",
 			          LogHelper.flatten( externalId, imageBytes, imageDate ) );
@@ -89,7 +89,7 @@ public class ImageServiceImpl implements ImageService
 
 		imageStoreService.storeOriginalImage( image, imageBytes );
 
-		return image.getDimensions();
+		return image;
 	}
 
 	/**

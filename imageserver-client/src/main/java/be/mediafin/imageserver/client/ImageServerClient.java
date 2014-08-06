@@ -34,9 +34,9 @@ public interface ImageServerClient
 
 	InputStream imageStream( String imageId, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant );
 
-	DimensionsDto loadImage( String imageId, byte[] imageBytes );
+	ImageInfoDto loadImage( String imageId, byte[] imageBytes );
 
-	DimensionsDto loadImage( String imageId, byte[] imageBytes, Date imageDate );
+	ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate );
 
 	boolean imageExists( String imageId );
 

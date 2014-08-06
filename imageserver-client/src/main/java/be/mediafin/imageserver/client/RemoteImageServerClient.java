@@ -108,12 +108,12 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	@Override
-	public DimensionsDto loadImage( String imageId, byte[] imageBytes ) {
+	public ImageInfoDto loadImage( String imageId, byte[] imageBytes ) {
 		return loadImage( imageId, imageBytes, null );
 	}
 
 	@Override
-	public DimensionsDto loadImage( String imageId, byte[] imageBytes, Date imageDate ) {
+	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate ) {
 		if ( StringUtils.isBlank( imageId ) || imageBytes == null || imageDate == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageServerClientImpl#loadImage: imageId={}, imageBytes={}, imageDate={}",
@@ -138,7 +138,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 			fdp.setContentDisposition( builder.build() );
 			form.bodyPart( fdp );
 
-			GenericType<JsonResponse<DimensionsDto>> responseType = new GenericType<JsonResponse<DimensionsDto>>()
+			GenericType<JsonResponse<ImageInfoDto>> responseType = new GenericType<JsonResponse<ImageInfoDto>>()
 			{
 			};
 

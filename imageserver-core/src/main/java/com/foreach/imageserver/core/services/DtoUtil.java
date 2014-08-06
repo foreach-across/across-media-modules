@@ -1,11 +1,7 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.Crop;
-import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.dto.CropDto;
-import com.foreach.imageserver.dto.DimensionsDto;
-import com.foreach.imageserver.dto.ImageResolutionDto;
+import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.dto.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +36,25 @@ public final class DtoUtil
 		dimensions.setWidth( dto.getWidth() );
 		dimensions.setHeight( dto.getHeight() );
 		return dimensions;
+	}
+
+	public static ImageContextDto toDto( Context context ){
+		ImageContextDto contextDto = new ImageContextDto();
+		contextDto.setId( context.getId() );
+		contextDto.setCode( context.getCode() );
+
+		return contextDto;
+	}
+
+	public static ImageInfoDto toDto( Image image ) {
+		ImageInfoDto dto = new ImageInfoDto();
+		dto.setExisting( true );
+		dto.setExternalId( image.getExternalId() );
+		dto.setCreated( image.getDateCreated() );
+		dto.setDimensionsDto( toDto( image.getDimensions() ) );
+		dto.setImageType( ImageTypeDto.valueOf( image.getImageType().name() ) );
+
+		return dto;
 	}
 
 	public static DimensionsDto toDto( Dimensions dimensions ) {

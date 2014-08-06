@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.dto.ImageContextDto;
 
 import java.util.Collection;
 
@@ -13,4 +14,6 @@ public interface ContextManager
 	Collection<Context> getForResolution( long resolutionId );
 
 	void updateContextsForResolution( long resolutionId, Collection<Context> contexts );
+
+	void save( ImageContextDto contextDto );
 }
