@@ -55,9 +55,9 @@ public class ImageResolution {
 			inverseJoinColumns = @JoinColumn(name = "context_id"))
 	private Collection<Context> contexts = new TreeSet<>();
 
-	@Transient //TODO: FIX
+	@Column( name = "configurable" )
 	private boolean configurable;
-	@Transient //TODO: FIX
+	@Column( name = "name" )
 	private String name;
 
 	@Transient //TODO: FIX

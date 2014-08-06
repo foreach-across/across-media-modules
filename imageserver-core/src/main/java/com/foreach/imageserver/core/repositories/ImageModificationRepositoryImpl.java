@@ -53,8 +53,9 @@ public class ImageModificationRepositoryImpl extends BasicRepositoryImpl<ImageMo
 	@SuppressWarnings( "unchecked" )
 	public boolean hasModification( long imageId ) {
 		Criteria criteria = session().createCriteria( ImageModification.class );
+		criteria.add( Restrictions.eq( "imageId", imageId ) );
 		criteria.setProjection( Projections.rowCount() );
-		Number number = (Number) criteria.uniqueResult();
+		Long number = (Long) criteria.uniqueResult();
 		return number != 0;
 	}
 }
