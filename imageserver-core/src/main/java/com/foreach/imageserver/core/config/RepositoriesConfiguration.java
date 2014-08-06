@@ -36,4 +36,9 @@ public class RepositoriesConfiguration
 	public ImageModificationRepository imageModificationRepository() {
 		return new ImageModificationRepositoryImpl();
 	}
+
+	@Bean
+	public ImageProfileModificationRepository imageProfileModificationRepository() {
+		return new ImageProfileModificationRepositoryImpl();
+	}
 }
