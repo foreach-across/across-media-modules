@@ -1,11 +1,11 @@
 package com.foreach.imageserver.core.controllers;
 
 import com.foreach.imageserver.core.annotations.ImageServerController;
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.services.ContextService;
+import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.CropGeneratorUtil;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageService;
@@ -30,7 +30,7 @@ public class ImageModificationController extends BaseImageAPIController
 	public static final String LIST_MODIFICATIONS = "listModifications";
 
 	@Autowired
-	private ContextService contextService;
+	private ImageContextService contextService;
 
 	@Autowired
 	private ImageService imageService;
@@ -53,7 +53,7 @@ public class ImageModificationController extends BaseImageAPIController
 			return error( "No such image." );
 		}
 
-		Context context = contextService.getByCode( contextCode );
+		ImageContext context = contextService.getByCode( contextCode );
 		if ( context == null ) {
 			return error( "No such context." );
 		}
@@ -93,7 +93,7 @@ public class ImageModificationController extends BaseImageAPIController
 			return error( "Access denied." );
 		}
 
-		Context context = contextService.getByCode( contextCode );
+		ImageContext context = contextService.getByCode( contextCode );
 		if ( context == null ) {
 			return error( "No such context." );
 		}

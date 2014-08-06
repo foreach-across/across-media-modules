@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.AbstractIntegrationTest;
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +11,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.Assert.*;
 
-public class ContextManagerTest extends AbstractIntegrationTest {
+public class ImageContextManagerTest extends AbstractIntegrationTest {
 
     @Autowired
-    private ContextManager contextManager;
+    private ImageContextManager contextManager;
 
     @Autowired
     private CacheManager cacheManager;
@@ -31,7 +31,7 @@ public class ContextManagerTest extends AbstractIntegrationTest {
         assertNotNull(cache);
         assertNull(cache.get("byCode-the_application_code"));
 
-        Context retrievedContext = contextManager.getByCode("the_application_code");
+        ImageContext retrievedContext = contextManager.getByCode("the_application_code");
         assertEquals(10, retrievedContext.getId());
         assertEquals("the_application_code", retrievedContext.getCode());
         assertSame(retrievedContext, cache.get("byCode-the_application_code").get());
@@ -39,7 +39,7 @@ public class ContextManagerTest extends AbstractIntegrationTest {
         String updateStatement = "UPDATE CONTEXT SET code = ? WHERE id = ?";
         jdbcTemplate.update(updateStatement, "the_other_application_code", 10);
 
-        Context retrievedAgainContext = contextManager.getByCode("the_application_code");
+        ImageContext retrievedAgainContext = contextManager.getByCode("the_application_code");
         assertSame(retrievedContext, retrievedAgainContext);
         assertEquals(10, retrievedAgainContext.getId());
         assertEquals("the_application_code", retrievedAgainContext.getCode());

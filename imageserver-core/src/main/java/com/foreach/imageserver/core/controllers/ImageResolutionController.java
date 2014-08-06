@@ -1,12 +1,12 @@
 package com.foreach.imageserver.core.controllers;
 
 import com.foreach.imageserver.core.annotations.ImageServerController;
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
 import com.foreach.imageserver.core.rest.services.ResolutionRestService;
-import com.foreach.imageserver.core.services.ContextService;
+import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.ImageResolutionDto;
@@ -32,7 +32,7 @@ public class ImageResolutionController extends BaseImageAPIController
 	public static final String LIST_RESOLUTIONS_PATH = "listResolutions";
 
 	@Autowired
-	private ContextService contextService;
+	private ImageContextService contextService;
 
 	@Autowired
 	private ImageService imageService;
@@ -52,11 +52,10 @@ public class ImageResolutionController extends BaseImageAPIController
 		}
 
 		ImageResolution resolution = imageService.getResolution( resolutionId );
-		Collection<Context> contexts = contextService.getForResolution( resolutionId );
 
-		List<String> contextNames = new ArrayList<>( contexts.size() );
+		List<String> contextNames = new ArrayList<>( resolution.getContexts().size() );
 
-		for ( Context ctx : contexts ) {
+		for ( ImageContext ctx : resolution.getContexts() ) {
 			contextNames.add( ctx.getCode() );
 		}
 
@@ -74,7 +73,7 @@ public class ImageResolutionController extends BaseImageAPIController
 		}
 
 		ImageResolution resolution = DtoUtil.toBusiness( formDto.getResolution() );
-		Collection<Context> contexts = new LinkedList<>();
+		Collection<ImageContext> contexts = new LinkedList<>();
 
 		for ( String code : formDto.getContext() ) {
 			contexts.add( contextService.getByCode( code ) );

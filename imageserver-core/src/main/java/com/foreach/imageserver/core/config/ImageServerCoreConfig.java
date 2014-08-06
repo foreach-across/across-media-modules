@@ -54,7 +54,7 @@ public class ImageServerCoreConfig extends WebMvcConfigurerAdapter
 		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
 		sessionFactory.setDataSource( dataSource );
 		sessionFactory.setTypeAliases(
-				new Class[] { Context.class, Image.class, ImageResolution.class, ImageModification.class,
+				new Class[] { ImageContext.class, Image.class, ImageResolution.class, ImageModification.class,
 				              ImageProfile.class, ImageProfileModification.class } );
 		return sessionFactory.getObject();
 	}

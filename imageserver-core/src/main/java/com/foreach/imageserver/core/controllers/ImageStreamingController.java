@@ -3,7 +3,7 @@ package com.foreach.imageserver.core.controllers;
 import com.foreach.imageserver.core.annotations.ImageServerController;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.logging.LogHelper;
-import com.foreach.imageserver.core.services.ContextService;
+import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
@@ -35,7 +35,7 @@ public class ImageStreamingController
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStreamingController.class );
 
 	@Autowired
-	private ContextService contextService;
+	private ImageContextService contextService;
 
 	@Autowired
 	private ImageService imageService;
@@ -114,7 +114,7 @@ public class ImageStreamingController
 				return;
 			}
 
-			Context context = contextService.getByCode( contextCode );
+			ImageContext context = contextService.getByCode( contextCode );
 			if ( context == null ) {
 				error( response, HttpStatus.NOT_FOUND, "No such context." );
 				return;

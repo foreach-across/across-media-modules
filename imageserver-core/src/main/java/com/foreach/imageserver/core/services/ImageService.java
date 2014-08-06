@@ -26,7 +26,7 @@ public interface ImageService
 	                                        ImageVariant imageVariant );
 
 	StreamImageSource getVariantImage( Image image,
-	                                   Context context,
+	                                   ImageContext context,
 	                                   ImageResolution imageResolution,
 	                                   ImageVariant imageVariant );
 
@@ -40,5 +40,5 @@ public interface ImageService
 
 	Collection<ImageResolution> getAllResolutions();
 
-	void saveImageResolution( ImageResolution resolution, Collection<Context> contexts );
+	void saveImageResolution( ImageResolution resolution, Collection<ImageContext> contexts );
 }

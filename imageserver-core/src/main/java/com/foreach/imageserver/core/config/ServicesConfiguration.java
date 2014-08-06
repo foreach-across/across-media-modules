@@ -53,8 +53,8 @@ public class ServicesConfiguration
 
 	@Bean
 	@Exposed
-	public ContextService contextService() {
-		return new ContextServiceImpl();
+	public ImageContextService contextService() {
+		return new ImageContextServiceImpl();
 	}
 
 	@Bean

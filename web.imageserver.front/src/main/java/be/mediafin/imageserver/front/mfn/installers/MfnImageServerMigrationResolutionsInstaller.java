@@ -4,10 +4,10 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.installers.InstallerRunCondition;
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.services.ContextService;
+import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class MfnImageServerMigrationResolutionsInstaller {
     private ImageService imageService;
 
     @Autowired
-    private ContextService contextService;
+    private ImageContextService contextService;
 
     @InstallerMethod
     public void installResolutions() {
@@ -92,13 +92,13 @@ public class MfnImageServerMigrationResolutionsInstaller {
         existing.setName(name);
         existing.setTags(new HashSet<>(Arrays.asList(tags)));
 
-        Collection<Context> contextCollection = determineContexts(contexts);
+        Collection<ImageContext> contextCollection = determineContexts(contexts);
 
         imageService.saveImageResolution(existing, contextCollection);
     }
 
-    private Collection<Context> determineContexts(String[] contexts) {
-        Collection<Context> contextCollection = new LinkedList<>();
+    private Collection<ImageContext> determineContexts(String[] contexts) {
+        Collection<ImageContext> contextCollection = new LinkedList<>();
 
         for (String code : contexts) {
             contextCollection.add(contextService.getByCode(code));

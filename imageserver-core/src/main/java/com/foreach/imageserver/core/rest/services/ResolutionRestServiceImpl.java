@@ -1,10 +1,10 @@
 package com.foreach.imageserver.core.rest.services;
 
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
-import com.foreach.imageserver.core.services.ContextService;
+import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageService;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,7 @@ import java.util.List;
 public class ResolutionRestServiceImpl implements ResolutionRestService
 {
 	@Autowired
-	private ContextService contextService;
+	private ImageContextService contextService;
 
 	@Autowired
 	private ImageService imageService;
@@ -34,7 +34,7 @@ public class ResolutionRestServiceImpl implements ResolutionRestService
 		Collection<ImageResolution> imageResolutions = null;
 
 		if ( StringUtils.isNotBlank( request.getContext() ) ) {
-			Context context = contextService.getByCode( request.getContext() );
+			ImageContext context = contextService.getByCode( request.getContext() );
 
 			if ( context == null ) {
 				response.setContextDoesNotExist( true );

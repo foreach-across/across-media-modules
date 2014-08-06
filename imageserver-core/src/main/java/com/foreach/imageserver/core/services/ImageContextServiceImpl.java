@@ -1,12 +1,11 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.managers.ContextManager;
+import com.foreach.imageserver.core.managers.ImageContextManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.services.exceptions.ImageResolutionException;
 import com.foreach.imageserver.dto.ImageContextDto;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +14,20 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class ContextServiceImpl implements ContextService
+public class ImageContextServiceImpl implements ImageContextService
 {
 
 	// default image resolution width/height proportion
 	public static final double DEFAULT_ASPECT_RATIO = 3.0 / 2.0;
 
 	@Autowired
-	private ContextManager contextManager;
+	private ImageContextManager contextManager;
 
 	@Autowired
 	private ImageResolutionManager imageResolutionManager;
 
 	@Override
-	public Context getByCode( String contextCode ) {
+	public ImageContext getByCode( String contextCode ) {
 		return contextManager.getByCode( contextCode );
 	}
 
@@ -109,12 +108,7 @@ public class ContextServiceImpl implements ContextService
 	}
 
 	@Override
-	public Collection<Context> getForResolution( long resolutionId ) {
-		return new ArrayList<>( contextManager.getForResolution( resolutionId ) );
-	}
-
-	@Override
-	public Collection<Context> getAllContexts() {
+	public Collection<ImageContext> getAllContexts() {
 		return new ArrayList<>( contextManager.getAllContexts() );
 	}
 

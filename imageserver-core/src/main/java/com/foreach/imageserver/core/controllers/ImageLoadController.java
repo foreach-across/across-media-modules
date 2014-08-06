@@ -1,9 +1,9 @@
 package com.foreach.imageserver.core.controllers;
 
 import com.foreach.imageserver.core.annotations.ImageServerController;
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.services.ContextService;
+import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.ImageInfoDto;
@@ -30,7 +30,7 @@ public class ImageLoadController extends BaseImageAPIController
 	private ImageService imageService;
 
 	@Autowired
-	private ContextService contextService;
+	private ImageContextService contextService;
 
 	public ImageLoadController( String accessToken ) {
 		super( accessToken );
@@ -48,10 +48,10 @@ public class ImageLoadController extends BaseImageAPIController
 			return error( "Access denied." );
 		}
 
-		Collection<Context> contexts = contextService.getAllContexts();
+		Collection<ImageContext> contexts = contextService.getAllContexts();
 		List<String> contextNames = new ArrayList<>( contexts.size() );
 
-		for ( Context ctx : contexts ) {
+		for ( ImageContext ctx : contexts ) {
 			contextNames.add( ctx.getCode() );
 		}
 

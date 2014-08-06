@@ -149,7 +149,7 @@ public class ImageServiceGetVariantSynchronizationTest {
     private TestResults runTest(int threadsPerImage, Answer<InMemoryImageSource> firstImageAnswer, Answer<InMemoryImageSource> secondImageAnswer) throws InterruptedException {
         Image firstImage = image(1);
         Image secondImage = image(2);
-        Context context = context(10);
+        ImageContext context = context(10);
         ImageResolution imageResolution = imageResolution(20);
         ImageVariant imageVariant = imageVariant(ImageType.PNG);
 
@@ -195,8 +195,8 @@ public class ImageServiceGetVariantSynchronizationTest {
         return image;
     }
 
-    private Context context(int id) {
-        Context context = new Context();
+    private ImageContext context(int id) {
+        ImageContext context = new ImageContext();
         context.setId(id);
         return context;
     }
@@ -272,11 +272,11 @@ public class ImageServiceGetVariantSynchronizationTest {
     private static class GetVariantImageCallable implements Callable<StreamImageSource> {
         private final ImageService imageService;
         private final Image image;
-        private final Context context;
+        private final ImageContext context;
         private final ImageResolution imageResolution;
         private final ImageVariant imageVariant;
 
-        public GetVariantImageCallable(ImageService imageService, Image image, Context context, ImageResolution imageResolution, ImageVariant imageVariant) {
+        public GetVariantImageCallable(ImageService imageService, Image image, ImageContext context, ImageResolution imageResolution, ImageVariant imageVariant) {
             this.imageService = imageService;
             this.image = image;
             this.context = context;

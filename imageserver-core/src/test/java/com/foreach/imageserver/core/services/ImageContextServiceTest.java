@@ -14,14 +14,15 @@ import static junit.framework.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-public class ContextServiceTest {
+public class ImageContextServiceTest
+{
 
     public static final int CONTEXT_ID = 2;
-    private ContextService contextService;
+    private ImageContextService contextService;
 
     @Before
     public void setUp() {
-        contextService = new ContextServiceImpl();
+        contextService = new ImageContextServiceImpl();
         ImageResolutionManager imageResolutionManager = mock(ImageResolutionManager.class);
 
         List<ImageResolution> imageResolutions = new ArrayList<ImageResolution>();

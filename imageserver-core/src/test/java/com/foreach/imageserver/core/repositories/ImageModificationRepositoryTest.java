@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 
 	@Autowired
-	private ContextRepository contextRepository;
+	private ImageContextRepository contextRepository;
 	@Autowired
 	private ImageRepository imageRepository;
 	@Autowired
@@ -63,7 +63,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
     }
 
 	private void createContext( int id, String code ) {
-		Context context = new Context();
+		ImageContext context = new ImageContext();
 		context.setId( id );
 		context.setCode( code );
 		contextRepository.create( context );
@@ -153,7 +153,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 	@Test
     public void updateAndGetById() {
 		createContext( 6666, "code" );
-		createImage( 78878, "externalId_78878", new Dimensions( 100, 100 ), ImageType.PNG, new Date(2012, 11, 13) );
+		createImage( 78878, "externalId_78878", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
 		createImageResolution( 99994, 934, 9843 );
 
 		ImageModification imageModification = modification(78878, 6666, 99994, 0, 1, 2, 3, 4, 5);
@@ -175,7 +175,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 
     @Test
     public void hasModification() {
-	    Context context6010 = new Context();
+	    ImageContext context6010 = new ImageContext();
 	    context6010.setId( 6010 );
 	    context6010.setCode( "the_application_code_6010" );
 	    contextRepository.create( context6010 );

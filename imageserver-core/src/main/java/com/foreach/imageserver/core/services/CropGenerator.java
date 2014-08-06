@@ -9,9 +9,9 @@ public interface CropGenerator
 {
 
 	Crop generateCrop( Image image,
-	                   Context context,
+	                   ImageContext context,
 	                   ImageResolution resolution,
 	                   List<ImageModification> modifications );
 
-	ImageModificationDto buildModificationDto( Image image, Context context, ImageResolution imageResolution );
+	ImageModificationDto buildModificationDto( Image image, ImageContext context, ImageResolution imageResolution );
 }

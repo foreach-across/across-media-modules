@@ -64,7 +64,7 @@ public class CropGeneratorImpl implements CropGenerator
 	private ImageProfileManager imageProfileManager;
 
 	@Override
-	public ImageModificationDto buildModificationDto( Image image, Context context, ImageResolution imageResolution ) {
+	public ImageModificationDto buildModificationDto( Image image, ImageContext context, ImageResolution imageResolution ) {
 		if ( image == null || context == null || imageResolution == null ) {
 			LOG.warn(
 					"Null parameters not allowed - CropGeneratorImpl#buildModificationDto: image={}, context={}, imageResolution={}",
@@ -99,7 +99,7 @@ public class CropGeneratorImpl implements CropGenerator
 		return modificationDto;
 	}
 
-	private Crop obtainCrop( Image image, Context context, ImageResolution requestedResolution ) {
+	private Crop obtainCrop( Image image, ImageContext context, ImageResolution requestedResolution ) {
 		if ( image == null || context == null || requestedResolution == null ) {
 			LOG.warn(
 					"Null parameters not allowed - CropGeneratorImpl#obtainCrop: image={}, context={}, requestedResolution={}",
@@ -138,7 +138,7 @@ public class CropGeneratorImpl implements CropGenerator
 
 	@Override
 	public Crop generateCrop( Image image,
-	                          Context context,
+	                          ImageContext context,
 	                          ImageResolution resolution,
 	                          List<ImageModification> modifications ) {
 		if ( image == null || context == null || modifications == null ) {
@@ -402,7 +402,7 @@ public class CropGeneratorImpl implements CropGenerator
 		return new CropCandidate( newCrop, extensionMeasure, cutOffMeasure, scaleFactor );
 	}
 
-	private Crops obtainCrops( Image image, Context context, List<ImageModification> modifications ) {
+	private Crops obtainCrops( Image image, ImageContext context, List<ImageModification> modifications ) {
 		if ( image == null || context == null || modifications == null ) {
 			LOG.warn(
 					"Null parameters not allowed - CropGeneratorImpl#obtainCrops: image={}, context={}, modifications={}",

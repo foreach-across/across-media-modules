@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.repositories;
 
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -38,7 +38,7 @@ public class ImageResolutionRepositoryImpl extends BasicRepositoryImpl<ImageReso
 
 	@Override
 	@Transactional
-	public void updateContextsForResolution( long resolutionId, Collection<Context> contexts ) {
+	public void updateContextsForResolution( long resolutionId, Collection<ImageContext> contexts ) {
 		ImageResolution imageResolution = getById( resolutionId );
 		imageResolution.setContexts( contexts );
 		update( imageResolution );

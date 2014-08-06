@@ -1,8 +1,7 @@
 package com.foreach.imageserver.core.managers;
 
-import com.foreach.imageserver.core.business.Context;
-import com.foreach.imageserver.core.repositories.ContextRepository;
-import com.foreach.imageserver.core.repositories.ImageResolutionRepository;
+import com.foreach.imageserver.core.business.ImageContext;
+import com.foreach.imageserver.core.repositories.ImageContextRepository;
 import com.foreach.imageserver.dto.ImageContextDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,40 +12,32 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 @Repository
-public class ContextManagerImpl implements ContextManager
+public class ImageContextManagerImpl implements ImageContextManager
 {
 	private final static String CACHE_NAME = "contexts";
 
 	@Autowired
-	private ContextRepository contextRepository;
-
-	@Autowired
-	private ImageResolutionRepository imageResolutionRepository;
+	private ImageContextRepository contextRepository;
 
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "'byCode-'+#code")
-	public Context getByCode( String code ) {
+	public ImageContext getByCode( String code ) {
 		return contextRepository.getByCode( code );
 	}
 
 	@Override
-	public Collection<Context> getForResolution( long resolutionId ) {
-		return contextRepository.getForResolution( resolutionId );
-	}
-
-	@Override
 	@Cacheable(value = CACHE_NAME)
-	public Collection<Context> getAllContexts() {
+	public Collection<ImageContext> getAllContexts() {
 		return contextRepository.getAll();
 	}
 
 	@Override
 	@CacheEvict(value = CACHE_NAME, allEntries = true)
 	public void save( ImageContextDto contextDto ) {
-		Context context;
+		ImageContext context;
 
 		if ( contextDto.isNewEntity() ) {
-			context = new Context();
+			context = new ImageContext();
 		}
 		else {
 			context = getByCode( contextDto.getCode() );

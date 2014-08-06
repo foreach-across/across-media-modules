@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.business.ImageVariant;
@@ -93,7 +93,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public void storeVariantImage( Image image,
-	                               Context context,
+	                               ImageContext context,
 	                               ImageModificationDto modification,
 	                               ImageVariant imageVariant,
 	                               InputStream imageStream ) {
@@ -109,7 +109,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public StreamImageSource getVariantImage( Image image,
-	                                          Context context,
+	                                          ImageContext context,
 	                                          ImageModificationDto modification,
 	                                          ImageVariant imageVariant ) {
 		if ( image == null || context == null || modification == null || imageVariant == null ) {
@@ -123,7 +123,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public void removeVariantImage( Image image,
-	                                Context context,
+	                                ImageContext context,
 	                                ImageModificationDto modification,
 	                                ImageVariant imageVariant ) {
 		if ( image == null || context == null || modification == null || imageVariant == null ) {
@@ -213,7 +213,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	private Path getTargetPath( Image image,
-	                            Context context,
+	                            ImageContext context,
 	                            ImageModificationDto modification,
 	                            ImageVariant imageVariant ) {
 		if ( image == null || context == null || modification == null || imageVariant == null ) {

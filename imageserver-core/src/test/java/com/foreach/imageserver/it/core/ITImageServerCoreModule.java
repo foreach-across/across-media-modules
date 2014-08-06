@@ -7,7 +7,7 @@ import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
-import com.foreach.imageserver.core.services.ContextService;
+import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.ImageTransformService;
 import org.junit.Test;
@@ -18,11 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
-
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,7 +37,7 @@ public class ITImageServerCoreModule
 	private ImageService imageService;
 
 	@Autowired(required = false)
-	private ContextService contextService;
+	private ImageContextService contextService;
 
 	@Autowired(required = false)
 	private ImageTransformService imageTransformService;

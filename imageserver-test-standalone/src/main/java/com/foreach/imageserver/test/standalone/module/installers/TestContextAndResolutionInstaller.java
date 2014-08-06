@@ -3,9 +3,9 @@ package com.foreach.imageserver.test.standalone.module.installers;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerPhase;
-import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
-import com.foreach.imageserver.core.services.ContextService;
+import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.ImageContextDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.*;
 public class TestContextAndResolutionInstaller
 {
 	@Autowired
-	private ContextService contextService;
+	private ImageContextService contextService;
 
 	@Autowired
 	private ImageService imageService;
@@ -50,7 +50,7 @@ public class TestContextAndResolutionInstaller
 			resolution.setTags( new HashSet<>( tags ) );
 			resolution.setConfigurable( configurable );
 
-			List<Context> contexts = new ArrayList<>( contextCodes.size() );
+			List<ImageContext> contexts = new ArrayList<>( contextCodes.size() );
 
 			for ( String code : contextCodes ) {
 				contexts.add( contextService.getByCode( code ) );
@@ -63,7 +63,7 @@ public class TestContextAndResolutionInstaller
 	}
 
 	private void createContext( String code ) {
-		Context existing = contextService.getByCode( code );
+		ImageContext existing = contextService.getByCode( code );
 
 		if ( existing == null ) {
 			ImageContextDto context = new ImageContextDto();

@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = ImageSchemaConfiguration.TABLE_CONTEXT)
-public class Context
+public class ImageContext
 {
 	@Id
 	@GeneratedValue(generator = "seq_img_context_id")
@@ -51,11 +51,11 @@ public class Context
 		if ( this == o ) {
 			return true;
 		}
-		if ( !( o instanceof Context ) ) {
+		if ( !( o instanceof ImageContext ) ) {
 			return false;
 		}
 
-		Context that = (Context) o;
+		ImageContext that = (ImageContext) o;
 
 		return Objects.equals( this.id, that.id );
 	}

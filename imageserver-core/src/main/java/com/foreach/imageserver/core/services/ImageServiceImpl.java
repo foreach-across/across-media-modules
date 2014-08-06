@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.logging.LogHelper;
+import com.foreach.imageserver.core.managers.ImageContextManager;
 import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
@@ -132,7 +133,7 @@ public class ImageServiceImpl implements ImageService
 
 	@Override
 	public StreamImageSource getVariantImage( Image image,
-	                                          Context context,
+	                                          ImageContext context,
 	                                          ImageResolution imageResolution,
 	                                          ImageVariant imageVariant ) {
 		if ( image == null || context == null || imageResolution == null || imageVariant == null ) {
@@ -178,7 +179,7 @@ public class ImageServiceImpl implements ImageService
 	 * will block and re-use the same result.
 	 */
 	private StreamImageSource generateVariantImage( Image image,
-	                                                Context context,
+	                                                ImageContext context,
 	                                                ImageModificationDto imageModification,
 	                                                ImageVariant imageVariant,
 	                                                boolean storeImage ) {
@@ -245,7 +246,7 @@ public class ImageServiceImpl implements ImageService
 	 * Tries to remove the image variant file to avoid the possibility that a corrupt file was created and will be persisted
 	 */
 	private void removeImageVariantFile( Image image,
-	                                     Context context,
+	                                     ImageContext context,
 	                                     ImageModificationDto modification,
 	                                     ImageVariant imageVariant ) {
 		try {
@@ -260,7 +261,7 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	private InMemoryImageSource generateVariantImageInCurrentThread( Image image,
-	                                                                 Context context,
+	                                                                 ImageContext context,
 	                                                                 ImageModificationDto modificationDto,
 	                                                                 ImageVariant imageVariant,
 	                                                                 boolean storeImage ) {
@@ -325,7 +326,7 @@ public class ImageServiceImpl implements ImageService
 
 	@Override
 	@Transactional
-	public void saveImageResolution( ImageResolution resolution, Collection<Context> contexts ) {
+	public void saveImageResolution( ImageResolution resolution, Collection<ImageContext> contexts ) {
 		if ( resolution == null || contexts == null ) {
 			LOG.warn( "Null parameters not allowed - ImageServiceImpl#saveImageResolution: resolution={}, contexts={}}",
 			          LogHelper.flatten( resolution, contexts ) );

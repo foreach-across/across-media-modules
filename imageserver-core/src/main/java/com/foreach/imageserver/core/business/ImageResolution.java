@@ -56,7 +56,7 @@ public class ImageResolution
 			name = ImageSchemaConfiguration.TABLE_CONTEXT_IMAGE_RESOLUTION,
 			joinColumns = @JoinColumn(name = "image_resolution_id"),
 			inverseJoinColumns = @JoinColumn(name = "context_id"))
-	private Collection<Context> contexts = new TreeSet<>();
+	private Collection<ImageContext> contexts = new TreeSet<>();
 
 	@Column(name = "configurable")
 	private boolean configurable;
@@ -136,11 +136,11 @@ public class ImageResolution
 		this.tags = tags;
 	}
 
-	public Collection<Context> getContexts() {
+	public Collection<ImageContext> getContexts() {
 		return contexts;
 	}
 
-	public void setContexts( Collection<Context> contexts ) {
+	public void setContexts( Collection<ImageContext> contexts ) {
 		this.contexts = contexts;
 	}
 
