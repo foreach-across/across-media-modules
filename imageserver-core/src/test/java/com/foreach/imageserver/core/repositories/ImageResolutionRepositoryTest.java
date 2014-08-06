@@ -2,14 +2,15 @@ package com.foreach.imageserver.core.repositories;
 
 import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.ImageContext;
-import com.foreach.imageserver.core.business.ContextImageResolution;
 import com.foreach.imageserver.core.business.ImageResolution;
 import org.junit.Test;
+import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -52,11 +53,10 @@ public class ImageResolutionRepositoryTest extends AbstractIntegrationTest {
 	    context11.setCode( "the_other_application_code" );
 	    contextRepository.create( context11 );
 
-	    imageResolutionRepository.create( createImageResolution( 10, 111, 222 ) );
-	    imageResolutionRepository.create( createImageResolution( 11, 1111, 2222 ) );
-	    imageResolutionRepository.create( createImageResolution( 12, 11111, 22222 ) );
-
-	    imageResolutionRepository.create( createImageResolution( 14, 555, 666 ) );
+	    imageResolutionRepository.create( createImageResolution( 10, 111, 222, Sets.newSet( context10 ) ) );
+	    imageResolutionRepository.create( createImageResolution( 11, 1111, 2222, Sets.newSet( context10 ) ) );
+	    imageResolutionRepository.create( createImageResolution( 12, 11111, 22222, Sets.newSet( context10 ) ) );
+	    imageResolutionRepository.create( createImageResolution( 14, 555, 666, Sets.newSet( context11 ) ) );
 
         List<ImageResolution> imageResolutions10 = imageResolutionRepository.getForContext(-10);
         assertEquals( 3, imageResolutions10.size() );
@@ -87,11 +87,12 @@ public class ImageResolutionRepositoryTest extends AbstractIntegrationTest {
 	    assertEquals( 2, imageResolutions10AfterUpdate.size() );
     }
 
-	private ImageResolution createImageResolution( long id, int width, int height ) {
+	private ImageResolution createImageResolution( long id, int width, int height, Set<ImageContext> imageContexts ) {
 		ImageResolution imageResolution = new ImageResolution();
 		imageResolution.setId( id );
 		imageResolution.setWidth( width );
 		imageResolution.setHeight( height );
+		imageResolution.setContexts( imageContexts );
 		return imageResolution;
 	}
 }
