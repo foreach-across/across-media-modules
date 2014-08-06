@@ -23,7 +23,6 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 	@Autowired
 	private CacheManager cacheManager;
 
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
 	@Test

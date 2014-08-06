@@ -4,7 +4,6 @@ import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Date;
 import java.util.List;
@@ -21,9 +20,6 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 	private ImageResolutionRepository imageResolutionRepository;
 	@Autowired
 	private ImageModificationRepository imageModificationRepository;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Test
     public void insertAndGetById() {

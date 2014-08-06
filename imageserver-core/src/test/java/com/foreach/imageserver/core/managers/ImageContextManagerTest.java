@@ -20,7 +20,6 @@ public class ImageContextManagerTest extends AbstractIntegrationTest {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Test

@@ -4,7 +4,6 @@ import com.foreach.imageserver.core.AbstractIntegrationTest;
 import com.foreach.imageserver.core.business.ImageContext;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,9 +11,6 @@ public class ImageContextRepositoryTest extends AbstractIntegrationTest {
 
     @Autowired
     private ImageContextRepository contextRepository;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Test
     public void getById() {
