@@ -83,7 +83,7 @@ public class TestLocalImageServerClient
 	@Test
 	public void listAllowedResolutions() {
 		ListResolutionsRequest request = new ListResolutionsRequest();
-		request.setContextCode( "digital" );
+		request.setContext( "digital" );
 		request.setConfigurableOnly( false );
 
 		List<ImageResolutionDto> resolutions = new ArrayList<>();
@@ -98,7 +98,7 @@ public class TestLocalImageServerClient
 	@Test
 	public void listConfigurableResolutions() {
 		ListResolutionsRequest request = new ListResolutionsRequest();
-		request.setContextCode( "digital" );
+		request.setContext( "digital" );
 		request.setConfigurableOnly( true );
 
 		List<ImageResolutionDto> resolutions = new ArrayList<>();

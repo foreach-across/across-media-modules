@@ -336,7 +336,6 @@ public class ImageServiceImpl implements ImageService
 		}
 
 		imageResolutionManager.saveResolution( resolution );
-		contextManager.updateContextsForResolution( resolution.getId(), contexts );
 	}
 
 	private static class VariantImageRequest

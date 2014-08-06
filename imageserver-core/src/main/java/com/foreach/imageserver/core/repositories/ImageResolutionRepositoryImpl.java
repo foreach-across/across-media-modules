@@ -1,14 +1,13 @@
 package com.foreach.imageserver.core.repositories;
 
 import com.foreach.imageserver.core.business.Context;
-import com.foreach.imageserver.core.business.ContextImageResolution;
 import com.foreach.imageserver.core.business.ImageResolution;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,24 +15,20 @@ import java.util.List;
 public class ImageResolutionRepositoryImpl extends BasicRepositoryImpl<ImageResolution> implements ImageResolutionRepository
 {
 	@Override
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<ImageResolution> getForContext( long contextId ) {
-		Criteria criteria = session().createCriteria( ContextImageResolution.class );
-		criteria.add( Restrictions.eq( "contextId", contextId ) );
+		String hql = "select distinct r " +
+				"from ImageResolution r join r.contexts c " +
+				"where c.id = :contextId";
+		Query query = session().createQuery( hql );
+		query.setParameter( "contextId", contextId );
 
-		List<ContextImageResolution> contextImageResolutions = criteria.list();
-		List<ImageResolution> imageResolutions = new ArrayList<>();
-		for( ContextImageResolution contextImageResolution : contextImageResolutions ) {
-			//TODO: optimize me using JoinType.INNER_JOIN
-			ImageResolution imageResolution = getById( contextImageResolution.getImageResolutionId() );
-			imageResolutions.add( imageResolution );
-		}
-		return imageResolutions;
+		return query.list();
 	}
 
 	@Override
-	@Transactional( readOnly = true)
+	@Transactional(readOnly = true)
 	public ImageResolution getByDimensions( int width, int height ) {
 		Criteria criteria = session().createCriteria( ImageResolution.class );
 		criteria.add( Restrictions.eq( "width", width ) );

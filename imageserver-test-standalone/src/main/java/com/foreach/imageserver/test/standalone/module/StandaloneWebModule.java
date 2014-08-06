@@ -4,7 +4,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.imageserver.core.ImageServerCoreModule;
-import com.foreach.imageserver.test.standalone.module.installers.TestsContextsInstaller;
+import com.foreach.imageserver.test.standalone.module.installers.TestContextAndResolutionInstaller;
 
 import java.util.Set;
 
@@ -32,6 +32,6 @@ public class StandaloneWebModule extends AcrossModule
 
 	@Override
 	public Object[] getInstallers() {
-		return new Object[] { TestsContextsInstaller.class };
+		return new Object[] { TestContextAndResolutionInstaller.class };
 	}
 }

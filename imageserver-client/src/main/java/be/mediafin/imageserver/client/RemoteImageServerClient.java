@@ -206,7 +206,10 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.putSingle( "token", imageServerAccessToken );
 		queryParams.putSingle( "iid", imageId );
-		queryParams.putSingle( "context", context );
+		if ( !StringUtils.isBlank( context ) ) {
+			queryParams.putSingle( "context", context );
+		}
+
 		addQueryParams( queryParams, imageModification );
 
 		GenericType<JsonResponse<Object>> responseType = new GenericType<JsonResponse<Object>>()
@@ -220,7 +223,10 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	public List<ImageResolutionDto> listAllowedResolutions( String context ) {
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.putSingle( "token", imageServerAccessToken );
-		queryParams.putSingle( "context", context );
+
+		if ( !StringUtils.isBlank( context ) ) {
+			queryParams.putSingle( "context", context );
+		}
 
 		GenericType<JsonResponse<List<ImageResolutionDto>>> responseType =
 				new GenericType<JsonResponse<List<ImageResolutionDto>>>()
@@ -234,7 +240,10 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	public List<ImageResolutionDto> listConfigurableResolutions( String context ) {
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.putSingle( "token", imageServerAccessToken );
-		queryParams.putSingle( "context", context );
+		if ( !StringUtils.isBlank( context ) ) {
+			queryParams.putSingle( "context", context );
+		}
+
 		queryParams.putSingle( "configurableOnly", "true" );
 
 		GenericType<JsonResponse<List<ImageResolutionDto>>> responseType =
@@ -250,7 +259,9 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.putSingle( "token", imageServerAccessToken );
 		queryParams.putSingle( "iid", imageId );
-		queryParams.putSingle( "context", context );
+		if ( !StringUtils.isBlank( context ) ) {
+			queryParams.putSingle( "context", context );
+		}
 
 		GenericType<JsonResponse<List<ImageModificationDto>>> responseType =
 				new GenericType<JsonResponse<List<ImageModificationDto>>>()

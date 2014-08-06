@@ -7,15 +7,15 @@ import java.util.Objects;
  */
 public class ListResolutionsRequest
 {
-	private String contextCode;
+	private String context;
 	private boolean configurableOnly;
 
-	public String getContextCode() {
-		return contextCode;
+	public String getContext() {
+		return context;
 	}
 
-	public void setContextCode( String contextCode ) {
-		this.contextCode = contextCode;
+	public void setContext( String context ) {
+		this.context = context;
 	}
 
 	public boolean isConfigurableOnly() {
@@ -38,11 +38,11 @@ public class ListResolutionsRequest
 		ListResolutionsRequest that = (ListResolutionsRequest) o;
 
 		return Objects.equals( configurableOnly, that.configurableOnly )
-				&& Objects.equals( contextCode, that.contextCode );
+				&& Objects.equals( context, that.context );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( contextCode, configurableOnly );
+		return Objects.hash( context, configurableOnly );
 	}
 }

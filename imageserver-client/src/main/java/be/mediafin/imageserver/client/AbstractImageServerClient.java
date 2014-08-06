@@ -49,7 +49,7 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "iid", imageId );
-		queryParams.set( "context", context );
+		queryParams.set( "context", StringUtils.defaultString( context ) );
 		addQueryParams( queryParams, imageResolution );
 		addQueryParams( queryParams, imageVariant );
 

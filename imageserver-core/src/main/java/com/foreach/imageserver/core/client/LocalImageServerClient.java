@@ -115,7 +115,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	@Override
 	public List<ImageResolutionDto> listAllowedResolutions( String context ) {
 		ListResolutionsRequest request = new ListResolutionsRequest();
-		request.setContextCode( context );
+		request.setContext( context );
 
 		ListResolutionsResponse response = resolutionRestService.listResolutions( request );
 
@@ -129,7 +129,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	@Override
 	public List<ImageResolutionDto> listConfigurableResolutions( String context ) {
 		ListResolutionsRequest request = new ListResolutionsRequest();
-		request.setContextCode( context );
+		request.setContext( context );
 		request.setConfigurableOnly( true );
 
 		ListResolutionsResponse response = resolutionRestService.listResolutions( request );

@@ -13,7 +13,5 @@ public interface ContextManager
 
 	Collection<Context> getForResolution( long resolutionId );
 
-	void updateContextsForResolution( long resolutionId, Collection<Context> contexts );
-
 	void save( ImageContextDto contextDto );
 }

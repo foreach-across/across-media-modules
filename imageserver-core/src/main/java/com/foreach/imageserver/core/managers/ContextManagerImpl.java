@@ -19,7 +19,7 @@ public class ContextManagerImpl implements ContextManager
 
 	@Autowired
 	private ContextRepository contextRepository;
-	
+
 	@Autowired
 	private ImageResolutionRepository imageResolutionRepository;
 
@@ -38,12 +38,6 @@ public class ContextManagerImpl implements ContextManager
 	@Cacheable(value = CACHE_NAME)
 	public Collection<Context> getAllContexts() {
 		return contextRepository.getAll();
-	}
-
-	@Override
-	@CacheEvict(value = CACHE_NAME, allEntries = true)
-	public void updateContextsForResolution( long resolutionId, Collection<Context> contexts ) {
-		imageResolutionRepository.updateContextsForResolution( resolutionId, contexts );
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import be.mediafin.imageserver.client.ImageServerClient;
 import be.mediafin.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageInfoDto;
+import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -44,6 +46,55 @@ public class ITRemoteImageServerClient
 
 		fetchedInfo = imageServerClient.imageInfo( externalId );
 		assertEquals( createdInfo, fetchedInfo );
+	}
+
+	@Test
+	public void listResolutions() {
+		List<ImageResolutionDto> resolutions = imageServerClient.listAllowedResolutions( "website" );
+		assertEquals( 2, resolutions.size() );
+		assertTrue( hasResolution( resolutions, 640, 480, false ) );
+		assertFalse( hasResolution( resolutions, 800, 600, true ) );
+		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
+
+		resolutions = imageServerClient.listAllowedResolutions( "tablet" );
+		assertEquals( 2, resolutions.size() );
+		assertFalse( hasResolution( resolutions, 640, 480, false ) );
+		assertTrue( hasResolution( resolutions, 800, 600, true ) );
+		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
+
+		resolutions = imageServerClient.listAllowedResolutions( null );
+		assertEquals( 3, resolutions.size() );
+		assertTrue( hasResolution( resolutions, 640, 480, false ) );
+		assertTrue( hasResolution( resolutions, 800, 600, true ) );
+		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
+
+		resolutions = imageServerClient.listConfigurableResolutions( "website" );
+		assertEquals( 1, resolutions.size() );
+		assertFalse( hasResolution( resolutions, 640, 480, false ) );
+		assertFalse( hasResolution( resolutions, 800, 600, true ) );
+		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
+
+		resolutions = imageServerClient.listConfigurableResolutions( "tablet" );
+		assertEquals( 2, resolutions.size() );
+		assertFalse( hasResolution( resolutions, 640, 480, false ) );
+		assertTrue( hasResolution( resolutions, 800, 600, true ) );
+		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
+
+		resolutions = imageServerClient.listConfigurableResolutions( null );
+		assertEquals( 2, resolutions.size() );
+		assertFalse( hasResolution( resolutions, 640, 480, false ) );
+		assertTrue( hasResolution( resolutions, 800, 600, true ) );
+		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
+	}
+
+	private boolean hasResolution( List<ImageResolutionDto> list, int width, int height, boolean configurable ) {
+		for ( ImageResolutionDto resolution : list ) {
+			if ( resolution.getWidth() == width && resolution.getHeight() == height && resolution.isConfigurable() == configurable ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/*

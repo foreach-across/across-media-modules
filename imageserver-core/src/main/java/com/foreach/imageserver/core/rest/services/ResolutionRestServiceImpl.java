@@ -11,8 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Arne Vandamme
@@ -32,8 +33,8 @@ public class ResolutionRestServiceImpl implements ResolutionRestService
 
 		Collection<ImageResolution> imageResolutions = null;
 
-		if ( StringUtils.isNotBlank( request.getContextCode() ) ) {
-			Context context = contextService.getByCode( request.getContextCode() );
+		if ( StringUtils.isNotBlank( request.getContext() ) ) {
+			Context context = contextService.getByCode( request.getContext() );
 
 			if ( context == null ) {
 				response.setContextDoesNotExist( true );
@@ -48,7 +49,7 @@ public class ResolutionRestServiceImpl implements ResolutionRestService
 
 		if ( imageResolutions != null && !imageResolutions.isEmpty() ) {
 			if ( request.isConfigurableOnly() ) {
-				removeNonConfigurableResolutions( imageResolutions );
+				imageResolutions = filterNonConfigurableResolutions( imageResolutions );
 			}
 
 			response.setImageResolutions( DtoUtil.toDto( imageResolutions ) );
@@ -57,15 +58,15 @@ public class ResolutionRestServiceImpl implements ResolutionRestService
 		return response;
 	}
 
-	private void removeNonConfigurableResolutions( Collection<ImageResolution> imageResolutions ) {
-		Iterator<ImageResolution> iterator = imageResolutions.iterator();
+	private Collection<ImageResolution> filterNonConfigurableResolutions( Collection<ImageResolution> imageResolutions ) {
+		List<ImageResolution> configurableResolutions = new ArrayList<>(imageResolutions.size());
 
-		while ( iterator.hasNext() ) {
-			ImageResolution resolution = iterator.next();
-
-			if ( !resolution.isConfigurable() ) {
-				iterator.remove();
+		for ( ImageResolution resolution : imageResolutions ) {
+			if ( resolution.isConfigurable() ) {
+				configurableResolutions.add( resolution );
 			}
 		}
+
+		return configurableResolutions;
 	}
 }

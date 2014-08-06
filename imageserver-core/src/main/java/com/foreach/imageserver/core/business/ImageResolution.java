@@ -29,25 +29,26 @@ import java.util.TreeSet;
  * configurable) resolution, eg. Large teaser format.</p>
  */
 @Entity
-@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
-public class ImageResolution {
-    @Id
-    @GeneratedValue( generator = "seq_img_image_resolution_id" )
-    @GenericGenerator(
-            name = "seq_img_image_resolution_id",
-            strategy = AcrossSequenceGenerator.STRATEGY,
-            parameters = {
-                    @org.hibernate.annotations.Parameter( name = "sequenceName", value = "seq_img_image_resolution_id" ),
-                    @org.hibernate.annotations.Parameter( name = "allocationSize", value = "10" )
-            }
-    )
-    private long id;
+@Table(name = ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
+public class ImageResolution
+{
+	@Id
+	@GeneratedValue(generator = "seq_img_image_resolution_id")
+	@GenericGenerator(
+			name = "seq_img_image_resolution_id",
+			strategy = AcrossSequenceGenerator.STRATEGY,
+			parameters = {
+					@org.hibernate.annotations.Parameter(name = "sequenceName", value = "seq_img_image_resolution_id"),
+					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "10")
+			}
+	)
+	private long id;
 
-    @Column( name = "width" )
-    private int width;
+	@Column(name = "width")
+	private int width;
 
-    @Column( name = "height" )
-    private int height;
+	@Column(name = "height")
+	private int height;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@BatchSize(size = 50)
@@ -57,23 +58,23 @@ public class ImageResolution {
 			inverseJoinColumns = @JoinColumn(name = "context_id"))
 	private Collection<Context> contexts = new TreeSet<>();
 
-	@Column( name = "configurable" )
+	@Column(name = "configurable")
 	private boolean configurable;
 
-	@Column( name = "name" )
+	@Column(name = "name")
 	private String name;
 
 	@Column( name = "tags" )
 	@Type(type = TagsUserType.CLASS_NAME)
 	private Set<String> tags = new HashSet<>();
 
-    public long getId() {
-        return id;
-    }
+	public long getId() {
+		return id;
+	}
 
-    public void setId(long id) {
-        this.id = id;
-    }
+	public void setId( long id ) {
+		this.id = id;
+	}
 
 	public int getWidth() {
 		return width;
