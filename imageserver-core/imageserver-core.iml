@@ -30,6 +30,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.1.0.GA" level="project" />
     <orderEntry type="module" module-name="imageserver-dtos" />
     <orderEntry type="module" module-name="imageserver-client" />
     <orderEntry type="library" name="Maven: com.sun.jersey:jersey-client:1.9.1" level="project" />
