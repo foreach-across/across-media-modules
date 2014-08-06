@@ -25,13 +25,16 @@ public class ImageProfileModification {
             }
     )
     private long id;
+
     @Column( name = "resolution_id" )
     private int imageResolutionId;
+
     @Column( name = "profile_id" )
     private int imageProfileId;
+
     @Column( name = "context_id" )
-    @Transient //TODO: FIX
     private int imageContextId;
+
 	@Transient //TODO: FIX
     private ImageModificationDto modificationDto = new ImageModificationDto();
 

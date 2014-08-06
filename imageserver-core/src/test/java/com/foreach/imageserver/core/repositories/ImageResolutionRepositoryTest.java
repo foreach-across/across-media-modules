@@ -29,6 +29,8 @@ public class ImageResolutionRepositoryTest extends AbstractIntegrationTest {
 	    imageResolution.setId( 101010 );
 	    imageResolution.setWidth( 222 );
 	    imageResolution.setHeight( 333 );
+	    imageResolution.getTags().add( "one" );
+	    imageResolution.getTags().add( "two" );
 	    imageResolutionRepository.create( imageResolution );
 
         ImageResolution imageResolutionFromDb = imageResolutionRepository.getById(101010);
@@ -36,6 +38,7 @@ public class ImageResolutionRepositoryTest extends AbstractIntegrationTest {
         assertEquals(101010, imageResolutionFromDb.getId());
         assertEquals(222, imageResolutionFromDb.getWidth());
         assertEquals(333, imageResolutionFromDb.getHeight());
+	    assertEquals( 2, imageResolutionFromDb.getTags().size() );
     }
 
     @Test

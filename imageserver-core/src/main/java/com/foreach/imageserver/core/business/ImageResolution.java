@@ -5,6 +5,7 @@ import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -44,6 +45,7 @@ public class ImageResolution {
 
     @Column( name = "width" )
     private int width;
+
     @Column( name = "height" )
     private int height;
 
@@ -57,10 +59,12 @@ public class ImageResolution {
 
 	@Column( name = "configurable" )
 	private boolean configurable;
+
 	@Column( name = "name" )
 	private String name;
 
-	@Transient //TODO: FIX
+	@Column( name = "tags" )
+	@Type(type = TagsUserType.CLASS_NAME)
 	private Set<String> tags = new HashSet<>();
 
     public long getId() {
