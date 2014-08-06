@@ -167,6 +167,7 @@ public class ImageMagickImageTransformerTest {
     }
 
     @Test
+    @Ignore
     public void cropPngToJpg() throws Exception {
         ImageModifyAction action = modifyAction(
                 ImageType.PNG,
@@ -185,7 +186,6 @@ public class ImageMagickImageTransformerTest {
     }
 
     @Test
-    @Ignore
     public void transparentPngToPng() throws Exception {
         ImageModifyAction action = modifyAction(
                 ImageType.PNG,
