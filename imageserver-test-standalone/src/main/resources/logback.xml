@@ -6,8 +6,8 @@
 	<logger name="org.hibernate.cfg.annotations" level="WARN"/>
 	<logger name="org.quartz" level="WARN"/>
 	<logger name="org.springframework" level="WARN"/>
-	<logger name="liquibase" level="INFO"/>
-	<logger name="com.foreach.across" level="INFO"/>
+	<logger name="liquibase" level="WARN"/>
+	<logger name="com.foreach.across" level="DEBUG"/>
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -18,4 +18,5 @@
 	<root level="DEBUG">
 		<appender-ref ref="console"/>
 	</root>
+
 </configuration>

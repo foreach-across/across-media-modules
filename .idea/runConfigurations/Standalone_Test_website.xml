@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Standalone Test website" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 7" ALTERNATIVE_JRE_ENABLED="false" ALTERNATIVE_JRE_PATH="">
     <option name="OPEN_IN_BROWSER" value="false" />
+    <option name="COMMON_VM_ARGUMENTS" value="-Xmx1024m -XX:MaxPermSize=256M" />
     <option name="SHOW_DIALOG_ON_UPDATE" value="false" />
     <option name="UPDATING_POLICY" value="update-resources" />
     <deployment>
@@ -13,7 +14,7 @@
     <server-settings>
       <option name="BASE_DIRECTORY_NAME" value="Unnamed_imageserver_2" />
       <option name="HTTP_PORT" value="8078" />
-      <option name="JNDI_PORT" value="1078" />
+      <option name="JNDI_PORT" value="11078" />
     </server-settings>
     <predefined_log_file id="Tomcat" enabled="true" />
     <predefined_log_file id="Tomcat Catalina" enabled="true" />
