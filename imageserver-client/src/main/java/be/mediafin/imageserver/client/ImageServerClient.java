@@ -1,6 +1,8 @@
 package be.mediafin.imageserver.client;
 
 import com.foreach.imageserver.dto.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -8,15 +10,16 @@ import java.util.List;
 
 public interface ImageServerClient
 {
+	String ENDPOINT_VIEW_IMAGE = "view";
 
 	String imageUrl( String imageId,
-	                 ImageServerContext context,
-	                 Integer width,
-	                 Integer height,
+	                 String context,
+	                 int width,
+	                 int height,
 	                 ImageTypeDto imageType );
 
 	String imageUrl( String imageId,
-	                 ImageServerContext context,
+	                 String context,
 	                 ImageResolutionDto imageResolution,
 	                 ImageVariantDto imageVariant );
 
@@ -56,9 +59,9 @@ public interface ImageServerClient
 	                                int densityWidth,
 	                                int densityHeight );
 
-	List<ImageResolutionDto> listAllowedResolutions( ImageServerContext context );
+	List<ImageResolutionDto> listAllowedResolutions( String context );
 
-	List<ImageResolutionDto> listConfigurableResolutions( ImageServerContext context );
+	List<ImageResolutionDto> listConfigurableResolutions( String context );
 
 	List<ImageModificationDto> listModifications( String imageId, ImageServerContext context );
 

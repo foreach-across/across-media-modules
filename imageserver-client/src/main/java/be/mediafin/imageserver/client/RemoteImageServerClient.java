@@ -27,15 +27,20 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
-public class ImageServerClientImpl implements ImageServerClient
+/**
+ * Represents a client for a remote ImageServer endpoint.
+ */
+public class RemoteImageServerClient extends AbstractImageServerClient
 {
-	private static Logger LOG = LoggerFactory.getLogger( ImageServerClientImpl.class );
+	private static Logger LOG = LoggerFactory.getLogger( RemoteImageServerClient.class );
 
 	private final String imageServerEndpoint;
 	private final String imageServerAccessToken;
 	private final Client client;
 
-	public ImageServerClientImpl( String imageServerEndpoint, String imageServerAccessToken ) {
+	public RemoteImageServerClient( String imageServerEndpoint, String imageServerAccessToken ) {
+		super( imageServerEndpoint );
+
 		this.imageServerEndpoint = imageServerEndpoint;
 		this.imageServerAccessToken = imageServerAccessToken;
 
@@ -49,36 +54,6 @@ public class ImageServerClientImpl implements ImageServerClient
 		clientConfig.getSingletons().add( jacksonJsonProvider );
 
 		this.client = Client.create( clientConfig );
-	}
-
-	@Override
-	public String imageUrl( String imageId,
-	                        ImageServerContext context,
-	                        Integer width,
-	                        Integer height,
-	                        ImageTypeDto imageType ) {
-		return imageUrl( imageId, context, new ImageResolutionDto( width, height ), new ImageVariantDto( imageType ) );
-	}
-
-	@Override
-	public String imageUrl( String imageId,
-	                        ImageServerContext context,
-	                        ImageResolutionDto imageResolution,
-	                        ImageVariantDto imageVariant ) {
-		if ( StringUtils.isBlank( imageId ) || context == null || imageResolution == null || imageVariant == null ) {
-			LOG.warn(
-					"Null parameters not allowed - ImageServerClientImpl#imageUrl: imageId={}, context={}, imageResolution={}, imageVariant={}",
-					LogHelper.flatten( imageId, context, imageResolution, imageVariant ) );
-		}
-
-		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-		queryParams.putSingle( "iid", imageId );
-		queryParams.putSingle( "context", context.toString() );
-		addQueryParams( queryParams, imageResolution );
-		addQueryParams( queryParams, imageVariant );
-
-		WebResource resource = getResource( "view", queryParams );
-		return resource.getURI().toString();
 	}
 
 	@Override
@@ -242,10 +217,10 @@ public class ImageServerClientImpl implements ImageServerClient
 	}
 
 	@Override
-	public List<ImageResolutionDto> listAllowedResolutions( ImageServerContext context ) {
+	public List<ImageResolutionDto> listAllowedResolutions( String context ) {
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.putSingle( "token", imageServerAccessToken );
-		queryParams.putSingle( "context", context.toString() );
+		queryParams.putSingle( "context", context );
 
 		GenericType<JsonResponse<List<ImageResolutionDto>>> responseType =
 				new GenericType<JsonResponse<List<ImageResolutionDto>>>()
@@ -256,10 +231,10 @@ public class ImageServerClientImpl implements ImageServerClient
 	}
 
 	@Override
-	public List<ImageResolutionDto> listConfigurableResolutions( ImageServerContext context ) {
+	public List<ImageResolutionDto> listConfigurableResolutions( String context ) {
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.putSingle( "token", imageServerAccessToken );
-		queryParams.putSingle( "context", context.toString() );
+		queryParams.putSingle( "context", context );
 		queryParams.putSingle( "configurableOnly", "true" );
 
 		GenericType<JsonResponse<List<ImageResolutionDto>>> responseType =
@@ -283,39 +258,6 @@ public class ImageServerClientImpl implements ImageServerClient
 				};
 
 		return getJsonResponse( "modification/listModifications", queryParams, responseType );
-	}
-
-	private void addQueryParams( MultivaluedMap<String, String> queryParams, ImageResolutionDto imageResolution ) {
-		queryParams.putSingle( "width", Integer.toString( imageResolution.getWidth() ) );
-		queryParams.putSingle( "height", Integer.toString( imageResolution.getHeight() ) );
-	}
-
-	private void addQueryParams( MultivaluedMap<String, String> queryParams, ImageVariantDto imageVariant ) {
-		queryParams.putSingle( "imageType", imageVariant.getImageType().toString() );
-	}
-
-	private void addQueryParams( MultivaluedMap<String, String> queryParams, ImageModificationDto imageModification ) {
-		ImageResolutionDto resolution = imageModification.getResolution();
-		DimensionsDto boundaries = imageModification.getBoundaries();
-		CropDto crop = imageModification.getCrop();
-		DimensionsDto density = imageModification.getDensity();
-
-		queryParams.putSingle( "resolution.width", Integer.toString( resolution.getWidth() ) );
-		queryParams.putSingle( "resolution.height", Integer.toString( resolution.getHeight() ) );
-
-		queryParams.putSingle( "crop.x", Integer.toString( crop.getX() ) );
-		queryParams.putSingle( "crop.y", Integer.toString( crop.getY() ) );
-		queryParams.putSingle( "crop.width", Integer.toString( crop.getWidth() ) );
-		queryParams.putSingle( "crop.height", Integer.toString( crop.getHeight() ) );
-		queryParams.putSingle( "crop.source.width", Integer.toString( crop.getSource().getWidth() ) );
-		queryParams.putSingle( "crop.source.height", Integer.toString( crop.getSource().getHeight() ) );
-		queryParams.putSingle( "crop.box.width", Integer.toString( crop.getBox().getWidth() ) );
-		queryParams.putSingle( "crop.box.height", Integer.toString( crop.getBox().getHeight() ) );
-		queryParams.putSingle( "density.width", Integer.toString( density.getWidth() ) );
-		queryParams.putSingle( "density.height", Integer.toString( density.getHeight() ) );
-
-		queryParams.putSingle( "boundaries.width", Integer.toString( boundaries.getWidth() ) );
-		queryParams.putSingle( "boundaries.height", Integer.toString( boundaries.getHeight() ) );
 	}
 
 	private <T> T getJsonResponse( String path,

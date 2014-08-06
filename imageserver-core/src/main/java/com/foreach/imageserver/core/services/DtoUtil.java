@@ -7,6 +7,9 @@ import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // TODO: review to simply business and dto objects layer
 public final class DtoUtil
 {
@@ -56,5 +59,14 @@ public final class DtoUtil
 		dto.setTags( imageResolution.getTags() );
 
 		return dto;
+	}
+
+	public static List<ImageResolutionDto> toDto( List<ImageResolution> imageResolutions ) {
+		List<ImageResolutionDto> dtos = new ArrayList<>( imageResolutions.size() );
+		for ( ImageResolution imageResolution : imageResolutions ) {
+			ImageResolutionDto dto = DtoUtil.toDto( imageResolution );
+			dtos.add( dto );
+		}
+		return dtos;
 	}
 }

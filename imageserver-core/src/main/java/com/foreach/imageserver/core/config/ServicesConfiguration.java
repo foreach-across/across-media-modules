@@ -2,6 +2,8 @@ package com.foreach.imageserver.core.config;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
+import com.foreach.imageserver.core.rest.services.ResolutionRestService;
+import com.foreach.imageserver.core.rest.services.ResolutionRestServiceImpl;
 import com.foreach.imageserver.core.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +23,11 @@ public class ServicesConfiguration
 	private Environment environment;
 
 	@Bean
+	public ResolutionRestService resolutionRestService() {
+		return new ResolutionRestServiceImpl();
+	}
+
+	@Bean
 	@Exposed
 	public ImageService imageService() {
 		return new ImageServiceImpl();
@@ -36,8 +43,12 @@ public class ServicesConfiguration
 	@Exposed
 	public ImageTransformService imageTransformService() {
 		return new ImageTransformServiceImpl(
-				environment.getProperty( ImageServerCoreModuleSettings.TRANSFORMERS_CONCURRENT_LIMIT, Integer.class,
-				                         10 ) );
+				environment.getProperty(
+						ImageServerCoreModuleSettings.TRANSFORMERS_CONCURRENT_LIMIT,
+						Integer.class,
+						10
+				)
+		);
 	}
 
 	@Bean

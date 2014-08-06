@@ -6,6 +6,7 @@ import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.annotations.ImageServerController;
 import com.foreach.imageserver.core.controllers.ImageLoadController;
 import com.foreach.imageserver.core.controllers.ImageModificationController;
+import com.foreach.imageserver.core.controllers.ImageResolutionController;
 import com.foreach.imageserver.core.controllers.ImageStreamingController;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,11 @@ public class WebConfiguration
 	@Bean
 	public ImageModificationController imageModificationController() {
 		return new ImageModificationController( accessToken() );
+	}
+
+	@Bean
+	public ImageResolutionController imageResolutionController() {
+		return new ImageResolutionController( accessToken() );
 	}
 
 	@Bean
