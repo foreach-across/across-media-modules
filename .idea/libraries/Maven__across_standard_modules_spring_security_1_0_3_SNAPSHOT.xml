@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: across-standard-modules:spring-security:1.0.3-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/spring-security/1.0.3-SNAPSHOT/spring-security-1.0.3-SNAPSHOT.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/spring-security/1.0.3-SNAPSHOT/spring-security-1.0.3-20140805.144348-36.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/spring-security/1.0.3-SNAPSHOT/spring-security-1.0.3-SNAPSHOT-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/spring-security/1.0.3-SNAPSHOT/spring-security-1.0.3-20140805.144348-36-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/spring-security/1.0.3-SNAPSHOT/spring-security-1.0.3-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/spring-security/1.0.3-SNAPSHOT/spring-security-1.0.3-20140805.144348-36-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

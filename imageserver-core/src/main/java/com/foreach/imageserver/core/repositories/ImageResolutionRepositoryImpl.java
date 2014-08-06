@@ -20,7 +20,7 @@ public class ImageResolutionRepositoryImpl extends BasicRepositoryImpl<ImageReso
 	public List<ImageResolution> getForContext( long contextId ) {
 		String hql = "select distinct r " +
 				"from ImageResolution r join r.contexts c " +
-				"where c.id = :contextId";
+				"where c.id = :contextId order by r.id";
 		Query query = session().createQuery( hql );
 		query.setParameter( "contextId", contextId );
 
