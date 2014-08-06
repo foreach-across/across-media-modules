@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.controllers;
 
+import com.foreach.imageserver.core.annotations.ImageServerController;
 import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
@@ -21,7 +22,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-@Controller
+@ImageServerController
 public class ImageLoadController extends BaseImageAPIController
 {
 	public static final String LOAD_IMAGE_PATH = "load";

@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.controllers;
 
+import com.foreach.imageserver.core.annotations.ImageServerController;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.services.ContextService;
@@ -15,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-@Controller
+@ImageServerController
 public class ImageStreamingController
 {
 	public static final String VIEW_PATH = "view";

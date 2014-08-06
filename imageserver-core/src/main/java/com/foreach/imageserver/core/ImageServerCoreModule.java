@@ -43,7 +43,7 @@ public class ImageServerCoreModule extends AcrossModule implements HasHibernateP
 		contextConfigurers.add( new AnnotatedClassConfigurer( ImageServerCoreConfig.class, ServicesConfiguration.class,
 		                                                      RepositoriesConfiguration.class,
 		                                                      ImageMagickTransformerConfiguration.class,
-		                                                      ControllersConfiguration.class,
+		                                                      WebConfiguration.class,
 		                                                      MultipartResolverConfiguration.class ) );
 	}
 

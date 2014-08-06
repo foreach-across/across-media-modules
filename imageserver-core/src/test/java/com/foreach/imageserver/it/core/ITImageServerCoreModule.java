@@ -3,6 +3,7 @@ package com.foreach.imageserver.it.core;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
+import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
@@ -17,8 +18,14 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -42,11 +49,21 @@ public class ITImageServerCoreModule
 	@Autowired(required = false)
 	private MultipartResolver multipartResolver;
 
+	@Autowired(required = false)
+	private PrefixingRequestMappingHandlerMapping imageServerHandlerMapping;
+
 	@Test
 	public void exposedServices() {
 		assertNotNull( imageService );
 		assertNotNull( contextService );
 		assertNotNull( imageTransformService );
+	}
+
+	@Test
+	public void exposedHandlerMapping() {
+		assertNotNull( imageServerHandlerMapping );
+		assertFalse( imageServerHandlerMapping.getHandlerMethods().isEmpty() );
+		assertEquals( "/imgsrvr", imageServerHandlerMapping.getPrefixPath() );
 	}
 
 	@Test
@@ -68,6 +85,7 @@ public class ITImageServerCoreModule
 			ImageServerCoreModule imageServerCoreModule = new ImageServerCoreModule();
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
 			                                   System.getProperty( "java.io.tmpdir" ) );
+			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/imgsrvr" );
 
 			return imageServerCoreModule;
 		}

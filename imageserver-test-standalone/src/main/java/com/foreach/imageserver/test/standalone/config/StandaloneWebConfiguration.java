@@ -98,6 +98,7 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 		ImageServerCoreModule coreModule = new ImageServerCoreModule();
 		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
 		                        System.getProperty( "java.io.tmpdir" ) );
+		coreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/resources/images" );
 
 		return coreModule;
 	}

@@ -10,6 +10,11 @@ import java.io.File;
 public class ImageServerCoreModuleSettings
 {
 	/**
+	 * Base path for all controllers.
+	 */
+	public static final String ROOT_PATH = "imageServerCore.rootPath";
+
+	/**
 	 * Access token required for secured services.
 	 * <p/>
 	 * Type: string

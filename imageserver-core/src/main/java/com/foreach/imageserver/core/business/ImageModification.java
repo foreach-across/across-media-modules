@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.business;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -19,19 +19,19 @@ import java.util.Objects;
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 @Entity
-@Table(name= ImageSchemaConfiguration.TABLE_IMAGE_MODIFICATION)
+@Table(name = ImageSchemaConfiguration.TABLE_IMAGE_MODIFICATION)
 public class ImageModification implements Serializable
 {
-    @Id
-    private long imageId;
 	@Id
-    private long contextId;
+	private long imageId;
 	@Id
-    private long resolutionId;
+	private long contextId;
+	@Id
+	private long resolutionId;
 	@Transient //TODO: FIX
-    private Crop crop;
+	private Crop crop;
 	@Transient //TODO: FIX
-    private Dimensions density;
+	private Dimensions density;
 
 	public long getImageId() {
 		return imageId;

@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.business;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * The ImageVariant specifies what variant of an ImageModification we want to obtain. This may include options such as
