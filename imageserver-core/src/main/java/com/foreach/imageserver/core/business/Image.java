@@ -34,7 +34,7 @@ public class Image
 	private String externalId;
 
 	@Column(name = "created")
-	private Date dateCreated;
+	private Date dateCreated = new Date();
 
 	@Column(name = "image_type_id")
 	@Type(type = ImageTypeUserType.CLASS_NAME)

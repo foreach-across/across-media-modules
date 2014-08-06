@@ -28,7 +28,7 @@ public class ImageManagerTest extends AbstractIntegrationTest {
 
     @Test
     public void insertGetById() {
-        Image insertedImage = image("externalId", new Date(2013, 0, 1), 100, 200, ImageType.GIF);
+        Image insertedImage = image("externalId", new Date(), 100, 200, ImageType.GIF);
         imageManager.insert(insertedImage);
 
         Cache cache = cacheManager.getCache("images");

@@ -5,7 +5,7 @@ import com.foreach.imageserver.core.business.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -24,7 +24,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
     @Test
     public void insertAndGetById() {
 	    createContext( 1010, "the_application_code_1010" );
-	    createImage( 9998, "externalId", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
+	    createImage( 9998, "externalId", new Dimensions( 100, 100 ), ImageType.PNG );
 	    createImageResolution( -8, 8888, 1616 );
 
         Crop writtenCrop = new Crop();
@@ -70,8 +70,8 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 		createContext( 8010, "the_application_code_8010" );
 		createContext( 8011, "the_application_code_8011" );
 
-	    createImage( 19998, "externalId19998", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
-	    createImage( 19999, "externalId19999", new Dimensions( 100, 100 ), ImageType.PNG, new Date(2012, 11, 13) );
+	    createImage( 19998, "externalId19998", new Dimensions( 100, 100 ), ImageType.PNG );
+	    createImage( 19999, "externalId19999", new Dimensions( 100, 100 ), ImageType.PNG );
 
 		createImageResolution( -88, 1211, 2222);
 	    createImageResolution( -99, 1311, 2222);
@@ -108,8 +108,8 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 		createContext( 7010, "the_application_code_7010" );
 		createContext( 7011, "the_application_code_7011" );
 
-		createImage( 29998, "externalId_29998", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
-		createImage( 29999, "externalId_29999", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
+		createImage( 29998, "externalId_29998", new Dimensions( 100, 100 ), ImageType.PNG );
+		createImage( 29999, "externalId_29999", new Dimensions( 100, 100 ), ImageType.PNG );
 
 		createImageResolution( -288, 1211, 2242);
 		createImageResolution( -299, 1311, 2242);
@@ -135,13 +135,17 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
         assertEquals(-288, modifications.get(2).getResolutionId());
     }
 
-	private void createImage( long id, String externalId, Dimensions dimensions, ImageType imageType, Date created ) {
+	private void createImage( long id, String externalId, Dimensions dimensions, ImageType imageType ) {
 		Image image = new Image();
 		image.setId( id );
 		image.setExternalId( externalId );
 		image.setDimensions( dimensions );
 		image.setImageType( imageType );
-		image.setDateCreated( created );
+
+		Calendar c = Calendar.getInstance();
+		c.set(2012, Calendar.NOVEMBER, 13, 0, 0);
+
+		image.setDateCreated( c.getTime() );
 		image.setImageProfileId( ImageProfile.DEFAULT_PROFILE_ID );
 		imageRepository.create( image );
 	}
@@ -149,7 +153,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 	@Test
     public void updateAndGetById() {
 		createContext( 6666, "code" );
-		createImage( 78878, "externalId_78878", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
+		createImage( 78878, "externalId_78878", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImageResolution( 99994, 934, 9843 );
 
 		ImageModification imageModification = modification(78878, 6666, 99994, 0, 1, 2, 3, 4, 5);
@@ -176,8 +180,8 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 	    context6010.setCode( "the_application_code_6010" );
 	    contextRepository.create( context6010 );
 
-	    createImage( 39998, "externalId_39998", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
-	    createImage( 49998, "externalId_49998", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
+	    createImage( 39998, "externalId_39998", new Dimensions( 100, 100 ), ImageType.PNG );
+	    createImage( 49998, "externalId_49998", new Dimensions( 100, 100 ), ImageType.PNG );
 
 	    createImageResolution( 766, 8473, 4398 );
 
