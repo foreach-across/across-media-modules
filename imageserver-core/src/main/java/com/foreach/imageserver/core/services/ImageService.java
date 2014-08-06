@@ -38,7 +38,7 @@ public interface ImageService
 
 	List<ImageModification> getModifications( long imageId, long contextId );
 
-	List<ImageResolution> getAllResolutions();
+	Collection<ImageResolution> getAllResolutions();
 
 	void saveImageResolution( ImageResolution resolution, Collection<Context> contexts );
 }

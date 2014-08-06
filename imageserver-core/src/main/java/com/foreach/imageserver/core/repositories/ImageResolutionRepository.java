@@ -7,4 +7,6 @@ import java.util.List;
 public interface ImageResolutionRepository extends BasicRepository<ImageResolution>
 {
 	List<ImageResolution> getForContext( long contextId );
+
+	ImageResolution getByDimensions( int width, int height );
 }

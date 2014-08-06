@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.business.ImageResolution;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ImageResolutionManager
@@ -10,7 +11,7 @@ public interface ImageResolutionManager
 
 	List<ImageResolution> getForContext( long contextId );
 
-	List<ImageResolution> getAllResolutions();
+	Collection<ImageResolution> getAllResolutions();
 
 	void saveResolution( ImageResolution resolution );
 

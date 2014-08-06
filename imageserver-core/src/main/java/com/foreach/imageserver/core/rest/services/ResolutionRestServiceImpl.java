@@ -11,8 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author Arne Vandamme
@@ -30,7 +30,7 @@ public class ResolutionRestServiceImpl implements ResolutionRestService
 	public ListResolutionsResponse listResolutions( ListResolutionsRequest request ) {
 		ListResolutionsResponse response = new ListResolutionsResponse( request );
 
-		List<ImageResolution> imageResolutions = null;
+		Collection<ImageResolution> imageResolutions = null;
 
 		if ( StringUtils.isNotBlank( request.getContextCode() ) ) {
 			Context context = contextService.getByCode( request.getContextCode() );
@@ -57,7 +57,7 @@ public class ResolutionRestServiceImpl implements ResolutionRestService
 		return response;
 	}
 
-	private void removeNonConfigurableResolutions( List<ImageResolution> imageResolutions ) {
+	private void removeNonConfigurableResolutions( Collection<ImageResolution> imageResolutions ) {
 		Iterator<ImageResolution> iterator = imageResolutions.iterator();
 
 		while ( iterator.hasNext() ) {

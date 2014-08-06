@@ -319,7 +319,7 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
-	public List<ImageResolution> getAllResolutions() {
+	public Collection<ImageResolution> getAllResolutions() {
 		return imageResolutionManager.getAllResolutions();
 	}
 
