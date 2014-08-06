@@ -9,6 +9,7 @@ import java.util.List;
 public interface ImageServerClient
 {
 	String ENDPOINT_VIEW_IMAGE = "view";
+	String ENDPOINT_RENDER_IMAGE = "render";
 
 	String imageUrl( String imageId,
 	                 String context,

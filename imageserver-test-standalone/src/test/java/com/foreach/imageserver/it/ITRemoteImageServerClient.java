@@ -2,15 +2,13 @@ package com.foreach.imageserver.it;
 
 import be.mediafin.imageserver.client.ImageServerClient;
 import be.mediafin.imageserver.client.RemoteImageServerClient;
-import com.foreach.imageserver.dto.DimensionsDto;
-import com.foreach.imageserver.dto.ImageInfoDto;
-import com.foreach.imageserver.dto.ImageResolutionDto;
-import com.foreach.imageserver.dto.ImageTypeDto;
+import com.foreach.imageserver.dto.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +44,11 @@ public class ITRemoteImageServerClient
 
 		fetchedInfo = imageServerClient.imageInfo( externalId );
 		assertEquals( createdInfo, fetchedInfo );
+
+		InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(),
+		                                                         new ImageVariantDto( ImageTypeDto.JPEG ) );
+		assertNotNull( inputStream );
+		assertTrue( IOUtils.toByteArray( inputStream ).length > 1000 );
 	}
 
 	@Test

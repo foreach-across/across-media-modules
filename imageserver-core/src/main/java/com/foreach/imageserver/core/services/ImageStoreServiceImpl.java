@@ -209,7 +209,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		String month = image.getDateCreatedMonthString();
 		String day = image.getDateCreatedDayString();
 
-		return originalsFolder.resolve( year ).resolve( month ).resolve( day ).resolve( fileName );
+		return originalsFolder.resolve( image.getPath() ).resolve( fileName );
 	}
 
 	private Path getTargetPath( Image image,

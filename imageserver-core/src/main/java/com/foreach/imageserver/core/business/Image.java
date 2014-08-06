@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.business;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -89,6 +90,10 @@ public class Image
 			dateCreatedMonthString = null;
 			dateCreatedDayString = null;
 		}
+	}
+
+	public String getPath() {
+		return dateCreated != null ? FastDateFormat.getInstance( "yyyy/MM/dd" ).format( dateCreated ) : null;
 	}
 
 	public Dimensions getDimensions() {

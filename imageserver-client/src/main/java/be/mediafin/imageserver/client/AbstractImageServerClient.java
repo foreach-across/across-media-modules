@@ -59,6 +59,13 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 		return buildUri( ENDPOINT_VIEW_IMAGE, queryParams ).toString();
 	}
 
+	protected URI buildUri( String path ) {
+		return UriComponentsBuilder.fromHttpUrl( imageServerUrl )
+		                           .path( path )
+		                           .build()
+		                           .toUri();
+	}
+
 	protected URI buildUri( String path, MultiValueMap<String, String> queryParams ) {
 		return UriComponentsBuilder.fromHttpUrl( imageServerUrl )
 		                           .path( path )
