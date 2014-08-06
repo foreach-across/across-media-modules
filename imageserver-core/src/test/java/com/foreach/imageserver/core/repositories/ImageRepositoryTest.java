@@ -5,12 +5,15 @@ import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageProfile;
 import com.foreach.imageserver.core.business.ImageType;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ImageRepositoryTest extends AbstractIntegrationTest {
 
@@ -36,7 +39,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest {
         Image readImage = imageRepository.getById(writtenImage.getId());
         assertEquals(writtenImage.getId(), readImage.getId());
         assertEquals(writtenImage.getExternalId(), readImage.getExternalId());
-        assertEquals(writtenImage.getDateCreated(), readImage.getDateCreated());
+	    assertTrue( DateUtils.truncatedEquals( writtenImage.getDateCreated(), readImage.getDateCreated(), Calendar.SECOND ) );
         assertEquals(writtenImage.getDimensions().getWidth(), readImage.getDimensions().getWidth());
         assertEquals(writtenImage.getDimensions().getHeight(), readImage.getDimensions().getHeight());
         assertEquals(writtenImage.getImageType(), readImage.getImageType());
@@ -59,7 +62,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest {
         Image readImage = imageRepository.getByExternalId(writtenImage.getExternalId());
         assertEquals(writtenImage.getId(), readImage.getId());
         assertEquals(writtenImage.getExternalId(), readImage.getExternalId());
-        assertEquals(writtenImage.getDateCreated(), readImage.getDateCreated());
+	    assertTrue( DateUtils.truncatedEquals( writtenImage.getDateCreated(), readImage.getDateCreated(), Calendar.SECOND ) );
         assertEquals(writtenImage.getDimensions().getWidth(), readImage.getDimensions().getWidth());
         assertEquals(writtenImage.getDimensions().getHeight(), readImage.getDimensions().getHeight());
         assertEquals(writtenImage.getImageType(), readImage.getImageType());
