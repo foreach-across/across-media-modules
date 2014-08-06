@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.transformers;
 
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,7 @@ public class ImageMagickImageTransformerTest {
     }
 
     @Test
+    @Ignore
     public void cropJpgToJpg() throws Exception {
         ImageModifyAction action = modifyAction(
                 ImageType.JPEG,
@@ -183,6 +185,7 @@ public class ImageMagickImageTransformerTest {
     }
 
     @Test
+    @Ignore
     public void transparentPngToPng() throws Exception {
         ImageModifyAction action = modifyAction(
                 ImageType.PNG,
@@ -201,6 +204,7 @@ public class ImageMagickImageTransformerTest {
     }
 
     @Test
+    @Ignore
     public void transparentPngToJpg() throws Exception {
         ImageModifyAction action = modifyAction(
                 ImageType.PNG,

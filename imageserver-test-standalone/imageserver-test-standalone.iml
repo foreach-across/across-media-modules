@@ -28,6 +28,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.1.3.GA" level="project" />
     <orderEntry type="module" module-name="imageserver-core" />
     <orderEntry type="module" module-name="imageserver-dtos" />
     <orderEntry type="module" module-name="imageserver-client" />
@@ -62,7 +63,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-web:4.0.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: across-standard-modules:across-hibernate:1.0.3-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-orm:4.0.6.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.1.3.GA" level="project" />
+    <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.1.0.GA" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-entitymanager:4.2.14.Final" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-core:4.2.14.Final" level="project" />
     <orderEntry type="library" name="Maven: antlr:antlr:2.7.7" level="project" />
