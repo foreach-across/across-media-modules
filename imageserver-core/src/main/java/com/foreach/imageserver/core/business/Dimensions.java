@@ -1,11 +1,14 @@
 package com.foreach.imageserver.core.business;
 
+import javax.persistence.Embeddable;
+
 /**
  * A simple object to specify the actual dimensions of an Image.
  * <p/>
  * Not to be confused with the ImageResolution, which specifies a permitted output resolution which may be unrestricted
  * for a certain dimension.
  */
+@Embeddable
 public class Dimensions
 {
 	public static final Dimensions EMPTY = new Dimensions();
@@ -21,7 +24,7 @@ public class Dimensions
 	public Dimensions() {
 	}
 
-	public AspectRatio getAspectRatio() {
+	public AspectRatio fetchAspectRatio() {
 		return new AspectRatio( width, height );
 	}
 
@@ -52,7 +55,7 @@ public class Dimensions
 	public Dimensions normalize( Dimensions boundaries ) {
 		Dimensions normalized = new Dimensions( width, height );
 
-		AspectRatio originalAspectRatio = boundaries.getAspectRatio();
+		AspectRatio originalAspectRatio = boundaries.fetchAspectRatio();
 
 		if ( width == 0 && height == 0 ) {
 			normalized.setWidth( boundaries.getWidth() );
@@ -75,7 +78,7 @@ public class Dimensions
 	public Dimensions normalize( AspectRatio aspectRatio ) {
 		Dimensions normalized = new Dimensions( width, height );
 
-		if ( !normalized.getAspectRatio().equals( aspectRatio ) ) {
+		if ( !normalized.fetchAspectRatio().equals( aspectRatio ) ) {
 			if ( aspectRatio.getNumerator() > aspectRatio.getDenominator() ) {
 				normalized.setHeight( aspectRatio.calculateHeightForWidth( normalized.getWidth() ) );
 			}
@@ -94,10 +97,10 @@ public class Dimensions
 		Dimensions normalized = normalize( boundaries );
 		Dimensions scaled = new Dimensions( normalized.getWidth(), normalized.getHeight() );
 
-		AspectRatio aspectRatio = normalized.getAspectRatio();
+		AspectRatio aspectRatio = normalized.fetchAspectRatio();
 
 		if ( !normalized.fitsIn( boundaries ) ) {
-			if ( normalized.getAspectRatio().isLargerOnWidth() ) {
+			if ( normalized.fetchAspectRatio().isLargerOnWidth() ) {
 				scaled.setWidth( boundaries.getWidth() );
 				scaled.setHeight( aspectRatio.calculateHeightForWidth( boundaries.getWidth() ) );
 			}
@@ -108,7 +111,7 @@ public class Dimensions
 
 			if ( !scaled.fitsIn( boundaries ) ) {
 				// Reverse the side as scaling basis, we made the wrong decision
-				if ( normalized.getAspectRatio().isLargerOnWidth() ) {
+				if ( normalized.fetchAspectRatio().isLargerOnWidth() ) {
 					scaled.setHeight( boundaries.getHeight() );
 					scaled.setWidth( aspectRatio.calculateWidthForHeight( boundaries.getHeight() ) );
 				}

@@ -2,9 +2,7 @@ package com.foreach.imageserver.core.business;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestDimensions {
     @Test
@@ -65,7 +63,7 @@ public class TestDimensions {
         Dimensions da2 = new Dimensions(800, 600);
 
         comparison(da1, da2, false);
-        assertEquals(true, da1.getAspectRatio().equals(da2.getAspectRatio()));
+        assertEquals(true, da1.fetchAspectRatio().equals(da2.fetchAspectRatio()));
     }
 
     private void comparison(Dimensions left, Dimensions right, boolean expected) {

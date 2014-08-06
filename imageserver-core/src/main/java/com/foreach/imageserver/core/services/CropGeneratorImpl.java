@@ -161,7 +161,7 @@ public class CropGeneratorImpl implements CropGenerator
 		targetDimensions = targetDimensions.scaleToFitIn( image.getDimensions() );
 
 		// If the requested dimensions does not defined their own aspect ratio, we consider it a scale instead of an actual crop
-		if ( requestedDimensions.getAspectRatio().isUndefined() ) {
+		if ( requestedDimensions.fetchAspectRatio().isUndefined() ) {
 			return new Crop( 0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight() );
 		}
 

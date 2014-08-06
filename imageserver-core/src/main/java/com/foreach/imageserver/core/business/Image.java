@@ -13,6 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name= ImageSchemaConfiguration.TABLE_IMAGE)
+
 public class Image {
 
     @Id
@@ -36,24 +37,23 @@ public class Image {
     @Column( name = "created" )
     private Date dateCreated;
 
-    @Column( name = "width" )
-    private int width;
-
-    @Column( name = "height" )
-    private int height;
 
     @Column( name = "image_type_id" )
     @Type(type = ImageTypeUserType.CLASS_NAME)
     private ImageType imageType;
 
-	@Transient //TODO: FIX
+
+	@AttributeOverrides( {
+             @AttributeOverride(name="width", column = @Column(name="width") ),
+             @AttributeOverride(name="height", column = @Column(name="height") )
+     })
 	private Dimensions dimensions;
 
-	@Transient //TODO: FIX
+	@Transient
 	private String dateCreatedYearString;
-	@Transient //TODO: FIX
+	@Transient
 	private String dateCreatedMonthString;
-	@Transient //TODO: FIX
+	@Transient
 	private String dateCreatedDayString;
 
     public long getId() {
