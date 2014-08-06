@@ -18,9 +18,11 @@
     <property name="table.image_profile" value="img_image_profile"/>
     <property name="table.image_profile_modification" value="img_image_profile_modification"/>
 
-    <changeSet id="201403211601" author="ovh" dbms="hsqldb">
-        <sql>SET DATABASE SQL SYNTAX ORA TRUE;</sql>
-    </changeSet>
+	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
+		<sql>
+			ALTER session SET nls_length_semantics=CHAR;
+		</sql>
+	</changeSet>
 
     <changeSet id="201408051516" author="marc">
         <createTable tableName="${table.context}">
@@ -53,7 +55,7 @@
             <column name="id" type="java.sql.Types.BIGINT">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_image"/>
             </column>
-            <column name="external_id" type="java.sql.Types.VARCHAR(500)">
+            <column name="external_id" type="java.sql.Types.VARCHAR(250)">
                 <constraints nullable="false"/>
             </column>
             <column name="profile_id" type="java.sql.Types.BIGINT" defaultValue="1">
