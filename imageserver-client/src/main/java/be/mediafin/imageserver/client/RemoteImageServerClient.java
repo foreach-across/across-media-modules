@@ -58,7 +58,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	@Override
 	public InputStream imageStream( String imageId,
-	                                ImageServerContext context,
+	                                String context,
 	                                Integer width,
 	                                Integer height,
 	                                ImageTypeDto imageType ) {
@@ -68,7 +68,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	@Override
 	public InputStream imageStream( String imageId,
-	                                ImageServerContext context,
+	                                String context,
 	                                ImageResolutionDto imageResolution,
 	                                ImageVariantDto imageVariant ) {
 		if ( StringUtils.isBlank( imageId ) || context == null || imageResolution == null || imageVariant == null ) {
@@ -79,7 +79,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.putSingle( "iid", imageId );
-		queryParams.putSingle( "context", context.toString() );
+		queryParams.putSingle( "context", context );
 		addQueryParams( queryParams, imageResolution );
 		addQueryParams( queryParams, imageVariant );
 
@@ -184,7 +184,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	@Override
 	@Deprecated
 	public void registerImageModification( String imageId,
-	                                       ImageServerContext context,
+	                                       String context,
 	                                       Integer width,
 	                                       Integer height,
 	                                       int cropX,
@@ -201,12 +201,12 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	@Override
 	public void registerImageModification( String imageId,
-	                                       ImageServerContext context,
+	                                       String context,
 	                                       ImageModificationDto imageModification ) {
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.putSingle( "token", imageServerAccessToken );
 		queryParams.putSingle( "iid", imageId );
-		queryParams.putSingle( "context", context.toString() );
+		queryParams.putSingle( "context", context );
 		addQueryParams( queryParams, imageModification );
 
 		GenericType<JsonResponse<Object>> responseType = new GenericType<JsonResponse<Object>>()
@@ -246,11 +246,11 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	@Override
-	public List<ImageModificationDto> listModifications( String imageId, ImageServerContext context ) {
+	public List<ImageModificationDto> listModifications( String imageId, String context ) {
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 		queryParams.putSingle( "token", imageServerAccessToken );
 		queryParams.putSingle( "iid", imageId );
-		queryParams.putSingle( "context", context.toString() );
+		queryParams.putSingle( "context", context );
 
 		GenericType<JsonResponse<List<ImageModificationDto>>> responseType =
 				new GenericType<JsonResponse<List<ImageModificationDto>>>()

@@ -1,8 +1,6 @@
 package be.mediafin.imageserver.client;
 
 import com.foreach.imageserver.dto.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -24,13 +22,13 @@ public interface ImageServerClient
 	                 ImageVariantDto imageVariant );
 
 	InputStream imageStream( String imageId,
-	                         ImageServerContext context,
+	                         String context,
 	                         Integer width,
 	                         Integer height,
 	                         ImageTypeDto imageType );
 
 	InputStream imageStream( String imageId,
-	                         ImageServerContext context,
+	                         String context,
 	                         ImageResolutionDto imageResolution,
 	                         ImageVariantDto imageVariant );
 
@@ -45,11 +43,11 @@ public interface ImageServerClient
 	ImageInfoDto imageInfo( String imageId );
 
 	void registerImageModification( String imageId,
-	                                ImageServerContext context,
+	                                String context,
 	                                ImageModificationDto imageModificationDto );
 
 	void registerImageModification( String imageId,
-	                                ImageServerContext context,
+	                                String context,
 	                                Integer width,
 	                                Integer height,
 	                                int cropX,
@@ -63,6 +61,6 @@ public interface ImageServerClient
 
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
 
-	List<ImageModificationDto> listModifications( String imageId, ImageServerContext context );
+	List<ImageModificationDto> listModifications( String imageId, String context );
 
 }

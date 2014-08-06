@@ -2,13 +2,13 @@ package com.foreach.imageserver.core.client;
 
 import be.mediafin.imageserver.client.AbstractImageServerClient;
 import be.mediafin.imageserver.client.ImageServerClient;
-import be.mediafin.imageserver.client.ImageServerContext;
 import be.mediafin.imageserver.client.ImageServerException;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
 import com.foreach.imageserver.core.rest.services.ResolutionRestService;
 import com.foreach.imageserver.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -31,7 +31,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public InputStream imageStream( String imageId,
-	                                ImageServerContext context,
+	                                String context,
 	                                Integer width,
 	                                Integer height,
 	                                ImageTypeDto imageType ) {
@@ -40,7 +40,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public InputStream imageStream( String imageId,
-	                                ImageServerContext context,
+	                                String context,
 	                                ImageResolutionDto imageResolution,
 	                                ImageVariantDto imageVariant ) {
 		return null;
@@ -75,14 +75,14 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public void registerImageModification( String imageId,
-	                                       ImageServerContext context,
+	                                       String context,
 	                                       ImageModificationDto imageModificationDto ) {
 
 	}
 
 	@Override
 	public void registerImageModification( String imageId,
-	                                       ImageServerContext context,
+	                                       String context,
 	                                       Integer width,
 	                                       Integer height,
 	                                       int cropX,
@@ -124,7 +124,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	}
 
 	@Override
-	public List<ImageModificationDto> listModifications( String imageId, ImageServerContext context ) {
+	public List<ImageModificationDto> listModifications( String imageId, String context ) {
 		return null;
 	}
 }
