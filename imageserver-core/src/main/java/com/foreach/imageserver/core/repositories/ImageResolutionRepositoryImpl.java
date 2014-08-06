@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.repositories;
 
+import com.foreach.imageserver.core.business.Context;
 import com.foreach.imageserver.core.business.ContextImageResolution;
 import com.foreach.imageserver.core.business.ImageResolution;
 import org.hibernate.Criteria;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -37,5 +39,13 @@ public class ImageResolutionRepositoryImpl extends BasicRepositoryImpl<ImageReso
 		criteria.add( Restrictions.eq( "width", width ) );
 		criteria.add( Restrictions.eq( "height", height ) );
 		return (ImageResolution) criteria.uniqueResult();
+	}
+
+	@Override
+	@Transactional
+	public void updateContextsForResolution( long resolutionId, Collection<Context> contexts ) {
+		ImageResolution imageResolution = getById( resolutionId );
+		imageResolution.setContexts( contexts );
+		update( imageResolution );
 	}
 }

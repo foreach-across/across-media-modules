@@ -3,11 +3,14 @@ package com.foreach.imageserver.core.business;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * <p>An ImageResolution specifies a permitted output resolution. Every Application has an associated list of
@@ -43,6 +46,14 @@ public class ImageResolution {
     private int width;
     @Column( name = "height" )
     private int height;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@BatchSize(size = 50)
+	@JoinTable(
+			name = ImageSchemaConfiguration.TABLE_CONTEXT_IMAGE_RESOLUTION,
+			joinColumns = @JoinColumn(name = "image_resolution_id"),
+			inverseJoinColumns = @JoinColumn(name = "context_id"))
+	private Collection<Context> contexts = new TreeSet<>();
 
 	@Transient //TODO: FIX
 	private boolean configurable;
@@ -118,6 +129,14 @@ public class ImageResolution {
 
 	public void setTags( Set<String> tags ) {
 		this.tags = tags;
+	}
+
+	public Collection<Context> getContexts() {
+		return contexts;
+	}
+
+	public void setContexts( Collection<Context> contexts ) {
+		this.contexts = contexts;
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -60,20 +62,33 @@ public class ImageResolutionRepositoryTest extends AbstractIntegrationTest {
 	    contextImageResolutionRepository.create( createContextImageResolution( -10, 12) );
         contextImageResolutionRepository.create( createContextImageResolution( -11, 14) );
 
-        List<ImageResolution> imageResolutions = imageResolutionRepository.getForContext(-10);
-        assertEquals(3, imageResolutions.size());
+        List<ImageResolution> imageResolutions10 = imageResolutionRepository.getForContext(-10);
+        assertEquals( 3, imageResolutions10.size() );
 
-        assertEquals(10, imageResolutions.get(0).getId());
-        assertEquals(111, imageResolutions.get(0).getWidth());
-        assertEquals(222, imageResolutions.get(0).getHeight());
+        assertEquals( 10, imageResolutions10.get( 0 ).getId() );
+        assertEquals(111, imageResolutions10.get(0).getWidth());
+        assertEquals( 222, imageResolutions10.get( 0 ).getHeight() );
 
-        assertEquals(11, imageResolutions.get(1).getId());
-	    assertEquals(1111, imageResolutions.get( 1 ).getWidth() );
-        assertEquals(2222, imageResolutions.get(1).getHeight());
+        assertEquals(11, imageResolutions10.get(1).getId());
+	    assertEquals( 1111, imageResolutions10.get( 1 ).getWidth() );
+        assertEquals(2222, imageResolutions10.get(1).getHeight());
 
-        assertEquals(12, imageResolutions.get(2).getId());
-        assertEquals(11111, imageResolutions.get(2).getWidth());
-	    assertEquals( 22222, imageResolutions.get( 2 ).getHeight() );
+        assertEquals( 12, imageResolutions10.get( 2 ).getId() );
+        assertEquals(11111, imageResolutions10.get(2).getWidth());
+	    assertEquals( 22222, imageResolutions10.get( 2 ).getHeight() );
+
+	    List<ImageResolution> imageResolutions11 = imageResolutionRepository.getForContext(-11);
+	    assertEquals( 1, imageResolutions11.size() );
+
+	    Collection<Context> newContexts = new ArrayList<>();
+	    newContexts.add( context11 );
+	    imageResolutionRepository.updateContextsForResolution( 10, newContexts );
+
+	    List<ImageResolution> imageResolutions11AfterUpdate = imageResolutionRepository.getForContext(-11);
+	    assertEquals( 2, imageResolutions11AfterUpdate.size() );
+
+	    List<ImageResolution> imageResolutions10AfterUpdate = imageResolutionRepository.getForContext(-10);
+	    assertEquals( 2, imageResolutions10AfterUpdate.size() );
     }
 
 	private ContextImageResolution createContextImageResolution( long contextId, long imageResolutionId ) {
