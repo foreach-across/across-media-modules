@@ -1,12 +1,11 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
-import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
-import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
+import com.foreach.test.MockedLoader;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +30,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ImageServiceGetVariantSynchronizationTest.TestConfig.class})
+@ContextConfiguration(classes = {ImageServiceGetVariantSynchronizationTest.TestConfig.class}, loader = MockedLoader.class )
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ImageServiceGetVariantSynchronizationTest {
 
@@ -355,40 +354,7 @@ public class ImageServiceGetVariantSynchronizationTest {
             return new ImageServiceImpl();
         }
 
-        @Bean
-        public CropGenerator cropGenerator() {
-            return mock(CropGenerator.class);
-        }
 
-        @Bean
-        public ImageManager imageManager() {
-            return mock(ImageManager.class);
-        }
-
-        @Bean
-        public ImageStoreService imageStoreService() {
-            return mock(ImageStoreService.class);
-        }
-
-        @Bean
-        public ImageModificationManager imageModificationManager() {
-            return mock(ImageModificationManager.class);
-        }
-
-        @Bean
-        public ImageTransformService imageTransformService() {
-            return mock(ImageTransformService.class);
-        }
-
-        @Bean
-        public ImageRepositoryService imageRepositoryService() {
-            return mock(ImageRepositoryService.class);
-        }
-
-        @Bean
-        public ImageResolutionManager imageResolutionManager() {
-            return mock(ImageResolutionManager.class);
-        }
 
     }
 }

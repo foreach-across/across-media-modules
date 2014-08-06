@@ -2,7 +2,6 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.logging.LogHelper;
-import com.foreach.imageserver.core.managers.ContextManager;
 import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
@@ -48,9 +47,6 @@ public class ImageServiceImpl implements ImageService
 
 	@Autowired
 	private ImageResolutionManager imageResolutionManager;
-
-	@Autowired
-	private ContextManager contextManager;
 
 	@Autowired
 	private ImageProfileService imageProfileService;
