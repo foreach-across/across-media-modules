@@ -104,7 +104,7 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="${table.image_resolution}" columnNames="width, height" />
+        <addUniqueConstraint tableName="${table.image_resolution}" constraintName="ix_img_ir_wh" columnNames="width, height" />
 
         <createTable tableName="${table.context_image_resolution}">
             <column name="context_id" type="java.sql.Types.BIGINT">

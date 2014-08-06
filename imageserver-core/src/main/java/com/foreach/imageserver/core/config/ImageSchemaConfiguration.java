@@ -9,6 +9,7 @@ public class ImageSchemaConfiguration extends SchemaConfiguration {
     public static final String TABLE_CONTEXT = "img_context";
     public static final String TABLE_IMAGE = "img_image";
     public static final String TABLE_IMAGE_RESOLUTION = "img_image_resolution";
+	public static final String TABLE_CONTEXT_IMAGE_RESOLUTION = "img_context_image_resolution";
     public static final String TABLE_IMAGE_MODIFICATION = "img_image_modification";
     public static final String TABLE_IMAGE_PROFILE = "img_image_profile";
     public static final String TABLE_IMAGE_PROFILE_MODIFICATION = "img_image_profile_modification";
@@ -16,6 +17,7 @@ public class ImageSchemaConfiguration extends SchemaConfiguration {
     public ImageSchemaConfiguration() {
         super( Arrays.asList(new SchemaObject("table.context", TABLE_CONTEXT),
                 new SchemaObject("table.image", TABLE_IMAGE),
+                new SchemaObject("table.context_image_resolution", TABLE_CONTEXT_IMAGE_RESOLUTION),
                 new SchemaObject("table.image_resolution", TABLE_IMAGE_RESOLUTION),
                 new SchemaObject("table.image_modification", TABLE_IMAGE_MODIFICATION),
                 new SchemaObject("table.image_profile", TABLE_IMAGE_PROFILE),

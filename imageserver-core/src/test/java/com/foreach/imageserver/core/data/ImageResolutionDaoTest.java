@@ -1,10 +1,14 @@
 package com.foreach.imageserver.core.data;
 
 import com.foreach.imageserver.core.AbstractIntegrationTest;
+import com.foreach.imageserver.core.business.Context;
+import com.foreach.imageserver.core.business.ContextImageResolution;
 import com.foreach.imageserver.core.business.ImageResolution;
+import com.foreach.imageserver.core.repositories.ContextImageResolutionRepository;
+import com.foreach.imageserver.core.repositories.ContextRepository;
+import com.foreach.imageserver.core.repositories.ImageResolutionRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
@@ -13,44 +17,52 @@ import static org.junit.Assert.*;
 public class ImageResolutionDaoTest extends AbstractIntegrationTest {
 
     @Autowired
-    private ImageResolutionDao imageResolutionDao;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private ImageResolutionRepository imageResolutionRepository;
+	@Autowired
+	private ContextRepository contextRepository;
+	@Autowired
+	private ContextImageResolutionRepository contextImageResolutionRepository;
 
     @Test
     public void getById() {
-        String resolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
-        jdbcTemplate.update(resolutionSql, 101010, 111, 222);
+	    ImageResolution imageResolution = new ImageResolution();
+	    imageResolution.setId( 101010 );
+	    imageResolution.setWidth( 222 );
+	    imageResolution.setHeight( 333 );
+	    imageResolutionRepository.create( imageResolution );
 
-        ImageResolution imageResolution = imageResolutionDao.getById(101010);
-        assertNotNull(imageResolution);
-        assertEquals(101010, imageResolution.getId());
-        assertEquals(111, imageResolution.getWidth());
-        assertEquals(222, imageResolution.getHeight());
+        ImageResolution imageResolutionFromDb = imageResolutionRepository.getById(101010);
+        assertNotNull(imageResolutionFromDb);
+        assertEquals(101010, imageResolutionFromDb.getId());
+        assertEquals(222, imageResolutionFromDb.getWidth());
+        assertEquals(333, imageResolutionFromDb.getHeight());
     }
 
     @Test
     public void getForContext() {
-        String contextSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
-        jdbcTemplate.update(contextSql, 10, "the_application_code");
-        jdbcTemplate.update(contextSql, 11, "the_other_application_code");
 
-        String resolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
-        jdbcTemplate.update(resolutionSql, 10, 111, 222);
-        jdbcTemplate.update(resolutionSql, 11, null, 333);
-        jdbcTemplate.update(resolutionSql, 12, 444, null);
-        jdbcTemplate.update(resolutionSql, 14, 555, 666);
+	    Context context10 = new Context();
+	    context10.setId( -10 );
+	    context10.setCode( "application_code" );
+	    contextRepository.create( context10 );
 
-        String linkSql = "INSERT INTO CONTEXT_IMAGE_RESOLUTION ( contextId, imageResolutionId ) VALUES ( ?, ? )";
-        jdbcTemplate.update(linkSql, 10, 10);
-        jdbcTemplate.update(linkSql, 10, 11);
-        jdbcTemplate.update(linkSql, 10, 12);
-        jdbcTemplate.update(linkSql, 11, 14);
-        jdbcTemplate.update(linkSql, 11, 11);
-        jdbcTemplate.update(linkSql, 11, 12);
+	    Context context11 = new Context();
+	    context11.setId( -11 );
+	    context11.setCode( "the_other_application_code" );
+	    contextRepository.create( context11 );
 
-        List<ImageResolution> imageResolutions = imageResolutionDao.getForContext(10);
+	    imageResolutionRepository.create( createImageResolution( 10, 1111, 222 ) );
+	    imageResolutionRepository.create( createImageResolution( 11, 1111, 2222 ) );
+	    imageResolutionRepository.create( createImageResolution( 12, 11111, 22222 ) );
+
+	    imageResolutionRepository.create( createImageResolution( 14, 555, 666 ) );
+
+        contextImageResolutionRepository.create( createContextImageResolution(  -10, 10) );
+	    contextImageResolutionRepository.create( createContextImageResolution(  -10, 11) );
+	    contextImageResolutionRepository.create( createContextImageResolution(  -10, 12) );
+        contextImageResolutionRepository.create( createContextImageResolution(  -11, 14) );
+
+        List<ImageResolution> imageResolutions = imageResolutionRepository.getForContext(-10);
         assertEquals(3, imageResolutions.size());
 
         assertEquals(10, imageResolutions.get(0).getId());
@@ -66,4 +78,18 @@ public class ImageResolutionDaoTest extends AbstractIntegrationTest {
         assertNull(imageResolutions.get(2).getHeight());
     }
 
+	private ContextImageResolution createContextImageResolution( long contextId, long imageResolutionId ) {
+		ContextImageResolution contextImageResolution = new ContextImageResolution();
+		contextImageResolution.setContextId( contextId );
+		contextImageResolution.setImageResolutionId( imageResolutionId );
+		return contextImageResolution;
+	}
+
+	private ImageResolution createImageResolution( long id, int width, int height ) {
+		ImageResolution imageResolution = new ImageResolution();
+		imageResolution.setId( id );
+		imageResolution.setWidth( width );
+		imageResolution.setHeight( height );
+		return imageResolution;
+	}
 }
