@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.business.ImageModification;
-import com.foreach.imageserver.core.data.ImageModificationDao;
+import com.foreach.imageserver.core.repositories.ImageModificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,42 +16,41 @@ import java.util.List;
 @Repository
 public class ImageModificationManagerImpl implements ImageModificationManager
 {
-
 	@Autowired
-	private ImageModificationDao imageModificationDao;
+	private ImageModificationRepository imageModificationRepository;
 
 	@Override
 	// Not cached -- see comments above.
 	public ImageModification getById( long imageId, long contextId, long imageResolutionId ) {
-		return imageModificationDao.getById( imageId, contextId, imageResolutionId );
+		return imageModificationRepository.getById( imageId, contextId, imageResolutionId );
 	}
 
 	@Override
 	// Not cached -- see comments above.
 	public List<ImageModification> getModifications( long imageId, long contextId ) {
-		return Collections.unmodifiableList( imageModificationDao.getModifications( imageId, contextId ) );
+		return Collections.unmodifiableList( imageModificationRepository.getModifications( imageId, contextId ) );
 	}
 
 	@Override
 	// Not cached -- see comments above.
 	public List<ImageModification> getAllModifications( long imageId ) {
-		return Collections.unmodifiableList( imageModificationDao.getAllModifications( imageId ) );
+		return Collections.unmodifiableList( imageModificationRepository.getAllModifications( imageId ) );
 	}
 
 	@Override
 	public void insert( ImageModification imageModification ) {
-		imageModificationDao.insert( imageModification );
+		imageModificationRepository.create( imageModification );
 	}
 
 	@Override
 	public void update( ImageModification imageModification ) {
-		imageModificationDao.update( imageModification );
+		imageModificationRepository.update( imageModification );
 	}
 
 	@Override
 	// Not cached -- see comments above.
 	public boolean hasModification( long imageId ) {
-		return imageModificationDao.hasModification( imageId );
+		return imageModificationRepository.hasModification( imageId );
 	}
 
 }

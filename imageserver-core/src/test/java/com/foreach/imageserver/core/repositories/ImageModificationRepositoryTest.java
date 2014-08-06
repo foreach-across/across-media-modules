@@ -27,19 +27,9 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 
     @Test
     public void insertAndGetById() {
-	    Context context = new Context();
-	    context.setId( 1010 );
-	    context.setCode( "the_application_code_1010" );
-	    contextRepository.create( context );
-
+	    createContext( 1010, "the_application_code_1010" );
 	    createImage( 9998, "externalId", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
-
-	    ImageResolution imageResolution = new ImageResolution();
-	    imageResolution.setId( -8 );
-	    imageResolution.setWidth( 8888 );
-	    imageResolution.setHeight( 1616 );
-	    imageResolutionRepository.create( imageResolution );
-
+	    createImageResolution( -8, 8888, 1616 );
 
         Crop writtenCrop = new Crop();
         writtenCrop.setX(100);
@@ -72,17 +62,17 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
         assertEquals(writtenImageModification.getDensity().getHeight(), readImageModification.getDensity().getHeight());
     }
 
-    @Test
-    public void getModifications() {
-	    Context context8010 = new Context();
-	    context8010.setId( 8010 );
-	    context8010.setCode( "the_application_code_8010" );
-	    contextRepository.create( context8010 );
+	private void createContext( int id, String code ) {
+		Context context = new Context();
+		context.setId( id );
+		context.setCode( code );
+		contextRepository.create( context );
+	}
 
-	    Context context8011 = new Context();
-	    context8011.setId( 8011 );
-	    context8011.setCode( "the_application_code_8011" );
-	    contextRepository.create( context8011 );
+	@Test
+    public void getModifications() {
+		createContext( 8010, "the_application_code_8010" );
+		createContext( 8011, "the_application_code_8011" );
 
 	    createImage( 19998, "externalId19998", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
 	    createImage( 19999, "externalId19999", new Dimensions( 100, 100 ), ImageType.PNG, new Date(2012, 11, 13) );
@@ -119,15 +109,8 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 
 	@Test
     public void getAllModifications() {
-		Context context7010 = new Context();
-		context7010.setId( 7010 );
-		context7010.setCode( "the_application_code_7010" );
-		contextRepository.create( context7010 );
-
-		Context context7011 = new Context();
-		context7011.setId( 7011 );
-		context7011.setCode( "the_application_code_7011" );
-		contextRepository.create( context7011 );
+		createContext( 7010, "the_application_code_7010" );
+		createContext( 7011, "the_application_code_7011" );
 
 		createImage( 29998, "externalId_29998", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
 		createImage( 29999, "externalId_29999", new Dimensions( 100, 100 ), ImageType.PNG, new Date( 2012, 11, 13 ) );
@@ -169,24 +152,19 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest {
 
 	@Test
     public void updateAndGetById() {
-        String contextSql = "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )";
-        jdbcTemplate.update(contextSql, 1010, "code");
+		createContext( 6666, "code" );
+		createImage( 78878, "externalId_78878", new Dimensions( 100, 100 ), ImageType.PNG, new Date(2012, 11, 13) );
+		createImageResolution( 99994, 934, 9843 );
 
-        String imageSql = "INSERT INTO IMAGE ( id, externalId, created, width, height, imageTypeId ) VALUES ( ?, ?, ?, 100, 100, 1 )";
-        jdbcTemplate.update(imageSql, 9998, "externalId", new Date(2012, 11, 13));
+		ImageModification imageModification = modification(78878, 6666, 99994, 0, 1, 2, 3, 4, 5);
+		imageModificationRepository.create( imageModification );
 
-        String imageResolutionSql = "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )";
-        jdbcTemplate.update(imageResolutionSql, 8, 1111, 2222);
+	    imageModificationRepository.update(modification(78878, 6666, 99994, 10, 11, 12, 13, 14, 15));
 
-        String modificationSql = "INSERT INTO IMAGE_MODIFICATION ( imageId, contextId, resolutionId, densityWidth, densityHeight, cropX, cropY, cropWidth, cropHeight ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
-        jdbcTemplate.update(modificationSql, 9998, 1010, 8, 0, 1, 2, 3, 4, 5);
-
-	    imageModificationRepository.update(modification(9998, 1010, 8, 10, 11, 12, 13, 14, 15));
-
-        ImageModification readImageModification = imageModificationRepository.getById(9998, 1010, 8);
-        assertEquals(9998, readImageModification.getImageId());
-        assertEquals(1010, readImageModification.getContextId());
-        assertEquals(8, readImageModification.getResolutionId());
+        ImageModification readImageModification = imageModificationRepository.getById(78878, 6666, 99994);
+        assertEquals(78878, readImageModification.getImageId());
+        assertEquals(6666, readImageModification.getContextId());
+        assertEquals(99994, readImageModification.getResolutionId());
         assertEquals(10, readImageModification.getCrop().getX());
         assertEquals(11, readImageModification.getCrop().getY());
         assertEquals(12, readImageModification.getCrop().getWidth());
