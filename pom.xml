@@ -150,6 +150,16 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-test</artifactId>
+				<version>${foreachCommonVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.4</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
