@@ -55,7 +55,7 @@
             <column name="id" type="java.sql.Types.BIGINT">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_image"/>
             </column>
-            <column name="external_id" type="java.sql.Types.VARCHAR(250)">
+            <column name="external_id" type="java.sql.Types.VARCHAR(190)">
                 <constraints nullable="false"/>
             </column>
             <column name="profile_id" type="java.sql.Types.BIGINT" defaultValue="1">
