@@ -57,7 +57,7 @@ public abstract class AbstractIntegrationTest {
 			ImageServerCoreModule module = new ImageServerCoreModule();
 			module.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
 			                    System.getProperty( "java.io.tmpdir" ) );
-			module.setExposeFilter(new PackageBeanFilter("com.foreach.imageserver.core", "org.mybatis.spring.mapper", "net.sf.ehcache"));
+			module.setExposeFilter(new PackageBeanFilter("com.foreach.imageserver.core", "net.sf.ehcache"));
 			return module;
 		}
 

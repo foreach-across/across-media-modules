@@ -1,10 +1,7 @@
 package com.foreach.imageserver.core.config;
 
-import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.ImageRepositoryRegistry;
 import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,9 +13,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan(
-		basePackages = {"com.foreach.imageserver.core.managers", "com.foreach.imageserver.core.data"}
+		basePackages = {"com.foreach.imageserver.core.managers" }
 )
-@MapperScan("com.foreach.imageserver.core.data")
 @EnableTransactionManagement
 public class ImageServerCoreConfig extends WebMvcConfigurerAdapter
 {
@@ -48,16 +44,6 @@ public class ImageServerCoreConfig extends WebMvcConfigurerAdapter
 			return new MappingJacksonHttpMessageConverter();
 		}
 	*/
-
-	@Bean
-	public org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory() throws Exception {
-		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-		sessionFactory.setDataSource( dataSource );
-		sessionFactory.setTypeAliases(
-				new Class[] { ImageContext.class, Image.class, ImageResolution.class, ImageModification.class,
-				              ImageProfile.class, ImageProfileModification.class } );
-		return sessionFactory.getObject();
-	}
 
 	@Bean
 	public ImageTransformerRegistry imageTransformerRegistry() {
