@@ -16,7 +16,7 @@ public class BasicRepositoryImpl<T> implements BasicRepository<T>
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	public BasicRepositoryImpl() {
 		ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
 		this.clazz = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
@@ -27,7 +27,7 @@ public class BasicRepositoryImpl<T> implements BasicRepository<T>
 	}
 
 	@Transactional(readOnly = true)
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Override
 	public T getById( long id ) {
 		return (T) session().get( clazz, id );

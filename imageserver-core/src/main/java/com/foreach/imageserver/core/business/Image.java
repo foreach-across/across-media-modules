@@ -45,13 +45,13 @@ public class Image
 	                    })
 	private Dimensions dimensions;
 
-	@Column( name = "file_size" )
+	@Column(name = "file_size")
 	private long fileSize;
 
-	@Column( name = "original_path" )
+	@Column(name = "original_path")
 	private String originalPath;
 
-	@Column( name = "variant_path" )
+	@Column(name = "variant_path")
 	private String variantPath;
 
 	public long getId() {

@@ -64,7 +64,9 @@ public class CropGeneratorImpl implements CropGenerator
 	private ImageProfileManager imageProfileManager;
 
 	@Override
-	public ImageModificationDto buildModificationDto( Image image, ImageContext context, ImageResolution imageResolution ) {
+	public ImageModificationDto buildModificationDto( Image image,
+	                                                  ImageContext context,
+	                                                  ImageResolution imageResolution ) {
 		if ( image == null || context == null || imageResolution == null ) {
 			LOG.warn(
 					"Null parameters not allowed - CropGeneratorImpl#buildModificationDto: image={}, context={}, imageResolution={}",
@@ -126,8 +128,8 @@ public class CropGeneratorImpl implements CropGenerator
             } else {*/
 		List<ImageModification> modifications = imageModificationManager.getAllModifications( image.getId() );
 		result = generateCrop( image, context, requestedResolution, modifications );
-	        /*}
-        }*/
+		    /*}
+	    }*/
 
 		if ( result == null ) {
 			throw new ImageCouldNotBeRetrievedException( "No crop could be determined for this image." );

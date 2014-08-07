@@ -31,7 +31,8 @@ public class ImageProfileServiceImpl implements ImageProfileService
 
 		if ( imageProfileDto.isNewEntity() ) {
 			imageProfile = new ImageProfile();
-		} else {
+		}
+		else {
 			imageProfile = getById( imageProfileDto.getId() );
 		}
 
@@ -39,7 +40,8 @@ public class ImageProfileServiceImpl implements ImageProfileService
 
 		if ( imageProfileDto.isNewEntity() ) {
 			imageProfileRepository.create( imageProfile );
-		} else {
+		}
+		else {
 			imageProfileRepository.update( imageProfile );
 		}
 

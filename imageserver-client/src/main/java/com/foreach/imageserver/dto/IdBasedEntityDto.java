@@ -23,7 +23,7 @@ public class IdBasedEntityDto
 		this.newEntity = newEntity;
 	}
 
-	@SuppressWarnings( "all" )
+	@SuppressWarnings("all")
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {
@@ -38,7 +38,7 @@ public class IdBasedEntityDto
 		return Objects.equals( id, that.id );
 	}
 
-	@SuppressWarnings( "all" )
+	@SuppressWarnings("all")
 	@Override
 	public int hashCode() {
 		return Objects.hash( id );

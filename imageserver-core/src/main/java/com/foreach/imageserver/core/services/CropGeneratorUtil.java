@@ -142,8 +142,8 @@ public class CropGeneratorUtil
 
 	public static Dimensions applyResolution( Image image, ImageResolution resolution ) {
 		return resolution.getDimensions().normalize( image.getDimensions() );
-	    /*
-        Integer resolutionWidth = resolution.getWidth();
+		/*
+	    Integer resolutionWidth = resolution.getWidth();
         Integer resolutionHeight = resolution.getHeight();
 
         if (resolutionWidth != null && resolutionHeight != null) {

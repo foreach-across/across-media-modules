@@ -1,55 +1,64 @@
 package com.foreach.imageserver.dto;
 
-public class DimensionsDto {
-    private int width;
-    private int height;
+import java.util.Objects;
 
-    public DimensionsDto() {
-    }
+public class DimensionsDto
+{
+	private int width;
+	private int height;
 
-    public DimensionsDto(DimensionsDto original) {
-        width = original.width;
-        height = original.height;
-    }
+	public DimensionsDto() {
+	}
 
-    public DimensionsDto(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
+	public DimensionsDto( DimensionsDto original ) {
+		width = original.width;
+		height = original.height;
+	}
 
-    public int getWidth() {
-        return width;
-    }
+	public DimensionsDto( int width, int height ) {
+		this.width = width;
+		this.height = height;
+	}
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
+	public int getWidth() {
+		return width;
+	}
 
-    public int getHeight() {
-        return height;
-    }
+	public void setWidth( int width ) {
+		this.width = width;
+	}
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
+	public int getHeight() {
+		return height;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DimensionsDto)) return false;
+	public void setHeight( int height ) {
+		this.height = height;
+	}
 
-        DimensionsDto that = (DimensionsDto) o;
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( !( o instanceof DimensionsDto ) ) {
+			return false;
+		}
 
-        if (height != that.height) return false;
-        if (width != that.width) return false;
+		DimensionsDto that = (DimensionsDto) o;
 
-        return true;
-    }
+		if ( height != that.height ) {
+			return false;
+		}
+		if ( width != that.width ) {
+			return false;
+		}
 
-    @Override
-    public int hashCode() {
-        int result = width;
-        result = 31 * result + height;
-        return result;
-    }
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( width, height );
+	}
 }

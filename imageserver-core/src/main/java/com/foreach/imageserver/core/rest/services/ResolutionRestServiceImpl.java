@@ -59,7 +59,7 @@ public class ResolutionRestServiceImpl implements ResolutionRestService
 	}
 
 	private Collection<ImageResolution> filterNonConfigurableResolutions( Collection<ImageResolution> imageResolutions ) {
-		List<ImageResolution> configurableResolutions = new ArrayList<>(imageResolutions.size());
+		List<ImageResolution> configurableResolutions = new ArrayList<>( imageResolutions.size() );
 
 		for ( ImageResolution resolution : imageResolutions ) {
 			if ( resolution.isConfigurable() ) {

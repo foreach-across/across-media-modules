@@ -14,7 +14,7 @@ import java.util.Date;
 public class ImageRepositoryImpl extends BasicRepositoryImpl<Image> implements ImageRepository
 {
 	@Transactional(readOnly = true)
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Override
 	public Image getByExternalId( String externalId ) {
 		Criteria criteria = session().createCriteria( Image.class );
@@ -39,7 +39,8 @@ public class ImageRepositoryImpl extends BasicRepositoryImpl<Image> implements I
 
 	private void setPath( Image object ) {
 		Date dateCreated = object.getDateCreated();
-		if( dateCreated == null || ( StringUtils.isBlank( object.getOriginalPath() ) && StringUtils.isBlank( object.getVariantPath() ) ) ) {
+		if ( dateCreated == null || ( StringUtils.isBlank( object.getOriginalPath() ) && StringUtils.isBlank(
+				object.getVariantPath() ) ) ) {
 			String path = FastDateFormat.getInstance( "yyyy/MM/dd" ).format( dateCreated );
 			object.setVariantPath( path );
 			object.setOriginalPath( path );

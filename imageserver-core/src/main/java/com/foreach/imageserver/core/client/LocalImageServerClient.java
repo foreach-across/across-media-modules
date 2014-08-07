@@ -77,10 +77,9 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public ImageInfoDto imageInfo( String imageId ) {
-		Image image = imageService.getByExternalId(imageId);
+		Image image = imageService.getByExternalId( imageId );
 
-		if ( image == null )
-		{
+		if ( image == null ) {
 			ImageInfoDto imageInfoDto = new ImageInfoDto();
 			imageInfoDto.setExternalId( imageId );
 			imageInfoDto.setExisting( false );

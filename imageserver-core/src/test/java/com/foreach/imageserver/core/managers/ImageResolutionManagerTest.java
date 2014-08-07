@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@Ignore( "CacheManager later" )
+@Ignore("CacheManager later")
 public class ImageResolutionManagerTest extends AbstractIntegrationTest
 {
 
@@ -35,7 +35,7 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 
 		ImageResolution retrievedResolution = imageResolutionManager.getById( 10 );
 		assertEquals( 10, retrievedResolution.getId() );
-		assertEquals( 111, retrievedResolution.getWidth());
+		assertEquals( 111, retrievedResolution.getWidth() );
 		assertEquals( 222, retrievedResolution.getHeight() );
 		assertSame( retrievedResolution, cache.get( "byId-10" ).get() );
 
@@ -44,7 +44,7 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 		ImageResolution retrievedAgainResolution = imageResolutionManager.getById( 10 );
 		assertSame( retrievedResolution, retrievedAgainResolution );
 		assertEquals( 10, retrievedAgainResolution.getId() );
-		assertEquals( 111, retrievedAgainResolution.getWidth());
+		assertEquals( 111, retrievedAgainResolution.getWidth() );
 		assertEquals( 222, retrievedAgainResolution.getHeight() );
 	}
 

@@ -21,9 +21,10 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import javax.sql.DataSource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AbstractIntegrationTest.Config.class})
+@ContextConfiguration(classes = { AbstractIntegrationTest.Config.class })
 @EnableTransactionManagement
-public abstract class AbstractIntegrationTest {
+public abstract class AbstractIntegrationTest
+{
 	@AcrossTestConfiguration
 	@Configuration
 	static class Config implements AcrossContextConfigurer
@@ -31,15 +32,15 @@ public abstract class AbstractIntegrationTest {
 		@Bean
 		public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
 			PropertySourcesPlaceholderConfigurer propertySources = new PropertySourcesPlaceholderConfigurer();
-			propertySources.setIgnoreResourceNotFound(false);
-			propertySources.setIgnoreUnresolvablePlaceholders(false);
+			propertySources.setIgnoreResourceNotFound( false );
+			propertySources.setIgnoreUnresolvablePlaceholders( false );
 
 			return propertySources;
 		}
 
 		@Bean
-		public DataSourceTransactionManager transactionManager(DataSource dataSource) {
-			return new DataSourceTransactionManager(dataSource);
+		public DataSourceTransactionManager transactionManager( DataSource dataSource ) {
+			return new DataSourceTransactionManager( dataSource );
 		}
 
 		@Bean
@@ -49,7 +50,7 @@ public abstract class AbstractIntegrationTest {
 
 		@Bean
 		public AcrossModule dummyWebModule() {
-			return new EmptyAcrossModule("AcrossWebModule");
+			return new EmptyAcrossModule( "AcrossWebModule" );
 		}
 
 		@Bean
@@ -57,7 +58,7 @@ public abstract class AbstractIntegrationTest {
 			ImageServerCoreModule module = new ImageServerCoreModule();
 			module.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
 			                    System.getProperty( "java.io.tmpdir" ) );
-			module.setExposeFilter(new PackageBeanFilter("com.foreach.imageserver.core", "net.sf.ehcache"));
+			module.setExposeFilter( new PackageBeanFilter( "com.foreach.imageserver.core", "net.sf.ehcache" ) );
 			return module;
 		}
 

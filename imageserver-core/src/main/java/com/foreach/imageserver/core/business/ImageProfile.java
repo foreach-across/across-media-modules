@@ -17,17 +17,17 @@ public class ImageProfile
 
 	public static final int DEFAULT_PROFILE_ID = 1;
 
-    @Id
-    @GeneratedValue( generator = "seq_img_image_profile_id" )
-    @GenericGenerator(
-            name = "seq_img_image_profile_id",
-            strategy = AcrossSequenceGenerator.STRATEGY,
-            parameters = {
-                    @org.hibernate.annotations.Parameter( name = "sequenceName", value = "seq_img_image_profile_id" ),
-                    @org.hibernate.annotations.Parameter( name = "allocationSize", value = "10" )
-            }
-    )
-    private long id;
+	@Id
+	@GeneratedValue(generator = "seq_img_image_profile_id")
+	@GenericGenerator(
+			name = "seq_img_image_profile_id",
+			strategy = AcrossSequenceGenerator.STRATEGY,
+			parameters = {
+					@org.hibernate.annotations.Parameter(name = "sequenceName", value = "seq_img_image_profile_id"),
+					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "10")
+			}
+	)
+	private long id;
 
 	@Column(name = "name", unique = true)
 	private String name;

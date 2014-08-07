@@ -7,37 +7,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 
-public class ImageContextRepositoryTest extends AbstractIntegrationTest {
+public class ImageContextRepositoryTest extends AbstractIntegrationTest
+{
 
-    @Autowired
-    private ImageContextRepository contextRepository;
+	@Autowired
+	private ImageContextRepository contextRepository;
 
-    @Test
-    public void getById() {
-	    int fixedId = -100;
-	    ImageContext context = new ImageContext();
-	    context.setId( fixedId );
-	    context.setCode( "the_application_code" );
-	    contextRepository.create( context );
+	@Test
+	public void getById() {
+		int fixedId = -100;
+		ImageContext context = new ImageContext();
+		context.setId( fixedId );
+		context.setCode( "the_application_code" );
+		contextRepository.create( context );
 
-        ImageContext contextFromDb = contextRepository.getById(fixedId);
+		ImageContext contextFromDb = contextRepository.getById( fixedId );
 
-        assertEquals(fixedId, contextFromDb.getId());
-        assertEquals("the_application_code", contextFromDb.getCode());
-    }
+		assertEquals( fixedId, contextFromDb.getId() );
+		assertEquals( "the_application_code", contextFromDb.getCode() );
+	}
 
-    @Test
-    public void getByCode() {
-	    int fixedId = -101;
-	    ImageContext context = new ImageContext();
-	    context.setId( fixedId );
-	    context.setCode( "the_application_code_by_code" );
-	    contextRepository.create( context );
+	@Test
+	public void getByCode() {
+		int fixedId = -101;
+		ImageContext context = new ImageContext();
+		context.setId( fixedId );
+		context.setCode( "the_application_code_by_code" );
+		contextRepository.create( context );
 
-	    ImageContext contextFromDb = contextRepository.getByCode("the_application_code_by_code");
+		ImageContext contextFromDb = contextRepository.getByCode( "the_application_code_by_code" );
 
-	    assertEquals(fixedId, contextFromDb.getId());
-	    assertEquals("the_application_code_by_code", contextFromDb.getCode());
-    }
+		assertEquals( fixedId, contextFromDb.getId() );
+		assertEquals( "the_application_code_by_code", contextFromDb.getCode() );
+	}
 
 }

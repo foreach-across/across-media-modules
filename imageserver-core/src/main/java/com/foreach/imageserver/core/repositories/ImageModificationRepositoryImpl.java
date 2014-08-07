@@ -14,7 +14,7 @@ import java.util.List;
 public class ImageModificationRepositoryImpl extends BasicRepositoryImpl<ImageModification> implements ImageModificationRepository
 {
 	@Transactional(readOnly = true)
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Override
 	public ImageModification getById( long imageId, long contextId, long imageResolutionId ) {
 		Criteria criteria = session().createCriteria( ImageModification.class );
@@ -27,7 +27,7 @@ public class ImageModificationRepositoryImpl extends BasicRepositoryImpl<ImageMo
 
 	@Override
 	@Transactional(readOnly = true)
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	public List<ImageModification> getModifications( long imageId, long contextId ) {
 		Criteria criteria = session().createCriteria( ImageModification.class );
 		criteria.add( Restrictions.eq( "imageId", imageId ) );
@@ -40,7 +40,7 @@ public class ImageModificationRepositoryImpl extends BasicRepositoryImpl<ImageMo
 
 	@Override
 	@Transactional(readOnly = true)
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	public List<ImageModification> getAllModifications( long imageId ) {
 		Criteria criteria = session().createCriteria( ImageModification.class );
 		criteria.add( Restrictions.eq( "imageId", imageId ) );
@@ -50,7 +50,7 @@ public class ImageModificationRepositoryImpl extends BasicRepositoryImpl<ImageMo
 
 	@Override
 	@Transactional(readOnly = true)
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	public boolean hasModification( long imageId ) {
 		Criteria criteria = session().createCriteria( ImageModification.class );
 		criteria.add( Restrictions.eq( "imageId", imageId ) );

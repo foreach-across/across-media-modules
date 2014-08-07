@@ -15,77 +15,78 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
-@Ignore( "CacheManager later" )
-public class ImageManagerTest extends AbstractIntegrationTest {
+@Ignore("CacheManager later")
+public class ImageManagerTest extends AbstractIntegrationTest
+{
 
-    @Autowired
-    private ImageManager imageManager;
+	@Autowired
+	private ImageManager imageManager;
 
-    @Autowired
-    private CacheManager cacheManager;
+	@Autowired
+	private CacheManager cacheManager;
 
-    private JdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
-    @Test
-    public void insertGetById() {
-        Image insertedImage = image("externalId", new Date(), 100, 200, ImageType.GIF);
-        imageManager.insert(insertedImage);
+	@Test
+	public void insertGetById() {
+		Image insertedImage = image( "externalId", new Date(), 100, 200, ImageType.GIF );
+		imageManager.insert( insertedImage );
 
-        Cache cache = cacheManager.getCache("images");
-        assertNotNull(cache);
-        assertNull(cache.get("byId-" + insertedImage.getId()));
+		Cache cache = cacheManager.getCache( "images" );
+		assertNotNull( cache );
+		assertNull( cache.get( "byId-" + insertedImage.getId() ) );
 
-        Image retrievedImage = imageManager.getById(insertedImage.getId());
-        shouldBeEqual(insertedImage, retrievedImage);
-        assertSame(retrievedImage, cache.get("byId-" + insertedImage.getId()).get());
+		Image retrievedImage = imageManager.getById( insertedImage.getId() );
+		shouldBeEqual( insertedImage, retrievedImage );
+		assertSame( retrievedImage, cache.get( "byId-" + insertedImage.getId() ).get() );
 
-        jdbcTemplate.execute("DELETE FROM IMAGE");
+		jdbcTemplate.execute( "DELETE FROM IMAGE" );
 
-        Image retrievedAgainImage = imageManager.getById(insertedImage.getId());
-        shouldBeEqual(insertedImage, retrievedAgainImage);
-        assertSame(retrievedImage, retrievedAgainImage);
-    }
+		Image retrievedAgainImage = imageManager.getById( insertedImage.getId() );
+		shouldBeEqual( insertedImage, retrievedAgainImage );
+		assertSame( retrievedImage, retrievedAgainImage );
+	}
 
-    @Test
-    public void insertGetByExternalId() {
-        // Things will go wrong if this null result is cached.
-        assertNull(imageManager.getByExternalId("externalId"));
+	@Test
+	public void insertGetByExternalId() {
+		// Things will go wrong if this null result is cached.
+		assertNull( imageManager.getByExternalId( "externalId" ) );
 
-        Image insertedImage = image("externalId", new Date(), 100, 200, ImageType.GIF);
-        imageManager.insert(insertedImage);
+		Image insertedImage = image( "externalId", new Date(), 100, 200, ImageType.GIF );
+		imageManager.insert( insertedImage );
 
-        Cache cache = cacheManager.getCache("images");
-        assertNotNull(cache);
-        assertNull(cache.get("byExternalId-" + insertedImage.getExternalId()));
+		Cache cache = cacheManager.getCache( "images" );
+		assertNotNull( cache );
+		assertNull( cache.get( "byExternalId-" + insertedImage.getExternalId() ) );
 
-        Image retrievedImage = imageManager.getByExternalId(insertedImage.getExternalId());
-        shouldBeEqual(insertedImage, retrievedImage);
-        assertSame(retrievedImage, cache.get("byExternalId-" + insertedImage.getExternalId()).get());
+		Image retrievedImage = imageManager.getByExternalId( insertedImage.getExternalId() );
+		shouldBeEqual( insertedImage, retrievedImage );
+		assertSame( retrievedImage, cache.get( "byExternalId-" + insertedImage.getExternalId() ).get() );
 
-        jdbcTemplate.execute("DELETE FROM IMAGE");
+		jdbcTemplate.execute( "DELETE FROM IMAGE" );
 
-        Image retrievedAgainImage = imageManager.getByExternalId(insertedImage.getExternalId());
-        shouldBeEqual(insertedImage, retrievedAgainImage);
-        assertSame(retrievedImage, retrievedAgainImage);
-    }
+		Image retrievedAgainImage = imageManager.getByExternalId( insertedImage.getExternalId() );
+		shouldBeEqual( insertedImage, retrievedAgainImage );
+		assertSame( retrievedImage, retrievedAgainImage );
+	}
 
-    private Image image(String externalId, Date date, int width, int height, ImageType imageType) {
-        Image image = new Image();
-        image.setExternalId(externalId);
-        image.setDateCreated(date);
-        image.setDimensions(new Dimensions(width, height));
-        image.setImageType(imageType);
-        return image;
-    }
+	private Image image( String externalId, Date date, int width, int height, ImageType imageType ) {
+		Image image = new Image();
+		image.setExternalId( externalId );
+		image.setDateCreated( date );
+		image.setDimensions( new Dimensions( width, height ) );
+		image.setImageType( imageType );
+		return image;
+	}
 
-    private void shouldBeEqual(Image lhsImage, Image rhsImage) {
-        assertEquals(lhsImage.getId(), rhsImage.getId());
-        assertEquals(lhsImage.getExternalId(), rhsImage.getExternalId());
-	    //TODO: use DateUtils.truncatedEquals()
-        assertEquals( lhsImage.getDateCreated(), rhsImage.getDateCreated() );
-        assertEquals(lhsImage.getDimensions().getWidth(), rhsImage.getDimensions().getWidth());
-        assertEquals(lhsImage.getDimensions().getHeight(), rhsImage.getDimensions().getHeight());
-        assertEquals(lhsImage.getImageType(), rhsImage.getImageType());
-    }
+	private void shouldBeEqual( Image lhsImage, Image rhsImage ) {
+		assertEquals( lhsImage.getId(), rhsImage.getId() );
+		assertEquals( lhsImage.getExternalId(), rhsImage.getExternalId() );
+		//TODO: use DateUtils.truncatedEquals()
+		assertEquals( lhsImage.getDateCreated(), rhsImage.getDateCreated() );
+		assertEquals( lhsImage.getDimensions().getWidth(), rhsImage.getDimensions().getWidth() );
+		assertEquals( lhsImage.getDimensions().getHeight(), rhsImage.getDimensions().getHeight() );
+		assertEquals( lhsImage.getImageType(), rhsImage.getImageType() );
+	}
 
 }

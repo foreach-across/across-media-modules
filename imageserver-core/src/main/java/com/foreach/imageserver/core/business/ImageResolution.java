@@ -64,7 +64,7 @@ public class ImageResolution
 	@Column(name = "name")
 	private String name;
 
-	@Column( name = "tags" )
+	@Column(name = "tags")
 	@Type(type = TagsUserType.CLASS_NAME)
 	private Set<String> tags = new HashSet<>();
 

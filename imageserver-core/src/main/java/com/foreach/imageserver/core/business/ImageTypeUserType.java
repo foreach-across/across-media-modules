@@ -18,7 +18,7 @@ public class ImageTypeUserType implements UserType
 
 	@Override
 	public int[] sqlTypes() {
-		return new int[]{TYPE.sqlType()};
+		return new int[] { TYPE.sqlType() };
 	}
 
 	@Override
@@ -37,8 +37,11 @@ public class ImageTypeUserType implements UserType
 	}
 
 	@Override
-	public Object nullSafeGet( ResultSet rs, String[] names, SessionImplementor session, Object owner ) throws HibernateException, SQLException {
-		BigDecimal id = ( BigDecimal ) TYPE.get( rs, names[0], session );
+	public Object nullSafeGet( ResultSet rs,
+	                           String[] names,
+	                           SessionImplementor session,
+	                           Object owner ) throws HibernateException, SQLException {
+		BigDecimal id = (BigDecimal) TYPE.get( rs, names[0], session );
 		for ( ImageType imageType : ImageType.values() ) {
 			if ( imageType.getId().equals( id ) ) {
 				return imageType;
@@ -48,12 +51,16 @@ public class ImageTypeUserType implements UserType
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
-	public void nullSafeSet( PreparedStatement st, Object value, int index, SessionImplementor session ) throws HibernateException, SQLException {
+	@SuppressWarnings("unchecked")
+	public void nullSafeSet( PreparedStatement st,
+	                         Object value,
+	                         int index,
+	                         SessionImplementor session ) throws HibernateException, SQLException {
 		try {
-			BigDecimal result = ((ImageType) value).getId();
+			BigDecimal result = ( (ImageType) value ).getId();
 			TYPE.set( st, result, index, session );
-		} catch ( Exception e ) {
+		}
+		catch ( Exception e ) {
 			throw new HibernateException( "Exception while getting ids from set", e );
 		}
 	}
@@ -70,7 +77,7 @@ public class ImageTypeUserType implements UserType
 
 	@Override
 	public Serializable disassemble( Object value ) throws HibernateException {
-		return ( Serializable ) value;
+		return (Serializable) value;
 	}
 
 	@Override

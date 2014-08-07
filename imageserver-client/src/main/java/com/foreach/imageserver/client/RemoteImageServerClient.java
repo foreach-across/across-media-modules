@@ -1,7 +1,7 @@
 package com.foreach.imageserver.client;
 
-import com.foreach.imageserver.logging.LogHelper;
 import com.foreach.imageserver.dto.*;
+import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,11 +118,11 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate ) {
-		if ( StringUtils.isBlank( imageId    )) {
+		if ( StringUtils.isBlank( imageId ) ) {
 			throw new ImageServerException( "You must specify an imageId when loading an image." );
 		}
 		if ( imageBytes == null || imageBytes.length == 0 ) {
-			throw new ImageServerException( "Unable to load an image with empty byte data.");
+			throw new ImageServerException( "Unable to load an image with empty byte data." );
 		}
 
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
@@ -238,8 +238,8 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	protected <T> T httpGet( String path,
-	                       MultiValueMap<String, String> queryParams,
-	                       ParameterizedTypeReference<JsonResponse<T>> responseType ) {
+	                         MultiValueMap<String, String> queryParams,
+	                         ParameterizedTypeReference<JsonResponse<T>> responseType ) {
 		URI url = buildUri( path, queryParams );
 		HttpEntity<?> request = new HttpEntity<MultiValueMap<?, ?>>( new LinkedMultiValueMap<String, String>() );
 
@@ -256,9 +256,9 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	protected <T> T httpPost( String path,
-	                        MultiValueMap<String, String> queryParams,
-	                        MultiValueMap<String, Object> bodyParams,
-	                        ParameterizedTypeReference<JsonResponse<T>> responseType ) {
+	                          MultiValueMap<String, String> queryParams,
+	                          MultiValueMap<String, Object> bodyParams,
+	                          ParameterizedTypeReference<JsonResponse<T>> responseType ) {
 		URI url = buildUri( path, queryParams );
 
 		HttpEntity<?> request =

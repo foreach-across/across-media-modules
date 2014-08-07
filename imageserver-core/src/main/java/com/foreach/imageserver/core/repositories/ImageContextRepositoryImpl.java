@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ImageContextRepositoryImpl extends BasicRepositoryImpl<ImageContext> implements ImageContextRepository
 {
 	@Transactional(readOnly = true)
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Override
 	public ImageContext getByCode( String code ) {
 		Criteria criteria = session().createCriteria( ImageContext.class );

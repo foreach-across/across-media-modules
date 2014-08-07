@@ -20,27 +20,27 @@ import java.util.Objects;
 public class ImageModification implements Serializable
 {
 	@Id
-	@Column( name = "image_id" )
+	@Column(name = "image_id")
 	private long imageId;
 	@Id
-	@Column( name = "context_id" )
+	@Column(name = "context_id")
 	private long contextId;
 	@Id
-	@Column( name = "resolution_id" )
+	@Column(name = "resolution_id")
 	private long resolutionId;
 
 	@AttributeOverrides({
-            @AttributeOverride(name = "x", column = @Column(name = "cropX")),
-            @AttributeOverride(name = "y", column = @Column(name = "cropY")),
-            @AttributeOverride(name = "width", column = @Column(name = "cropWidth")),
-			@AttributeOverride(name = "height", column = @Column(name = "cropHeight"))
-    })
+			                    @AttributeOverride(name = "x", column = @Column(name = "cropX")),
+			                    @AttributeOverride(name = "y", column = @Column(name = "cropY")),
+			                    @AttributeOverride(name = "width", column = @Column(name = "cropWidth")),
+			                    @AttributeOverride(name = "height", column = @Column(name = "cropHeight"))
+	                    })
 	private Crop crop;
 
 	@AttributeOverrides({
-            @AttributeOverride(name = "width", column = @Column(name = "densityWidth")),
-            @AttributeOverride(name = "height", column = @Column(name = "densityHeight"))
-    })
+			                    @AttributeOverride(name = "width", column = @Column(name = "densityWidth")),
+			                    @AttributeOverride(name = "height", column = @Column(name = "densityHeight"))
+	                    })
 	private Dimensions density;
 
 	public long getImageId() {

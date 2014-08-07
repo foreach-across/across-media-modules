@@ -1,21 +1,22 @@
 package com.foreach.imageserver.dto;
 
-public enum ImageTypeDto {
-    JPEG("jpeg"),
-    PNG("png"),
-    GIF("gif"),
-    SVG("svg"),
-    EPS("eps"),
-    PDF("pdf"),
-    TIFF("tif");
+public enum ImageTypeDto
+{
+	JPEG( "jpeg" ),
+	PNG( "png" ),
+	GIF( "gif" ),
+	SVG( "svg" ),
+	EPS( "eps" ),
+	PDF( "pdf" ),
+	TIFF( "tif" );
 
-    private String extension;
+	private String extension;
 
-    private ImageTypeDto(String extension) {
-        this.extension = extension;
-    }
+	private ImageTypeDto( String extension ) {
+		this.extension = extension;
+	}
 
-    public String getExtension() {
-        return extension;
-    }
+	public String getExtension() {
+		return extension;
+	}
 }

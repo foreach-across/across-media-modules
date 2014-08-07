@@ -38,7 +38,7 @@ public final class DtoUtil
 		return dimensions;
 	}
 
-	public static ImageContextDto toDto( ImageContext context ){
+	public static ImageContextDto toDto( ImageContext context ) {
 		ImageContextDto contextDto = new ImageContextDto();
 		contextDto.setId( context.getId() );
 		contextDto.setCode( context.getCode() );

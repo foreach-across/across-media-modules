@@ -17,7 +17,7 @@ public class AdminWebAppController
 	private final String accessToken;
 	private final String imageServerUrl;
 
-	public AdminWebAppController( String imageServerUrl , String accessToken ) {
+	public AdminWebAppController( String imageServerUrl, String accessToken ) {
 		this.accessToken = accessToken;
 		this.imageServerUrl = imageServerUrl;
 	}

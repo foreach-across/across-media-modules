@@ -21,8 +21,10 @@ public class ImageMagickTransformerConfiguration
 		return new ImageMagickImageTransformer(
 				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PRIORITY, Integer.class, 1 ),
 				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PATH, "/usr/bin/" ),
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GHOSTSCRIPT, Boolean.class, false ),
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GRAPHICSMAGICK, Boolean.class, false )
+				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GHOSTSCRIPT, Boolean.class,
+				                         false ),
+				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GRAPHICSMAGICK, Boolean.class,
+				                         false )
 		);
 	}
 }
