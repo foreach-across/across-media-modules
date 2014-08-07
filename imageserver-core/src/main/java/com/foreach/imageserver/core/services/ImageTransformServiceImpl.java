@@ -117,7 +117,7 @@ public class ImageTransformServiceImpl implements ImageTransformService
 		if ( imageSource == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}",
-					LogHelper.flatten( imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight,
+					LogHelper.flatten( outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight,
 					                   densityWidth, densityHeight, outputType ) );
 		}
 
