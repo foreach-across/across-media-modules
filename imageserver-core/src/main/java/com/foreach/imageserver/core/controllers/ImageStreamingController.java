@@ -142,19 +142,13 @@ public class ImageStreamingController
 			response.setHeader( "Cache-Control", String.format( "max-age=%d", maxCacheAgeInSeconds ) );
 		}
 
-		InputStream imageStream = null;
-		OutputStream responseStream = null;
-		try {
-			imageStream = imageSource.getImageStream();
-			responseStream = response.getOutputStream();
-			IOUtils.copy( imageStream, responseStream );
+		try( InputStream imageStream = imageSource.getImageStream() ) {
+			try( OutputStream responseStream = response.getOutputStream() ) {
+				IOUtils.copy( imageStream, responseStream );
+			}
 		}
 		catch ( IOException ioe ) {
 			error( response, HttpStatus.INTERNAL_SERVER_ERROR, ioe.getMessage() );
-		}
-		finally {
-			IOUtils.closeQuietly( responseStream );
-			IOUtils.closeQuietly( imageStream );
 		}
 	}
 
@@ -162,15 +156,11 @@ public class ImageStreamingController
 		response.setStatus( status.value() );
 		response.setContentType( "text/plain" );
 		response.setHeader( "Cache-Control", "no-cache" );
-		ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() );
-		try {
+		try( ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() ) ) {
 			IOUtils.copy( bis, response.getOutputStream() );
 		}
 		catch ( IOException e ) {
 			LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );
-		}
-		finally {
-			IOUtils.closeQuietly( bis );
 		}
 	}
 }

@@ -1,7 +1,5 @@
 package com.foreach.imageserver.core.utils;
 
-import org.apache.commons.io.IOUtils;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -15,25 +13,8 @@ public class ImageUtils
 	public static BufferedImage bufferedImage( byte[] imageBytes ) throws IOException {
 		BufferedImage image = null;
 
-		ByteArrayInputStream imageStream = new ByteArrayInputStream( imageBytes );
-		try {
+		try( ByteArrayInputStream imageStream = new ByteArrayInputStream( imageBytes ) ) {
 			image = ImageIO.read( imageStream );
-		}
-		finally {
-			IOUtils.closeQuietly( imageStream );
-		}
-
-		return image;
-	}
-
-	public static BufferedImage bufferedImage( InputStream imageStream ) throws IOException {
-		BufferedImage image = null;
-
-		try {
-			image = ImageIO.read( imageStream );
-		}
-		finally {
-			IOUtils.closeQuietly( imageStream );
 		}
 
 		return image;
@@ -42,13 +23,9 @@ public class ImageUtils
 	public static BufferedImage bufferedImageFromClassPath( String classPath ) throws IOException {
 		BufferedImage image = null;
 
-		InputStream resourceStream = ImageUtils.class.getClassLoader().getResourceAsStream( classPath );
-		if ( resourceStream != null ) {
-			try {
+		try( InputStream resourceStream = ImageUtils.class.getClassLoader().getResourceAsStream( classPath ) ) {
+			if ( resourceStream != null ) {
 				image = ImageIO.read( resourceStream );
-			}
-			finally {
-				IOUtils.closeQuietly( resourceStream );
 			}
 		}
 

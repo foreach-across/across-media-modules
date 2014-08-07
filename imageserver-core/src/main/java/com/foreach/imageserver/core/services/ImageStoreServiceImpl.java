@@ -9,7 +9,6 @@ import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.logging.LogHelper;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,19 +61,14 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public void storeOriginalImage( Image image, byte[] imageBytes ) {
-		InputStream imageStream = null;
-		try {
-			imageStream = new ByteArrayInputStream( imageBytes );
+		try( InputStream imageStream = new ByteArrayInputStream( imageBytes ) ) {
 			this.storeOriginalImage( image, imageStream );
 		}
 		catch ( Exception e ) {
 			LOG.error(
 					"Encountered failure while storing original image - ImageStoreServiceImpl#storeOriginalImage: image={}",
 					LogHelper.flatten( image ), e );
-			throw e;
-		}
-		finally {
-			IOUtils.closeQuietly( imageStream );
+			throw new RuntimeException( e );
 		}
 	}
 

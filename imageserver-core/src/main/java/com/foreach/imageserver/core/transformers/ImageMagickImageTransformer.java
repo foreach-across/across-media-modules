@@ -4,7 +4,6 @@ import com.foreach.imageserver.core.business.Crop;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.logging.LogHelper;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
@@ -114,9 +113,8 @@ public class ImageMagickImageTransformer implements ImageTransformer
 		}
 
 		StreamImageSource imageSource = action.getImageSource();
-		InputStream stream = null;
-		try {
-			stream = imageSource.getImageStream();
+		try( InputStream stream = imageSource.getImageStream() ) {
+
 			Info info = new Info( "-", stream, false );
 			return new Dimensions( info.getImageWidth(), info.getImageHeight() );
 		}
@@ -124,9 +122,6 @@ public class ImageMagickImageTransformer implements ImageTransformer
 			LOG.error( "Failed to get image dimensions - ImageMagickImageTransformer#execute: action={}",
 			           LogHelper.flatten( action ), e );
 			throw new ImageModificationException( e );
-		}
-		finally {
-			IOUtils.closeQuietly( stream );
 		}
 	}
 
@@ -136,11 +131,9 @@ public class ImageMagickImageTransformer implements ImageTransformer
 			throw new UnsupportedOperationException();
 		}
 
-		InputStream stream = null;
 		ImageType imageType = null;
 		Dimensions dimensions = null;
-		try {
-			stream = action.getImageStream();
+		try( InputStream stream = action.getImageStream() ) {
 			Info info = new Info( "-", stream, false );
 			imageType = toImageType( info );
 			dimensions = new Dimensions( info.getImageWidth(), info.getImageHeight() );
@@ -152,9 +145,6 @@ public class ImageMagickImageTransformer implements ImageTransformer
 					LogHelper.flatten( action ), LogHelper.flatten( imageType ), LogHelper.flatten( dimensions ), e );
 			throw new ImageModificationException( e );
 		}
-		finally {
-			IOUtils.closeQuietly( stream );
-		}
 	}
 
 	@Override
@@ -163,57 +153,47 @@ public class ImageMagickImageTransformer implements ImageTransformer
 			throw new UnsupportedOperationException();
 		}
 
-		InputStream imageStream = null;
-		ByteArrayOutputStream os = null;
-		Dimensions appliedDensity = null;
-		Crop crop = null;
-		try {
-			ConvertCmd cmd = new ConvertCmd();
+		ConvertCmd cmd = new ConvertCmd();
+		IMOperation op = new IMOperation();
+		Dimensions appliedDensity = setDensityIfRequired( op, action );
+		op.addImage( "-" );
 
-			IMOperation op = new IMOperation();
-			appliedDensity = setDensityIfRequired( op, action );
-			op.addImage( "-" );
+		String colorspace = "Transparent";
 
-			String colorspace = "Transparent";
+		if ( shouldRemoveTransparency( action ) ) {
+			op.background( ALPHA_BACKGROUND );
+			op.flatten();
 
-			if ( shouldRemoveTransparency( action ) ) {
-				op.background( ALPHA_BACKGROUND );
-				op.flatten();
+			colorspace = "RGB";
+		}
 
-				colorspace = "RGB";
+		Crop crop = applyDensity( action.getCrop(), appliedDensity );
+		op.crop( crop.getWidth(), crop.getHeight(), crop.getX(), crop.getY() );
+
+		op.units( "PixelsPerInch" );
+
+		op.resize( action.getOutputDimensions().getWidth(), action.getOutputDimensions().getHeight(), "!" );
+		op.colorspace( colorspace );
+		op.strip();
+		op.quality( QUALITY );
+		op.addImage( action.getOutputType().getExtension() + ":-" );
+		try( InputStream imageStream = action.getSourceImageSource().getImageStream() ) {
+			try ( ByteArrayOutputStream os = new ByteArrayOutputStream() ) {
+				cmd.setInputProvider( new Pipe( imageStream, null ) );
+				cmd.setOutputConsumer( new Pipe( null, os ) );
+
+				cmd.run( op );
+
+				byte[] bytes = os.toByteArray();
+				return new InMemoryImageSource( action.getOutputType(), bytes );
 			}
 
-			crop = applyDensity( action.getCrop(), appliedDensity );
-			op.crop( crop.getWidth(), crop.getHeight(), crop.getX(), crop.getY() );
-
-			op.units( "PixelsPerInch" );
-
-			op.resize( action.getOutputDimensions().getWidth(), action.getOutputDimensions().getHeight(), "!" );
-			op.colorspace( colorspace );
-			op.strip();
-			op.quality( QUALITY );
-			op.addImage( action.getOutputType().getExtension() + ":-" );
-
-			imageStream = action.getSourceImageSource().getImageStream();
-			os = new ByteArrayOutputStream();
-
-			cmd.setInputProvider( new Pipe( imageStream, null ) );
-			cmd.setOutputConsumer( new Pipe( null, os ) );
-
-			cmd.run( op );
-
-			byte[] bytes = os.toByteArray();
-			return new InMemoryImageSource( action.getOutputType(), bytes );
 		}
 		catch ( Exception e ) {
 			LOG.error(
 					"Failed to apply modification - ImageMagickImageTransformer#execute: action={}, appliedDensity={}, crop={}",
 					LogHelper.flatten( action ), LogHelper.flatten( appliedDensity ), LogHelper.flatten( crop ), e );
 			throw new ImageModificationException( e );
-		}
-		finally {
-			IOUtils.closeQuietly( imageStream );
-			IOUtils.closeQuietly( os );
 		}
 	}
 
