@@ -18,7 +18,7 @@ import java.util.Arrays;
 		phase = InstallerPhase.AfterModuleBootstrap)
 public class ImageServerPermissionsInstaller
 {
-	private static Logger LOG = LoggerFactory.getLogger( ImageServerPermissionsInstaller.class );
+	private static final Logger LOG = LoggerFactory.getLogger( ImageServerPermissionsInstaller.class );
 
 	@Autowired
 	private RoleService roleService;

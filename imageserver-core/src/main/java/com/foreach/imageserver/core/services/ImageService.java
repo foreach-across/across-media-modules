@@ -4,6 +4,8 @@ import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Date;
@@ -11,6 +13,8 @@ import java.util.List;
 
 public interface ImageService
 {
+	Logger LOG = LoggerFactory.getLogger( ImageService.class );
+
 	Image getById( long imageId );
 
 	Image getByExternalId( String externalId );

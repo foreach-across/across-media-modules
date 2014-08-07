@@ -4,8 +4,6 @@ import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.*;
 import com.foreach.imageserver.logging.LogHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +13,6 @@ import java.util.concurrent.Semaphore;
 @Service
 public class ImageTransformServiceImpl implements ImageTransformService
 {
-	private static Logger LOG = LoggerFactory.getLogger( ImageTransformServiceImpl.class );
-
 	@Autowired
 	private ImageTransformerRegistry imageTransformerRegistry;
 

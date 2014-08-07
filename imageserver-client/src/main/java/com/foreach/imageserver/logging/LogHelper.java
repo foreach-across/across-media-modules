@@ -8,7 +8,7 @@ import java.util.Date;
 
 public final class LogHelper
 {
-	private static FastDateFormat DATE_FORMAT = FastDateFormat.getInstance( "yyyy-MM-dd HH:mm:ss.SSS" );
+	private static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance( "yyyy-MM-dd HH:mm:ss.SSS" );
 
 	private LogHelper() {
 	}

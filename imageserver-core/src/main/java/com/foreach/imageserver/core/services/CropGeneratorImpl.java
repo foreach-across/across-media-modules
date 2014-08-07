@@ -6,8 +6,6 @@ import com.foreach.imageserver.core.managers.ImageProfileManager;
 import com.foreach.imageserver.core.services.exceptions.ImageCouldNotBeRetrievedException;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.logging.LogHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,9 +52,6 @@ import static com.foreach.imageserver.core.services.CropGeneratorUtil.*;
 @Service
 public class CropGeneratorImpl implements CropGenerator
 {
-
-	private static Logger LOG = LoggerFactory.getLogger( CropGeneratorImpl.class );
-
 	@Autowired
 	private ImageModificationManager imageModificationManager;
 
