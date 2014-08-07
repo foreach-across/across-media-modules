@@ -24,12 +24,12 @@ import java.util.List;
  */
 @ImageServerController
 @ResponseBody
-@RequestMapping("/resolutions")
+@RequestMapping("/api/resolution")
 public class ImageResolutionController extends BaseImageAPIController
 {
-	public static final String UPDATE_RESOLUTION = "update";
-	public static final String RESOLUTION_DETAILS = "details";
-	public static final String LIST_RESOLUTIONS_PATH = "list";
+	public static final String UPDATE_RESOLUTION = "/update";
+	public static final String RESOLUTION_DETAILS = "/details";
+	public static final String LIST_RESOLUTIONS_PATH = "/list";
 
 	@Autowired
 	private ImageContextService contextService;
@@ -44,7 +44,7 @@ public class ImageResolutionController extends BaseImageAPIController
 		super( accessToken );
 	}
 
-	@RequestMapping(value = "/" + RESOLUTION_DETAILS, method = RequestMethod.GET)
+	@RequestMapping(value = RESOLUTION_DETAILS, method = RequestMethod.GET)
 	public JsonResponse resolutionDetails( @RequestParam(value = "token", required = true) String accessToken,
 	                                       @RequestParam(value = "id", required = true) long resolutionId ) {
 		if ( !this.accessToken.equals( accessToken ) ) {
@@ -65,7 +65,7 @@ public class ImageResolutionController extends BaseImageAPIController
 		return success( dto );
 	}
 
-	@RequestMapping(value = "/" + UPDATE_RESOLUTION, method = RequestMethod.POST)
+	@RequestMapping(value = UPDATE_RESOLUTION, method = RequestMethod.POST)
 	public JsonResponse saveResolution( @RequestParam(value = "token", required = true) String accessToken,
 	                                    @RequestBody ImageResolutionFormDto formDto ) {
 		if ( !this.accessToken.equals( accessToken ) ) {
@@ -86,7 +86,7 @@ public class ImageResolutionController extends BaseImageAPIController
 		return resolutionDetails( accessToken, resolution.getId() );
 	}
 
-	@RequestMapping(value = "/" + LIST_RESOLUTIONS_PATH, method = RequestMethod.GET)
+	@RequestMapping(value = LIST_RESOLUTIONS_PATH, method = RequestMethod.GET)
 	public JsonResponse listResolutions( @RequestParam(value = "token", required = true) String accessToken,
 	                                     ListResolutionsRequest listResolutionsRequest ) {
 		if ( !this.accessToken.equals( accessToken ) ) {

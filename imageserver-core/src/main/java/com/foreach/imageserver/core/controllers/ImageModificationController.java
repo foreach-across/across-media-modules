@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @ImageServerController
 @ResponseBody
-@RequestMapping("/modification")
+@RequestMapping("/api/modification")
 public class ImageModificationController extends BaseImageAPIController
 {
-	public static final String REGISTER_PATH = "register";
-	public static final String LIST_MODIFICATIONS = "listModifications";
+	public static final String REGISTER_PATH = "/register";
+	public static final String LIST_MODIFICATIONS = "/list";
 
 	@Autowired
 	private ImageRestService imageRestService;
@@ -29,7 +29,7 @@ public class ImageModificationController extends BaseImageAPIController
 		super( accessToken );
 	}
 
-	@RequestMapping(value = "/" + REGISTER_PATH, method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = REGISTER_PATH, method = { RequestMethod.GET, RequestMethod.POST })
 	public JsonResponse register( @RequestParam(value = "token", required = true) String accessToken,
 	                              @RequestParam(value = "iid", required = true) String externalId,
 	                              @RequestParam(value = "context", required = true) String contextCode,
@@ -65,7 +65,7 @@ public class ImageModificationController extends BaseImageAPIController
 		return success();
 	}
 
-	@RequestMapping(value = "/" + LIST_MODIFICATIONS, method = RequestMethod.GET)
+	@RequestMapping(value = LIST_MODIFICATIONS, method = RequestMethod.GET)
 	public JsonResponse listModifications( @RequestParam(value = "token", required = true) String accessToken,
 	                                       @RequestParam(value = "iid", required = true) String externalId,
 	                                       @RequestParam(value = "context", required = true) String contextCode

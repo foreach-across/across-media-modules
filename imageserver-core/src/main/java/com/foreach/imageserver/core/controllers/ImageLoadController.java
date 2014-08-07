@@ -21,10 +21,9 @@ import java.util.List;
 @ImageServerController
 public class ImageLoadController extends BaseImageAPIController
 {
-	public static final String LOAD_IMAGE_PATH = "load";
-	public static final String IMAGE_EXISTS_PATH = "imageExists";
-	public static final String IMAGE_INFO_PATH = "imageInfo";
-	public static final String CONTEXT_LIST = "/context/list";
+	public static final String LOAD_IMAGE_PATH = "/api/image/load";
+	public static final String IMAGE_INFO_PATH = "/api/image/details";
+	public static final String CONTEXT_LIST = "/api/context/list";
 
 	@Autowired
 	private ImageService imageService;
@@ -72,19 +71,6 @@ public class ImageLoadController extends BaseImageAPIController
 		Image image = imageService.saveImage( externalId, imageData, imageDate );
 
 		return success( DtoUtil.toDto( image ) );
-	}
-
-	@RequestMapping(value = "/" + IMAGE_EXISTS_PATH, method = RequestMethod.GET)
-	@ResponseBody
-	public JsonResponse exists( @RequestParam(value = "token", required = true) String accessToken,
-	                            @RequestParam(value = "iid", required = true) String externalId ) {
-		if ( !this.accessToken.equals( accessToken ) ) {
-			return error( "Access denied." );
-		}
-
-		Image image = imageService.getByExternalId( externalId );
-
-		return success( image != null );
 	}
 
 	@RequestMapping(value = "/" + IMAGE_INFO_PATH, method = RequestMethod.GET)

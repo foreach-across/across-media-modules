@@ -18,7 +18,7 @@ angular.module('imageServerAdmin')
     .factory('imageService', ['$http', '$rootScope', function ($http, $rootScope) {
         var imageInfo = function (externalId, callback) {
             $http
-                    .get($rootScope.imageServerUrl + '/imageInfo?token=' + $rootScope.token + '&iid=' + externalId)
+                    .get($rootScope.imageServerUrl + '/api/image/details?token=' + $rootScope.token + '&iid=' + externalId)
                     .success(function (data) {
                         callback(data.result);
                     });
@@ -26,7 +26,7 @@ angular.module('imageServerAdmin')
 
         var imageContexts = function (callback) {
             $http
-                    .get($rootScope.imageServerUrl + '/context/list?token=' + $rootScope.token)
+                    .get($rootScope.imageServerUrl + '/api/context/list?token=' + $rootScope.token)
                     .success(function (data) {
                         callback(data.result);
                     });
@@ -35,7 +35,7 @@ angular.module('imageServerAdmin')
 
         var imageResolutions = function (context, callback) {
             $http
-                    .get($rootScope.imageServerUrl + '/resolutions/list?token=' + $rootScope.token + '&context=' + context)
+                    .get($rootScope.imageServerUrl + '/api/resolution/list?token=' + $rootScope.token + '&context=' + context)
                     .success(function (data) {
                         callback(data.result);
                     });
@@ -43,7 +43,7 @@ angular.module('imageServerAdmin')
 
         var registeredModifications = function (externalId, context, callback) {
             $http
-                    .get($rootScope.imageServerUrl + '/modification/listModifications?token=' + $rootScope.token + '&context=' + context + '&iid=' + externalId)
+                    .get($rootScope.imageServerUrl + '/api/modification/list?token=' + $rootScope.token + '&context=' + context + '&iid=' + externalId)
                     .success(function (data) {
                         callback(data.result);
                     });
@@ -55,7 +55,7 @@ angular.module('imageServerAdmin')
 
         var resolutionDetails = function (resolutionId, callback) {
             $http
-                    .get($rootScope.imageServerUrl + '/resolutions/details?token=' + $rootScope.token + '&id=' + resolutionId)
+                    .get($rootScope.imageServerUrl + '/api/resolution/details?token=' + $rootScope.token + '&id=' + resolutionId)
                     .success(function (data) {
                         callback(data.result);
                     });
@@ -138,7 +138,7 @@ angular.module('imageServerAdmin')
                     }
                 }, formData);
 
-                $http.post($rootScope.imageServerUrl + '/resolutions/update?token=' + $rootScope.token, formData)
+                $http.post($rootScope.imageServerUrl + '/api/resolution/update?token=' + $rootScope.token, formData)
                     .success(function (data) {
                         if (!data.success) {
                             $scope.feedback = { 'type': 'alert-danger', 'message': 'Something went wrong, resolution has not been saved.'};
@@ -292,7 +292,7 @@ angular.module('imageServerAdmin')
 
         this.upload = function () {
             $upload.upload({
-                url: $rootScope.imageServerUrl + '/load',
+                url: $rootScope.imageServerUrl + '/api/image/load',
                 data: {
                     'token': $rootScope.token,
                     'iid': this.externalId

@@ -13,12 +13,12 @@ public interface ImageServerClient
 	Logger LOG = LoggerFactory.getLogger( ImageServerClient.class );
 
 	String ENDPOINT_IMAGE_VIEW = "view";
-	String ENDPOINT_IMAGE_RENDER = "render";
-	String ENDPOINT_IMAGE_LOAD = "load";
-	String ENDPOINT_IMAGE_INFO = "imageInfo";
-	String ENDPOINT_RESOLUTION_LIST = "resolutions/list";
-	String ENDPOINT_MODIFICATION_LIST = "modification/listModifications";
-	String ENDPOINT_MODIFICATION_REGISTER = "modification/register";
+	String ENDPOINT_IMAGE_RENDER = "api/image/render";
+	String ENDPOINT_IMAGE_LOAD = "api/image/load";
+	String ENDPOINT_IMAGE_INFO = "api/image/details";
+	String ENDPOINT_RESOLUTION_LIST = "api/resolution/list";
+	String ENDPOINT_MODIFICATION_LIST = "api/modification/list";
+	String ENDPOINT_MODIFICATION_REGISTER = "api/modification/register";
 
 	String getImageServerUrl();
 

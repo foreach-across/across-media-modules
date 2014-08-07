@@ -27,8 +27,8 @@ import java.io.OutputStream;
 @ImageServerController
 public class ImageStreamingController
 {
-	public static final String VIEW_PATH = "view";
-	public static final String RENDER_PATH = "render";
+	public static final String VIEW_PATH = "/view";
+	public static final String RENDER_PATH = "/api/image/render";
 
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStreamingController.class );
 
@@ -55,7 +55,7 @@ public class ImageStreamingController
 		this.maxCacheAgeInSeconds = maxCacheAgeInSeconds;
 	}
 
-	@RequestMapping(value = "/" + RENDER_PATH, method = RequestMethod.GET)
+	@RequestMapping(value = RENDER_PATH, method = RequestMethod.GET)
 	public void render( @RequestParam(value = "token", required = true) String accessToken,
 	                    @RequestParam(value = "iid", required = true) String externalId,
 	                    ImageModificationDto imageModificationDto,
@@ -84,7 +84,7 @@ public class ImageStreamingController
 		}
 	}
 
-	@RequestMapping(value = "/" + VIEW_PATH, method = RequestMethod.GET)
+	@RequestMapping(value = VIEW_PATH, method = RequestMethod.GET)
 	public void view( @RequestParam(value = "iid", required = true) String externalId,
 	                  @RequestParam(value = "context", required = true) String contextCode,
 	                  ImageResolutionDto imageResolutionDto,
@@ -142,8 +142,8 @@ public class ImageStreamingController
 			response.setHeader( "Cache-Control", String.format( "max-age=%d", maxCacheAgeInSeconds ) );
 		}
 
-		try( InputStream imageStream = imageSource.getImageStream() ) {
-			try( OutputStream responseStream = response.getOutputStream() ) {
+		try (InputStream imageStream = imageSource.getImageStream()) {
+			try (OutputStream responseStream = response.getOutputStream()) {
 				IOUtils.copy( imageStream, responseStream );
 			}
 		}
@@ -156,7 +156,7 @@ public class ImageStreamingController
 		response.setStatus( status.value() );
 		response.setContentType( "text/plain" );
 		response.setHeader( "Cache-Control", "no-cache" );
-		try( ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() ) ) {
+		try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
 			IOUtils.copy( bis, response.getOutputStream() );
 		}
 		catch ( IOException e ) {
