@@ -4,9 +4,13 @@ import com.foreach.imageserver.client.AbstractImageServerClient;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.rest.request.ListModificationsRequest;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
+import com.foreach.imageserver.core.rest.request.RegisterModificationRequest;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
+import com.foreach.imageserver.core.rest.response.ListModificationsResponse;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
+import com.foreach.imageserver.core.rest.response.RegisterModificationResponse;
 import com.foreach.imageserver.core.rest.response.ViewImageResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.DtoUtil;
@@ -130,27 +134,6 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	}
 
 	@Override
-	public void registerImageModification( String imageId,
-	                                       String context,
-	                                       ImageModificationDto imageModificationDto ) {
-
-	}
-
-	@Override
-	public void registerImageModification( String imageId,
-	                                       String context,
-	                                       Integer width,
-	                                       Integer height,
-	                                       int cropX,
-	                                       int cropY,
-	                                       int cropWidth,
-	                                       int croptHeight,
-	                                       int densityWidth,
-	                                       int densityHeight ) {
-
-	}
-
-	@Override
 	public List<ImageResolutionDto> listAllowedResolutions( String context ) {
 		ListResolutionsRequest request = new ListResolutionsRequest();
 		request.setContext( context );
@@ -180,7 +163,49 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	}
 
 	@Override
+	public void registerImageModification( String imageId,
+	                                       String context,
+	                                       ImageModificationDto imageModificationDto ) {
+		RegisterModificationRequest request = new RegisterModificationRequest();
+		request.setExternalId( imageId );
+		request.setContext( context );
+		request.setImageModificationDto( imageModificationDto );
+
+		RegisterModificationResponse response = imageRestService.registerModification( request );
+
+		if ( response.isContextDoesNotExist() ) {
+			throw new ImageServerException( "Context does not exist: " + context );
+		}
+
+		if ( response.isImageDoesNotExist() ) {
+			throw new ImageServerException( "Image does not exist: " + imageId );
+		}
+
+		if ( response.isResolutionDoesNotExist() ) {
+			throw new ImageServerException(
+					"No such image resolution : " + imageModificationDto.getResolution().getWidth() + "x" + imageModificationDto.getResolution().getHeight() );
+		}
+
+		if ( response.isCropOutsideOfImageBounds() ) {
+			throw new ImageServerException( "Crop dimensions fall outside image bounds." );
+		}
+	}
+
+	@Override
 	public List<ImageModificationDto> listModifications( String imageId, String context ) {
-		return null;
+		ListModificationsRequest request = new ListModificationsRequest();
+		request.setExternalId( imageId );
+		request.setContext( context );
+
+		ListModificationsResponse response = imageRestService.listModifications( request );
+
+		if ( response.isContextDoesNotExist() ) {
+			throw new ImageServerException( "Context does not exist: " + context );
+		}
+		if ( response.isImageDoesNotExist() ) {
+			throw new ImageServerException( "Image does not exist: " + imageId );
+		}
+
+		return response.getModifications();
 	}
 }

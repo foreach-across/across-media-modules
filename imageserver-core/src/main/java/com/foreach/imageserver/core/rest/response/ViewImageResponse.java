@@ -7,9 +7,9 @@ import org.springframework.beans.BeanUtils;
 /**
  * @author Arne Vandamme
  */
-public class ViewImageResponse extends ViewImageRequest
+public class ViewImageResponse extends ImageResponse
 {
-	private boolean imageDoesNotExist, contextDoesNotExist, resolutionDoesNotExist, failed;
+	private boolean resolutionDoesNotExist, failed;
 
 	private StreamImageSource imageSource;
 
@@ -18,22 +18,6 @@ public class ViewImageResponse extends ViewImageRequest
 
 	public ViewImageResponse( ViewImageRequest request ) {
 		BeanUtils.copyProperties( request, this );
-	}
-
-	public boolean isImageDoesNotExist() {
-		return imageDoesNotExist;
-	}
-
-	public void setImageDoesNotExist( boolean imageDoesNotExist ) {
-		this.imageDoesNotExist = imageDoesNotExist;
-	}
-
-	public boolean isContextDoesNotExist() {
-		return contextDoesNotExist;
-	}
-
-	public void setContextDoesNotExist( boolean contextDoesNotExist ) {
-		this.contextDoesNotExist = contextDoesNotExist;
 	}
 
 	public boolean isResolutionDoesNotExist() {

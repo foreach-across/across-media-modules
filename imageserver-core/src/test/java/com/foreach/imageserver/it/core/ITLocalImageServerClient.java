@@ -23,7 +23,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
@@ -36,8 +39,8 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = ITImageServerCoreWithLocalClient.Config.class)
-public class ITImageServerCoreWithLocalClient
+@ContextConfiguration(classes = ITLocalImageServerClient.Config.class)
+public class ITLocalImageServerClient
 {
 	@Autowired(required = false)
 	private ImageServerClient imageServerClient;
@@ -106,6 +109,30 @@ public class ITImageServerCoreWithLocalClient
 		modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
 		assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
 		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+	}
+
+	@Test
+	public void registerModifications() throws ParseException, IOException {
+		String externalId = UUID.randomUUID().toString();
+		byte[] imageData =
+				IOUtils.toByteArray(
+						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+
+		ImageInfoDto uploaded = imageServerClient.loadImage( externalId, imageData );
+		assertTrue( uploaded.isExisting() );
+
+		Collection<ImageModificationDto> modifications = imageServerClient.listModifications( externalId, "default" );
+		assertTrue( modifications.isEmpty() );
+
+		ImageModificationDto modificationDto = new ImageModificationDto( 640, 480 );
+		modificationDto.setCrop( new CropDto( 10, 10, 400, 300 ) );
+		modificationDto.setDensity( new DimensionsDto( 300, 300 ) );
+
+		imageServerClient.registerImageModification( externalId, "default", modificationDto );
+
+		modifications = imageServerClient.listModifications( externalId, "default" );
+		assertEquals( 1, modifications.size() );
+		assertEquals( modificationDto, modifications.iterator().next() );
 	}
 
 	@Configuration

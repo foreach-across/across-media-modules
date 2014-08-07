@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -68,6 +69,29 @@ public class ITRemoteImageServerClient
 		modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
 		assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
 		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+	}
+
+	@Test
+	public void registerModifications() throws ParseException, IOException {
+		String externalId = UUID.randomUUID().toString();
+		byte[] imageData =
+				IOUtils.toByteArray( getClass().getClassLoader().getResourceAsStream( "poppy_flower_nature.jpg" ) );
+
+		ImageInfoDto uploaded = imageServerClient.loadImage( externalId, imageData );
+		assertTrue( uploaded.isExisting() );
+
+		Collection<ImageModificationDto> modifications = imageServerClient.listModifications( externalId, "website" );
+		assertTrue( modifications.isEmpty() );
+
+		ImageModificationDto modificationDto = new ImageModificationDto( 640, 480 );
+		modificationDto.setCrop( new CropDto( 10, 10, 400, 300 ) );
+		modificationDto.setDensity( new DimensionsDto( 300, 300 ) );
+
+		imageServerClient.registerImageModification( externalId, "website", modificationDto );
+
+		modifications = imageServerClient.listModifications( externalId, "website" );
+		assertEquals( 1, modifications.size() );
+		assertEquals( modificationDto, modifications.iterator().next() );
 	}
 
 	@Test

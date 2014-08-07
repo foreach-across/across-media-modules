@@ -7,29 +7,11 @@ import com.foreach.imageserver.dto.ImageVariantDto;
 /**
  * @author Arne Vandamme
  */
-public class ViewImageRequest
+public class ViewImageRequest extends ImageRequest
 {
-	private String externalId;
-	private String context;
 	private ImageResolutionDto imageResolutionDto;
 	private ImageModificationDto imageModificationDto;
 	private ImageVariantDto imageVariantDto;
-
-	public String getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId( String externalId ) {
-		this.externalId = externalId;
-	}
-
-	public String getContext() {
-		return context;
-	}
-
-	public void setContext( String context ) {
-		this.context = context;
-	}
 
 	public ImageResolutionDto getImageResolutionDto() {
 		return imageResolutionDto;

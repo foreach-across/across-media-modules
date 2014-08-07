@@ -58,17 +58,6 @@ public interface ImageServerClient
 	                                String context,
 	                                ImageModificationDto imageModificationDto );
 
-	void registerImageModification( String imageId,
-	                                String context,
-	                                Integer width,
-	                                Integer height,
-	                                int cropX,
-	                                int cropY,
-	                                int cropWidth,
-	                                int croptHeight,
-	                                int densityWidth,
-	                                int densityHeight );
-
 	List<ImageModificationDto> listModifications( String imageId, String context );
 
 	List<ImageResolutionDto> listAllowedResolutions( String context );

@@ -1,5 +1,7 @@
 package com.foreach.imageserver.dto;
 
+import java.util.Objects;
+
 public class ImageModificationDto
 {
 	private ImageResolutionDto resolution;
@@ -93,28 +95,14 @@ public class ImageModificationDto
 
 		ImageModificationDto that = (ImageModificationDto) o;
 
-		if ( boundaries != null ? !boundaries.equals( that.boundaries ) : that.boundaries != null ) {
-			return false;
-		}
-		if ( crop != null ? !crop.equals( that.crop ) : that.crop != null ) {
-			return false;
-		}
-		if ( density != null ? !density.equals( that.density ) : that.density != null ) {
-			return false;
-		}
-		if ( resolution != null ? !resolution.equals( that.resolution ) : that.resolution != null ) {
-			return false;
-		}
-
-		return true;
+		return Objects.equals( boundaries, that.boundaries )
+				&& Objects.equals( crop, that.crop )
+				&& Objects.equals( density, that.density )
+				&& Objects.equals( resolution, that.resolution );
 	}
 
 	@Override
 	public int hashCode() {
-		int result = resolution != null ? resolution.hashCode() : 0;
-		result = 31 * result + ( crop != null ? crop.hashCode() : 0 );
-		result = 31 * result + ( density != null ? density.hashCode() : 0 );
-		result = 31 * result + ( boundaries != null ? boundaries.hashCode() : 0 );
-		return result;
+		return Objects.hash( resolution, crop, density, boundaries );
 	}
 }

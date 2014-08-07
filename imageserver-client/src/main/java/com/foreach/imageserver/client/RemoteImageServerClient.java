@@ -167,24 +167,6 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	@Override
-	@Deprecated
-	public void registerImageModification( String imageId,
-	                                       String context,
-	                                       Integer width,
-	                                       Integer height,
-	                                       int cropX,
-	                                       int cropY,
-	                                       int cropWidth,
-	                                       int croptHeight,
-	                                       int densityWidth,
-	                                       int densityHeight ) {
-		ImageResolutionDto resolution = new ImageResolutionDto( width, height );
-		CropDto crop = new CropDto( cropX, cropY, cropWidth, croptHeight );
-		DimensionsDto density = new DimensionsDto( densityWidth, densityHeight );
-		registerImageModification( imageId, context, new ImageModificationDto( resolution, crop, density ) );
-	}
-
-	@Override
 	public void registerImageModification( String imageId,
 	                                       String context,
 	                                       ImageModificationDto imageModification ) {
@@ -212,7 +194,6 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "token", imageServerAccessToken );
 		queryParams.set( "context", context );
-
 		queryParams.set( "configurableOnly", "true" );
 
 		return httpGet( ENDPOINT_RESOLUTION_LIST, queryParams, ResponseTypes.RESOLUTIONS );
