@@ -17,28 +17,36 @@ angular.module('imageServerAdmin')
 
     .factory('imageService', ['$http', '$rootScope', function ($http, $rootScope) {
         var imageInfo = function (externalId, callback) {
-            $http.get('/imageInfo?token=' + $rootScope.token + '&iid=' + externalId).success(function (data) {
-                callback(data.result);
-            });
+            $http
+                    .get($rootScope.imageServerUrl + '/imageInfo?token=' + $rootScope.token + '&iid=' + externalId)
+                    .success(function (data) {
+                        callback(data.result);
+                    });
         };
 
         var imageContexts = function (callback) {
-            $http.get('/context/list?token=' + $rootScope.token).success(function (data) {
-                callback(data.result);
-            });
+            $http
+                    .get($rootScope.imageServerUrl + '/context/list?token=' + $rootScope.token)
+                    .success(function (data) {
+                        callback(data.result);
+                    });
             // callback(['ONLINE', 'DIGITAL'])
         };
 
         var imageResolutions = function (context, callback) {
-            $http.get('/modification/listResolutions?token=' + $rootScope.token + '&context=' + context).success(function (data) {
-                callback(data.result);
-            });
+            $http
+                    .get($rootScope.imageServerUrl + '/resolutions/list?token=' + $rootScope.token + '&context=' + context)
+                    .success(function (data) {
+                        callback(data.result);
+                    });
         };
 
         var registeredModifications = function (externalId, context, callback) {
-            $http.get('/modification/listModifications?token=' + $rootScope.token + '&context=' + context + '&iid=' + externalId).success(function (data) {
-                callback(data.result);
-            });
+            $http
+                    .get($rootScope.imageServerUrl + '/modification/listModifications?token=' + $rootScope.token + '&context=' + context + '&iid=' + externalId)
+                    .success(function (data) {
+                        callback(data.result);
+                    });
         };
 
         var imageTypes = function (callback) {
@@ -46,9 +54,11 @@ angular.module('imageServerAdmin')
         };
 
         var resolutionDetails = function (resolutionId, callback) {
-            $http.get('/modification/resolutionDetails?token=' + $rootScope.token + '&id=' + resolutionId).success(function (data) {
-                callback(data.result);
-            });
+            $http
+                    .get($rootScope.imageServerUrl + '/resolutions/details?token=' + $rootScope.token + '&id=' + resolutionId)
+                    .success(function (data) {
+                        callback(data.result);
+                    });
         };
 
         return {
@@ -128,7 +138,7 @@ angular.module('imageServerAdmin')
                     }
                 }, formData);
 
-                $http.post('/modification/updateResolution?token=' + $rootScope.token, formData)
+                $http.post($rootScope.imageServerUrl + '/resolutions/update?token=' + $rootScope.token, formData)
                     .success(function (data) {
                         if (!data.success) {
                             $scope.feedback = { 'type': 'alert-danger', 'message': 'Something went wrong, resolution has not been saved.'};
@@ -221,7 +231,7 @@ angular.module('imageServerAdmin')
         this.buildPreviewUrl = function () {
             if (this.image) {
                 this.selectedCrop = this.getCrop(this.selectedResolution);
-                this.previewUrl = '/view?iid=' + this.image.externalId + '&imageType=' + this.selectedImageType
+                this.previewUrl = $rootScope.imageServerUrl + '/view?iid=' + this.image.externalId + '&imageType=' + this.selectedImageType
                     + '&width=' + this.selectedResolution.width
                     + '&height=' + this.selectedResolution.height
                     + '&context=' + this.selectedContext
@@ -282,7 +292,7 @@ angular.module('imageServerAdmin')
 
         this.upload = function () {
             $upload.upload({
-                url: '/load',
+                url: $rootScope.imageServerUrl + '/load',
                 data: {
                     'token': $rootScope.token,
                     'iid': this.externalId

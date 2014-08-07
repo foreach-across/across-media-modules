@@ -24,12 +24,12 @@ import java.util.List;
  */
 @ImageServerController
 @ResponseBody
-@RequestMapping("/modification")
+@RequestMapping("/resolutions")
 public class ImageResolutionController extends BaseImageAPIController
 {
-	public static final String UPDATE_RESOLUTION = "updateResolution";
-	public static final String RESOLUTION_DETAILS = "resolutionDetails";
-	public static final String LIST_RESOLUTIONS_PATH = "listResolutions";
+	public static final String UPDATE_RESOLUTION = "update";
+	public static final String RESOLUTION_DETAILS = "details";
+	public static final String LIST_RESOLUTIONS_PATH = "list";
 
 	@Autowired
 	private ImageContextService contextService;

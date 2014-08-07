@@ -13,6 +13,7 @@ import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.AcrossWebViewSupport;
 import com.foreach.imageserver.admin.ImageServerAdminWebModule;
+import com.foreach.imageserver.admin.ImageServerAdminWebModuleSettings;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.test.standalone.module.StandaloneWebModule;
@@ -21,6 +22,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.util.UUID;
 
 @Configuration
 @EnableAcrossContext
@@ -56,10 +59,6 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 		return new AcrossHibernateModule();
 	}
 
-	private ImageServerAdminWebModule imageServerAdminModule() {
-		return new ImageServerAdminWebModule();
-	}
-
 	private PropertiesModule propertiesModule() {
 		return new PropertiesModule();
 	}
@@ -84,7 +83,10 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 		AcrossWebModule webModule = new AcrossWebModule();
 		webModule.setViewsResourcePath( "/static" );
 		webModule.setSupportViews( AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF );
-		webModule.setDevelopmentMode( false );
+
+		webModule.setDevelopmentMode( true );
+		webModule.addDevelopmentViews( "imageserver-admin",
+		                               "c:/code/imageserver/imageserver-admin/src/main/resources/views/" );
 
 		return webModule;
 	}
@@ -99,13 +101,26 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 	private ImageServerCoreModule imageServerCoreModule() {
 		ImageServerCoreModule coreModule = new ImageServerCoreModule();
 		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
-		                        System.getProperty( "java.io.tmpdir" ) );
+		                        new File( System.getProperty( "java.io.tmpdir" ), UUID.randomUUID().toString() ) );
 		coreModule.setProperty( ImageServerCoreModuleSettings.PROVIDE_STACKTRACE, true );
 		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_ENABLED, true );
 		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GRAPHICSMAGICK, true );
-		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PATH, "c:/Program Files/GraphicsMagick-1.3.19-Q8" );
-		//coreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/resources/images" );
+		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PATH,
+		                        "c:/Program Files/GraphicsMagick-1.3.19-Q8" );
+
+		coreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/resources/images" );
+		coreModule.setProperty( ImageServerCoreModuleSettings.ACCESS_TOKEN, "standalone-access-token" );
 
 		return coreModule;
+	}
+
+	private ImageServerAdminWebModule imageServerAdminModule() {
+		ImageServerAdminWebModule imageServerAdminWebModule = new ImageServerAdminWebModule();
+		imageServerAdminWebModule.setProperty( ImageServerAdminWebModuleSettings.IMAGE_SERVER_URL,
+		                                       "/resources/images" );
+		imageServerAdminWebModule.setProperty( ImageServerAdminWebModuleSettings.ACCESS_TOKEN,
+		                                       "standalone-access-token" );
+
+		return imageServerAdminWebModule;
 	}
 }

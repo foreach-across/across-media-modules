@@ -12,7 +12,7 @@ public interface ImageServerClient
 	String ENDPOINT_IMAGE_RENDER = "render";
 	String ENDPOINT_IMAGE_LOAD = "load";
 	String ENDPOINT_IMAGE_INFO = "imageInfo";
-	String ENDPOINT_RESOLUTION_LIST = "modification/listResolutions";
+	String ENDPOINT_RESOLUTION_LIST = "resolutions/list";
 	String ENDPOINT_MODIFICATION_LIST = "modification/listModifications";
 	String ENDPOINT_MODIFICATION_REGISTER = "modification/register";
 

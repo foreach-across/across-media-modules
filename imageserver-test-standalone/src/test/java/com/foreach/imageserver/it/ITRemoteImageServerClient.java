@@ -5,6 +5,7 @@ import be.mediafin.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -21,11 +22,15 @@ import static org.junit.Assert.*;
  */
 public class ITRemoteImageServerClient
 {
-	private ImageServerClient imageServerClient = new RemoteImageServerClient( "http://localhost:"
-			                                                                           + System.getProperty(
-			"local.tomcat.port", "8078" )
-			                                                                           +
-			                                                                           "/", "azerty" );
+	private ImageServerClient imageServerClient;
+
+	@Before
+	public void createClient() {
+		String url = "http://localhost:" + System.getProperty( "local.tomcat.port", "8078" ) + "/resources/images";
+		String accessToken = "standalone-access-token";
+
+		imageServerClient = new RemoteImageServerClient( url, accessToken );
+	}
 
 	@Test
 	public void uploadKnownResourceImage() throws ParseException, IOException {
