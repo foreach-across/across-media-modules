@@ -452,7 +452,7 @@ public class CropGeneratorImpl implements CropGenerator
 		}
 	}
 
-	private final static class CropCandidate
+	private static final class CropCandidate
 	{
 		private final Crop crop;
 		private final float extensionMeasure;

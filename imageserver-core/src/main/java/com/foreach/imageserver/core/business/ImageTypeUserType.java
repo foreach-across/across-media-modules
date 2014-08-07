@@ -57,13 +57,8 @@ public class ImageTypeUserType implements UserType
 	                         Object value,
 	                         int index,
 	                         SessionImplementor session ) throws HibernateException, SQLException {
-		try {
-			BigDecimal result = ( (ImageType) value ).getId();
-			TYPE.set( st, result, index, session );
-		}
-		catch ( Exception e ) {
-			throw new HibernateException( "Exception while getting ids from set", e );
-		}
+		BigDecimal result = ( (ImageType) value ).getId();
+		TYPE.set( st, result, index, session );
 	}
 
 	@Override
