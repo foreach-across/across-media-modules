@@ -1,5 +1,7 @@
 package com.foreach.imageserver.dto;
 
+import org.apache.commons.io.FileUtils;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -10,6 +12,7 @@ public class ImageInfoDto
 	private Date created;
 	private ImageTypeDto imageType;
 	private DimensionsDto dimensionsDto;
+	private long imageFileSize;
 
 	public ImageInfoDto() {
 	}
@@ -75,5 +78,17 @@ public class ImageInfoDto
 	@Override
 	public int hashCode() {
 		return Objects.hash( existing, externalId, created, imageType, dimensionsDto );
+	}
+
+	public void setImageFileSize( long imageFileSize ) {
+		this.imageFileSize = imageFileSize;
+	}
+
+	public long getImageFileSize() {
+		return imageFileSize;
+	}
+
+	public String getReadableFileSize() {
+		return FileUtils.byteCountToDisplaySize( imageFileSize );
 	}
 }

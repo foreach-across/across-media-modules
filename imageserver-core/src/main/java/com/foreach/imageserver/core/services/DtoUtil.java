@@ -80,6 +80,7 @@ public final class DtoUtil
 		dto.setCreated( image.getDateCreated() );
 		dto.setDimensionsDto( toDto( image.getDimensions() ) );
 		dto.setImageType( ImageTypeDto.valueOf( image.getImageType().name() ) );
+		dto.setImageFileSize( image.getFileSize() );
 
 		return dto;
 	}

@@ -25,6 +25,7 @@
                         <p><strong>{{controller.image.externalId}}</strong><br/>
                             {{controller.image.dimensionsDto.width}} x {{controller.image.dimensionsDto.height}}<br/>
                             {{controller.image.imageType}}<br/>
+                            {{controller.image.readableFileSize}}<br/>
                         </p>
                         {{controller.image.created | date:['dd MMM y hh:mm']}}
                     </div>
