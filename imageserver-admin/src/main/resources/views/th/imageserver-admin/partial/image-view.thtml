@@ -25,9 +25,9 @@
                         <p><strong>{{controller.image.externalId}}</strong><br/>
                             {{controller.image.dimensionsDto.width}} x {{controller.image.dimensionsDto.height}}<br/>
                             {{controller.image.imageType}}<br/>
-                            {{controller.image.readableFileSize}}<br/>
+                            {{controller.image.imageFileSize | bytes}}<br/>
                         </p>
-                        {{controller.image.created | date:['dd MMM y hh:mm']}}
+                        {{controller.image.created | date:['dd MMM yyyy HH:mm:ss']}}
                     </div>
                 </div>
 
@@ -48,7 +48,7 @@
                             <td>
                             <span class="badge pull-right" ng-if="controller.getCrop(resolution)"
                                   title="Crop defined">!</span>
-                                <a href="" ng-click="controller.selectResolution(resolution)">{{resolution.name}}</a>
+                                <a href="" ng-click="controller.selectResolution(resolution, true)">{{resolution.name}}</a>
                             </td>
                         </tr>
                     </table>

@@ -202,7 +202,7 @@ angular.module('imageServerAdmin')
 
             imageService.getImageResolutions(context, function (data) {
                 $controller.resolutions = data;
-                $controller.selectResolution(data[0]);
+                $controller.selectResolution(data[0], false);
                 $controller.updateModifications();
             });
         };
@@ -221,11 +221,18 @@ angular.module('imageServerAdmin')
 
         this.selectImageType = function (imageType) {
             $controller.selectedImageType = imageType;
+            imageService.getImageResolutions( $controller.selectedContext, function (data) {
+                $controller.resolutions = data;
+                $controller.selectResolution(data[0], false);
+                $controller.updateModifications();
+            });
         };
 
-        this.selectResolution = function (resolution) {
+        this.selectResolution = function (resolution, refreshPreviewUrl ) {
             $controller.selectedResolution = resolution;
-            $controller.buildPreviewUrl();
+            if( refreshPreviewUrl ) {
+                $controller.buildPreviewUrl();
+            }
         };
 
         this.buildPreviewUrl = function () {
@@ -307,5 +314,22 @@ angular.module('imageServerAdmin')
         this.canUpload = function () {
             return !this.existing && this.externalId && this.file;
         };
-    }]);
+    }])
 
+    .filter('bytes', function() {
+        return function(bytes, precision) {
+            if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) {
+                return '-';
+            }
+
+            if (typeof precision === 'undefined') {
+                precision = 1;
+            }
+
+            var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+                    number = Math.floor(Math.log(bytes) / Math.log(1024));
+
+            return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+        }
+    }
+);

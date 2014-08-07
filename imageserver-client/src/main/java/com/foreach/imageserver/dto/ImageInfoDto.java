@@ -1,7 +1,5 @@
 package com.foreach.imageserver.dto;
 
-import org.apache.commons.io.FileUtils;
-
 import java.util.Date;
 import java.util.Objects;
 
@@ -86,9 +84,5 @@ public class ImageInfoDto
 
 	public long getImageFileSize() {
 		return imageFileSize;
-	}
-
-	public String getReadableFileSize() {
-		return FileUtils.byteCountToDisplaySize( imageFileSize );
 	}
 }
