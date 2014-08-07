@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source source="LOCAL" name="MySQL - imageserver_test@172.16.3.27" uuid="c67123e0-5795-4a30-b439-41e666f227e4">
+    <database-info product="MySQL" version="5.1.62-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.31 ( Revision: alexander.soklakov@oracle.com-20140520065950-groqzzbvxprqdmnz )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower"/>
+    <schema name="" catalog="imageserver_test"/>
+    <table name="across_sequences" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="seq_name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <column name="seq_number" sqlType="BIGINT" precision="19" scale="0" nullable="true" jdbcType="-5"/>
+      <primary-key name="PRIMARY" columns="seq_name"/>
+    </table>
+    <table name="acrossmodules" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="module_id" sqlType="VARCHAR" precision="120" scale="0" nullable="false" jdbcType="12"/>
+      <column name="installer_id" sqlType="VARCHAR" precision="120" scale="0" nullable="false" jdbcType="12"/>
+      <column name="module" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="installer" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="version" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="description" sqlType="VARCHAR" precision="500" scale="0" nullable="true" jdbcType="12"/>
+      <column name="created" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
+      <primary-key name="PRIMARY" columns="module_id,installer_id"/>
+    </table>
+    <table name="databasechangelog" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="ID" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="AUTHOR" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="FILENAME" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="DATEEXECUTED" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="ORDEREXECUTED" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="EXECTYPE" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="MD5SUM" sqlType="VARCHAR" precision="35" scale="0" nullable="true" jdbcType="12"/>
+      <column name="DESCRIPTION" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="COMMENTS" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="TAG" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="LIQUIBASE" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+    </table>
+    <table name="databasechangeloglock" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="LOCKED" sqlType="BIT" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="LOCKGRANTED" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="LOCKEDBY" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="ID"/>
+    </table>
+    <table name="img_context" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="code" sqlType="VARCHAR" precision="100" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="fk_img_cir_ci" table="img_context_image_resolution" schema="" catalog="imageserver_test" columns="context_id"/>
+      <exported-key name="fk_img_imci_ci" table="img_image_modification" schema="" catalog="imageserver_test" columns="context_id"/>
+      <exported-key name="fk_img_ipm_ci" table="img_image_profile_modification" schema="" catalog="imageserver_test" columns="context_id"/>
+      <index name="idx_img_context_code" unique="true" columns="code"/>
+    </table>
+    <table name="img_context_image_resolution" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="context_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="image_resolution_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <foreign-key name="fk_img_cir_iri" columns="image_resolution_id" ref-table="img_image_resolution" ref-schema="" ref-catalog="imageserver_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="fk_img_cir_ci" columns="context_id" ref-table="img_context" ref-schema="" ref-catalog="imageserver_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="ix_img_cir_ci" unique="false" columns="context_id"/>
+      <index name="ix_img_cir_iri" unique="false" columns="image_resolution_id"/>
+    </table>
+    <table name="img_image" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="external_id" sqlType="VARCHAR" precision="250" scale="0" nullable="false" jdbcType="12"/>
+      <column name="profile_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" def="MQ=="/>
+      <column name="created" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
+      <column name="width" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="height" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="image_type_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="fk_img_pi_ii" columns="profile_id" ref-table="img_image_profile" ref-schema="" ref-catalog="imageserver_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="fk_img_imii_ii" table="img_image_modification" schema="" catalog="imageserver_test" columns="image_id"/>
+      <index name="ix_img_image_externalid" unique="true" columns="external_id"/>
+      <index name="fk_img_pi_ii" unique="false" columns="profile_id"/>
+    </table>
+    <table name="img_image_modification" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="image_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="context_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="resolution_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="densityWidth" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="densityHeight" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropX" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropY" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropWidth" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropHeight" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <primary-key name="PRIMARY" columns="image_id,context_id,resolution_id"/>
+      <foreign-key name="fk_img_imri_ri" columns="resolution_id" ref-table="img_image_resolution" ref-schema="" ref-catalog="imageserver_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="fk_img_imci_ci" columns="context_id" ref-table="img_context" ref-schema="" ref-catalog="imageserver_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="fk_img_imii_ii" columns="image_id" ref-table="img_image" ref-schema="" ref-catalog="imageserver_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="ix_img_im_ci" unique="false" columns="context_id"/>
+      <index name="ix_img_im_ii" unique="false" columns="image_id"/>
+      <index name="ix_img_im_ri" unique="false" columns="resolution_id"/>
+    </table>
+    <table name="img_image_profile" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="name" sqlType="VARCHAR" precision="50" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="fk_img_pi_ii" table="img_image" schema="" catalog="imageserver_test" columns="profile_id"/>
+      <exported-key name="fk_img_ipm_pi" table="img_image_profile_modification" schema="" catalog="imageserver_test" columns="profile_id"/>
+      <index name="name" unique="true" columns="name"/>
+    </table>
+    <table name="img_image_profile_modification" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="resolution_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="context_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="profile_id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="width" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="height" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="boundariesWidth" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="boundariesHeight" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="densityX" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="densityY" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropX" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropY" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropWidth" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropHeight" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropSourceWidth" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropSourceHeight" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropBoxWidth" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="cropBoxHeight" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="fk_img_ipm_ci" columns="context_id" ref-table="img_context" ref-schema="" ref-catalog="imageserver_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="fk_img_ipm_pi" columns="profile_id" ref-table="img_image_profile" ref-schema="" ref-catalog="imageserver_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="fk_img_ipm_ri" columns="resolution_id" ref-table="img_image_resolution" ref-schema="" ref-catalog="imageserver_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="fk_img_ipm_ci" unique="false" columns="context_id"/>
+      <index name="fk_img_ipm_pi" unique="false" columns="profile_id"/>
+      <index name="fk_img_ipm_ri" unique="false" columns="resolution_id"/>
+    </table>
+    <table name="img_image_resolution" schema="" catalog="imageserver_test" type="TABLE">
+      <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="width" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="height" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="configurable" sqlType="DECIMAL" precision="1" scale="0" nullable="false" jdbcType="3" def="MA=="/>
+      <column name="name" sqlType="VARCHAR" precision="250" scale="0" nullable="true" jdbcType="12"/>
+      <column name="tags" sqlType="VARCHAR" precision="500" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="fk_img_cir_iri" table="img_context_image_resolution" schema="" catalog="imageserver_test" columns="image_resolution_id"/>
+      <exported-key name="fk_img_imri_ri" table="img_image_modification" schema="" catalog="imageserver_test" columns="resolution_id"/>
+      <exported-key name="fk_img_ipm_ri" table="img_image_profile_modification" schema="" catalog="imageserver_test" columns="resolution_id"/>
+      <index name="ix_img_ir_wh" unique="true" columns="width,height"/>
+    </table>
+  </data-source>
+</component>
