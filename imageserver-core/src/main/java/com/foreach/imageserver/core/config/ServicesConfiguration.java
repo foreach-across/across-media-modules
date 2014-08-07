@@ -5,8 +5,10 @@ import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.rest.services.ResolutionRestService;
 import com.foreach.imageserver.core.rest.services.ResolutionRestServiceImpl;
 import com.foreach.imageserver.core.services.*;
+import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
@@ -16,11 +18,24 @@ import java.io.IOException;
 /**
  * @author Arne Vandamme
  */
+@ComponentScan(
+		basePackages = { "com.foreach.imageserver.core.managers" }
+)
 @Configuration
 public class ServicesConfiguration
 {
 	@Autowired
 	private Environment environment;
+
+	@Bean
+	public ImageTransformerRegistry imageTransformerRegistry() {
+		return new ImageTransformerRegistry();
+	}
+
+	@Bean
+	public ImageRepositoryRegistry imageRepositoryRegistry() {
+		return new ImageRepositoryRegistry();
+	}
 
 	@Bean
 	public ResolutionRestService resolutionRestService() {

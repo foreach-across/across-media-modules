@@ -26,6 +26,14 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 		this.imageServerUrl = imageServerUrl;
 	}
 
+	public String getImageServerUrl() {
+		return imageServerUrl;
+	}
+
+	public void setImageServerUrl( String imageServerUrl ) {
+		this.imageServerUrl = imageServerUrl;
+	}
+
 	@Override
 	public String imageUrl( String imageId,
 	                        String context,

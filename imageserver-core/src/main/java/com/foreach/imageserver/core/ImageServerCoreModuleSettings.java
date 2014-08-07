@@ -11,11 +11,25 @@ public class ImageServerCoreModuleSettings
 	public static final String ROOT_PATH = "imageServerCore.rootPath";
 
 	/**
+	 * URL for this ImageServer instance.  In case a local client will be created, this
+	 * will be the base url for requesting images.
+	 */
+	public static final String IMAGE_SERVER_URL = "imageServerCore.imageServerUrl";
+
+	/**
 	 * Access token required for secured services.
 	 * <p/>
 	 * Type: string
 	 */
 	public static final String ACCESS_TOKEN = "imageServerCore.accessToken";
+
+	/**
+	 * Should a {@link com.foreach.imageserver.core.client.LocalImageServerClient} instance be created
+	 * for this ImageServer.  If true the instance will be created and exposed so dependant modules can use it.
+	 * <p/>
+	 * Type: boolean, default: false
+	 */
+	public static final String CREATE_LOCAL_CLIENT = "imageServerCore.createLocalClient";
 
 	/**
 	 * Should exception stacktrace be returned to the caller.

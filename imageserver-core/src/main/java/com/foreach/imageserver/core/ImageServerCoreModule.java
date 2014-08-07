@@ -13,6 +13,8 @@ import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.*;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.imageserver.core.config.*;
+import com.foreach.imageserver.core.config.conditional.ImageMagickTransformerConfiguration;
+import com.foreach.imageserver.core.config.conditional.LocalImageServerClientConfiguration;
 import com.foreach.imageserver.core.installers.DefaultDataInstaller;
 import com.foreach.imageserver.core.installers.Image404Installer;
 import com.foreach.imageserver.core.installers.InitialSchemaInstaller;
@@ -26,7 +28,7 @@ public class ImageServerCoreModule extends AcrossModule implements HasHibernateP
 	public static final String NAME = "ImageServerCoreModule";
 	private final SchemaConfiguration schemaConfiguration = new ImageSchemaConfiguration();
 
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	public ImageServerCoreModule() {
 		setExposeFilter( new AnnotationBeanFilter( true, Exposed.class ) );
 	}
@@ -43,11 +45,16 @@ public class ImageServerCoreModule extends AcrossModule implements HasHibernateP
 
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-		contextConfigurers.add( new AnnotatedClassConfigurer( ImageServerCoreConfig.class, ServicesConfiguration.class,
-		                                                      RepositoriesConfiguration.class,
-		                                                      ImageMagickTransformerConfiguration.class,
-		                                                      WebConfiguration.class,
-		                                                      MultipartResolverConfiguration.class ) );
+		contextConfigurers.add(
+				new AnnotatedClassConfigurer(
+						ServicesConfiguration.class,
+						RepositoriesConfiguration.class,
+						ImageMagickTransformerConfiguration.class,
+						WebConfiguration.class,
+						MultipartResolverConfiguration.class,
+						LocalImageServerClientConfiguration.class
+				)
+		);
 	}
 
 	@Override

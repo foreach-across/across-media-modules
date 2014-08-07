@@ -16,6 +16,8 @@ public interface ImageServerClient
 	String ENDPOINT_MODIFICATION_LIST = "modification/listModifications";
 	String ENDPOINT_MODIFICATION_REGISTER = "modification/register";
 
+	String getImageServerUrl();
+
 	String imageUrl( String imageId,
 	                 String context,
 	                 int width,
