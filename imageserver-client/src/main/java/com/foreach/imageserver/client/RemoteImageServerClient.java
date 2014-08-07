@@ -27,8 +27,9 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 {
 	private static final Logger LOG = LoggerFactory.getLogger( RemoteImageServerClient.class );
 
-	private static class ResponseTypes
+	private static final class ResponseTypes
 	{
+		private ResponseTypes() {}
 		private static final ParameterizedTypeReference<JsonResponse<List<ImageResolutionDto>>> RESOLUTIONS =
 				new ParameterizedTypeReference<JsonResponse<List<ImageResolutionDto>>>()
 				{

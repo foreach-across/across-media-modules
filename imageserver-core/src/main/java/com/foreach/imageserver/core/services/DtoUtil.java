@@ -10,7 +10,7 @@ import java.util.List;
 // TODO: review to simply business and dto objects layer
 public final class DtoUtil
 {
-
+	private DtoUtil() {}
 	public static Crop toBusiness( CropDto dto ) {
 		Crop crop = new Crop();
 		crop.setX( dto.getX() );
