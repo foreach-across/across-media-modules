@@ -207,7 +207,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 */
 
 		String fileName = constructFileName( image );
-		return originalsFolder.resolve( image.getPath() ).resolve( fileName );
+		return originalsFolder.resolve( image.getOriginalPath() ).resolve( fileName );
 	}
 
 	private Path getTargetPath( Image image,
@@ -227,7 +227,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 		String fileName = constructFileName( image, modification, imageVariant );
 
-		return variantsFolder.resolve( context.getCode() ).resolve( image.getPath() ).resolve( fileName );
+		return variantsFolder.resolve( context.getCode() ).resolve( image.getVariantPath() ).resolve( fileName );
 	}
 
 	private String constructFileName( Image image, ImageModificationDto modification, ImageVariant imageVariant ) {

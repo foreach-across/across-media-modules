@@ -73,6 +73,15 @@
             <column name="image_type_id" type="java.sql.Types.INTEGER">
                 <constraints nullable="false"/>
             </column>
+	        <column name="file_size" type="java.sql.Types.BIGINT">
+		        <constraints nullable="false"/>
+	        </column>
+	        <column name="original_path" type="java.sql.Types.VARCHAR(250)">
+		        <constraints nullable="false"/>
+	        </column>
+	        <column name="variant_path" type="java.sql.Types.VARCHAR(250)">
+		        <constraints nullable="false"/>
+	        </column>
         </createTable>
         <createIndex tableName="${table.image}" indexName="ix_img_image_externalid" unique="true">
             <column name="external_id"/>

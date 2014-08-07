@@ -30,7 +30,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest {
 
         Image writtenImage = new Image();
         writtenImage.setExternalId("external_id");
-        writtenImage.setDateCreated(new Date());
+        writtenImage.setDateCreated( DateUtils.truncate( new Date(), Calendar.SECOND ) );
         writtenImage.setDimensions(dimensions(111, 222));
         writtenImage.setImageType(ImageType.EPS);
 	    writtenImage.setImageProfileId( imageProfile.getId() );
@@ -53,10 +53,15 @@ public class ImageRepositoryTest extends AbstractIntegrationTest {
 
         Image writtenImage = new Image();
         writtenImage.setExternalId("external_id2");
-        writtenImage.setDateCreated(new Date());
+
+	    Calendar cal = Calendar.getInstance();
+	    cal.set( 2011, Calendar.FEBRUARY, 28 );
+
+        writtenImage.setDateCreated( DateUtils.truncate( cal.getTime(), Calendar.SECOND ) );
         writtenImage.setDimensions(dimensions(111, 222));
         writtenImage.setImageType(ImageType.EPS);
 	    writtenImage.setImageProfileId( imageProfile.getId() );
+	    writtenImage.setFileSize( Long.MAX_VALUE );
 	    imageRepository.create(writtenImage);
 
         Image readImage = imageRepository.getByExternalId(writtenImage.getExternalId());
@@ -64,8 +69,17 @@ public class ImageRepositoryTest extends AbstractIntegrationTest {
         assertEquals(writtenImage.getExternalId(), readImage.getExternalId());
 	    assertTrue( DateUtils.truncatedEquals( writtenImage.getDateCreated(), readImage.getDateCreated(), Calendar.SECOND ) );
         assertEquals(writtenImage.getDimensions().getWidth(), readImage.getDimensions().getWidth());
+	    assertEquals("2011/02/28", readImage.getVariantPath());
+	    assertEquals("2011/02/28", readImage.getOriginalPath());
         assertEquals(writtenImage.getDimensions().getHeight(), readImage.getDimensions().getHeight());
         assertEquals(writtenImage.getImageType(), readImage.getImageType());
+	    assertEquals( Long.MAX_VALUE, readImage.getFileSize() );
+
+	    imageRepository.update(readImage);
+	    Image dontChangePathsOnImage = imageRepository.getByExternalId(readImage.getExternalId());
+	    assertEquals("2011/02/28", dontChangePathsOnImage.getVariantPath());
+	    assertEquals("2011/02/28", dontChangePathsOnImage.getOriginalPath());
+
     }
 
     private Dimensions dimensions(int width, int height) {

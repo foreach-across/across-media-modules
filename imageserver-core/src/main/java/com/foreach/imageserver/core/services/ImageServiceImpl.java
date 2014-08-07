@@ -82,6 +82,7 @@ public class ImageServiceImpl implements ImageService
 		image.setDateCreated( imageDate );
 		image.setDimensions( imageAttributes.getDimensions() );
 		image.setImageType( imageAttributes.getType() );
+		image.setFileSize( imageBytes != null ? imageBytes.length : 0 );
 		imageManager.insert( image );
 
 		imageStoreService.storeOriginalImage( image, imageBytes );

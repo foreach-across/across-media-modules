@@ -2,7 +2,6 @@ package com.foreach.imageserver.core.business;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -46,6 +45,15 @@ public class Image
 	                    })
 	private Dimensions dimensions;
 
+	@Column( name = "file_size" )
+	private long fileSize;
+
+	@Column( name = "original_path" )
+	private String originalPath;
+
+	@Column( name = "variant_path" )
+	private String variantPath;
+
 	public long getId() {
 		return id;
 	}
@@ -75,10 +83,6 @@ public class Image
 		}
 	}
 
-	public String getPath() {
-		return dateCreated != null ? FastDateFormat.getInstance( "yyyy/MM/dd" ).format( dateCreated ) : null;
-	}
-
 	public Dimensions getDimensions() {
 		return dimensions;
 	}
@@ -101,6 +105,30 @@ public class Image
 
 	public void setImageProfileId( long imageProfileId ) {
 		this.imageProfileId = imageProfileId;
+	}
+
+	public long getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize( long fileSize ) {
+		this.fileSize = fileSize;
+	}
+
+	public String getOriginalPath() {
+		return originalPath;
+	}
+
+	public void setOriginalPath( String originalPath ) {
+		this.originalPath = originalPath;
+	}
+
+	public String getVariantPath() {
+		return variantPath;
+	}
+
+	public void setVariantPath( String variantPath ) {
+		this.variantPath = variantPath;
 	}
 
 	@Override
