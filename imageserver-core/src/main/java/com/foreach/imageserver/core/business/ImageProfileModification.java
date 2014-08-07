@@ -27,38 +27,38 @@ public class ImageProfileModification {
     private long id;
 
     @Column( name = "resolution_id" )
-    private int imageResolutionId;
+    private long imageResolutionId;
 
     @Column( name = "profile_id" )
-    private int imageProfileId;
+    private long imageProfileId;
 
     @Column( name = "context_id" )
-    private int imageContextId;
+    private long imageContextId;
 
 	@Transient //TODO: FIX
     private ImageModificationDto modificationDto = new ImageModificationDto();
 
-	public int getImageResolutionId() {
+	public long getImageResolutionId() {
 		return imageResolutionId;
 	}
 
-	public void setImageResolutionId( int imageResolutionId ) {
+	public void setImageResolutionId( long imageResolutionId ) {
 		this.imageResolutionId = imageResolutionId;
 	}
 
-	public int getImageProfileId() {
+	public long getImageProfileId() {
 		return imageProfileId;
 	}
 
-	public void setImageProfileId( int imageProfileId ) {
+	public void setImageProfileId( long imageProfileId ) {
 		this.imageProfileId = imageProfileId;
 	}
 
-	public int getImageContextId() {
+	public long getImageContextId() {
 		return imageContextId;
 	}
 
-	public void setImageContextId( int imageContextId ) {
+	public void setImageContextId( long imageContextId ) {
 		this.imageContextId = imageContextId;
 	}
 

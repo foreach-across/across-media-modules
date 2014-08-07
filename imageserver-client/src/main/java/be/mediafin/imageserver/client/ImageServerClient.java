@@ -8,8 +8,13 @@ import java.util.List;
 
 public interface ImageServerClient
 {
-	String ENDPOINT_VIEW_IMAGE = "view";
-	String ENDPOINT_RENDER_IMAGE = "render";
+	String ENDPOINT_IMAGE_VIEW = "view";
+	String ENDPOINT_IMAGE_RENDER = "render";
+	String ENDPOINT_IMAGE_LOAD = "load";
+	String ENDPOINT_IMAGE_INFO = "imageInfo";
+	String ENDPOINT_RESOLUTION_LIST = "modification/listResolutions";
+	String ENDPOINT_MODIFICATION_LIST = "modification/listModifications";
+	String ENDPOINT_MODIFICATION_REGISTER = "modification/register";
 
 	String imageUrl( String imageId,
 	                 String context,
@@ -58,10 +63,9 @@ public interface ImageServerClient
 	                                int densityWidth,
 	                                int densityHeight );
 
+	List<ImageModificationDto> listModifications( String imageId, String context );
+
 	List<ImageResolutionDto> listAllowedResolutions( String context );
 
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
-
-	List<ImageModificationDto> listModifications( String imageId, String context );
-
 }

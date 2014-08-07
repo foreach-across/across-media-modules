@@ -112,18 +112,6 @@ public class Image
 		this.imageType = imageType;
 	}
 
-	public String getDateCreatedYearString() {
-		return dateCreatedYearString;
-	}
-
-	public String getDateCreatedMonthString() {
-		return dateCreatedMonthString;
-	}
-
-	public String getDateCreatedDayString() {
-		return dateCreatedDayString;
-	}
-
 	public long getImageProfileId() {
 		return imageProfileId;
 	}

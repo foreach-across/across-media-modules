@@ -89,7 +89,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		addQueryParams( queryParams, imageResolution );
 		addQueryParams( queryParams, imageVariant );
 
-		return new ByteArrayInputStream( httpGet( "view", queryParams, byte[].class ) );
+		return new ByteArrayInputStream( httpGet( ENDPOINT_IMAGE_VIEW, queryParams, byte[].class ) );
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		addQueryParams( queryParams, imageModificationDto );
 		addQueryParams( queryParams, imageVariant );
 
-		return new ByteArrayInputStream( httpGet( "render", queryParams, byte[].class ) );
+		return new ByteArrayInputStream( httpGet( ENDPOINT_IMAGE_RENDER, queryParams, byte[].class ) );
 	}
 
 	@Override
@@ -118,10 +118,11 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate ) {
-		if ( StringUtils.isBlank( imageId ) || imageBytes == null || imageDate == null ) {
-			LOG.warn(
-					"Null parameters not allowed - ImageServerClientImpl#loadImage: imageId={}, imageBytes={}, imageDate={}",
-					LogHelper.flatten( imageId, imageBytes, imageDate ) );
+		if ( StringUtils.isBlank( imageId    )) {
+			throw new ImageServerException( "You must specify an imageId when loading an image." );
+		}
+		if ( imageBytes == null || imageBytes.length == 0 ) {
+			throw new ImageServerException( "Unable to load an image with empty byte data.");
 		}
 
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
@@ -141,12 +142,12 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		} );
 
 		try {
-			return httpPost( "load", queryParams, bodyParts, ResponseTypes.IMAGE_INFO );
+			return httpPost( ENDPOINT_IMAGE_LOAD, queryParams, bodyParts, ResponseTypes.IMAGE_INFO );
 		}
 		catch ( RuntimeException e ) {
 			LOG.error(
 					"Loading image caused exception - ImageServerClientImpl#loadImage: imageId={}, imageBytes={}, imageDate={}",
-					LogHelper.flatten( imageId, imageBytes, imageDate ) );
+					LogHelper.flatten( imageId, imageBytes.length, imageDate ) );
 			throw e;
 		}
 	}
@@ -162,7 +163,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		queryParams.set( "token", imageServerAccessToken );
 		queryParams.set( "iid", imageId );
 
-		return httpGet( "imageInfo", queryParams, ResponseTypes.IMAGE_INFO );
+		return httpGet( ENDPOINT_IMAGE_INFO, queryParams, ResponseTypes.IMAGE_INFO );
 	}
 
 	@Override
@@ -194,7 +195,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 		addQueryParams( queryParams, imageModification );
 
-		httpGet( "modification/register", queryParams, ResponseTypes.OBJECT );
+		httpGet( ENDPOINT_MODIFICATION_REGISTER, queryParams, ResponseTypes.OBJECT );
 	}
 
 	@Override
@@ -203,7 +204,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		queryParams.set( "token", imageServerAccessToken );
 		queryParams.set( "context", context );
 
-		return httpGet( "modification/listResolutions", queryParams, ResponseTypes.RESOLUTIONS );
+		return httpGet( ENDPOINT_RESOLUTION_LIST, queryParams, ResponseTypes.RESOLUTIONS );
 	}
 
 	@Override
@@ -214,7 +215,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 		queryParams.set( "configurableOnly", "true" );
 
-		return httpGet( "modification/listResolutions", queryParams, ResponseTypes.RESOLUTIONS );
+		return httpGet( ENDPOINT_RESOLUTION_LIST, queryParams, ResponseTypes.RESOLUTIONS );
 	}
 
 	@Override
@@ -224,10 +225,10 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		queryParams.set( "iid", imageId );
 		queryParams.set( "context", context );
 
-		return httpGet( "modification/listModifications", queryParams, ResponseTypes.MODIFICATIONS );
+		return httpGet( ENDPOINT_MODIFICATION_LIST, queryParams, ResponseTypes.MODIFICATIONS );
 	}
 
-	private <T> T httpGet( String path, MultiValueMap<String, String> queryParams, Class<T> responseType ) {
+	protected <T> T httpGet( String path, MultiValueMap<String, String> queryParams, Class<T> responseType ) {
 		URI url = buildUri( path, queryParams );
 		HttpEntity<?> request = new HttpEntity<MultiValueMap<?, ?>>( new LinkedMultiValueMap<String, String>() );
 
@@ -236,7 +237,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		return response.getBody();
 	}
 
-	private <T> T httpGet( String path,
+	protected <T> T httpGet( String path,
 	                       MultiValueMap<String, String> queryParams,
 	                       ParameterizedTypeReference<JsonResponse<T>> responseType ) {
 		URI url = buildUri( path, queryParams );
@@ -254,7 +255,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		return body.getResult();
 	}
 
-	private <T> T httpPost( String path,
+	protected <T> T httpPost( String path,
 	                        MultiValueMap<String, String> queryParams,
 	                        MultiValueMap<String, Object> bodyParams,
 	                        ParameterizedTypeReference<JsonResponse<T>> responseType ) {

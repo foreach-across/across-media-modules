@@ -56,7 +56,7 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 		//WebResource resource = getResource( "view", queryParams );
 		// resource.getURI().toString();
 
-		return buildUri( ENDPOINT_VIEW_IMAGE, queryParams ).toString();
+		return buildUri( ENDPOINT_IMAGE_VIEW, queryParams ).toString();
 	}
 
 	protected URI buildUri( String path ) {

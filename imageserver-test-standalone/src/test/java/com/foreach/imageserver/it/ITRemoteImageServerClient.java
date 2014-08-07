@@ -51,8 +51,18 @@ public class ITRemoteImageServerClient
 
 		InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(),
 		                                                         new ImageVariantDto( ImageTypeDto.JPEG ) );
-		assertNotNull( inputStream );
-		assertTrue( IOUtils.toByteArray( inputStream ).length > 1000 );
+		byte[] originalSizeData = IOUtils.toByteArray( inputStream );
+
+		ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), originalSizeData );
+		assertEquals( new DimensionsDto( 1920, 1080 ), modifiedUpload.getDimensionsDto() );
+		assertEquals( ImageTypeDto.JPEG, modifiedUpload.getImageType() );
+
+		inputStream = imageServerClient.imageStream( externalId, "website", 640, 480, ImageTypeDto.PNG );
+		byte[] scaledDate = IOUtils.toByteArray( inputStream );
+
+		modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
+		assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
+		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
 	}
 
 	@Test

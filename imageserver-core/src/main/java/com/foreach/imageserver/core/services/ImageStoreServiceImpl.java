@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.logging.LogHelper;
@@ -43,7 +43,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private final Set<PosixFilePermission> folderPermissions;
 	private final Set<PosixFilePermission> filePermissions;
 
-	public ImageStoreServiceImpl( Path imageStoreFolder, String folderPermissions, String filePermissions  ) throws IOException {
+	public ImageStoreServiceImpl( Path imageStoreFolder,
+	                              String folderPermissions,
+	                              String filePermissions ) throws IOException {
 		this.folderPermissions = toPermissions( folderPermissions );
 		this.filePermissions = toPermissions( filePermissions );
 
@@ -205,10 +207,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 */
 
 		String fileName = constructFileName( image );
-		String year = image.getDateCreatedYearString();
-		String month = image.getDateCreatedMonthString();
-		String day = image.getDateCreatedDayString();
-
 		return originalsFolder.resolve( image.getPath() ).resolve( fileName );
 	}
 
@@ -228,12 +226,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 */
 
 		String fileName = constructFileName( image, modification, imageVariant );
-		String year = image.getDateCreatedYearString();
-		String month = image.getDateCreatedMonthString();
-		String day = image.getDateCreatedDayString();
 
-		return variantsFolder.resolve( context.getCode() ).resolve( year ).resolve( month ).resolve( day ).resolve(
-				fileName );
+		return variantsFolder.resolve( context.getCode() ).resolve( image.getPath() ).resolve( fileName );
 	}
 
 	private String constructFileName( Image image, ImageModificationDto modification, ImageVariant imageVariant ) {

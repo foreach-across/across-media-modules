@@ -10,13 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class ImageProfileModificationRepositoryImpl extends BasicRepositoryImpl<ImageProfileModification> implements ImageProfileModificationRepository
 {
 	@Transactional(readOnly = true)
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Override
-	public ImageProfileModification getModification( long imageId, long contextId, long imageResolutionId ) {
+	public ImageProfileModification getModification( long imageProfileId, long contextId, long imageResolutionId ) {
 		Criteria criteria = session().createCriteria( ImageProfileModification.class );
-		criteria.add( Restrictions.eq( "imageId", imageId ) );
-		criteria.add( Restrictions.eq( "contextId", contextId ) );
-		criteria.add( Restrictions.eq( "resolutionId", imageResolutionId ) );
+		criteria.add( Restrictions.eq( "imageProfileId", imageProfileId ) );
+		criteria.add( Restrictions.eq( "imageContextId", contextId ) );
+		criteria.add( Restrictions.eq( "imageResolutionId", imageResolutionId ) );
 
 		return (ImageProfileModification) criteria.uniqueResult();
 	}
