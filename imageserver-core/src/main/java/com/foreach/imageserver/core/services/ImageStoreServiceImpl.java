@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -361,7 +363,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 */
 
 		Files.createDirectories( path );
-		if ( folderPermissions != null ) {
+		if ( !CollectionUtils.isEmpty( folderPermissions ) ) {
 			Files.setPosixFilePermissions( path, folderPermissions );
 		}
 	}
@@ -374,7 +376,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 * manipulated by external actors in the mean time, we ignore all errors.
 		 */
 
-		if ( filePermissions != null ) {
+		if ( !CollectionUtils.isEmpty( filePermissions ) ) {
 			try {
 				Files.setPosixFilePermissions( path, filePermissions );
 			}
@@ -389,7 +391,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 			return PosixFilePermissions.fromString( permissionsString );
 		}
 		else {
-			return null;
+			return Collections.emptySet();
 		}
 	}
 

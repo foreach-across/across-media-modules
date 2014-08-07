@@ -1,6 +1,8 @@
 package com.foreach.imageserver.client;
 
 import com.foreach.imageserver.dto.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -8,6 +10,8 @@ import java.util.List;
 
 public interface ImageServerClient
 {
+	Logger LOG = LoggerFactory.getLogger( ImageServerClient.class );
+
 	String ENDPOINT_IMAGE_VIEW = "view";
 	String ENDPOINT_IMAGE_RENDER = "render";
 	String ENDPOINT_IMAGE_LOAD = "load";

@@ -1,10 +1,8 @@
 package com.foreach.imageserver.client;
 
-import com.foreach.imageserver.logging.LogHelper;
 import com.foreach.imageserver.dto.*;
+import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,8 +16,6 @@ import java.net.URI;
  */
 public abstract class AbstractImageServerClient implements ImageServerClient
 {
-	protected final Logger LOG = LoggerFactory.getLogger( getClass() );
-
 	private String imageServerUrl;
 
 	protected AbstractImageServerClient( String imageServerUrl ) {

@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class TagsUserType implements UserType
@@ -30,12 +31,12 @@ public class TagsUserType implements UserType
 
 	@Override
 	public boolean equals( Object x, Object y ) throws HibernateException {
-		return x == y;
+		return Objects.equals( x, y );
 	}
 
 	@Override
 	public int hashCode( Object x ) throws HibernateException {
-		return x.hashCode();
+		return Objects.hash( x );
 	}
 
 	@Override

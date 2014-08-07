@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class ImageTypeUserType implements UserType
 {
@@ -28,12 +29,12 @@ public class ImageTypeUserType implements UserType
 
 	@Override
 	public boolean equals( Object x, Object y ) throws HibernateException {
-		return x == y;
+		return Objects.equals( x, y );
 	}
 
 	@Override
 	public int hashCode( Object x ) throws HibernateException {
-		return x.hashCode();
+		return Objects.hashCode( x );
 	}
 
 	@Override
