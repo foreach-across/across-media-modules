@@ -1,7 +1,7 @@
 package com.foreach.imageserver.it;
 
-import be.mediafin.imageserver.client.ImageServerClient;
-import be.mediafin.imageserver.client.RemoteImageServerClient;
+import com.foreach.imageserver.client.ImageServerClient;
+import com.foreach.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;

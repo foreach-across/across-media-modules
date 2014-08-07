@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/imageserver-admin/imageserver-admin.iml" filepath="$PROJECT_DIR$/imageserver-admin/imageserver-admin.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-client/imageserver-client.iml" filepath="$PROJECT_DIR$/imageserver-client/imageserver-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-core/imageserver-core.iml" filepath="$PROJECT_DIR$/imageserver-core/imageserver-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imageserver-dtos/imageserver-dtos.iml" filepath="$PROJECT_DIR$/imageserver-dtos/imageserver-dtos.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-test-standalone/imageserver-test-standalone.iml" filepath="$PROJECT_DIR$/imageserver-test-standalone/imageserver-test-standalone.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />
       <module fileurl="file://$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" filepath="$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" />

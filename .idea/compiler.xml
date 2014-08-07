@@ -27,7 +27,6 @@
         <module name="imageserver-admin" />
         <module name="imageserver-client" />
         <module name="imageserver-core" />
-        <module name="imageserver-dtos" />
         <module name="imageserver-test-standalone" />
         <module name="web.imageserver.front" />
       </profile>

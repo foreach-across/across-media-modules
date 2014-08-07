@@ -27,9 +27,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>imageserver-core</module>
 		<module>imageserver-client</module>
-		<module>imageserver-dtos</module>
+		<module>imageserver-core</module>
 		<module>imageserver-admin</module>
 		<module>web.imageserver.front</module>
 		<module>imageserver-test-standalone</module>

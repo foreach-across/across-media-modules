@@ -1,8 +1,8 @@
 package com.foreach.imageserver.core.client;
 
-import be.mediafin.imageserver.client.AbstractImageServerClient;
-import be.mediafin.imageserver.client.ImageServerClient;
-import be.mediafin.imageserver.client.ImageServerException;
+import com.foreach.imageserver.client.AbstractImageServerClient;
+import com.foreach.imageserver.client.ImageServerClient;
+import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
