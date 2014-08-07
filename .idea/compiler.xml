@@ -28,7 +28,6 @@
         <module name="imageserver-client" />
         <module name="imageserver-core" />
         <module name="imageserver-test-standalone" />
-        <module name="web.imageserver.front" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
