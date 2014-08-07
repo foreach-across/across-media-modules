@@ -1,7 +1,5 @@
 package com.foreach.imageserver.core.rest.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * @author Arne Vandamme
  */

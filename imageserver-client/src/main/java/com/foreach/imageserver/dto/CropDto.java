@@ -1,5 +1,7 @@
 package com.foreach.imageserver.dto;
 
+import java.util.Objects;
+
 /**
  * Source dimensions are the assumed dimensions of the  original image.  Basically they define the
  * scale of the coordinate system.  If not set, the original dimensions of the target image are assumed unless a
@@ -131,12 +133,6 @@ public class CropDto
 
 	@Override
 	public int hashCode() {
-		int result = x;
-		result = 31 * result + y;
-		result = 31 * result + width;
-		result = 31 * result + height;
-		result = 31 * result + ( source != null ? source.hashCode() : 0 );
-		result = 31 * result + ( box != null ? box.hashCode() : 0 );
-		return result;
+		return Objects.hash( x, y, width, height, source, box );
 	}
 }

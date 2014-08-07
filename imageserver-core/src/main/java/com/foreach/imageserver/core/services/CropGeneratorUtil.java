@@ -11,7 +11,7 @@ import com.foreach.imageserver.dto.ImageResolutionDto;
 
 public class CropGeneratorUtil
 {
-
+	CropGeneratorUtil() {}
 	/**
 	 * Normalizes a modification to be possible with the defined original image.
 	 */
