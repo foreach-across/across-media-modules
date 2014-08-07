@@ -40,5 +40,5 @@ public interface ImageService
 
 	Collection<ImageResolution> getAllResolutions();
 
-	void saveImageResolution( ImageResolution resolution, Collection<ImageContext> contexts );
+	void saveImageResolution( ImageResolution resolution );
 }

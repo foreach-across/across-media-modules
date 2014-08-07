@@ -326,10 +326,9 @@ public class ImageServiceImpl implements ImageService
 
 	@Override
 	@Transactional
-	public void saveImageResolution( ImageResolution resolution, Collection<ImageContext> contexts ) {
-		if ( resolution == null || contexts == null ) {
-			LOG.warn( "Null parameters not allowed - ImageServiceImpl#saveImageResolution: resolution={}, contexts={}}",
-			          LogHelper.flatten( resolution, contexts ) );
+	public void saveImageResolution( ImageResolution resolution ) {
+		if ( resolution == null ) {
+			LOG.warn( "Null resolution not not allowed - ImageServiceImpl#saveImageResolution" );
 		}
 
 		imageResolutionManager.saveResolution( resolution );

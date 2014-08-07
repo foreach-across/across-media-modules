@@ -79,7 +79,9 @@ public class ImageResolutionController extends BaseImageAPIController
 			contexts.add( contextService.getByCode( code ) );
 		}
 
-		imageService.saveImageResolution( resolution, contexts );
+		resolution.setContexts( contexts );
+
+		imageService.saveImageResolution( resolution );
 
 		return resolutionDetails( accessToken, resolution.getId() );
 	}

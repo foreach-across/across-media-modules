@@ -3,7 +3,9 @@ package com.foreach.imageserver.core.installers;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerPhase;
+import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageProfileService;
+import com.foreach.imageserver.dto.ImageContextDto;
 import com.foreach.imageserver.dto.ImageProfileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,9 +16,19 @@ public class DefaultDataInstaller
 	@Autowired
 	private ImageProfileService imageProfileService;
 
+	@Autowired
+	private ImageContextService imageContextService;
+
 	@InstallerMethod
 	public void install() {
 		createImageProfile();
+		createImageContext();
+	}
+
+	private void createImageContext() {
+		ImageContextDto imageContextDto = new ImageContextDto();
+		imageContextDto.setCode( "default" );
+		imageContextService.save( imageContextDto );
 	}
 
 	private void createImageProfile() {

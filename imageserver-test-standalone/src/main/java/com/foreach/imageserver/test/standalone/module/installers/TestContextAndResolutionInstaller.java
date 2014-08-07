@@ -58,7 +58,7 @@ public class TestContextAndResolutionInstaller
 
 			resolution.setContexts( contexts );
 
-			imageService.saveImageResolution( resolution, contexts );
+			imageService.saveImageResolution( resolution );
 		}
 	}
 
