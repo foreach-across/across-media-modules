@@ -14,8 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static com.foreach.imageserver.core.services.CropGeneratorUtil.*;
-
 /**
  * This implementation will use the existing Crops for an Image so as to propose an as-good-as-possible Crop for any
  * ImageResolution. The algorithm will first turn every existing Crop into a CropCandidate that matches the requested
@@ -56,6 +54,9 @@ public class CropGeneratorImpl implements CropGenerator
 	private ImageModificationManager imageModificationManager;
 
 	@Autowired
+	private CropGeneratorUtil cropGeneratorUtil;
+
+	@Autowired
 	private ImageProfileManager imageProfileManager;
 
 	@Override
@@ -91,7 +92,7 @@ public class CropGeneratorImpl implements CropGenerator
 			}
 		}
 
-		CropGeneratorUtil.normalizeModificationDto( image, modificationDto );
+		cropGeneratorUtil.normalizeModificationDto( image, modificationDto );
 
 		return modificationDto;
 	}
@@ -145,7 +146,7 @@ public class CropGeneratorImpl implements CropGenerator
 		}
 
 		Dimensions requestedDimensions = resolution.getDimensions();
-		Dimensions targetDimensions = applyResolution( image, resolution );
+		Dimensions targetDimensions = cropGeneratorUtil.applyResolution( image, resolution );
         /*
         if (targetDimensions.getWidth() > image.getDimensions().getWidth()) {
             return null;
@@ -295,8 +296,8 @@ public class CropGeneratorImpl implements CropGenerator
 
 		Crop newCrop = new Crop( newX, newY, newWidth, newHeight );
 
-		float newCropArea = area( newCrop );
-		float existingCropArea = area( crop );
+		float newCropArea = cropGeneratorUtil.area( newCrop );
+		float existingCropArea = cropGeneratorUtil.area( crop );
 
 		float extensionMeasure = ( newCropArea - existingCropArea ) / newCropArea;
 		float cutOffMeasure = 0.0f;
@@ -378,10 +379,10 @@ public class CropGeneratorImpl implements CropGenerator
 		Crop newCrop = new Crop( newX, newY, newWidth, newHeight );
 		float extensionMeasure = 0.0f, cutOffMeasure = 0.0f;
 		if ( cuttingWasNecessary ) {
-			Crop intersectingCrop = intersect( newCrop, crop );
+			Crop intersectingCrop = cropGeneratorUtil.intersect( newCrop, crop );
 			if ( intersectingCrop != null ) {
-				float existingCropArea = area( crop );
-				float intersectingCropArea = area( intersectingCrop );
+				float existingCropArea = cropGeneratorUtil.area( crop );
+				float intersectingCropArea = cropGeneratorUtil.area( intersectingCrop );
 				cutOffMeasure = ( existingCropArea - intersectingCropArea ) / existingCropArea;
 			}
 			else {
@@ -389,8 +390,8 @@ public class CropGeneratorImpl implements CropGenerator
 			}
 		}
 		else {
-			float existingCropArea = area( crop );
-			float newCropArea = area( newCrop );
+			float existingCropArea = cropGeneratorUtil.area( crop );
+			float newCropArea = cropGeneratorUtil.area( newCrop );
 			extensionMeasure = ( newCropArea - existingCropArea ) / newCropArea;
 		}
 

@@ -43,6 +43,9 @@ public class ImageServiceImpl implements ImageService
 	private CropGenerator cropGenerator;
 
 	@Autowired
+	private CropGeneratorUtil cropGeneratorUtil;
+
+	@Autowired
 	private ImageResolutionManager imageResolutionManager;
 
 	@Autowired
@@ -167,7 +170,7 @@ public class ImageServiceImpl implements ImageService
 	public StreamImageSource generateModification( Image image,
 	                                               ImageModificationDto modificationDto,
 	                                               ImageVariant imageVariant ) {
-		CropGeneratorUtil.normalizeModificationDto( image, modificationDto );
+		cropGeneratorUtil.normalizeModificationDto( image, modificationDto );
 		return generateVariantImage( image, null, modificationDto, imageVariant, false );
 	}
 

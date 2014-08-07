@@ -38,6 +38,11 @@ public class ServicesConfiguration
 	}
 
 	@Bean
+	public CropGeneratorUtil cropGeneratorUtil() {
+		return new CropGeneratorUtilImpl();
+	}
+
+	@Bean
 	public ImageRestService imageRestService() {
 		ImageRestServiceImpl imageRestService = new ImageRestServiceImpl();
 		imageRestService.setFallbackImageKey(

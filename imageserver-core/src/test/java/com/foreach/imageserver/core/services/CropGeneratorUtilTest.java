@@ -10,12 +10,13 @@ import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import org.junit.Test;
 
-import static com.foreach.imageserver.core.services.CropGeneratorUtil.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class CropGeneratorUtilTest
 {
+
+	private CropGeneratorUtil cropGeneratorUtil = new CropGeneratorUtilImpl();
 
 	@Test
 	public void normalizeModification() {
@@ -29,28 +30,28 @@ public class CropGeneratorUtilTest
 		Image original = new Image();
 		original.setDimensions( new Dimensions( 800, 600 ) );
 
-		CropGeneratorUtil.normalizeModificationDto( original, mod );
+		cropGeneratorUtil.normalizeModificationDto( original, mod );
 
 		assertEquals( new CropDto( 0, 0, 800, 600 ), mod.getCrop() );
 	}
 
 	@Test
 	public void applyExactResolution() {
-		Dimensions result = applyResolution( image( 1000, 2000 ), resolution( 3000, 4000 ) );
+		Dimensions result = cropGeneratorUtil.applyResolution( image( 1000, 2000 ), resolution( 3000, 4000 ) );
 		assertEquals( 3000, result.getWidth() );
 		assertEquals( 4000, result.getHeight() );
 	}
 
 	@Test
 	public void applyUnboundedWidthResolution() {
-		Dimensions result = applyResolution( image( 1000, 2000 ), resolution( 0, 4000 ) );
+		Dimensions result = cropGeneratorUtil.applyResolution( image( 1000, 2000 ), resolution( 0, 4000 ) );
 		assertEquals( 2000, result.getWidth() );
 		assertEquals( 4000, result.getHeight() );
 	}
 
 	@Test
 	public void applyUnboundedHeightResolution() {
-		Dimensions result = applyResolution( image( 1000, 2000 ), resolution( 3000, 0 ) );
+		Dimensions result = cropGeneratorUtil.applyResolution( image( 1000, 2000 ), resolution( 3000, 0 ) );
 		assertEquals( 3000, result.getWidth() );
 		assertEquals( 6000, result.getHeight() );
 	}
@@ -58,26 +59,29 @@ public class CropGeneratorUtilTest
 	@Test
 	public void calculateArea() {
 		Crop crop = new Crop( 1234, 4321, 254, 782 );
-		assertEquals( 198628, area( crop ) );
+		assertEquals( 198628, cropGeneratorUtil.area( crop ) );
 	}
 
 	@Test
 	public void noIntersection() {
-		assertNull( intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 2001, 1000, 500, 500 ) ) );
-		assertNull( intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 499, 1000, 500, 500 ) ) );
-		assertNull( intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 1000, 499, 500, 500 ) ) );
-		assertNull( intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 1000, 2001, 500, 500 ) ) );
+		assertNull( cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 2001, 1000, 500, 500 ) ) );
+		assertNull( cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 499, 1000, 500, 500 ) ) );
+		assertNull( cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 1000, 499, 500, 500 ) ) );
+		assertNull( cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 1000, 2001, 500, 500 ) ) );
 	}
 
 	@Test
 	public void intersection() {
-		Crop intersection1 = intersect( new Crop( 500, 500, 1000, 1000 ), new Crop( 1000, 1000, 1000, 1000 ) );
+		Crop intersection1 = cropGeneratorUtil.intersect( new Crop( 500, 500, 1000, 1000 ),
+		                                                  new Crop( 1000, 1000, 1000, 1000 ) );
 		assertEquals( new Crop( 1000, 1000, 500, 500 ), intersection1 );
 
-		Crop intersection2 = intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 500, 500, 1000, 1000 ) );
+		Crop intersection2 = cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ),
+		                                                  new Crop( 500, 500, 1000, 1000 ) );
 		assertEquals( new Crop( 1000, 1000, 500, 500 ), intersection2 );
 
-		Crop intersection3 = intersect( new Crop( 500, 500, 2000, 2000 ), new Crop( 600, 800, 1000, 900 ) );
+		Crop intersection3 = cropGeneratorUtil.intersect( new Crop( 500, 500, 2000, 2000 ),
+		                                                  new Crop( 600, 800, 1000, 900 ) );
 		assertEquals( new Crop( 600, 800, 1000, 900 ), intersection3 );
 	}
 

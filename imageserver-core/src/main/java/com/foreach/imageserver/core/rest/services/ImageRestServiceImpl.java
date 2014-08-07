@@ -36,7 +36,8 @@ public class ImageRestServiceImpl implements ImageRestService
 {
 	@Autowired
 	private ImageContextService contextService;
-
+	@Autowired
+	private CropGeneratorUtil cropGeneratorUtil;
 	@Autowired
 	private ImageService imageService;
 
@@ -193,7 +194,7 @@ public class ImageRestServiceImpl implements ImageRestService
 					response.setResolutionDoesNotExist( true );
 				}
 				else {
-					CropGeneratorUtil.normalizeModificationDto( image, imageModificationDto );
+					cropGeneratorUtil.normalizeModificationDto( image, imageModificationDto );
 
 					ImageModification modification = new ImageModification();
 					modification.setImageId( image.getId() );
