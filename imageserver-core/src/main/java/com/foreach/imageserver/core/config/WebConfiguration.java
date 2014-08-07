@@ -53,8 +53,6 @@ public class WebConfiguration
 	@Bean
 	public ImageStreamingController imageStreamingController() {
 		ImageStreamingController imageStreamingController = new ImageStreamingController( accessToken() );
-		imageStreamingController.setFallbackImageKey(
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_NOT_FOUND_IMAGEKEY, "" ) );
 		imageStreamingController.setMaxCacheAgeInSeconds(
 				environment.getProperty( ImageServerCoreModuleSettings.MAX_BROWSER_CACHE_SECONDS, Integer.class, 60 ) );
 		imageStreamingController.setProvideStackTrace(

@@ -38,6 +38,33 @@ public final class DtoUtil
 		return dimensions;
 	}
 
+	public static ImageVariant toBusiness( ImageVariantDto dto ) {
+		ImageVariant imageVariant = new ImageVariant();
+		imageVariant.setOutputType( toBusiness( dto.getImageType() ) );
+		return imageVariant;
+	}
+
+	public static ImageType toBusiness( ImageTypeDto dto ) {
+		switch ( dto ) {
+			case JPEG:
+				return ImageType.JPEG;
+			case PNG:
+				return ImageType.PNG;
+			case GIF:
+				return ImageType.GIF;
+			case SVG:
+				return ImageType.SVG;
+			case EPS:
+				return ImageType.EPS;
+			case PDF:
+				return ImageType.PDF;
+			case TIFF:
+				return ImageType.TIFF;
+			default:
+				throw new RuntimeException( "Unknown image type." );
+		}
+	}
+
 	public static ImageContextDto toDto( ImageContext context ) {
 		ImageContextDto contextDto = new ImageContextDto();
 		contextDto.setId( context.getId() );

@@ -5,7 +5,7 @@ import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
-import com.foreach.imageserver.core.rest.services.ResolutionRestService;
+import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
@@ -38,7 +38,7 @@ public class ImageResolutionController extends BaseImageAPIController
 	private ImageService imageService;
 
 	@Autowired
-	private ResolutionRestService resolutionRestService;
+	private ImageRestService imageRestService;
 
 	public ImageResolutionController( String accessToken ) {
 		super( accessToken );
@@ -93,7 +93,7 @@ public class ImageResolutionController extends BaseImageAPIController
 			return error( "Access denied." );
 		}
 
-		ListResolutionsResponse response = resolutionRestService.listResolutions( listResolutionsRequest );
+		ListResolutionsResponse response = imageRestService.listResolutions( listResolutionsRequest );
 
 		if ( response.isContextDoesNotExist() ) {
 			return error( "No such context." );

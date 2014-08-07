@@ -2,8 +2,8 @@ package com.foreach.imageserver.core.config;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
-import com.foreach.imageserver.core.rest.services.ResolutionRestService;
-import com.foreach.imageserver.core.rest.services.ResolutionRestServiceImpl;
+import com.foreach.imageserver.core.rest.services.ImageRestService;
+import com.foreach.imageserver.core.rest.services.ImageRestServiceImpl;
 import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +38,13 @@ public class ServicesConfiguration
 	}
 
 	@Bean
-	public ResolutionRestService resolutionRestService() {
-		return new ResolutionRestServiceImpl();
+	public ImageRestService imageRestService() {
+		ImageRestServiceImpl imageRestService = new ImageRestServiceImpl();
+		imageRestService.setFallbackImageKey(
+				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_NOT_FOUND_IMAGEKEY, "" )
+		);
+
+		return imageRestService;
 	}
 
 	@Bean

@@ -4,7 +4,7 @@ import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
-import com.foreach.imageserver.core.rest.services.ResolutionRestService;
+import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.test.MockedLoader;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 public class TestLocalImageServerClient
 {
 	@Autowired
-	private ResolutionRestService resolutionRestService;
+	private ImageRestService imageRestService;
 
 	@Autowired
 	private ImageServerClient imageServerClient = new LocalImageServerClient( "http://localhost:8078/" );
@@ -55,7 +55,7 @@ public class TestLocalImageServerClient
 		ListResolutionsResponse response = new ListResolutionsResponse();
 		response.setContextDoesNotExist( true );
 
-		when( resolutionRestService.listResolutions( any( ListResolutionsRequest.class ) ) ).thenReturn( response );
+		when( imageRestService.listResolutions( any( ListResolutionsRequest.class ) ) ).thenReturn( response );
 
 		boolean failed = false;
 
@@ -90,7 +90,7 @@ public class TestLocalImageServerClient
 		ListResolutionsResponse response = new ListResolutionsResponse();
 		response.setImageResolutions( resolutions );
 
-		when( resolutionRestService.listResolutions( request ) ).thenReturn( response );
+		when( imageRestService.listResolutions( request ) ).thenReturn( response );
 
 		assertSame( resolutions, imageServerClient.listAllowedResolutions( "digital" ) );
 	}
@@ -105,7 +105,7 @@ public class TestLocalImageServerClient
 		ListResolutionsResponse response = new ListResolutionsResponse();
 		response.setImageResolutions( resolutions );
 
-		when( resolutionRestService.listResolutions( request ) ).thenReturn( response );
+		when( imageRestService.listResolutions( request ) ).thenReturn( response );
 
 		assertSame( resolutions, imageServerClient.listConfigurableResolutions( "digital" ) );
 	}

@@ -5,8 +5,10 @@ import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
+import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
-import com.foreach.imageserver.core.rest.services.ResolutionRestService;
+import com.foreach.imageserver.core.rest.response.ViewImageResponse;
+import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.*;
@@ -25,7 +27,7 @@ import java.util.List;
 public class LocalImageServerClient extends AbstractImageServerClient implements ImageServerClient
 {
 	@Autowired
-	private ResolutionRestService resolutionRestService;
+	private ImageRestService imageRestService;
 
 	@Autowired
 	private ImageService imageService;
@@ -40,7 +42,8 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	                                Integer width,
 	                                Integer height,
 	                                ImageTypeDto imageType ) {
-		return null;
+		return imageStream( imageId, context, new ImageResolutionDto( width, height ),
+		                    new ImageVariantDto( imageType ) );
 	}
 
 	@Override
@@ -48,24 +51,60 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	                                String context,
 	                                ImageResolutionDto imageResolution,
 	                                ImageVariantDto imageVariant ) {
-		return null;
+		ViewImageRequest request = new ViewImageRequest();
+		request.setExternalId( imageId );
+		request.setContext( context );
+		request.setImageResolutionDto( imageResolution );
+		request.setImageVariantDto( imageVariant );
+
+		ViewImageResponse response = imageRestService.viewImage( request );
+
+		if ( response.isImageDoesNotExist() ) {
+			throw new ImageServerException( "No such image." );
+		}
+		else if ( response.isContextDoesNotExist() ) {
+			throw new ImageServerException( "No such context." );
+		}
+		else if ( response.isResolutionDoesNotExist() ) {
+			throw new ImageServerException( "No such resolution." );
+		}
+		else if ( response.isFailed() ) {
+			throw new ImageServerException( "Could not create variant." );
+		}
+
+		return response.getImageSource().getImageStream();
 	}
 
 	@Override
 	public InputStream imageStream( String imageId,
 	                                ImageModificationDto imageModificationDto,
 	                                ImageVariantDto imageVariant ) {
-		return null;
+		ViewImageRequest request = new ViewImageRequest();
+		request.setExternalId( imageId );
+		request.setImageModificationDto( imageModificationDto );
+		request.setImageVariantDto( imageVariant );
+
+		ViewImageResponse response = imageRestService.renderImage( request );
+
+		if ( response.isImageDoesNotExist() ) {
+			throw new ImageServerException( "No such image." );
+		}
+		else if ( response.isFailed() ) {
+			throw new ImageServerException( "Could not create variant." );
+		}
+
+		return response.getImageSource().getImageStream();
 	}
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes ) {
-		return null;
+		return loadImage( imageId, imageBytes, null );
 	}
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate ) {
-		return null;
+		Image image = imageService.saveImage( imageId, imageBytes, imageDate != null ? imageDate : new Date() );
+		return DtoUtil.toDto( image );
 	}
 
 	@Override
@@ -116,7 +155,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		ListResolutionsRequest request = new ListResolutionsRequest();
 		request.setContext( context );
 
-		ListResolutionsResponse response = resolutionRestService.listResolutions( request );
+		ListResolutionsResponse response = imageRestService.listResolutions( request );
 
 		if ( response.isContextDoesNotExist() ) {
 			throw new ImageServerException( "Context does not exist: " + context );
@@ -131,7 +170,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		request.setContext( context );
 		request.setConfigurableOnly( true );
 
-		ListResolutionsResponse response = resolutionRestService.listResolutions( request );
+		ListResolutionsResponse response = imageRestService.listResolutions( request );
 
 		if ( response.isContextDoesNotExist() ) {
 			throw new ImageServerException( "Context does not exist: " + context );

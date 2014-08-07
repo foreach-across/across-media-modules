@@ -1,17 +1,15 @@
 package com.foreach.imageserver.core.controllers;
 
 import com.foreach.imageserver.core.annotations.ImageServerController;
-import com.foreach.imageserver.core.business.*;
-import com.foreach.imageserver.core.services.ImageContextService;
-import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.rest.request.ViewImageRequest;
+import com.foreach.imageserver.core.rest.response.ViewImageResponse;
+import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
-import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
 import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +33,9 @@ public class ImageStreamingController
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStreamingController.class );
 
 	@Autowired
-	private ImageContextService contextService;
-
-	@Autowired
-	private ImageService imageService;
+	private ImageRestService imageRestService;
 
 	private String accessToken;
-	private String fallbackImageKey = null;
 	private boolean provideStackTrace = false;
 	private int maxCacheAgeInSeconds = 30;
 
@@ -51,10 +45,6 @@ public class ImageStreamingController
 
 	public void setAccessToken( String accessToken ) {
 		this.accessToken = accessToken;
-	}
-
-	public void setFallbackImageKey( String fallbackImageKey ) {
-		this.fallbackImageKey = fallbackImageKey;
 	}
 
 	public void setProvideStackTrace( boolean provideStackTrace ) {
@@ -76,21 +66,22 @@ public class ImageStreamingController
 			error( response, HttpStatus.FORBIDDEN, "Access denied." );
 		}
 
-		Image image = imageService.getByExternalId( externalId );
-		if ( image == null ) {
+		ViewImageRequest renderImageRequest = new ViewImageRequest();
+		renderImageRequest.setExternalId( externalId );
+		renderImageRequest.setImageModificationDto( imageModificationDto );
+		renderImageRequest.setImageVariantDto( imageVariantDto );
+
+		ViewImageResponse renderImageResponse = imageRestService.renderImage( renderImageRequest );
+
+		if ( renderImageResponse.isImageDoesNotExist() ) {
 			error( response, HttpStatus.NOT_FOUND, "No such image." );
-			return;
 		}
-
-		StreamImageSource imageSource =
-				imageService.generateModification( image, imageModificationDto, toBusiness( imageVariantDto ) );
-
-		if ( imageSource == null ) {
+		else if ( renderImageResponse.isFailed() ) {
 			error( response, HttpStatus.NOT_FOUND, "Could not create variant." );
-			return;
 		}
-
-		renderImageSource( imageSource, response );
+		else {
+			renderImageSource( renderImageResponse.getImageSource(), response );
+		}
 	}
 
 	@RequestMapping(value = "/" + VIEW_PATH, method = RequestMethod.GET)
@@ -102,40 +93,29 @@ public class ImageStreamingController
 		// TODO Make sure we only rely on objects that can be long-term cached for retrieving the image.
 
 		try {
-			Image image = imageService.getByExternalId( externalId );
+			ViewImageRequest viewImageRequest = new ViewImageRequest();
+			viewImageRequest.setExternalId( externalId );
+			viewImageRequest.setContext( contextCode );
+			viewImageRequest.setImageResolutionDto( imageResolutionDto );
+			viewImageRequest.setImageVariantDto( imageVariantDto );
 
-			if ( image == null && StringUtils.isNotBlank( fallbackImageKey ) && !StringUtils.equals( externalId,
-			                                                                                         fallbackImageKey ) ) {
-				image = imageService.getByExternalId( fallbackImageKey );
-			}
+			ViewImageResponse viewImageResponse = imageRestService.viewImage( viewImageRequest );
 
-			if ( image == null ) {
+			if ( viewImageResponse.isImageDoesNotExist() ) {
 				error( response, HttpStatus.NOT_FOUND, "No such image." );
-				return;
 			}
-
-			ImageContext context = contextService.getByCode( contextCode );
-			if ( context == null ) {
+			else if ( viewImageResponse.isContextDoesNotExist() ) {
 				error( response, HttpStatus.NOT_FOUND, "No such context." );
-				return;
 			}
-
-			ImageResolution imageResolution =
-					contextService.getImageResolution( context.getId(), imageResolutionDto.getWidth(),
-					                                   imageResolutionDto.getHeight() );
-			if ( imageResolution == null ) {
+			else if ( viewImageResponse.isResolutionDoesNotExist() ) {
 				error( response, HttpStatus.NOT_FOUND, "No such resolution." );
-				return;
 			}
-
-			StreamImageSource imageSource =
-					imageService.getVariantImage( image, context, imageResolution, toBusiness( imageVariantDto ) );
-			if ( imageSource == null ) {
+			else if ( viewImageResponse.isFailed() ) {
 				error( response, HttpStatus.NOT_FOUND, "Could not create variant." );
-				return;
 			}
-
-			renderImageSource( imageSource, response );
+			else {
+				renderImageSource( viewImageResponse.getImageSource(), response );
+			}
 
 			// fail-safe to avoid that stack traces are shown when an unexpected exception occurs
 		}
@@ -191,33 +171,6 @@ public class ImageStreamingController
 		}
 		finally {
 			IOUtils.closeQuietly( bis );
-		}
-	}
-
-	private ImageVariant toBusiness( ImageVariantDto dto ) {
-		ImageVariant imageVariant = new ImageVariant();
-		imageVariant.setOutputType( toBusiness( dto.getImageType() ) );
-		return imageVariant;
-	}
-
-	private ImageType toBusiness( ImageTypeDto dto ) {
-		switch ( dto ) {
-			case JPEG:
-				return ImageType.JPEG;
-			case PNG:
-				return ImageType.PNG;
-			case GIF:
-				return ImageType.GIF;
-			case SVG:
-				return ImageType.SVG;
-			case EPS:
-				return ImageType.EPS;
-			case PDF:
-				return ImageType.PDF;
-			case TIFF:
-				return ImageType.TIFF;
-			default:
-				throw new RuntimeException( "Unknown image type." );
 		}
 	}
 }
