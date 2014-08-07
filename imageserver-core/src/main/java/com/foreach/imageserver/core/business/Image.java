@@ -2,7 +2,6 @@ package com.foreach.imageserver.core.business;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -47,13 +46,6 @@ public class Image
 	                    })
 	private Dimensions dimensions;
 
-	@Transient
-	private String dateCreatedYearString;
-	@Transient
-	private String dateCreatedMonthString;
-	@Transient
-	private String dateCreatedDayString;
-
 	public long getId() {
 		return id;
 	}
@@ -80,15 +72,6 @@ public class Image
 		if ( dateCreated != null ) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime( dateCreated );
-
-			dateCreatedYearString = Integer.toString( cal.get( Calendar.YEAR ) );
-			dateCreatedMonthString = StringUtils.leftPad( Integer.toString( cal.get( Calendar.MONTH ) + 1 ), 2, '0' );
-			dateCreatedDayString = StringUtils.leftPad( Integer.toString( cal.get( Calendar.DAY_OF_MONTH ) ), 2, '0' );
-		}
-		else {
-			dateCreatedYearString = null;
-			dateCreatedMonthString = null;
-			dateCreatedDayString = null;
 		}
 	}
 
