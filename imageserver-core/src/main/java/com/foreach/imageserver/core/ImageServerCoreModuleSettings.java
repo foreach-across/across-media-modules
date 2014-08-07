@@ -1,9 +1,5 @@
 package com.foreach.imageserver.core;
 
-import org.springframework.core.env.Environment;
-
-import java.io.File;
-
 /**
  * @author Arne Vandamme
  */

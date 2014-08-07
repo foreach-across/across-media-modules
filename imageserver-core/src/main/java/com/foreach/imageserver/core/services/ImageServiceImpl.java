@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ImageServiceImpl implements ImageService
@@ -51,6 +52,9 @@ public class ImageServiceImpl implements ImageService
 	@Autowired
 	private ImageProfileService imageProfileService;
 
+	// Used concurrently from multiple threads.
+	private Map<VariantImageRequest, FutureVariantImage> futureVariantImages = new ConcurrentHashMap<>();
+
 	@Override
 	public Image getById( long imageId ) {
 		return imageManager.getById( imageId );
@@ -60,9 +64,6 @@ public class ImageServiceImpl implements ImageService
 	public Image getByExternalId( String externalId ) {
 		return imageManager.getByExternalId( externalId );
 	}
-
-	// Used concurrently from multiple threads.
-	private Map<VariantImageRequest, FutureVariantImage> futureVariantImages = new HashMap<>();
 
 	// TODO I'm not taking care of errors right now, make sure to tackle this later on!
 	@Override

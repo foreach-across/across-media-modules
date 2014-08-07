@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;

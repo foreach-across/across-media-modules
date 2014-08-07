@@ -14,7 +14,7 @@ import java.util.Collection;
 @Repository
 public class ImageContextManagerImpl implements ImageContextManager
 {
-	private final static String CACHE_NAME = "contexts";
+	private static final String CACHE_NAME = "contexts";
 
 	@Autowired
 	private ImageContextRepository contextRepository;

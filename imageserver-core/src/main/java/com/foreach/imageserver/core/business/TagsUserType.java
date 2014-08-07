@@ -17,7 +17,7 @@ import java.util.Set;
 public class TagsUserType implements UserType
 {
 	public static final String CLASS_NAME = "com.foreach.imageserver.core.business.TagsUserType";
-	private final StringType TYPE = StringType.INSTANCE;
+	private static final StringType TYPE = StringType.INSTANCE;
 
 	public int[] sqlTypes() {
 		return new int[] { TYPE.sqlType() };

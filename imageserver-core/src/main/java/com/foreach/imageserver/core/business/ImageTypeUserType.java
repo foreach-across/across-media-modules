@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class ImageTypeUserType implements UserType
 {
 	public static final String CLASS_NAME = "com.foreach.imageserver.core.business.ImageTypeUserType";
-	private final BigDecimalType TYPE = BigDecimalType.INSTANCE;
+	private static final BigDecimalType TYPE = BigDecimalType.INSTANCE;
 
 	@Override
 	public int[] sqlTypes() {
