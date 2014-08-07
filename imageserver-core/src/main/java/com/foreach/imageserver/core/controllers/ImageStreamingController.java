@@ -2,7 +2,6 @@ package com.foreach.imageserver.core.controllers;
 
 import com.foreach.imageserver.core.annotations.ImageServerController;
 import com.foreach.imageserver.core.business.*;
-import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
@@ -10,6 +9,7 @@ import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
+import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

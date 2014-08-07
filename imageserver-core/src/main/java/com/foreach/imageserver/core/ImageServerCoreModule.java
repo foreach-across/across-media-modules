@@ -26,6 +26,7 @@ public class ImageServerCoreModule extends AcrossModule implements HasHibernateP
 	public static final String NAME = "ImageServerCoreModule";
 	private final SchemaConfiguration schemaConfiguration = new ImageSchemaConfiguration();
 
+	@SuppressWarnings( "unchecked" )
 	public ImageServerCoreModule() {
 		setExposeFilter( new AnnotationBeanFilter( true, Exposed.class ) );
 	}

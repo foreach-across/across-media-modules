@@ -1,14 +1,12 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.across.core.annotations.Exposed;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.logging.LogHelper;
 import com.foreach.imageserver.core.transformers.*;
+import com.foreach.imageserver.logging.LogHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;

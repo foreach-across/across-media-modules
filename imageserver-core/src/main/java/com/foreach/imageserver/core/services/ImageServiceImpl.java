@@ -1,8 +1,6 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
-import com.foreach.imageserver.core.logging.LogHelper;
-import com.foreach.imageserver.core.managers.ImageContextManager;
 import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
@@ -16,6 +14,7 @@ import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
+import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -13,7 +13,9 @@ public final class LogHelper
 	private LogHelper() {
 	}
 
-	public static String[] flatten( Object... objects ) {
+
+
+	public static Object[] flatten( Object... objects ) {
 		String[] result = new String[objects.length];
 		for ( int i = 0; i < objects.length; i++ ) {
 			result[i] = flatten( objects[i] );

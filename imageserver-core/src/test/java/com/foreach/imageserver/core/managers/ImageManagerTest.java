@@ -51,7 +51,7 @@ public class ImageManagerTest extends AbstractIntegrationTest {
         // Things will go wrong if this null result is cached.
         assertNull(imageManager.getByExternalId("externalId"));
 
-        Image insertedImage = image("externalId", new Date(2013, 0, 1), 100, 200, ImageType.GIF);
+        Image insertedImage = image("externalId", new Date(), 100, 200, ImageType.GIF);
         imageManager.insert(insertedImage);
 
         Cache cache = cacheManager.getCache("images");
@@ -81,7 +81,8 @@ public class ImageManagerTest extends AbstractIntegrationTest {
     private void shouldBeEqual(Image lhsImage, Image rhsImage) {
         assertEquals(lhsImage.getId(), rhsImage.getId());
         assertEquals(lhsImage.getExternalId(), rhsImage.getExternalId());
-        assertEquals(lhsImage.getDateCreated(), rhsImage.getDateCreated());
+	    //TODO: use DateUtils.truncatedEquals()
+        assertEquals( lhsImage.getDateCreated(), rhsImage.getDateCreated() );
         assertEquals(lhsImage.getDimensions().getWidth(), rhsImage.getDimensions().getWidth());
         assertEquals(lhsImage.getDimensions().getHeight(), rhsImage.getDimensions().getHeight());
         assertEquals(lhsImage.getImageType(), rhsImage.getImageType());

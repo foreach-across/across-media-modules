@@ -3,7 +3,7 @@ package com.foreach.imageserver.core.transformers;
 import com.foreach.imageserver.core.business.Crop;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.logging.LogHelper;
+import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.im4java.core.ConvertCmd;
