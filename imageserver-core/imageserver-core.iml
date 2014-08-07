@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/com/foreach/imageserver/core/config/ImageServerCoreConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/foreach/imageserver/core/config/MultipartResolverConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/foreach/imageserver/core/config/RepositoriesConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/foreach/imageserver/core/config/ServicesConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/foreach/imageserver/core/config/WebConfiguration.java</file>
+        </fileset>
+      </configuration>
+    </facet>
+    <facet type="hibernate" name="Hibernate">
+      <configuration>
+        <datasource-map />
+        <naming-strategy-map />
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
