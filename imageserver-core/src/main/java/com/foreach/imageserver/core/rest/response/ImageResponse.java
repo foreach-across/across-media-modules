@@ -8,6 +8,7 @@ import com.foreach.imageserver.core.rest.request.ImageRequest;
 public class ImageResponse extends ImageRequest
 {
 	private boolean imageDoesNotExist, contextDoesNotExist;
+	private boolean outputTypeNotAllowed;
 
 	public boolean isImageDoesNotExist() {
 		return imageDoesNotExist;
@@ -23,5 +24,13 @@ public class ImageResponse extends ImageRequest
 
 	public void setContextDoesNotExist( boolean contextDoesNotExist ) {
 		this.contextDoesNotExist = contextDoesNotExist;
+	}
+
+	public void setOutputTypeNotAllowed( boolean outputTypeNotAllowed ) {
+		this.outputTypeNotAllowed = outputTypeNotAllowed;
+	}
+
+	public boolean isOutputTypeNotAllowed() {
+		return outputTypeNotAllowed;
 	}
 }

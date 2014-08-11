@@ -4,7 +4,6 @@ import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ImageContextManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
-import com.foreach.imageserver.core.services.exceptions.ImageResolutionException;
 import com.foreach.imageserver.dto.ImageContextDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

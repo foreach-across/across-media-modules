@@ -110,6 +110,9 @@ public class ImageStreamingController
 			else if ( viewImageResponse.isResolutionDoesNotExist() ) {
 				error( response, HttpStatus.NOT_FOUND, "No such resolution." );
 			}
+			else if ( viewImageResponse.isOutputTypeNotAllowed() ) {
+				error( response, HttpStatus.NOT_FOUND, "Requested output type is not allowed." );
+			}
 			else if ( viewImageResponse.isFailed() ) {
 				error( response, HttpStatus.NOT_FOUND, "Could not create variant." );
 			}

@@ -111,15 +111,25 @@ public class ImageRestServiceImpl implements ImageRestService
 					response.setResolutionDoesNotExist( true );
 				}
 				else {
-					StreamImageSource imageSource = imageService.getVariantImage(
-							image, context, imageResolution, imageVariant( image, request.getImageVariantDto() )
-					);
+					ImageVariant variant = imageVariant( image, request.getImageVariantDto() );
 
-					if ( imageSource == null ) {
-						response.setFailed( true );
+					if ( !imageResolution.isAllowedOutputType( variant.getOutputType() ) ) {
+						LOG.warn( "Output type {} is not allowed for resolution {}", variant.getOutputType(),
+						          imageResolution );
+
+						response.setOutputTypeNotAllowed( true );
 					}
 					else {
-						response.setImageSource( imageSource );
+						StreamImageSource imageSource = imageService.getVariantImage(
+								image, context, imageResolution, variant
+						);
+
+						if ( imageSource == null ) {
+							response.setFailed( true );
+						}
+						else {
+							response.setImageSource( imageSource );
+						}
 					}
 				}
 			}

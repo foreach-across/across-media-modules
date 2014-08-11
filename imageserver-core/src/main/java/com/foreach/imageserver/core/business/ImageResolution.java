@@ -139,6 +139,10 @@ public class ImageResolution
 		}
 	}
 
+	public boolean isAllowedOutputType( ImageType imageType ) {
+		return getAllowedOutputTypes().contains( imageType );
+	}
+
 	public boolean isPregenerateVariants() {
 		return pregenerateVariants;
 	}
