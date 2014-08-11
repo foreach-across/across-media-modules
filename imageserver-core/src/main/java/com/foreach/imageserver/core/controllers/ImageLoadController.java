@@ -3,6 +3,8 @@ package com.foreach.imageserver.core.controllers;
 import com.foreach.imageserver.core.annotations.ImageServerController;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageContext;
+import com.foreach.imageserver.core.rest.response.PregenerateResolutionsResponse;
+import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
@@ -24,9 +26,13 @@ public class ImageLoadController extends BaseImageAPIController
 	public static final String LOAD_IMAGE_PATH = "/api/image/load";
 	public static final String IMAGE_INFO_PATH = "/api/image/details";
 	public static final String CONTEXT_LIST = "/api/context/list";
+	public static final String IMAGE_PREGENERATE = "/api/image/pregenerate";
 
 	@Autowired
 	private ImageService imageService;
+
+	@Autowired
+	private ImageRestService imageRestService;
 
 	@Autowired
 	private ImageContextService contextService;
@@ -93,6 +99,23 @@ public class ImageLoadController extends BaseImageAPIController
 
 			return success( notExisting );
 		}
+	}
+
+	@RequestMapping(value = "/" + IMAGE_PREGENERATE, method = RequestMethod.GET)
+	@ResponseBody
+	public JsonResponse pregenerate( @RequestParam(value = "token", required = true) String accessToken,
+	                                 @RequestParam(value = "iid", required = true) String externalId ) {
+		if ( !this.accessToken.equals( accessToken ) ) {
+			return error( "Access denied." );
+		}
+
+		PregenerateResolutionsResponse response = imageRestService.pregenerateResolutions( externalId );
+
+		if ( response.isImageDoesNotExist() ) {
+			return error( "Image does not exist." );
+		}
+
+		return success( response.getImageResolutions() );
 	}
 }
 

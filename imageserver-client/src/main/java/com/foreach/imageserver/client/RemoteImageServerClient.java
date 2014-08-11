@@ -29,7 +29,9 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	private static final class ResponseTypes
 	{
-		private ResponseTypes() {}
+		private ResponseTypes() {
+		}
+
 		private static final ParameterizedTypeReference<JsonResponse<List<ImageResolutionDto>>> RESOLUTIONS =
 				new ParameterizedTypeReference<JsonResponse<List<ImageResolutionDto>>>()
 				{
@@ -165,6 +167,15 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		queryParams.set( "iid", imageId );
 
 		return httpGet( ENDPOINT_IMAGE_INFO, queryParams, ResponseTypes.IMAGE_INFO );
+	}
+
+	@Override
+	public List<ImageResolutionDto> pregenerateResolutions( String imageId ) {
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
+
+		return httpGet( ENDPOINT_IMAGE_PREGENERATE, queryParams, ResponseTypes.RESOLUTIONS );
 	}
 
 	@Override

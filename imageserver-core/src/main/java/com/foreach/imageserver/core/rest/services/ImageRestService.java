@@ -4,10 +4,7 @@ import com.foreach.imageserver.core.rest.request.ListModificationsRequest;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.request.RegisterModificationRequest;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
-import com.foreach.imageserver.core.rest.response.ListModificationsResponse;
-import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
-import com.foreach.imageserver.core.rest.response.RegisterModificationResponse;
-import com.foreach.imageserver.core.rest.response.ViewImageResponse;
+import com.foreach.imageserver.core.rest.response.*;
 
 /**
  * @author Arne Vandamme
@@ -17,6 +14,8 @@ public interface ImageRestService
 	ViewImageResponse renderImage( ViewImageRequest request );
 
 	ViewImageResponse viewImage( ViewImageRequest request );
+
+	PregenerateResolutionsResponse pregenerateResolutions( String imageId );
 
 	ListModificationsResponse listModifications( ListModificationsRequest request );
 

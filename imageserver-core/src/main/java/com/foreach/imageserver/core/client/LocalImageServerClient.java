@@ -8,10 +8,7 @@ import com.foreach.imageserver.core.rest.request.ListModificationsRequest;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.request.RegisterModificationRequest;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
-import com.foreach.imageserver.core.rest.response.ListModificationsResponse;
-import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
-import com.foreach.imageserver.core.rest.response.RegisterModificationResponse;
-import com.foreach.imageserver.core.rest.response.ViewImageResponse;
+import com.foreach.imageserver.core.rest.response.*;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageService;
@@ -131,6 +128,17 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		}
 
 		return DtoUtil.toDto( image );
+	}
+
+	@Override
+	public List<ImageResolutionDto> pregenerateResolutions( String imageId ) {
+		PregenerateResolutionsResponse response = imageRestService.pregenerateResolutions( imageId );
+
+		if ( response.isImageDoesNotExist() ) {
+			throw new ImageServerException( "Image does not exist: " + imageId );
+		}
+
+		return response.getImageResolutions();
 	}
 
 	@Override

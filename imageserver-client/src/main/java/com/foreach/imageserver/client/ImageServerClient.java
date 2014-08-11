@@ -16,6 +16,7 @@ public interface ImageServerClient
 	String ENDPOINT_IMAGE_RENDER = "api/image/render";
 	String ENDPOINT_IMAGE_LOAD = "api/image/load";
 	String ENDPOINT_IMAGE_INFO = "api/image/details";
+	String ENDPOINT_IMAGE_PREGENERATE = "api/image/pregenerate";
 	String ENDPOINT_RESOLUTION_LIST = "api/resolution/list";
 	String ENDPOINT_MODIFICATION_LIST = "api/modification/list";
 	String ENDPOINT_MODIFICATION_REGISTER = "api/modification/register";
@@ -53,6 +54,14 @@ public interface ImageServerClient
 	boolean imageExists( String imageId );
 
 	ImageInfoDto imageInfo( String imageId );
+
+	/**
+	 * Will create the variants for all pregenerate resolutions of the image.
+	 *
+	 * @param imageId External id of the image.
+	 * @return List of ImageResolutions that will be pregenerated.
+	 */
+	List<ImageResolutionDto> pregenerateResolutions( String imageId );
 
 	void registerImageModification( String imageId,
 	                                String context,

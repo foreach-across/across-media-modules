@@ -143,4 +143,20 @@ public class ITRemoteImageServerClient
 
 		return false;
 	}
+
+	@Test
+	public void pregenerateVariants() throws IOException {
+		String externalId = UUID.randomUUID().toString();
+		byte[] imageData =
+				IOUtils.toByteArray( getClass().getClassLoader().getResourceAsStream( "poppy_flower_nature.jpg" ) );
+
+		ImageInfoDto uploaded = imageServerClient.loadImage( externalId, imageData );
+		assertTrue( uploaded.isExisting() );
+
+		List<ImageResolutionDto> resolutions = imageServerClient.pregenerateResolutions( externalId );
+		assertEquals( 3, resolutions.size() );
+		assertTrue( hasResolution( resolutions, 640, 480, false ) );
+		assertTrue( hasResolution( resolutions, 800, 600, true ) );
+		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
+	}
 }

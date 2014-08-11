@@ -51,6 +51,7 @@ public class TestContextAndResolutionInstaller
 			resolution.setTags( new HashSet<>( tags ) );
 			resolution.setConfigurable( configurable );
 			resolution.setAllowedOutputTypes( EnumSet.of( ImageType.JPEG, ImageType.PNG, ImageType.GIF ) );
+			resolution.setPregenerateVariants( true );
 
 			List<ImageContext> contexts = new ArrayList<>( contextCodes.size() );
 

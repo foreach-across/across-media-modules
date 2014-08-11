@@ -5,10 +5,7 @@ import com.foreach.imageserver.core.rest.request.ListModificationsRequest;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.request.RegisterModificationRequest;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
-import com.foreach.imageserver.core.rest.response.ListModificationsResponse;
-import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
-import com.foreach.imageserver.core.rest.response.RegisterModificationResponse;
-import com.foreach.imageserver.core.rest.response.ViewImageResponse;
+import com.foreach.imageserver.core.rest.response.*;
 import com.foreach.imageserver.core.services.CropGeneratorUtil;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageContextService;
@@ -26,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -72,6 +70,67 @@ public class ImageRestServiceImpl implements ImageRestService
 			}
 			else {
 				response.setImageSource( imageSource );
+			}
+		}
+
+		return response;
+	}
+
+	@Override
+	public PregenerateResolutionsResponse pregenerateResolutions( String imageId ) {
+		PregenerateResolutionsResponse response = new PregenerateResolutionsResponse();
+
+		final Image image = imageService.getByExternalId( imageId );
+
+		if ( image == null ) {
+			response.setImageDoesNotExist( true );
+		}
+		else {
+			final List<ImageResolution> pregenerateList = new LinkedList<>();
+			Collection<ImageResolution> resolutions = imageService.getAllResolutions();
+
+			for ( ImageResolution resolution : resolutions ) {
+				if ( resolution.isPregenerateVariants() ) {
+					pregenerateList.add( resolution );
+				}
+			}
+
+			if ( !pregenerateList.isEmpty() ) {
+				response.setImageResolutions( DtoUtil.toDto( pregenerateList ) );
+
+				// TODO: offload this as set of tasks to generation service (with a threadpool)
+				Runnable runnable = new Runnable()
+				{
+					@Override
+					public void run() {
+						LOG.debug( "Start pregeneration of {} resolutions for {}", pregenerateList.size(), image );
+						for ( final ImageResolution resolution : pregenerateList ) {
+							for ( ImageType outputType : resolution.getAllowedOutputTypes() ) {
+								ImageVariant variant = new ImageVariant();
+								variant.setOutputType( outputType );
+
+								for ( ImageContext context : resolution.getContexts() ) {
+									try {
+										imageService.getVariantImage( image, context, resolution, variant );
+
+										LOG.info(
+												"Finished pregenerating resolution {} for {}: context {} - imageType {}",
+												resolution, image, context.getCode(), outputType );
+									}
+									catch ( Exception e ) {
+										LOG.warn(
+												"Problem pregenerating resolution {} for {}: context {} - imageType {}",
+												resolution, image, context.getCode(), outputType, e );
+									}
+								}
+							}
+						}
+
+						LOG.info( "Finished pregenerating {} resolutions for {}", pregenerateList.size(), image );
+					}
+				};
+
+				new Thread( runnable ).start();
 			}
 		}
 
