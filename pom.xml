@@ -18,6 +18,11 @@
 			<name>Foreach repository</name>
 			<url>http://java.libs.foreach.com/nexus/content/groups/public</url>
 		</repository>
+		<repository>
+			<id>foreach-custom-externals</id>
+			<name>Foreach Custom repository</name>
+			<url>http://java.libs.foreach.com/nexus/content/repositories/foreach-custom-externals</url>
+		</repository>
 	</repositories>
 
 	<groupId>com.foreach.imageserver</groupId>
@@ -58,34 +63,24 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-
-		<!--
 		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>7.6.11.v20130520</version>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.31</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.3.172</version>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>11.2.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.foreach.libs</groupId>
-			<artifactId>common-test</artifactId>
-			<version>${foreachCommonVersion}</version>
+			<groupId>net.sourceforge.jtds</groupId>
+			<artifactId>jtds</artifactId>
+			<version>1.2.8</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.jayway.jsonpath</groupId>
-			<artifactId>json-path</artifactId>
-			<version>0.9.1</version>
-			<scope>test</scope>
-		</dependency>
-
-		-->
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
