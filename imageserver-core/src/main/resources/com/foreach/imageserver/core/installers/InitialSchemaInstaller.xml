@@ -5,10 +5,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <property name="now" value="GETDATE()" dbms="mssql"/>
-    <property name="now" value="NOW" dbms="hsqldb"/>
-    <property name="now" value="SYSDATE" dbms="oracle"/>
-
     <!-- Default table names -->
     <property name="table.context" value="img_context"/>
     <property name="table.image" value="img_image"/>
@@ -18,13 +14,18 @@
     <property name="table.image_profile" value="img_image_profile"/>
     <property name="table.image_profile_modification" value="img_image_profile_modification"/>
 
-	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
+	<changeSet id="201408071550" author="arne" runAlways="true" dbms="oracle">
 		<sql>
 			ALTER session SET nls_length_semantics=CHAR;
 		</sql>
 	</changeSet>
 
-    <changeSet id="201408051516" author="marc">
+    <changeSet id="201408071551" author="marc">
+	    <preConditions onFail="MARK_RAN">
+		    <not>
+			    <tableExists tableName="${table.context}"/>
+		    </not>
+	    </preConditions>
         <createTable tableName="${table.context}">
             <column name="id" type="java.sql.Types.BIGINT">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_context"/>
@@ -33,12 +34,25 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+
+	<changeSet id="201408071552" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="${table.context}" columnNames="code"/>
+			</not>
+		</preConditions>
         <createIndex indexName="idx_img_context_code" tableName="${table.context}" unique="true">
             <column name="code"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="201408051517" author="marc">
+    <changeSet id="201408071553" author="marc">
+	    <preConditions onFail="MARK_RAN">
+		    <not>
+			    <tableExists tableName="${table.image_profile}"/>
+		    </not>
+	    </preConditions>
         <comment>Install ImageProfile table and assign default profile to images</comment>
         <createTable tableName="${table.image_profile}">
             <column name="id" type="java.sql.Types.BIGINT">
@@ -50,7 +64,12 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="201408051518" author="marc">
+    <changeSet id="201408071554" author="marc">
+	    <preConditions onFail="MARK_RAN">
+		    <not>
+			    <tableExists tableName="${table.image}"/>
+		    </not>
+	    </preConditions>
         <createTable tableName="${table.image}">
             <column name="id" type="java.sql.Types.BIGINT">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_image"/>
@@ -83,6 +102,13 @@
 		        <constraints nullable="false"/>
 	        </column>
         </createTable>
+    </changeSet>
+	<changeSet id="201408071555" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="${table.image}" columnNames="external_id"/>
+			</not>
+		</preConditions>
         <createIndex tableName="${table.image}" indexName="ix_img_image_externalid" unique="true">
             <column name="external_id"/>
         </createIndex>
@@ -93,7 +119,12 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="201408051524" author="marc">
+    <changeSet id="201408071556" author="marc">
+	    <preConditions onFail="MARK_RAN">
+		    <not>
+			    <tableExists tableName="${table.image_resolution}"/>
+		    </not>
+	    </preConditions>
         <createTable tableName="${table.image_resolution}">
             <column name="id" type="java.sql.Types.BIGINT">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_image_resolution"/>
@@ -116,7 +147,13 @@
         </createTable>
 
         <addUniqueConstraint tableName="${table.image_resolution}" constraintName="ix_img_ir_wh" columnNames="width, height" />
-
+	</changeSet>
+	<changeSet id="201408071557" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.context_image_resolution}"/>
+			</not>
+		</preConditions>
         <createTable tableName="${table.context_image_resolution}">
             <column name="context_id" type="java.sql.Types.BIGINT">
                 <constraints nullable="false" />
@@ -125,13 +162,6 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <createIndex tableName="${table.context_image_resolution}" indexName="ix_img_cir_ci">
-            <column name="context_id"/>
-        </createIndex>
-
-        <createIndex tableName="${table.context_image_resolution}" indexName="ix_img_cir_iri">
-            <column name="image_resolution_id"/>
-        </createIndex>
         <addForeignKeyConstraint baseTableName="${table.context_image_resolution}"
                                  baseColumnNames="context_id"
                                  constraintName="fk_img_cir_ci"
@@ -142,10 +172,34 @@
                                  constraintName="fk_img_cir_iri"
                                  referencedTableName="${table.image_resolution}"
                                  referencedColumnNames="id"/>
-
     </changeSet>
+	<changeSet id="201408071558" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="${table.context_image_resolution}" columnNames="context_id"/>
+			</not>
+		</preConditions>
+		<createIndex tableName="${table.context_image_resolution}" indexName="ix_img_cir_ci">
+			<column name="context_id"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="201408071559" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="${table.context_image_resolution}" columnNames="image_resolution_id"/>
+			</not>
+		</preConditions>
+		<createIndex tableName="${table.context_image_resolution}" indexName="ix_img_cir_iri">
+			<column name="image_resolution_id"/>
+		</createIndex>
+	</changeSet>
 
-    <changeSet id="201408051539" author="marc">
+    <changeSet id="201408071600" author="marc">
+	    <preConditions onFail="MARK_RAN">
+		    <not>
+			    <tableExists tableName="${table.image_modification}"/>
+		    </not>
+	    </preConditions>
         <createTable tableName="${table.image_modification}">
             <column name="image_id" type="java.sql.Types.BIGINT">
                 <constraints nullable="false"/>
@@ -178,15 +232,9 @@
         <addPrimaryKey tableName="${table.image_modification}"
                        columnNames="image_id, context_id, resolution_id"
                        constraintName="pk_image_modification"/>
-        <createIndex tableName="${table.image_modification}" indexName="ix_img_im_ii">
-            <column name="image_id"/>
-        </createIndex>
-        <createIndex tableName="${table.image_modification}" indexName="ix_img_im_ci">
-            <column name="context_id"/>
-        </createIndex>
-        <createIndex tableName="${table.image_modification}" indexName="ix_img_im_ri">
-            <column name="resolution_id"/>
-        </createIndex>
+
+
+
         <addForeignKeyConstraint baseTableName="${table.image_modification}"
                                  baseColumnNames="image_id"
                                  constraintName="fk_img_imii_ii"
@@ -203,8 +251,44 @@
                                  referencedTableName="${table.image_resolution}"
                                  referencedColumnNames="id"/>
     </changeSet>
+	<changeSet id="201408071601" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="${table.image_modification}" columnNames="image_id"/>
+			</not>
+		</preConditions>
+		<createIndex tableName="${table.image_modification}" indexName="ix_img_im_ii">
+			<column name="image_id"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="201408071602" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="${table.image_modification}" columnNames="context_id"/>
+			</not>
+		</preConditions>
+		<createIndex tableName="${table.image_modification}" indexName="ix_img_im_ci">
+			<column name="context_id"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="201408071603" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="${table.image_modification}" columnNames="resolution_id"/>
+			</not>
+		</preConditions>
+		<createIndex tableName="${table.image_modification}" indexName="ix_img_im_ri">
+			<column name="resolution_id"/>
+		</createIndex>
+	</changeSet>
 
-    <changeSet id="201405211236" author="arne">
+
+    <changeSet id="201408071604" author="arne">
+	    <preConditions onFail="MARK_RAN">
+		    <not>
+			    <tableExists tableName="${table.image_profile_modification}"/>
+		    </not>
+	    </preConditions>
         <comment>Install ImageProfileModification table</comment>
         <createTable tableName="${table.image_profile_modification}">
             <column name="id" type="java.sql.Types.BIGINT">
