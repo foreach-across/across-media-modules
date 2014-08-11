@@ -76,6 +76,7 @@
           <element id="library" level="project" name="Maven: com.fasterxml:classmate:1.0.0" />
           <element id="library" level="project" name="Maven: javax.el:javax.el-api:2.2.4" />
           <element id="library" level="project" name="Maven: org.glassfish.web:javax.el:2.2.4" />
+          <element id="library" level="project" name="Maven: com.foreach.libs:common-web:0.8-SNAPSHOT" />
           <element id="library" level="project" name="Maven: cglib:cglib:2.2.2" />
           <element id="library" level="project" name="Maven: asm:asm:3.3.1" />
           <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.2" />

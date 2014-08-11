@@ -2,8 +2,10 @@ package com.foreach.imageserver.test.standalone.module;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.imageserver.core.ImageServerCoreModule;
+import com.foreach.imageserver.test.standalone.module.config.StandaloneConfiguration;
 import com.foreach.imageserver.test.standalone.module.installers.TestContextAndResolutionInstaller;
 
 import java.util.Set;
@@ -28,6 +30,7 @@ public class StandaloneWebModule extends AcrossModule
 
 	@Override
 	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+		contextConfigurers.add( new AnnotatedClassConfigurer( StandaloneConfiguration.class ) );
 	}
 
 	@Override
