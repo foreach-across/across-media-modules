@@ -6,11 +6,13 @@ import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageProfile;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.repositories.ImageRepository;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
@@ -30,7 +32,10 @@ public class ImageManagerTest extends AbstractCachedIntegrationTest
 
 	@Test
 	public void insertGetById() {
-		Image insertedImage = image( "externalId", new Date(), 100, 200, ImageType.GIF );
+		Calendar cal = Calendar.getInstance();
+		cal.set( 2014, Calendar.FEBRUARY, 28 );
+
+		Image insertedImage = image( "externalId_56455", DateUtils.truncate( cal.getTime(), Calendar.SECOND ), 100, 200, ImageType.GIF );
 		imageManager.insert( insertedImage );
 
 		Cache cache = cacheManager.getCache( "images" );
@@ -59,8 +64,10 @@ public class ImageManagerTest extends AbstractCachedIntegrationTest
 	public void insertGetByExternalId() {
 		// Things will go wrong if this null result is cached.
 		assertNull( imageManager.getByExternalId( "externalId" ) );
+		Calendar cal = Calendar.getInstance();
+		cal.set( 2014, Calendar.DECEMBER, 31 );
 
-		Image insertedImage = image( "externalId", new Date(), 100, 200, ImageType.GIF );
+		Image insertedImage = image( "externalId", DateUtils.truncate( cal.getTime(), Calendar.SECOND ), 100, 200, ImageType.GIF );
 		imageManager.insert( insertedImage );
 
 		Cache cache = cacheManager.getCache( "images" );
@@ -91,7 +98,8 @@ public class ImageManagerTest extends AbstractCachedIntegrationTest
 	private void shouldBeEqual( Image lhsImage, Image rhsImage ) {
 		assertEquals( lhsImage.getId(), rhsImage.getId() );
 		assertEquals( lhsImage.getExternalId(), rhsImage.getExternalId() );
-		//TODO: use DateUtils.truncatedEquals()
+		assertTrue( DateUtils.truncatedEquals( lhsImage.getDateCreated(), rhsImage.getDateCreated(),
+		                                       Calendar.SECOND ) );
 		assertEquals( lhsImage.getDateCreated(), rhsImage.getDateCreated() );
 		assertEquals( lhsImage.getDimensions().getWidth(), rhsImage.getDimensions().getWidth() );
 		assertEquals( lhsImage.getDimensions().getHeight(), rhsImage.getDimensions().getHeight() );
