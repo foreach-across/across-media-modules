@@ -18,19 +18,24 @@ import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.test.standalone.module.StandaloneWebModule;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 @Configuration
 @EnableAcrossContext
 public class StandaloneWebConfiguration implements AcrossContextConfigurer
 {
+	@Autowired
+	private ServletContext servletContext;
+
 	@Bean
 	public DataSource acrossDataSource() {
 		BasicDataSource dataSource = new BasicDataSource();
@@ -88,11 +93,10 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 
 		webModule.setDevelopmentMode( true );
 
-		Map<String, String> developmentViews = new HashMap<>();
-		developmentViews.put( "imageserver-admin-1", "c:/code/imageserver/imageserver-admin/src/main/resources/views/" );
-		developmentViews.put( "imageserver-admin-2", "c:/codefe/image-server/imageserver-admin/src/main/resources/views/" );
+		String deploymentPath = servletContext.getRealPath( "" );
+		Path adminPath = Paths.get( deploymentPath, "../../../", "imageserver-admin/src/main/resources/views" );
 
-		webModule.setDevelopmentViews( developmentViews );
+		webModule.addDevelopmentViews( "imageserver-admin", adminPath.toString() );
 
 		return webModule;
 	}
