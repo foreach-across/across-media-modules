@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AbstractCachedIntegrationTest.Config.class })
 @EnableTransactionManagement
-public class AbstractCachedIntegrationTest
+public abstract class AbstractCachedIntegrationTest
 {
 	@AcrossTestConfiguration
 	@Configuration
