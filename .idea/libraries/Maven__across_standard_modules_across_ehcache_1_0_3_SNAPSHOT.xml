@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: across-standard-modules:across-ehcache:1.0.3-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/across-ehcache/1.0.3-SNAPSHOT/across-ehcache-1.0.3-20140811.105354-40.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/across-ehcache/1.0.3-SNAPSHOT/across-ehcache-1.0.3-20140811.105354-40-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/across-ehcache/1.0.3-SNAPSHOT/across-ehcache-1.0.3-20140811.105354-40-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

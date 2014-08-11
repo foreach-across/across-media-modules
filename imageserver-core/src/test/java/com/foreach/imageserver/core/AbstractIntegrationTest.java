@@ -27,7 +27,7 @@ public abstract class AbstractIntegrationTest
 {
 	@AcrossTestConfiguration
 	@Configuration
-	static class Config implements AcrossContextConfigurer
+	public static class Config implements AcrossContextConfigurer
 	{
 		@Bean
 		public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {

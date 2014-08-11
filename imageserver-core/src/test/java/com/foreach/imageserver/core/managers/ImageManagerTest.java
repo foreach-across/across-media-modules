@@ -1,22 +1,22 @@
 package com.foreach.imageserver.core.managers;
 
-import com.foreach.imageserver.core.AbstractIntegrationTest;
+import com.foreach.imageserver.core.AbstractCachedIntegrationTest;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageProfile;
 import com.foreach.imageserver.core.business.ImageType;
-import org.junit.Ignore;
+import com.foreach.imageserver.core.repositories.ImageRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Collection;
 import java.util.Date;
 
 import static org.junit.Assert.*;
 
-@Ignore("CacheManager later")
-public class ImageManagerTest extends AbstractIntegrationTest
+public class ImageManagerTest extends AbstractCachedIntegrationTest
 {
 
 	@Autowired
@@ -25,7 +25,8 @@ public class ImageManagerTest extends AbstractIntegrationTest
 	@Autowired
 	private CacheManager cacheManager;
 
-	private JdbcTemplate jdbcTemplate;
+	@Autowired
+	private ImageRepository imageRepository;
 
 	@Test
 	public void insertGetById() {
@@ -40,11 +41,18 @@ public class ImageManagerTest extends AbstractIntegrationTest
 		shouldBeEqual( insertedImage, retrievedImage );
 		assertSame( retrievedImage, cache.get( "byId-" + insertedImage.getId() ).get() );
 
-		jdbcTemplate.execute( "DELETE FROM IMAGE" );
+		deleteAllImages();
 
 		Image retrievedAgainImage = imageManager.getById( insertedImage.getId() );
 		shouldBeEqual( insertedImage, retrievedAgainImage );
 		assertSame( retrievedImage, retrievedAgainImage );
+	}
+
+	private void deleteAllImages() {
+		Collection<Image> images = imageRepository.getAll();
+		for( Image image : images ) {
+			imageRepository.delete( image );
+		}
 	}
 
 	@Test
@@ -63,7 +71,7 @@ public class ImageManagerTest extends AbstractIntegrationTest
 		shouldBeEqual( insertedImage, retrievedImage );
 		assertSame( retrievedImage, cache.get( "byExternalId-" + insertedImage.getExternalId() ).get() );
 
-		jdbcTemplate.execute( "DELETE FROM IMAGE" );
+		deleteAllImages();
 
 		Image retrievedAgainImage = imageManager.getByExternalId( insertedImage.getExternalId() );
 		shouldBeEqual( insertedImage, retrievedAgainImage );
@@ -76,6 +84,7 @@ public class ImageManagerTest extends AbstractIntegrationTest
 		image.setDateCreated( date );
 		image.setDimensions( new Dimensions( width, height ) );
 		image.setImageType( imageType );
+		image.setImageProfileId( ImageProfile.DEFAULT_PROFILE_ID );
 		return image;
 	}
 

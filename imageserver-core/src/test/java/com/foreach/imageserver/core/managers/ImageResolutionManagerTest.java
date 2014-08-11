@@ -1,33 +1,38 @@
 package com.foreach.imageserver.core.managers;
 
-import com.foreach.imageserver.core.AbstractIntegrationTest;
+import com.foreach.imageserver.core.AbstractCachedIntegrationTest;
+import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
-import org.junit.Ignore;
+import com.foreach.imageserver.core.repositories.ImageContextRepository;
+import com.foreach.imageserver.core.repositories.ImageResolutionRepository;
 import org.junit.Test;
+import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-@Ignore("CacheManager later")
-public class ImageResolutionManagerTest extends AbstractIntegrationTest
+public class ImageResolutionManagerTest extends AbstractCachedIntegrationTest
 {
-
 	@Autowired
 	private ImageResolutionManager imageResolutionManager;
 
 	@Autowired
 	private CacheManager cacheManager;
 
-	private JdbcTemplate jdbcTemplate;
+	@Autowired
+	private ImageResolutionRepository imageResolutionRepository;
+
+	@Autowired
+	private ImageContextRepository imageContextRepository;
 
 	@Test
 	public void getById() {
-		jdbcTemplate.update( "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )", 10, 111, 222 );
+		createImageResolution( 10, 111, 222, null );
 
 		Cache cache = cacheManager.getCache( "imageResolutions" );
 		assertNotNull( cache );
@@ -39,7 +44,7 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 		assertEquals( 222, retrievedResolution.getHeight() );
 		assertSame( retrievedResolution, cache.get( "byId-10" ).get() );
 
-		jdbcTemplate.execute( "DELETE FROM IMAGE_RESOLUTION" );
+		deleteImageResolutions();
 
 		ImageResolution retrievedAgainResolution = imageResolutionManager.getById( 10 );
 		assertSame( retrievedResolution, retrievedAgainResolution );
@@ -48,30 +53,56 @@ public class ImageResolutionManagerTest extends AbstractIntegrationTest
 		assertEquals( 222, retrievedAgainResolution.getHeight() );
 	}
 
+	private void createImageResolution( long id, int width, int height, Collection<ImageContext> contexts ) {
+		ImageResolution imageResolution = new ImageResolution();
+		imageResolution.setId( id );
+		imageResolution.setWidth( width );
+		imageResolution.setHeight( height );
+		if( contexts != null ) {
+			imageResolution.setContexts( contexts );
+		}
+		imageResolutionRepository.create( imageResolution );
+	}
+
 	@Test
 	public void getForContext() {
-		jdbcTemplate.update( "INSERT INTO CONTEXT ( id, code ) VALUES ( ?, ? )", 10, "the_application_code" );
-		jdbcTemplate.update( "INSERT INTO IMAGE_RESOLUTION ( id, width, height ) VALUES ( ?, ?, ? )", 11, 222, 333 );
-		jdbcTemplate.update( "INSERT INTO CONTEXT_IMAGE_RESOLUTION ( contextId, imageResolutionId ) VALUES ( ?, ? )",
-		                     10, 11 );
+		ImageContext context = new ImageContext();
+		context.setId( 17 );
+		context.setCode( "the_application_code_17" );
+		imageContextRepository.create( context );
+
+		createImageResolution( 11, 222, 333, Sets.newSet( context ) );
 
 		Cache cache = cacheManager.getCache( "imageResolutions" );
 		assertNotNull( cache );
 		assertNull( cache.get( "forContext-10" ) );
 
-		List<ImageResolution> retrievedList = imageResolutionManager.getForContext( 10 );
+		List<ImageResolution> retrievedList = imageResolutionManager.getForContext( 17 );
 		assertEquals( 1, retrievedList.size() );
 		assertEquals( 11, retrievedList.get( 0 ).getId() );
-		assertSame( retrievedList, cache.get( "forContext-10" ).get() );
+		assertSame( retrievedList, cache.get( "forContext-17" ).get() );
 
-		jdbcTemplate.execute( "DELETE FROM CONTEXT_IMAGE_RESOLUTION" );
-		jdbcTemplate.execute( "DELETE FROM IMAGE_RESOLUTION" );
-		jdbcTemplate.execute( "DELETE FROM CONTEXT" );
+		deleteImageResolutions();
+		deleteContexts();
 
-		List<ImageResolution> retrievedAgainList = imageResolutionManager.getForContext( 10 );
+		List<ImageResolution> retrievedAgainList = imageResolutionManager.getForContext( 17 );
 		assertSame( retrievedList, retrievedAgainList );
 		assertEquals( 1, retrievedAgainList.size() );
 		assertEquals( 11, retrievedAgainList.get( 0 ).getId() );
+	}
+
+	private void deleteContexts() {
+		Collection<ImageContext> imageContexts = imageContextRepository.getAll();
+		for( ImageContext imageContext : imageContexts ) {
+			imageContextRepository.delete( imageContext );
+		}
+	}
+
+	private void deleteImageResolutions() {
+		Collection<ImageResolution> imageResolutions = imageResolutionRepository.getAll();
+		for( ImageResolution imageResolution : imageResolutions ) {
+			imageResolutionRepository.delete( imageResolution );
+		}
 	}
 
 }

@@ -31,6 +31,10 @@
 		</dependency>
 		<dependency>
 			<groupId>across-standard-modules</groupId>
+			<artifactId>across-ehcache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>across-standard-modules</groupId>
 			<artifactId>across-hibernate</artifactId>
 		</dependency>
 		<dependency>

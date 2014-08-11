@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+         updateCheck="false" monitoring="autodetect" dynamicConfig="false">
+	<defaultCache maxElementsInMemory="100" eternal="false" timeToIdleSeconds="120" timeToLiveSeconds="120"
+	              overflowToDisk="false"
+	              memoryStoreEvictionPolicy="LRU" statistics="true">
+	</defaultCache>
+
+	<cache name="contexts" eternal="true" statistics="true" maxElementsInMemory="50" timeToLiveSeconds="3600"
+	       memoryStoreEvictionPolicy="LRU"/>
+
+	<cache name="imageResolutions" eternal="true" statistics="true" maxElementsInMemory="100" timeToLiveSeconds="3600"
+	       memoryStoreEvictionPolicy="LRU"/>
+
+	<cache name="images" eternal="false" statistics="true" maxElementsInMemory="5000" timeToLiveSeconds="3600"
+	       memoryStoreEvictionPolicy="LRU"/>
+</ehcache>
