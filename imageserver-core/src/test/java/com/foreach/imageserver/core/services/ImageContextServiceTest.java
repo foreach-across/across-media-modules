@@ -2,7 +2,6 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
-import com.foreach.imageserver.core.services.exceptions.ImageResolutionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -126,9 +125,10 @@ public class ImageContextServiceTest
 		assertEquals( 17, (int) imageResolution.getId() );
 	}
 
-	@Test(expected = ImageResolutionException.class)
+	@Test
 	public void getImageResolution_NoWidthNoHeight() {
 		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 0, 0 );
+		assertNull( "factory should return null", imageResolution );
 	}
 
 	private ImageResolution createImageResolution( int id, int width, int height ) {
