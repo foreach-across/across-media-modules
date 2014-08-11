@@ -23,6 +23,8 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Configuration
@@ -85,8 +87,12 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 		webModule.setSupportViews( AcrossWebViewSupport.JSP, AcrossWebViewSupport.THYMELEAF );
 
 		webModule.setDevelopmentMode( true );
-		webModule.addDevelopmentViews( "imageserver-admin",
-		                               "c:/code/imageserver/imageserver-admin/src/main/resources/views/" );
+
+		Map<String, String> developmentViews = new HashMap<>();
+		developmentViews.put( "imageserver-admin-1", "c:/code/imageserver/imageserver-admin/src/main/resources/views/" );
+		developmentViews.put( "imageserver-admin-2", "c:/codefe/image-server/imageserver-admin/src/main/resources/views/" );
+
+		webModule.setDevelopmentViews( developmentViews );
 
 		return webModule;
 	}
