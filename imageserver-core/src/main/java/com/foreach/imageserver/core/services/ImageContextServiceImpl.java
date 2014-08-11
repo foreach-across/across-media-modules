@@ -16,7 +16,6 @@ import java.util.List;
 @Service
 public class ImageContextServiceImpl implements ImageContextService
 {
-
 	// default image resolution width/height proportion
 	public static final double DEFAULT_ASPECT_RATIO = 3.0 / 2.0;
 
@@ -46,7 +45,7 @@ public class ImageContextServiceImpl implements ImageContextService
 	@Override
 	public ImageResolution getImageResolution( long contextId, int width, int height ) {
 		if ( width < 0 || height < 0 ) {
-			throw new ImageResolutionException( "Invalid image dimensions specified." );
+			return null;
 		}
 		else if ( width == 0 && height == 0 ) {
 			// We won't try to match different resolutions in this case.
@@ -57,7 +56,8 @@ public class ImageContextServiceImpl implements ImageContextService
 				}
 			}
 
-			throw new ImageResolutionException( "At least one valid dimension is required." );
+			// At least one valid dimension should have been specified
+			return null;
 		}
 
 		ImageResolution selectedResolution = null;

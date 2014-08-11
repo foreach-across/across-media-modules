@@ -79,15 +79,16 @@ public enum ImageType implements IdLookup<BigDecimal>
 		return null;
 	}
 
-	public static ImageType getPreferredOutputType( ImageType imageType ) {
-		if ( imageType == null ) {
-			return JPEG;
+	public static ImageType getPreferredOutputType( ImageType requestedImageType, ImageType originalImageType ) {
+		if ( requestedImageType != null ) {
+			return requestedImageType;
 		}
-		switch ( imageType ) {
+		switch ( originalImageType ) {
 			case GIF:
 				return GIF;
 			case SVG:
 			case EPS:
+			case PNG:
 				return PNG;
 			default:
 				return JPEG;

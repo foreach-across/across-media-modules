@@ -45,6 +45,9 @@ public final class DtoUtil
 	}
 
 	public static ImageType toBusiness( ImageTypeDto dto ) {
+		if ( dto == null ) {
+			return null;
+		}
 		switch ( dto ) {
 			case JPEG:
 				return ImageType.JPEG;
@@ -61,7 +64,7 @@ public final class DtoUtil
 			case TIFF:
 				return ImageType.TIFF;
 			default:
-				throw new RuntimeException( "Unknown image type." );
+				return null;
 		}
 	}
 

@@ -1,9 +1,6 @@
 package com.foreach.imageserver.core.rest.services;
 
-import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageContext;
-import com.foreach.imageserver.core.business.ImageModification;
-import com.foreach.imageserver.core.business.ImageResolution;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.rest.request.ListModificationsRequest;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.request.RegisterModificationRequest;
@@ -20,7 +17,10 @@ import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBounds
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
+import com.foreach.imageserver.dto.ImageVariantDto;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +34,14 @@ import java.util.List;
 @Service
 public class ImageRestServiceImpl implements ImageRestService
 {
+	private static final Logger LOG = LoggerFactory.getLogger( ImageRestService.class );
+
 	@Autowired
 	private ImageContextService contextService;
+
 	@Autowired
 	private CropGeneratorUtil cropGeneratorUtil;
+
 	@Autowired
 	private ImageService imageService;
 
@@ -60,7 +64,7 @@ public class ImageRestServiceImpl implements ImageRestService
 			StreamImageSource imageSource = imageService.generateModification(
 					image,
 					request.getImageModificationDto(),
-					DtoUtil.toBusiness( request.getImageVariantDto() )
+					imageVariant( image, request.getImageVariantDto() )
 			);
 
 			if ( imageSource == null ) {
@@ -102,11 +106,13 @@ public class ImageRestServiceImpl implements ImageRestService
 				);
 
 				if ( imageResolution == null ) {
+					LOG.warn( "Resolution {}x{} does not exist for context {}", imageResolutionDto.getWidth(),
+					          imageResolutionDto.getHeight(), context.getCode() );
 					response.setResolutionDoesNotExist( true );
 				}
 				else {
 					StreamImageSource imageSource = imageService.getVariantImage(
-							image, context, imageResolution, DtoUtil.toBusiness( request.getImageVariantDto() )
+							image, context, imageResolution, imageVariant( image, request.getImageVariantDto() )
 					);
 
 					if ( imageSource == null ) {
@@ -120,6 +126,15 @@ public class ImageRestServiceImpl implements ImageRestService
 		}
 
 		return response;
+	}
+
+	private ImageVariant imageVariant( Image image, ImageVariantDto variantDto ) {
+		ImageVariant variant = DtoUtil.toBusiness( variantDto );
+
+		// Ensure an output image type is set
+		variant.setOutputType( ImageType.getPreferredOutputType( variant.getOutputType(), image.getImageType() ) );
+
+		return variant;
 	}
 
 	@Override
