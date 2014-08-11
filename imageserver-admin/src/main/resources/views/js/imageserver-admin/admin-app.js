@@ -50,7 +50,7 @@ angular.module('imageServerAdmin')
         };
 
         var imageTypes = function (callback) {
-            callback(['JPEG', 'PNG']);
+            callback(['JPEG', 'PNG', 'GIF']);
         };
 
         var resolutionDetails = function (resolutionId, callback) {
@@ -101,8 +101,9 @@ angular.module('imageServerAdmin')
             $rootScope.selectedMenu = 'resolutions';
 
             $scope.feedback = null;
-            $scope.selectedContexts = [];
-            $scope.resolution = {'id': 0, 'name': '', 'width': 0, 'height': 0, 'tags': ['']};
+            $scope.selectedContexts = {};
+            $scope.allowedOutputTypes = {};
+            $scope.resolution = {'id': 0, 'name': '', 'width': 0, 'height': 0, 'tags': [''], 'allowedOutputTypes': []};
 
             if ($routeParams.resolutionId > 0) {
                 // Load existing resolution
@@ -115,12 +116,21 @@ angular.module('imageServerAdmin')
                 $scope.contexts = data;
             });
 
+            imageService.getImageTypes(function (data) {
+                $scope.imageTypes = data;
+            });
+
             $scope.setResolution = function (data) {
                 $scope.resolution = data.resolution;
 
                 if ($scope.resolution.tags.length < 1) {
                     $scope.resolution.tags.push('');
                 }
+
+                $scope.allowedOutputTypes = {};
+                angular.forEach(data.resolution.allowedOutputTypes, function(value) {
+                   $scope.allowedOutputTypes[value] = true;
+                });
 
                 var list = data.context ? data.context : [];
                 $scope.selectedContexts = {};
@@ -137,6 +147,13 @@ angular.module('imageServerAdmin')
                         formData.context.push(value);
                     }
                 }, formData);
+
+                formData.resolution.allowedOutputTypes = [];
+                angular.forEach($scope.imageTypes, function(value) {
+                    if ($scope.allowedOutputTypes[value]) {
+                        formData.resolution.allowedOutputTypes.push(value);
+                    }
+                }, formData );
 
                 $http.post($rootScope.imageServerUrl + '/api/resolution/update?token=' + $rootScope.token, formData)
                     .success(function (data) {

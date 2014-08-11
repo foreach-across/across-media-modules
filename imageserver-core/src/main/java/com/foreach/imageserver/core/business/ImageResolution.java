@@ -2,16 +2,16 @@ package com.foreach.imageserver.core.business;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
+import com.foreach.imageserver.core.hibernate.ImageTypeSetUserType;
+import com.foreach.imageserver.core.hibernate.ImageTypeUserType;
+import com.foreach.imageserver.core.hibernate.TagsUserType;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * <p>An ImageResolution specifies a permitted output resolution. Every Application has an associated list of
@@ -61,12 +61,19 @@ public class ImageResolution
 	@Column(name = "configurable")
 	private boolean configurable;
 
+	@Column(name = "pregenerate")
+	private boolean pregenerateVariants;
+
 	@Column(name = "name")
 	private String name;
 
 	@Column(name = "tags")
 	@Type(type = TagsUserType.CLASS_NAME)
 	private Set<String> tags = new HashSet<>();
+
+	@Column(name = "output_types", nullable = false)
+	@Type(type = ImageTypeSetUserType.CLASS_NAME)
+	private Set<ImageType> allowedOutputTypes = EnumSet.noneOf( ImageType.class );
 
 	public long getId() {
 		return id;
@@ -104,6 +111,14 @@ public class ImageResolution
 		this.configurable = configurable;
 	}
 
+	public Set<ImageType> getAllowedOutputTypes() {
+		return allowedOutputTypes;
+	}
+
+	public void setAllowedOutputTypes( Set<ImageType> allowedOutputTypes ) {
+		this.allowedOutputTypes = allowedOutputTypes;
+	}
+
 	public String getName() {
 		return StringUtils.isBlank( name ) ? generatedName() : name;
 	}
@@ -122,6 +137,14 @@ public class ImageResolution
 		else {
 			return width + "x" + height;
 		}
+	}
+
+	public boolean isPregenerateVariants() {
+		return pregenerateVariants;
+	}
+
+	public void setPregenerateVariants( boolean pregenerateVariants ) {
+		this.pregenerateVariants = pregenerateVariants;
 	}
 
 	public void setName( String name ) {

@@ -1,15 +1,17 @@
 package com.foreach.imageserver.dto;
 
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ImageResolutionDto
 {
 	private long id;
-	private boolean configurable;
+	private boolean configurable, pregenerateVariants;
 	private String name;
 	private int width;
 	private int height;
+	private Set<ImageTypeDto> allowedOutputTypes = EnumSet.noneOf( ImageTypeDto.class );
 	private Set<String> tags = new HashSet<String>();
 
 	public ImageResolutionDto() {
@@ -49,6 +51,14 @@ public class ImageResolutionDto
 		this.configurable = configurable;
 	}
 
+	public boolean isPregenerateVariants() {
+		return pregenerateVariants;
+	}
+
+	public void setPregenerateVariants( boolean pregenerateVariants ) {
+		this.pregenerateVariants = pregenerateVariants;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -71,6 +81,14 @@ public class ImageResolutionDto
 
 	public void setId( long id ) {
 		this.id = id;
+	}
+
+	public Set<ImageTypeDto> getAllowedOutputTypes() {
+		return allowedOutputTypes;
+	}
+
+	public void setAllowedOutputTypes( Set<ImageTypeDto> allowedOutputTypes ) {
+		this.allowedOutputTypes = allowedOutputTypes;
 	}
 
 	@Override

@@ -128,7 +128,7 @@ public class ImageContextServiceTest
 	@Test
 	public void getImageResolution_NoWidthNoHeight() {
 		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 0, 0 );
-		assertNull( "factory should return null", imageResolution );
+		assertNull( imageResolution );
 	}
 
 	private ImageResolution createImageResolution( int id, int width, int height ) {

@@ -135,7 +135,10 @@
             <column name="height" type="java.sql.Types.INTEGER">
                 <constraints nullable="false"/>
             </column>
-            <column name="configurable" type="NUMBER(1,0)" defaultValue="0">
+            <column name="configurable" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+	        <column name="pregenerate" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="name" type="java.sql.Types.VARCHAR(250)">
@@ -143,6 +146,9 @@
             </column>
             <column name="tags" type="java.sql.Types.VARCHAR(500)">
                 <constraints nullable="true"/>
+            </column>
+	        <column name="output_types" type="java.sql.Types.INTEGER">
+                <constraints nullable="false"/>
             </column>
         </createTable>
 

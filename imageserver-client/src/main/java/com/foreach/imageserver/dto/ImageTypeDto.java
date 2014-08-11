@@ -12,7 +12,7 @@ public enum ImageTypeDto
 
 	private String extension;
 
-	private ImageTypeDto( String extension ) {
+	ImageTypeDto( String extension ) {
 		this.extension = extension;
 	}
 

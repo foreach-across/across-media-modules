@@ -3,14 +3,14 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.dto.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 // TODO: review to simply business and dto objects layer
 public final class DtoUtil
 {
-	private DtoUtil() {}
+	private DtoUtil() {
+	}
+
 	public static Crop toBusiness( CropDto dto ) {
 		Crop crop = new Crop();
 		crop.setX( dto.getX() );
@@ -25,9 +25,11 @@ public final class DtoUtil
 		resolution.setId( dto.getId() );
 		resolution.setWidth( dto.getWidth() );
 		resolution.setHeight( dto.getHeight() );
+		resolution.setPregenerateVariants( dto.isPregenerateVariants() );
 		resolution.setConfigurable( dto.isConfigurable() );
 		resolution.setName( dto.getName() );
 		resolution.setTags( dto.getTags() );
+		resolution.setAllowedOutputTypes( toBusiness( dto.getAllowedOutputTypes() ) );
 		return resolution;
 	}
 
@@ -42,6 +44,19 @@ public final class DtoUtil
 		ImageVariant imageVariant = new ImageVariant();
 		imageVariant.setOutputType( toBusiness( dto.getImageType() ) );
 		return imageVariant;
+	}
+
+	public static Set<ImageType> toBusiness( Set<ImageTypeDto> dtoSet ) {
+		Set<ImageType> imageTypes = EnumSet.noneOf( ImageType.class );
+
+		for ( ImageTypeDto dto : dtoSet ) {
+			ImageType imageType = toBusiness( dto );
+			if ( imageType != null ) {
+				imageTypes.add( imageType );
+			}
+		}
+		return imageTypes;
+
 	}
 
 	public static ImageType toBusiness( ImageTypeDto dto ) {
@@ -96,18 +111,6 @@ public final class DtoUtil
 		return new CropDto( crop.getX(), crop.getY(), crop.getWidth(), crop.getHeight() );
 	}
 
-	public static ImageResolutionDto toDto( ImageResolution imageResolution ) {
-		ImageResolutionDto dto = new ImageResolutionDto();
-		dto.setId( imageResolution.getId() );
-		dto.setWidth( imageResolution.getWidth() );
-		dto.setHeight( imageResolution.getHeight() );
-		dto.setConfigurable( imageResolution.isConfigurable() );
-		dto.setName( imageResolution.getName() );
-		dto.setTags( imageResolution.getTags() );
-
-		return dto;
-	}
-
 	public static List<ImageResolutionDto> toDto( Collection<ImageResolution> imageResolutions ) {
 		List<ImageResolutionDto> dtos = new ArrayList<>( imageResolutions.size() );
 		for ( ImageResolution imageResolution : imageResolutions ) {
@@ -116,4 +119,32 @@ public final class DtoUtil
 		}
 		return dtos;
 	}
+
+	public static ImageResolutionDto toDto( ImageResolution imageResolution ) {
+		ImageResolutionDto dto = new ImageResolutionDto();
+		dto.setId( imageResolution.getId() );
+		dto.setWidth( imageResolution.getWidth() );
+		dto.setHeight( imageResolution.getHeight() );
+		dto.setPregenerateVariants( imageResolution.isPregenerateVariants() );
+		dto.setAllowedOutputTypes( toDto( imageResolution.getAllowedOutputTypes() ) );
+		dto.setConfigurable( imageResolution.isConfigurable() );
+		dto.setName( imageResolution.getName() );
+		dto.setTags( imageResolution.getTags() );
+
+		return dto;
+	}
+
+	public static Set<ImageTypeDto> toDto( Set<ImageType> imageTypeSet ) {
+		Set<ImageTypeDto> imageTypes = EnumSet.noneOf( ImageTypeDto.class );
+
+		for ( ImageType imageType : imageTypeSet ) {
+			ImageTypeDto dto = ImageTypeDto.valueOf( imageType.name() );
+			if ( dto != null ) {
+				imageTypes.add( dto );
+			}
+		}
+
+		return imageTypes;
+	}
+
 }

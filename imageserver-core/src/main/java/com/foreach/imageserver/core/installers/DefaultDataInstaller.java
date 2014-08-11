@@ -4,6 +4,7 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.imageserver.core.business.ImageResolution;
+import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageProfileService;
 import com.foreach.imageserver.core.services.ImageService;
@@ -12,6 +13,7 @@ import com.foreach.imageserver.dto.ImageProfileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
+import java.util.EnumSet;
 
 @Installer(description = "Installs the default image_profile", version = 1,
            phase = InstallerPhase.AfterModuleBootstrap)
@@ -50,6 +52,7 @@ public class DefaultDataInstaller
 		originalResolution.setWidth( 0 );
 		originalResolution.setHeight( 0 );
 		originalResolution.setContexts( Collections.singleton( imageContextService.getByCode( "default" ) ) );
+		originalResolution.setAllowedOutputTypes( EnumSet.of( ImageType.JPEG, ImageType.PNG, ImageType.GIF ) );
 
 		imageService.saveImageResolution( originalResolution );
 	}

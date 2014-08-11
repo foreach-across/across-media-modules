@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.business;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
+import com.foreach.imageserver.core.hibernate.ImageTypeUserType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 

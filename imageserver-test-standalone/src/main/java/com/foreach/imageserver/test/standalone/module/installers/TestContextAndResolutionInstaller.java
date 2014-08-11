@@ -5,6 +5,7 @@ import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
+import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.ImageContextDto;
@@ -49,6 +50,7 @@ public class TestContextAndResolutionInstaller
 			resolution.setHeight( height );
 			resolution.setTags( new HashSet<>( tags ) );
 			resolution.setConfigurable( configurable );
+			resolution.setAllowedOutputTypes( EnumSet.of( ImageType.JPEG, ImageType.PNG, ImageType.GIF ) );
 
 			List<ImageContext> contexts = new ArrayList<>( contextCodes.size() );
 

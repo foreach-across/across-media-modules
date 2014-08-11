@@ -8,6 +8,7 @@ import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.business.ImageResolution;
+import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.*;
@@ -26,10 +27,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -61,6 +59,7 @@ public class ITLocalImageServerClient
 			resolution.setHeight( 480 );
 			resolution.setConfigurable( true );
 			resolution.setContexts( Collections.singleton( imageContextService.getByCode( "default" ) ) );
+			resolution.setAllowedOutputTypes( EnumSet.allOf( ImageType.class ) );
 
 			imageService.saveImageResolution( resolution );
 		}

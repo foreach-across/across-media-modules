@@ -1,30 +1,32 @@
-package com.foreach.imageserver.core.business;
+package com.foreach.imageserver.core.hibernate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.StringType;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-public class ImageTypeUserType implements UserType
+public class TagsUserType implements UserType
 {
-	public static final String CLASS_NAME = "com.foreach.imageserver.core.business.ImageTypeUserType";
-	private static final BigDecimalType TYPE = BigDecimalType.INSTANCE;
+	public static final String CLASS_NAME = "com.foreach.imageserver.core.hibernate.TagsUserType";
+	private static final StringType TYPE = StringType.INSTANCE;
 
-	@Override
 	public int[] sqlTypes() {
 		return new int[] { TYPE.sqlType() };
 	}
 
 	@Override
 	public Class returnedClass() {
-		return ImageType.class;
+		return Set.class;
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class ImageTypeUserType implements UserType
 
 	@Override
 	public int hashCode( Object x ) throws HibernateException {
-		return Objects.hashCode( x );
+		return Objects.hash( x );
 	}
 
 	@Override
@@ -42,13 +44,8 @@ public class ImageTypeUserType implements UserType
 	                           String[] names,
 	                           SessionImplementor session,
 	                           Object owner ) throws HibernateException, SQLException {
-		BigDecimal id = (BigDecimal) TYPE.get( rs, names[0], session );
-		for ( ImageType imageType : ImageType.values() ) {
-			if ( imageType.getId().equals( id ) ) {
-				return imageType;
-			}
-		}
-		return null;
+		String value = (String) TYPE.get( rs, names[0], session );
+		return new HashSet<>( Arrays.asList( StringUtils.split( StringUtils.defaultString( value ), "," ) ) );
 	}
 
 	@Override
@@ -57,8 +54,20 @@ public class ImageTypeUserType implements UserType
 	                         Object value,
 	                         int index,
 	                         SessionImplementor session ) throws HibernateException, SQLException {
-		BigDecimal result = ( (ImageType) value ).getId();
-		TYPE.set( st, result, index, session );
+		try {
+			Set<String> tags = new HashSet<>();
+
+			for ( String p : (Set<String>) value ) {
+				if ( StringUtils.isNotBlank( p ) ) {
+					tags.add( p );
+				}
+			}
+			String result = StringUtils.join( tags, "," );
+			TYPE.set( st, result, index, session );
+		}
+		catch ( Exception e ) {
+			throw new HibernateException( "Exception while getting ids from set", e );
+		}
 	}
 
 	@Override

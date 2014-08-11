@@ -1,27 +1,28 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.types.BitFlag;
 import com.foreach.spring.enums.IdLookup;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 
-public enum ImageType implements IdLookup<BigDecimal>
+public enum ImageType implements IdLookup<Integer>, BitFlag
 {
-	JPEG( BigDecimal.valueOf( 0 ), "image/jpeg", "jpeg", false, false ),
-	PNG( BigDecimal.valueOf( 1 ), "image/png", "png", true, false ),
-	GIF( BigDecimal.valueOf( 2 ), "image/gif", "gif", true, false ),
-	SVG( BigDecimal.valueOf( 3 ), "image/svg+xml", "svg", true, true ),
-	EPS( BigDecimal.valueOf( 4 ), "application/postscript", "eps", true, true, "image/eps", "image/x-eps",
+	JPEG( 1, "image/jpeg", "jpeg", false, false ),
+	PNG( 2, "image/png", "png", true, false ),
+	GIF( 4, "image/gif", "gif", true, false ),
+	SVG( 8, "image/svg+xml", "svg", true, true ),
+	EPS( 16, "application/postscript", "eps", true, true, "image/eps", "image/x-eps",
 	     "application/eps", "application/x-eps" ),
-	PDF( BigDecimal.valueOf( 5 ), "application/pdf", "pdf", false, false, "application/x-pdf" ),
-	TIFF( BigDecimal.valueOf( 6 ), "image/tiff", "tif", false, false );
+	PDF( 32, "application/pdf", "pdf", false, false, "application/x-pdf" ),
+	TIFF( 64, "image/tiff", "tif", false, false );
 
-	private final BigDecimal id;
+	private final int id;
 	private final String contentType, extension;
 	private final String[] alternativeContentTypes;
 	private final boolean transparency, scalable;
 
-	private ImageType( BigDecimal id,
+	ImageType( int id,
 	                   String contentType,
 	                   String extension,
 	                   boolean transparency,
@@ -34,6 +35,7 @@ public enum ImageType implements IdLookup<BigDecimal>
 		this.transparency = transparency;
 		this.scalable = scalable;
 	}
+
 
 	public String getContentType() {
 		return contentType;
@@ -52,7 +54,7 @@ public enum ImageType implements IdLookup<BigDecimal>
 	}
 
 	@Override
-	public BigDecimal getId() {
+	public Integer getId() {
 		return id;
 	}
 
@@ -93,5 +95,10 @@ public enum ImageType implements IdLookup<BigDecimal>
 			default:
 				return JPEG;
 		}
+	}
+
+	@Override
+	public int getBitFlag() {
+		return id;
 	}
 }
