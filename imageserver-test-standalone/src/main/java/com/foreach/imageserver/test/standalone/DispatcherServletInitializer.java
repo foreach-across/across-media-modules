@@ -1,8 +1,8 @@
 package com.foreach.imageserver.test.standalone;
 
+import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
 import com.foreach.imageserver.test.standalone.config.StandaloneWebConfiguration;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
 
 /**
@@ -12,7 +12,7 @@ public class DispatcherServletInitializer extends AbstractDispatcherServletIniti
 {
 	@Override
 	protected WebApplicationContext createServletApplicationContext() {
-		return new AnnotationConfigWebApplicationContext();
+		return new AcrossWebApplicationContext();
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class DispatcherServletInitializer extends AbstractDispatcherServletIniti
 
 	@Override
 	protected WebApplicationContext createRootApplicationContext() {
-		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+		AcrossWebApplicationContext context = new AcrossWebApplicationContext();
 		context.register( StandaloneWebConfiguration.class );
 
 		return context;
