@@ -26,6 +26,11 @@ public interface ImageServerClient
 	String imageUrl( String imageId,
 	                 String context,
 	                 int width,
+	                 int height );
+
+	String imageUrl( String imageId,
+	                 String context,
+	                 int width,
 	                 int height,
 	                 ImageTypeDto imageType );
 

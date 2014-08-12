@@ -51,6 +51,12 @@ public class TestLocalImageServerClient
 	}
 
 	@Test
+	public void imageUrlWithOutImageTypeWillReturnImageTypeOfOriginal() {
+		String url = imageServerClient.imageUrl( "10", "ONLINE", 1000, 2000 );
+		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&width=1000&height=2000", url );
+	}
+
+	@Test
 	public void listResolutionsContextNotFoundThrowsException() {
 		ListResolutionsResponse response = new ListResolutionsResponse();
 		response.setContextDoesNotExist( true );

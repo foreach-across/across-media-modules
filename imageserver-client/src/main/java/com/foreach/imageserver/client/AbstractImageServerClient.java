@@ -34,6 +34,15 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	public String imageUrl( String imageId,
 	                        String context,
 	                        int width,
+	                        int height
+	                        ) {
+		return imageUrl( imageId, context, new ImageResolutionDto( width, height ), new ImageVariantDto( null ) );
+	}
+
+	@Override
+	public String imageUrl( String imageId,
+	                        String context,
+	                        int width,
 	                        int height,
 	                        ImageTypeDto imageType ) {
 		return imageUrl( imageId, context, new ImageResolutionDto( width, height ), new ImageVariantDto( imageType ) );
@@ -78,7 +87,10 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	}
 
 	protected void addQueryParams( MultiValueMap<String, String> queryParams, ImageVariantDto imageVariant ) {
-		queryParams.set( "imageType", imageVariant.getImageType().toString() );
+		ImageTypeDto imageTypeDto = imageVariant.getImageType();
+		if( imageTypeDto != null ) {
+			queryParams.set( "imageType", imageVariant.getImageType().toString() );
+		}
 	}
 
 	protected void addQueryParams( MultiValueMap<String, String> queryParams,
