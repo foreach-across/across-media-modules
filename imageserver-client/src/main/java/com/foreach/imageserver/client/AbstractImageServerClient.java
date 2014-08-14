@@ -71,7 +71,7 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	protected URI buildUri( String path, MultiValueMap<String, String> queryParams ) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl( imageServerUrl ).path( "/" ).path( path );
 		for ( String key: queryParams.keySet() ) {
-			uri.queryParam( key, queryParams.get(key) );
+			uri.queryParam( key, queryParams.get(key).get( 0 ) );
 		}
 		return uri.build().toUri();
 	}
