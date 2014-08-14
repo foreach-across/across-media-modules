@@ -10,15 +10,15 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a client for a remote ImageServer endpoint.
@@ -86,9 +86,9 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 					LogHelper.flatten( imageId, context, imageResolution, imageVariant ) );
 		}
 
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "iid", imageId );
-		queryParams.put( "context", context );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "iid", imageId );
+		queryParams.set( "context", context );
 		addQueryParams( queryParams, imageResolution );
 		addQueryParams( queryParams, imageVariant );
 
@@ -105,9 +105,9 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 					LogHelper.flatten( imageId, imageModificationDto, imageVariant ) );
 		}
 
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "token", imageServerAccessToken );
-		queryParams.put( "iid", imageId );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
 		addQueryParams( queryParams, imageModificationDto );
 		addQueryParams( queryParams, imageVariant );
 
@@ -128,15 +128,15 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 			throw new ImageServerException( "Unable to load an image with empty byte data." );
 		}
 
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "token", imageServerAccessToken );
-		queryParams.put( "iid", imageId );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
 		if ( imageDate != null ) {
-			queryParams.put( "imageTimestamp", Long.toString( imageDate.getTime() ) );
+			queryParams.set( "imageTimestamp", Long.toString( imageDate.getTime() ) );
 		}
 
-		Map<String, Object> bodyParts = new LinkedHashMap<>();
-		bodyParts.put( "imageData", new ByteArrayResource( imageBytes )
+		MultiValueMap<String, Object> bodyParts = new LinkedMultiValueMap<>();
+		bodyParts.set( "imageData", new ByteArrayResource( imageBytes )
 		{
 			@Override
 			public String getFilename() {
@@ -162,18 +162,18 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	@Override
 	public ImageInfoDto imageInfo( String imageId ) {
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "token", imageServerAccessToken );
-		queryParams.put( "iid", imageId );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
 
 		return httpGet( ENDPOINT_IMAGE_INFO, queryParams, ResponseTypes.IMAGE_INFO );
 	}
 
 	@Override
 	public List<ImageResolutionDto> pregenerateResolutions( String imageId ) {
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "token", imageServerAccessToken );
-		queryParams.put( "iid", imageId );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
 
 		return httpGet( ENDPOINT_IMAGE_PREGENERATE, queryParams, ResponseTypes.RESOLUTIONS );
 	}
@@ -182,10 +182,10 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	public void registerImageModification( String imageId,
 	                                       String context,
 	                                       ImageModificationDto imageModification ) {
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "token", imageServerAccessToken );
-		queryParams.put( "iid", imageId );
-		queryParams.put( "context", context );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
+		queryParams.set( "context", context );
 
 		addQueryParams( queryParams, imageModification );
 
@@ -194,36 +194,36 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	@Override
 	public List<ImageResolutionDto> listAllowedResolutions( String context ) {
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "token", imageServerAccessToken );
-		queryParams.put( "context", context );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "context", context );
 
 		return httpGet( ENDPOINT_RESOLUTION_LIST, queryParams, ResponseTypes.RESOLUTIONS );
 	}
 
 	@Override
 	public List<ImageResolutionDto> listConfigurableResolutions( String context ) {
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "token", imageServerAccessToken );
-		queryParams.put( "context", context );
-		queryParams.put( "configurableOnly", "true" );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "context", context );
+		queryParams.set( "configurableOnly", "true" );
 
 		return httpGet( ENDPOINT_RESOLUTION_LIST, queryParams, ResponseTypes.RESOLUTIONS );
 	}
 
 	@Override
 	public List<ImageModificationDto> listModifications( String imageId, String context ) {
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "token", imageServerAccessToken );
-		queryParams.put( "iid", imageId );
-		queryParams.put( "context", context );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
+		queryParams.set( "context", context );
 
 		return httpGet( ENDPOINT_MODIFICATION_LIST, queryParams, ResponseTypes.MODIFICATIONS );
 	}
 
-	protected <T> T httpGet( String path, Map<String, String> queryParams, Class<T> responseType ) {
+	protected <T> T httpGet( String path, MultiValueMap<String, String> queryParams, Class<T> responseType ) {
 		URI url = buildUri( path, queryParams );
-		HttpEntity<?> request = new HttpEntity<Map<?, ?>>( new LinkedHashMap<String, String>() );
+		HttpEntity<?> request = new HttpEntity<MultiValueMap<?, ?>>( new LinkedMultiValueMap<String, String>() );
 
 		ResponseEntity<T> response = restTemplate.exchange( url, HttpMethod.GET, request, responseType );
 
@@ -231,10 +231,10 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	protected <T> T httpGet( String path,
-	                         Map<String, String> queryParams,
+	                         MultiValueMap<String, String> queryParams,
 	                         ParameterizedTypeReference<JsonResponse<T>> responseType ) {
 		URI url = buildUri( path, queryParams );
-		HttpEntity<?> request = new HttpEntity<Map<?, ?>>( new LinkedHashMap<String, String>() );
+		HttpEntity<?> request = new HttpEntity<MultiValueMap<?, ?>>( new LinkedMultiValueMap<String, String>() );
 
 		ResponseEntity<JsonResponse<T>> response =
 				restTemplate.exchange( url, HttpMethod.GET, request, responseType );
@@ -249,13 +249,13 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	protected <T> T httpPost( String path,
-	                          Map<String, String> queryParams,
-	                          Map<String, Object> bodyParams,
+	                          MultiValueMap<String, String> queryParams,
+	                          MultiValueMap<String, Object> bodyParams,
 	                          ParameterizedTypeReference<JsonResponse<T>> responseType ) {
 		URI url = buildUri( path, queryParams );
 
 		HttpEntity<?> request =
-				new HttpEntity<Map<?, ?>>( bodyParams );
+				new HttpEntity<MultiValueMap<?, ?>>( bodyParams );
 
 		ResponseEntity<JsonResponse<T>> response =
 				restTemplate.exchange( url, HttpMethod.POST, request, responseType );

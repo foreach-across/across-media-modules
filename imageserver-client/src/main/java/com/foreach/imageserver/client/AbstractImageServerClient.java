@@ -8,8 +8,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Provides the common ImageServerClient methods that are endpoint independent.
@@ -61,61 +59,61 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 					LogHelper.flatten( imageId, context, imageResolution, imageVariant ) );
 		}
 
-		Map<String, String> queryParams = new LinkedHashMap<>();
-		queryParams.put( "iid", imageId );
-		queryParams.put( "context", StringUtils.defaultString( context ) );
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "iid", imageId );
+		queryParams.set( "context", StringUtils.defaultString( context ) );
 		addQueryParams( queryParams, imageResolution );
 		addQueryParams( queryParams, imageVariant );
 
 		return buildUri( ENDPOINT_IMAGE_VIEW, queryParams ).toString();
 	}
 
-	protected URI buildUri( String path, Map<String, String> queryParams ) {
+	protected URI buildUri( String path, MultiValueMap<String, String> queryParams ) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl( imageServerUrl ).path( "/" ).path( path );
-		for ( Map.Entry<String, String> param : queryParams.entrySet() ) {
-			uri.queryParam( param.getKey(), param.getValue() );
+		for ( String key: queryParams.keySet() ) {
+			uri.queryParam( key, queryParams.get(key) );
 		}
 		return uri.build().toUri();
 	}
 
-	protected void addQueryParams( Map<String, String> queryParams, ImageResolutionDto imageResolution ) {
+	protected void addQueryParams( MultiValueMap<String, String> queryParams, ImageResolutionDto imageResolution ) {
 		if ( imageResolution.getWidth() != 0 ) {
-			queryParams.put( "width", Integer.toString( imageResolution.getWidth() ) );
+			queryParams.set( "width", Integer.toString( imageResolution.getWidth() ) );
 		}
 		if ( imageResolution.getHeight() != 0 ) {
-			queryParams.put( "height", Integer.toString( imageResolution.getHeight() ) );
+			queryParams.set( "height", Integer.toString( imageResolution.getHeight() ) );
 		}
 	}
 
-	protected void addQueryParams( Map<String, String> queryParams, ImageVariantDto imageVariant ) {
+	protected void addQueryParams( MultiValueMap<String, String> queryParams, ImageVariantDto imageVariant ) {
 	ImageTypeDto imageTypeDto = imageVariant.getImageType();
 		if( imageTypeDto != null ) {
-			queryParams.put( "imageType", imageVariant.getImageType().toString() );
+			queryParams.set( "imageType", imageVariant.getImageType().toString() );
 		}
 	}
 
-	protected void addQueryParams( Map<String, String> queryParams,
+	protected void addQueryParams( MultiValueMap<String, String> queryParams,
 	                               ImageModificationDto imageModification ) {
 		ImageResolutionDto resolution = imageModification.getResolution();
 		DimensionsDto boundaries = imageModification.getBoundaries();
 		CropDto crop = imageModification.getCrop();
 		DimensionsDto density = imageModification.getDensity();
 
-		queryParams.put( "resolution.width", Integer.toString( resolution.getWidth() ) );
-		queryParams.put( "resolution.height", Integer.toString( resolution.getHeight() ) );
+		queryParams.set( "resolution.width", Integer.toString( resolution.getWidth() ) );
+		queryParams.set( "resolution.height", Integer.toString( resolution.getHeight() ) );
 
-		queryParams.put( "crop.x", Integer.toString( crop.getX() ) );
-		queryParams.put( "crop.y", Integer.toString( crop.getY() ) );
-		queryParams.put( "crop.width", Integer.toString( crop.getWidth() ) );
-		queryParams.put( "crop.height", Integer.toString( crop.getHeight() ) );
-		queryParams.put( "crop.source.width", Integer.toString( crop.getSource().getWidth() ) );
-		queryParams.put( "crop.source.height", Integer.toString( crop.getSource().getHeight() ) );
-		queryParams.put( "crop.box.width", Integer.toString( crop.getBox().getWidth() ) );
-		queryParams.put( "crop.box.height", Integer.toString( crop.getBox().getHeight() ) );
-		queryParams.put( "density.width", Integer.toString( density.getWidth() ) );
-		queryParams.put( "density.height", Integer.toString( density.getHeight() ) );
+		queryParams.set( "crop.x", Integer.toString( crop.getX() ) );
+		queryParams.set( "crop.y", Integer.toString( crop.getY() ) );
+		queryParams.set( "crop.width", Integer.toString( crop.getWidth() ) );
+		queryParams.set( "crop.height", Integer.toString( crop.getHeight() ) );
+		queryParams.set( "crop.source.width", Integer.toString( crop.getSource().getWidth() ) );
+		queryParams.set( "crop.source.height", Integer.toString( crop.getSource().getHeight() ) );
+		queryParams.set( "crop.box.width", Integer.toString( crop.getBox().getWidth() ) );
+		queryParams.set( "crop.box.height", Integer.toString( crop.getBox().getHeight() ) );
+		queryParams.set( "density.width", Integer.toString( density.getWidth() ) );
+		queryParams.set( "density.height", Integer.toString( density.getHeight() ) );
 
-		queryParams.put( "boundaries.width", Integer.toString( boundaries.getWidth() ) );
-		queryParams.put( "boundaries.height", Integer.toString( boundaries.getHeight() ) );
+		queryParams.set( "boundaries.width", Integer.toString( boundaries.getWidth() ) );
+		queryParams.set( "boundaries.height", Integer.toString( boundaries.getHeight() ) );
 	}
 }
