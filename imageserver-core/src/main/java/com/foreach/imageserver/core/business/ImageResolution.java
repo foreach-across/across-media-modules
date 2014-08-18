@@ -3,7 +3,6 @@ package com.foreach.imageserver.core.business;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import com.foreach.imageserver.core.hibernate.ImageTypeSetUserType;
-import com.foreach.imageserver.core.hibernate.ImageTypeUserType;
 import com.foreach.imageserver.core.hibernate.TagsUserType;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
@@ -174,5 +173,24 @@ public class ImageResolution
 	@Override
 	public String toString() {
 		return width + "x" + height;
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
+
+		ImageResolution that = (ImageResolution) o;
+
+		return Objects.equals( this.id, that.id );
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( id );
 	}
 }

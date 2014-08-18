@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.business;
 
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 /**
  * A simple object to specify the actual dimensions of an Image.
@@ -137,14 +138,7 @@ public class Dimensions
 
 		Dimensions that = (Dimensions) o;
 
-		if ( height != that.height ) {
-			return false;
-		}
-		if ( width != that.width ) {
-			return false;
-		}
-
-		return true;
+		return Objects.equals( this.height, that.height ) && Objects.equals( this.width, that.width );
 	}
 
 	@Override

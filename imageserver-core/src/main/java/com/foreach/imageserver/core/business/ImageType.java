@@ -4,8 +4,6 @@ import com.foreach.across.modules.hibernate.types.BitFlag;
 import com.foreach.spring.enums.IdLookup;
 import org.apache.commons.lang3.StringUtils;
 
-import java.math.BigDecimal;
-
 public enum ImageType implements IdLookup<Integer>, BitFlag
 {
 	JPEG( 1, "image/jpeg", "jpeg", false, false ),

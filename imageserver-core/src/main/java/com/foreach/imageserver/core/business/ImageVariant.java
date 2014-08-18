@@ -2,6 +2,8 @@ package com.foreach.imageserver.core.business;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.Objects;
+
 /**
  * The ImageVariant specifies what variant of an ImageModification we want to obtain. This may include options such as
  * the desired output format, whether the image should be converted to greyscale, etc.
@@ -25,5 +27,24 @@ public class ImageVariant
 
 	public void setOutputType( ImageType outputType ) {
 		this.outputType = outputType;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode( outputType );
+	}
+
+	@Override
+	public boolean equals( Object obj ) {
+		if ( this == obj ) {
+			return true;
+		}
+		if ( obj == null || getClass() != obj.getClass() ) {
+			return false;
+		}
+
+		ImageVariant that = (ImageVariant) obj;
+
+		return Objects.equals( this.outputType, that.outputType );
 	}
 }
