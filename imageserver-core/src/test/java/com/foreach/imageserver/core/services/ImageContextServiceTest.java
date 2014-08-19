@@ -35,7 +35,8 @@ public class ImageContextServiceTest
 		imageResolutions.add( createImageResolution( 7, 20, 50 ) );
 		imageResolutions.add( createImageResolution( 8, 30, 50 ) );
 		imageResolutions.add( createImageResolution( 9, 40, 50 ) );
-		imageResolutions.add( createImageResolution( 10, 50, 50 ) );
+
+		imageResolutions.add( createImageResolution( 10, 50, 0 ) );
 
 		imageResolutions.add( createImageResolution( 11, 10, 70 ) );
 		imageResolutions.add( createImageResolution( 12, 20, 70 ) );
@@ -53,20 +54,18 @@ public class ImageContextServiceTest
 	@Test
 	public void getImageResolution_forWidthHeight() {
 		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 28, 48 ); //-> 30,50
-		assertNotNull( imageResolution );
-		assertEquals( 8, (int) imageResolution.getId() );
+		assertNull( imageResolution );
 	}
 
 	@Test
 	public void getImageResolution_ExactWidthHeight() {
-		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 30, 48 ); //-> 30,50
-		assertNotNull( imageResolution );
-		assertEquals( 8, (int) imageResolution.getId() );
+		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 30, 48 ); //-> null
+		assertNull( imageResolution );
 	}
 
 	@Test
 	public void getImageResolution_ExactWidthExactHeight() {
-		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 30, 50 ); //-> 30,50
+		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 30, 50 ); //-> 30x50
 		assertNotNull( imageResolution );
 		assertEquals( 8, (int) imageResolution.getId() );
 	}
@@ -96,17 +95,14 @@ public class ImageContextServiceTest
 	}
 
 	@Test
-	public void getImageResolution_WidthNoHeight() {
-		// gets resolution closest to 3/2 width/height ratio: : 50/50=2.5 is closer than 50/20 or 50/70=0.71
-		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 48, 0 ); //-> 50,50
-		assertNotNull( imageResolution );
-		assertEquals( 10, (int) imageResolution.getId() );
+	public void getImageResolution_WidthNoHeightNonExistent() {
+		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 48, 0 ); //-> null
+		assertNull( imageResolution );
 	}
 
 	@Test
 	public void getImageResolution_ExactWidthNoHeight() {
-		// gets resolution closest to 3/2 width/height ratio: 50/50=2.5 is closer than 50/20 or 50/70=0.71
-		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 50, 0 ); //-> 50,50
+		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 50, 0 ); //-> 50,0
 		assertNotNull( imageResolution );
 		assertEquals( 10, (int) imageResolution.getId() );
 	}
