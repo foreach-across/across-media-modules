@@ -5,6 +5,8 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ImageContextManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.dto.ImageContextDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import java.util.List;
 @Service
 public class ImageContextServiceImpl implements ImageContextService
 {
+	private static final Logger LOG = LoggerFactory.getLogger( ImageContextServiceImpl.class );
+
 	// default image resolution width/height proportion
 	public static final double DEFAULT_ASPECT_RATIO = 3.0 / 2.0;
 
@@ -46,20 +50,6 @@ public class ImageContextServiceImpl implements ImageContextService
 		if ( width < 0 || height < 0 ) {
 			return null;
 		}
-		else if ( width == 0 && height == 0 ) {
-			// We won't try to match different resolutions in this case.
-			List<ImageResolution> imageResolutions = imageResolutionManager.getForContext( contextId );
-			for ( ImageResolution imageResolution : imageResolutions ) {
-				if ( imageResolution.getWidth() == width && imageResolution.getHeight() == height ) {
-					return imageResolution;
-				}
-			}
-
-			// At least one valid dimension should have been specified
-			return null;
-		}
-
-		ImageResolution selectedResolution = null;
 
 		List<ImageResolution> imageResolutions = imageResolutionManager.getForContext( contextId );
 		for ( ImageResolution imageResolution : imageResolutions ) {
@@ -67,38 +57,12 @@ public class ImageContextServiceImpl implements ImageContextService
 			if ( imageResolution.getWidth() == width && imageResolution.getHeight() == height ) {
 				return imageResolution;
 			}
-
-			// image resolution is large enough to contain (width, height)  (or only width, if height is zero)
-			if ( imageResolution.getWidth() >= width && ( imageResolution.getHeight() >= height || height == 0 ) ) {
-
-				// image resolution is larger (in width) than previously selected image resolution
-				boolean betterFit = true;
-
-				if ( selectedResolution != null ) {
-					// tightest fit for width
-					betterFit &= imageResolution.getWidth() <= selectedResolution.getWidth();
-
-					if ( height > 0 ) {
-						// tightest fit for height
-						betterFit &= imageResolution.getHeight() <= selectedResolution.getHeight();
-					}
-					else {
-						// closest to default aspect ratio
-						double oldDist = Math.abs(
-								(double) selectedResolution.getWidth() / (double) selectedResolution.getHeight() - DEFAULT_ASPECT_RATIO );
-						double newDist = Math.abs(
-								(double) imageResolution.getWidth() / (double) imageResolution.getHeight() - DEFAULT_ASPECT_RATIO );
-						betterFit &= newDist <= oldDist;
-					}
-				}
-
-				if ( betterFit ) {
-					selectedResolution = imageResolution;
-				}
-			}
 		}
 
-		return selectedResolution;
+		// no matching image resolution was found
+		LOG.error( "Undefined image resolution: width={}, height={}, contextId={}", width, height, contextId );
+
+		return null;
 	}
 
 	@Override
