@@ -34,11 +34,7 @@ public class ImageContextServiceImpl implements ImageContextService
 	}
 
 	/**
-	 * Provides an image resolution that most closely matches the given dimensions.
-	 * When both width and height are given this means the smallest image resolution that encompasses these dimensions.
-	 * When no height is given (i.e. <= 0), a height is calculated bases on the default aspect ratio (3/2).
-	 * The given width is expected to always be larger than zero.
-	 * When all image resolutions are smaller than the given dimensions, null is returned.
+	 * Provides an image resolution that exactly matches the given dimensions, if it exists.
 	 *
 	 * @param contextId The id of the context
 	 * @param width     The wanted image resolution width
