@@ -7,7 +7,7 @@ import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
-import com.foreach.test.MockedLoader;
+import com.foreach.common.test.MockedLoader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.business;
 
 import com.foreach.across.modules.hibernate.types.BitFlag;
-import com.foreach.spring.enums.IdLookup;
+import com.foreach.common.spring.enums.IdLookup;
 import org.apache.commons.lang3.StringUtils;
 
 public enum ImageType implements IdLookup<Integer>, BitFlag

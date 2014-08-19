@@ -110,7 +110,6 @@
 		<dependency>
 			<groupId>com.foreach.libs</groupId>
 			<artifactId>common-web</artifactId>
-			<version>0.8-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
