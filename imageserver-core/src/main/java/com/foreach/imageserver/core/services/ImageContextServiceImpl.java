@@ -60,8 +60,6 @@ public class ImageContextServiceImpl implements ImageContextService
 		}
 
 		// no matching image resolution was found
-		LOG.error( "Undefined image resolution: width={}, height={}, contextId={}", width, height, contextId );
-
 		return null;
 	}
 
