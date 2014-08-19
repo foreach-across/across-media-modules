@@ -250,7 +250,7 @@ public class LTMethods
 				try (InputStream imageStream = imageServerClient.imageStream( id, context, width, height, imageType )) {
 					if ( consumeReads ) {
 						// Make sure we consume the stream.
-						IOUtils.toByteArray( imageStream );
+						while (imageStream.read() != -1);
 					}
 				}
 			}
