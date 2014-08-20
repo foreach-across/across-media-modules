@@ -11,6 +11,9 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LTMethods
@@ -92,7 +95,7 @@ public class LTMethods
 		Set<Thread> threads = new HashSet<>( nrOfReads );
 		CyclicBarrier barrier = new CyclicBarrier( nrOfReads + 1 );
 
-		for ( int i = 0 ; i < nrOfReadsMultiplier ; ++i ) {
+		for ( int i = 0; i < nrOfReadsMultiplier; ++i ) {
 			for ( String id : imageIds ) {
 				StopWatch taskTimer = new StopWatch();
 				AtomicBoolean errorFlag = new AtomicBoolean( false );
@@ -123,6 +126,47 @@ public class LTMethods
 		}
 
 		System.out.println( prettyPrintTimings( totalTimer, taskTimers ) );
+		System.out.println( prettyErrorFlags( errorFlags ) );
+	}
+
+	public static void readNumberOfImagesConcurrently( ImageServerClient imageServerClient,
+	                                                   List<String> imageIds,
+	                                                   String context,
+	                                                   int width,
+	                                                   int height,
+	                                                   List<ImageTypeDto> types,
+	                                                   int nrOfThreads,
+	                                                   int nrOfRequestsMultiplier ) throws Exception {
+		int nrOfRequests = nrOfRequestsMultiplier * imageIds.size() * types.size();
+		System.out.println( String.format( "Reading %s variants using %d threads.", nrOfRequests, nrOfThreads ) );
+
+		StopWatch totalTimer = new StopWatch();
+		SortedMap<String, StopWatch> taskTimers = new TreeMap<>();
+		SortedMap<String, AtomicBoolean> errorFlags = new TreeMap<>();
+		List<Runnable> tasks = new ArrayList<>( nrOfRequests );
+		for ( int i = 0; i < nrOfRequestsMultiplier; ++i ) {
+			for ( String id : imageIds ) {
+				for ( ImageTypeDto imageType : types ) {
+					StopWatch taskTimer = new StopWatch();
+					AtomicBoolean errorFlag = new AtomicBoolean( false );
+					tasks.add( new ConsumeImageStreamTask( taskTimer, imageServerClient, id, context, width, height,
+					                                       imageType, errorFlag, true, null ) );
+					taskTimers.put( id + "-" + i + "-" + imageType.toString(), taskTimer );
+					errorFlags.put( id + "-" + i + "-" + imageType.toString(), errorFlag );
+				}
+			}
+		}
+
+		ExecutorService executorService = Executors.newFixedThreadPool( nrOfThreads );
+		totalTimer.start();
+		for ( Runnable task : tasks ) {
+			executorService.submit( task );
+		}
+		executorService.shutdown();
+		executorService.awaitTermination( Long.MAX_VALUE, TimeUnit.DAYS );
+		totalTimer.stop();
+
+		System.out.println( prettyPrintSummary( totalTimer, taskTimers ) );
 		System.out.println( prettyErrorFlags( errorFlags ) );
 	}
 
@@ -161,18 +205,25 @@ public class LTMethods
 	}
 
 	public static String prettyPrintTimings( StopWatch totalTimer, SortedMap<String, StopWatch> taskTimers ) {
-		long averageTaskTime = computeAverageTaskTime( taskTimers );
-
 		StringBuffer sb = new StringBuffer();
-		sb.append( String.format( "Total: %dms, Average: %dms.\n", totalTimer.getTime(), averageTaskTime ) );
+		sb.append( prettyPrintSummary( totalTimer, taskTimers ) );
 
 		for ( SortedMap.Entry<String, StopWatch> taskTimer : taskTimers.entrySet() ) {
 			String taskName = taskTimer.getKey();
 			StopWatch stopWatch = taskTimer.getValue();
-			sb.append( String.format( "%-25s%10dms%10dms\n", taskName, stopWatch.getTime(),
-			                          stopWatch.getTime() - averageTaskTime ) );
+			sb.append( String.format( "%-25s%10dms\n", taskName, stopWatch.getTime() ) );
 		}
 
+		return sb.toString();
+	}
+
+	public static String prettyPrintSummary( StopWatch totalTimer, SortedMap<String, StopWatch> taskTimers ) {
+		double averageTaskTime = computeAverageTaskTime( taskTimers );
+		double standardDeviation = Math.sqrt( computeVariance( taskTimers, averageTaskTime ) );
+
+		StringBuffer sb = new StringBuffer();
+		sb.append( String.format( "Total: %dms, Average: %dms, Standard Deviation: %dms.\n", totalTimer.getTime(),
+		                          (long) averageTaskTime, (long) standardDeviation ) );
 		return sb.toString();
 	}
 
@@ -199,13 +250,22 @@ public class LTMethods
 		return flaggedIds;
 	}
 
-	public static long computeAverageTaskTime( SortedMap<String, StopWatch> taskTimers ) {
+	public static double computeAverageTaskTime( SortedMap<String, StopWatch> taskTimers ) {
 		Collection<StopWatch> timers = taskTimers.values();
 		long sum = 0;
 		for ( StopWatch taskTimer : timers ) {
 			sum += taskTimer.getTime();
 		}
-		return sum / timers.size();
+		return (double) sum / (double) timers.size();
+	}
+
+	private static double computeVariance( SortedMap<String, StopWatch> taskTimers, double averageTaskTime ) {
+		Collection<StopWatch> timers = taskTimers.values();
+		long sum = 0;
+		for ( StopWatch taskTimer : timers ) {
+			sum += Math.pow( ( taskTimer.getTime() - averageTaskTime ), 2 );
+		}
+		return (double) sum / (double) timers.size();
 	}
 
 	public static class ConsumeImageStreamTask implements Runnable
@@ -244,13 +304,15 @@ public class LTMethods
 		@Override
 		public void run() {
 			try {
-				barrier.await();
+				if ( barrier != null ) {
+					barrier.await();
+				}
 
 				taskTimer.start();
 				try (InputStream imageStream = imageServerClient.imageStream( id, context, width, height, imageType )) {
 					if ( consumeReads ) {
 						// Make sure we consume the stream.
-						while (imageStream.read() != -1);
+						while ( imageStream.read() != -1 );
 					}
 				}
 			}

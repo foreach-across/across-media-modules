@@ -5,6 +5,7 @@ import com.foreach.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.ImageTypeDto;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -15,7 +16,7 @@ import static com.foreach.imageserver.lt.core.LTMethods.*;
  * This test will:
  * - Start out by loading the same image file NR_OF_ORIGINALS times.
  * - Generate a JPEG and a PNG variant for every original.
- * - Create NR_OF_ORIGINALS times NR_OF_READS_MULTIPLIER threads that will request a generated variant.
+ * - Use NR_OF_THREADS threads to read NR_OF_ORIGINALS * NR_OF_REQUESTS_MULTIPLIER * <nr_of_image_types> variants in total.
  */
 public class LTReadThroughput
 {
@@ -31,7 +32,8 @@ public class LTReadThroughput
 	private static final String CONTEXT = "website";
 
 	private static final int NR_OF_ORIGINALS = 10;
-	private static final int NR_OF_READS_MULTIPLIER = 20;
+	private static final int NR_OF_THREADS = 10;
+	private static final int NR_OF_REQUESTS_MULTIPLIER = 100;
 	private static final long BREAK_TIME = 5000;
 
 	public static void main( String[] args ) throws Exception {
@@ -46,12 +48,8 @@ public class LTReadThroughput
 		assertSameImages( imageServerClient, imageIds, CONTEXT, WIDTH, HEIGHT, ImageTypeDto.PNG );
 		pause( BREAK_TIME );
 
-		readImagesConcurrently( imageServerClient, imageIds, CONTEXT, WIDTH, HEIGHT, ImageTypeDto.JPEG,
-		                        NR_OF_READS_MULTIPLIER, true );
-		pause( BREAK_TIME );
-
-		readImagesConcurrently( imageServerClient, imageIds, CONTEXT, WIDTH, HEIGHT, ImageTypeDto.PNG,
-		                        NR_OF_READS_MULTIPLIER, true );
+		readNumberOfImagesConcurrently( imageServerClient, imageIds, CONTEXT, WIDTH, HEIGHT, Arrays.asList(
+				ImageTypeDto.JPEG, ImageTypeDto.PNG ), NR_OF_THREADS, NR_OF_REQUESTS_MULTIPLIER );
 
 		System.out.println( "Done." );
 	}
