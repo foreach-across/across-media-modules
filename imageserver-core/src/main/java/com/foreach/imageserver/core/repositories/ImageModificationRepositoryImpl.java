@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.repositories;
 
+import com.foreach.across.modules.hibernate.repositories.BasicRepositoryImpl;
 import com.foreach.imageserver.core.business.ImageModification;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;

@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.repositories;
 
+import com.foreach.across.modules.hibernate.repositories.BasicRepositoryImpl;
 import com.foreach.imageserver.core.business.Image;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;

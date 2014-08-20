@@ -70,6 +70,7 @@
           <element id="library" level="project" name="Maven: across-standard-modules:admin-web:1.0.3-SNAPSHOT" />
           <element id="library" level="project" name="Maven: across-standard-modules:spring-security:1.0.3-SNAPSHOT" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-core:3.2.4.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-acl:3.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-web:3.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-config:3.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.thymeleaf.extras:thymeleaf-extras-springsecurity3:2.1.1.RELEASE" />
