@@ -1,13 +1,8 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageContext;
-import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
-import com.foreach.imageserver.dto.ImageModificationDto;
-import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -92,15 +87,15 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	@Override
 	public void storeVariantImage( Image image,
 	                               ImageContext context,
-	                               ImageModificationDto modification,
+	                               ImageResolution imageResolution,
 	                               ImageVariant imageVariant,
 	                               InputStream imageStream ) {
-		if ( image == null || context == null || modification == null || imageVariant == null || imageStream == null ) {
+		if ( image == null || context == null || imageResolution == null || imageVariant == null || imageStream == null ) {
 			LOG.warn(
-					"Null parameters not allowed - ImageStoreServiceImpl#storeVariantImage: image={}, context={}, modification={}, imageVariant={}, imageStream={}",
-					LogHelper.flatten( image, context, modification, imageVariant, imageStream ) );
+					"Null parameters not allowed - ImageStoreServiceImpl#storeVariantImage: image={}, context={}, imageResolution={}, imageVariant={}, imageStream={}",
+					LogHelper.flatten( image, context, imageResolution, imageVariant, imageStream ) );
 		}
-		Path targetPath = getTargetPath( image, context, modification, imageVariant );
+		Path targetPath = getTargetPath( image, context, imageResolution, imageVariant );
 		createFoldersSafely( targetPath.getParent() );
 		writeSafely( imageStream, targetPath );
 	}
@@ -108,29 +103,29 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	@Override
 	public StreamImageSource getVariantImage( Image image,
 	                                          ImageContext context,
-	                                          ImageModificationDto modification,
+	                                          ImageResolution imageResolution,
 	                                          ImageVariant imageVariant ) {
-		if ( image == null || context == null || modification == null || imageVariant == null ) {
+		if ( image == null || context == null || imageResolution == null || imageVariant == null ) {
 			LOG.warn(
-					"Null parameters not allowed - ImageStoreServiceImpl#getVariantImage: image={}, context={}, modification={}, imageVariant={}",
-					LogHelper.flatten( image, context, modification, imageVariant ) );
+					"Null parameters not allowed - ImageStoreServiceImpl#getVariantImage: image={}, context={}, imageResolution={}, imageVariant={}",
+					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
-		Path targetPath = getTargetPath( image, context, modification, imageVariant );
+		Path targetPath = getTargetPath( image, context, imageResolution, imageVariant );
 		return read( targetPath, imageVariant.getOutputType() );
 	}
 
 	@Override
 	public void removeVariantImage( Image image,
 	                                ImageContext context,
-	                                ImageModificationDto modification,
+	                                ImageResolution imageResolution,
 	                                ImageVariant imageVariant ) {
-		if ( image == null || context == null || modification == null || imageVariant == null ) {
+		if ( image == null || context == null || imageResolution == null || imageVariant == null ) {
 			LOG.warn(
-					"Null parameters not allowed - ImageStoreServiceImpl#removeVariantImage: image={}, context={}, modification={}, imageVariant={}",
-					LogHelper.flatten( image, context, modification, imageVariant ) );
+					"Null parameters not allowed - ImageStoreServiceImpl#removeVariantImage: image={}, context={}, imageResolution={}, imageVariant={}",
+					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
 
-		Path targetPath = getTargetPath( image, context, modification, imageVariant );
+		Path targetPath = getTargetPath( image, context, imageResolution, imageVariant );
 
 		try {
 			Files.deleteIfExists( targetPath );
@@ -208,12 +203,12 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	private Path getTargetPath( Image image,
 	                            ImageContext context,
-	                            ImageModificationDto modification,
+	                            ImageResolution imageResolution,
 	                            ImageVariant imageVariant ) {
-		if ( image == null || context == null || modification == null || imageVariant == null ) {
+		if ( image == null || context == null || imageResolution == null || imageVariant == null ) {
 			LOG.warn(
-					"Null parameters not allowed - ImageStoreServiceImpl#getTargetPath: image={}, context={}, modification={}, imageVariant={}",
-					LogHelper.flatten( image, context, modification, imageVariant ) );
+					"Null parameters not allowed - ImageStoreServiceImpl#getTargetPath: image={}, context={}, imageResolution={}, imageVariant={}",
+					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
 
 		/**
@@ -221,19 +216,18 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 * create a per-repository parent folder, so we can easily distinguish between repositories.
 		 */
 
-		String fileName = constructFileName( image, modification, imageVariant );
+		String fileName = constructFileName( image, imageResolution, imageVariant );
 
 		return variantsFolder.resolve( context.getCode() ).resolve( image.getVariantPath() ).resolve( fileName );
 	}
 
-	private String constructFileName( Image image, ImageModificationDto modification, ImageVariant imageVariant ) {
-		if ( image == null || modification == null || imageVariant == null ) {
+	private String constructFileName( Image image, ImageResolution imageResolution, ImageVariant imageVariant ) {
+		if ( image == null || imageResolution == null || imageVariant == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageStoreServiceImpl#constructFileName: image={}, modification={}, imageVariant={}",
-					LogHelper.flatten( image, modification, imageVariant ) );
+					LogHelper.flatten( image, imageResolution, imageVariant ) );
 		}
 
-		ImageResolutionDto imageResolution = modification.getResolution();
 		StringBuilder fileNameBuilder = new StringBuilder();
 		fileNameBuilder.append( variantFileNamePrefix( image.getId() ) );
 		//if (imageResolution.getWidth() != null) {

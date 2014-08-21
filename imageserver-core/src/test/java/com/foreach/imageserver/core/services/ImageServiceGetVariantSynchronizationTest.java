@@ -182,9 +182,9 @@ public class ImageServiceGetVariantSynchronizationTest
 		when( cropGenerator.buildModificationDto( secondImage, context, imageResolution ) ).thenReturn(
 				modificationDto );
 
-		when( imageStoreService.getVariantImage( firstImage, context, modificationDto, imageVariant ) ).thenReturn(
+		when( imageStoreService.getVariantImage( firstImage, context, imageResolution, imageVariant ) ).thenReturn(
 				null );
-		when( imageStoreService.getVariantImage( secondImage, context, modificationDto, imageVariant ) ).thenReturn(
+		when( imageStoreService.getVariantImage( secondImage, context, imageResolution, imageVariant ) ).thenReturn(
 				null );
 
 		when( imageModificationManager.getById( 1, 10, 20 ) ).thenReturn( imageModification() );

@@ -2,9 +2,9 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageContext;
+import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
-import com.foreach.imageserver.dto.ImageModificationDto;
 
 import java.io.InputStream;
 
@@ -18,18 +18,18 @@ public interface ImageStoreService
 
 	void storeVariantImage( Image image,
 	                        ImageContext context,
-	                        ImageModificationDto modification,
+	                        ImageResolution imageResolution,
 	                        ImageVariant imageVariant,
 	                        InputStream imageStream );
 
 	StreamImageSource getVariantImage( Image image,
 	                                   ImageContext context,
-	                                   ImageModificationDto modification,
+	                                   ImageResolution imageResolution,
 	                                   ImageVariant imageVariant );
 
 	void removeVariantImage( Image image,
 	                         ImageContext context,
-	                         ImageModificationDto modification,
+	                         ImageResolution imageResolution,
 	                         ImageVariant imageVariant );
 
 	void removeVariants( long imageId );
