@@ -21,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Arne Vandamme
@@ -105,7 +102,8 @@ public class ImageRestServiceImpl implements ImageRestService
 					public void run() {
 						LOG.debug( "Start pregeneration of {} resolutions for {}", pregenerateList.size(), image );
 						for ( final ImageResolution resolution : pregenerateList ) {
-							for ( ImageType outputType : resolution.getAllowedOutputTypes() ) {
+							List<ImageType> allowedTypes = Arrays.asList( ImageType.JPEG );
+							for ( ImageType outputType : allowedTypes ) {
 								ImageVariant variant = new ImageVariant();
 								variant.setOutputType( outputType );
 
