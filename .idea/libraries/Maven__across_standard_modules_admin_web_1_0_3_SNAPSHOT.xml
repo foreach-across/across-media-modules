@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: across-standard-modules:admin-web:1.0.3-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/admin-web/1.0.3-SNAPSHOT/admin-web-1.0.3-SNAPSHOT.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/admin-web/1.0.3-SNAPSHOT/admin-web-1.0.3-20140820.145139-47.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/admin-web/1.0.3-SNAPSHOT/admin-web-1.0.3-SNAPSHOT-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/admin-web/1.0.3-SNAPSHOT/admin-web-1.0.3-20140820.145139-47-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/admin-web/1.0.3-SNAPSHOT/admin-web-1.0.3-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/admin-web/1.0.3-SNAPSHOT/admin-web-1.0.3-20140820.145139-47-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
