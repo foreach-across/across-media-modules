@@ -142,9 +142,9 @@ public class ImageServiceImpl implements ImageService
 					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
 
-		ImageModificationDto modification = cropGenerator.buildModificationDto( image, context, imageResolution );
 		StreamImageSource imageSource = imageStoreService.getVariantImage( image, context, imageResolution, imageVariant );
 		if ( imageSource == null ) {
+			ImageModificationDto modification = cropGenerator.buildModificationDto( image, context, imageResolution );
 			imageSource = generateVariantImage( image, context, modification, imageResolution, imageVariant, true );
 
 			/**
