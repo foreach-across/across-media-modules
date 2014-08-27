@@ -32,6 +32,10 @@ public class ImageStreamingController
 
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStreamingController.class );
 
+	// explicit logging of requested resolutions and images that do not exist
+	private static final Logger LOG_RESOLUTION_NOT_FOUND = LoggerFactory.getLogger("ResolutionNotFoundLogger");
+	private static final Logger LOG_IMAGE_NOT_FOUND = LoggerFactory.getLogger("ImageNotFoundLogger");
+
 	public static final String AKAMAI_EDGE_CONTROL_HEADER = "Edge-Control";
 	public static final String AKAMAI_CACHE_MAX_AGE = "!no-store, cache-maxage=";
 	public static final String AKAMAI_NO_STORE = "no-store";
@@ -112,12 +116,14 @@ public class ImageStreamingController
 			ViewImageResponse viewImageResponse = imageRestService.viewImage( viewImageRequest );
 
 			if ( viewImageResponse.isImageDoesNotExist() ) {
+				LOG_IMAGE_NOT_FOUND.error(externalId);
 				error( response, HttpStatus.NOT_FOUND, "No such image." );
 			}
 			else if ( viewImageResponse.isContextDoesNotExist() ) {
 				error( response, HttpStatus.NOT_FOUND, "No such context." );
 			}
 			else if ( viewImageResponse.isResolutionDoesNotExist() ) {
+				LOG_RESOLUTION_NOT_FOUND.error(imageResolutionDto.getWidth() + "x" + imageResolutionDto.getHeight());
 				error( response, HttpStatus.NOT_FOUND, "No such resolution." );
 			}
 			else if ( viewImageResponse.isOutputTypeNotAllowed() ) {
