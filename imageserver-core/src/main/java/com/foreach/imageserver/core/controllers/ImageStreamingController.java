@@ -1,6 +1,8 @@
 package com.foreach.imageserver.core.controllers;
 
 import com.foreach.imageserver.core.annotations.ImageServerController;
+import com.foreach.imageserver.core.business.Image;
+import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.ViewImageResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
@@ -33,8 +35,8 @@ public class ImageStreamingController
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStreamingController.class );
 
 	// explicit logging of requested resolutions and images that do not exist
-	private static final Logger LOG_RESOLUTION_NOT_FOUND = LoggerFactory.getLogger("ResolutionNotFoundLogger");
-	private static final Logger LOG_IMAGE_NOT_FOUND = LoggerFactory.getLogger("ImageNotFoundLogger");
+	private static final Logger LOG_RESOLUTION_NOT_FOUND = LoggerFactory.getLogger( ImageResolution.class );
+	private static final Logger LOG_IMAGE_NOT_FOUND = LoggerFactory.getLogger( Image.class );
 
 	public static final String AKAMAI_EDGE_CONTROL_HEADER = "Edge-Control";
 	public static final String AKAMAI_CACHE_MAX_AGE = "!no-store, cache-maxage=";
@@ -116,7 +118,7 @@ public class ImageStreamingController
 			ViewImageResponse viewImageResponse = imageRestService.viewImage( viewImageRequest );
 
 			if ( viewImageResponse.isImageDoesNotExist() ) {
-				LOG_IMAGE_NOT_FOUND.error(externalId);
+				LOG_IMAGE_NOT_FOUND.error( externalId );
 				error( response, HttpStatus.NOT_FOUND, "No such image." );
 			}
 			else if ( viewImageResponse.isContextDoesNotExist() ) {
