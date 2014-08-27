@@ -44,6 +44,11 @@ public interface ImageServerCoreModuleSettings
 	String MAX_BROWSER_CACHE_SECONDS = "imageServerCore.streaming.maxBrowserCacheSeconds";
 
 	/**
+	 * String representation of the timespan that Akamai is allowed to cache the image returned.
+	 */
+	String AKAMAI_CACHE_MAX_AGE = "imageServerCore.streaming.akamaiCacheMaxAge";
+
+	/**
 	 * Image server key for the image that should be returned in case the requested image was not found.
 	 */
 	String IMAGE_NOT_FOUND_IMAGEKEY = "imageServerCore.streaming.imageNotFoundKey";

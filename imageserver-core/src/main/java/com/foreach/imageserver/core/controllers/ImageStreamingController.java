@@ -32,12 +32,18 @@ public class ImageStreamingController
 
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStreamingController.class );
 
+	public static final String AKAMAI_EDGE_CONTROL_HEADER = "Edge-Control";
+	public static final String AKAMAI_CACHE_MAX_AGE = "!no-store, cache-maxage=";
+	public static final String AKAMAI_NO_STORE = "no-store";
+
 	@Autowired
 	private ImageRestService imageRestService;
 
 	private String accessToken;
 	private boolean provideStackTrace = false;
 	private int maxCacheAgeInSeconds = 30;
+
+	private String akamaiCacheMaxAge = "";
 
 	public ImageStreamingController( String accessToken ) {
 		this.accessToken = accessToken;
@@ -53,6 +59,10 @@ public class ImageStreamingController
 
 	public void setMaxCacheAgeInSeconds( int maxCacheAgeInSeconds ) {
 		this.maxCacheAgeInSeconds = maxCacheAgeInSeconds;
+	}
+
+	public void setAkamaiCacheMaxAge( String akamaiCacheMaxAge ) {
+		this.akamaiCacheMaxAge = akamaiCacheMaxAge;
 	}
 
 	@RequestMapping(value = RENDER_PATH, method = RequestMethod.GET)
@@ -144,6 +154,9 @@ public class ImageStreamingController
 		if ( maxCacheAgeInSeconds > 0 ) {
 			response.setHeader( "Cache-Control", String.format( "max-age=%d", maxCacheAgeInSeconds ) );
 		}
+		if (  akamaiCacheMaxAge != "") {
+			response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_CACHE_MAX_AGE + akamaiCacheMaxAge );
+		}
 
 		try (InputStream imageStream = imageSource.getImageStream()) {
 			try (OutputStream responseStream = response.getOutputStream()) {
@@ -159,6 +172,7 @@ public class ImageStreamingController
 		response.setStatus( status.value() );
 		response.setContentType( "text/plain" );
 		response.setHeader( "Cache-Control", "no-cache" );
+		response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_NO_STORE );
 		try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
 			IOUtils.copy( bis, response.getOutputStream() );
 		}

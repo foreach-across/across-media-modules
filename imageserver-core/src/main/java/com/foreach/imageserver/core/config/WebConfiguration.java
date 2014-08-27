@@ -55,6 +55,10 @@ public class WebConfiguration
 		ImageStreamingController imageStreamingController = new ImageStreamingController( accessToken() );
 		imageStreamingController.setMaxCacheAgeInSeconds(
 				environment.getProperty( ImageServerCoreModuleSettings.MAX_BROWSER_CACHE_SECONDS, Integer.class, 60 ) );
+
+		imageStreamingController.setAkamaiCacheMaxAge(
+				environment.getProperty( ImageServerCoreModuleSettings.AKAMAI_CACHE_MAX_AGE, String.class, "" ) );
+
 		imageStreamingController.setProvideStackTrace(
 				environment.getProperty( ImageServerCoreModuleSettings.PROVIDE_STACKTRACE, Boolean.class, false ) );
 
