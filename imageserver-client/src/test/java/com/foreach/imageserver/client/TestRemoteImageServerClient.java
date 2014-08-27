@@ -29,4 +29,16 @@ public class TestRemoteImageServerClient
 		String url = imageServerClient.imageUrl( "10", "ONLINE", 1000, 2000 );
 		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&width=1000&height=2000", url );
 	}
+
+	@Test
+	public void imageUrlWithZeroHeight() {
+		String url = imageServerClient.imageUrl( "10", "ONLINE", 1000, 0, ImageTypeDto.TIFF );
+		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&width=1000&imageType=TIFF", url );
+	}
+
+	@Test
+	public void imageUrlWithZeroWidtht() {
+		String url = imageServerClient.imageUrl( "10", "ONLINE", 0, 2000 );
+		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&height=2000", url );
+	}
 }
