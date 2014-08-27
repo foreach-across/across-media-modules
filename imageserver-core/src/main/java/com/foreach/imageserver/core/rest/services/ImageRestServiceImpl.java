@@ -81,7 +81,6 @@ public class ImageRestServiceImpl implements ImageRestService
 		PregenerateResolutionsResponse response = new PregenerateResolutionsResponse();
 
 		final Image image = imageService.getByExternalId( imageId );
-		LOG_IMAGE_NOT_FOUND.error( imageId );
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
@@ -144,6 +143,9 @@ public class ImageRestServiceImpl implements ImageRestService
 		ViewImageResponse response = new ViewImageResponse( request );
 
 		Image image = imageService.getByExternalId( request.getExternalId() );
+		if (image == null){
+			LOG_IMAGE_NOT_FOUND.error( request.getExternalId() );
+		}
 
 		if ( image == null
 				&& StringUtils.isNotBlank( fallbackImageKey )
