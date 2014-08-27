@@ -31,6 +31,9 @@ public class ImageRestServiceImpl implements ImageRestService
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ImageRestService.class );
 
+	// explicit logging of requested images that do not exist
+	private static final Logger LOG_IMAGE_NOT_FOUND = LoggerFactory.getLogger( Image.class );
+
 	@Autowired
 	private ImageContextService contextService;
 
@@ -78,6 +81,7 @@ public class ImageRestServiceImpl implements ImageRestService
 		PregenerateResolutionsResponse response = new PregenerateResolutionsResponse();
 
 		final Image image = imageService.getByExternalId( imageId );
+		LOG_IMAGE_NOT_FOUND.error( imageId );
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
