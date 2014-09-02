@@ -1,8 +1,10 @@
 package com.foreach.imageserver.core.services;
 
+import com.foreach.across.modules.hibernate.util.BasicServiceHelper;
 import com.foreach.imageserver.core.business.ImageProfile;
 import com.foreach.imageserver.core.repositories.ImageProfileRepository;
 import com.foreach.imageserver.dto.ImageProfileDto;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -8,9 +8,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="TEST" name="Maven: across:across-test:1.0.3-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: across:across-core:1.0.3-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.foreach.libs:common-concurrent:0.9-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: across:across-test:1.0.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: across:across-core:1.0.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.foreach.libs:common-concurrent:0.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-api:1.7.7" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-context:4.0.6.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-aop:4.0.6.RELEASE" level="project" />
@@ -28,7 +28,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.yaml:snakeyaml:1.13" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.mattbertolini:liquibase-slf4j:1.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.engio:mbassador:1.1.10" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: across:across-web:1.0.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: across:across-web:1.0.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.18.1-GA" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.thymeleaf:thymeleaf-spring4:2.1.3.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.thymeleaf:thymeleaf:2.1.3.RELEASE" level="project" />

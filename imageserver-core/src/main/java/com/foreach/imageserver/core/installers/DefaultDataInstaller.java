@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.installers;
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.core.installers.InstallerPhase;
+import com.foreach.imageserver.core.business.ImageProfile;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.ImageContextService;
@@ -42,9 +43,16 @@ public class DefaultDataInstaller
 	}
 
 	private void createImageProfile() {
-		ImageProfileDto imageProfileDto = new ImageProfileDto();
-		imageProfileDto.setName( "default" );
-		imageProfileService.save( imageProfileDto );
+		ImageProfile profile = imageProfileService.getById( ImageProfile.DEFAULT_PROFILE_ID );
+
+		if ( profile == null ) {
+			ImageProfileDto imageProfileDto = new ImageProfileDto();
+			imageProfileDto.setNewEntity( true );
+			imageProfileDto.setId( ImageProfile.DEFAULT_PROFILE_ID );
+			imageProfileDto.setName( "default" );
+
+			imageProfileService.save( imageProfileDto );
+		}
 	}
 
 	private void createDefaultOriginalResolution() {
