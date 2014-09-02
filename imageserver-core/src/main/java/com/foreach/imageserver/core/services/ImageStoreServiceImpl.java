@@ -7,6 +7,7 @@ import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -17,6 +18,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -31,6 +33,11 @@ import java.util.Set;
 public class ImageStoreServiceImpl implements ImageStoreService
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStoreServiceImpl.class );
+
+	@Autowired
+	private ImageContextService imageContextService;
+	@Autowired
+	private ImageService imageService;
 
 	private final Path tempFolder;
 	private final Path originalsFolder;
@@ -160,27 +167,35 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 * This was also tested on a linux server on an NFS mount.
 		 */
 		try {
-			Files.walkFileTree( variantsFolder, new SimpleFileVisitor<Path>()
-			{
-				@Override
-				public FileVisitResult visitFile( Path file, BasicFileAttributes attrs ) throws IOException {
-					if ( file.getFileName().toString().startsWith( variantFileNamePrefix ) ) {
-						try {
-							Files.deleteIfExists( file );
-						}
-						catch ( IOException e ) {
-							// Unfortunately, we need to ignore this error. (See comment above)
-						}
-					}
-					return FileVisitResult.CONTINUE;
-				}
 
-				@Override
-				public FileVisitResult visitFileFailed( Path file, IOException exc ) throws IOException {
-					// Unfortunately, we need to ignore this error. (See comment above)
-					return FileVisitResult.CONTINUE;
-				}
-			} );
+			Image image = imageService.getById( imageId );
+
+			Collection<ImageContext> contexts = imageContextService.getAllContexts();
+			for (ImageContext context: contexts){
+				// only need to walk the specific variant folder of this image (within this context)
+				Path imageSpecificVariantsFolder  = variantsFolder.resolve( context.getCode() ).resolve( image.getVariantPath() );
+				Files.walkFileTree( imageSpecificVariantsFolder, new SimpleFileVisitor<Path>()
+				{
+					@Override
+					public FileVisitResult visitFile( Path file, BasicFileAttributes attrs ) throws IOException {
+						if ( file.getFileName().toString().startsWith( variantFileNamePrefix ) ) {
+							try {
+								Files.deleteIfExists( file );
+							}
+							catch ( IOException e ) {
+								// Unfortunately, we need to ignore this error. (See comment above)
+							}
+						}
+						return FileVisitResult.CONTINUE;
+					}
+
+					@Override
+					public FileVisitResult visitFileFailed( Path file, IOException exc ) throws IOException {
+						// Unfortunately, we need to ignore this error. (See comment above)
+						return FileVisitResult.CONTINUE;
+					}
+				} );
+			}
 		}
 		catch ( IOException e ) {
 			// I'm not really sure whether this will ever happen, given that the above implementation catches all
