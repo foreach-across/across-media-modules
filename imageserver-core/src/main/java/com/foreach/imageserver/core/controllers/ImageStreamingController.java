@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 @ImageServerController
 public class ImageStreamingController
@@ -159,6 +160,8 @@ public class ImageStreamingController
 
 		if ( maxCacheAgeInSeconds > 0 ) {
 			response.setHeader( "Cache-Control", String.format( "max-age=%d", maxCacheAgeInSeconds ) );
+			long now = new Date().getTime();
+			response.setHeader("Expires", String.valueOf(now + maxCacheAgeInSeconds * 1000));
 		}
 		if (  akamaiCacheMaxAge != "") {
 			response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_CACHE_MAX_AGE + akamaiCacheMaxAge );
