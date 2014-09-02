@@ -6,8 +6,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<acrossVersion>1.0.3-SNAPSHOT</acrossVersion>
-		<foreachCommonVersion>0.9-SNAPSHOT</foreachCommonVersion>
+		<acrossVersion>1.0.3</acrossVersion>
+		<foreachCommonVersion>0.9</foreachCommonVersion>
 		<jacksonVersion>2.3.2</jacksonVersion>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
