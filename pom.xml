@@ -210,4 +210,8 @@
 			<url>http://java.libs.foreach.com/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
+	<scm>
+		<connection>scm:git:http://stash.foreach.be/scm/fe/image-server.git</connection>
+		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/image-server.git</developerConnection>
+	</scm>
 </project>
