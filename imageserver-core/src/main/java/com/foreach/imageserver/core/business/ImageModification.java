@@ -1,107 +1,120 @@
 package com.foreach.imageserver.core.business;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
- * Specifies a single set of modifications to be done to an image.
+ * The ImageModification specifies how an original image is to be transformed into an image conforming to a specific
+ * ImageResolution.
+ * <p/>
+ * Note that an ImageModification is generic; the non-generic options required for an actual transform are specified
+ * using an ImageVariant object.
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
-public class ImageModification {
+@Entity
+@Table(name = ImageSchemaConfiguration.TABLE_IMAGE_MODIFICATION)
+public class ImageModification implements Serializable
+{
+	@Id
+	@Column(name = "image_id")
+	private long imageId;
+	@Id
+	@Column(name = "context_id")
+	private long contextId;
+	@Id
+	@Column(name = "resolution_id")
+	private long resolutionId;
 
-    public static final ImageModification EMPTY = new ImageModification();
-    private static final ImageModification EMPTY_WITH_STRETCH;
+	@AttributeOverrides({
+			                    @AttributeOverride(name = "x", column = @Column(name = "cropX")),
+			                    @AttributeOverride(name = "y", column = @Column(name = "cropY")),
+			                    @AttributeOverride(name = "width", column = @Column(name = "cropWidth")),
+			                    @AttributeOverride(name = "height", column = @Column(name = "cropHeight"))
+	                    })
+	private Crop crop;
 
-    static {
-        EMPTY_WITH_STRETCH = new ImageModification();
-        EMPTY_WITH_STRETCH.getVariant().setStretch(true);
-    }
+	@AttributeOverrides({
+			                    @AttributeOverride(name = "width", column = @Column(name = "densityWidth")),
+			                    @AttributeOverride(name = "height", column = @Column(name = "densityHeight"))
+	                    })
+	private Dimensions density;
 
-    private Crop crop;
-    private ImageVariant variant;
+	public long getImageId() {
+		return imageId;
+	}
 
-    public ImageModification() {
-        this(new ImageVariant(), new Crop());
-    }
+	public void setImageId( long imageId ) {
+		this.imageId = imageId;
+	}
 
-    public ImageModification(ImageVariant variant, Crop crop) {
-        this.crop = crop;
-        this.variant = variant;
-    }
+	public long getContextId() {
+		return contextId;
+	}
 
-    public ImageModification normalize(Dimensions dimensions) {
-        if (dimensions.getHeight() < 0 || dimensions.getWidth() < 0) {
-            throw new RuntimeException("Illegal dimensions!");
-        }
-        ImageModification result = new ImageModification();
-        if (this.isEmpty()) {
-            return result;
-        }
-        Crop scaledCrop = crop.normalize(dimensions);
-        result.setCrop(scaledCrop);
-        Dimensions minDimensions;
-        if (!scaledCrop.isEmpty()) {
-            minDimensions = new Dimensions(Math.min(dimensions.getWidth(), scaledCrop.getWidth()), Math.min(dimensions.getHeight(), scaledCrop.getHeight()));
-        } else {
-            minDimensions = dimensions;
-        }
-        result.setVariant(variant.normalize(minDimensions));
-        return result;
-    }
+	public void setContextId( long contextId ) {
+		this.contextId = contextId;
+	}
 
-    @JsonIgnore
-    public boolean isEmpty() {
-        return this.equals(EMPTY) || this.equals(EMPTY_WITH_STRETCH);
-    }
+	public long getResolutionId() {
+		return resolutionId;
+	}
 
-    public Crop getCrop() {
-        return crop;
-    }
+	public void setResolutionId( long resolutionId ) {
+		this.resolutionId = resolutionId;
+	}
 
+	public Crop getCrop() {
+		return crop;
+	}
 
-    public void setCrop(Crop crop) {
-        this.crop = crop;
-    }
+	public void setCrop( Crop crop ) {
+		this.crop = crop;
+	}
 
-    public boolean hasCrop() {
-        return crop != null && !crop.isEmpty();
-    }
+	public Dimensions getDensity() {
+		return density;
+	}
 
-    public ImageVariant getVariant() {
-        return variant;
-    }
+	public void setDensity( Dimensions density ) {
+		this.density = density;
+	}
 
-    public void setVariant(ImageVariant variant) {
-        this.variant = variant;
-    }
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-    @SuppressWarnings("all")
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+		ImageModification that = (ImageModification) o;
 
-        ImageModification modification = (ImageModification) o;
+		if ( contextId != that.contextId ) {
+			return false;
+		}
+		if ( imageId != that.imageId ) {
+			return false;
+		}
+		if ( resolutionId != that.resolutionId ) {
+			return false;
+		}
+		if ( crop != null ? !crop.equals( that.crop ) : that.crop != null ) {
+			return false;
+		}
+		if ( density != null ? !density.equals( that.density ) : that.density != null ) {
+			return false;
+		}
 
-        return ObjectUtils.equals(crop, modification.getCrop()) && ObjectUtils.equals(this.variant, modification.getVariant());
-    }
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(crop).append(variant).toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "ImageModification{" +
-                "variant=" + variant +
-                ", crop=" + crop +
-                '}';
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash( imageId, contextId, resolutionId, crop, density );
+	}
 }

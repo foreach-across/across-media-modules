@@ -1,25 +1,36 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageFile;
-import com.foreach.imageserver.core.business.ImageModification;
+import com.foreach.imageserver.core.business.ImageContext;
+import com.foreach.imageserver.core.business.ImageResolution;
+import com.foreach.imageserver.core.business.ImageVariant;
+import com.foreach.imageserver.core.transformers.StreamImageSource;
 
-public interface ImageStoreService {
-    String generateRelativeImagePath(Image image);
+import java.io.InputStream;
 
-    String generateFullImagePath(Image image);
+public interface ImageStoreService
+{
+	void storeOriginalImage( Image image, byte[] imageBytes );
 
-    String generateFullImagePath(Image image, ImageModification modification);
+	void storeOriginalImage( Image image, InputStream imageStream );
 
-    ImageFile saveImage(Image image, ImageFile imageFile);
+	StreamImageSource getOriginalImage( Image image );
 
-    ImageFile saveImage(Image image, ImageModification modification, ImageFile file);
+	void storeVariantImage( Image image,
+	                        ImageContext context,
+	                        ImageResolution imageResolution,
+	                        ImageVariant imageVariant,
+	                        InputStream imageStream );
 
-    void delete(Image image);
+	StreamImageSource getVariantImage( Image image,
+	                                   ImageContext context,
+	                                   ImageResolution imageResolution,
+	                                   ImageVariant imageVariant );
 
-    void deleteVariants(Image image);
+	void removeVariantImage( Image image,
+	                         ImageContext context,
+	                         ImageResolution imageResolution,
+	                         ImageVariant imageVariant );
 
-    ImageFile getImageFile(Image image);
-
-    ImageFile getImageFile(Image image, ImageModification modification);
+	void removeVariants( long imageId );
 }

@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="web.imageserver.front:war">
-    <output-path>$PROJECT_DIR$/web.imageserver.front/target</output-path>
-    <root id="archive" name="web.imageserver.front.war">
-      <element id="artifact" artifact-name="web.imageserver.front:war exploded" />
-    </root>
-  </artifact>
-</component>

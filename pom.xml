@@ -1,78 +1,165 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<springVersion>4.0.0.RELEASE</springVersion>
-		<foreachCommonVersion>0.7</foreachCommonVersion>
+		<acrossVersion>1.0.3</acrossVersion>
+		<foreachCommonVersion>0.9</foreachCommonVersion>
+		<jacksonVersion>2.3.2</jacksonVersion>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
-    <repositories>
-        <repository>
-            <id>foreach-nexus</id>
-            <name>Foreach repository</name>
-            <url>http://java.libs.foreach.com/nexus/content/groups/public</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+			<id>foreach-nexus</id>
+			<name>Foreach repository</name>
+			<url>http://java.libs.foreach.com/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>foreach-custom-externals</id>
+			<name>Foreach Custom repository</name>
+			<url>http://java.libs.foreach.com/nexus/content/repositories/foreach-custom-externals</url>
+		</repository>
+	</repositories>
 
 	<groupId>com.foreach.imageserver</groupId>
 	<artifactId>imageserver-platform</artifactId>
 	<name>ImageServer Platform</name>
-	<version>2.0-SNAPSHOT</version>
+	<version>3.0</version>
 	<packaging>pom</packaging>
+
 	<modules>
-		<module>web.imageserver.front</module>
-		<module>imageserver-dpp-connector</module>
-        <module>imageserver-core</module>
-        <module>imageserver-core-integration-tests</module>
+		<module>imageserver-client</module>
+		<module>imageserver-core</module>
+		<module>imageserver-admin</module>
+		<module>imageserver-test-standalone</module>
 	</modules>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${springVersion}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>7.6.11.v20130520</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.3.172</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.foreach.libs</groupId>
-            <artifactId>common-test</artifactId>
-            <version>${foreachCommonVersion}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-            <version>0.9.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+
+	<dependencies>
+		<dependency>
+			<groupId>across</groupId>
+			<artifactId>across-test</artifactId>
+			<version>${acrossVersion}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.31</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>11.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.jtds</groupId>
+			<artifactId>jtds</artifactId>
+			<version>1.2.8</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>across</groupId>
+				<artifactId>across-core</artifactId>
+				<version>${acrossVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>across</groupId>
+				<artifactId>across-web</artifactId>
+				<version>${acrossVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>admin-web</artifactId>
+				<version>${acrossVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>across-hibernate</artifactId>
+				<version>${acrossVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>user-module</artifactId>
+				<version>${acrossVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>spring-security</artifactId>
+				<version>${acrossVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>debug-web</artifactId>
+				<version>${acrossVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>across-ehcache</artifactId>
+				<version>${acrossVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jacksonVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jacksonVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-spring</artifactId>
+				<version>${foreachCommonVersion}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-validator</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-test</artifactId>
+				<version>${foreachCommonVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.libs</groupId>
+				<artifactId>common-web</artifactId>
+				<version>${foreachCommonVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.4</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>
@@ -84,6 +171,45 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.17</version>
+				<configuration>
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.17</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+		<repository>
+			<id>foreach-nexus</id>
+			<name>Foreach nexus</name>
+			<url>http://java.libs.foreach.com/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>foreach-nexus</id>
+			<name>Foreach nexus</name>
+			<url>http://java.libs.foreach.com/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<connection>scm:git:http://stash.foreach.be/scm/fe/image-server.git</connection>
+		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/image-server.git</developerConnection>
+	</scm>
 </project>

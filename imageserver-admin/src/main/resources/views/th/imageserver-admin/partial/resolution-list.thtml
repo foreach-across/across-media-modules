@@ -1,0 +1,26 @@
+<h3>Manage resolutions</h3>
+<nav class="navbar navbar-default">
+<select ng-model="selectedContext" ng-options="context for context in contexts"
+        ng-change="selectContext(selectedContext)"/>
+<a class="btn navbar-btn" ng-href="#/manage/resolutions/create">Create a resolution</a>
+</nav>
+
+        {{resolutions.length}} results
+<table class="table table-striped table-hover">
+<thead>
+<tr>
+    <th>Dimensions</th>
+    <th>Name</th>
+    <th>Tags</th>
+    <th></th>
+</tr>
+</thead>
+<tbody>
+<tr ng-repeat="resolution in resolutions |  orderBy:['width','height']">
+    <td>{{resolution.width}}x{{resolution.height}}</td>
+    <td>{{resolution.name}}</td>
+    <td><span ng-repeat="tag in resolution.tags">{{tag}}{{$last ? '': ', '}}</span></td>
+    <td><a href="#/manage/resolutions/{{resolution.id}}" ng-href="" title="Modify resolution {{resolution.name}}"><span class="glyphicon glyphicon-file"></span></a></td>
+</tr>
+</tbody>
+</table>

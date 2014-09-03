@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/imageserver-admin/imageserver-admin.iml" filepath="$PROJECT_DIR$/imageserver-admin/imageserver-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imageserver-client/imageserver-client.iml" filepath="$PROJECT_DIR$/imageserver-client/imageserver-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-core/imageserver-core.iml" filepath="$PROJECT_DIR$/imageserver-core/imageserver-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imageserver-core-integration-tests/imageserver-core-integration-tests.iml" filepath="$PROJECT_DIR$/imageserver-core-integration-tests/imageserver-core-integration-tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imageserver-dpp-connector/imageserver-dpp-connector.iml" filepath="$PROJECT_DIR$/imageserver-dpp-connector/imageserver-dpp-connector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imageserver-test-standalone/imageserver-test-standalone.iml" filepath="$PROJECT_DIR$/imageserver-test-standalone/imageserver-test-standalone.iml" />
       <module fileurl="file://$PROJECT_DIR$/platform.iml" filepath="$PROJECT_DIR$/platform.iml" />
-      <module fileurl="file://$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" filepath="$PROJECT_DIR$/web.imageserver.front/web.imageserver.front.iml" />
     </modules>
   </component>
 </project>

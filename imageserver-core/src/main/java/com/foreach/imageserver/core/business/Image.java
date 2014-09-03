@@ -1,98 +1,161 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
+import com.foreach.imageserver.core.hibernate.ImageTypeUserType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
-public class Image {
-    private int id, applicationId;
-    private String key, filePath;
-    private Dimensions dimensions = new Dimensions();
-    private long fileSize;
-    private ImageType imageType;
-    private Date dateCreated = new Date();
-    private Date dateUpdated;
+@Entity
+@Table(name = ImageSchemaConfiguration.TABLE_IMAGE)
+public class Image
+{
+	@Id
+	@GeneratedValue(generator = "seq_img_image_id")
+	@GenericGenerator(
+			name = "seq_img_image_id",
+			strategy = AcrossSequenceGenerator.STRATEGY,
+			parameters = {
+					@org.hibernate.annotations.Parameter(name = "sequenceName", value = "seq_img_image_id"),
+					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "10")
+			}
+	)
+	private long id;
 
-    public String getKey() {
-        return key;
-    }
+	@Column(name = "profile_id")
+	private long imageProfileId;
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+	@Column(name = "external_id")
+	private String externalId;
 
-    public int getId() {
-        return id;
-    }
+	@Column(name = "created")
+	private Date dateCreated = new Date();
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	@Column(name = "image_type_id")
+	@Type(type = ImageTypeUserType.CLASS_NAME)
+	private ImageType imageType;
 
-    public int getApplicationId() {
-        return applicationId;
-    }
+	@AttributeOverrides({
+			                    @AttributeOverride(name = "width", column = @Column(name = "width")),
+			                    @AttributeOverride(name = "height", column = @Column(name = "height"))
+	                    })
+	private Dimensions dimensions;
 
-    public void setApplicationId(int applicationId) {
-        this.applicationId = applicationId;
-    }
+	@Column(name = "file_size")
+	private long fileSize;
 
-    public String getFilePath() {
-        return filePath;
-    }
+	@Column(name = "original_path")
+	private String originalPath;
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
+	@Column(name = "variant_path")
+	private String variantPath;
 
-    public Dimensions getDimensions() {
-        return dimensions;
-    }
+	public long getId() {
+		return id;
+	}
 
-    public void setDimensions(Dimensions dimensions) {
-        this.dimensions = dimensions;
-    }
+	public void setId( long id ) {
+		this.id = id;
+	}
 
-    public long getFileSize() {
-        return fileSize;
-    }
+	public String getExternalId() {
+		return externalId;
+	}
 
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
+	public void setExternalId( String externalId ) {
+		this.externalId = externalId;
+	}
 
-    public Date getDateCreated() {
-        return dateCreated;
-    }
+	public Date getDateCreated() {
+		return dateCreated;
+	}
 
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
+	public void setDateCreated( Date dateCreated ) {
+		this.dateCreated = dateCreated;
 
-    public Date getDateUpdated() {
-        return dateUpdated;
-    }
+		if ( dateCreated != null ) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime( dateCreated );
+		}
+	}
 
-    public void setDateUpdated(Date dateUpdated) {
-        this.dateUpdated = dateUpdated;
-    }
+	public Dimensions getDimensions() {
+		return dimensions;
+	}
 
-    public ImageType getImageType() {
-        return imageType;
-    }
+	public void setDimensions( Dimensions dimensions ) {
+		this.dimensions = dimensions;
+	}
 
-    public void setImageType(ImageType imageType) {
-        this.imageType = imageType;
-    }
+	public ImageType getImageType() {
+		return imageType;
+	}
 
-    public String toString() {
-        return "Image[id=" + id + ",aid=" + applicationId + "]";
-    }
+	public void setImageType( ImageType imageType ) {
+		this.imageType = imageType;
+	}
 
-    public boolean equals(Object other) {
-        if (other instanceof Image) {
-            Image otherImage = (Image) other;
-            return getId() == otherImage.getId() && getApplicationId() == otherImage.getApplicationId();
-        } else {
-            return false;
-        }
-    }
+	public long getImageProfileId() {
+		return imageProfileId;
+	}
+
+	public void setImageProfileId( long imageProfileId ) {
+		this.imageProfileId = imageProfileId;
+	}
+
+	public long getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize( long fileSize ) {
+		this.fileSize = fileSize;
+	}
+
+	public String getOriginalPath() {
+		return originalPath;
+	}
+
+	public void setOriginalPath( String originalPath ) {
+		this.originalPath = originalPath;
+	}
+
+	public String getVariantPath() {
+		return variantPath;
+	}
+
+	public void setVariantPath( String variantPath ) {
+		this.variantPath = variantPath;
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
+
+		Image image = (Image) o;
+
+		return Objects.equals( this.id, image.id );
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( id );
+	}
+
+	@Override
+	public String toString() {
+		return "Image{" +
+				"id=" + id +
+				", externalId='" + externalId + '\'' +
+				'}';
+	}
 }
