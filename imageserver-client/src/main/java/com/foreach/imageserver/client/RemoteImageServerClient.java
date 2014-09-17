@@ -193,6 +193,20 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	@Override
+	public void registerImageModifications( String imageId,
+	                                       String context,
+	                                       List<ImageModificationDto> imageModifications ) {
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
+		queryParams.set( "context", context );
+
+		addQueryParams( queryParams, imageModifications );
+
+		httpGet( ENDPOINT_MODIFICATION_REGISTER_LIST, queryParams, ResponseTypes.OBJECT );
+	}
+
+	@Override
 	public List<ImageResolutionDto> listAllowedResolutions( String context ) {
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "token", imageServerAccessToken );

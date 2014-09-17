@@ -256,7 +256,7 @@ public class ImageRestServiceImpl implements ImageRestService
 	}
 
 	@Override
-	public RegisterModificationResponse registerModification( RegisterModificationRequest request ) {
+	public RegisterModificationResponse registerModifications( RegisterModificationRequest request ) {
 		RegisterModificationResponse response = new RegisterModificationResponse( request );
 
 		ImageContext context = contextService.getByCode( request.getContext() );
@@ -270,38 +270,68 @@ public class ImageRestServiceImpl implements ImageRestService
 				response.setImageDoesNotExist( true );
 			}
 			else {
-				ImageModificationDto imageModificationDto = request.getImageModificationDto();
-				ImageResolutionDto resolutionDto = imageModificationDto.getResolution();
-
-				ImageResolution imageResolution =
-						contextService.getImageResolution( context.getId(),
-						                                   resolutionDto.getWidth(),
-						                                   resolutionDto.getHeight() );
-
-				if ( imageResolution == null ) {
-					response.setResolutionDoesNotExist( true );
-				}
-				else {
-					cropGeneratorUtil.normalizeModificationDto( image, imageModificationDto );
-
-					ImageModification modification = new ImageModification();
-					modification.setImageId( image.getId() );
-					modification.setContextId( context.getId() );
-					modification.setResolutionId( imageResolution.getId() );
-					modification.setCrop( DtoUtil.toBusiness( imageModificationDto.getCrop() ) );
-					modification.setDensity( DtoUtil.toBusiness( imageModificationDto.getDensity() ) );
-
-					try {
-						imageService.saveImageModification( modification, image );
-					}
-					catch ( CropOutsideOfImageBoundsException e ) {
-						response.setCropOutsideOfImageBounds( true );
-					}
-				}
+				List<ImageModification> modifications = extractImageModifications(request, image, context,response);
+				imageService.saveImageModifications( modifications, image );
 			}
 		}
 
 		return response;
+	}
+
+	private List<ImageModification> extractImageModifications( RegisterModificationRequest request,
+	                                                           Image image,
+	                                                           ImageContext context,
+	                                                           RegisterModificationResponse response ) {
+		List<ImageModification> modifications = new ArrayList<ImageModification>();
+
+		if ( request.getImageModificationDto() != null ) {
+			modifications.add( toModification( request.getImageModificationDto(), image, context, response ) );
+		}
+		if ( request.getImageModificationDtos() != null ) {
+			for (ImageModificationDto modificationDto : request.getImageModificationDtos()){
+				modifications.add( toModification( modificationDto, image, context, response ) );
+
+			}
+		}
+
+		return modifications;
+	}
+
+	private ImageModification toModification( ImageModificationDto imageModificationDto,
+	                             Image image,
+	                             ImageContext context,
+	                             RegisterModificationResponse response ) {
+		ImageModification modification = null;
+
+		ImageResolutionDto resolutionDto = imageModificationDto.getResolution();
+
+		ImageResolution imageResolution =
+				contextService.getImageResolution( context.getId(),
+				                                   resolutionDto.getWidth(),
+				                                   resolutionDto.getHeight() );
+
+		if ( imageResolution == null ) {
+			response.addMissingResolution( resolutionDto );
+		}
+		else {
+			cropGeneratorUtil.normalizeModificationDto( image, imageModificationDto );
+
+			modification = new ImageModification();
+			modification.setImageId( image.getId() );
+			modification.setContextId( context.getId() );
+			modification.setResolutionId( imageResolution.getId() );
+			modification.setCrop( DtoUtil.toBusiness( imageModificationDto.getCrop() ) );
+			modification.setDensity( DtoUtil.toBusiness( imageModificationDto.getDensity() ) );
+
+			try {
+				imageService.saveImageModification( modification, image );
+			}
+			catch ( CropOutsideOfImageBoundsException e ) {
+				response.setCropOutsideOfImageBounds( true );
+			}
+		}
+
+		return modification;
 	}
 
 	@Override
