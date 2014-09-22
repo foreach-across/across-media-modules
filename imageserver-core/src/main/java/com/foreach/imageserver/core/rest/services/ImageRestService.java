@@ -21,5 +21,5 @@ public interface ImageRestService
 
 	ListResolutionsResponse listResolutions( ListResolutionsRequest request );
 
-	RegisterModificationResponse registerModification( RegisterModificationRequest request );
+	RegisterModificationResponse registerModifications( RegisterModificationRequest request );
 }

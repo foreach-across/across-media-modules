@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.foreach.imageserver</groupId>
 		<artifactId>imageserver-platform</artifactId>
-		<version>3.0</version>
+		<version>3.1</version>
 	</parent>
 
 	<artifactId>imageserver-client</artifactId>
 	<name>ImageServer Client Module</name>
-	<version>3.0</version>
+	<version>3.1</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -38,4 +38,22 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>

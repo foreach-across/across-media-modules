@@ -193,6 +193,20 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	@Override
+	public void registerImageModifications( String imageId,
+	                                       String context,
+	                                       List<ImageModificationDto> imageModifications ) {
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
+		queryParams.set( "context", context );
+
+		addQueryParams( queryParams, imageModifications );
+
+		httpGet( ENDPOINT_MODIFICATION_REGISTER_LIST, queryParams, ResponseTypes.OBJECT );
+	}
+
+	@Override
 	public List<ImageResolutionDto> listAllowedResolutions( String context ) {
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "token", imageServerAccessToken );
@@ -235,11 +249,17 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	                         ParameterizedTypeReference<JsonResponse<T>> responseType ) {
 		URI url = buildUri( path, queryParams );
 		HttpEntity<?> request = new HttpEntity<MultiValueMap<?, ?>>( new LinkedMultiValueMap<String, String>() );
+		JsonResponse<T> body = null;
+		try {
+			ResponseEntity<JsonResponse<T>> response =
+					restTemplate.exchange( url, HttpMethod.GET, request, responseType );
 
-		ResponseEntity<JsonResponse<T>> response =
-				restTemplate.exchange( url, HttpMethod.GET, request, responseType );
+			body = response.getBody();
 
-		JsonResponse<T> body = response.getBody();
+		} catch (Exception e){
+			LOG.error( e.getMessage() );
+			throw new ImageServerException( e.getMessage() );
+		}
 
 		if ( !body.isSuccess() ) {
 			throw new ImageServerException( body.getErrorMessage() );

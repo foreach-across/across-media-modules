@@ -8,6 +8,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * Provides the common ImageServerClient methods that are endpoint independent.
@@ -69,9 +70,15 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	}
 
 	protected URI buildUri( String path, MultiValueMap<String, String> queryParams ) {
-		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl( imageServerUrl ).path( "/" ).path( path );
+		return buildUri(path, queryParams, imageServerUrl);
+	}
+
+	protected URI buildUri( String path, MultiValueMap<String, String> queryParams, String host ) {
+		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl( host ).path( "/" ).path( path );
 		for ( String key: queryParams.keySet() ) {
-			uri.queryParam( key, queryParams.get(key).get( 0 ) );
+			for (int n = 0; n < queryParams.get(key).size(); ++n){
+				uri.queryParam( key, queryParams.get(key).get( n ) );
+			}
 		}
 		return uri.build().toUri();
 	}
@@ -99,21 +106,28 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 		CropDto crop = imageModification.getCrop();
 		DimensionsDto density = imageModification.getDensity();
 
-		queryParams.set( "resolution.width", Integer.toString( resolution.getWidth() ) );
-		queryParams.set( "resolution.height", Integer.toString( resolution.getHeight() ) );
+		queryParams.add( "resolution.width", Integer.toString( resolution.getWidth() ) );
+		queryParams.add( "resolution.height", Integer.toString( resolution.getHeight() ) );
 
-		queryParams.set( "crop.x", Integer.toString( crop.getX() ) );
-		queryParams.set( "crop.y", Integer.toString( crop.getY() ) );
-		queryParams.set( "crop.width", Integer.toString( crop.getWidth() ) );
-		queryParams.set( "crop.height", Integer.toString( crop.getHeight() ) );
-		queryParams.set( "crop.source.width", Integer.toString( crop.getSource().getWidth() ) );
-		queryParams.set( "crop.source.height", Integer.toString( crop.getSource().getHeight() ) );
-		queryParams.set( "crop.box.width", Integer.toString( crop.getBox().getWidth() ) );
-		queryParams.set( "crop.box.height", Integer.toString( crop.getBox().getHeight() ) );
-		queryParams.set( "density.width", Integer.toString( density.getWidth() ) );
-		queryParams.set( "density.height", Integer.toString( density.getHeight() ) );
+		queryParams.add( "crop.x", Integer.toString( crop.getX() ) );
+		queryParams.add( "crop.y", Integer.toString( crop.getY() ) );
+		queryParams.add( "crop.width", Integer.toString( crop.getWidth() ) );
+		queryParams.add( "crop.height", Integer.toString( crop.getHeight() ) );
+		queryParams.add( "crop.source.width", Integer.toString( crop.getSource().getWidth() ) );
+		queryParams.add( "crop.source.height", Integer.toString( crop.getSource().getHeight() ) );
+		queryParams.add( "crop.box.width", Integer.toString( crop.getBox().getWidth() ) );
+		queryParams.add( "crop.box.height", Integer.toString( crop.getBox().getHeight() ) );
+		queryParams.add( "density.width", Integer.toString( density.getWidth() ) );
+		queryParams.add( "density.height", Integer.toString( density.getHeight() ) );
 
-		queryParams.set( "boundaries.width", Integer.toString( boundaries.getWidth() ) );
-		queryParams.set( "boundaries.height", Integer.toString( boundaries.getHeight() ) );
+		queryParams.add( "boundaries.width", Integer.toString( boundaries.getWidth() ) );
+		queryParams.add( "boundaries.height", Integer.toString( boundaries.getHeight() ) );
+	}
+
+	protected void addQueryParams( MultiValueMap<String, String> queryParams,
+	                               List<ImageModificationDto> imageModifications ) {
+		for(ImageModificationDto imageModificationDto : imageModifications){
+			addQueryParams(queryParams, imageModificationDto);
+		}
 	}
 }

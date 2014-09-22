@@ -50,13 +50,18 @@ public class ITLocalImageServerClient
 	private ImageContextService imageContextService;
 
 	@Before
-	public void registerResolution() {
-		ImageResolution resolution = imageService.getResolution( 640, 480 );
+	public void registerResolutions() {
+		registerResolution(640, 480);
+		registerResolution( 320, 240 );
+	}
+
+	private void registerResolution( int width, int height ) {
+		ImageResolution resolution = imageService.getResolution( width, height );
 
 		if ( resolution == null ) {
 			resolution = new ImageResolution();
-			resolution.setWidth( 640 );
-			resolution.setHeight( 480 );
+			resolution.setWidth( width );
+			resolution.setHeight( height );
 			resolution.setConfigurable( true );
 			resolution.setContexts( Collections.singleton( imageContextService.getByCode( "default" ) ) );
 			resolution.setAllowedOutputTypes( EnumSet.allOf( ImageType.class ) );
@@ -111,7 +116,7 @@ public class ITLocalImageServerClient
 	}
 
 	@Test
-	public void registerModifications() throws ParseException, IOException {
+	public void registerModification() throws ParseException, IOException {
 		String externalId = UUID.randomUUID().toString();
 		byte[] imageData =
 				IOUtils.toByteArray(
@@ -131,6 +136,36 @@ public class ITLocalImageServerClient
 
 		modifications = imageServerClient.listModifications( externalId, "default" );
 		assertEquals( 1, modifications.size() );
+		assertEquals( modificationDto, modifications.iterator().next() );
+	}
+
+	@Test
+	public void registerModifications() throws ParseException, IOException {
+		String externalId = UUID.randomUUID().toString();
+		byte[] imageData =
+				IOUtils.toByteArray(
+						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+
+		ImageInfoDto uploaded = imageServerClient.loadImage( externalId, imageData );
+		assertTrue( uploaded.isExisting() );
+
+		Collection<ImageModificationDto> modifications = imageServerClient.listModifications( externalId, "default" );
+		assertTrue( modifications.isEmpty() );
+
+		ImageModificationDto modificationDto = new ImageModificationDto( 640, 480 );
+		modificationDto.setCrop( new CropDto( 10, 10, 400, 300 ) );
+		modificationDto.setDensity( new DimensionsDto( 300, 300 ) );
+
+		ImageModificationDto modificationDto2 = new ImageModificationDto( 320, 240 );
+		modificationDto.setCrop( new CropDto( 10, 10, 100, 150 ) );
+		modificationDto.setDensity( new DimensionsDto( 100, 100 ) );
+
+		List<ImageModificationDto> imageModificationDtos = Arrays.asList( modificationDto, modificationDto2 );
+
+		imageServerClient.registerImageModifications( externalId, "default", imageModificationDtos );
+
+		modifications = imageServerClient.listModifications( externalId, "default" );
+		assertEquals( 2, modifications.size() );
 		assertEquals( modificationDto, modifications.iterator().next() );
 	}
 

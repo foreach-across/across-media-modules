@@ -13,6 +13,7 @@ import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.InputStream;
@@ -179,7 +180,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		request.setContext( context );
 		request.setImageModificationDto( imageModificationDto );
 
-		RegisterModificationResponse response = imageRestService.registerModification( request );
+		RegisterModificationResponse response = imageRestService.registerModifications( request );
 
 		if ( response.isContextDoesNotExist() ) {
 			throw new ImageServerException( "Context does not exist: " + context );
@@ -192,6 +193,38 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		if ( response.isResolutionDoesNotExist() ) {
 			throw new ImageServerException(
 					"No such image resolution : " + imageModificationDto.getResolution().getWidth() + "x" + imageModificationDto.getResolution().getHeight() );
+		}
+
+		if ( response.isCropOutsideOfImageBounds() ) {
+			throw new ImageServerException( "Crop dimensions fall outside image bounds." );
+		}
+	}
+
+	@Override
+	public void registerImageModifications( String imageId,
+	                                       String context,
+	                                       List<ImageModificationDto> imageModificationDtos ) {
+		RegisterModificationRequest request = new RegisterModificationRequest();
+		request.setExternalId( imageId );
+		request.setContext( context );
+		request.setImageModificationDtos( imageModificationDtos );
+
+		RegisterModificationResponse response = imageRestService.registerModifications( request );
+
+		if ( response.isContextDoesNotExist() ) {
+			throw new ImageServerException( "Context does not exist: " + context );
+		}
+
+		if ( response.isImageDoesNotExist() ) {
+			throw new ImageServerException( "Image does not exist: " + imageId );
+		}
+
+		if ( response.isResolutionDoesNotExist() ) {
+			StringBuilder errorMessage = new StringBuilder();
+			for (ImageResolutionDto imageResolutionDto: response.getMissingResolutions()){
+				errorMessage.append( "No such image resolution : " + imageResolutionDto.getWidth() + "x" + imageResolutionDto.getHeight() + "\r\n");
+			}
+			throw new ImageServerException(StringUtils.substringBeforeLast( errorMessage.toString(), "\r\n" ) );
 		}
 
 		if ( response.isCropOutsideOfImageBounds() ) {

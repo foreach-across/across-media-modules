@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -82,6 +83,23 @@ public class ImageServiceSaveImageModificationTest
 	public void saveImageModification() throws Exception {
 		try {
 			imageService.saveImageModification( createModification( cropX, cropY, cropWidth, cropHeight ),
+			                                    createImage( imageWidth, imageHeight ) );
+		}
+		catch ( CropOutsideOfImageBoundsException e ) {
+			if ( !throwsError ) {
+				throw new Exception( "Should not have thrown exception!" );
+			}
+			return;
+		}
+		if ( throwsError ) {
+			throw new Exception( "Should have thrown exception!" );
+		}
+	}
+
+	@Test
+	public void saveImageModifications() throws Exception {
+		try {
+			imageService.saveImageModifications( Arrays.asList(createModification( cropX, cropY, cropWidth, cropHeight )),
 			                                    createImage( imageWidth, imageHeight ) );
 		}
 		catch ( CropOutsideOfImageBoundsException e ) {

@@ -20,6 +20,7 @@ public interface ImageServerClient
 	String ENDPOINT_RESOLUTION_LIST = "api/resolution/list";
 	String ENDPOINT_MODIFICATION_LIST = "api/modification/list";
 	String ENDPOINT_MODIFICATION_REGISTER = "api/modification/register";
+	String ENDPOINT_MODIFICATION_REGISTER_LIST = "api/modification/registerlist";
 
 	String getImageServerUrl();
 
@@ -71,6 +72,10 @@ public interface ImageServerClient
 	void registerImageModification( String imageId,
 	                                String context,
 	                                ImageModificationDto imageModificationDto );
+
+	void registerImageModifications( String imageId,
+	                                String context,
+	                                List<ImageModificationDto> imageModificationDtos );
 
 	List<ImageModificationDto> listModifications( String imageId, String context );
 

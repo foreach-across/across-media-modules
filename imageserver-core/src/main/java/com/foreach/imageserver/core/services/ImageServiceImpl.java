@@ -93,6 +93,8 @@ public class ImageServiceImpl implements ImageService
 	 * DO NOT MAKE THIS METHOD TRANSACTIONAL! If we are updating an existing modification, we need to make sure that
 	 * the changes are committed to the database *before* we clean up the filesystem. Otherwise a different instance
 	 * might recreate variants on disk using the old values.
+	 *
+	 * TODO: if needed, storeImageModficication could perhaps be made transactional
 	 */
 	@Override
 	public void saveImageModification( ImageModification modification ) {
@@ -107,28 +109,48 @@ public class ImageServiceImpl implements ImageService
 			          LogHelper.flatten( modification ) );
 		}
 
-		int imageWidth = image.getDimensions().getWidth();
-		int imageHeight = image.getDimensions().getHeight();
-		int cropX = modification.getCrop().getX();
-		int cropY = modification.getCrop().getY();
-		int cropWidth = modification.getCrop().getWidth();
-		int cropHeight = modification.getCrop().getHeight();
+		saveImageModifications( Arrays.asList( modification ), image );
+	}
 
-		if ( cropX < 0 || cropY < 0 || cropWidth + cropX > imageWidth || cropHeight + cropY > imageHeight ) {
-			throw new CropOutsideOfImageBoundsException( "The crop fell at least partly outside the image bounds" );
+	@Override
+	public void saveImageModifications( List<ImageModification> modifications, Image image ) {
+		if ( modifications == null ) {
+			LOG.warn( "Null parameters not allowed - ImageServiceImpl#saveImageModifications: modifications={}",
+			          LogHelper.flatten( modifications ) );
+		}
+		if ( modifications.size() == 0 ) {
+			LOG.warn( "An empty list of modifications was provided - ImageServiceImpl#saveImageModifications: modifications={}",
+			          LogHelper.flatten( modifications ) );
 		}
 
-		ImageModification existingModification =
-				imageModificationManager.getById( modification.getImageId(), modification.getContextId(),
-				                                  modification.getResolutionId() );
-		if ( existingModification == null ) {
-			imageModificationManager.insert( modification );
-		}
-		else {
-			imageModificationManager.update( modification );
-		}
+		storeImageModification( modifications, image );
 
-		imageStoreService.removeVariants( modification.getImageId() );
+		imageStoreService.removeVariants( image.getId() );
+	}
+
+	private void storeImageModification( List<ImageModification> modifications, Image image ) {
+		for ( ImageModification modification : modifications ) {
+			int imageWidth = image.getDimensions().getWidth();
+			int imageHeight = image.getDimensions().getHeight();
+			int cropX = modification.getCrop().getX();
+			int cropY = modification.getCrop().getY();
+			int cropWidth = modification.getCrop().getWidth();
+			int cropHeight = modification.getCrop().getHeight();
+
+			if ( cropX < 0 || cropY < 0 || cropWidth + cropX > imageWidth || cropHeight + cropY > imageHeight ) {
+				throw new CropOutsideOfImageBoundsException( "The crop fell at least partly outside the image bounds" );
+			}
+
+			ImageModification existingModification =
+					imageModificationManager.getById( modification.getImageId(), modification.getContextId(),
+					                                  modification.getResolutionId() );
+			if ( existingModification == null ) {
+				imageModificationManager.insert( modification );
+			}
+			else {
+				imageModificationManager.update( modification );
+			}
+		}
 	}
 
 	@Override
@@ -142,7 +164,7 @@ public class ImageServiceImpl implements ImageService
 					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
 
-		StreamImageSource imageSource = imageStoreService.getVariantImage( image, context, imageResolution, imageVariant );
+		StreamImageSource imageSource =	imageStoreService.getVariantImage( image, context, imageResolution, imageVariant );
 		if ( imageSource == null ) {
 			ImageModificationDto modification = cropGenerator.buildModificationDto( image, context, imageResolution );
 			imageSource = generateVariantImage( image, context, modification, imageResolution, imageVariant, true );
@@ -190,7 +212,7 @@ public class ImageServiceImpl implements ImageService
 					LogHelper.flatten( image, context, imageModification, requestedResolution, imageVariant, storeImage ) );
 		}
 
-		if ( storeImage && (requestedResolution==null)) {
+		if ( storeImage && ( requestedResolution == null ) ) {
 			throw new IllegalArgumentException( "Cannot store image without a requested resolution specified." );
 		}
 
@@ -279,7 +301,7 @@ public class ImageServiceImpl implements ImageService
 					LogHelper.flatten( image, context, modificationDto, requestedResolution, imageVariant, storeImage ) );
 		}
 
-		if ( storeImage && (requestedResolution==null)) {
+		if ( storeImage && ( requestedResolution == null ) ) {
 			throw new IllegalArgumentException( "Cannot store image without a requested resolution specified." );
 		}
 

@@ -25,6 +25,8 @@ public interface ImageService
 
 	void saveImageModification( ImageModification modification, Image image );
 
+	void saveImageModifications( List<ImageModification> modifications, Image image );
+
 	StreamImageSource generateModification( Image image,
 	                                        ImageModificationDto modificationDto,
 	                                        ImageVariant imageVariant );
