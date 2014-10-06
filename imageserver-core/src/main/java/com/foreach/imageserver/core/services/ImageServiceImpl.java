@@ -209,7 +209,8 @@ public class ImageServiceImpl implements ImageService
 		if ( image == null || context == null || imageModification == null || requestedResolution == null || imageVariant == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, requestedResolution={}, imageVariant={}, storeImage={}",
-					LogHelper.flatten( image, context, imageModification, requestedResolution, imageVariant, storeImage ) );
+					LogHelper.flatten( image, context, imageModification, requestedResolution, imageVariant,
+					                   storeImage ) );
 		}
 
 		if ( storeImage && ( requestedResolution == null ) ) {
@@ -217,7 +218,8 @@ public class ImageServiceImpl implements ImageService
 		}
 
 		VariantImageRequest request =
-				new VariantImageRequest( image.getId(), context != null ? context.getId() : 0, imageModification, requestedResolution,
+				new VariantImageRequest( image.getId(), context != null ? context.getId() : 0, imageModification,
+				                         requestedResolution,
 				                         imageVariant );
 
 		FutureVariantImage futureVariantImage;
@@ -239,7 +241,8 @@ public class ImageServiceImpl implements ImageService
 		else {
 			try {
 				InMemoryImageSource variantImageSource =
-						generateVariantImageInCurrentThread( image, context, imageModification, requestedResolution, imageVariant,
+						generateVariantImageInCurrentThread( image, context, imageModification, requestedResolution,
+						                                     imageVariant,
 						                                     storeImage );
 				synchronized ( this ) {
 					futureVariantImage.setResult( variantImageSource );
@@ -298,7 +301,8 @@ public class ImageServiceImpl implements ImageService
 		if ( image == null || context == null || modificationDto == null || requestedResolution == null || imageVariant == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageServiceImpl#generateVariantImageInCurrentThread: image={}, context={}, modificationDto={}, requestedResolution={}, imageVariant={}, storeImage={}",
-					LogHelper.flatten( image, context, modificationDto, requestedResolution, imageVariant, storeImage ) );
+					LogHelper.flatten( image, context, modificationDto, requestedResolution, imageVariant,
+					                   storeImage ) );
 		}
 
 		if ( storeImage && ( requestedResolution == null ) ) {
@@ -315,7 +319,12 @@ public class ImageServiceImpl implements ImageService
 
 		StreamImageSource originalImageSource = imageStoreService.getOriginalImage( image );
 		if ( originalImageSource == null ) {
-			throw new ImageCouldNotBeRetrievedException( "The original image is not available on disk." );
+			String message = String.format(
+					"The original image is not available on disk. image=%s, context=%s, modificationDto=%s, requestedResolution=%s, imageVariant=%s,",
+					LogHelper.flatten( image ), LogHelper.flatten( context ), LogHelper.flatten( modificationDto ),
+					LogHelper.flatten( requestedResolution ), LogHelper.flatten( imageVariant ) );
+			LOG.error( message );
+			throw new ImageCouldNotBeRetrievedException( message );
 		}
 
 		InMemoryImageSource variantImageSource =
@@ -323,6 +332,15 @@ public class ImageServiceImpl implements ImageService
 				                              outputDimensions.getHeight(), crop.getX(), crop.getY(), crop.getWidth(),
 				                              crop.getHeight(), density.getWidth(), density.getHeight(),
 				                              imageVariant.getOutputType() );
+		if ( variantImageSource == null ) {
+			String message = String.format(
+					"Failed to retrieve in-memory variant image source. image=%s, context=%s, modificationDto=%s, requestedResolution=%s, imageVariant=%s,",
+					LogHelper.flatten( image ), LogHelper.flatten( context ), LogHelper.flatten( modificationDto ),
+					LogHelper.flatten( requestedResolution ), LogHelper.flatten( imageVariant ) );
+			LOG.error( message );
+			throw new ImageCouldNotBeRetrievedException( message );
+
+		}
 
 		// TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
 		if ( storeImage ) {
