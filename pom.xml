@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>across-taskrunner</groupId>
+	<artifactId>taskrunner-project</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<properties>
+		<across.version>1.0.4-SNAPSHOT</across.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<modules>
+		<module>taskrunner</module>
+		<module>taskrunner-test-web</module>
+	</modules>
+
+	<repositories>
+		<repository>
+			<id>foreach-nexus</id>
+			<name>Foreach repository</name>
+			<url>http://java.libs.foreach.com/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.9.1</version>
+					<executions>
+						<execution>
+							<id>javadoc-jar</id>
+							<phase>package</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+							<configuration>
+								<!-- switch on dependency-driven aggregation -->
+								<includeDependencySources>true</includeDependencySources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.17</version>
+				<configuration>
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>2.17</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>foreach-nexus</id>
+			<url>http://java.libs.foreach.com/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>foreach-nexus</id>
+			<url>http://java.libs.foreach.com/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<scm>
+		<connection>scm:git:http://stash.foreach.be/scm/fe/across-taskrunnermodule.git</connection>
+		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/across-taskrunnermodule.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>across</groupId>
+				<artifactId>across-core</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>across-hibernate</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across</groupId>
+				<artifactId>across-web</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>spring-security</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>properties-module</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>user-module</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+</project>

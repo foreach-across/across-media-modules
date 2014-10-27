@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="taskrunner-test-web:war exploded">
+    <output-path>$PROJECT_DIR$/taskrunner-test-web/target/taskrunner-test-web-1.0.0-SNAPSHOT</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="taskrunner-test-web/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="taskrunner-test-web" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
