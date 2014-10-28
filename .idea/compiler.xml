@@ -27,6 +27,11 @@
         <module name="taskrunner-test-web" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="taskrunner" target="1.7" />
+      <module name="taskrunner-project" target="1.7" />
+      <module name="taskrunner-test-web" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 

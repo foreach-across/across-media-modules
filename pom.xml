@@ -134,13 +134,23 @@
 				<version>${across.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>across</groupId>
+				<artifactId>across-web</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across</groupId>
+				<artifactId>across-test</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>across-standard-modules</groupId>
 				<artifactId>across-hibernate</artifactId>
 				<version>${across.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>across</groupId>
-				<artifactId>across-web</artifactId>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>debug-web</artifactId>
 				<version>${across.version}</version>
 			</dependency>
 			<dependency>
