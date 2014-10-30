@@ -254,6 +254,15 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		fileNameBuilder.append( 'h' );
 		fileNameBuilder.append( imageResolution.getHeight() );
 		//}
+		if (imageVariant.getBoundingBox() != null){
+			fileNameBuilder.append( '-' );
+			fileNameBuilder.append( "bw" );
+			fileNameBuilder.append( imageVariant.getBoundingBox().getWidth() );
+			fileNameBuilder.append( '-' );
+			fileNameBuilder.append( "bh" );
+			fileNameBuilder.append( imageVariant.getBoundingBox().getHeight() );
+		}
+
 		fileNameBuilder.append( '.' );
 		fileNameBuilder.append( imageVariant.getOutputType().getExtension() );
 

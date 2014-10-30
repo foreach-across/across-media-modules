@@ -21,6 +21,8 @@ public class ImageVariant
 {
 	private ImageType outputType;
 
+	private Dimensions boundingBox;
+
 	public ImageType getOutputType() {
 		return outputType;
 	}
@@ -46,5 +48,13 @@ public class ImageVariant
 		ImageVariant that = (ImageVariant) obj;
 
 		return Objects.equals( this.outputType, that.outputType );
+	}
+
+	public Dimensions getBoundingBox() {
+		return boundingBox;
+	}
+
+	public void setBoundingBox( Dimensions boundingBox ) {
+		this.boundingBox = boundingBox;
 	}
 }

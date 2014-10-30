@@ -176,7 +176,18 @@ public class ImageMagickImageTransformer implements ImageTransformer
 		op.colorspace( colorspace );
 		op.strip();
 		op.quality( QUALITY );
+
+		// only apply bounding box when available, and when the outputted image is larger than the bounding box
+		Dimensions boundingBox = action.getBoundingBox();
+		if (boundingBox != null){
+			Dimensions output = action.getOutputDimensions();
+			if (boundingBox.getHeight() < output.getHeight() || boundingBox.getWidth() < output.getWidth()){
+				op.resize( action.getBoundingBox().getWidth(), action.getBoundingBox().getHeight() );
+			}
+		}
+
 		op.addImage( action.getOutputType().getExtension() + ":-" );
+
 		try( InputStream imageStream = action.getSourceImageSource().getImageStream() ) {
 			try ( ByteArrayOutputStream os = new ByteArrayOutputStream() ) {
 				cmd.setInputProvider( new Pipe( imageStream, null ) );
