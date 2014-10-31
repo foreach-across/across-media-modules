@@ -10,7 +10,7 @@ public class ImageModifyAction
 	private final Dimensions outputDimensions;
 	private final Crop crop;
 	private final Dimensions density;
-	private final Dimensions boundingBox;
+	private final Dimensions boundaries;
 	private final ImageType outputType;
 
 
@@ -38,13 +38,13 @@ public class ImageModifyAction
 	                          int densityWidth,
 	                          int densityHeight,
 	                          ImageType outputType,
-	                          Dimensions boundingBox ) {
+	                          Dimensions boundaries ) {
 		this.sourceImageSource = sourceImageSource;
 		this.outputDimensions = new Dimensions( outputWidth, outputHeight );
 		this.crop = new Crop( cropX, cropY, cropWidth, cropHeight );
 		this.density = new Dimensions( densityWidth, densityHeight );
 		this.outputType = outputType;
-		this.boundingBox = boundingBox;
+		this.boundaries = boundaries;
 	}
 
 	public StreamImageSource getSourceImageSource() {
@@ -67,7 +67,7 @@ public class ImageModifyAction
 		return outputType;
 	}
 
-	public Dimensions getBoundingBox() {
-		return boundingBox;
+	public Dimensions getBoundaries() {
+		return boundaries;
 	}
 }

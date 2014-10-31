@@ -39,5 +39,5 @@ public interface ImageTransformService
 	                            int densityWidth,
 	                            int densityHeight,
 	                            ImageType outputType,
-	                            Dimensions boundingBox );
+	                            Dimensions boundaries );
 }

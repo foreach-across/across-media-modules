@@ -4,7 +4,7 @@ public class ImageVariantDto
 {
 	private ImageTypeDto imageType;
 
-	private DimensionsDto boundingBox;
+	private DimensionsDto bounderies;
 
 	public ImageVariantDto() {
 	}
@@ -13,8 +13,8 @@ public class ImageVariantDto
 		this.imageType = imageType;
 	}
 
-	public ImageVariantDto( DimensionsDto boundingBox ) {
-		this.boundingBox = boundingBox;
+	public ImageVariantDto( DimensionsDto bounderies ) {
+		this.bounderies = bounderies;
 	}
 
 	public ImageTypeDto getImageType() {
@@ -25,11 +25,11 @@ public class ImageVariantDto
 		this.imageType = imageType;
 	}
 
-	public DimensionsDto getBoundingBox() {
-		return boundingBox;
+	public DimensionsDto getBounderies() {
+		return bounderies;
 	}
 
-	public void setBoundingBox( DimensionsDto boundingBox ) {
-		this.boundingBox = boundingBox;
+	public void setBounderies( DimensionsDto bounderies ) {
+		this.bounderies = bounderies;
 	}
 }

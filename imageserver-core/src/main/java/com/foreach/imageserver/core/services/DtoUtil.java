@@ -43,8 +43,8 @@ public final class DtoUtil
 	public static ImageVariant toBusiness( ImageVariantDto dto ) {
 		ImageVariant imageVariant = new ImageVariant();
 		imageVariant.setOutputType( toBusiness( dto.getImageType() ) );
-		if ( dto.getBoundingBox() != null ) {
-			imageVariant.setBoundingBox( toBusiness( dto.getBoundingBox() ) );
+		if ( dto.getBounderies() != null ) {
+			imageVariant.setBoundaries( toBusiness( dto.getBounderies() ) );
 		}
 		return imageVariant;
 	}

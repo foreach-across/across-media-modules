@@ -124,7 +124,7 @@ public class ImageTransformServiceImpl implements ImageTransformService
 	                                   int densityWidth,
 	                                   int densityHeight,
 	                                   ImageType outputType,
-	                                   Dimensions boundingBox ) {
+	                                   Dimensions boundaries ) {
 		if ( imageSource == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}",
@@ -134,7 +134,7 @@ public class ImageTransformServiceImpl implements ImageTransformService
 
 		final ImageModifyAction action =
 				new ImageModifyAction( imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight,
-				                       densityWidth, densityHeight, outputType, boundingBox );
+				                       densityWidth, densityHeight, outputType, boundaries );
 
 		ImageTransformer imageTransformer = findAbleTransformer( new CanExecute()
 		{

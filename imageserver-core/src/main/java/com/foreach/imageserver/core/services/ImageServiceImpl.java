@@ -331,7 +331,7 @@ public class ImageServiceImpl implements ImageService
 				imageTransformService.modify( originalImageSource, outputDimensions.getWidth(),
 				                              outputDimensions.getHeight(), crop.getX(), crop.getY(), crop.getWidth(),
 				                              crop.getHeight(), density.getWidth(), density.getHeight(),
-				                              imageVariant.getOutputType(), imageVariant.getBoundingBox() );
+				                              imageVariant.getOutputType(), imageVariant.getBoundaries() );
 		if ( variantImageSource == null ) {
 			String message = String.format(
 					"Failed to retrieve in-memory variant image source. image=%s, context=%s, modificationDto=%s, requestedResolution=%s, imageVariant=%s,",

@@ -21,7 +21,7 @@ public class ImageVariant
 {
 	private ImageType outputType;
 
-	private Dimensions boundingBox;
+	private Dimensions boundaries;
 
 	public ImageType getOutputType() {
 		return outputType;
@@ -50,11 +50,11 @@ public class ImageVariant
 		return Objects.equals( this.outputType, that.outputType );
 	}
 
-	public Dimensions getBoundingBox() {
-		return boundingBox;
+	public Dimensions getBoundaries() {
+		return boundaries;
 	}
 
-	public void setBoundingBox( Dimensions boundingBox ) {
-		this.boundingBox = boundingBox;
+	public void setBoundaries( Dimensions boundaries ) {
+		this.boundaries = boundaries;
 	}
 }
