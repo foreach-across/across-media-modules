@@ -35,9 +35,14 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	public String imageUrl( String imageId,
 	                        String context,
 	                        int width,
-	                        int height
-	                        ) {
-		return imageUrl( imageId, context, new ImageResolutionDto( width, height ), new ImageVariantDto( null ) );
+	                        int height	) {
+		return imageUrl( imageId, context, new ImageResolutionDto( width, height ), new ImageVariantDto( ) );
+	}
+
+	public String imageUrl( String imageId,
+	                        String context,
+	                        String... size	) {
+		return imageUrl( imageId, context, null, new ImageVariantDto(), size );
 	}
 
 	@Override
@@ -52,32 +57,70 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	@Override
 	public String imageUrl( String imageId,
 	                        String context,
+	                        int width,
+	                        int height,
+	                        ImageVariantDto imageVariant ) {
+		return imageUrl( imageId, context, new ImageResolutionDto( width, height ), imageVariant );
+	}
+
+	@Override
+	public String imageUrl( String imageId,
+	                        String context,
+	                        ImageTypeDto imageType,
+	                        String... size
+	) {
+		return imageUrl( imageId, context, null, new ImageVariantDto( imageType ), size );
+	}
+
+	@Override
+	public String imageUrl( String imageId,
+	                        String context,
 	                        ImageResolutionDto imageResolution,
 	                        ImageVariantDto imageVariant ) {
-		if ( StringUtils.isBlank( imageId ) || context == null || imageResolution == null || imageVariant == null ) {
-			LOG.warn(
-					"Null parameters not allowed - ImageServerClientImpl#imageUrl: imageId={}, context={}, imageResolution={}, imageVariant={}",
-					LogHelper.flatten( imageId, context, imageResolution, imageVariant ) );
+		return imageUrl( imageId, context, imageResolution, imageVariant, null );
+	}
+
+	@Override
+	public String imageUrl( String imageId,
+	                        String context,
+	                        ImageResolutionDto imageResolution,
+	                        ImageVariantDto imageVariant,
+	                        String... size ) {
+		if ( StringUtils.isBlank( imageId ) || context == null || imageVariant == null ) {
+			LOG.warn( "Null parameters not allowed - imageId={}, context={}, imageResolution={}, imageVariant={}, size={}",
+			          LogHelper.flatten( imageId, context, imageResolution, imageVariant, size ) );
+		}
+		if ( imageResolution == null && ( size == null || size.length == 0 ) ) {
+			LOG.error( "Request does not contain an imageResolution or size - imageId={}, context={}, imageResolution={}, imageVariant={}, size={}",
+			           LogHelper.flatten( imageId, context, imageResolution, imageVariant, size ) );
+			throw new IllegalArgumentException( "Request does not contain an imageResolution or size" );
 		}
 
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "iid", imageId );
 		queryParams.set( "context", StringUtils.defaultString( context ) );
-		addQueryParams( queryParams, imageResolution );
+
+		if ( imageResolution != null ) {
+			addQueryParams( queryParams, imageResolution );
+		}
+		if ( size != null && size.length > 0 ) {
+			queryParams.set( "size", StringUtils.join( size, "," ) );
+		}
+
 		addQueryParams( queryParams, imageVariant );
 
 		return buildUri( ENDPOINT_IMAGE_VIEW, queryParams ).toString();
 	}
 
 	protected URI buildUri( String path, MultiValueMap<String, String> queryParams ) {
-		return buildUri(path, queryParams, imageServerUrl);
+		return buildUri( path, queryParams, imageServerUrl );
 	}
 
 	protected URI buildUri( String path, MultiValueMap<String, String> queryParams, String host ) {
 		UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl( host ).path( "/" ).path( path );
-		for ( String key: queryParams.keySet() ) {
-			for (int n = 0; n < queryParams.get(key).size(); ++n){
-				uri.queryParam( key, queryParams.get(key).get( n ) );
+		for ( String key : queryParams.keySet() ) {
+			for ( int n = 0; n < queryParams.get( key ).size(); ++n ) {
+				uri.queryParam( key, queryParams.get( key ).get( n ) );
 			}
 		}
 		return uri.build().toUri();
@@ -93,9 +136,14 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	}
 
 	protected void addQueryParams( MultiValueMap<String, String> queryParams, ImageVariantDto imageVariant ) {
-	ImageTypeDto imageTypeDto = imageVariant.getImageType();
-		if( imageTypeDto != null ) {
+		ImageTypeDto imageTypeDto = imageVariant.getImageType();
+		if ( imageTypeDto != null ) {
 			queryParams.set( "imageType", imageVariant.getImageType().toString() );
+		}
+		DimensionsDto boundingBox = imageVariant.getBoundingBox();
+		if ( boundingBox != null ) {
+			queryParams.set( "boundingBox.width", String.valueOf( boundingBox.getWidth() ) );
+			queryParams.set( "boundingBox.height", String.valueOf( boundingBox.getHeight() ) );
 		}
 	}
 
@@ -126,8 +174,8 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 
 	protected void addQueryParams( MultiValueMap<String, String> queryParams,
 	                               List<ImageModificationDto> imageModifications ) {
-		for(ImageModificationDto imageModificationDto : imageModifications){
-			addQueryParams(queryParams, imageModificationDto);
+		for ( ImageModificationDto imageModificationDto : imageModifications ) {
+			addQueryParams( queryParams, imageModificationDto );
 		}
 	}
 }

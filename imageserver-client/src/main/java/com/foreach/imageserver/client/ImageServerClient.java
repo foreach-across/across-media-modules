@@ -31,9 +31,25 @@ public interface ImageServerClient
 
 	String imageUrl( String imageId,
 	                 String context,
+	                 String... size );
+
+	String imageUrl( String imageId,
+	                 String context,
 	                 int width,
 	                 int height,
 	                 ImageTypeDto imageType );
+
+	String imageUrl( String imageId,
+	                 String context,
+	                 int width,
+	                 int height,
+	                 ImageVariantDto imageVariant );
+
+	String imageUrl( String imageId,
+	                 String context,
+	                 ImageTypeDto imageType,
+	                 String... size
+	);
 
 	String imageUrl( String imageId,
 	                 String context,
@@ -82,4 +98,10 @@ public interface ImageServerClient
 	List<ImageResolutionDto> listAllowedResolutions( String context );
 
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
+
+	String imageUrl( String imageId,
+	                 String context,
+	                 ImageResolutionDto imageResolution,
+	                 ImageVariantDto imageVariant,
+	                 String... size );
 }

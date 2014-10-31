@@ -13,6 +13,10 @@ public class ImageVariantDto
 		this.imageType = imageType;
 	}
 
+	public ImageVariantDto( DimensionsDto boundingBox ) {
+		this.boundingBox = boundingBox;
+	}
+
 	public ImageTypeDto getImageType() {
 		return imageType;
 	}
