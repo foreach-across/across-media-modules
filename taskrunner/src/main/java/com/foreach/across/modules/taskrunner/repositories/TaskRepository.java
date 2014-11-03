@@ -1,13 +1,13 @@
 package com.foreach.across.modules.taskrunner.repositories;
 
 import com.foreach.across.modules.hibernate.repositories.BasicRepository;
-import com.foreach.across.modules.taskrunner.business.ReportTask;
+import com.foreach.across.modules.taskrunner.business.PersistedTask;
 
 import java.util.Collection;
 
-public interface TaskRepository extends BasicRepository<ReportTask>
+public interface TaskRepository extends BasicRepository<PersistedTask>
 {
-	Collection<ReportTask> getAllByHash( String hash );
+	Collection<PersistedTask> getAllByHash( String hash );
 
-	ReportTask getByUuid( String uuid );
+	PersistedTask getByUuid( String uuid );
 }

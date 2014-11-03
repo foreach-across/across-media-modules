@@ -3,7 +3,7 @@ package com.foreach.across.modules.taskrunner.business;
 /**
  * @author Arne Vandamme
  */
-public enum ReportStatus
+public enum TaskStatus
 {
 	/**
 	 * Task has been created, but no generator has picked it up yet.

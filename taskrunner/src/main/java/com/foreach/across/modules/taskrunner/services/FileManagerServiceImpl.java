@@ -2,6 +2,10 @@ package com.foreach.across.modules.taskrunner.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foreach.across.modules.taskrunner.business.*;
+import com.foreach.across.modules.taskrunner.tasks.reports.JsonReportFileResult;
+import com.foreach.across.modules.taskrunner.tasks.reports.ReportFileResult;
+import com.foreach.across.modules.taskrunner.tasks.reports.ReportFormat;
+import com.foreach.across.modules.taskrunner.tasks.reports.ReportResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -65,7 +69,7 @@ public class FileManagerServiceImpl implements FileManagerService
 	}
 
 	@Override
-	public InputStream readReportResult( ReportFileResult reportFileResult, ReportTask reportTask ) {
+	public InputStream readReportResult( ReportFileResult reportFileResult, PersistedTask reportTask ) {
 		try {
 			return Files.newInputStream( Paths.get( reportFileResult.getPath() ) );
 		}

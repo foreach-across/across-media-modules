@@ -7,9 +7,9 @@ import java.util.Arrays;
 
 public class TaskRunnerSchemaConfiguration extends SchemaConfiguration
 {
-	public static final String TABLE_REPORT_TASK = "rm_report_task";
+	public static final String TABLE_TASK = "trm_task";
 
 	public TaskRunnerSchemaConfiguration() {
-		super( Arrays.asList( new SchemaObject( "table.report_task", TABLE_REPORT_TASK ) ) );
+		super( Arrays.asList( new SchemaObject( "table.task", TABLE_TASK ) ) );
 	}
 }

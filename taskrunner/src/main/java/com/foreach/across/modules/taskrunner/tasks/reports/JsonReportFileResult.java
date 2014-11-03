@@ -1,4 +1,4 @@
-package com.foreach.across.modules.taskrunner.business;
+package com.foreach.across.modules.taskrunner.tasks.reports;
 
 public class JsonReportFileResult extends ReportFileResult
 {

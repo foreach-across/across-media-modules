@@ -1,4 +1,4 @@
-package com.foreach.across.modules.taskrunner.business;
+package com.foreach.across.modules.taskrunner.tasks.reports;
 
 import java.util.Objects;
 

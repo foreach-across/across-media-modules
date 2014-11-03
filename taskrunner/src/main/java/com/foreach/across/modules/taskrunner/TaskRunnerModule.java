@@ -2,19 +2,13 @@ package com.foreach.across.modules.taskrunner;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
-import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.database.HasSchemaConfiguration;
 import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
 import com.foreach.across.modules.hibernate.provider.*;
-import com.foreach.across.modules.taskrunner.config.TaskRunnerRepositoriesConfiguration;
-import com.foreach.across.modules.taskrunner.config.TaskRunnerServicesConfiguration;
 import com.foreach.across.modules.taskrunner.config.TaskRunnerSchemaConfiguration;
 import com.foreach.across.modules.taskrunner.installers.TaskRunnerSchemaInstaller;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Set;
 
 /**
  * @author Arne Vandamme
@@ -41,12 +35,6 @@ public class TaskRunnerModule extends AcrossModule implements HasHibernatePackag
 		return new Object[] { new TaskRunnerSchemaInstaller( schemaConfiguration ) };
 	}
 
-	@Override
-	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-		contextConfigurers.add( new AnnotatedClassConfigurer( TaskRunnerRepositoriesConfiguration.class,
-		                                                      TaskRunnerServicesConfiguration.class ) );
-	}
-
 	/**
 	 * Returns the package provider associated with this implementation.
 	 *
@@ -54,9 +42,9 @@ public class TaskRunnerModule extends AcrossModule implements HasHibernatePackag
 	 * @return HibernatePackageProvider instance.
 	 */
 	public HibernatePackageProvider getHibernatePackageProvider( AcrossHibernateModule hibernateModule ) {
-		if ( StringUtils.equals( "AcrossHibernateModule", hibernateModule.getName() ) ) {
+		if ( StringUtils.equals( AcrossHibernateModule.NAME, hibernateModule.getName() ) ) {
 			return new HibernatePackageProviderComposite(
-					new PackagesToScanProvider( "com.foreach.across.modules.taskrunner.business" ),
+					new PackagesToScanProvider( getClass().getPackage().getName() + ".business" ),
 					new TableAliasProvider( schemaConfiguration.getTables() ) );
 		}
 

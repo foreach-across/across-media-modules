@@ -10,13 +10,13 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * This should probably be a service object with a link back to the report service itself.
+ * Persisted version of a task, containing the serialized parameters and result.
  *
  * @author Arne Vandamme
  */
 @Entity
-@Table(name = TaskRunnerSchemaConfiguration.TABLE_REPORT_TASK)
-public class ReportTask implements IdBasedEntity
+@Table(name = TaskRunnerSchemaConfiguration.TABLE_TASK)
+public class PersistedTask implements IdBasedEntity
 {
 	@Id
 	@GeneratedValue(generator = "seq_rm_report_task_id")
@@ -46,7 +46,7 @@ public class ReportTask implements IdBasedEntity
 	private String result;
 
 	@Column(name = "status")
-	private ReportStatus status;
+	private TaskStatus status;
 
 	@Column(name = "saved")
 	private boolean saved;
@@ -130,11 +130,11 @@ public class ReportTask implements IdBasedEntity
 	/**
 	 * @return Current status of the report task.
 	 */
-	public ReportStatus getStatus() {
+	public TaskStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus( ReportStatus status ) {
+	public void setStatus( TaskStatus status ) {
 		this.status = status;
 	}
 
@@ -191,7 +191,7 @@ public class ReportTask implements IdBasedEntity
 			return false;
 		}
 
-		ReportTask that = (ReportTask) obj;
+		PersistedTask that = (PersistedTask) obj;
 		return Objects.equals( this.getUuid(), that.getUuid() );
 	}
 

@@ -2,6 +2,7 @@
   <artifact type="exploded-war" name="taskrunner-test-web:war exploded">
     <output-path>$PROJECT_DIR$/taskrunner-test-web/target/taskrunner-test-web-1.0.0-SNAPSHOT</output-path>
     <root id="root">
+      <element id="javaee-facet-resources" facet="taskrunner-test-web/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="taskrunner-test-web" />
@@ -31,7 +32,8 @@
           <element id="library" level="project" name="Maven: org.liquibase:liquibase-core:3.1.1" />
           <element id="library" level="project" name="Maven: org.yaml:snakeyaml:1.13" />
           <element id="library" level="project" name="Maven: com.mattbertolini:liquibase-slf4j:1.2.1" />
-          <element id="library" level="project" name="Maven: net.engio:mbassador:1.1.10" />
+          <element id="library" level="project" name="Maven: net.engio:mbassador:1.2.0" />
+          <element id="library" level="project" name="Maven: javax.el:el-api:2.2" />
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.0.6.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:4.0.6.RELEASE" />
           <element id="archive" name="taskrunner-module-1.0.0-SNAPSHOT.jar">
@@ -63,7 +65,6 @@
           <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.2" />
         </element>
       </element>
-      <element id="javaee-facet-resources" facet="taskrunner-test-web/web/Web" />
     </root>
   </artifact>
 </component>

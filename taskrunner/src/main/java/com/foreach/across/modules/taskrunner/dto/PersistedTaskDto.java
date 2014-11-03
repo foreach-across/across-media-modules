@@ -1,12 +1,12 @@
 package com.foreach.across.modules.taskrunner.dto;
 
 import com.foreach.across.modules.hibernate.dto.IdBasedEntityDto;
-import com.foreach.across.modules.taskrunner.business.ReportStatus;
-import com.foreach.across.modules.taskrunner.business.ReportTask;
+import com.foreach.across.modules.taskrunner.business.PersistedTask;
+import com.foreach.across.modules.taskrunner.business.TaskStatus;
 
 import java.util.Date;
 
-public class ReportTaskDto extends IdBasedEntityDto<ReportTask>
+public class PersistedTaskDto extends IdBasedEntityDto<PersistedTask>
 {
 	private String uuid;
 
@@ -18,7 +18,7 @@ public class ReportTaskDto extends IdBasedEntityDto<ReportTask>
 
 	private String result;
 
-	private ReportStatus status;
+	private TaskStatus status;
 
 	private boolean saved;
 
@@ -68,11 +68,11 @@ public class ReportTaskDto extends IdBasedEntityDto<ReportTask>
 		this.result = result;
 	}
 
-	public ReportStatus getStatus() {
+	public TaskStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus( ReportStatus status ) {
+	public void setStatus( TaskStatus status ) {
 		this.status = status;
 	}
 
@@ -108,8 +108,8 @@ public class ReportTaskDto extends IdBasedEntityDto<ReportTask>
 		this.expiryDate = expiryDate;
 	}
 
-	public static ReportTaskDto fromReportTask( ReportTask reportTask ) {
-		ReportTaskDto dto = new ReportTaskDto();
+	public static PersistedTaskDto fromReportTask( PersistedTask reportTask ) {
+		PersistedTaskDto dto = new PersistedTaskDto();
 		dto.copyFrom( reportTask );
 		return dto;
 	}

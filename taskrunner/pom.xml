@@ -24,6 +24,16 @@
 			<artifactId>across-hibernate</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>across</groupId>
+			<artifactId>across-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.libs</groupId>
+			<artifactId>common-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.7</version>

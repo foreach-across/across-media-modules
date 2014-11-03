@@ -1,12 +1,13 @@
 package com.foreach.across.modules.taskrunner.services;
 
 import com.foreach.across.modules.hibernate.util.BasicServiceHelper;
-import com.foreach.across.modules.taskrunner.business.ReportRequest;
-import com.foreach.across.modules.taskrunner.business.ReportResult;
-import com.foreach.across.modules.taskrunner.business.ReportStatus;
-import com.foreach.across.modules.taskrunner.business.ReportTask;
-import com.foreach.across.modules.taskrunner.dto.ReportTaskDto;
+import com.foreach.across.modules.taskrunner.business.PersistedTask;
+import com.foreach.across.modules.taskrunner.business.TaskRequest;
+import com.foreach.across.modules.taskrunner.dto.PersistedTaskDto;
+import com.foreach.across.modules.taskrunner.tasks.reports.ReportResult;
+import com.foreach.across.modules.taskrunner.business.TaskStatus;
 import com.foreach.across.modules.taskrunner.repositories.TaskRepository;
+import com.foreach.across.modules.taskrunner.tasks.TaskHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -16,40 +17,40 @@ import java.util.Date;
 public class ReportTaskRunnable<T> extends Thread
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ReportTaskRunnable.class );
-	private final ReportHandler<T> reportHandler;
-	private ReportTask reportTask;
-	private final ReportRequest<T> reportRequest;
+	private final TaskHandler<T> taskHandler;
+	private PersistedTask reportTask;
+	private final TaskRequest<T> taskRequest;
 
 	private final TaskRepository taskRepository;
-	private final ReportServiceImpl.ReportTaskResult reportTaskResult;
-	private final ReportParameterSerializer reportParameterSerializer;
+	private final TaskRunnerServiceImpl.ReportTaskResult reportTaskResult;
+	private final TaskObjectsSerializer taskObjectsSerializer;
 
-	public ReportTaskRunnable( ReportHandler<T> reportHandler,
-	                           ReportTask reportTask,
-	                           ReportRequest<T> reportRequest,
+	public ReportTaskRunnable( TaskHandler<T> taskHandler,
+	                           PersistedTask reportTask,
+	                           TaskRequest<T> taskRequest,
 	                           TaskRepository taskRepository,
-	                           ReportServiceImpl.ReportTaskResult reportTaskResult,
-	                           ReportParameterSerializer reportParameterSerializer ) {
-		super(String.format( "%s-%s", reportRequest.getParameters().getClass(), reportTask.getUuid() ));
-		this.reportHandler = reportHandler;
+	                           TaskRunnerServiceImpl.ReportTaskResult reportTaskResult,
+	                           TaskObjectsSerializer taskObjectsSerializer ) {
+		super(String.format( "%s-%s", taskRequest.getParameters().getClass(), reportTask.getUuid() ));
+		this.taskHandler = taskHandler;
 		this.reportTask = reportTask;
-		this.reportRequest = reportRequest;
+		this.taskRequest = taskRequest;
 		this.taskRepository = taskRepository;
 		this.reportTaskResult = reportTaskResult;
-		this.reportParameterSerializer = reportParameterSerializer;
+		this.taskObjectsSerializer = taskObjectsSerializer;
 	}
 
 	@Override
 	public void run() {
-		performStateChange( ReportStatus.BUSY );
+		performStateChange( TaskStatus.BUSY );
 
 		ReportResult result;
 		try {
-			result = reportHandler.generate( reportTask, reportRequest );
+			result = taskHandler.execute( reportTask, taskRequest );
 		}
 		catch ( Exception e ) {
-			LOG.error( "Failed to generate report", e );
-			performStateChange( ReportStatus.FAILED );
+			LOG.error( "Failed to execute report", e );
+			performStateChange( TaskStatus.FAILED );
 			return;
 		}
 
@@ -57,21 +58,21 @@ public class ReportTaskRunnable<T> extends Thread
 	}
 
 	private void finishTask( ReportResult result ) {
-		ReportTaskDto dto = new ReportTaskDto();
+		PersistedTaskDto dto = new PersistedTaskDto();
 		BeanUtils.copyProperties( reportTask, dto );
-		dto.setStatus( ReportStatus.FINISHED );
-		dto.setResult( reportParameterSerializer.serialize( result ) );
+		dto.setStatus( TaskStatus.FINISHED );
+		dto.setResult( taskObjectsSerializer.serialize( result ) );
 		dto.setUpdated( new Date() );
-		reportTask = BasicServiceHelper.save( dto, ReportTask.class, taskRepository );
+		reportTask = BasicServiceHelper.save( dto, PersistedTask.class, taskRepository );
 
 		reportTaskResult.setReportTask( reportTask );
 	}
 
-	private void performStateChange( ReportStatus reportStatus ) {
-		ReportTaskDto dto = new ReportTaskDto();
+	private void performStateChange( TaskStatus taskStatus ) {
+		PersistedTaskDto dto = new PersistedTaskDto();
 		BeanUtils.copyProperties( reportTask, dto );
-		dto.setStatus( reportStatus );
+		dto.setStatus( taskStatus );
 		dto.setUpdated( new Date() );
-		reportTask = BasicServiceHelper.save( dto, ReportTask.class, taskRepository );
+		reportTask = BasicServiceHelper.save( dto, PersistedTask.class, taskRepository );
 	}
 }

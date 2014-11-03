@@ -10,12 +10,12 @@ import java.util.Date;
  *
  * @author Arne Vandamme
  */
-public class ReportRequest<T>
+public class TaskRequest<T>
 {
 	private T parameters;
 
 	private boolean saveResult;
-	private boolean forceGeneration;
+	private boolean forceExecution;
 
 	private Date expiryDate, oldestResultDate;
 
@@ -57,12 +57,12 @@ public class ReportRequest<T>
 	 *
 	 * @return True if the report should be generated.
 	 */
-	public boolean isForceGeneration() {
-		return forceGeneration;
+	public boolean isForceExecution() {
+		return forceExecution;
 	}
 
-	public void setForceGeneration( boolean forceGeneration ) {
-		this.forceGeneration = forceGeneration;
+	public void setForceExecution( boolean forceExecution ) {
+		this.forceExecution = forceExecution;
 	}
 
 	/**
