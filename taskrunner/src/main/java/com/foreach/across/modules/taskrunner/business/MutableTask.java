@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * @author Arne Vandamme
  */
-public interface MutableTask<P> extends TouchableTask<P>
+public interface MutableTask<P> extends Task<P>
 {
 	void setCreatedBy( String createdBy );
 

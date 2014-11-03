@@ -41,6 +41,9 @@ public class TaskRunnerServiceImpl implements TaskRunnerService
 	private TaskObjectsSerializer taskObjectsSerializer;
 
 	@Autowired
+	private TaskTransitionManager transitionManager;
+
+	@Autowired
 	private TaskRepository taskRepository;
 
 	private TaskParametersHashGenerator<Object> defaultHashGenerator;
@@ -50,8 +53,8 @@ public class TaskRunnerServiceImpl implements TaskRunnerService
 
 	// todo (feedback): min size should probably be 1 or 2 by default, with a max of 5 - move to executor (?)
 	@Deprecated
-	public TaskRunnerServiceImpl( int threadpoolMin,
-	                              int threadpoolMax ) {
+	public TaskRunnerServiceImpl(
+			int threadpoolMin, int threadpoolMax ) {
 
 		this.threadpoolMin = threadpoolMin;
 		this.threadpoolMax = threadpoolMax;
@@ -62,15 +65,14 @@ public class TaskRunnerServiceImpl implements TaskRunnerService
 	}
 
 	@PostConstruct
-	public void init() {
+	public void start() {
 		if ( defaultHashGenerator == null ) {
 			defaultHashGenerator = new DefaultTaskParametersHashGenerator( taskObjectsSerializer );
 		}
 
-		CustomizableThreadFactory threadFactory = new CustomizableThreadFactory( "report-pool-" );
+		CustomizableThreadFactory threadFactory = new CustomizableThreadFactory( "taskrunner-thread-" );
 		threadPool = new ThreadPoolExecutor( threadpoolMin, threadpoolMax, 60, TimeUnit.SECONDS,
-		                                     new ArrayBlockingQueue<Runnable>( 100 ),
-		                                     threadFactory );
+		                                     new ArrayBlockingQueue<Runnable>( 1000 ), threadFactory );
 	}
 
 	// TODO: handle tasks that are not started and are interrupted
@@ -116,6 +118,27 @@ public class TaskRunnerServiceImpl implements TaskRunnerService
 		return createOrGetTask( handler, request, true );
 	}
 
+	/**
+	 * Synchronous execution of a request.
+	 */
+	@Override
+	public Task execute( TaskRequest request ) {
+		TaskHandler handler = handler( request );
+
+		return createOrGetTask( handler, request, false );
+	}
+
+	@Override
+	public Task getTaskById( String id ) {
+		PersistedTask persisted = taskRepository.getByUuid( id );
+
+		if ( persisted != null ) {
+			return readTask( persisted );
+		}
+
+		return null;
+	}
+
 	private TaskHandler handler( TaskRequest<?> request ) {
 		Assert.notNull( request.getParameters() );
 
@@ -140,27 +163,20 @@ public class TaskRunnerServiceImpl implements TaskRunnerService
 			task = createTaskFromRequest( request, hash );
 		}
 
-		/*
 		try {
+			FutureTask<Void> future = new FutureTask<>( new TaskRunnable( transitionManager, handler, task ), null );
 
-			ReportTaskResult reportTaskResult = new ReportTaskResult();
-			FutureTask<ReportTaskResult> futureTask = new FutureTask<>(
-					new ReportTaskRunnable<>( handler, reportTask, request, taskRepository, reportTaskResult,
-					                          taskObjectsSerializer ), reportTaskResult );
-
-			threadPool.execute( futureTask );
+			threadPool.execute( future );
 
 			if ( !async ) {
-				ReportTaskResult callback = futureTask.get();
-				reportTask = callback.getReportTask();
+				future.get();
 			}
-
 		}
 		catch ( RejectedExecutionException | InterruptedException | ExecutionException e ) {
 			// TODO: handle tasks that are interrupted by a threadpool shutdown
 			LOG.error( "Failed to add task {} to threadpool. ", task.getId(), e );
 		}
-*/
+
 		return task;
 	}
 
@@ -192,9 +208,8 @@ public class TaskRunnerServiceImpl implements TaskRunnerService
 		return null;
 	}
 
-	private MutableTask readMatchingTask( TaskHandler handler,
-	                                      TaskRequest request,
-	                                      PersistedTask persistedTask ) {
+	private MutableTask readMatchingTask(
+			TaskHandler handler, TaskRequest request, PersistedTask persistedTask ) {
 
 		// Task should not be reused
 		if ( !persistedTask.isSaved() ) {
@@ -207,9 +222,13 @@ public class TaskRunnerServiceImpl implements TaskRunnerService
 		}
 
 		// Existing results are older than the oldest allowed
-		if ( request.getOldestResultDate() != null
-				&& persistedTask.getStatus() == TaskStatus.FINISHED
-				&& persistedTask.getUpdated().before( request.getOldestResultDate() ) ) {
+		if ( request.getOldestResultDate() != null && persistedTask.getStatus() == TaskStatus.FINISHED && persistedTask.getUpdated().before(
+				request.getOldestResultDate() ) ) {
+			return null;
+		}
+
+		// Execution is forced but the task is not yet finished
+		if ( persistedTask.getStatus() == TaskStatus.FINISHED && request.isForceExecution() ) {
 			return null;
 		}
 
@@ -222,27 +241,6 @@ public class TaskRunnerServiceImpl implements TaskRunnerService
 
 		// No reason why this task should not be reused
 		return task;
-	}
-
-	/**
-	 * Synchronous execution of a request.
-	 */
-	@Override
-	public Task execute( TaskRequest request ) {
-		TaskHandler handler = handler( request );
-
-		return createOrGetTask( handler, request, false );
-	}
-
-	@Override
-	public Task getTaskById( String id ) {
-		PersistedTask persisted = taskRepository.getByUuid( id );
-
-		if ( persisted != null ) {
-			return readTask( persisted );
-		}
-
-		return null;
 	}
 
 	private MutableTask createTaskFromRequest( TaskRequest request, String hash ) {
@@ -277,37 +275,5 @@ public class TaskRunnerServiceImpl implements TaskRunnerService
 
 	private Object deserialize( String xml ) {
 		return xml != null ? taskObjectsSerializer.deserialize( xml ) : null;
-	}
-
-	// todo (feedback): fetching of a ReportTask should check if result is available and if it is, should deserialize it already
-	@Deprecated
-	@Override
-	public PersistedTask getReportTaskById( long id ) {
-		return taskRepository.getById( id );
-	}
-
-	@Deprecated
-	@Override
-	public PersistedTask getReportTaskByUuid( String uuid ) {
-		return taskRepository.getByUuid( uuid );
-	}
-
-	@Deprecated
-	@Override
-	public <T> T getReportResult( String xml, Class<T> clazz ) {
-		return (T) taskObjectsSerializer.deserialize( xml );
-	}
-
-	public static class ReportTaskResult
-	{
-		private PersistedTask reportTask;
-
-		public void setReportTask( PersistedTask reportTask ) {
-			this.reportTask = reportTask;
-		}
-
-		public PersistedTask getReportTask() {
-			return reportTask;
-		}
 	}
 }

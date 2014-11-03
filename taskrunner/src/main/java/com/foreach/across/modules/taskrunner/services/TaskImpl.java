@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * @author Arne Vandamme
  */
-public class TaskImpl implements MutableTask
+public class TaskImpl<P> implements MutableTask<P>
 {
 	private final String id;
 	private String createdBy;
@@ -36,11 +36,11 @@ public class TaskImpl implements MutableTask
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getParameters() {
+	public <T extends P> T getParameters() {
 		return (T) parameters;
 	}
 
-	public void setParameters( Object parameters ) {
+	public void setParameters( P parameters ) {
 		this.parameters = parameters;
 	}
 
@@ -83,10 +83,5 @@ public class TaskImpl implements MutableTask
 
 	public void setExpiryDate( Date expiryDate ) {
 		this.expiryDate = expiryDate;
-	}
-
-	@Override
-	public void touch() {
-		throw new UnsupportedOperationException( "Not yet implemented." );
 	}
 }

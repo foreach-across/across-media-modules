@@ -10,7 +10,7 @@ package com.foreach.across.modules.taskrunner.business;
 public interface TouchableTask<P> extends Task<P>
 {
 	/**
-	 * Update the timestamp when the
+	 * Update the timestamp for the task.
 	 */
 	void touch();
 }
