@@ -179,7 +179,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 
 		// only apply bounding box when available, and when the outputted image is larger than the bounding box
 		Dimensions boundaries = action.getBoundaries();
-		if (boundaries != null){
+		if (boundaries != null && boundaries.getWidth() > 0 && boundaries.getHeight() > 0){
 			Dimensions output = action.getOutputDimensions();
 			if (boundaries.getHeight() < output.getHeight() || boundaries.getWidth() < output.getWidth()){
 				op.resize( action.getBoundaries().getWidth(), action.getBoundaries().getHeight() );
