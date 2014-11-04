@@ -69,7 +69,7 @@ public class TestRemoteImageServerClient
 	}
 
 	@Test
-	public void imageUrlWithBounderies() {
+	public void imageUrlWithBoundaries() {
 		String url = imageServerClient.imageUrl( "10", "ONLINE", 1000, 2000, new ImageVariantDto( new DimensionsDto( 400, 800 ) ) );
 		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&width=1000&height=2000&boundaries.width=400&boundaries.height=800", url );
 	}

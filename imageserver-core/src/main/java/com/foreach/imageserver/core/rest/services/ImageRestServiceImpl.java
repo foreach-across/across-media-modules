@@ -170,7 +170,7 @@ public class ImageRestServiceImpl implements ImageRestService
 					response.setResolutionDoesNotExist( true );
 				} else {
 					// when available, the bounding box dimensions should be those of an existing resolution
-					DimensionsDto boundaries = request.getImageVariantDto().getBounderies();
+					DimensionsDto boundaries = request.getImageVariantDto().getBoundaries();
 					if ( boundaries != null && !boundingResolutionExists( boundaries, context ) ) {
 						LOG.warn( "Bounding box resolution {}x{} does not exist for context {}", imageResolutionDto.getWidth(),
 						          imageResolutionDto.getHeight(), context.getCode() );

@@ -140,7 +140,7 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 		if ( imageTypeDto != null ) {
 			queryParams.set( "imageType", imageVariant.getImageType().toString() );
 		}
-		DimensionsDto boundaries = imageVariant.getBounderies();
+		DimensionsDto boundaries = imageVariant.getBoundaries();
 		if ( boundaries != null ) {
 			queryParams.set( "boundaries.width", String.valueOf( boundaries.getWidth() ) );
 			queryParams.set( "boundaries.height", String.valueOf( boundaries.getHeight() ) );
