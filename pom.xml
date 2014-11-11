@@ -17,6 +17,7 @@
 	</properties>
 
 	<modules>
+		<module>filemanager</module>
 		<module>taskrunner</module>
 		<module>taskrunner-test-web</module>
 	</modules>
@@ -152,6 +153,11 @@
 			<dependency>
 				<groupId>across-standard-modules</groupId>
 				<artifactId>across-hibernate</artifactId>
+				<version>${across.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>across-standard-modules</groupId>
+				<artifactId>admin-web</artifactId>
 				<version>${across.version}</version>
 			</dependency>
 			<dependency>
