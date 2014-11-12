@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>across-taskrunner</groupId>
-	<artifactId>taskrunner-project</artifactId>
+	<groupId>across-standard-modules</groupId>
+	<artifactId>across-job-modules-project</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.4-SNAPSHOT</version>
 
 	<properties>
 		<across.version>1.0.4-SNAPSHOT</across.version>
@@ -18,8 +18,8 @@
 
 	<modules>
 		<module>filemanager</module>
-		<module>taskrunner</module>
-		<module>taskrunner-test-web</module>
+		<module>spring-batch</module>
+		<module>spring-batch-test-web</module>
 	</modules>
 
 	<repositories>
@@ -182,5 +182,26 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.31</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>11.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.jtds</groupId>
+			<artifactId>jtds</artifactId>
+			<version>1.2.8</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 </project>

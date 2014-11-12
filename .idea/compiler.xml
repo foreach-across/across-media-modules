@@ -24,12 +24,17 @@
         <processorPath useClasspath="true" />
         <module name="across-taskrunner" />
         <module name="filemanager" />
+        <module name="spring-batch" />
+        <module name="spring-batch-test-web" />
         <module name="taskrunner" />
         <module name="taskrunner-test-web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="across-job-modules" target="1.7" />
       <module name="filemanager" target="1.7" />
+      <module name="spring-batch" target="1.7" />
+      <module name="spring-batch-test-web" target="1.7" />
       <module name="taskrunner" target="1.7" />
       <module name="taskrunner-project" target="1.7" />
       <module name="taskrunner-test-web" target="1.7" />

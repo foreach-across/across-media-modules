@@ -3,13 +3,13 @@
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/filemanager" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/taskrunner" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/taskrunner-test-web" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/taskrunner-test-web/src/main/java/com/foreach/across/webapp/taskrunner/WebAppInitializer.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/taskrunner-test-web/src/main/java/com/foreach/across/webapp/taskrunner/config/TestWebConfiguration.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/taskrunner-test-web/src/main/resources/logback.xml" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/taskrunner-test-web/src/main/webapp" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/taskrunner/src/test/resources/logback-test.xml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-batch" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-batch-test-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-batch-test-web/src/main/java/com/foreach/across/webapp/spring/batch/WebAppInitializer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-batch-test-web/src/main/java/com/foreach/across/webapp/spring/batch/config/TestWebConfiguration.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-batch-test-web/src/main/resources/logback.xml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-batch-test-web/src/main/webapp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-batch/src/test/resources/logback-test.xml" charset="UTF-8" />
   </component>
 </project>
 

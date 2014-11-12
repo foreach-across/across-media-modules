@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/across-job-modules.iml" filepath="$PROJECT_DIR$/across-job-modules.iml" />
       <module fileurl="file://$PROJECT_DIR$/filemanager/filemanager.iml" filepath="$PROJECT_DIR$/filemanager/filemanager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/taskrunner/taskrunner.iml" filepath="$PROJECT_DIR$/taskrunner/taskrunner.iml" />
-      <module fileurl="file://$PROJECT_DIR$/taskrunner-project.iml" filepath="$PROJECT_DIR$/taskrunner-project.iml" />
-      <module fileurl="file://$PROJECT_DIR$/taskrunner-test-web/taskrunner-test-web.iml" filepath="$PROJECT_DIR$/taskrunner-test-web/taskrunner-test-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-batch/spring-batch.iml" filepath="$PROJECT_DIR$/spring-batch/spring-batch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-batch-test-web/spring-batch-test-web.iml" filepath="$PROJECT_DIR$/spring-batch-test-web/spring-batch-test-web.iml" />
     </modules>
   </component>
 </project>

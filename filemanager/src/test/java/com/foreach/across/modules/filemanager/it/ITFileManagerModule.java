@@ -54,8 +54,10 @@ public class ITFileManagerModule
 		@Override
 		public void configure( AcrossContext context ) {
 			FileManagerModule module = new FileManagerModule();
-			module.setProperty( FileManagerModuleSettings.LOCAL_REPOSITORIES_ROOT, System.getProperty(
-					"java.io.tmpdir" ) );
+			module.setProperty(
+					FileManagerModuleSettings.LOCAL_REPOSITORIES_ROOT,
+					System.getProperty( "java.io.tmpdir" )
+			);
 
 			context.addModule( module );
 		}
