@@ -17,7 +17,7 @@ public class DateFormatPathGenerator implements PathGenerator
 	}
 
 	@Override
-	public String generatePath( String proposed ) {
+	public String generatePath() {
 		return dateFormat.format( System.currentTimeMillis() );
 	}
 }

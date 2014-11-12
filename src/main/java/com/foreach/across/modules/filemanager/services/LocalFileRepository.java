@@ -17,6 +17,8 @@ import java.util.UUID;
 /**
  * The simplest of file repositories, storing all files in a set of local folders
  * with one root parent folder.
+ *
+ * @see com.foreach.across.modules.filemanager.services.PathGenerator
  */
 public class LocalFileRepository implements FileRepository
 {
@@ -267,7 +269,7 @@ public class LocalFileRepository implements FileRepository
 		String extension = FilenameUtils.getExtension( proposedName );
 		String fileName = UUID.randomUUID().toString() + ( !StringUtils.isBlank( extension ) ? "." + extension : "" );
 
-		String path = pathGenerator != null ? pathGenerator.generatePath( proposedPath ) : null;
+		String path = pathGenerator != null ? pathGenerator.generatePath() : null;
 
 		return new FileDescriptor( repositoryId, path, fileName );
 	}
