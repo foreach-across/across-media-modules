@@ -29,6 +29,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Arne Vandamme
@@ -59,12 +60,20 @@ public class ITSpringBatchModule
 		Map<String, JobParameter> params = new HashMap<>();
 		params.put( "map", new JobParameter( 123L ) );
 
-		JobExecution execution = jobLauncher.run( jobRegistry.getJob( "jobModule.testJob" ),
-		                                          new JobParameters( params ) );
+		Job job = jobRegistry.getJob( "jobModule.testJob" );
+		JobParameters parameters = new JobParameters( params );
+		JobExecution execution = jobLauncher.run( job, parameters );
+		boolean found = false;
+		for( int i = 0; i < 3; i++ ) {
+			JobExecution jobExecution = jobRepository.getLastJobExecution( "jobModule.testJob", parameters );
+			if( BatchStatus.COMPLETED == jobExecution.getStatus() ) {
+				found = true;
+				break;
+			}
+			Thread.sleep( 500 );
+		}
 
-		Thread.sleep( 500 );
-
-		assertEquals( BatchStatus.COMPLETED, execution.getStatus() );
+		assertTrue( "Failed to complete job in time", found );
 		assertEquals( new BigDecimal( "12.30" ), execution.getExecutionContext().get( "returnValue" ) );
 
 	}
