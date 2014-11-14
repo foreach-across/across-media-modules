@@ -22,12 +22,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="across-taskrunner" />
         <module name="filemanager" />
         <module name="spring-batch" />
         <module name="spring-batch-test-web" />
-        <module name="taskrunner" />
-        <module name="taskrunner-test-web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

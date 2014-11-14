@@ -122,8 +122,8 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:git:http://stash.foreach.be/scm/fe/across-taskrunnermodule.git</connection>
-		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/across-taskrunnermodule.git</developerConnection>
+		<connection>scm:git:http://stash.foreach.be/scm/fe/across-jobmodules.git</connection>
+		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/across-jobmodules.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
