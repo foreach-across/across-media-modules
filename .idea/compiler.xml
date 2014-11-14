@@ -35,9 +35,6 @@
       <module name="filemanager" target="1.7" />
       <module name="spring-batch" target="1.7" />
       <module name="spring-batch-test-web" target="1.7" />
-      <module name="taskrunner" target="1.7" />
-      <module name="taskrunner-project" target="1.7" />
-      <module name="taskrunner-test-web" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
