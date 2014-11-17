@@ -10,6 +10,7 @@ import com.foreach.across.modules.spring.batch.installers.SpringBatchSchemaInsta
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 
@@ -32,7 +33,8 @@ public class SpringBatchModule extends AcrossModule
 								JobLauncher.class,
 								JobRegistry.class,
 								StepBuilderFactory.class,
-								JobBuilderFactory.class
+								JobBuilderFactory.class,
+						        JobExplorer.class
 						)
 				)
 		);
