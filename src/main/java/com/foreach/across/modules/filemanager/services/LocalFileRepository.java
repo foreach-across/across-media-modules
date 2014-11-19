@@ -3,9 +3,12 @@ package com.foreach.across.modules.filemanager.services;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.utils.FileManagerUtils;
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -22,6 +25,8 @@ import java.util.UUID;
  */
 public class LocalFileRepository implements FileRepository
 {
+	private static final Logger LOG = LoggerFactory.getLogger( LocalFileRepository.class );
+
 	private String repositoryId;
 	private String rootFolder;
 	private PathGenerator pathGenerator;
@@ -95,13 +100,46 @@ public class LocalFileRepository implements FileRepository
 				FileUtils.forceMkdir( newFile.getParentFile() );
 			}
 
-			FileUtils.moveFile( file, newFile );
+			moveFileIfPossible( file, newFile );
 		}
 		catch ( IOException ioe ) {
 			throw new FileStorageException( ioe );
 		}
 
 		return descriptor;
+	}
+
+	/**
+	 * Based on {@link FileUtils#moveFile(java.io.File, java.io.File)}.  Copies the file into
+	 * the repository and tries to delete the original.
+	 */
+	private void moveFileIfPossible( File srcFile, File destFile ) throws IOException {
+		if ( srcFile == null ) {
+			throw new NullPointerException( "Source must not be null" );
+		}
+		if ( destFile == null ) {
+			throw new NullPointerException( "Destination must not be null" );
+		}
+		if ( !srcFile.exists() ) {
+			throw new FileNotFoundException( "Source '" + srcFile + "' does not exist" );
+		}
+		if ( srcFile.isDirectory() ) {
+			throw new IOException( "Source '" + srcFile + "' is a directory" );
+		}
+		if ( destFile.exists() ) {
+			throw new FileExistsException( "Destination '" + destFile + "' already exists" );
+		}
+		if ( destFile.isDirectory() ) {
+			throw new IOException( "Destination '" + destFile + "' is a directory" );
+		}
+		boolean rename = srcFile.renameTo( destFile );
+		if ( !rename ) {
+			FileUtils.copyFile( srcFile, destFile );
+			if ( !srcFile.delete() ) {
+				LOG.warn( "File {} was copied into the LocalFileRepository but could not be deleted",
+				          srcFile );
+			}
+		}
 	}
 
 	/**
