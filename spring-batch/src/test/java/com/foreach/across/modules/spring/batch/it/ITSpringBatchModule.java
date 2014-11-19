@@ -27,9 +27,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -64,9 +62,9 @@ public class ITSpringBatchModule
 		JobParameters parameters = new JobParameters( params );
 		JobExecution execution = jobLauncher.run( job, parameters );
 		boolean found = false;
-		for( int i = 0; i < 3; i++ ) {
+		for ( int i = 0; i < 3; i++ ) {
 			JobExecution jobExecution = jobRepository.getLastJobExecution( "jobModule.testJob", parameters );
-			if( BatchStatus.COMPLETED == jobExecution.getStatus() ) {
+			if ( BatchStatus.COMPLETED == jobExecution.getStatus() ) {
 				found = true;
 				break;
 			}
