@@ -11,6 +11,7 @@ import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -108,16 +109,7 @@ public class ITSpringBatchModule
 		@Bean
 		protected Step step() {
 			return stepBuilderFactory.get( "step" )
-			                         .tasklet(
-					                         new Tasklet()
-					                         {
-						                         @Override
-						                         public RepeatStatus execute( StepContribution contribution,
-						                                                      ChunkContext chunkContext ) throws Exception {
-							                         return RepeatStatus.FINISHED;
-						                         }
-					                         }
-			                         )
+			                         .tasklet( stepScopeTasklet() )
 			                         .listener(
 					                         new StepExecutionListener()
 					                         {
@@ -136,6 +128,19 @@ public class ITSpringBatchModule
 					                         } )
 			                         .build();
 
+		}
+
+		@Bean
+		@StepScope
+		protected Tasklet stepScopeTasklet() {
+			return new Tasklet()
+			{
+				@Override
+				public RepeatStatus execute( StepContribution contribution,
+				                             ChunkContext chunkContext ) throws Exception {
+					return RepeatStatus.FINISHED;
+				}
+			};
 		}
 	}
 

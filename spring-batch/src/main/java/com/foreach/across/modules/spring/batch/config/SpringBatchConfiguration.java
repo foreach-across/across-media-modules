@@ -2,6 +2,7 @@ package com.foreach.across.modules.spring.batch.config;
 
 import com.foreach.across.core.annotations.AcrossEventHandler;
 import com.foreach.across.core.annotations.Event;
+import com.foreach.across.core.context.configurer.AnnotatedClassConfigurer;
 import com.foreach.across.core.context.configurer.PostProcessorConfigurer;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
@@ -23,6 +24,8 @@ import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
+import org.springframework.batch.core.scope.JobScope;
+import org.springframework.batch.core.scope.StepScope;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,6 +167,7 @@ public class SpringBatchConfiguration implements BatchConfigurer
 	@Event
 	protected void registerBeanPostProcessor( final AcrossModuleBeforeBootstrapEvent moduleBeforeBootstrapEvent ) {
 		moduleBeforeBootstrapEvent.getBootstrapConfig().addApplicationContextConfigurer(
+				new AnnotatedClassConfigurer( ScopeConfiguration.class ),
 				new PostProcessorConfigurer(
 						new BeanFactoryPostProcessor()
 						{
@@ -217,5 +221,27 @@ public class SpringBatchConfiguration implements BatchConfigurer
 
 			return new ResourcelessTransactionManager();
 		}
+	}
+}
+
+/**
+ * Copied non-static class registering Spring Batch specific bean scopes.
+ */
+@Configuration
+class ScopeConfiguration
+{
+	private StepScope stepScope = new StepScope();
+	private JobScope jobScope = new JobScope();
+
+	@Bean
+	public StepScope stepScope() {
+		stepScope.setAutoProxy( false );
+		return stepScope;
+	}
+
+	@Bean
+	public JobScope jobScope() {
+		jobScope.setAutoProxy( false );
+		return jobScope;
 	}
 }
