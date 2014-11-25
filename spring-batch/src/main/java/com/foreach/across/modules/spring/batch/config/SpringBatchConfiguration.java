@@ -7,6 +7,7 @@ import com.foreach.across.core.context.configurer.PostProcessorConfigurer;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.core.events.AcrossModuleBeforeBootstrapEvent;
 import com.foreach.across.modules.spring.batch.SpringBatchModuleSettings;
+import com.foreach.across.modules.spring.batch.modules.ScopeConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.ProxyFactory;
@@ -24,8 +25,6 @@ import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
-import org.springframework.batch.core.scope.JobScope;
-import org.springframework.batch.core.scope.StepScope;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -224,24 +223,3 @@ public class SpringBatchConfiguration implements BatchConfigurer
 	}
 }
 
-/**
- * Copied non-static class registering Spring Batch specific bean scopes.
- */
-@Configuration
-class ScopeConfiguration
-{
-	private StepScope stepScope = new StepScope();
-	private JobScope jobScope = new JobScope();
-
-	@Bean
-	public StepScope stepScope() {
-		stepScope.setAutoProxy( false );
-		return stepScope;
-	}
-
-	@Bean
-	public JobScope jobScope() {
-		jobScope.setAutoProxy( false );
-		return jobScope;
-	}
-}
