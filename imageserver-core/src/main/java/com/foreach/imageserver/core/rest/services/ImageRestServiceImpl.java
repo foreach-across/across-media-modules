@@ -205,10 +205,10 @@ public class ImageRestServiceImpl implements ImageRestService
 
 	private boolean boundingResolutionExists( DimensionsDto boundaries, ImageContext context ) {
 		if ( boundaries != null ) {
-			ImageResolution boundingRsolution = contextService.getImageResolution(
+			ImageResolution boundingResolution = contextService.getImageResolution(
 					context.getId(), boundaries.getWidth(), boundaries.getHeight()
 			);
-			return boundingRsolution != null;
+			return boundingResolution != null;
 		}
 		return false;
 	}
