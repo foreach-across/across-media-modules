@@ -119,32 +119,29 @@ public class ImageStreamingController
 			viewImageRequest.setExternalId( externalId );
 			viewImageRequest.setContext( contextCode );
 			viewImageRequest.setImageVariantDto( imageVariantDto );
+
 			viewImageRequest.setImageResolutionDto( determineImageResolution( externalId, imageResolutionDto, size ) );
 
-			if ( viewImageRequest.getImageResolutionDto() == null ) {
-				error( response, HttpStatus.NOT_FOUND, "No usable resolution specified." );
-			} else {
-				ViewImageResponse viewImageResponse = imageRestService.viewImage( viewImageRequest );
+			ViewImageResponse viewImageResponse = imageRestService.viewImage( viewImageRequest );
 
-				if ( viewImageResponse.isImageDoesNotExist() ) {
-					error( response, HttpStatus.NOT_FOUND, "No such image." );
-				} else if ( viewImageResponse.isContextDoesNotExist() ) {
-					error( response, HttpStatus.NOT_FOUND, "No such context." );
-				} else if ( viewImageResponse.isResolutionDoesNotExist() ) {
-					LOG_RESOLUTION_NOT_FOUND.error( imageResolutionDto.getWidth() + "x" + imageResolutionDto.getHeight() );
-					error( response, HttpStatus.NOT_FOUND, "No such resolution." );
-				} else if ( viewImageResponse.isOutputTypeNotAllowed() ) {
-					error( response, HttpStatus.NOT_FOUND, "Requested output type is not allowed." );
-				} else if ( viewImageResponse.isFailed() ) {
-					error( response, HttpStatus.NOT_FOUND, "Could not create variant." );
-				} else {
-					renderImageSource( viewImageResponse.getImageSource(), response );
-				}
+			if ( viewImageResponse.isImageDoesNotExist() ) {
+				error( response, HttpStatus.NOT_FOUND, "No such image." );
+			} else if ( viewImageResponse.isContextDoesNotExist() ) {
+				error( response, HttpStatus.NOT_FOUND, "No such context." );
+			} else if ( viewImageResponse.isNoResolutionSpecified() ) {
+				error( response, HttpStatus.NOT_FOUND, "No usable resolution specified." );
+			} else if ( viewImageResponse.isResolutionDoesNotExist() ) {
+				LOG_RESOLUTION_NOT_FOUND.error( imageResolutionDto.getWidth() + "x" + imageResolutionDto.getHeight() );
+				error( response, HttpStatus.NOT_FOUND, "No such resolution." );
+			} else if ( viewImageResponse.isOutputTypeNotAllowed() ) {
+				error( response, HttpStatus.NOT_FOUND, "Requested output type is not allowed." );
+			} else if ( viewImageResponse.isFailed() ) {
+				error( response, HttpStatus.NOT_FOUND, "Could not create variant." );
+			} else {
+				renderImageSource( viewImageResponse.getImageSource(), response );
 			}
 
-			// fail-safe to avoid that stack traces are shown when an unexpected exception occurs
-		}
-		catch ( Exception e ) {
+		} catch ( Exception e ) { // fail-safe to avoid that stack traces are shown when an unexpected exception occurs
 			// log the exception context and either send a clean error (in production) or rethrow the exception (anywhere else)
 			LOG.error(
 					"Retrieving image variant caused exception - ImageStreamingController#view: externalId={}, contextCode={}, imageResolutionDto={}, imageVariantDto={}",
@@ -222,8 +219,7 @@ public class ImageStreamingController
 		response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_NO_STORE );
 		try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
 			IOUtils.copy( bis, response.getOutputStream() );
-		}
-		catch ( IOException e ) {
+		} catch ( IOException e ) {
 			LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );
 		}
 	}
