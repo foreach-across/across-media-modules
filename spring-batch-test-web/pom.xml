@@ -4,12 +4,12 @@
 
 	<artifactId>spring-batch-test-web</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.4</version>
+	<version>1.0.5-SNAPSHOT</version>
 
 	<parent>
 		<groupId>across-standard-modules</groupId>
 		<artifactId>across-job-modules-project</artifactId>
-		<version>1.0.4</version>
+		<version>1.0.5-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>

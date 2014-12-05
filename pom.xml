@@ -5,7 +5,7 @@
 	<groupId>across-standard-modules</groupId>
 	<artifactId>across-job-modules-project</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.4</version>
+	<version>1.0.5-SNAPSHOT</version>
 
 	<properties>
 		<across.version>1.0.4</across.version>
@@ -123,7 +123,7 @@
 	<scm>
 		<connection>scm:git:http://stash.foreach.be/scm/fe/across-jobmodules.git</connection>
 		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/across-jobmodules.git</developerConnection>
-		<tag>across-job-modules-project-1.0.4</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 
