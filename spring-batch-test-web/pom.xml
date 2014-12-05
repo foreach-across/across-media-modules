@@ -10,7 +10,7 @@
 
 	<parent>
 		<groupId>across-standard-modules</groupId>
-		<artifactId>across-job-modules-project</artifactId>
+		<artifactId>across-job-modules</artifactId>
 		<version>1.0.4-SNAPSHOT</version>
 	</parent>
 
