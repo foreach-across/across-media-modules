@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.foreach.imageserver</groupId>
 		<artifactId>imageserver-platform</artifactId>
-		<version>3.2-SNAPSHOT</version>
+		<version>3.2</version>
 	</parent>
 
 	<artifactId>imageserver-client</artifactId>
 	<name>ImageServer Client Module</name>
-	<version>3.2-SNAPSHOT</version>
+	<version>3.2</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
