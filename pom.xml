@@ -26,7 +26,7 @@
 	<groupId>com.foreach.imageserver</groupId>
 	<artifactId>imageserver-platform</artifactId>
 	<name>ImageServer Platform</name>
-	<version>3.2</version>
+	<version>3.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -216,6 +216,6 @@
 	<scm>
 		<connection>scm:git:http://stash.foreach.be/scm/fe/across-imageserver-modules.git</connection>
 		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/across-imageserver-modules.git</developerConnection>
-	  <tag>imageserver-platform-3.2</tag>
+	  <tag>HEAD</tag>
   </scm>
 </project>
