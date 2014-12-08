@@ -214,7 +214,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<scm>
-		<connection>scm:git:http://stash.foreach.be/scm/fe/image-server.git</connection>
-		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/image-server.git</developerConnection>
+		<connection>scm:git:http://stash.foreach.be/scm/fe/across-imageserver-modules.git</connection>
+		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/across-imageserver-modules.git</developerConnection>
 	</scm>
 </project>
