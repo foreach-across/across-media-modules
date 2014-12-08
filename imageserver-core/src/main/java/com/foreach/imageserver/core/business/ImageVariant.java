@@ -33,7 +33,9 @@ public class ImageVariant
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode( outputType );
+		int result = Objects.hashCode( outputType );
+		result = 31 * result + Objects.hashCode( boundaries );
+		return result;
 	}
 
 	@Override
@@ -47,7 +49,7 @@ public class ImageVariant
 
 		ImageVariant that = (ImageVariant) obj;
 
-		return Objects.equals( this.outputType, that.outputType );
+		return Objects.equals( this.outputType, that.outputType ) && Objects.equals( this.boundaries, that.boundaries );
 	}
 
 	public Dimensions getBoundaries() {
