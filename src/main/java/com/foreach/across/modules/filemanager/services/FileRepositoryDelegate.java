@@ -75,6 +75,11 @@ public class FileRepositoryDelegate implements FileRepository
 		return repository().exists( descriptor );
 	}
 
+	@Override
+	public boolean rename( FileDescriptor original, FileDescriptor renamed ) {
+		return repository().rename( original, renamed );
+	}
+
 	private FileRepository repository() {
 		return actualImplementation;
 	}

@@ -111,6 +111,13 @@ public class TestFileManager
 		fileManager.getAsFile( descriptorTwo );
 		verify( one ).getAsFile( descriptorOne );
 		verify( two ).getAsFile( descriptorTwo );
+
+		FileDescriptor renameA = new FileDescriptor( "one", null, "c" );
+		FileDescriptor renameB = new FileDescriptor( "two", null, "d" );
+		fileManager.rename( descriptorOne, renameA );
+		fileManager.rename( descriptorTwo, renameB );
+		verify( one ).rename( descriptorOne, renameA );
+		verify( two ).rename( descriptorTwo, renameB );
 	}
 
 	@Test
