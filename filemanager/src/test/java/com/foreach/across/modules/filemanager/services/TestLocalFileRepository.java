@@ -155,6 +155,39 @@ public class TestLocalFileRepository
 		assertEquals( "modified text", read( descriptor ) );
 	}
 
+	@Test
+	public void renameFileRenamesTheFile() {
+		FileDescriptor original = fileRepository.save( FILE_ONE );
+		String renamedName = UUID.randomUUID().toString();
+		FileDescriptor renamed = new FileDescriptor( fileRepository.getRepositoryId(), null, renamedName );
+
+		assertTrue( fileRepository.rename( original, renamed ) );
+		assertTrue( fileRepository.exists( renamed ) );
+		assertFalse( fileRepository.exists( original ) );
+	}
+
+	@Test
+	public void renameFileCreatesDirectoriesIfNecessary() {
+		FileDescriptor original = fileRepository.save( FILE_ONE );
+		String renamedName = UUID.randomUUID().toString();
+		String renamedDir = UUID.randomUUID().toString();
+		FileDescriptor renamed = new FileDescriptor( fileRepository.getRepositoryId(), renamedDir, renamedName );
+
+		assertTrue( fileRepository.rename( original, renamed ) );
+		assertTrue( fileRepository.exists( renamed ) );
+		assertFalse( fileRepository.exists( original ) );
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void renameFileToDifferentRepositoryThrowsIllegalArgument() {
+		FileDescriptor original = fileRepository.save( FILE_ONE );
+		String renamedName = UUID.randomUUID().toString();
+		String renamedDir = UUID.randomUUID().toString();
+		FileDescriptor renamed = new FileDescriptor( "foo", renamedDir, renamedName );
+
+		fileRepository.rename( original, renamed );
+	}
+
 	private String read( FileDescriptor descriptor ) throws IOException {
 		try (InputStream is = fileRepository.getInputStream( descriptor )) {
 			char[] text = new char[1024];
