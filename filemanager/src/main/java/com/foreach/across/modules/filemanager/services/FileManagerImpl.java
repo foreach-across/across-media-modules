@@ -99,6 +99,11 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	}
 
 	@Override
+	public boolean rename( FileDescriptor original, FileDescriptor renamed ) {
+		return requireRepository( original.getRepositoryId() ).rename( original, renamed );
+	}
+
+	@Override
 	public void setFileRepositoryFactory( FileRepositoryFactory factory ) {
 		this.repositoryFactory = factory;
 	}

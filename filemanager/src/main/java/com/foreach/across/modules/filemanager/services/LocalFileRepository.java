@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.UUID;
 
 /**
@@ -280,6 +277,33 @@ public class LocalFileRepository implements FileRepository
 		}
 
 		return getAsFile( descriptor ).exists();
+	}
+
+	@Override
+	public boolean rename( FileDescriptor original, FileDescriptor renamed ) {
+		String renamedRep = renamed.getRepositoryId();
+		String originalRep = original.getRepositoryId();
+		if ( !StringUtils.equalsIgnoreCase( originalRep, renamedRep ) ) {
+			throw new IllegalArgumentException( String.format(
+					"The renamed repositoryId %s must be the same as the original repositoryId %s", renamedRep,
+					originalRep ) );
+		}
+
+		Path result;
+		Path renamedPath = buildPath( renamed );
+		try {
+			Path parent = renamedPath.getParent();
+			if ( !Files.isDirectory( parent ) ) {
+				Files.createDirectories( parent );
+			}
+			result = Files.move( buildPath( original ), renamedPath, StandardCopyOption.ATOMIC_MOVE,
+			                     StandardCopyOption.REPLACE_EXISTING );
+		}
+		catch ( IOException e ) {
+			throw new FileStorageException( e );
+		}
+
+		return renamedPath.equals( result );
 	}
 
 	/**
