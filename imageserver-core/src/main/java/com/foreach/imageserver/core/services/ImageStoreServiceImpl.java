@@ -367,8 +367,22 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 		Files.createDirectories( path );
 		if ( !CollectionUtils.isEmpty( folderPermissions ) ) {
-			Files.setPosixFilePermissions( path, folderPermissions );
+			setPosixFilePermissions( path, folderPermissions );
 		}
+	}
+
+	private void setPosixFilePermissions( Path path, Set<PosixFilePermission> folderPermissions ) throws IOException {
+		if( isRootFolder( path ) ) {
+			return;
+		}
+
+		Files.setPosixFilePermissions( path, folderPermissions );
+
+		setPosixFilePermissions( path.getParent(), folderPermissions );
+	}
+
+	private boolean isRootFolder( Path path ) {
+		return path.equals( originalsFolder ) || path.equals( variantsFolder ) || path.equals( tempFolder );
 	}
 
 	private void setFilePermissionsWithoutFailing( Path path ) {
