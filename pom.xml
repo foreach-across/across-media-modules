@@ -14,12 +14,12 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach repository</name>
-			<url>http://java.libs.foreach.com/nexus/content/groups/public</url>
+			<url>https://repository.foreach.be/nexus/content/groups/public</url>
 		</repository>
 		<repository>
 			<id>foreach-custom-externals</id>
 			<name>Foreach Custom repository</name>
-			<url>http://java.libs.foreach.com/nexus/content/repositories/foreach-custom-externals</url>
+			<url>https://repository.foreach.be/nexus/content/repositories/foreach-custom-externals</url>
 		</repository>
 	</repositories>
 
@@ -200,12 +200,12 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://java.libs.foreach.com/nexus/content/repositories/releases</url>
+			<url>https://repository.foreach.be/nexus/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://java.libs.foreach.com/nexus/content/repositories/snapshots</url>
+			<url>https://repository.foreach.be/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<scm>
