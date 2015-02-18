@@ -6,10 +6,6 @@
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://172.16.3.27:3306/imageserver_test</jdbc-url>
-      <user-name>imageserver_test</user-name>
-      <user-password>dfc3dfc7dfcbdfcddfcfdfd9dfcfdfd8dfdcdfcfdfd8dff5dfdedfcfdfd9dfde</user-password>
-      <schema-pattern>imageserver_test.*</schema-pattern>
-      <default-schemas>imageserver_test.*</default-schemas>
       <driver-properties>
         <property name="zeroDateTimeBehavior" value="convertToNull" />
         <property name="tinyInt1isBit" value="false" />
@@ -18,4 +14,3 @@
     </data-source>
   </component>
 </project>
-
