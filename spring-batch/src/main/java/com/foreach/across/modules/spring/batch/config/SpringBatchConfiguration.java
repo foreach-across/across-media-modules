@@ -35,11 +35,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 @AcrossEventHandler
@@ -203,17 +205,29 @@ public class SpringBatchConfiguration implements BatchConfigurer
 		protected Object createObject() throws Exception {
 			Assert.notNull( contextBeanRegistry );
 
-			try {
-				return contextBeanRegistry.getBeanOfType( PlatformTransactionManager.class );
-			}
-			catch ( BeansException be ) {
-				LOG.warn(
-						"No PlatformTransactionManager bean found in the AcrossContext, falling back to defaults." );
-			}
-
 			if ( dataSource != null ) {
+				DataSource underlyingDataSource =
+						dataSource instanceof TransactionAwareDataSourceProxy ? ( (TransactionAwareDataSourceProxy) dataSource )
+								.getTargetDataSource() : dataSource;
+				try {
+					List<DataSourceTransactionManager> dataSourceTransactionManagers =
+							contextBeanRegistry.getBeansOfType( DataSourceTransactionManager.class );
+					if ( !dataSourceTransactionManagers.isEmpty() ) {
+						for ( DataSourceTransactionManager dataSourceTransactionManager : dataSourceTransactionManagers ) {
+							if ( underlyingDataSource == dataSourceTransactionManager.getDataSource() ) {
+								return dataSourceTransactionManager;
+							}
+						}
+					}
+				}
+				catch ( BeansException be ) {
+					LOG.warn(
+							"No DataSourceTransactionManager bean found in the AcrossContext, falling back to defaults." );
+				}
+
 				LOG.debug( "Creating default PlatformTransactionManager for the datasource" );
 				return new DataSourceTransactionManager( dataSource );
+
 			}
 
 			LOG.warn( "No datasource was provided...using a Map based JobRepository" );
