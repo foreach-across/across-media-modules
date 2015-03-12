@@ -8,7 +8,7 @@
 	<version>1.0.5-SNAPSHOT</version>
 
 	<properties>
-		<across.version>1.0.5-SNAPSHOT</across.version>
+		<across.version>1.0.5</across.version>
 		<foreach.common.version>0.11</foreach.common.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
