@@ -26,10 +26,13 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
@@ -48,6 +51,8 @@ import java.util.List;
 @EnableBatchProcessing
 public class SpringBatchConfiguration implements BatchConfigurer
 {
+	public static final String TRANSACTION_MANAGER_BEAN = "springBatchTransactionManager";
+
 	private static final Logger LOG = LoggerFactory.getLogger( SpringBatchConfiguration.class );
 
 	@Autowired
@@ -61,6 +66,9 @@ public class SpringBatchConfiguration implements BatchConfigurer
 
 	@Autowired
 	private DataSource dataSource;
+
+	@Autowired
+	private ApplicationContext applicationContext;
 
 	private PlatformTransactionManager transactionManager;
 	private JobRepository jobRepository;
@@ -79,9 +87,6 @@ public class SpringBatchConfiguration implements BatchConfigurer
 	public PlatformTransactionManager getTransactionManager() {
 		if ( transactionManager == null ) {
 			PlatformTransactionManagerTargetSource targetSource = new PlatformTransactionManagerTargetSource();
-			targetSource.setContextBeanRegistry( beanRegistry );
-			targetSource.setDataSource( dataSource );
-
 			transactionManager = ProxyFactory.getProxy( PlatformTransactionManager.class, targetSource );
 		}
 
@@ -188,34 +193,36 @@ public class SpringBatchConfiguration implements BatchConfigurer
 	/**
 	 * Fetches TransactionManager from the AcrossContext.
 	 */
-	private static class PlatformTransactionManagerTargetSource extends AbstractLazyCreationTargetSource
+	private class PlatformTransactionManagerTargetSource extends AbstractLazyCreationTargetSource
 	{
-		private AcrossContextBeanRegistry contextBeanRegistry;
-		private DataSource dataSource;
-
-		public void setDataSource( DataSource dataSource ) {
-			this.dataSource = dataSource;
-		}
-
-		public void setContextBeanRegistry( AcrossContextBeanRegistry contextBeanRegistry ) {
-			this.contextBeanRegistry = contextBeanRegistry;
-		}
-
 		@Override
 		protected Object createObject() throws Exception {
-			Assert.notNull( contextBeanRegistry );
+			Assert.notNull( beanRegistry );
+
+			PlatformTransactionManager registered = registeredTransactionManager( applicationContext );
+
+			if ( registered != null ) {
+				return registered;
+			}
 
 			if ( dataSource != null ) {
+				LOG.debug( "Attempting to find a valid PlatformTransactionManager for the given datasource" );
+
 				DataSource underlyingDataSource =
-						dataSource instanceof TransactionAwareDataSourceProxy ? ( (TransactionAwareDataSourceProxy) dataSource )
-								.getTargetDataSource() : dataSource;
+						dataSource instanceof TransactionAwareDataSourceProxy
+								? ( (TransactionAwareDataSourceProxy) dataSource ).getTargetDataSource() : dataSource;
 				try {
-					List<DataSourceTransactionManager> dataSourceTransactionManagers =
-							contextBeanRegistry.getBeansOfType( DataSourceTransactionManager.class );
+					List<PlatformTransactionManager> dataSourceTransactionManagers =
+							beanRegistry.getBeansOfType( PlatformTransactionManager.class );
 					if ( !dataSourceTransactionManagers.isEmpty() ) {
-						for ( DataSourceTransactionManager dataSourceTransactionManager : dataSourceTransactionManagers ) {
-							if ( underlyingDataSource == dataSourceTransactionManager.getDataSource() ) {
-								return dataSourceTransactionManager;
+
+						for ( PlatformTransactionManager platformTransactionManager : dataSourceTransactionManagers ) {
+							DataSource candidateDataSource = retrieveDataSource( platformTransactionManager );
+							if ( underlyingDataSource == candidateDataSource || dataSource == candidateDataSource ) {
+								LOG.info( "Using existing PlatformTransactionManager {} for Spring batch. " +
+										          "Configure a {} if you want a specific TransactionManager to be used instead.",
+								          TRANSACTION_MANAGER_BEAN );
+								return platformTransactionManager;
 							}
 						}
 					}
@@ -233,6 +240,31 @@ public class SpringBatchConfiguration implements BatchConfigurer
 			LOG.warn( "No datasource was provided...using a Map based JobRepository" );
 
 			return new ResourcelessTransactionManager();
+		}
+
+		private DataSource retrieveDataSource( PlatformTransactionManager transactionManager ) {
+			BeanWrapper wrapper = new BeanWrapperImpl( transactionManager );
+			try {
+				Object value = wrapper.getPropertyValue( "dataSource" );
+				if ( value instanceof DataSource ) {
+					return (DataSource) value;
+				}
+			}
+			catch ( BeansException be ) {
+				/* ignore */
+			}
+			return null;
+		}
+
+		private PlatformTransactionManager registeredTransactionManager( ApplicationContext applicationContext ) {
+			try {
+				return applicationContext.getBean( TRANSACTION_MANAGER_BEAN, PlatformTransactionManager.class );
+			}
+			catch ( BeansException be ) {
+				LOG.debug( "No registered PlatformTransactionManager bean named {} found", TRANSACTION_MANAGER_BEAN );
+			}
+
+			return null;
 		}
 	}
 }
