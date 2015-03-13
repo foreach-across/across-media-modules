@@ -4,12 +4,12 @@
 
 	<artifactId>spring-batch</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.5-SNAPSHOT</version>
+	<version>1.0.5</version>
 
 	<parent>
 		<groupId>across-standard-modules</groupId>
 		<artifactId>across-job-modules</artifactId>
-		<version>1.0.5-SNAPSHOT</version>
+		<version>1.0.5</version>
 	</parent>
 
 	<dependencies>
