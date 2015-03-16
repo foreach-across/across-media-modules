@@ -9,7 +9,7 @@
 	<version>1.1.0-SNAPSHOT</version>
 
 	<properties>
-		<across.version>1.1.0-SNAPSHOT</across.version>
+		<across.version>1.1.0</across.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
