@@ -114,10 +114,24 @@ public class TestFileManager
 
 		FileDescriptor renameA = new FileDescriptor( "one", null, "c" );
 		FileDescriptor renameB = new FileDescriptor( "two", null, "d" );
-		fileManager.rename( descriptorOne, renameA );
-		fileManager.rename( descriptorTwo, renameB );
-		verify( one ).rename( descriptorOne, renameA );
-		verify( two ).rename( descriptorTwo, renameB );
+		fileManager.move( descriptorOne, renameA );
+		fileManager.move( descriptorTwo, renameB );
+		verify( one ).move( descriptorOne, renameA );
+		verify( two ).move( descriptorTwo, renameB );
+
+		FileDescriptor renameC = new FileDescriptor( "two", null, "e" );
+		File mockFile = mock( File.class );
+		when( one.getAsFile( renameA ) ).thenReturn( mockFile );
+		InputStream streamA = mock( InputStream.class );
+		when( one.getInputStream( renameA ) ).thenReturn( streamA );
+		FileDescriptor tempDescriptor = new FileDescriptor( "two", null, "temp" );
+		when( two.save( streamA ) ).thenReturn( tempDescriptor );
+		when( two.move( tempDescriptor, renameC ) ).thenReturn( true );
+		when( one.delete( renameA ) ).thenReturn( true );
+		fileManager.move( renameA, renameC );
+		verify( two ).save( streamA );
+		verify( two ).move( tempDescriptor, renameC );
+		verify( one ).delete( renameA );
 	}
 
 	@Test

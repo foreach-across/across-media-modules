@@ -161,7 +161,7 @@ public class TestLocalFileRepository
 		String renamedName = UUID.randomUUID().toString();
 		FileDescriptor renamed = new FileDescriptor( fileRepository.getRepositoryId(), null, renamedName );
 
-		assertTrue( fileRepository.rename( original, renamed ) );
+		assertTrue( fileRepository.move( original, renamed ) );
 		assertTrue( fileRepository.exists( renamed ) );
 		assertFalse( fileRepository.exists( original ) );
 	}
@@ -173,7 +173,7 @@ public class TestLocalFileRepository
 		String renamedDir = UUID.randomUUID().toString();
 		FileDescriptor renamed = new FileDescriptor( fileRepository.getRepositoryId(), renamedDir, renamedName );
 
-		assertTrue( fileRepository.rename( original, renamed ) );
+		assertTrue( fileRepository.move( original, renamed ) );
 		assertTrue( fileRepository.exists( renamed ) );
 		assertFalse( fileRepository.exists( original ) );
 	}
@@ -185,7 +185,7 @@ public class TestLocalFileRepository
 		String renamedDir = UUID.randomUUID().toString();
 		FileDescriptor renamed = new FileDescriptor( "foo", renamedDir, renamedName );
 
-		fileRepository.rename( original, renamed );
+		fileRepository.move( original, renamed );
 	}
 
 	private String read( FileDescriptor descriptor ) throws IOException {

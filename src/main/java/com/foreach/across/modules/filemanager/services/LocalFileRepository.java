@@ -280,9 +280,9 @@ public class LocalFileRepository implements FileRepository
 	}
 
 	@Override
-	public boolean rename( FileDescriptor original, FileDescriptor renamed ) {
-		String renamedRep = renamed.getRepositoryId();
-		String originalRep = original.getRepositoryId();
+	public boolean move( FileDescriptor source, FileDescriptor target ) {
+		String renamedRep = target.getRepositoryId();
+		String originalRep = source.getRepositoryId();
 		if ( !StringUtils.equalsIgnoreCase( originalRep, renamedRep ) ) {
 			throw new IllegalArgumentException( String.format(
 					"The renamed repositoryId %s must be the same as the original repositoryId %s", renamedRep,
@@ -290,13 +290,13 @@ public class LocalFileRepository implements FileRepository
 		}
 
 		Path result;
-		Path renamedPath = buildPath( renamed );
+		Path renamedPath = buildPath( target );
 		try {
 			Path parent = renamedPath.getParent();
 			if ( !Files.isDirectory( parent ) ) {
 				Files.createDirectories( parent );
 			}
-			result = Files.move( buildPath( original ), renamedPath, StandardCopyOption.ATOMIC_MOVE,
+			result = Files.move( buildPath( source ), renamedPath, StandardCopyOption.ATOMIC_MOVE,
 			                     StandardCopyOption.REPLACE_EXISTING );
 		}
 		catch ( IOException e ) {

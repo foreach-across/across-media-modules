@@ -109,13 +109,13 @@ public interface FileRepository
 	boolean exists( FileDescriptor descriptor );
 
 	/**
-	 * Renames the file "original" into "renamed", which may not exist yet.
+	 * Moves the file "original" into "renamed", which may not exist yet.
 	 * </p>
 	 * An IllegalArgumentException will be thrown if the two are not in the same repository.
 	 *
-	 * @param original FileDescriptor instance of the original file.
-	 * @param renamed FileDescriptor instance of the wanted resulting file.
-	 * @return True if the file was successfully renamed.
+	 * @param source FileDescriptor instance of the original file.
+	 * @param target FileDescriptor instance of the wanted resulting file.
+	 * @return True if the file was successfully moved.
 	 */
-	boolean rename( FileDescriptor original, FileDescriptor renamed );
+	boolean move( FileDescriptor source, FileDescriptor target );
 }

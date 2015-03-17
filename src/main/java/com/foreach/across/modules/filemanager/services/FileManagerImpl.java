@@ -99,8 +99,15 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	}
 
 	@Override
-	public boolean rename( FileDescriptor original, FileDescriptor renamed ) {
-		return requireRepository( original.getRepositoryId() ).rename( original, renamed );
+	public boolean move( FileDescriptor source, FileDescriptor target ) {
+		FileRepository sourceRep = requireRepository( source.getRepositoryId() );
+		if (source.getRepositoryId().equals( target.getRepositoryId() )) {
+			return sourceRep.move( source, target );
+		} else {
+			FileRepository targetRep = requireRepository( target.getRepositoryId() );
+			FileDescriptor temp = save( targetRep.getRepositoryId(), sourceRep.getInputStream( source ) );
+			return move( temp, target ) && delete( source );
+		}
 	}
 
 	@Override
