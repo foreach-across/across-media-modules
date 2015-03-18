@@ -283,10 +283,8 @@ public class LocalFileRepository implements FileRepository
 	public boolean move( FileDescriptor source, FileDescriptor target ) {
 		String renamedRep = target.getRepositoryId();
 		String originalRep = source.getRepositoryId();
-		if ( !StringUtils.equalsIgnoreCase( originalRep, renamedRep ) ) {
-			throw new IllegalArgumentException( String.format(
-					"The renamed repositoryId %s must be the same as the original repositoryId %s", renamedRep,
-					originalRep ) );
+		if ( !StringUtils.equals( originalRep, renamedRep ) ) {
+			throw new IllegalArgumentException( "Repository id of the target is different from the source." );
 		}
 
 		Path result;
