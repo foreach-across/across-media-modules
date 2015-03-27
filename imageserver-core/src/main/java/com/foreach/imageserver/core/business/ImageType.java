@@ -21,11 +21,11 @@ public enum ImageType implements IdLookup<Integer>, BitFlag
 	private final boolean transparency, scalable;
 
 	ImageType( int id,
-	                   String contentType,
-	                   String extension,
-	                   boolean transparency,
-	                   boolean scalable,
-	                   String... alternativeContentTypes ) {
+	           String contentType,
+	           String extension,
+	           boolean transparency,
+	           boolean scalable,
+	           String... alternativeContentTypes ) {
 		this.id = id;
 		this.contentType = contentType;
 		this.extension = extension;
@@ -33,7 +33,6 @@ public enum ImageType implements IdLookup<Integer>, BitFlag
 		this.transparency = transparency;
 		this.scalable = scalable;
 	}
-
 
 	public String getContentType() {
 		return contentType;
@@ -93,10 +92,5 @@ public enum ImageType implements IdLookup<Integer>, BitFlag
 			default:
 				return JPEG;
 		}
-	}
-
-	@Override
-	public int getBitFlag() {
-		return id;
 	}
 }

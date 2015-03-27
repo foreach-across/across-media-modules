@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.foreach.imageserver:imageserver-client:3.2-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/imageserver-client/pom.xml!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/imageserver-client/imageserver-client-3.2-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/imageserver-client/imageserver-client-3.2-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
