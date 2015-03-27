@@ -6,12 +6,14 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.ViewImageResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
+import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
 import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +43,14 @@ public class ImageStreamingController
 	public static final String AKAMAI_EDGE_CONTROL_HEADER = "Edge-Control";
 	public static final String AKAMAI_CACHE_MAX_AGE = "!no-store, cache-maxage=";
 	public static final String AKAMAI_NO_STORE = "no-store";
+	public static final String RESOLUTION_SEPARATOR = ",";
+	public static final String WIDTH_HEIGHT_SEPARATOR = "x";
 
 	@Autowired
 	private ImageRestService imageRestService;
+
+	@Autowired
+	private ImageService imageService;
 
 	private String accessToken;
 	private boolean provideStackTrace = false;
@@ -91,11 +98,9 @@ public class ImageStreamingController
 
 		if ( renderImageResponse.isImageDoesNotExist() ) {
 			error( response, HttpStatus.NOT_FOUND, "No such image." );
-		}
-		else if ( renderImageResponse.isFailed() ) {
+		} else if ( renderImageResponse.isFailed() ) {
 			error( response, HttpStatus.NOT_FOUND, "Could not create variant." );
-		}
-		else {
+		} else {
 			renderImageSource( renderImageResponse.getImageSource(), response );
 		}
 	}
@@ -105,6 +110,7 @@ public class ImageStreamingController
 	                  @RequestParam(value = "context", required = true) String contextCode,
 	                  ImageResolutionDto imageResolutionDto,
 	                  ImageVariantDto imageVariantDto,
+	                  String size,
 	                  HttpServletResponse response ) {
 		// TODO Make sure we only rely on objects that can be long-term cached for retrieving the image.
 
@@ -112,34 +118,30 @@ public class ImageStreamingController
 			ViewImageRequest viewImageRequest = new ViewImageRequest();
 			viewImageRequest.setExternalId( externalId );
 			viewImageRequest.setContext( contextCode );
-			viewImageRequest.setImageResolutionDto( imageResolutionDto );
 			viewImageRequest.setImageVariantDto( imageVariantDto );
+
+			viewImageRequest.setImageResolutionDto( determineImageResolution( externalId, imageResolutionDto, size ) );
 
 			ViewImageResponse viewImageResponse = imageRestService.viewImage( viewImageRequest );
 
 			if ( viewImageResponse.isImageDoesNotExist() ) {
 				error( response, HttpStatus.NOT_FOUND, "No such image." );
-			}
-			else if ( viewImageResponse.isContextDoesNotExist() ) {
+			} else if ( viewImageResponse.isContextDoesNotExist() ) {
 				error( response, HttpStatus.NOT_FOUND, "No such context." );
-			}
-			else if ( viewImageResponse.isResolutionDoesNotExist() ) {
-				LOG_RESOLUTION_NOT_FOUND.error(imageResolutionDto.getWidth() + "x" + imageResolutionDto.getHeight());
+			} else if ( viewImageResponse.isNoResolutionSpecified() ) {
+				error( response, HttpStatus.NOT_FOUND, "No usable resolution specified." );
+			} else if ( viewImageResponse.isResolutionDoesNotExist() ) {
+				LOG_RESOLUTION_NOT_FOUND.error( imageResolutionDto.getWidth() + "x" + imageResolutionDto.getHeight() );
 				error( response, HttpStatus.NOT_FOUND, "No such resolution." );
-			}
-			else if ( viewImageResponse.isOutputTypeNotAllowed() ) {
+			} else if ( viewImageResponse.isOutputTypeNotAllowed() ) {
 				error( response, HttpStatus.NOT_FOUND, "Requested output type is not allowed." );
-			}
-			else if ( viewImageResponse.isFailed() ) {
+			} else if ( viewImageResponse.isFailed() ) {
 				error( response, HttpStatus.NOT_FOUND, "Could not create variant." );
-			}
-			else {
+			} else {
 				renderImageSource( viewImageResponse.getImageSource(), response );
 			}
 
-			// fail-safe to avoid that stack traces are shown when an unexpected exception occurs
-		}
-		catch ( Exception e ) {
+		} catch ( Exception e ) { // fail-safe to avoid that stack traces are shown when an unexpected exception occurs
 			// log the exception context and either send a clean error (in production) or rethrow the exception (anywhere else)
 			LOG.error(
 					"Retrieving image variant caused exception - ImageStreamingController#view: externalId={}, contextCode={}, imageResolutionDto={}, imageVariantDto={}",
@@ -147,10 +149,43 @@ public class ImageStreamingController
 					LogHelper.flatten( imageVariantDto ), e );
 			if ( provideStackTrace ) {
 				throw e;
-			}
-			else {
+			} else {
 				error( response, HttpStatus.INTERNAL_SERVER_ERROR, "Error encountered while retrieving variant." );
 			}
+		}
+	}
+
+	private ImageResolutionDto determineImageResolution( String externalId, ImageResolutionDto imageresolution, String size ) {
+		if ( StringUtils.isNotBlank( size ) ) {
+			String[] sizeList = StringUtils.split( size, RESOLUTION_SEPARATOR );
+
+			Image image = imageService.getByExternalId( externalId );
+			if ( image == null ) {
+				// allow the normal error handling process to handle this
+				return null;
+			}
+
+			for ( String sizeItem : sizeList ) {
+				try {
+					int width = Integer.parseInt( StringUtils.substringBefore( sizeItem, WIDTH_HEIGHT_SEPARATOR ) );
+					int height = Integer.parseInt( StringUtils.substringAfter( sizeItem, WIDTH_HEIGHT_SEPARATOR ) );
+
+					// check if original image is large enough to accomodate the requested resolution
+					if ( width < image.getDimensions().getWidth() && height < image.getDimensions().getHeight() ) {
+						imageresolution.setWidth( width );
+						imageresolution.setHeight( height );
+						return imageresolution;
+					}
+				}
+				catch ( NumberFormatException e ) {
+					LOG.error( "Could not parse resolution string: " + sizeItem + ", of resolution list: " + size );
+				}
+			}
+			// no proper
+			LOG.error( "Could not retrieve proper resolution from size list: " + size );
+			return null;
+		} else {
+			return imageresolution;
 		}
 	}
 
@@ -161,9 +196,9 @@ public class ImageStreamingController
 		if ( maxCacheAgeInSeconds > 0 ) {
 			response.setHeader( "Cache-Control", String.format( "max-age=%d", maxCacheAgeInSeconds ) );
 			long now = new Date().getTime();
-			response.setHeader("Expires", String.valueOf(now + maxCacheAgeInSeconds * 1000));
+			response.setHeader( "Expires", String.valueOf( now + maxCacheAgeInSeconds * 1000 ) );
 		}
-		if (  akamaiCacheMaxAge != "") {
+		if ( akamaiCacheMaxAge != "" ) {
 			response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_CACHE_MAX_AGE + akamaiCacheMaxAge );
 		}
 
@@ -184,8 +219,7 @@ public class ImageStreamingController
 		response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_NO_STORE );
 		try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
 			IOUtils.copy( bis, response.getOutputStream() );
-		}
-		catch ( IOException e ) {
+		} catch ( IOException e ) {
 			LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );
 		}
 	}

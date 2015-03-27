@@ -12,6 +12,7 @@ import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
@@ -57,8 +58,7 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
-		}
-		else {
+		} else {
 			StreamImageSource imageSource = imageService.generateModification(
 					image,
 					request.getImageModificationDto(),
@@ -67,8 +67,7 @@ public class ImageRestServiceImpl implements ImageRestService
 
 			if ( imageSource == null ) {
 				response.setFailed( true );
-			}
-			else {
+			} else {
 				response.setImageSource( imageSource );
 			}
 		}
@@ -84,8 +83,7 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
-		}
-		else {
+		} else {
 			final List<ImageResolution> pregenerateList = new LinkedList<>();
 			Collection<ImageResolution> resolutions = imageService.getAllResolutions();
 
@@ -143,7 +141,7 @@ public class ImageRestServiceImpl implements ImageRestService
 		ViewImageResponse response = new ViewImageResponse( request );
 
 		Image image = imageService.getByExternalId( request.getExternalId() );
-		if (image == null){
+		if ( image == null ) {
 			LOG_IMAGE_NOT_FOUND.error( request.getExternalId() );
 		}
 
@@ -155,43 +153,51 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
-		}
-		else {
-			ImageContext context = contextService.getByCode( request.getContext() );
+		} else {
+			if ( request.getImageResolutionDto() == null ) {
+				response.setNoResolutionSpecified( true );
+			} else {
+				ImageContext context = contextService.getByCode( request.getContext() );
 
-			if ( context == null ) {
-				response.setContextDoesNotExist( true );
-			}
-			else {
-				ImageResolutionDto imageResolutionDto = request.getImageResolutionDto();
-				ImageResolution imageResolution = contextService.getImageResolution(
-						context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight()
-				);
+				if ( context == null ) {
+					response.setContextDoesNotExist( true );
+				} else {
+					ImageResolutionDto imageResolutionDto = request.getImageResolutionDto();
+					ImageResolution imageResolution = contextService.getImageResolution(
+							context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight()
+					);
 
-				if ( imageResolution == null ) {
-					LOG.warn( "Resolution {}x{} does not exist for context {}", imageResolutionDto.getWidth(),
-					          imageResolutionDto.getHeight(), context.getCode() );
-					response.setResolutionDoesNotExist( true );
-				}
-				else {
-					ImageVariant variant = imageVariant( image, request.getImageVariantDto() );
+					if ( imageResolution == null ) {
+						LOG.warn( "Resolution {}x{} does not exist for context {}", imageResolutionDto.getWidth(),
+						          imageResolutionDto.getHeight(), context.getCode() );
+						response.setResolutionDoesNotExist( true );
+					} else {
+						// when available, the bounding box dimensions should be those of an existing resolution
+						DimensionsDto boundaries = request.getImageVariantDto().getBoundaries();
+						if ( boundaries != null && !boundingResolutionExists( boundaries, context ) ) {
+							LOG.warn( "Bounding box resolution {}x{} does not exist for context {}", imageResolutionDto.getWidth(),
+							          imageResolutionDto.getHeight(), context.getCode() );
+							response.setResolutionDoesNotExist( true );
+						} else {
 
-					if ( !imageResolution.isAllowedOutputType( variant.getOutputType() ) ) {
-						LOG.warn( "Output type {} is not allowed for resolution {}", variant.getOutputType(),
-						          imageResolution );
+							ImageVariant variant = imageVariant( image, request.getImageVariantDto() );
 
-						response.setOutputTypeNotAllowed( true );
-					}
-					else {
-						StreamImageSource imageSource = imageService.getVariantImage(
-								image, context, imageResolution, variant
-						);
+							if ( !imageResolution.isAllowedOutputType( variant.getOutputType() ) ) {
+								LOG.warn( "Output type {} is not allowed for resolution {}", variant.getOutputType(),
+								          imageResolution );
 
-						if ( imageSource == null ) {
-							response.setFailed( true );
-						}
-						else {
-							response.setImageSource( imageSource );
+								response.setOutputTypeNotAllowed( true );
+							} else {
+								StreamImageSource imageSource = imageService.getVariantImage(
+										image, context, imageResolution, variant
+								);
+
+								if ( imageSource == null ) {
+									response.setFailed( true );
+								} else {
+									response.setImageSource( imageSource );
+								}
+							}
 						}
 					}
 				}
@@ -199,6 +205,16 @@ public class ImageRestServiceImpl implements ImageRestService
 		}
 
 		return response;
+	}
+
+	private boolean boundingResolutionExists( DimensionsDto boundaries, ImageContext context ) {
+		if ( boundaries != null ) {
+			ImageResolution boundingResolution = contextService.getImageResolution(
+					context.getId(), boundaries.getWidth(), boundaries.getHeight()
+			);
+			return boundingResolution != null;
+		}
+		return false;
 	}
 
 	private ImageVariant imageVariant( Image image, ImageVariantDto variantDto ) {
@@ -218,13 +234,11 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		if ( context == null ) {
 			response.setContextDoesNotExist( true );
-		}
-		else {
+		} else {
 			Image image = imageService.getByExternalId( request.getExternalId() );
 			if ( image == null ) {
 				response.setImageDoesNotExist( true );
-			}
-			else {
+			} else {
 				List<ImageModification> modifications = imageService.getModifications( image.getId(), context.getId() );
 				response.setModifications( toModificationDtos( modifications ) );
 			}
@@ -263,14 +277,12 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		if ( context == null ) {
 			response.setContextDoesNotExist( true );
-		}
-		else {
+		} else {
 			Image image = imageService.getByExternalId( request.getExternalId() );
 			if ( image == null ) {
 				response.setImageDoesNotExist( true );
-			}
-			else {
-				List<ImageModification> modifications = extractImageModifications(request, image, context,response);
+			} else {
+				List<ImageModification> modifications = extractImageModifications( request, image, context, response );
 				imageService.saveImageModifications( modifications, image );
 			}
 		}
@@ -288,7 +300,7 @@ public class ImageRestServiceImpl implements ImageRestService
 			modifications.add( toModification( request.getImageModificationDto(), image, context, response ) );
 		}
 		if ( request.getImageModificationDtos() != null ) {
-			for (ImageModificationDto modificationDto : request.getImageModificationDtos()){
+			for ( ImageModificationDto modificationDto : request.getImageModificationDtos() ) {
 				modifications.add( toModification( modificationDto, image, context, response ) );
 
 			}
@@ -298,9 +310,9 @@ public class ImageRestServiceImpl implements ImageRestService
 	}
 
 	private ImageModification toModification( ImageModificationDto imageModificationDto,
-	                             Image image,
-	                             ImageContext context,
-	                             RegisterModificationResponse response ) {
+	                                          Image image,
+	                                          ImageContext context,
+	                                          RegisterModificationResponse response ) {
 		ImageModification modification = null;
 
 		ImageResolutionDto resolutionDto = imageModificationDto.getResolution();
@@ -312,8 +324,7 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		if ( imageResolution == null ) {
 			response.addMissingResolution( resolutionDto );
-		}
-		else {
+		} else {
 			cropGeneratorUtil.normalizeModificationDto( image, imageModificationDto );
 
 			modification = new ImageModification();
@@ -345,12 +356,10 @@ public class ImageRestServiceImpl implements ImageRestService
 
 			if ( context == null ) {
 				response.setContextDoesNotExist( true );
-			}
-			else {
+			} else {
 				imageResolutions = contextService.getImageResolutions( context.getId() );
 			}
-		}
-		else {
+		} else {
 			imageResolutions = imageService.getAllResolutions();
 		}
 

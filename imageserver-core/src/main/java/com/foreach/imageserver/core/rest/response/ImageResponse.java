@@ -7,7 +7,7 @@ import com.foreach.imageserver.core.rest.request.ImageRequest;
  */
 public class ImageResponse extends ImageRequest
 {
-	private boolean imageDoesNotExist, contextDoesNotExist;
+	private boolean imageDoesNotExist, contextDoesNotExist, noResolutionSpecified;
 	private boolean outputTypeNotAllowed;
 
 	public boolean isImageDoesNotExist() {
@@ -32,5 +32,13 @@ public class ImageResponse extends ImageRequest
 
 	public boolean isOutputTypeNotAllowed() {
 		return outputTypeNotAllowed;
+	}
+
+	public boolean isNoResolutionSpecified() {
+		return noResolutionSpecified;
+	}
+
+	public void setNoResolutionSpecified( boolean noResolutionSpecified ) {
+		this.noResolutionSpecified = noResolutionSpecified;
 	}
 }

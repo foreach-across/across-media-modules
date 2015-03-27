@@ -28,4 +28,16 @@ public interface ImageTransformService
 	                            int densityWidth,
 	                            int densityHeight,
 	                            ImageType outputType );
+
+	InMemoryImageSource modify( StreamImageSource imageSource,
+	                            int outputWidth,
+	                            int outputHeight,
+	                            int cropX,
+	                            int cropY,
+	                            int cropWidth,
+	                            int cropHeight,
+	                            int densityWidth,
+	                            int densityHeight,
+	                            ImageType outputType,
+	                            Dimensions boundaries );
 }
