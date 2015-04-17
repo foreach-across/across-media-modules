@@ -63,7 +63,7 @@ public class ImageLoadController extends BaseImageAPIController
 		return success( contextNames );
 	}
 
-	@RequestMapping(value = "/" + LOAD_IMAGE_PATH, method = RequestMethod.POST)
+	@RequestMapping(value = LOAD_IMAGE_PATH, method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse load( @RequestParam(value = "token", required = true) String accessToken,
 	                          @RequestParam(value = "iid", required = true) String externalId,
@@ -79,7 +79,7 @@ public class ImageLoadController extends BaseImageAPIController
 		return success( DtoUtil.toDto( image ) );
 	}
 
-	@RequestMapping(value = "/" + IMAGE_INFO_PATH, method = RequestMethod.GET)
+	@RequestMapping(value = IMAGE_INFO_PATH, method = RequestMethod.GET)
 	@ResponseBody
 	public JsonResponse info( @RequestParam(value = "token", required = true) String accessToken,
 	                          @RequestParam(value = "iid", required = true) String externalId ) {
@@ -101,7 +101,7 @@ public class ImageLoadController extends BaseImageAPIController
 		}
 	}
 
-	@RequestMapping(value = "/" + IMAGE_PREGENERATE, method = RequestMethod.GET)
+	@RequestMapping(value = IMAGE_PREGENERATE, method = RequestMethod.GET)
 	@ResponseBody
 	public JsonResponse pregenerate( @RequestParam(value = "token", required = true) String accessToken,
 	                                 @RequestParam(value = "iid", required = true) String externalId ) {
