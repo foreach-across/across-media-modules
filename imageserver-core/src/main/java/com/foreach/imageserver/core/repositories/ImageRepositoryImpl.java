@@ -40,9 +40,10 @@ public class ImageRepositoryImpl extends BasicRepositoryImpl<Image> implements I
 
 	private void setPath( Image object ) {
 		Date dateCreated = object.getDateCreated();
-		if ( dateCreated == null || ( StringUtils.isBlank( object.getOriginalPath() ) && StringUtils.isBlank(
-				object.getVariantPath() ) ) ) {
-			String path = FastDateFormat.getInstance( "yyyy/MM/dd" ).format( dateCreated );
+		if ( dateCreated == null || (
+				StringUtils.isBlank( object.getOriginalPath() ) && StringUtils.isBlank( object.getVariantPath() )
+		) ) {
+			String path = FastDateFormat.getInstance( "yyyy/MM/dd/HH" ).format( dateCreated );
 			object.setVariantPath( path );
 			object.setOriginalPath( path );
 		}

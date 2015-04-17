@@ -58,6 +58,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest
 
 		Calendar cal = Calendar.getInstance();
 		cal.set( 2011, Calendar.FEBRUARY, 28 );
+		cal.set( Calendar.HOUR_OF_DAY, 9 );
 
 		writtenImage.setDateCreated( DateUtils.truncate( cal.getTime(), Calendar.SECOND ) );
 		writtenImage.setDimensions( dimensions( 111, 222 ) );
@@ -72,16 +73,16 @@ public class ImageRepositoryTest extends AbstractIntegrationTest
 		assertTrue( DateUtils.truncatedEquals( writtenImage.getDateCreated(), readImage.getDateCreated(),
 		                                       Calendar.SECOND ) );
 		assertEquals( writtenImage.getDimensions().getWidth(), readImage.getDimensions().getWidth() );
-		assertEquals( "2011/02/28", readImage.getVariantPath() );
-		assertEquals( "2011/02/28", readImage.getOriginalPath() );
+		assertEquals( "2011/02/28/09", readImage.getVariantPath() );
+		assertEquals( "2011/02/28/09", readImage.getOriginalPath() );
 		assertEquals( writtenImage.getDimensions().getHeight(), readImage.getDimensions().getHeight() );
 		assertEquals( writtenImage.getImageType(), readImage.getImageType() );
 		assertEquals( Long.MAX_VALUE, readImage.getFileSize() );
 
 		imageRepository.update( readImage );
 		Image dontChangePathsOnImage = imageRepository.getByExternalId( readImage.getExternalId() );
-		assertEquals( "2011/02/28", dontChangePathsOnImage.getVariantPath() );
-		assertEquals( "2011/02/28", dontChangePathsOnImage.getOriginalPath() );
+		assertEquals( "2011/02/28/09", dontChangePathsOnImage.getVariantPath() );
+		assertEquals( "2011/02/28/09", dontChangePathsOnImage.getOriginalPath() );
 
 	}
 
