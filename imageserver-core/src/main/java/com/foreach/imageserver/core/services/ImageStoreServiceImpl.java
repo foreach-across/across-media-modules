@@ -5,6 +5,7 @@ import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public void storeOriginalImage( Image image, byte[] imageBytes ) {
-		try( InputStream imageStream = new ByteArrayInputStream( imageBytes ) ) {
+		try (InputStream imageStream = new ByteArrayInputStream( imageBytes )) {
 			this.storeOriginalImage( image, imageStream );
 		}
 		catch ( Exception e ) {
@@ -167,13 +168,16 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 * This was also tested on a linux server on an NFS mount.
 		 */
 		try {
+			StopWatch stopWatch = new StopWatch();
+			stopWatch.start();
 
 			Image image = imageService.getById( imageId );
 
 			Collection<ImageContext> contexts = imageContextService.getAllContexts();
-			for (ImageContext context: contexts){
+			for ( ImageContext context : contexts ) {
 				// only need to walk the specific variant folder of this image (within this context)
-				Path imageSpecificVariantsFolder  = variantsFolder.resolve( context.getCode() ).resolve( image.getVariantPath() );
+				Path imageSpecificVariantsFolder =
+						variantsFolder.resolve( context.getCode() ).resolve( image.getVariantPath() );
 				Files.walkFileTree( imageSpecificVariantsFolder, new SimpleFileVisitor<Path>()
 				{
 					@Override
@@ -196,6 +200,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 					}
 				} );
 			}
+
+			stopWatch.stop();
+			LOG.debug( "Variant cleanup for imageId {} completed in {} ms", imageId, stopWatch.getTime() );
 		}
 		catch ( IOException e ) {
 			// I'm not really sure whether this will ever happen, given that the above implementation catches all
@@ -254,7 +261,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		fileNameBuilder.append( 'h' );
 		fileNameBuilder.append( imageResolution.getHeight() );
 		//}
-		if (imageVariant.getBoundaries() != null){
+		if ( imageVariant.getBoundaries() != null ) {
 			fileNameBuilder.append( '-' );
 			fileNameBuilder.append( "bw" );
 			fileNameBuilder.append( imageVariant.getBoundaries().getWidth() );
@@ -381,7 +388,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	private void setPosixFilePermissions( Path path, Set<PosixFilePermission> folderPermissions ) throws IOException {
-		if( isRootFolder( path ) ) {
+		if ( isRootFolder( path ) ) {
 			return;
 		}
 

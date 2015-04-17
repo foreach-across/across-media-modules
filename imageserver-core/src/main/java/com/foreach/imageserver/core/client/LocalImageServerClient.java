@@ -202,8 +202,8 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public void registerImageModifications( String imageId,
-	                                       String context,
-	                                       List<ImageModificationDto> imageModificationDtos ) {
+	                                        String context,
+	                                        List<ImageModificationDto> imageModificationDtos ) {
 		RegisterModificationRequest request = new RegisterModificationRequest();
 		request.setExternalId( imageId );
 		request.setContext( context );
@@ -221,10 +221,11 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 		if ( response.isResolutionDoesNotExist() ) {
 			StringBuilder errorMessage = new StringBuilder();
-			for (ImageResolutionDto imageResolutionDto: response.getMissingResolutions()){
-				errorMessage.append( "No such image resolution : " + imageResolutionDto.getWidth() + "x" + imageResolutionDto.getHeight() + "\r\n");
+			for ( ImageResolutionDto imageResolutionDto : response.getMissingResolutions() ) {
+				errorMessage.append(
+						"No such image resolution : " + imageResolutionDto.getWidth() + "x" + imageResolutionDto.getHeight() + "\r\n" );
 			}
-			throw new ImageServerException(StringUtils.substringBeforeLast( errorMessage.toString(), "\r\n" ) );
+			throw new ImageServerException( StringUtils.substringBeforeLast( errorMessage.toString(), "\r\n" ) );
 		}
 
 		if ( response.isCropOutsideOfImageBounds() ) {

@@ -21,10 +21,24 @@ public interface ImageService
 
 	Image saveImage( String externalId, byte[] imageBytes, Date imageDate ) throws ImageStoreException;
 
-	void saveImageModification( ImageModification modification );
-
+	/**
+	 * Save a new image modification for an image.
+	 * <p>
+	 * <strong>WARNING:</strong> This will remove the existing variant images once done.  When saving more than one
+	 * {@link ImageModification} use {@link #saveImageModifications(List, Image)} instead.
+	 * </p>
+	 *
+	 * @param modification to register
+	 * @param image to add the modification to
+	 */
 	void saveImageModification( ImageModification modification, Image image );
 
+	/**
+	 * Registers a list of image modifications for an image.  This will remove the existing variant images once done.
+	 *
+	 * @param modifications to register
+	 * @param image to add the modifications to
+	 */
 	void saveImageModifications( List<ImageModification> modifications, Image image );
 
 	StreamImageSource generateModification( Image image,

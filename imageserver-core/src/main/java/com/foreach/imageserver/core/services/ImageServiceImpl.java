@@ -89,19 +89,6 @@ public class ImageServiceImpl implements ImageService
 		return image;
 	}
 
-	/**
-	 * DO NOT MAKE THIS METHOD TRANSACTIONAL! If we are updating an existing modification, we need to make sure that
-	 * the changes are committed to the database *before* we clean up the filesystem. Otherwise a different instance
-	 * might recreate variants on disk using the old values.
-	 *
-	 * TODO: if needed, storeImageModficication could perhaps be made transactional
-	 */
-	@Override
-	public void saveImageModification( ImageModification modification ) {
-		Image image = getById( modification.getImageId() );
-		saveImageModification( modification, image );
-	}
-
 	@Override
 	public void saveImageModification( ImageModification modification, Image image ) {
 		if ( modification == null ) {
@@ -112,6 +99,13 @@ public class ImageServiceImpl implements ImageService
 		saveImageModifications( Arrays.asList( modification ), image );
 	}
 
+	/**
+	 * DO NOT MAKE THIS METHOD TRANSACTIONAL! If we are updating an existing modification, we need to make sure that
+	 * the changes are committed to the database *before* we clean up the filesystem. Otherwise a different instance
+	 * might recreate variants on disk using the old values.
+	 * <p/>
+	 * TODO: if needed, storeImageModficication could perhaps be made transactional
+	 */
 	@Override
 	public void saveImageModifications( List<ImageModification> modifications, Image image ) {
 		if ( modifications == null ) {
@@ -119,8 +113,9 @@ public class ImageServiceImpl implements ImageService
 			          LogHelper.flatten( modifications ) );
 		}
 		if ( modifications.size() == 0 ) {
-			LOG.warn( "An empty list of modifications was provided - ImageServiceImpl#saveImageModifications: modifications={}",
-			          LogHelper.flatten( modifications ) );
+			LOG.warn(
+					"An empty list of modifications was provided - ImageServiceImpl#saveImageModifications: modifications={}",
+					LogHelper.flatten( modifications ) );
 		}
 
 		storeImageModification( modifications, image );
@@ -164,7 +159,8 @@ public class ImageServiceImpl implements ImageService
 					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
 
-		StreamImageSource imageSource =	imageStoreService.getVariantImage( image, context, imageResolution, imageVariant );
+		StreamImageSource imageSource =
+				imageStoreService.getVariantImage( image, context, imageResolution, imageVariant );
 		if ( imageSource == null ) {
 			ImageModificationDto modification = cropGenerator.buildModificationDto( image, context, imageResolution );
 			imageSource = generateVariantImage( image, context, modification, imageResolution, imageVariant, true );
