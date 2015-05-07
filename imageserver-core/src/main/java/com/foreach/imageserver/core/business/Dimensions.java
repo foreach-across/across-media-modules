@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.imageserver.math.AspectRatio;
+
 import javax.persistence.Embeddable;
 import java.util.Objects;
 

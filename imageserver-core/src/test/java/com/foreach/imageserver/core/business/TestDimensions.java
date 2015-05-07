@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.imageserver.math.AspectRatio;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
