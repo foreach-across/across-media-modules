@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.business;
+package com.foreach.imageserver.math;
 
 import org.junit.Before;
 import org.junit.Test;

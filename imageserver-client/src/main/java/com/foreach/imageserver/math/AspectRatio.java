@@ -1,4 +1,4 @@
-package com.foreach.imageserver.core.business;
+package com.foreach.imageserver.math;
 
 public class AspectRatio
 {

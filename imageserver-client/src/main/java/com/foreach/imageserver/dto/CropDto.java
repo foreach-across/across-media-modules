@@ -98,6 +98,18 @@ public class CropDto
 		return source != null && !source.equals( new DimensionsDto() );
 	}
 
+	/**
+	 * Translates the current crop coordinates into a new set of coordinates with the assumed
+	 * source dimensions for the current coordinates, and the target box that the new coordinates should fit in.
+	 *
+	 * @param source dimensions of the original file for the current crop coordinates
+	 * @param box dimensions that the new crop should fit in
+	 * @return translated crop coordinates
+	 */
+	public CropDto translate( DimensionsDto source, DimensionsDto box ) {
+		return null;
+	}
+
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {
