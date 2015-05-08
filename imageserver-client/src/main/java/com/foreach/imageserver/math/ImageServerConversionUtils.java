@@ -83,7 +83,9 @@ public class ImageServerConversionUtils
 		CropDto translated = new CropDto( original );
 
 		// Translate the crop coordinates to fit with the new box
-		translateSource( translated, scaleToFitIn( original.getSource(), box ) );
+		DimensionsDto newSource = scaleToFitIn( original.getSource(), box );
+		translateCropToNewSource( translated, newSource );
+		translated.setSource( newSource );
 		translated.setBox( box );
 
 		// Ensure the resulting crop is valid
@@ -94,7 +96,7 @@ public class ImageServerConversionUtils
 		return translated;
 	}
 
-	private static void translateSource( CropDto crop, DimensionsDto newDimensions ) {
+	private static void translateCropToNewSource( CropDto crop, DimensionsDto newDimensions ) {
 		int leftX = crop.getX();
 		int leftY = crop.getY();
 		int rightX = leftX + crop.getWidth();
