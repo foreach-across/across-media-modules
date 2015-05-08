@@ -253,26 +253,29 @@ public class ImageRestServiceImpl implements ImageRestService
 			}
 			else {
 				List<ImageModification> modifications = imageService.getModifications( image.getId(), context.getId() );
-				response.setModifications( toModificationDtos( modifications ) );
+
+				response.setModifications( toModificationDtos( modifications, image.getDimensions() ) );
 			}
 		}
 
 		return response;
 	}
 
-	private List<ImageModificationDto> toModificationDtos( List<ImageModification> modifications ) {
+	private List<ImageModificationDto> toModificationDtos( List<ImageModification> modifications, Dimensions source ) {
+		DimensionsDto sourceDimensions = DtoUtil.toDto( source );
 		List<ImageModificationDto> dtos = new ArrayList<>( modifications.size() );
 		for ( ImageModification modification : modifications ) {
-			dtos.add( toDto( modification ) );
+			dtos.add( toDto( modification, sourceDimensions ) );
 		}
 		return dtos;
 	}
 
-	private ImageModificationDto toDto( ImageModification modification ) {
+	private ImageModificationDto toDto( ImageModification modification, DimensionsDto source ) {
 		ImageResolution resolution = imageService.getResolution( modification.getResolutionId() );
 		ImageModificationDto dto = new ImageModificationDto();
 		dto.getResolution().setWidth( resolution.getWidth() );
 		dto.getResolution().setHeight( resolution.getHeight() );
+		dto.getCrop().setSource( source );
 		dto.getCrop().setX( modification.getCrop().getX() );
 		dto.getCrop().setY( modification.getCrop().getY() );
 		dto.getCrop().setWidth( modification.getCrop().getWidth() );

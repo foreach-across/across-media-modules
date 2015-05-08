@@ -1,5 +1,6 @@
 package com.foreach.imageserver.math;
 
+import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.DimensionsDto;
 
 /**
@@ -67,37 +68,104 @@ public class ImageServerConversionUtils
 	}
 
 	/**
+	 * Will translate a crop to fit inside the box specified.
+	 * This requires the source dimensions of the crop to be set.
+	 *
+	 * @param original crop
+	 * @param box      to use for translating the crop coordinates
+	 * @return normalized crop
+	 */
+	public static CropDto normalize( CropDto original, DimensionsDto box ) {
+		if ( original.getSource() == null || original.getSource().equals( new DimensionsDto() )) {
+			throw new IllegalArgumentException( "Normalizing a crop requires a valid source to be set." );
+		}
+
+		CropDto translated = new CropDto( original );
+
+		// Translate the crop coordinates to fit with the new box
+		translateSource( translated, scaleToFitIn( original.getSource(), box ) );
+		translated.setBox( box );
+
+		// Ensure the resulting crop is valid
+		if ( translated.getWidth() == 0 || translated.getHeight() == 0 ) {
+			throw new RuntimeException( "Could not process crop: resulted in an illegal width or height of 0" );
+		}
+
+		return translated;
+	}
+
+	private static void translateSource( CropDto crop, DimensionsDto newDimensions ) {
+		int leftX = crop.getX();
+		int leftY = crop.getY();
+		int rightX = leftX + crop.getWidth();
+		int rightY = leftY + crop.getHeight();
+
+		DimensionsDto source = crop.getSource();
+
+		leftX = snap( leftX, source.getWidth() );
+		leftY = snap( leftY, source.getHeight() );
+		rightX = snap( rightX, source.getWidth() );
+		rightY = snap( rightY, source.getHeight() );
+
+		if ( !newDimensions.equals( source ) ) {
+			double modX = (double) newDimensions.getWidth() / source.getWidth();
+			double modY = (double) newDimensions.getHeight() / source.getHeight();
+
+			crop.setX( Double.valueOf( leftX * modX ).intValue() );
+			crop.setY( Double.valueOf( leftY * modY ).intValue() );
+			crop.setWidth( Double.valueOf( ( rightX - leftX ) * modX ).intValue() );
+			crop.setHeight( Double.valueOf( ( rightY - leftY ) * modY ).intValue() );
+		}
+		else {
+			crop.setX( leftX );
+			crop.setY( leftY );
+			crop.setWidth( rightX - leftX );
+			crop.setHeight( rightY - leftY );
+		}
+	}
+
+	private static int snap( int pos, int max ) {
+		if ( pos < 0 ) {
+			return 0;
+		}
+		else if ( pos > max ) {
+			return max;
+		}
+		return pos;
+	}
+
+	/**
 	 * Will downscale the dimensions to fit in the boundaries if they are larger.
 	 *
-	 * @param original   dimensions
-	 * @param boundaries that the translated dimensions should fit in
+	 * @param original dimensions
+	 * @param box      that the translated dimensions should fit in
 	 * @return translated dimensions
 	 */
-	public static DimensionsDto scaleToFitIn( DimensionsDto original, DimensionsDto boundaries ) {
-		DimensionsDto normalized = normalize( original, boundaries );
+	public static DimensionsDto scaleToFitIn( DimensionsDto original, DimensionsDto box ) {
+		DimensionsDto normalized = normalize( original, box );
 		DimensionsDto scaled = new DimensionsDto( normalized.getWidth(), normalized.getHeight() );
 
 		AspectRatio aspectRatio = calculateAspectRatio( normalized );
 
-		if ( !fitsIn( normalized, boundaries ) ) {
+		if ( !fitsIn( normalized, box ) ) {
 			if ( aspectRatio.isLargerOnWidth() ) {
-				scaled.setWidth( boundaries.getWidth() );
-				scaled.setHeight( aspectRatio.calculateHeightForWidth( boundaries.getWidth() ) );
+				scaled.setWidth( box.getWidth() );
+				scaled.setHeight( aspectRatio.calculateHeightForWidth( box.getWidth() ) );
 			}
 			else {
-				scaled.setHeight( boundaries.getHeight() );
-				scaled.setWidth( aspectRatio.calculateWidthForHeight( boundaries.getHeight() ) );
+				scaled.setHeight( box.getHeight() );
+				scaled.setWidth( aspectRatio.calculateWidthForHeight( box.getHeight() ) );
 			}
 
-			if ( !fitsIn( scaled, boundaries ) ) {
+			if ( !fitsIn( scaled, box ) ) {
 				// Reverse the side as scaling basis, we made the wrong decision
 				if ( aspectRatio.isLargerOnWidth() ) {
-					scaled.setHeight( boundaries.getHeight() );
-					scaled.setWidth( aspectRatio.calculateWidthForHeight( boundaries.getHeight() ) );
+					scaled.setHeight( box.getHeight() );
+					scaled.setWidth( aspectRatio.calculateWidthForHeight( box.getHeight() ) );
 				}
 				else {
-					scaled.setWidth( boundaries.getWidth() );
-					scaled.setHeight( aspectRatio.calculateHeightForWidth( boundaries.getWidth() ) );
+					scaled.setWidth( box.getWidth() );
+					scaled.setHeight( aspectRatio.calculateHeightForWidth( box.getWidth() ) );
 
 				}
 			}

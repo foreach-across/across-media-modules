@@ -147,4 +147,16 @@ public class CropDto
 	public int hashCode() {
 		return Objects.hash( x, y, width, height, source, box );
 	}
+
+	@Override
+	public String toString() {
+		return "CropDto{" +
+				"x=" + x +
+				", y=" + y +
+				", width=" + width +
+				", height=" + height +
+				", source=" + source +
+				", box=" + box +
+				'}';
+	}
 }

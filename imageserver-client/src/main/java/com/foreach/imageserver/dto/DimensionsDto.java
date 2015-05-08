@@ -61,4 +61,12 @@ public class DimensionsDto
 	public int hashCode() {
 		return Objects.hash( width, height );
 	}
+
+	@Override
+	public String toString() {
+		return "{" +
+				"width=" + width +
+				", height=" + height +
+				'}';
+	}
 }

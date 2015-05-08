@@ -1,5 +1,6 @@
 package com.foreach.imageserver.math;
 
+import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.DimensionsDto;
 import org.junit.Test;
 
@@ -77,7 +78,34 @@ public class TestImageServerConversionUtils
 	}
 
 	@Test
-	public void equality() {
+	public void normalizeCropToBox() {
+		CropDto crop = new CropDto( 0, 0, 500, 300 );
+		crop.setSource( new DimensionsDto( 500, 300 ) );
+
+		CropDto normalized = normalize( crop, new DimensionsDto( 250, 150 ) );
+		assertEquals( 0, normalized.getX() );
+		assertEquals( 0, normalized.getY() );
+		assertEquals( 250, normalized.getWidth() );
+		assertEquals( 150, normalized.getHeight() );
+
+		crop = new CropDto( 30, 90, 300, 600 );
+		crop.setSource( new DimensionsDto( 900, 3000 ) );
+
+		normalized = normalize( crop, new DimensionsDto( 300, 1000 ) );
+		assertEquals( 10, normalized.getX() );
+		assertEquals( 30, normalized.getY() );
+		assertEquals( 100, normalized.getWidth() );
+		assertEquals( 200, normalized.getHeight() );
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void normalizeCropToBoxRequiresSourceToBeSet() {
+		CropDto crop = new CropDto( 0, 0, 500, 300 );
+		normalize( crop, new DimensionsDto( 250, 150 ) );
+	}
+
+	@Test
+	public void dimensionsAndAspectRatioEquality() {
 		DimensionsDto da1 = new DimensionsDto( 400, 300 );
 		DimensionsDto da2 = new DimensionsDto( 800, 600 );
 

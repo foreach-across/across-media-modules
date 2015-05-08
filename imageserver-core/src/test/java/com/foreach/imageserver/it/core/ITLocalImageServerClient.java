@@ -51,7 +51,7 @@ public class ITLocalImageServerClient
 
 	@Before
 	public void registerResolutions() {
-		registerResolution(640, 480);
+		registerResolution( 640, 480 );
 		registerResolution( 320, 240 );
 	}
 
@@ -136,7 +136,11 @@ public class ITLocalImageServerClient
 
 		modifications = imageServerClient.listModifications( externalId, "default" );
 		assertEquals( 1, modifications.size() );
-		assertEquals( modificationDto, modifications.iterator().next() );
+
+		ImageModificationDto dtoWithSource = new ImageModificationDto( modificationDto );
+		dtoWithSource.getCrop().setSource( new DimensionsDto( 1920, 1080 ) );
+
+		assertEquals( dtoWithSource, modifications.iterator().next() );
 	}
 
 	@Test
@@ -166,7 +170,11 @@ public class ITLocalImageServerClient
 
 		modifications = imageServerClient.listModifications( externalId, "default" );
 		assertEquals( 2, modifications.size() );
-		assertEquals( modificationDto, modifications.iterator().next() );
+
+		ImageModificationDto dtoWithSource = new ImageModificationDto( modificationDto );
+		dtoWithSource.getCrop().setSource( new DimensionsDto( 1920, 1080 ) );
+
+		assertEquals( dtoWithSource, modifications.iterator().next() );
 	}
 
 	@Configuration

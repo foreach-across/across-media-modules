@@ -91,7 +91,13 @@ public class ITRemoteImageServerClient
 
 		modifications = imageServerClient.listModifications( externalId, "website" );
 		assertEquals( 1, modifications.size() );
-		assertEquals( modificationDto, modifications.iterator().next() );
+
+		ImageModificationDto dtoWithSource = new ImageModificationDto( modificationDto );
+		dtoWithSource.getCrop().setSource( new DimensionsDto( 1920, 1080 ) );
+
+		assertEquals( dtoWithSource, modifications.iterator().next() );
+
+		assertEquals( dtoWithSource, modifications.iterator().next() );
 	}
 
 	@Test
