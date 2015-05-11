@@ -198,7 +198,7 @@ public class ImageStreamingController
 			long now = new Date().getTime();
 			response.setHeader( "Expires", String.valueOf( now + maxCacheAgeInSeconds * 1000 ) );
 		}
-		if ( akamaiCacheMaxAge != "" ) {
+		if ( !"".equals( akamaiCacheMaxAge ) ) {
 			response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_CACHE_MAX_AGE + akamaiCacheMaxAge );
 		}
 
@@ -208,6 +208,7 @@ public class ImageStreamingController
 			}
 		}
 		catch ( IOException ioe ) {
+			LOG.error( "IOExeption in renderImageSource", ioe );
 			error( response, HttpStatus.INTERNAL_SERVER_ERROR, ioe.getMessage() );
 		}
 	}
@@ -217,10 +218,12 @@ public class ImageStreamingController
 		response.setContentType( "text/plain" );
 		response.setHeader( "Cache-Control", "no-cache" );
 		response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_NO_STORE );
-		try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
-			IOUtils.copy( bis, response.getOutputStream() );
-		} catch ( IOException e ) {
-			LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );
+		if( errorMessage != null ) {
+			try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
+				IOUtils.copy( bis, response.getOutputStream() );
+			} catch ( IOException e ) {
+				LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );
+			}
 		}
 	}
 }
