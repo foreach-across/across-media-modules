@@ -219,6 +219,7 @@ public class ImageStreamingController
 		response.setHeader( "Cache-Control", "no-cache" );
 		response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_NO_STORE );
 		if( errorMessage != null ) {
+			// errorMessage can be null e.g. when a org.apache.catalina.connector.ClientAbortException occurs (it extends IOException)
 			try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
 				IOUtils.copy( bis, response.getOutputStream() );
 			} catch ( IOException e ) {
