@@ -92,14 +92,14 @@ public class ImageResolutionManagerTest extends AbstractCachedIntegrationTest
 	}
 
 	private void deleteContexts() {
-		Collection<ImageContext> imageContexts = imageContextRepository.getAll();
+		Collection<ImageContext> imageContexts = imageContextRepository.findAll();
 		for( ImageContext imageContext : imageContexts ) {
 			imageContextRepository.delete( imageContext );
 		}
 	}
 
 	private void deleteImageResolutions() {
-		Collection<ImageResolution> imageResolutions = imageResolutionRepository.getAll();
+		Collection<ImageResolution> imageResolutions = imageResolutionRepository.findAll();
 		for( ImageResolution imageResolution : imageResolutions ) {
 			imageResolutionRepository.delete( imageResolution );
 		}

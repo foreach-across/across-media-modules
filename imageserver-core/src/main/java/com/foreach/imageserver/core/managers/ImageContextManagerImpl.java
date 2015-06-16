@@ -28,7 +28,7 @@ public class ImageContextManagerImpl implements ImageContextManager
 	@Override
 	@Cacheable(value = CACHE_NAME)
 	public Collection<ImageContext> getAllContexts() {
-		return contextRepository.getAll();
+		return contextRepository.findAll();
 	}
 
 	@Override

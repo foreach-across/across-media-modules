@@ -4,7 +4,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<acrossVersion>1.0.5</acrossVersion>
+		<acrossVersion>1.1.1-SNAPSHOT</acrossVersion>
 		<foreachCommonVersion>0.11</foreachCommonVersion>
 		<jacksonVersion>2.3.2</jacksonVersion>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

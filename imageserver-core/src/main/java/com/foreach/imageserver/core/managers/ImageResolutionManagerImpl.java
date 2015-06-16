@@ -38,7 +38,7 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager
 
 	@Override
 	public Collection<ImageResolution> getAllResolutions() {
-		return Collections.unmodifiableCollection( imageResolutionRepository.getAll() );
+		return Collections.unmodifiableCollection( imageResolutionRepository.findAll() );
 	}
 
 	@Override

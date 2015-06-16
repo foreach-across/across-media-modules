@@ -45,7 +45,7 @@ public class ImageServerPermissionsInstaller
 		permissionGroup.setDescription(
 				"Permissions for managing the ImageServer entities." );
 
-		permissionService.save( permissionGroup );
+		permissionService.saveGroup( permissionGroup );
 	}
 
 	private void assignPermissionsToExistingRole() {

@@ -54,7 +54,7 @@ public class ImageManagerTest extends AbstractCachedIntegrationTest
 	}
 
 	private void deleteAllImages() {
-		Collection<Image> images = imageRepository.getAll();
+		Collection<Image> images = imageRepository.findAll();
 		for( Image image : images ) {
 			imageRepository.delete( image );
 		}

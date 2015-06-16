@@ -33,7 +33,7 @@ public class ImageProfile implements IdBasedEntity
 	@Column(name = "name", unique = true)
 	private String name;
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 

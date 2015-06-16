@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: across-standard-modules:debug-web:1.1.1-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/debug-web/1.1.1-SNAPSHOT/debug-web-1.1.1-20150609.070319-11.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/debug-web/1.1.1-SNAPSHOT/debug-web-1.1.1-20150609.070319-11-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/across-standard-modules/debug-web/1.1.1-SNAPSHOT/debug-web-1.1.1-20150609.070319-11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

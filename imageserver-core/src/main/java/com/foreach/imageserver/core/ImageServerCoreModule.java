@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Set;
 
 @AcrossDepends(required = { AcrossWebModule.NAME, AcrossHibernateModule.NAME })
-public class ImageServerCoreModule extends AcrossModule implements HasHibernatePackageProvider, HasSchemaConfiguration
+public class ImageServerCoreModule extends AcrossModule implements HibernatePackageConfiguringModule, HasSchemaConfiguration
 {
 	public static final String NAME = "ImageServerCoreModule";
 	private final SchemaConfiguration schemaConfiguration = new ImageSchemaConfiguration();
@@ -68,19 +68,17 @@ public class ImageServerCoreModule extends AcrossModule implements HasHibernateP
 	}
 
 	/**
-	 * Returns the package provider associated with this implementation.
+	 * Configures the package provider associated with this implementation.
 	 *
-	 * @param hibernateModule AcrossHibernateModule that is requesting packages.
-	 * @return HibernatePackageProvider instance.
+	 * @param hibernatePackage HibernatePackageRegistry.
 	 */
-	public HibernatePackageProvider getHibernatePackageProvider( AcrossHibernateModule hibernateModule ) {
-		if ( StringUtils.equals( "AcrossHibernateModule", hibernateModule.getName() ) ) {
-			return new HibernatePackageProviderComposite(
+	@Override
+	public void configureHibernatePackage( HibernatePackageRegistry hibernatePackage ) {
+		if ( StringUtils.equals( AcrossHibernateModule.NAME, hibernatePackage.getName() ) ) {
+			hibernatePackage.add( new HibernatePackageProviderComposite(
 					new PackagesToScanProvider( "com.foreach.imageserver.core.business" ),
-					new TableAliasProvider( schemaConfiguration.getTables() ) );
+					new TableAliasProvider( schemaConfiguration.getTables() ) ) );
 		}
-
-		return null;
 	}
 
 	@Override
