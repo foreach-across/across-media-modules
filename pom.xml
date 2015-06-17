@@ -4,7 +4,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<acrossVersion>1.1.1-SNAPSHOT</acrossVersion>
+		<across.version>1.1.1-SNAPSHOT</across.version>
 		<foreachCommonVersion>0.11</foreachCommonVersion>
 		<jacksonVersion>2.3.2</jacksonVersion>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -36,91 +36,14 @@
 		<module>imageserver-test-standalone</module>
 	</modules>
 
-	<dependencies>
-		<dependency>
-			<groupId>across</groupId>
-			<artifactId>across-test</artifactId>
-			<version>${acrossVersion}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.31</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6</artifactId>
-			<version>11.2.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.jtds</groupId>
-			<artifactId>jtds</artifactId>
-			<version>1.2.8</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>across</groupId>
-				<artifactId>across-core</artifactId>
-				<version>${acrossVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>across</groupId>
-				<artifactId>across-web</artifactId>
-				<version>${acrossVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>across-standard-modules</groupId>
-				<artifactId>admin-web</artifactId>
-				<version>${acrossVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>across-standard-modules</groupId>
-				<artifactId>across-hibernate</artifactId>
-				<version>${acrossVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>across-standard-modules</groupId>
-				<artifactId>user-module</artifactId>
-				<version>${acrossVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>across-standard-modules</groupId>
-				<artifactId>spring-security</artifactId>
-				<version>${acrossVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>across-standard-modules</groupId>
-				<artifactId>debug-web</artifactId>
-				<version>${acrossVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>across-standard-modules</groupId>
-				<artifactId>across-ehcache</artifactId>
-				<version>${acrossVersion}</version>
+				<artifactId>platform-bom</artifactId>
+				<version>${across.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
@@ -166,6 +89,50 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>across</groupId>
+			<artifactId>across-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.31</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>11.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.jtds</groupId>
+			<artifactId>jtds</artifactId>
+			<version>1.2.8</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

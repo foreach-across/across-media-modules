@@ -3,11 +3,9 @@ package com.foreach.imageserver.core;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
-import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
-import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.test.AcrossTestConfiguration;
+import com.foreach.across.test.AcrossTestWebConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,18 +13,18 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.sql.DataSource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AbstractIntegrationTest.Config.class })
 @EnableTransactionManagement
+@WebAppConfiguration
 public abstract class AbstractIntegrationTest
 {
-	@AcrossTestConfiguration
+	@AcrossTestWebConfiguration
 	@Configuration
 	public static class Config implements AcrossContextConfigurer
 	{
