@@ -4,7 +4,7 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
-import com.foreach.across.modules.hibernate.AcrossHibernateModule;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
@@ -45,7 +45,7 @@ public abstract class AbstractIntegrationTest
 		@Override
 		public void configure( AcrossContext context ) {
 			context.addModule( imageServerCoreModule() );
-			context.addModule( acrossHibernateModule() );
+			context.addModule( acrossHibernateJpaModule() );
 		}
 
 		public AcrossModule imageServerCoreModule() {
@@ -56,8 +56,8 @@ public abstract class AbstractIntegrationTest
 			return module;
 		}
 
-		public AcrossModule acrossHibernateModule() {
-			return new AcrossHibernateModule();
+		public AcrossModule acrossHibernateJpaModule() {
+			return new AcrossHibernateJpaModule();
 		}
 
 	}

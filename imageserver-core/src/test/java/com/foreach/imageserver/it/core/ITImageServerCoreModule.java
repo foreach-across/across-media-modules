@@ -2,7 +2,7 @@ package com.foreach.imageserver.it.core;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
-import com.foreach.across.modules.hibernate.AcrossHibernateModule;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.imageserver.client.ImageServerClient;
@@ -81,7 +81,7 @@ public class ITImageServerCoreModule
 		@Override
 		public void configure( AcrossContext context ) {
 			context.addModule( imageServerCoreModule() );
-			context.addModule( new AcrossHibernateModule() );
+			context.addModule( new AcrossHibernateJpaModule() );
 		}
 
 		private ImageServerCoreModule imageServerCoreModule() {

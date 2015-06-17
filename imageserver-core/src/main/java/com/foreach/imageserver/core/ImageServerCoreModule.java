@@ -9,10 +9,13 @@ import com.foreach.across.core.database.HasSchemaConfiguration;
 import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.installers.AcrossSequencesInstaller;
-import com.foreach.across.modules.hibernate.AcrossHibernateModule;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.hibernate.provider.*;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.imageserver.core.config.*;
+import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
+import com.foreach.imageserver.core.config.RepositoriesConfiguration;
+import com.foreach.imageserver.core.config.ServicesConfiguration;
+import com.foreach.imageserver.core.config.WebConfiguration;
 import com.foreach.imageserver.core.config.conditional.ImageMagickTransformerConfiguration;
 import com.foreach.imageserver.core.config.conditional.LocalImageServerClientConfiguration;
 import com.foreach.imageserver.core.installers.DefaultDataInstaller;
@@ -22,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
 
-@AcrossDepends(required = { AcrossWebModule.NAME, AcrossHibernateModule.NAME })
+@AcrossDepends(required = { AcrossWebModule.NAME, AcrossHibernateJpaModule.NAME })
 public class ImageServerCoreModule extends AcrossModule implements HibernatePackageConfiguringModule, HasSchemaConfiguration
 {
 	public static final String NAME = "ImageServerCoreModule";
@@ -73,7 +76,7 @@ public class ImageServerCoreModule extends AcrossModule implements HibernatePack
 	 */
 	@Override
 	public void configureHibernatePackage( HibernatePackageRegistry hibernatePackage ) {
-		if ( StringUtils.equals( AcrossHibernateModule.NAME, hibernatePackage.getName() ) ) {
+		if ( StringUtils.equals( AcrossHibernateJpaModule.NAME, hibernatePackage.getName() ) ) {
 			hibernatePackage.add( new HibernatePackageProviderComposite(
 					new PackagesToScanProvider( "com.foreach.imageserver.core.business" ),
 					new TableAliasProvider( schemaConfiguration.getTables() ) ) );
