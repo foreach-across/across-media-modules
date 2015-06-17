@@ -5,8 +5,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<across.version>1.1.1-SNAPSHOT</across.version>
-		<foreachCommonVersion>0.11</foreachCommonVersion>
-		<jacksonVersion>2.3.2</jacksonVersion>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
@@ -45,48 +43,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-core</artifactId>
-				<version>${jacksonVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>${jacksonVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-spring</artifactId>
-				<version>${foreachCommonVersion}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.hibernate</groupId>
-						<artifactId>hibernate-validator</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-test</artifactId>
-				<version>${foreachCommonVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.foreach.libs</groupId>
-				<artifactId>common-web</artifactId>
-				<version>${foreachCommonVersion}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>2.4</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -117,19 +73,16 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.31</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
-			<version>11.2.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.jtds</groupId>
 			<artifactId>jtds</artifactId>
-			<version>1.2.8</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
