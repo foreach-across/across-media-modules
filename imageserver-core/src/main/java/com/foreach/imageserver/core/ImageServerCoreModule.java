@@ -51,7 +51,6 @@ public class ImageServerCoreModule extends AcrossModule implements HibernatePack
 						RepositoriesConfiguration.class,
 						ImageMagickTransformerConfiguration.class,
 						WebConfiguration.class,
-						MultipartResolverConfiguration.class,
 						LocalImageServerClientConfiguration.class
 				)
 		);

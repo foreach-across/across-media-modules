@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.managers;
 
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.imageserver.core.AbstractCachedIntegrationTest;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.repositories.ImageContextRepository;
@@ -12,15 +13,14 @@ import static org.junit.Assert.*;
 
 public class ImageContextManagerTest extends AbstractCachedIntegrationTest
 {
-
 	@Autowired
 	private ImageContextManager contextManager;
 
 	@Autowired
-	private CacheManager cacheManager;
+	private ImageContextRepository imageContextRepository;
 
 	@Autowired
-	private ImageContextRepository imageContextRepository;
+	private CacheManager cacheManager;
 
 	@Test
 	public void getByCode() {

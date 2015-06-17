@@ -6,6 +6,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
 import com.foreach.across.modules.hibernate.AcrossHibernateModule;
+import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
@@ -43,35 +44,23 @@ public abstract class AbstractIntegrationTest
 			return new DataSourceTransactionManager( dataSource );
 		}
 
-		@Bean
-		public MultipartResolver multipartResolver() {
-			return new CommonsMultipartResolver();
+		@Override
+		public void configure( AcrossContext context ) {
+			context.addModule( imageServerCoreModule() );
+			context.addModule( acrossHibernateModule() );
 		}
 
-		@Bean
-		public AcrossModule dummyWebModule() {
-			return new EmptyAcrossModule( "AcrossWebModule" );
-		}
-
-		@Bean
 		public AcrossModule imageServerCoreModule() {
 			ImageServerCoreModule module = new ImageServerCoreModule();
 			module.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
 			                    System.getProperty( "java.io.tmpdir" ) );
-			module.setExposeFilter( new PackageBeanFilter( "com.foreach.imageserver.core", "net.sf.ehcache" ) );
+			module.setExposeFilter( new PackageBeanFilter( "com.foreach.imageserver.core" ) );
 			return module;
 		}
 
-		@Bean
 		public AcrossModule acrossHibernateModule() {
 			return new AcrossHibernateModule();
 		}
 
-		@Override
-		public void configure( AcrossContext context ) {
-			context.addModule( dummyWebModule() );
-			context.addModule( imageServerCoreModule() );
-			context.addModule( acrossHibernateModule() );
-		}
 	}
 }
