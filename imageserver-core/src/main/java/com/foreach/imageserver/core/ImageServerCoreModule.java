@@ -33,7 +33,7 @@ public class ImageServerCoreModule extends AcrossModule implements HibernatePack
 
 	@SuppressWarnings("unchecked")
 	public ImageServerCoreModule() {
-		setExposeFilter( new AnnotationBeanFilter( true, Exposed.class ) );
+		setExposeFilter( new AnnotationBeanFilter( true, true, Exposed.class ) );
 	}
 
 	@Override
