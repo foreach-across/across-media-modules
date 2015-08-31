@@ -9,6 +9,7 @@
 		<foreachCommonVersion>0.11</foreachCommonVersion>
 		<jacksonVersion>2.3.2</jacksonVersion>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 	</properties>
 
 	<repositories>
@@ -169,6 +170,11 @@
 	</dependencyManagement>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-maven-plugin.version}</version>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
