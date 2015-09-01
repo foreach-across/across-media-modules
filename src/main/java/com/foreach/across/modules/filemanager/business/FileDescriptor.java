@@ -1,9 +1,8 @@
 package com.foreach.across.modules.filemanager.business;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
-import org.thymeleaf.util.StringUtils;
 
-import javax.persistence.Transient;
 import java.util.Objects;
 
 /**
@@ -11,7 +10,6 @@ import java.util.Objects;
  */
 public class FileDescriptor
 {
-	@Transient
 	private final String repositoryId, fileId, folderId;
 
 	private final String uri;
