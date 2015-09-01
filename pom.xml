@@ -14,6 +14,14 @@
 	<artifactId>file-manager-module</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
+	<repositories>
+		<repository>
+			<id>foreach-nexus</id>
+			<name>Foreach nexus</name>
+			<url>http://repository.foreach.be/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>
 		Across standard module that provides a set of generic services for accessing files across different types
@@ -63,4 +71,40 @@
 		<url>https://bitbucket.org/beforeach/file-manager-module</url>
 	</scm>
 
+	<profiles>
+		<profile>
+			<id>assemble-site</id>
+			<activation>
+				<file>
+					<exists>site.xml</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.5.3</version>
+						<inherited>true</inherited>
+						<configuration>
+							<finalName>${project.artifactId}</finalName>
+							<descriptors>
+								<descriptor>site.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id>
+								<!-- this is used for inheritance merges -->
+								<phase>package</phase>
+								<!-- bind to the packaging phase -->
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
