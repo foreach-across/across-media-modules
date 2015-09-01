@@ -60,6 +60,33 @@
 		</developer>
 	</developers>
 
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.5</version>
+				<inherited>false</inherited>
+				<configuration>
+					<finalName>${project.artifactId}</finalName>
+					<descriptors>
+						<descriptor>${project.basedir}\site.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<!-- this is used for inheritance merges -->
+						<phase>package</phase>
+						<!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>across</groupId>
@@ -86,41 +113,4 @@
 		<developerConnection>scm:git:https://bitbucket.org/beforeach/file-manager-module.git</developerConnection>
 		<url>https://bitbucket.org/beforeach/file-manager-module</url>
 	</scm>
-
-	<profiles>
-		<profile>
-			<id>assemble-site</id>
-			<activation>
-				<file>
-					<exists>site.xml</exists>
-				</file>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.5.3</version>
-						<inherited>true</inherited>
-						<configuration>
-							<finalName>${project.artifactId}</finalName>
-							<descriptors>
-								<descriptor>site.xml</descriptor>
-							</descriptors>
-						</configuration>
-						<executions>
-							<execution>
-								<id>make-assembly</id>
-								<!-- this is used for inheritance merges -->
-								<phase>package</phase>
-								<!-- bind to the packaging phase -->
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
