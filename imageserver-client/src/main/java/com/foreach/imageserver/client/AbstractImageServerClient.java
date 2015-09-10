@@ -76,14 +76,6 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	public String imageUrl( String imageId,
 	                        String context,
 	                        ImageResolutionDto imageResolution,
-	                        ImageVariantDto imageVariant ) {
-		return imageUrl( imageId, context, imageResolution, imageVariant, null );
-	}
-
-	@Override
-	public String imageUrl( String imageId,
-	                        String context,
-	                        ImageResolutionDto imageResolution,
 	                        ImageVariantDto imageVariant,
 	                        String... size ) {
 		if ( StringUtils.isBlank( imageId ) || context == null || imageVariant == null ) {
@@ -92,7 +84,7 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 		}
 		if ( imageResolution == null && ( size == null || size.length == 0 ) ) {
 			LOG.error( "Request does not contain an imageResolution or size - imageId={}, context={}, imageResolution={}, imageVariant={}, size={}",
-			           LogHelper.flatten( imageId, context, imageResolution, imageVariant, size ) );
+			           LogHelper.flatten( imageId, context, null, imageVariant, size ) );
 			throw new IllegalArgumentException( "Request does not contain an imageResolution or size" );
 		}
 
@@ -109,6 +101,22 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 
 		addQueryParams( queryParams, imageVariant );
 
+		return buildUri( ENDPOINT_IMAGE_VIEW, queryParams ).toString();
+	}
+
+	@Override
+	public String imageUrl( String imageId, String context, String ratio, String size, ImageVariantDto imageVariant ) {
+		if ( StringUtils.isBlank( imageId ) || context == null || ratio == null || imageVariant == null ) {
+			LOG.warn( "Null parameters not allowed -- imageId={}, context={}, ratio={}, imageVariant={}", imageId, context, ratio, imageVariant );
+		}
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "iid", imageId );
+		queryParams.set( "context", StringUtils.defaultString( context ) );
+		queryParams.set( "ratio", ratio );
+		if ( StringUtils.isNotBlank( size ) ) {
+			queryParams.set( "size", size );
+		}
+		addQueryParams( queryParams, imageVariant );
 		return buildUri( ENDPOINT_IMAGE_VIEW, queryParams ).toString();
 	}
 

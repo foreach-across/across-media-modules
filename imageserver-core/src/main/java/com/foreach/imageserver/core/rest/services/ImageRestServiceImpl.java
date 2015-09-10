@@ -12,10 +12,7 @@ import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
-import com.foreach.imageserver.dto.DimensionsDto;
-import com.foreach.imageserver.dto.ImageModificationDto;
-import com.foreach.imageserver.dto.ImageResolutionDto;
-import com.foreach.imageserver.dto.ImageVariantDto;
+import com.foreach.imageserver.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,63 +153,96 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
+			return response;
+		}
+		if ( request.getImageAspectRatioDto() == null && request.getImageResolutionDto() == null ) {
+			response.setNoResolutionSpecified( true );
+			return response;
+		}
+		ImageContext context = contextService.getByCode( request.getContext() );
+
+		if ( context == null ) {
+			response.setContextDoesNotExist( true );
+			return response;
+		}
+
+		if ( request.getImageAspectRatioDto() != null ) {
+			return viewImageForRatio( response, image, context, request.getImageAspectRatioDto(),
+			                          request.getImageVariantDto() );
+		}
+		return viewImageForResolution( response, image, context, request.getImageResolutionDto(),
+		                               request.getImageVariantDto() );
+	}
+
+	private ViewImageResponse viewImageForRatio( ViewImageResponse response,
+	                                             Image image,
+	                                             ImageContext context,
+	                                             ImageAspectRatioDto imageAspectRatioDto,
+	                                             ImageVariantDto imageVariantDto ) {
+		ImageResolution imageResolution =
+				contextService.getImageResolution( context.getId(), DtoUtil.toBusiness( imageAspectRatioDto ),
+				                                   imageVariantDto.getBoundaries().getWidth() );
+		if ( imageResolution == null ) {
+			LOG.warn( "Resolution does not exist for ratio {} in context {}", imageAspectRatioDto.getRatio(),
+			          context.getCode() );
+			response.setResolutionDoesNotExist( true );
+			return response;
+		}
+
+		return viewImageForResolution( response, image, context, imageResolution, imageVariantDto );
+	}
+
+	private ViewImageResponse viewImageForResolution( ViewImageResponse response,
+	                                                  Image image,
+	                                                  ImageContext context,
+	                                                  ImageResolutionDto imageResolutionDto,
+	                                                  ImageVariantDto imageVariantDto ) {
+		ImageResolution imageResolution = contextService.getImageResolution(
+				context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight()
+		);
+
+		if ( imageResolution == null ) {
+			LOG.warn( "Resolution {}x{} does not exist for context {}", imageResolutionDto.getWidth(),
+			          imageResolutionDto.getHeight(), context.getCode() );
+			response.setResolutionDoesNotExist( true );
+			return response;
+		}
+		return viewImageForResolution( response, image, context, imageResolution, imageVariantDto );
+	}
+
+	private ViewImageResponse viewImageForResolution( ViewImageResponse response,
+	                                                  Image image,
+	                                                  ImageContext context,
+	                                                  ImageResolution imageResolution,
+	                                                  ImageVariantDto imageVariantDto ) {
+		// when available, the bounding box dimensions should be those of an existing resolution
+		DimensionsDto boundaries = imageVariantDto.getBoundaries();
+		if ( boundaries != null && !boundingResolutionExists( boundaries, context ) ) {
+			LOG.warn( "Bounding box resolution {}x{} does not exist for context {}",
+			          imageResolution.getWidth(),
+			          imageResolution.getHeight(), context.getCode() );
+			response.setResolutionDoesNotExist( true );
+			return response;
+		}
+
+		ImageVariant variant = imageVariant( image, imageVariantDto );
+
+		if ( !imageResolution.isAllowedOutputType( variant.getOutputType() ) ) {
+			LOG.warn( "Output type {} is not allowed for resolution {}", variant.getOutputType(),
+			          imageResolution );
+
+			response.setOutputTypeNotAllowed( true );
+			return response;
+		}
+		StreamImageSource imageSource = imageService.getVariantImage(
+				image, context, imageResolution, variant
+		);
+
+		if ( imageSource == null ) {
+			response.setFailed( true );
 		}
 		else {
-			if ( request.getImageResolutionDto() == null ) {
-				response.setNoResolutionSpecified( true );
-			}
-			else {
-				ImageContext context = contextService.getByCode( request.getContext() );
-
-				if ( context == null ) {
-					response.setContextDoesNotExist( true );
-				}
-				else {
-					ImageResolutionDto imageResolutionDto = request.getImageResolutionDto();
-					ImageResolution imageResolution = contextService.getImageResolution(
-							context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight()
-					);
-
-					if ( imageResolution == null ) {
-						LOG.warn( "Resolution {}x{} does not exist for context {}", imageResolutionDto.getWidth(),
-						          imageResolutionDto.getHeight(), context.getCode() );
-						response.setResolutionDoesNotExist( true );
-					}
-					else {
-						// when available, the bounding box dimensions should be those of an existing resolution
-						DimensionsDto boundaries = request.getImageVariantDto().getBoundaries();
-						if ( boundaries != null && !boundingResolutionExists( boundaries, context ) ) {
-							LOG.warn( "Bounding box resolution {}x{} does not exist for context {}",
-							          imageResolutionDto.getWidth(),
-							          imageResolutionDto.getHeight(), context.getCode() );
-							response.setResolutionDoesNotExist( true );
-						}
-						else {
-
-							ImageVariant variant = imageVariant( image, request.getImageVariantDto() );
-
-							if ( !imageResolution.isAllowedOutputType( variant.getOutputType() ) ) {
-								LOG.warn( "Output type {} is not allowed for resolution {}", variant.getOutputType(),
-								          imageResolution );
-
-								response.setOutputTypeNotAllowed( true );
-							}
-							else {
-								StreamImageSource imageSource = imageService.getVariantImage(
-										image, context, imageResolution, variant
-								);
-
-								if ( imageSource == null ) {
-									response.setFailed( true );
-								}
-								else {
-									response.setImageSource( imageSource );
-								}
-							}
-						}
-					}
-				}
-			}
+			response.setImageSource( imageSource );
 		}
 
 		return response;

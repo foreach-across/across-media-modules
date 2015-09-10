@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.rest.request;
 
+import com.foreach.imageserver.dto.ImageAspectRatioDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
@@ -12,6 +13,7 @@ public class ViewImageRequest extends ImageRequest
 	private ImageResolutionDto imageResolutionDto;
 	private ImageModificationDto imageModificationDto;
 	private ImageVariantDto imageVariantDto;
+	private ImageAspectRatioDto imageAspectRatioDto;
 
 	public ImageResolutionDto getImageResolutionDto() {
 		return imageResolutionDto;
@@ -35,5 +37,13 @@ public class ViewImageRequest extends ImageRequest
 
 	public void setImageModificationDto( ImageModificationDto imageModificationDto ) {
 		this.imageModificationDto = imageModificationDto;
+	}
+
+	public ImageAspectRatioDto getImageAspectRatioDto() {
+		return imageAspectRatioDto;
+	}
+
+	public void setImageAspectRatioDto( ImageAspectRatioDto imageAspectRatioDto ) {
+		this.imageAspectRatioDto = imageAspectRatioDto;
 	}
 }

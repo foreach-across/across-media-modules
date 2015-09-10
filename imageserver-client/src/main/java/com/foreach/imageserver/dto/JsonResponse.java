@@ -1,6 +1,6 @@
 package com.foreach.imageserver.dto;
 
-public class JsonResponse<T extends Object>
+public class JsonResponse<T>
 {
 
 	public boolean success;

@@ -5,14 +5,13 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ImageContextManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.dto.ImageContextDto;
+import com.foreach.imageserver.math.AspectRatio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ImageContextServiceImpl implements ImageContextService
@@ -56,6 +55,34 @@ public class ImageContextServiceImpl implements ImageContextService
 		}
 
 		// no matching image resolution was found
+		return null;
+	}
+
+	@Override
+	public ImageResolution getImageResolution( long contextId, AspectRatio aspectRatio, int width ) {
+		if ( aspectRatio.isNegative() || width < 0 ) {
+			return null;
+		}
+		List<ImageResolution> imageResolutions = imageResolutionManager.getForContext( contextId );
+		List<ImageResolution> imageResolutionsForRatio = new ArrayList<>();
+		for ( ImageResolution imageResolution : imageResolutions ) {
+			AspectRatio ratio = imageResolution.getDimensions().fetchAspectRatio();
+			if ( ratio.equals( aspectRatio ) ) {
+				imageResolutionsForRatio.add( imageResolution );
+			}
+		}
+		Collections.sort( imageResolutionsForRatio, new Comparator<ImageResolution>()
+		{
+			@Override
+			public int compare( ImageResolution o1, ImageResolution o2 ) {
+				return Integer.compare( o1.getWidth(), o2.getWidth() );
+			}
+		} );
+		for ( ImageResolution imageResolution : imageResolutionsForRatio ) {
+			if ( imageResolution.getWidth() >= width ) {
+				return imageResolution;
+			}
+		}
 		return null;
 	}
 
