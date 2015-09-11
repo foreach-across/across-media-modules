@@ -155,7 +155,7 @@ public class ImageRestServiceImpl implements ImageRestService
 			response.setImageDoesNotExist( true );
 			return response;
 		}
-		if ( request.getImageAspectRatioDto() == null && request.getImageResolutionDto() == null ) {
+		if ( ( request.getImageAspectRatioDto() == null || request.getImageAspectRatioDto().getRatio() == null ) && request.getImageResolutionDto() == null ) {
 			response.setNoResolutionSpecified( true );
 			return response;
 		}
@@ -166,7 +166,7 @@ public class ImageRestServiceImpl implements ImageRestService
 			return response;
 		}
 
-		if ( request.getImageAspectRatioDto() != null ) {
+		if ( request.getImageAspectRatioDto() != null && request.getImageAspectRatioDto().getRatio() != null ) {
 			return viewImageForRatio( response, image, context, request.getImageAspectRatioDto(),
 			                          request.getImageResolutionDto().getWidth(), request.getImageVariantDto() );
 		}

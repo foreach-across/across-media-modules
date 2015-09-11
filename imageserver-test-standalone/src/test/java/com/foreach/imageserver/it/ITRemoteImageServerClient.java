@@ -103,19 +103,19 @@ public class ITRemoteImageServerClient
 	@Test
 	public void listResolutions() {
 		List<ImageResolutionDto> resolutions = imageServerClient.listAllowedResolutions( "website" );
-		assertEquals( 2, resolutions.size() );
+		assertEquals( 4, resolutions.size() );
 		assertTrue( hasResolution( resolutions, 640, 480, false ) );
 		assertFalse( hasResolution( resolutions, 800, 600, true ) );
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
 
 		resolutions = imageServerClient.listAllowedResolutions( "tablet" );
-		assertEquals( 2, resolutions.size() );
+		assertEquals( 4, resolutions.size() );
 		assertFalse( hasResolution( resolutions, 640, 480, false ) );
 		assertTrue( hasResolution( resolutions, 800, 600, true ) );
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
 
 		resolutions = imageServerClient.listAllowedResolutions( null );
-		assertEquals( 4, resolutions.size() );
+		assertEquals( 8, resolutions.size() );
 		assertTrue( hasResolution( resolutions, 0, 0, false ) );
 		assertTrue( hasResolution( resolutions, 640, 480, false ) );
 		assertTrue( hasResolution( resolutions, 800, 600, true ) );
@@ -128,13 +128,13 @@ public class ITRemoteImageServerClient
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
 
 		resolutions = imageServerClient.listConfigurableResolutions( "tablet" );
-		assertEquals( 2, resolutions.size() );
+		assertEquals( 4, resolutions.size() );
 		assertFalse( hasResolution( resolutions, 640, 480, false ) );
 		assertTrue( hasResolution( resolutions, 800, 600, true ) );
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
 
 		resolutions = imageServerClient.listConfigurableResolutions( null );
-		assertEquals( 2, resolutions.size() );
+		assertEquals( 4, resolutions.size() );
 		assertFalse( hasResolution( resolutions, 640, 480, false ) );
 		assertTrue( hasResolution( resolutions, 800, 600, true ) );
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
@@ -160,7 +160,7 @@ public class ITRemoteImageServerClient
 		assertTrue( uploaded.isExisting() );
 
 		List<ImageResolutionDto> resolutions = imageServerClient.pregenerateResolutions( externalId );
-		assertEquals( 3, resolutions.size() );
+		assertEquals( 7, resolutions.size() );
 		assertTrue( hasResolution( resolutions, 640, 480, false ) );
 		assertTrue( hasResolution( resolutions, 800, 600, true ) );
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
