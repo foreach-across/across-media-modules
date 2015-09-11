@@ -151,7 +151,7 @@ public class ImageContextServiceTest
 		imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 401 );
 		assertEquals( 20, imageResolution.getId() );
 		imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 9000 );
-		assertNull( imageResolution );
+		assertEquals( 20, imageResolution.getId() );
 		imageResolution = contextService.getImageResolution( CONTEXT_ID, new AspectRatio( "4/3" ), 400 );
 		assertEquals( 21, imageResolution.getId() );
 	}
