@@ -32,9 +32,12 @@ public class TestContextAndResolutionInstaller
 		createContext( "tablet" );
 
 		createResolution( 640, 480, false, Arrays.asList( "low-res" ), Arrays.asList( "website" ) );
+		createResolution( 320, 240, false, Arrays.asList( "low-res-d2" ), Arrays.asList( "website" ) );
+		createResolution( 160, 120, false, Arrays.asList( "low-res-d4" ), Arrays.asList( "website" ) );
 		createResolution( 800, 600, true, Arrays.asList( "" ), Arrays.asList( "tablet" ) );
-		createResolution( 1024, 768, true, Arrays.asList( "high-res", "maximum" ),
-		                  Arrays.asList( "website", "tablet" ) );
+		createResolution( 400, 300, true, Arrays.asList( "" ), Arrays.asList( "tablet" ) );
+		createResolution( 1600, 1200, true, Arrays.asList( "" ), Arrays.asList( "tablet" ) );
+		createResolution( 1024, 768, true, Arrays.asList( "high-res", "maximum" ), Arrays.asList( "website", "tablet" ) );
 	}
 
 	private void createResolution( int width,

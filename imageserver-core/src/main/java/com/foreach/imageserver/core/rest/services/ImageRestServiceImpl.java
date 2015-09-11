@@ -103,7 +103,7 @@ public class ImageRestServiceImpl implements ImageRestService
 					public void run() {
 						LOG.debug( "Start pregeneration of {} resolutions for {}", pregenerateList.size(), image );
 						for ( final ImageResolution resolution : pregenerateList ) {
-							List<ImageType> allowedTypes = Arrays.asList( ImageType.JPEG );
+							List<ImageType> allowedTypes = Collections.singletonList( ImageType.JPEG );
 							for ( ImageType outputType : allowedTypes ) {
 								ImageVariant variant = new ImageVariant();
 								variant.setOutputType( outputType );
@@ -168,7 +168,7 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		if ( request.getImageAspectRatioDto() != null ) {
 			return viewImageForRatio( response, image, context, request.getImageAspectRatioDto(),
-			                          request.getImageVariantDto() );
+			                          request.getImageResolutionDto().getWidth(), request.getImageVariantDto() );
 		}
 		return viewImageForResolution( response, image, context, request.getImageResolutionDto(),
 		                               request.getImageVariantDto() );
@@ -178,10 +178,10 @@ public class ImageRestServiceImpl implements ImageRestService
 	                                             Image image,
 	                                             ImageContext context,
 	                                             ImageAspectRatioDto imageAspectRatioDto,
-	                                             ImageVariantDto imageVariantDto ) {
+	                                             int width, ImageVariantDto imageVariantDto ) {
 		ImageResolution imageResolution =
 				contextService.getImageResolution( context.getId(), DtoUtil.toBusiness( imageAspectRatioDto ),
-				                                   imageVariantDto.getBoundaries().getWidth() );
+				                                   width );
 		if ( imageResolution == null ) {
 			LOG.warn( "Resolution does not exist for ratio {} in context {}", imageAspectRatioDto.getRatio(),
 			          context.getCode() );
@@ -342,7 +342,7 @@ public class ImageRestServiceImpl implements ImageRestService
 	                                                           Image image,
 	                                                           ImageContext context,
 	                                                           RegisterModificationResponse response ) {
-		List<ImageModification> modifications = new ArrayList<ImageModification>();
+		List<ImageModification> modifications = new ArrayList<>();
 
 		if ( request.getImageModificationDto() != null ) {
 			modifications.add( toModification( request.getImageModificationDto(), image, context, response ) );

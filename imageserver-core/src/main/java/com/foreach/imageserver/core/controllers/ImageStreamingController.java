@@ -123,6 +123,7 @@ public class ImageStreamingController
 			viewImageRequest.setImageVariantDto( imageVariantDto );
 
 			viewImageRequest.setImageResolutionDto( determineImageResolution( externalId, imageResolutionDto, size ) );
+			viewImageRequest.setImageAspectRatioDto( aspectRatioDto );
 
 			ViewImageResponse viewImageResponse = imageRestService.viewImage( viewImageRequest );
 
