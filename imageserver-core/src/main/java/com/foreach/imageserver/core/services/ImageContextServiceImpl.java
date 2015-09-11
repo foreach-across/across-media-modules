@@ -83,7 +83,9 @@ public class ImageContextServiceImpl implements ImageContextService
 				return imageResolution;
 			}
 		}
-		return null;
+		// fallback to largest for the ratio
+		// this implies a possibility for loss of resolution, but we stay as responsive as possible
+		return imageResolutionsForRatio.isEmpty() ? null : imageResolutionsForRatio.get( imageResolutionsForRatio.size() - 1 );
 	}
 
 	@Override
