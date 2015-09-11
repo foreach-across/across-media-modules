@@ -137,7 +137,7 @@ public class ImageContextServiceTest
 	@Test
 	public void getImageResolution_ForUnknownRatio() {
 		ImageResolution imageResolution =
-				contextService.getImageResolution( CONTEXT_ID, new AspectRatio( "4/3" ), 200 );
+				contextService.getImageResolution( CONTEXT_ID, new AspectRatio( "16/3" ), 200 );
 		assertNull( imageResolution );
 	}
 
