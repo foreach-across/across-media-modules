@@ -59,7 +59,7 @@ public class AspectRatio
 	}
 
 	public boolean isLargerOnHeight() {
-		return !isLargerOnWidth();
+		return getDenominator() > getNumerator();
 	}
 
 	public final boolean equals( Object o ) {
