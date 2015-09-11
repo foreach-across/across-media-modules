@@ -68,6 +68,10 @@ public interface ImageServerClient
 	                 ImageVariantDto imageVariant,
 	                 String... size );
 
+	String imageUrl( String imageId, String context, String ratio, int screenWidth, ImageTypeDto imageType, int height, int width );
+
+	String imageUrl( String imageId, String context, String ratio, int screenWidth, ImageVariantDto imageVariantDto );
+
 	InputStream imageStream( String imageId, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant );
 
 	ImageInfoDto loadImage( String imageId, byte[] imageBytes );
@@ -99,6 +103,4 @@ public interface ImageServerClient
 	List<ImageResolutionDto> listAllowedResolutions( String context );
 
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
-
-	String imageUrl( String imageId, String context, String ratio, String size, ImageVariantDto imageVariant );
 }
