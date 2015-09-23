@@ -35,13 +35,13 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	public String imageUrl( String imageId,
 	                        String context,
 	                        int width,
-	                        int height	) {
-		return imageUrl( imageId, context, new ImageResolutionDto( width, height ), new ImageVariantDto( ) );
+	                        int height ) {
+		return imageUrl( imageId, context, new ImageResolutionDto( width, height ), new ImageVariantDto() );
 	}
 
 	public String imageUrl( String imageId,
 	                        String context,
-	                        String... size	) {
+	                        String... size ) {
 		return imageUrl( imageId, context, null, new ImageVariantDto(), size );
 	}
 
@@ -76,23 +76,17 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 	public String imageUrl( String imageId,
 	                        String context,
 	                        ImageResolutionDto imageResolution,
-	                        ImageVariantDto imageVariant ) {
-		return imageUrl( imageId, context, imageResolution, imageVariant, null );
-	}
-
-	@Override
-	public String imageUrl( String imageId,
-	                        String context,
-	                        ImageResolutionDto imageResolution,
 	                        ImageVariantDto imageVariant,
 	                        String... size ) {
 		if ( StringUtils.isBlank( imageId ) || context == null || imageVariant == null ) {
-			LOG.warn( "Null parameters not allowed - imageId={}, context={}, imageResolution={}, imageVariant={}, size={}",
-			          LogHelper.flatten( imageId, context, imageResolution, imageVariant, size ) );
+			LOG.warn(
+					"Null parameters not allowed - imageId={}, context={}, imageResolution={}, imageVariant={}, size={}",
+					LogHelper.flatten( imageId, context, imageResolution, imageVariant, size ) );
 		}
 		if ( imageResolution == null && ( size == null || size.length == 0 ) ) {
-			LOG.error( "Request does not contain an imageResolution or size - imageId={}, context={}, imageResolution={}, imageVariant={}, size={}",
-			           LogHelper.flatten( imageId, context, imageResolution, imageVariant, size ) );
+			LOG.error(
+					"Request does not contain an imageResolution or size - imageId={}, context={}, imageResolution={}, imageVariant={}, size={}",
+					LogHelper.flatten( imageId, context, null, imageVariant, size ) );
 			throw new IllegalArgumentException( "Request does not contain an imageResolution or size" );
 		}
 
@@ -109,6 +103,25 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 
 		addQueryParams( queryParams, imageVariant );
 
+		return buildUri( ENDPOINT_IMAGE_VIEW, queryParams ).toString();
+	}
+
+	@Override
+	public String imageUrl( String imageId, String context, String ratio, int screenWidth, ImageTypeDto imageType, int width, int height ) {
+		return imageUrl( imageId, context, ratio, screenWidth, new ImageVariantDto( imageType, new DimensionsDto( width, height )) );
+	}
+	@Override
+	public String imageUrl( String imageId, String context, String ratio, int screenWidth, ImageVariantDto imageVariant ) {
+		if ( StringUtils.isBlank( imageId ) || context == null || ratio == null || imageVariant == null ) {
+			LOG.warn( "Null parameters not allowed -- imageId={}, context={}, ratio={}, imageVariant={}", imageId,
+			          context, ratio, imageVariant );
+		}
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "iid", imageId );
+		queryParams.set( "context", StringUtils.defaultString( context ) );
+		queryParams.set( "ratio", ratio );
+		queryParams.set( "width", Integer.toString( screenWidth ) );
+		addQueryParams( queryParams, imageVariant );
 		return buildUri( ENDPOINT_IMAGE_VIEW, queryParams ).toString();
 	}
 

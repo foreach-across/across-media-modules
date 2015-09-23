@@ -17,6 +17,11 @@ public class ImageVariantDto
 		this.boundaries = boundaries;
 	}
 
+	public ImageVariantDto( ImageTypeDto imageType, DimensionsDto boundaries ) {
+		this.imageType = imageType;
+		this.boundaries = boundaries;
+	}
+
 	public ImageTypeDto getImageType() {
 		return imageType;
 	}

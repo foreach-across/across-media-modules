@@ -6,8 +6,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -287,11 +290,17 @@ public class ImageMagickImageTransformerTest
 	}
 
 	@Configuration
+	@PropertySource( "classpath:integrationtests.properties" )
 	static class Config
 	{
 		@Bean
-		public ImageMagickImageTransformer imageMagickImageTransformer() {
-			return new ImageMagickImageTransformer( 3, "c:/Program Files/GraphicsMagick-1.3.19-Q8", true, true );
+		public ImageMagickImageTransformer imageMagickImageTransformer( @Value("${transformer.imagemagick.path}") String imageMagickPath ) {
+			return new ImageMagickImageTransformer( 3, imageMagickPath, true, true );
+		}
+
+		@Bean
+		public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+			return new PropertySourcesPlaceholderConfigurer();
 		}
 	}
 }

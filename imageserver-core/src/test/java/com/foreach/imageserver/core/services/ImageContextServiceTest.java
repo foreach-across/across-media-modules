@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
+import com.foreach.imageserver.math.AspectRatio;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -46,6 +47,12 @@ public class ImageContextServiceTest
 
 		imageResolutions.add( createImageResolution( 16, 45, 0 ) );
 		imageResolutions.add( createImageResolution( 17, 0, 45 ) );
+
+		imageResolutions.add( createImageResolution( 18, 200, 400 ) );
+		imageResolutions.add( createImageResolution( 19, 400, 800 ) );
+		imageResolutions.add( createImageResolution( 20, 800, 1600 ) );
+
+		imageResolutions.add( createImageResolution( 21, 640, 480 ) );
 
 		doReturn( imageResolutions ).when( imageResolutionManager ).getForContext( CONTEXT_ID );
 		ReflectionTestUtils.setField( contextService, "imageResolutionManager", imageResolutionManager );
@@ -125,6 +132,28 @@ public class ImageContextServiceTest
 	public void getImageResolution_NoWidthNoHeight() {
 		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 0, 0 );
 		assertNull( imageResolution );
+	}
+
+	@Test
+	public void getImageResolution_ForUnknownRatio() {
+		ImageResolution imageResolution =
+				contextService.getImageResolution( CONTEXT_ID, new AspectRatio( "16/3" ), 200 );
+		assertNull( imageResolution );
+	}
+
+	@Test
+	public void getImageResolution_ForKnownRatio() {
+		AspectRatio half = new AspectRatio( "1/2" );
+		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 100 );
+		assertEquals( 18, imageResolution.getId() );
+		imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 400 );
+		assertEquals( 19, imageResolution.getId() );
+		imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 401 );
+		assertEquals( 20, imageResolution.getId() );
+		imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 9000 );
+		assertEquals( 20, imageResolution.getId() );
+		imageResolution = contextService.getImageResolution( CONTEXT_ID, new AspectRatio( "4/3" ), 400 );
+		assertEquals( 21, imageResolution.getId() );
 	}
 
 	private ImageResolution createImageResolution( int id, int width, int height ) {

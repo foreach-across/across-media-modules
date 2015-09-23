@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.dto.*;
+import com.foreach.imageserver.math.AspectRatio;
 
 import java.util.*;
 
@@ -9,6 +10,10 @@ import java.util.*;
 public final class DtoUtil
 {
 	private DtoUtil() {
+	}
+
+	public static AspectRatio toBusiness( ImageAspectRatioDto imageAspectRatioDto ) {
+		return new AspectRatio( imageAspectRatioDto.getRatio() );
 	}
 
 	public static Crop toBusiness( CropDto dto ) {
@@ -84,6 +89,10 @@ public final class DtoUtil
 			default:
 				return null;
 		}
+	}
+
+	public static ImageAspectRatioDto toDto( AspectRatio aspectRatio ) {
+		return new ImageAspectRatioDto( aspectRatio.toString() );
 	}
 
 	public static ImageContextDto toDto( ImageContext context ) {

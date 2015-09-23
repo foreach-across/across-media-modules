@@ -8,6 +8,7 @@ import com.foreach.imageserver.core.rest.response.ViewImageResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.dto.ImageAspectRatioDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
@@ -108,6 +109,7 @@ public class ImageStreamingController
 	@RequestMapping(value = VIEW_PATH, method = RequestMethod.GET)
 	public void view( @RequestParam(value = "iid", required = true) String externalId,
 	                  @RequestParam(value = "context", required = true) String contextCode,
+	                  ImageAspectRatioDto aspectRatioDto,
 	                  ImageResolutionDto imageResolutionDto,
 	                  ImageVariantDto imageVariantDto,
 	                  String size,
@@ -121,6 +123,7 @@ public class ImageStreamingController
 			viewImageRequest.setImageVariantDto( imageVariantDto );
 
 			viewImageRequest.setImageResolutionDto( determineImageResolution( externalId, imageResolutionDto, size ) );
+			viewImageRequest.setImageAspectRatioDto( aspectRatioDto );
 
 			ViewImageResponse viewImageResponse = imageRestService.viewImage( viewImageRequest );
 

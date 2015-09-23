@@ -48,6 +48,9 @@ public class TestLocalImageServerClient
 
 		url = imageServerClient.imageUrl( "someid", "SITE", 1000, 0, ImageTypeDto.TIFF );
 		assertEquals( "http://localhost:8078/view?iid=someid&context=SITE&width=1000&imageType=TIFF", url );
+
+		url = imageServerClient.imageUrl( "internal:1", "TABLET", "3/2", 200, ImageTypeDto.JPEG, 100, 1000 );
+		assertEquals( "http://localhost:8078/view?iid=internal:1&context=TABLET&ratio=3/2&width=200&imageType=JPEG&boundaries.width=100&boundaries.height=1000", url );
 	}
 
 	@Test

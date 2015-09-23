@@ -249,7 +249,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	                         ParameterizedTypeReference<JsonResponse<T>> responseType ) {
 		URI url = buildUri( path, queryParams );
 		HttpEntity<?> request = new HttpEntity<MultiValueMap<?, ?>>( new LinkedMultiValueMap<String, String>() );
-		JsonResponse<T> body = null;
+		JsonResponse<T> body;
 		try {
 			ResponseEntity<JsonResponse<T>> response =
 					restTemplate.exchange( url, HttpMethod.GET, request, responseType );

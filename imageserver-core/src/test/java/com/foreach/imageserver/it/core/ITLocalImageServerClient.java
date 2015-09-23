@@ -18,7 +18,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -179,8 +181,13 @@ public class ITLocalImageServerClient
 
 	@Configuration
 	@AcrossTestWebConfiguration
+	@PropertySource( "classpath:integrationtests.properties" )
 	protected static class Config implements AcrossContextConfigurer
 	{
+
+		@Value("${transformer.imagemagick.path}")
+		String imageMagickPath;
+
 		@Override
 		public void configure( AcrossContext context ) {
 			context.addModule( imageServerCoreModule() );
@@ -196,7 +203,7 @@ public class ITLocalImageServerClient
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_ENABLED, true );
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GRAPHICSMAGICK, true );
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PATH,
-			                                   "c:/Program Files/GraphicsMagick-1.3.19-Q8" );
+			                                   imageMagickPath );
 
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.CREATE_LOCAL_CLIENT, true );
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_SERVER_URL, "http://somehost/img" );
