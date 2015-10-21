@@ -201,9 +201,10 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		queryParams.set( "iid", imageId );
 		queryParams.set( "context", context );
 
-		addQueryParams( queryParams, imageModifications );
+		MultiValueMap<String, String> bodyParts = new LinkedMultiValueMap<>();
+		addQueryParams( bodyParts, imageModifications );
 
-		httpGet( ENDPOINT_MODIFICATION_REGISTER_LIST, queryParams, ResponseTypes.OBJECT );
+		httpPost( ENDPOINT_MODIFICATION_REGISTER_LIST, queryParams, bodyParts, ResponseTypes.OBJECT );
 	}
 
 	@Override
@@ -270,7 +271,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	protected <T> T httpPost( String path,
 	                          MultiValueMap<String, String> queryParams,
-	                          MultiValueMap<String, Object> bodyParams,
+	                          MultiValueMap<String, ?> bodyParams,
 	                          ParameterizedTypeReference<JsonResponse<T>> responseType ) {
 		URI url = buildUri( path, queryParams );
 

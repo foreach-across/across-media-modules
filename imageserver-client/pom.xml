@@ -37,6 +37,12 @@
 			<version>4.0.9.RELEASE</version>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<!-- Register MappingJackson2HttpMessageConverter for MockRestServiceServer -->
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
