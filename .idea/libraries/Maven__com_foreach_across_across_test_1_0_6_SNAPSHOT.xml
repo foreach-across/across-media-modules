@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.foreach.across:across-test:1.0.6-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/across/across-test/1.0.6-SNAPSHOT/across-test-1.0.6-20151022.104124-2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/across/across-test/1.0.6-SNAPSHOT/across-test-1.0.6-20151022.104124-2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/foreach/across/across-test/1.0.6-SNAPSHOT/across-test-1.0.6-20151022.104124-2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
