@@ -13,7 +13,7 @@
           <element id="archive" name="imageserver-client-3.4-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-client" />
           </element>
-          <element id="library" level="project" name="Maven: across:across-core:1.1.1-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.foreach.across:across-core:1.1.1-SNAPSHOT" />
           <element id="library" level="project" name="Maven: com.foreach.libs:common-concurrent:0.12" />
           <element id="library" level="project" name="Maven: org.springframework:spring-context:4.1.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:4.1.4.RELEASE" />
@@ -25,7 +25,7 @@
           <element id="library" level="project" name="Maven: org.yaml:snakeyaml:1.14" />
           <element id="library" level="project" name="Maven: com.mattbertolini:liquibase-slf4j:1.2.1" />
           <element id="library" level="project" name="Maven: net.engio:mbassador:1.2.0" />
-          <element id="library" level="project" name="Maven: across:across-web:1.1.1-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.foreach.across:across-web:1.1.1-SNAPSHOT" />
           <element id="library" level="project" name="Maven: org.javassist:javassist:3.18.1-GA" />
           <element id="library" level="project" name="Maven: org.thymeleaf:thymeleaf-spring4:2.1.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.thymeleaf:thymeleaf:2.1.4.RELEASE" />
@@ -33,10 +33,10 @@
           <element id="library" level="project" name="Maven: org.unbescape:unbescape:1.1.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.1.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:4.1.4.RELEASE" />
-          <element id="library" level="project" name="Maven: across-standard-modules:across-ehcache:1.1.1-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:ehcache-module:1.0.0-SNAPSHOT" />
           <element id="library" level="project" name="Maven: net.sf.ehcache:ehcache:2.8.5" />
           <element id="library" level="project" name="Maven: org.springframework:spring-context-support:4.1.4.RELEASE" />
-          <element id="library" level="project" name="Maven: across-standard-modules:across-hibernate:1.1.1-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:across-hibernate-module:1.1.0-SNAPSHOT" />
           <element id="library" level="project" name="Maven: org.springframework.data:spring-data-jpa:1.7.1.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.data:spring-data-commons:1.9.1.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-aop:4.1.4.RELEASE" />
@@ -68,15 +68,21 @@
           <element id="archive" name="imageserver-admin-3.4-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-admin" />
           </element>
-          <element id="library" level="project" name="Maven: across-standard-modules:admin-web:1.1.1-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:admin-web-module:1.1.0-SNAPSHOT" />
           <element id="library" level="project" name="Maven: org.thymeleaf.extras:thymeleaf-extras-springsecurity3:2.1.1.RELEASE" />
-          <element id="library" level="project" name="Maven: across-standard-modules:user-module:1.1.1-SNAPSHOT" />
-          <element id="library" level="project" name="Maven: across-standard-modules:properties-module:1.1.1-SNAPSHOT" />
-          <element id="library" level="project" name="Maven: across-standard-modules:entity-module:1.1.1-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:user-module:1.1.0-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:properties-module:1.1.0-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:entity-module:1.1.0-SNAPSHOT" />
           <element id="library" level="project" name="Maven: org.hibernate:hibernate-validator:4.3.2.Final" />
           <element id="library" level="project" name="Maven: javax.validation:validation-api:1.0.0.GA" />
+          <element id="library" level="project" name="Maven: javax.el:javax.el-api:2.2.5" />
           <element id="library" level="project" name="Maven: org.apache.commons:commons-collections4:4.0" />
-          <element id="library" level="project" name="Maven: across-standard-modules:spring-security:1.1.1-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: com.mysema.querydsl:querydsl-apt:3.5.1" />
+          <element id="library" level="project" name="Maven: com.mysema.querydsl:querydsl-codegen:3.5.1" />
+          <element id="library" level="project" name="Maven: com.mysema.codegen:codegen:0.6.4" />
+          <element id="library" level="project" name="Maven: org.eclipse.jdt.core.compiler:ecj:4.3.1" />
+          <element id="library" level="project" name="Maven: javax.inject:javax.inject:1" />
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:spring-security-module:1.1.0-SNAPSHOT" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-core:3.2.5.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-web:3.2.5.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.security:spring-security-config:3.2.5.RELEASE" />
@@ -88,8 +94,7 @@
           <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.2" />
           <element id="library" level="project" name="Maven: commons-dbcp:commons-dbcp:1.4" />
           <element id="library" level="project" name="Maven: commons-pool:commons-pool:1.6" />
-          <element id="library" level="project" name="Maven: across-standard-modules:debug-web:1.1.1-SNAPSHOT" />
-          <element id="library" level="project" name="Maven: gigadot.rebound:rebound:0.2" />
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:debug-web-module:1.0.0-SNAPSHOT" />
           <element id="library" level="project" name="Maven: org.slf4j:log4j-over-slf4j:1.7.8" />
           <element id="library" level="project" name="Maven: org.springframework:spring-core:4.1.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-orm:4.1.4.RELEASE" />

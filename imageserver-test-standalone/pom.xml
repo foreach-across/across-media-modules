@@ -122,8 +122,8 @@
 			<artifactId>commons-dbcp</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>across-standard-modules</groupId>
-			<artifactId>debug-web</artifactId>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>debug-web-module</artifactId>
 		</dependency>
 	</dependencies>
 

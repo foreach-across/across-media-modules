@@ -11,16 +11,16 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>across-standard-modules</groupId>
-			<artifactId>admin-web</artifactId>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>admin-web-module</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>across-standard-modules</groupId>
+			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>user-module</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>across-standard-modules</groupId>
-			<artifactId>spring-security</artifactId>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>spring-security-module</artifactId>
 		</dependency>
 	</dependencies>
 </project>
