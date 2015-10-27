@@ -14,13 +14,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.mockito.Matchers.anyObject;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(loader = MockedLoader.class, classes = TestImageStreamingController.Config.class)
@@ -44,7 +45,7 @@ public class TestImageStreamingController
 		HttpServletResponse response = mock( HttpServletResponse.class );
 		when( response.getOutputStream() ).thenThrow( new IOException() );
 		viewImageResponse.setImageSource( streamImageSource );
-		when( imageRestService.renderImage( (ViewImageRequest) anyObject() ) ).thenReturn( viewImageResponse );
+		when( imageRestService.renderImage( any( ViewImageRequest.class ) ) ).thenReturn( viewImageResponse );
 		      controller.render( "abc", "id", mock( ImageModificationDto.class ), mock(
 				      ImageVariantDto.class ), response );
 		verify( response ).setContentType( "text/plain" );
@@ -52,6 +53,23 @@ public class TestImageStreamingController
 		verify( response ).setHeader( ImageStreamingController.AKAMAI_EDGE_CONTROL_HEADER,
 		                              ImageStreamingController.AKAMAI_NO_STORE );
 	}
+
+	@Test
+	public void testThatExpiresHeaderIsCorrect() throws Exception {
+		ViewImageResponse viewImageResponse = new ViewImageResponse(  );
+		StreamImageSource streamImageSource = new StreamImageSource( ImageType.JPEG, new byte[] {1} );
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		viewImageResponse.setImageSource( streamImageSource );
+		when( imageRestService.renderImage( any( ViewImageRequest.class ) ) ).thenReturn( viewImageResponse );
+		controller.render( "abc", "id", mock( ImageModificationDto.class ), mock(
+				ImageVariantDto.class ), response );
+		assertEquals( "max-age=30", response.getHeader( "Cache-Control" ) );
+		assertNull( response.getHeader( ImageStreamingController.AKAMAI_EDGE_CONTROL_HEADER ) );
+		String expiresHeader = response.getHeader( "Expires" );
+
+		assertTrue( expiresHeader.contains( "GMT" ) );
+	}
+
 
 	@Configuration
 	static class Config
