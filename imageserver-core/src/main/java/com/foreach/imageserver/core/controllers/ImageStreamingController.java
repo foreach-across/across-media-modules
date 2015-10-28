@@ -15,6 +15,8 @@ import com.foreach.imageserver.dto.ImageVariantDto;
 import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 @ImageServerController
 public class ImageStreamingController
@@ -37,6 +41,7 @@ public class ImageStreamingController
 	public static final String RENDER_PATH = "/api/image/render";
 
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStreamingController.class );
+	private static final FastDateFormat fastDateFormat = FastDateFormat.getInstance( "EEE, dd MMM yyyy HH:mm:ss zzz", TimeZone.getTimeZone("GMT" ), Locale.US );
 
 	// explicit logging of requested resolutions that do not exist
 	private static final Logger LOG_RESOLUTION_NOT_FOUND = LoggerFactory.getLogger( ImageResolution.class );
@@ -198,8 +203,7 @@ public class ImageStreamingController
 
 		if ( maxCacheAgeInSeconds > 0 ) {
 			response.setHeader( "Cache-Control", String.format( "max-age=%d", maxCacheAgeInSeconds ) );
-			long now = new Date().getTime();
-			response.setHeader( "Expires", String.valueOf( now + maxCacheAgeInSeconds * 1000 ) );
+			response.setHeader( "Expires", fastDateFormat.format( DateUtils.addSeconds( new Date(), maxCacheAgeInSeconds ) ) );
 		}
 		if ( !"".equals( akamaiCacheMaxAge ) ) {
 			response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_CACHE_MAX_AGE + akamaiCacheMaxAge );
