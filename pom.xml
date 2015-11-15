@@ -28,7 +28,7 @@
 
 	<groupId>com.foreach.across.modules</groupId>
 	<artifactId>file-manager-module</artifactId>
-	<version>1.0.0.RELEASE</version>
+	<version>1.0.1-SNAPSHOT</version>
 
 	<repositories>
 		<repository>

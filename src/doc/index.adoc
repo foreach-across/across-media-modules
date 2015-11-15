@@ -1,13 +1,13 @@
 = FileManagerModule
 Arne Vandamme
-1.0.0.RELEASE
+1.0.1-SNAPSHOT
 :toc: left
 :sectanchors:
-:module-version: 1.0.0.RELEASE
+:module-version: 1.0.1-SNAPSHOT
 :module-name: FileManagerModule
 :module-artifact: file-manager-module
 :module-url: https://foreach.atlassian.net/wiki/display/AX/FileManagerModule
-:javadoc-filerepository: http://across.foreach.be/docs/across-standard-modules/FileManagerModule/1.0.0.RELEASE/javadoc/index.html?com/foreach/across/modules/filemanager/services/FileRepository.html
+:javadoc-filerepository: http://across.foreach.be/docs/across-standard-modules/FileManagerModule/1.0.1-SNAPSHOT/javadoc/index.html?com/foreach/across/modules/filemanager/services/FileRepository.html
 
 [copyright,verbatim]
 --
@@ -63,6 +63,9 @@ Module website: {module-url}
 
 == What's new in this version?
 :numbered!:
+=== 1.0.1-SNAPSHOT
+tbd
+
 === 1.0.0.RELEASE
 Initial public release available on http://search.maven.org/[Maven central].
 
