@@ -24,8 +24,12 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
-			<outputDirectory>..</outputDirectory>
-			<directory>target/site</directory>
+			<directory>${project.basedir}/target/apidocs</directory>
+			<outputDirectory>${project.version}/javadoc</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/target/site</directory>
+			<outputDirectory>.</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly>

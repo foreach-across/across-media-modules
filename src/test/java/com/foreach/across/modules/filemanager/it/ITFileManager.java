@@ -64,7 +64,8 @@ public class ITFileManager
 		assertFalse( defaultRep.getAsFile( file ).exists() );
 
 		FileRepository moveIt = fileRepositoryRegistry.getRepository( "move-it" );
-		FileDescriptor secondMoved = new FileDescriptor( moveIt.getRepositoryId(), file.getFolderId(), firstMoved.getFileId() );
+		FileDescriptor secondMoved = new FileDescriptor( moveIt.getRepositoryId(), file.getFolderId(),
+		                                                 firstMoved.getFileId() );
 		fileManager.move( firstMoved, secondMoved );
 		fileManager.exists( secondMoved );
 		assertTrue( moveIt.getAsFile( secondMoved ).exists() );

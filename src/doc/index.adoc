@@ -1,0 +1,129 @@
+= FileManagerModule
+Arne Vandamme
+1.0.0.RELEASE
+:toc: left
+:sectanchors:
+:module-version: 1.0.0.RELEASE
+:module-name: FileManagerModule
+:module-artifact: file-manager-module
+:module-url: https://foreach.atlassian.net/wiki/display/AX/FileManagerModule
+:javadoc-filerepository: http://across.foreach.be/docs/across-standard-modules/FileManagerModule/1.0.0.RELEASE/javadoc/index.html?com/foreach/across/modules/filemanager/services/FileRepository.html
+
+[copyright,verbatim]
+--
+Copyright (C) 2014-2015 +
+[small]#Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.#
+--
+
+[abstract]
+== About
+The {module-name} provides an abstraction layer for storing and retrieving files in an efficient way.
+Files are uniquely identified using a <<file-descriptor,FileDescriptor>> and stored in a named <<file-repository,FileRepository>>.
+Clients access all files and repositories through the central <<file-manager,FileManager>> bean.
+
+By default the {module-name} sets up local directory based file repositories and requires very little configuration.
+
+Module website: {module-url}
+
+:numbered:
+== General information
+
+=== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>{module-artifact}</artifactId>
+			<version>{module-version}</version>
+		</dependency>
+	</dependencies>
+----
+
+=== Module dependencies
+{module-name} does not have any dependencies on other modules.
+
+=== Module settings
+
+|===
+|Property |Type |Description |Default
+
+|fileManagerModule.tempFolder
+|`String`
+|Default directory for temporary files. +
+|_$java.io.tmpdir_
+
+|fileManagerModule.localRepositoriesRoot
+|`String.class`
+|Root directory in which local repositories will be created.
+|_null_
+
+|===
+
+== What's new in this version?
+:numbered!:
+=== 1.0.0.RELEASE
+Initial public release available on http://search.maven.org/[Maven central].
+
+:numbered:
+== Default configuration
+The default configuration of the {module-name} will automatically create file based repositories in a single root folder (controller by the *fileManagerModule.localRepositoriesRoot* property).
+A new repository will be created when it is accessed for the first time.
+If no explicit repository id is specified for file access, *default* will be used.
+
+== Core classes
+[[file-descriptor]]
+=== FileDescriptor
+Files are identified by a unique `FileDescriptor` that determines in which backing `FileRepository` a file should be saved or from which it should be retrieved.
+A `FileDescriptor` has a *URI* property that is a globally unique `String` version of the descriptor.
+Any `FileDescriptor` can be serialized to and from its URI.
+
+[[file-repository]]
+=== FileRepository
+A `FileRepository` is identified by a unique *repository id*.
+The first part of a `FileDescriptor` will always contain the repository id.
+How a `FileRepository` stores its files is implementation dependent.
+This could be disk-based storage, database backed or any form of cloud storage.
+The purpose of the `FileManager`, `FileDescriptor` and `FileRepository` interfaces is to provide a flexible way for modules to interact with files, without knowing how or where they are actually persisted.
+
+[[file-manager]]
+=== FileManager
+The `FileManager` service bean (exposed) is the facade to access any `FileRepository`.
+It is the central interface that clients should use for accessing files.
+Using it is pretty straightforward, the interface methods are well-documented and fairly self-explanatory.
+
+.Example storing a file
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+// Create a new temporary file
+File tempFile = fileManager.createTempFile();
+// Write data to the temporary file
+writeUploadedImage( tempFile );
+// Move the file into the 'images' repository (this deletes the temp file)
+FileDescriptor fd = fileManager.moveInto( "images", tempFile );
+// Store the unique file descriptor in database
+imageRecord.setFileUri( fd.getUri() );
+----
+
+NOTE: Because a `FileRepository` can have different types of implementations, modify operations on `java.io.File` instances might be limited.
+ To ensure maximum compatibility intermediate stages (using temporary files) or the `InputSteam`/`OutputStream` based methods should be used.
+ See the {javadoc-filerepository}[`FileRepository` javadoc] for more details.
+
+== Registering a FileRepository
+Registering your own `FileRepository` can be done through the (exposed) `FileRepositoryRegistry` bean.
+
+The default implementation will wrap all repositories in a `FileRepositoryDelegate`.
+Consumers can request a hard reference to a specific `FileRepository` using the `FileManager#getRepository()` methods.
+Because they actually get a `FileRepositoryDelegate` reference, the actual implementation can be modified at runtime through the repository registry.
+
+== FileRepository implementations
+The {module-name} has the following `FileRepository` implementations:
+
+=== LocalFileRepository
+Simple implementation that stores all files a single root directory.
+
+If the `pathGenerator` property is set, the `PathGenerator` instance will be used to generate a sub-directory structure to store the files in.
+  The `DateFormatPathGenerator` is a default implementation that uses the current date for creating sub-directories.
+  Using a `PathGenerator` can help distribute the physical files, avoiding OS performance problems when there are too many files in a single directory.

@@ -1,30 +1,16 @@
-# Across FileManagerModule
+## FileManagerModule
+Please refer to the [module wiki][] for all information regarding documentation, issue tracking and support.
 
-## Description
-The FileManagerModule provides a central access point for managing different file repositories.  Other modules
-persisting files using the FileManager services can get their file repositories managed through this module,
-without the need for knowing inner working of file peristence.
+### Contributing
+Contributions in the form of pull requests are greatly appreciated.  Please refer to the [contributor guidelines][] for more details. 
 
-## Features
-* Simple file system based repository
+### Building from source
+The source can be built using [Maven][] with JDK 8.
 
-TODO:
+### License
+Licensed under version 2.0 of the [Apache License][].
 
-* Database backed storage - allowing easy migration of files or subsets of files
-* Amazon S3 storage support
-* Hashbased optimization of unique files
-
-## Dependencies
-
-## Settings
-temp folder
-default factory root
-## Usage
-### Quick start
-set property for default factory, set property for temp folder
-### Registering a FileRepository
-register a filerepository from another module, return the delegate
-### Defining a FileRepositoryFactory
-register a factory for autocreation of file repository
-
-
+[module wiki]: https://foreach.atlassian.net/wiki/display/AX/FileManagerModule
+[contributor guidelines]: https://foreach.atlassian.net/wiki/display/AX/Contributor+guidelines
+[Maven]: http://maven.apache.org
+[Apache License]: http://www.apache.org/licenses/LICENSE-2.0

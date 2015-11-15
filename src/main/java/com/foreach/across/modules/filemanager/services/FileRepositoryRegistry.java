@@ -50,7 +50,8 @@ public interface FileRepositoryRegistry
 	/**
 	 * Adds a FileRepository to the registry.  This will replace the currently registered repository with that name.
 	 * This method can return a different instance of the FileRepository that is supposed to be used instead of the
-	 * original passed in.  By
+	 * original passed in.  The default {@link FileManagerImpl} wraps provided {@link FileRepository} instances
+	 * in a {@link FileRepositoryDelegate} so they can be replaced at runtime.
 	 *
 	 * @param fileRepository FileRepository instance.
 	 * @see FileRepositoryDelegate
