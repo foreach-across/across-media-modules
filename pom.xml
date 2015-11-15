@@ -28,7 +28,7 @@
 
 	<groupId>com.foreach.across.modules</groupId>
 	<artifactId>file-manager-module</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0.RELEASE</version>
 
 	<repositories>
 		<repository>
@@ -54,7 +54,7 @@
 	<developers>
 		<developer>
 			<name>Arne Vandamme</name>
-			<email>arne@foreach.be</email>
+			<email>arne at foreach.be</email>
 			<organization>Foreach</organization>
 			<organizationUrl>http://www.foreach.be</organizationUrl>
 		</developer>
