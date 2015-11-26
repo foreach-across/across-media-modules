@@ -5,19 +5,19 @@
 	<parent>
 		<groupId>com.foreach.imageserver</groupId>
 		<artifactId>imageserver-platform</artifactId>
-		<version>3.4-SNAPSHOT</version>
+		<version>3.4.RELEASE</version>
 	</parent>
 
 	<artifactId>imageserver-core</artifactId>
 	<name>ImageServer Core Module</name>
-	<version>3.4-SNAPSHOT</version>
+	<version>3.4.RELEASE</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.foreach.imageserver</groupId>
 			<artifactId>imageserver-client</artifactId>
-			<version>3.4-SNAPSHOT</version>
+			<version>3.4.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across</groupId>

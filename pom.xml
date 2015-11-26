@@ -38,7 +38,7 @@
 	<groupId>com.foreach.imageserver</groupId>
 	<artifactId>imageserver-platform</artifactId>
 	<name>ImageServer Platform</name>
-	<version>3.4-SNAPSHOT</version>
+	<version>3.4.RELEASE</version>
 	<packaging>pom</packaging>
 
 	<modules>
