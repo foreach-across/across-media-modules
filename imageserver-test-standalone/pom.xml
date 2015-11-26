@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>imageserver-platform</artifactId>
 		<groupId>com.foreach.imageserver</groupId>
-		<version>3.4.RELEASE</version>
+		<version>3.5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -92,7 +92,7 @@
 		<dependency>
 			<groupId>com.foreach.imageserver</groupId>
 			<artifactId>imageserver-core</artifactId>
-			<version>3.4.RELEASE</version>
+			<version>3.5-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.hibernate</groupId>
@@ -103,7 +103,7 @@
 		<dependency>
 			<groupId>com.foreach.imageserver</groupId>
 			<artifactId>imageserver-admin</artifactId>
-			<version>3.4.RELEASE</version>
+			<version>3.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.libs</groupId>
