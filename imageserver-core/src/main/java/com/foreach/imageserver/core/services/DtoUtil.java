@@ -86,6 +86,8 @@ public final class DtoUtil
 				return ImageType.PDF;
 			case TIFF:
 				return ImageType.TIFF;
+			case BMP:
+				return ImageType.BMP;
 			default:
 				return null;
 		}
