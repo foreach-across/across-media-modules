@@ -86,6 +86,22 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		request.setImageModificationDto( imageModificationDto );
 		request.setImageVariantDto( imageVariant );
 
+		return imageStream( request );
+	}
+
+	@Override
+	public InputStream imageStream( byte[] imageData,
+	                                ImageModificationDto imageModificationDto,
+	                                ImageVariantDto imageVariant ) {
+		ViewImageRequest request = new ViewImageRequest();
+		request.setImageData( imageData );
+		request.setImageModificationDto( imageModificationDto );
+		request.setImageVariantDto( imageVariant );
+
+		return imageStream( request );
+	}
+
+	private InputStream imageStream( ViewImageRequest request ) {
 		ViewImageResponse response = imageRestService.renderImage( request );
 
 		if ( response.isImageDoesNotExist() ) {

@@ -22,6 +22,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Still to verify and/or implement:
@@ -220,7 +221,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 */
 
 		String fileName = constructFileName( image );
-		return originalsFolder.resolve( image.getOriginalPath() ).resolve( fileName );
+		Path folder = image.isTemporaryImage() ? tempFolder : originalsFolder.resolve( image.getOriginalPath() );
+		return folder.resolve( fileName );
 	}
 
 	private Path getTargetPath( Image image,
@@ -277,8 +279,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	private String constructFileName( Image image ) {
-
-		return String.valueOf( image.getId() ) + '.' + image.getImageType().getExtension();
+		String name = image.isTemporaryImage() ? image.getExternalId() : String.valueOf( image.getId() );
+		return name + '.' + image.getImageType().getExtension();
 	}
 
 	private String variantFileNamePrefix( long imageId ) {

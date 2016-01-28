@@ -74,6 +74,8 @@ public interface ImageServerClient
 
 	InputStream imageStream( String imageId, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant );
 
+	InputStream imageStream( byte[] imageData, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant );
+
 	ImageInfoDto loadImage( String imageId, byte[] imageBytes );
 
 	ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate );

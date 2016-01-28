@@ -179,6 +179,22 @@ public class ITLocalImageServerClient
 		assertEquals( dtoWithSource, modifications.iterator().next() );
 	}
 
+	@Test
+	public void renderProvidedImage() throws IOException {
+		byte[] imageData =
+				IOUtils.toByteArray(
+						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+
+		InputStream renderedImage = imageServerClient.imageStream( imageData, new ImageModificationDto( 100, 100 ),
+		                                                           new ImageVariantDto( ImageTypeDto.PNG ) );
+
+		byte[] scaledDate = IOUtils.toByteArray( renderedImage );
+
+		ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
+		assertEquals( new DimensionsDto( 100, 100 ), modifiedUpload.getDimensionsDto() );
+		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+	}
+
 	@Configuration
 	@AcrossTestWebConfiguration
 	@PropertySource( "classpath:integrationtests.properties" )

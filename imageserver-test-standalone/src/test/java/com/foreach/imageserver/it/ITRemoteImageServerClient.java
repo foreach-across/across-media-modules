@@ -165,4 +165,20 @@ public class ITRemoteImageServerClient
 		assertTrue( hasResolution( resolutions, 800, 600, true ) );
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
 	}
+
+	@Test
+	public void renderProvidedImage() throws IOException {
+		byte[] imageData =
+				IOUtils.toByteArray(
+						getClass().getClassLoader().getResourceAsStream( "poppy_flower_nature.jpg" ) );
+
+		InputStream renderedImage = imageServerClient.imageStream( imageData, new ImageModificationDto( 100, 100 ),
+		                                                           new ImageVariantDto( ImageTypeDto.PNG ) );
+
+		byte[] scaledDate = IOUtils.toByteArray( renderedImage );
+
+		ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
+		assertEquals( new DimensionsDto( 100, 100 ), modifiedUpload.getDimensionsDto() );
+		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+	}
 }

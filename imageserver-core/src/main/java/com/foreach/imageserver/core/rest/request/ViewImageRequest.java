@@ -14,6 +14,7 @@ public class ViewImageRequest extends ImageRequest
 	private ImageModificationDto imageModificationDto;
 	private ImageVariantDto imageVariantDto;
 	private ImageAspectRatioDto imageAspectRatioDto;
+	private byte[] imageData;
 
 	public ImageResolutionDto getImageResolutionDto() {
 		return imageResolutionDto;
@@ -45,5 +46,13 @@ public class ViewImageRequest extends ImageRequest
 
 	public void setImageAspectRatioDto( ImageAspectRatioDto imageAspectRatioDto ) {
 		this.imageAspectRatioDto = imageAspectRatioDto;
+	}
+
+	public byte[] getImageData() {
+		return imageData;
+	}
+
+	public void setImageData( byte[] imageData ) {
+		this.imageData = imageData;
 	}
 }

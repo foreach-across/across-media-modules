@@ -22,6 +22,13 @@ public interface ImageService
 	Image saveImage( String externalId, byte[] imageBytes, Date imageDate ) throws ImageStoreException;
 
 	/**
+	 * Creates a temporary Image object containing ImageAttributes and the image data.
+	 * @param imageBytes the image
+	 * @return image
+	 */
+	Image createImage( byte[] imageBytes );
+
+	/**
 	 * Save a new image modification for an image.
 	 * <p>
 	 * <strong>WARNING:</strong> This will remove the existing variant images once done.  When saving more than one

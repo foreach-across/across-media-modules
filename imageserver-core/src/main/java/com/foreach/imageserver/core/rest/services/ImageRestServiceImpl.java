@@ -6,10 +6,7 @@ import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.request.RegisterModificationRequest;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.*;
-import com.foreach.imageserver.core.services.CropGeneratorUtil;
-import com.foreach.imageserver.core.services.DtoUtil;
-import com.foreach.imageserver.core.services.ImageContextService;
-import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.*;
@@ -51,7 +48,7 @@ public class ImageRestServiceImpl implements ImageRestService
 	public ViewImageResponse renderImage( ViewImageRequest request ) {
 		ViewImageResponse response = new ViewImageResponse( request );
 
-		Image image = imageService.getByExternalId( request.getExternalId() );
+		Image image = getImage( request );
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
@@ -72,6 +69,14 @@ public class ImageRestServiceImpl implements ImageRestService
 		}
 
 		return response;
+	}
+
+	private Image getImage( ViewImageRequest request ) {
+		if( StringUtils.isNotBlank( request.getExternalId() ) ) {
+			return imageService.getByExternalId( request.getExternalId() );
+		}
+
+		return imageService.createImage( request.getImageData() );
 	}
 
 	@Override

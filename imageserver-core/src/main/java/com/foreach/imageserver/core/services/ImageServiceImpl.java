@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
@@ -73,19 +74,36 @@ public class ImageServiceImpl implements ImageService
 			          LogHelper.flatten( externalId, imageBytes, imageDate ) );
 		}
 
-		ImageAttributes imageAttributes = imageTransformService.getAttributes( new ByteArrayInputStream( imageBytes ) );
-
-		Image image = new Image();
-		image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
+		Image image = loadImageData( imageBytes );
 		image.setExternalId( externalId );
 		image.setDateCreated( imageDate );
-		image.setDimensions( imageAttributes.getDimensions() );
-		image.setImageType( imageAttributes.getType() );
-		image.setFileSize( imageBytes != null ? imageBytes.length : 0 );
+
 		imageManager.insert( image );
 
 		imageStoreService.storeOriginalImage( image, imageBytes );
 
+		return image;
+	}
+
+	@Override
+	public Image createImage( byte[] imageBytes ) {
+		Image image = loadImageData( imageBytes );
+		image.setExternalId( UUID.randomUUID().toString() );
+		image.setTemporaryImage( true );
+		imageStoreService.storeOriginalImage( image, imageBytes );
+		return image;
+	}
+
+	private  Image loadImageData( byte[] imageBytes ) {
+		Assert.notNull( imageBytes );
+
+		ImageAttributes imageAttributes = imageTransformService.getAttributes( new ByteArrayInputStream( imageBytes ) );
+
+		Image image = new Image();
+		image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
+		image.setDimensions( imageAttributes.getDimensions() );
+		image.setImageType( imageAttributes.getType() );
+		image.setFileSize( imageBytes.length );
 		return image;
 	}
 

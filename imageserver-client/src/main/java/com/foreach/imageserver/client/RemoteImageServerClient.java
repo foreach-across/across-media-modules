@@ -115,6 +115,26 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	@Override
+	public InputStream imageStream( byte[] imageData,
+	                                ImageModificationDto imageModificationDto,
+	                                ImageVariantDto imageVariant ) {
+		if ( imageData == null || imageModificationDto == null || imageVariant == null ) {
+			LOG.warn(
+					"Null parameters not allowed - ImageServerClientImpl#imageStream: imageData={}, imageModificationDto={}, imageResolution={}, imageVariant={}",
+					LogHelper.flatten( imageData == null, imageModificationDto, imageVariant ) );
+		}
+
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		addQueryParams( queryParams, imageModificationDto );
+		addQueryParams( queryParams, imageVariant );
+
+		MultiValueMap<String, Object> bodyParts = getImageDataAsBody( imageData );
+
+		return new ByteArrayInputStream( httpPost( ENDPOINT_IMAGE_RENDER, queryParams, bodyParts, byte[].class ) );
+	}
+
+	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes ) {
 		return loadImage( imageId, imageBytes, null );
 	}
@@ -135,14 +155,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 			queryParams.set( "imageTimestamp", Long.toString( imageDate.getTime() ) );
 		}
 
-		MultiValueMap<String, Object> bodyParts = new LinkedMultiValueMap<>();
-		bodyParts.set( "imageData", new ByteArrayResource( imageBytes )
-		{
-			@Override
-			public String getFilename() {
-				return "imageData";
-			}
-		} );
+		MultiValueMap<String, Object> bodyParts = getImageDataAsBody( imageBytes );
 
 		try {
 			return httpPost( ENDPOINT_IMAGE_LOAD, queryParams, bodyParts, ResponseTypes.IMAGE_INFO );
@@ -153,6 +166,18 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 					LogHelper.flatten( imageId, imageBytes.length, imageDate ) );
 			throw e;
 		}
+	}
+
+	private MultiValueMap<String, Object> getImageDataAsBody( final byte[] imageBytes ) {
+		MultiValueMap<String, Object> bodyParts = new LinkedMultiValueMap<>();
+		bodyParts.set( "imageData", new ByteArrayResource( imageBytes )
+		{
+			@Override
+			public String getFilename() {
+				return "imageData";
+			}
+		} );
+		return bodyParts;
 	}
 
 	@Override
@@ -267,6 +292,20 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		}
 
 		return body.getResult();
+	}
+
+	protected <T> T httpPost( String path,
+	                          MultiValueMap<String, String> queryParams,
+	                          MultiValueMap<String, ?> bodyParams,
+	                          Class<T> responseType ) {
+		URI url = buildUri( path, queryParams );
+
+		HttpEntity<?> request =
+				new HttpEntity<MultiValueMap<?, ?>>( bodyParams );
+
+		ResponseEntity<T> response = restTemplate.exchange( url, HttpMethod.POST, request, responseType );
+
+		return response.getBody();
 	}
 
 	protected <T> T httpPost( String path,
