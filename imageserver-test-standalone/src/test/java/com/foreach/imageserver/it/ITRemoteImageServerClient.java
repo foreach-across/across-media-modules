@@ -1,6 +1,7 @@
 package com.foreach.imageserver.it;
 
 import com.foreach.imageserver.client.ImageServerClient;
+import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.*;
 import org.apache.commons.io.IOUtils;
@@ -69,6 +70,56 @@ public class ITRemoteImageServerClient
 		modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
 		assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
 		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+
+		// Delete existing
+		assertTrue( imageServerClient.deleteImage( externalId ) );
+		assertFalse( imageServerClient.imageInfo( externalId ).isExisting() );
+		assertFalse( imageServerClient.imageExists( externalId ) );
+
+		assertFalse( imageServerClient.deleteImage( externalId ) );
+
+		imageServerClient.loadImage( externalId, imageData, date );
+		assertTrue( imageServerClient.imageExists( externalId ) );
+	}
+
+	@Test
+	public void replacingImage() throws Exception {
+		String externalId = UUID.randomUUID().toString();
+		byte[] imageOne =
+				IOUtils.toByteArray( getClass().getClassLoader().getResourceAsStream( "poppy_flower_nature.jpg" ) );
+		byte[] imageTwo =
+				IOUtils.toByteArray( getClass().getClassLoader().getResourceAsStream( "transparentPngToPng.png" ) );
+
+		ImageInfoDto createdInfo = imageServerClient.loadImage( externalId, imageOne );
+		assertTrue( createdInfo.isExisting() );
+		assertEquals( externalId, createdInfo.getExternalId() );
+		assertEquals( new DimensionsDto( 1920, 1080 ), createdInfo.getDimensionsDto() );
+		assertEquals( ImageTypeDto.JPEG, createdInfo.getImageType() );
+
+		ImageInfoDto replaced;
+		boolean failed = false;
+
+		try {
+			imageServerClient.loadImage( externalId, imageTwo );
+		}
+		catch ( ImageServerException ise ) {
+			failed = true;
+		}
+
+		assertTrue( failed );
+
+		replaced = imageServerClient.loadImage( externalId, imageTwo, true );
+		assertNotNull( replaced );
+		assertTrue( replaced.isExisting() );
+		assertEquals( externalId, replaced.getExternalId() );
+		assertEquals( new DimensionsDto( 100, 100 ), replaced.getDimensionsDto() );
+		assertEquals( ImageTypeDto.PNG, replaced.getImageType() );
+
+		ImageInfoDto fetched = imageServerClient.imageInfo( externalId );
+		assertNotNull( fetched );
+		assertTrue( fetched.isExisting() );
+		assertEquals( externalId, fetched.getExternalId() );
+		assertEquals( new DimensionsDto( 100, 100 ), fetched.getDimensionsDto() );
 	}
 
 	@Test

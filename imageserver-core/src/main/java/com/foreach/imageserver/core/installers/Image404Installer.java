@@ -17,7 +17,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.util.Date;
 
 @Installer(description = "Installs the 404 dummy image", phase = InstallerPhase.AfterContextBootstrap, version = 1,
-           runCondition = InstallerRunCondition.AlwaysRun)
+		runCondition = InstallerRunCondition.AlwaysRun)
 public class Image404Installer
 {
 	private static final Logger LOG = LoggerFactory.getLogger( Image404Installer.class );
@@ -41,7 +41,7 @@ public class Image404Installer
 
 				byte[] img =
 						IOUtils.toByteArray( new ClassPathResource( "/images/404-1280x960.jpg" ).getInputStream() );
-				imageService.saveImage( fallbackImageKey, img, new Date() );
+				imageService.saveImage( fallbackImageKey, img, new Date(), false );
 			}
 		}
 	}

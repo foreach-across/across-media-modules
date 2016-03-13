@@ -19,10 +19,12 @@ public interface ImageService
 
 	Image getByExternalId( String externalId );
 
-	Image saveImage( String externalId, byte[] imageBytes, Date imageDate ) throws ImageStoreException;
+	Image saveImage( String externalId, byte[] imageBytes, Date imageDate,
+	                 boolean replaceExisting ) throws ImageStoreException;
 
 	/**
 	 * Creates a temporary Image object containing ImageAttributes and the image data.
+	 *
 	 * @param imageBytes the image
 	 * @return image
 	 */
@@ -36,7 +38,7 @@ public interface ImageService
 	 * </p>
 	 *
 	 * @param modification to register
-	 * @param image to add the modification to
+	 * @param image        to add the modification to
 	 */
 	void saveImageModification( ImageModification modification, Image image );
 
@@ -44,7 +46,7 @@ public interface ImageService
 	 * Registers a list of image modifications for an image.  This will remove the existing variant images once done.
 	 *
 	 * @param modifications to register
-	 * @param image to add the modifications to
+	 * @param image         to add the modifications to
 	 */
 	void saveImageModifications( List<ImageModification> modifications, Image image );
 
@@ -68,4 +70,12 @@ public interface ImageService
 	Collection<ImageResolution> getAllResolutions();
 
 	void saveImageResolution( ImageResolution resolution );
+
+	/**
+	 * Delete the image registered under the external id.
+	 *
+	 * @param externalId image should be registered under
+	 * @return true if image was deleted, false if not found
+	 */
+	boolean deleteImage( String externalId );
 }

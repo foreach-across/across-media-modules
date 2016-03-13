@@ -11,6 +11,7 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.dto.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -115,6 +116,58 @@ public class ITLocalImageServerClient
 		modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
 		assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
 		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+
+		// Delete existing
+		assertTrue( imageServerClient.deleteImage( externalId ) );
+		assertFalse( imageServerClient.imageInfo( externalId ).isExisting() );
+		assertFalse( imageServerClient.imageExists( externalId ) );
+
+		assertFalse( imageServerClient.deleteImage( externalId ) );
+
+		imageServerClient.loadImage( externalId, imageData, date );
+		assertTrue( imageServerClient.imageExists( externalId ) );
+	}
+
+	@Test
+	public void replacingImage() throws Exception {
+		String externalId = UUID.randomUUID().toString();
+		byte[] imageOne =
+				IOUtils.toByteArray(
+						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+		byte[] imageTwo =
+				IOUtils.toByteArray(
+						getClass().getClassLoader().getResourceAsStream( "images/transparentPngToPng.png" ) );
+
+		ImageInfoDto createdInfo = imageServerClient.loadImage( externalId, imageOne );
+		assertTrue( createdInfo.isExisting() );
+		assertEquals( externalId, createdInfo.getExternalId() );
+		assertEquals( new DimensionsDto( 1920, 1080 ), createdInfo.getDimensionsDto() );
+		assertEquals( ImageTypeDto.JPEG, createdInfo.getImageType() );
+
+		ImageInfoDto replaced;
+		boolean failed = false;
+
+		try {
+			imageServerClient.loadImage( externalId, imageTwo );
+		}
+		catch ( ImageStoreException ise ) {
+			failed = true;
+		}
+
+		assertTrue( failed );
+
+		replaced = imageServerClient.loadImage( externalId, imageTwo, true );
+		assertNotNull( replaced );
+		assertTrue( replaced.isExisting() );
+		assertEquals( externalId, replaced.getExternalId() );
+		assertEquals( new DimensionsDto( 100, 100 ), replaced.getDimensionsDto() );
+		assertEquals( ImageTypeDto.PNG, replaced.getImageType() );
+
+		ImageInfoDto fetched = imageServerClient.imageInfo( externalId );
+		assertNotNull( fetched );
+		assertTrue( fetched.isExisting() );
+		assertEquals( externalId, fetched.getExternalId() );
+		assertEquals( new DimensionsDto( 100, 100 ), fetched.getDimensionsDto() );
 	}
 
 	@Test
@@ -197,7 +250,7 @@ public class ITLocalImageServerClient
 
 	@Configuration
 	@AcrossTestWebConfiguration
-	@PropertySource( "classpath:integrationtests.properties" )
+	@PropertySource("classpath:integrationtests.properties")
 	protected static class Config implements AcrossContextConfigurer
 	{
 

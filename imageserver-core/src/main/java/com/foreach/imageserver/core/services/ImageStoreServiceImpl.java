@@ -22,13 +22,12 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Still to verify and/or implement:
  * - Files.createTempPath needs to be atomic.
  * - Files.copy with option REPLACE_EXISTING should never cause the temp file to not exist.
- * <p/>
+ * <p>
  * TODO Resolve the above.
  */
 @Service
@@ -211,6 +210,20 @@ public class ImageStoreServiceImpl implements ImageStoreService
 			LOG.error( "Encountered failure while removing variants - ImageStoreServiceImpl#removeVariants: imageId={}",
 			           imageId, e );
 			throw new ImageStoreException( e );
+		}
+	}
+
+	@Override
+	public void removeOriginal( Image image ) {
+		LOG.info( "Deleting original image file for {}", image );
+
+		Path targetPath = getTargetPath( image );
+
+		try {
+			Files.deleteIfExists( targetPath );
+		}
+		catch ( IOException e ) {
+			LOG.debug( "Unable to delete original image {}", image, e );
 		}
 	}
 

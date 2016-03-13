@@ -4,10 +4,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.annotations.ImageServerController;
-import com.foreach.imageserver.core.controllers.ImageLoadController;
-import com.foreach.imageserver.core.controllers.ImageModificationController;
-import com.foreach.imageserver.core.controllers.ImageResolutionController;
-import com.foreach.imageserver.core.controllers.ImageStreamingController;
+import com.foreach.imageserver.core.controllers.*;
 import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +35,11 @@ public class WebConfiguration
 	@Bean
 	public ImageLoadController imageLoadController() {
 		return new ImageLoadController( accessToken() );
+	}
+
+	@Bean
+	public ImageDeleteController imageDeleteController() {
+		return new ImageDeleteController( accessToken() );
 	}
 
 	@Bean

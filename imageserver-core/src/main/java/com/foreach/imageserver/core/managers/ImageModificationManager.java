@@ -17,4 +17,6 @@ public interface ImageModificationManager
 	void update( ImageModification imageModification );
 
 	boolean hasModification( long imageId );
+
+	void deleteModifications( long id );
 }

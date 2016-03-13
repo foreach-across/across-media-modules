@@ -9,4 +9,6 @@ public interface ImageManager
 	Image getByExternalId( String externalId );
 
 	void insert( Image image );
+
+	void delete( Image image );
 }

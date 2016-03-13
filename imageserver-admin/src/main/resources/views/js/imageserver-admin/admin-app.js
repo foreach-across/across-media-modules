@@ -175,6 +175,7 @@ angular.module('imageServerAdmin')
 
         this.externalId = '';
         this.feedback = 'Please enter the external id of the image you wish to view.';
+        this.replaceExisting = false;
         this.image = null;
 
         this.contexts = null;
@@ -311,6 +312,7 @@ angular.module('imageServerAdmin')
         this.loadImageFeedback = function () {
             imageService.getImageInfo(this.externalId, function (data) {
                 $controller.existing = data.existing;
+                $controller.replaceExisting = false;
             });
         };
 
@@ -319,17 +321,20 @@ angular.module('imageServerAdmin')
                 url: $rootScope.imageServerUrl + '/api/image/load',
                 data: {
                     'token': $rootScope.token,
-                    'iid': this.externalId
+                    'iid': this.externalId,
+                    'replaceExisting': this.replaceExisting
                 },
                 fileFormDataName: ['imageData'],
                 file: this.file
             }).success(function (data, status, headers, config) {
                 $location.path('/view/' + $controller.externalId);
+            }).error(function (data, status, headers, config) {
+                alert( data.errorMessage );
             });
         };
 
         this.canUpload = function () {
-            return !this.existing && this.externalId && this.file;
+            return (!this.existing || this.replaceExisting) && this.externalId && this.file;
         };
     }])
 

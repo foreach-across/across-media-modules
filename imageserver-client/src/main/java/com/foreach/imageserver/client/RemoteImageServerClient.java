@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a client for a remote ImageServer endpoint.
@@ -136,11 +137,21 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes ) {
-		return loadImage( imageId, imageBytes, null );
+		return loadImage( imageId, imageBytes, false );
+	}
+
+	@Override
+	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, boolean replaceExisting ) {
+		return loadImage( imageId, imageBytes, null, replaceExisting );
 	}
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate ) {
+		return loadImage( imageId, imageBytes, imageDate, false );
+	}
+
+	@Override
+	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate, boolean replaceExisting ) {
 		if ( StringUtils.isBlank( imageId ) ) {
 			throw new ImageServerException( "You must specify an imageId when loading an image." );
 		}
@@ -151,6 +162,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "token", imageServerAccessToken );
 		queryParams.set( "iid", imageId );
+		queryParams.set( "replaceExisting", Boolean.toString( replaceExisting ) );
 		if ( imageDate != null ) {
 			queryParams.set( "imageTimestamp", Long.toString( imageDate.getTime() ) );
 		}
@@ -178,6 +190,26 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 			}
 		} );
 		return bodyParts;
+	}
+
+	@Override
+	public boolean deleteImage( String imageId ) {
+		if ( StringUtils.isBlank( imageId ) ) {
+			throw new ImageServerException( "You must specify an imageId when deleting an image." );
+		}
+
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+		queryParams.set( "iid", imageId );
+
+		Object map = httpPost( ENDPOINT_IMAGE_DELETE, queryParams, new LinkedMultiValueMap<String, String>(),
+		                       ResponseTypes.OBJECT );
+
+		if ( map instanceof Map ) {
+			return Boolean.valueOf( "" + ( (Map) map ).get( "deleted" ) );
+		}
+
+		return false;
 	}
 
 	@Override
@@ -219,8 +251,8 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	@Override
 	public void registerImageModifications( String imageId,
-	                                       String context,
-	                                       List<ImageModificationDto> imageModifications ) {
+	                                        String context,
+	                                        List<ImageModificationDto> imageModifications ) {
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "token", imageServerAccessToken );
 		queryParams.set( "iid", imageId );
@@ -282,7 +314,8 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 			body = response.getBody();
 
-		} catch (Exception e){
+		}
+		catch ( Exception e ) {
 			LOG.error( e.getMessage() );
 			throw new ImageServerException( e.getMessage() );
 		}
