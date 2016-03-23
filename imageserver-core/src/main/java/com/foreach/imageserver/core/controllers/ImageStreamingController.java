@@ -21,9 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -41,7 +44,8 @@ public class ImageStreamingController
 	public static final String RENDER_PATH = "/api/image/render";
 
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStreamingController.class );
-	private static final FastDateFormat fastDateFormat = FastDateFormat.getInstance( "EEE, dd MMM yyyy HH:mm:ss zzz", TimeZone.getTimeZone("GMT" ), Locale.US );
+	private static final FastDateFormat fastDateFormat =
+			FastDateFormat.getInstance( "EEE, dd MMM yyyy HH:mm:ss zzz", TimeZone.getTimeZone( "GMT" ), Locale.US );
 
 	// explicit logging of requested resolutions that do not exist
 	private static final Logger LOG_RESOLUTION_NOT_FOUND = LoggerFactory.getLogger( ImageResolution.class );
@@ -84,6 +88,11 @@ public class ImageStreamingController
 		this.akamaiCacheMaxAge = akamaiCacheMaxAge;
 	}
 
+	@InitBinder
+	public void initBinder( ServletRequestDataBinder binder ) {
+		binder.registerCustomEditor( byte[].class, new ByteArrayMultipartFileEditor() );
+	}
+
 	@RequestMapping(value = RENDER_PATH, method = RequestMethod.GET)
 	public void render( @RequestParam(value = "token", required = true) String accessToken,
 	                    @RequestParam(value = "iid", required = true) String externalId,
@@ -100,13 +109,38 @@ public class ImageStreamingController
 		renderImageRequest.setImageModificationDto( imageModificationDto );
 		renderImageRequest.setImageVariantDto( imageVariantDto );
 
+		render( response, renderImageRequest );
+	}
+
+	@RequestMapping(value = RENDER_PATH, method = RequestMethod.POST)
+	public void renderProvidedImage( @RequestParam(value = "token", required = true) String accessToken,
+	                                 @RequestParam(value = "imageData", required = true) byte[] imageData,
+	                                 ImageModificationDto imageModificationDto,
+	                                 ImageVariantDto imageVariantDto,
+	                                 HttpServletResponse response ) {
+
+		if ( !this.accessToken.equals( accessToken ) ) {
+			error( response, HttpStatus.FORBIDDEN, "Access denied." );
+		}
+
+		ViewImageRequest renderImageRequest = new ViewImageRequest();
+		renderImageRequest.setImageData( imageData );
+		renderImageRequest.setImageModificationDto( imageModificationDto );
+		renderImageRequest.setImageVariantDto( imageVariantDto );
+
+		render( response, renderImageRequest );
+	}
+
+	private void render( HttpServletResponse response, ViewImageRequest renderImageRequest ) {
 		ViewImageResponse renderImageResponse = imageRestService.renderImage( renderImageRequest );
 
 		if ( renderImageResponse.isImageDoesNotExist() ) {
 			error( response, HttpStatus.NOT_FOUND, "No such image." );
-		} else if ( renderImageResponse.isFailed() ) {
+		}
+		else if ( renderImageResponse.isFailed() ) {
 			error( response, HttpStatus.NOT_FOUND, "Could not create variant." );
-		} else {
+		}
+		else {
 			renderImageSource( renderImageResponse.getImageSource(), response );
 		}
 	}
@@ -134,22 +168,29 @@ public class ImageStreamingController
 
 			if ( viewImageResponse.isImageDoesNotExist() ) {
 				error( response, HttpStatus.NOT_FOUND, "No such image." );
-			} else if ( viewImageResponse.isContextDoesNotExist() ) {
+			}
+			else if ( viewImageResponse.isContextDoesNotExist() ) {
 				error( response, HttpStatus.NOT_FOUND, "No such context." );
-			} else if ( viewImageResponse.isNoResolutionSpecified() ) {
+			}
+			else if ( viewImageResponse.isNoResolutionSpecified() ) {
 				error( response, HttpStatus.NOT_FOUND, "No usable resolution specified." );
-			} else if ( viewImageResponse.isResolutionDoesNotExist() ) {
+			}
+			else if ( viewImageResponse.isResolutionDoesNotExist() ) {
 				LOG_RESOLUTION_NOT_FOUND.error( imageResolutionDto.getWidth() + "x" + imageResolutionDto.getHeight() );
 				error( response, HttpStatus.NOT_FOUND, "No such resolution." );
-			} else if ( viewImageResponse.isOutputTypeNotAllowed() ) {
+			}
+			else if ( viewImageResponse.isOutputTypeNotAllowed() ) {
 				error( response, HttpStatus.NOT_FOUND, "Requested output type is not allowed." );
-			} else if ( viewImageResponse.isFailed() ) {
+			}
+			else if ( viewImageResponse.isFailed() ) {
 				error( response, HttpStatus.NOT_FOUND, "Could not create variant." );
-			} else {
+			}
+			else {
 				renderImageSource( viewImageResponse.getImageSource(), response );
 			}
 
-		} catch ( Exception e ) { // fail-safe to avoid that stack traces are shown when an unexpected exception occurs
+		}
+		catch ( Exception e ) { // fail-safe to avoid that stack traces are shown when an unexpected exception occurs
 			// log the exception context and either send a clean error (in production) or rethrow the exception (anywhere else)
 			LOG.error(
 					"Retrieving image variant caused exception - ImageStreamingController#view: externalId={}, contextCode={}, imageResolutionDto={}, imageVariantDto={}",
@@ -157,13 +198,20 @@ public class ImageStreamingController
 					LogHelper.flatten( imageVariantDto ), e );
 			if ( provideStackTrace ) {
 				throw e;
-			} else {
+			}
+			else {
 				error( response, HttpStatus.INTERNAL_SERVER_ERROR, "Error encountered while retrieving variant." );
 			}
 		}
 	}
 
-	private ImageResolutionDto determineImageResolution( String externalId, ImageResolutionDto imageresolution, String size ) {
+	private void render() {
+
+	}
+
+	private ImageResolutionDto determineImageResolution( String externalId,
+	                                                     ImageResolutionDto imageresolution,
+	                                                     String size ) {
 		if ( StringUtils.isNotBlank( size ) ) {
 			String[] sizeList = StringUtils.split( size, RESOLUTION_SEPARATOR );
 
@@ -192,7 +240,8 @@ public class ImageStreamingController
 			// no proper
 			LOG.error( "Could not retrieve proper resolution from size list: " + size );
 			return null;
-		} else {
+		}
+		else {
 			return imageresolution;
 		}
 	}
@@ -203,7 +252,8 @@ public class ImageStreamingController
 
 		if ( maxCacheAgeInSeconds > 0 ) {
 			response.setHeader( "Cache-Control", String.format( "max-age=%d", maxCacheAgeInSeconds ) );
-			response.setHeader( "Expires", fastDateFormat.format( DateUtils.addSeconds( new Date(), maxCacheAgeInSeconds ) ) );
+			response.setHeader( "Expires",
+			                    fastDateFormat.format( DateUtils.addSeconds( new Date(), maxCacheAgeInSeconds ) ) );
 		}
 		if ( !"".equals( akamaiCacheMaxAge ) ) {
 			response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_CACHE_MAX_AGE + akamaiCacheMaxAge );
@@ -225,11 +275,12 @@ public class ImageStreamingController
 		response.setContentType( "text/plain" );
 		response.setHeader( "Cache-Control", "no-cache" );
 		response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_NO_STORE );
-		if( errorMessage != null ) {
+		if ( errorMessage != null ) {
 			// errorMessage can be null e.g. when a org.apache.catalina.connector.ClientAbortException occurs (it extends IOException)
 			try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
 				IOUtils.copy( bis, response.getOutputStream() );
-			} catch ( IOException e ) {
+			}
+			catch ( IOException e ) {
 				LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );
 			}
 		}

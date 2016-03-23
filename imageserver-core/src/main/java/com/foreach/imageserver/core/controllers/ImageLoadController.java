@@ -68,15 +68,21 @@ public class ImageLoadController extends BaseImageAPIController
 	public JsonResponse load( @RequestParam(value = "token", required = true) String accessToken,
 	                          @RequestParam(value = "iid", required = true) String externalId,
 	                          @RequestParam(value = "imageData", required = true) byte[] imageData,
-	                          @RequestParam(value = "imageTimestamp", required = false) Long imageTimestamp ) {
+	                          @RequestParam(value = "imageTimestamp", required = false) Long imageTimestamp,
+	                          @RequestParam(value = "replaceExisting", required = false, defaultValue = "false") boolean replaceExisting ) {
 		if ( !this.accessToken.equals( accessToken ) ) {
 			return error( "Access denied." );
 		}
 
-		Date imageDate = ( imageTimestamp != null ) ? new Date( imageTimestamp ) : new Date();
-		Image image = imageService.saveImage( externalId, imageData, imageDate );
+		try {
+			Date imageDate = ( imageTimestamp != null ) ? new Date( imageTimestamp ) : new Date();
+			Image image = imageService.saveImage( externalId, imageData, imageDate, replaceExisting );
 
-		return success( DtoUtil.toDto( image ) );
+			return success( DtoUtil.toDto( image ) );
+		}
+		catch ( RuntimeException ise ) {
+			return error( ise.getMessage() );
+		}
 	}
 
 	@RequestMapping(value = IMAGE_INFO_PATH, method = RequestMethod.GET)

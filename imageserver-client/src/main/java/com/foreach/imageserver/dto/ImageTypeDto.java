@@ -8,7 +8,8 @@ public enum ImageTypeDto
 	SVG( "svg" ),
 	EPS( "eps" ),
 	PDF( "pdf" ),
-	TIFF( "tif" );
+	TIFF( "tif" ),
+	BMP( "bmp" );
 
 	private String extension;
 

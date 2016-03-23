@@ -55,6 +55,9 @@ public class Image
 	@Column(name = "variant_path")
 	private String variantPath;
 
+	@Transient
+	private boolean temporaryImage;
+
 	public long getId() {
 		return id;
 	}
@@ -132,6 +135,14 @@ public class Image
 		this.variantPath = variantPath;
 	}
 
+	public boolean isTemporaryImage() {
+		return temporaryImage;
+	}
+
+	public void setTemporaryImage( boolean temporaryImage ) {
+		this.temporaryImage = temporaryImage;
+	}
+
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {
@@ -143,12 +154,12 @@ public class Image
 
 		Image image = (Image) o;
 
-		return Objects.equals( this.id, image.id );
+		return temporaryImage ? Objects.equals( this.externalId, image.externalId ) : Objects.equals( this.id, image.id );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( id );
+		return temporaryImage ? Objects.hash( externalId ) : Objects.hash( id );
 	}
 
 	@Override
@@ -156,6 +167,7 @@ public class Image
 		return "Image{" +
 				"id=" + id +
 				", externalId='" + externalId + '\'' +
+				", temporaryImage=" + temporaryImage +
 				'}';
 	}
 }

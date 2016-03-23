@@ -86,6 +86,22 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		request.setImageModificationDto( imageModificationDto );
 		request.setImageVariantDto( imageVariant );
 
+		return imageStream( request );
+	}
+
+	@Override
+	public InputStream imageStream( byte[] imageData,
+	                                ImageModificationDto imageModificationDto,
+	                                ImageVariantDto imageVariant ) {
+		ViewImageRequest request = new ViewImageRequest();
+		request.setImageData( imageData );
+		request.setImageModificationDto( imageModificationDto );
+		request.setImageVariantDto( imageVariant );
+
+		return imageStream( request );
+	}
+
+	private InputStream imageStream( ViewImageRequest request ) {
 		ViewImageResponse response = imageRestService.renderImage( request );
 
 		if ( response.isImageDoesNotExist() ) {
@@ -100,13 +116,29 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes ) {
-		return loadImage( imageId, imageBytes, null );
+		return loadImage( imageId, imageBytes, false );
+	}
+
+	@Override
+	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, boolean replaceExisting ) {
+		return loadImage( imageId, imageBytes, null, replaceExisting );
 	}
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate ) {
-		Image image = imageService.saveImage( imageId, imageBytes, imageDate != null ? imageDate : new Date() );
+		return loadImage( imageId, imageBytes, imageDate, false );
+	}
+
+	@Override
+	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate, boolean replaceExisting ) {
+		Image image = imageService.saveImage( imageId, imageBytes, imageDate != null ? imageDate : new Date(),
+		                                      replaceExisting );
 		return DtoUtil.toDto( image );
+	}
+
+	@Override
+	public boolean deleteImage( String imageId ) {
+		return imageService.deleteImage( imageId );
 	}
 
 	@Override

@@ -13,7 +13,8 @@ public enum ImageType implements IdLookup<Integer>, BitFlag
 	EPS( 16, "application/postscript", "eps", true, true, "image/eps", "image/x-eps",
 	     "application/eps", "application/x-eps" ),
 	PDF( 32, "application/pdf", "pdf", false, false, "application/x-pdf" ),
-	TIFF( 64, "image/tiff", "tif", false, false );
+	TIFF( 64, "image/tiff", "tif", false, false ),
+	BMP( 128, "image/bmp", "bmp", false, false, "image/x-windows-bmp" );
 
 	private final int id;
 	private final String contentType, extension;
@@ -88,6 +89,7 @@ public enum ImageType implements IdLookup<Integer>, BitFlag
 			case SVG:
 			case EPS:
 			case PNG:
+			case BMP:
 				return PNG;
 			default:
 				return JPEG;

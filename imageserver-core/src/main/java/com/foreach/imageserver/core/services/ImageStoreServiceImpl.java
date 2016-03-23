@@ -27,7 +27,7 @@ import java.util.Set;
  * Still to verify and/or implement:
  * - Files.createTempPath needs to be atomic.
  * - Files.copy with option REPLACE_EXISTING should never cause the temp file to not exist.
- * <p/>
+ * <p>
  * TODO Resolve the above.
  */
 @Service
@@ -213,6 +213,20 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		}
 	}
 
+	@Override
+	public void removeOriginal( Image image ) {
+		LOG.info( "Deleting original image file for {}", image );
+
+		Path targetPath = getTargetPath( image );
+
+		try {
+			Files.deleteIfExists( targetPath );
+		}
+		catch ( IOException e ) {
+			LOG.debug( "Unable to delete original image {}", image, e );
+		}
+	}
+
 	private Path getTargetPath( Image image ) {
 		/**
 		 * We may at some point need image repositories that cannot re-retrieve their images. For this reason we
@@ -220,7 +234,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		 */
 
 		String fileName = constructFileName( image );
-		return originalsFolder.resolve( image.getOriginalPath() ).resolve( fileName );
+		Path folder = image.isTemporaryImage() ? tempFolder : originalsFolder.resolve( image.getOriginalPath() );
+		return folder.resolve( fileName );
 	}
 
 	private Path getTargetPath( Image image,
@@ -277,8 +292,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	private String constructFileName( Image image ) {
-
-		return String.valueOf( image.getId() ) + '.' + image.getImageType().getExtension();
+		String name = image.isTemporaryImage() ? image.getExternalId() : String.valueOf( image.getId() );
+		return name + '.' + image.getImageType().getExtension();
 	}
 
 	private String variantFileNamePrefix( long imageId ) {

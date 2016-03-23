@@ -15,6 +15,7 @@ public interface ImageServerClient
 	String ENDPOINT_IMAGE_VIEW = "view";
 	String ENDPOINT_IMAGE_RENDER = "api/image/render";
 	String ENDPOINT_IMAGE_LOAD = "api/image/load";
+	String ENDPOINT_IMAGE_DELETE = "api/image/delete";
 	String ENDPOINT_IMAGE_INFO = "api/image/details";
 	String ENDPOINT_IMAGE_PREGENERATE = "api/image/pregenerate";
 	String ENDPOINT_RESOLUTION_LIST = "api/resolution/list";
@@ -74,9 +75,23 @@ public interface ImageServerClient
 
 	InputStream imageStream( String imageId, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant );
 
+	InputStream imageStream( byte[] imageData, ImageModificationDto imageModificationDto, ImageVariantDto imageVariant );
+
 	ImageInfoDto loadImage( String imageId, byte[] imageBytes );
 
+	ImageInfoDto loadImage( String imageId, byte[] imageBytes, boolean replaceExisting );
+
 	ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate );
+
+	ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate, boolean replaceExisting );
+
+	/**
+	 * Delete an image entirely from the image server.
+	 *
+	 * @param imageId external id of the image
+	 * @return true if image existed and has been deleted
+	 */
+	boolean deleteImage( String imageId );
 
 	boolean imageExists( String imageId );
 

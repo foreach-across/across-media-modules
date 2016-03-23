@@ -80,6 +80,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 		magickToImageType.put( "PDF", ImageType.PDF );
 		magickToImageType.put( "EPDF", ImageType.PDF );
 		magickToImageType.put( "TIFF", ImageType.TIFF );
+		magickToImageType.put( "BMP", ImageType.BMP );
 
 		// This seems to be a bug in GraphicsMagick.
 		magickToImageType.put( "MVG", ImageType.SVG );

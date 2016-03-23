@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
@@ -67,25 +68,83 @@ public class ImageServiceImpl implements ImageService
 	// TODO I'm not taking care of errors right now, make sure to tackle this later on!
 	@Override
 	@Transactional
-	public Image saveImage( String externalId, byte[] imageBytes, Date imageDate ) throws ImageStoreException {
+	public Image saveImage( String externalId,
+	                        byte[] imageBytes,
+	                        Date imageDate,
+	                        boolean replaceExisting ) throws ImageStoreException {
 		if ( StringUtils.isBlank( externalId ) || imageBytes == null || imageDate == null ) {
 			LOG.warn( "Null parameters not allowed - ImageServiceImpl#saveImage: image={}, context={}, imageDate={}",
 			          LogHelper.flatten( externalId, imageBytes, imageDate ) );
 		}
 
+		Image existing = getByExternalId( externalId );
+
+		if ( existing != null ) {
+			if ( !replaceExisting ) {
+				throw new ImageStoreException(
+						"An image already exists with that external id and no explicit replace was asked." );
+			}
+			else {
+				LOG.debug( "Removing image {} - because it should be replaced", existing );
+				deleteImage( existing.getExternalId() );
+			}
+		}
+
+		Image image = loadImageData( imageBytes );
+		image.setExternalId( externalId );
+		image.setDateCreated( imageDate );
+
+		imageManager.insert( image );
+		imageStoreService.storeOriginalImage( image, imageBytes );
+
+		return image;
+	}
+
+	@Override
+	@Transactional
+	public synchronized boolean deleteImage( String externalId ) {
+		Image image = getByExternalId( externalId );
+
+		if ( image != null ) {
+			// Delete modifications
+			LOG.debug( "Deleting all modifications for image {}", image );
+			imageModificationManager.deleteModifications( image.getId() );
+
+			// Delete variants
+			imageStoreService.removeVariants( image.getId() );
+
+			// Delete image record
+			LOG.debug( "Deleting image record for image {}", image );
+			imageManager.delete( image );
+
+			// Delete original
+			imageStoreService.removeOriginal( image );
+
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public Image createImage( byte[] imageBytes ) {
+		Image image = loadImageData( imageBytes );
+		image.setExternalId( UUID.randomUUID().toString() );
+		image.setTemporaryImage( true );
+		imageStoreService.storeOriginalImage( image, imageBytes );
+		return image;
+	}
+
+	private Image loadImageData( byte[] imageBytes ) {
+		Assert.notNull( imageBytes );
+
 		ImageAttributes imageAttributes = imageTransformService.getAttributes( new ByteArrayInputStream( imageBytes ) );
 
 		Image image = new Image();
 		image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
-		image.setExternalId( externalId );
-		image.setDateCreated( imageDate );
 		image.setDimensions( imageAttributes.getDimensions() );
 		image.setImageType( imageAttributes.getType() );
-		image.setFileSize( imageBytes != null ? imageBytes.length : 0 );
-		imageManager.insert( image );
-
-		imageStoreService.storeOriginalImage( image, imageBytes );
-
+		image.setFileSize( imageBytes.length );
 		return image;
 	}
 
@@ -103,7 +162,7 @@ public class ImageServiceImpl implements ImageService
 	 * DO NOT MAKE THIS METHOD TRANSACTIONAL! If we are updating an existing modification, we need to make sure that
 	 * the changes are committed to the database *before* we clean up the filesystem. Otherwise a different instance
 	 * might recreate variants on disk using the old values.
-	 * <p/>
+	 * <p>
 	 * TODO: if needed, storeImageModficication could perhaps be made transactional
 	 */
 	@Override

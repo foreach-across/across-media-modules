@@ -33,4 +33,6 @@ public interface ImageStoreService
 	                         ImageVariant imageVariant );
 
 	void removeVariants( long imageId );
+
+	void removeOriginal( Image image );
 }
