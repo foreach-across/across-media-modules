@@ -24,36 +24,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="imageserver-dtos" />
-        <module name="web.imageserver.front" />
-      </profile>
-      <profile default="false" name="Annotation profile for imageserver-admin" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
         <module name="imageserver-admin" />
-      </profile>
-      <profile default="false" name="Annotation profile for imageserver-core" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="imageserver-core" />
-      </profile>
-      <profile default="false" name="Annotation profile for imageserver-client" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
         <module name="imageserver-client" />
-      </profile>
-      <profile default="false" name="Annotation profile for imageserver-test-standalone" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
+        <module name="imageserver-core" />
+        <module name="imageserver-dtos" />
         <module name="imageserver-test-standalone" />
+        <module name="web.imageserver.front" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
