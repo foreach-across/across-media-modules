@@ -183,7 +183,7 @@ public class CropGeneratorImpl implements CropGenerator
 			return new Crop( 0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight() );
 		}
 
-		Crops crops = obtainCrops( image, context, modifications );
+		Crops crops = obtainCrops( image, context, modifications, targetDimensions );
 
 		Set<CropCandidate> sameContextCandidates =
 				calculateCropCandidates( image, targetDimensions, crops.getSameContext() );
@@ -420,8 +420,8 @@ public class CropGeneratorImpl implements CropGenerator
 		return new CropCandidate( newCrop, extensionMeasure, cutOffMeasure, scaleFactor );
 	}
 
-	private Crops obtainCrops( Image image, ImageContext context, List<ImageModification> modifications ) {
-		if ( image == null || context == null || modifications == null ) {
+	private Crops obtainCrops( Image image, ImageContext context, List<ImageModification> modifications, Dimensions targetDimensions ) {
+		if ( image == null || context == null || modifications == null || targetDimensions == null ) {
 			LOG.warn(
 					"Null parameters not allowed - CropGeneratorImpl#obtainCrops: image={}, context={}, modifications={}",
 					LogHelper.flatten( image, context, modifications ) );
@@ -443,8 +443,14 @@ public class CropGeneratorImpl implements CropGenerator
 		 * Always consider the entire image. This also means we always have at least one crop. In the worst case
 		 * scenario (i.e. when not a single crop is defined) we'll scale the entire image and do some cutting to get
 		 * the required ratio.
+		 * If the aspect ratio of the original image is the same as the aspect ratio of the desired image, we count
+		 * the original image in the same context.
 		 */
-		differentContext.add( new Crop( 0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight() ) );
+		if ( targetDimensions.fetchAspectRatio().equals( image.getDimensions().fetchAspectRatio() )) {
+			sameContext.add( new Crop( 0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight() ) );
+		} else {
+			differentContext.add( new Crop( 0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight() ) );
+		}
 
 		return new Crops( sameContext, differentContext );
 	}

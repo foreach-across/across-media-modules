@@ -168,7 +168,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void inCaseOfOriginalAspectRatioOtherCropsAreIgnored() {
 		List<ImageModification> registeredModifications = Arrays.asList(
 				createModification( 800, 800, 3500, 1500, 500, 500 ),
@@ -194,7 +193,7 @@ public class CropGeneratorTest
 
 		when( imageModificationManager.getAllModifications( 1 ) ).thenReturn( registeredModifications );
 
-		// 1000x1000 request should use the 2000x2000 crop
+		// 1000x1000 request should use the 800x800 crop
 		requestModification( 1000, 1000 );
 		assertResolution( 1000, 1000 );
 		assertCrop( 1, 2, 3, 4 );
