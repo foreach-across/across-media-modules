@@ -9,14 +9,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Provides the common ImageServerClient methods that are endpoint independent.
+ * Adds support for a {@link ImageRequestHashBuilder} that will be used when generating image urls.
  *
  * @author Arne Vandamme
  */
 public abstract class AbstractImageServerClient implements ImageServerClient
 {
+	private ImageRequestHashBuilder hashBuilder;
+
 	private String imageServerUrl;
 
 	protected AbstractImageServerClient( String imageServerUrl ) {
@@ -29,6 +33,22 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 
 	public void setImageServerUrl( String imageServerUrl ) {
 		this.imageServerUrl = imageServerUrl;
+	}
+
+	/**
+	 * Sets an {@link ImageRequestHashBuilder} to be used when generating image urls.
+	 * If one is set, image urls will be suffixed with a hash of their parameters.
+	 * If the server side is not operating in strict mode and has the same hash builder configured,
+	 * all generated image urls will be accepted and result in a working response.
+	 *
+	 * @param hashBuilder to be used
+	 */
+	public void setImageRequestHashBuilder( ImageRequestHashBuilder hashBuilder ) {
+		this.hashBuilder = hashBuilder;
+	}
+
+	protected Optional<ImageRequestHashBuilder> hashBuilder() {
+		return Optional.ofNullable( hashBuilder );
 	}
 
 	@Override
@@ -102,16 +122,32 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 		}
 
 		addQueryParams( queryParams, imageVariant );
-
+		hashBuilder().ifPresent(
+				hb -> queryParams.set(
+						"hash",
+						hb.calculateHash( context, null, imageResolution, imageVariant, size )
+				) );
 		return buildUri( ENDPOINT_IMAGE_VIEW, queryParams ).toString();
 	}
 
 	@Override
-	public String imageUrl( String imageId, String context, String ratio, int screenWidth, ImageTypeDto imageType, int width, int height ) {
-		return imageUrl( imageId, context, ratio, screenWidth, new ImageVariantDto( imageType, new DimensionsDto( width, height )) );
+	public String imageUrl( String imageId,
+	                        String context,
+	                        String ratio,
+	                        int screenWidth,
+	                        ImageTypeDto imageType,
+	                        int width,
+	                        int height ) {
+		return imageUrl( imageId, context, ratio, screenWidth,
+		                 new ImageVariantDto( imageType, new DimensionsDto( width, height ) ) );
 	}
+
 	@Override
-	public String imageUrl( String imageId, String context, String ratio, int screenWidth, ImageVariantDto imageVariant ) {
+	public String imageUrl( String imageId,
+	                        String context,
+	                        String ratio,
+	                        int screenWidth,
+	                        ImageVariantDto imageVariant ) {
 		if ( StringUtils.isBlank( imageId ) || context == null || ratio == null || imageVariant == null ) {
 			LOG.warn( "Null parameters not allowed -- imageId={}, context={}, ratio={}, imageVariant={}", imageId,
 			          context, ratio, imageVariant );
@@ -122,6 +158,14 @@ public abstract class AbstractImageServerClient implements ImageServerClient
 		queryParams.set( "ratio", ratio );
 		queryParams.set( "width", Integer.toString( screenWidth ) );
 		addQueryParams( queryParams, imageVariant );
+
+		hashBuilder().ifPresent(
+				hb -> queryParams.set(
+						"hash",
+						hb.calculateHash( context, ratio, new ImageResolutionDto( screenWidth, 0 ), imageVariant )
+				)
+		);
+
 		return buildUri( ENDPOINT_IMAGE_VIEW, queryParams ).toString();
 	}
 

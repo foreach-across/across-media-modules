@@ -93,6 +93,12 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		addQueryParams( queryParams, imageResolution );
 		addQueryParams( queryParams, imageVariant );
 
+		hashBuilder().ifPresent(
+				hashBuilder -> queryParams.set(
+						"hash", hashBuilder.calculateHash( context, null, imageResolution, imageVariant )
+				)
+		);
+
 		return new ByteArrayInputStream( httpGet( ENDPOINT_IMAGE_VIEW, queryParams, byte[].class ) );
 	}
 

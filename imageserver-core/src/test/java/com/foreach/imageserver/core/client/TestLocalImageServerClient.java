@@ -1,13 +1,17 @@
 package com.foreach.imageserver.core.client;
 
+import com.foreach.common.test.MockedLoader;
+import com.foreach.imageserver.client.ImageRequestHashBuilder;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
+import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
-import com.foreach.common.test.MockedLoader;
+import com.foreach.imageserver.dto.ImageVariantDto;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -36,27 +41,94 @@ public class TestLocalImageServerClient
 	private ImageRestService imageRestService;
 
 	@Autowired
-	private ImageServerClient imageServerClient = new LocalImageServerClient( "http://localhost:8078/" );
+	private LocalImageServerClient imageServerClient = new LocalImageServerClient( "http://localhost:8078/" );
+
+	@Before
+	public void before() {
+		imageServerClient.setImageRequestHashBuilder( null );
+	}
 
 	@Test
-	public void imageUrl() {
+	public void imageUrlWithoutHash() {
 		String url = imageServerClient.imageUrl( "10", "ONLINE", 1000, 2000, ImageTypeDto.TIFF );
-		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&width=1000&height=2000&imageType=TIFF", url );
+		assertEquals(
+				"http://localhost:8078/view?iid=10&context=ONLINE&width=1000&height=2000&imageType=TIFF",
+				url );
 
 		url = imageServerClient.imageUrl( "10", "DIGITAL", 0, 2000, ImageTypeDto.TIFF );
-		assertEquals( "http://localhost:8078/view?iid=10&context=DIGITAL&height=2000&imageType=TIFF", url );
+		assertEquals(
+				"http://localhost:8078/view?iid=10&context=DIGITAL&height=2000&imageType=TIFF",
+				url );
 
 		url = imageServerClient.imageUrl( "someid", "SITE", 1000, 0, ImageTypeDto.TIFF );
-		assertEquals( "http://localhost:8078/view?iid=someid&context=SITE&width=1000&imageType=TIFF", url );
+		assertEquals(
+				"http://localhost:8078/view?iid=someid&context=SITE&width=1000&imageType=TIFF",
+				url );
 
 		url = imageServerClient.imageUrl( "internal:1", "TABLET", "3/2", 200, ImageTypeDto.JPEG, 100, 1000 );
-		assertEquals( "http://localhost:8078/view?iid=internal:1&context=TABLET&ratio=3/2&width=200&imageType=JPEG&boundaries.width=100&boundaries.height=1000", url );
+		assertEquals(
+				"http://localhost:8078/view?iid=internal:1&context=TABLET&ratio=3/2&width=200&imageType=JPEG&boundaries.width=100&boundaries.height=1000",
+				url );
+	}
+
+	@Test
+	public void hashIsAppendedIfHashBuilderAdded() {
+		ImageRequestHashBuilder hashBuilder = mock( ImageRequestHashBuilder.class );
+		imageServerClient.setImageRequestHashBuilder( hashBuilder );
+
+		when(
+				hashBuilder.calculateHash( "ONLINE",
+				                           null,
+				                           new ImageResolutionDto( 1000, 2000 ),
+				                           new ImageVariantDto( ImageTypeDto.TIFF ) )
+		).thenReturn( "one" );
+		String url = imageServerClient.imageUrl( "10", "ONLINE", 1000, 2000, ImageTypeDto.TIFF );
+		assertEquals(
+				"http://localhost:8078/view?iid=10&context=ONLINE&width=1000&height=2000&imageType=TIFF&hash=one",
+				url );
+
+		when(
+				hashBuilder.calculateHash( "DIGITAL",
+				                           null,
+				                           new ImageResolutionDto( 0, 2000 ),
+				                           new ImageVariantDto( ImageTypeDto.TIFF ) )
+		).thenReturn( "two" );
+		url = imageServerClient.imageUrl( "10", "DIGITAL", 0, 2000, ImageTypeDto.TIFF );
+		assertEquals(
+				"http://localhost:8078/view?iid=10&context=DIGITAL&height=2000&imageType=TIFF&hash=two",
+				url );
+
+		when(
+				hashBuilder.calculateHash( "SITE",
+				                           null,
+				                           new ImageResolutionDto( 1000, 0 ),
+				                           new ImageVariantDto( ImageTypeDto.TIFF ) )
+		).thenReturn( "three" );
+		url = imageServerClient.imageUrl( "someid", "SITE", 1000, 0, ImageTypeDto.TIFF );
+		assertEquals(
+				"http://localhost:8078/view?iid=someid&context=SITE&width=1000&imageType=TIFF&hash=three",
+				url );
+
+		ImageVariantDto variant = new ImageVariantDto( ImageTypeDto.JPEG );
+		variant.setBoundaries( new DimensionsDto( 100, 1000 ) );
+		when(
+				hashBuilder.calculateHash( "TABLET",
+				                           "3/2",
+				                           new ImageResolutionDto( 200, 0 ),
+				                           variant )
+		).thenReturn( "four" );
+		url = imageServerClient.imageUrl( "internal:1", "TABLET", "3/2", 200, ImageTypeDto.JPEG, 100, 1000 );
+		assertEquals(
+				"http://localhost:8078/view?iid=internal:1&context=TABLET&ratio=3/2&width=200&imageType=JPEG&boundaries.width=100&boundaries.height=1000&hash=four",
+				url );
 	}
 
 	@Test
 	public void imageUrlWithOutImageTypeWillReturnImageTypeOfOriginal() {
 		String url = imageServerClient.imageUrl( "10", "ONLINE", 1000, 2000 );
-		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&width=1000&height=2000", url );
+		assertEquals(
+				"http://localhost:8078/view?iid=10&context=ONLINE&width=1000&height=2000",
+				url );
 	}
 
 	@Test
