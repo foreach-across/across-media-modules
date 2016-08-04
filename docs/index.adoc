@@ -1,5 +1,5 @@
 = ImageServer
-Arne Vandamme, Olivier Verhoogen, Niels Doucet
+Arne Vandamme, Marc Vanbrabant, Peter Tibackx, Andy Somers, Alain Van Hout, Olivier Verhoogen, Niels Doucet
 4.0.0-SNAPSHOT
 :toc: left
 :sectanchors:
