@@ -28,6 +28,8 @@ public class CropGeneratorTest
 
 	private CropGeneratorImpl cropGenerator;
 
+	private ImageResolutionServiceImpl imageResolutionService;
+
 	private Image image;
 	private ImageContext context;
 	private ImageModificationDto modification;
@@ -45,10 +47,15 @@ public class CropGeneratorTest
 	public void before() {
 		MockitoAnnotations.initMocks( this );
 
+		imageResolutionService = new ImageResolutionServiceImpl();
 		cropGenerator = new CropGeneratorImpl();
 		cropGenerator.setCropGeneratorUtil( new CropGeneratorUtilImpl() );
 		cropGenerator.setImageModificationManager( imageModificationManager );
 		cropGenerator.setImageProfileManager( imageProfileManager );
+		cropGenerator.setImageResolutionManager( imageResolutionManager );
+		cropGenerator.setImageResolutionService( imageResolutionService );
+
+		imageResolutionService.setImageResolutionManager( imageResolutionManager );
 
 		image = new Image();
 		image.setId( 1 );
@@ -108,7 +115,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void useRegisteredModificationFromHigherResolutionWithSameAspectRatio() {
 		// register a crop for 2000x2000 and 500x500
 		List<ImageModification> registeredModifications = Arrays.asList(

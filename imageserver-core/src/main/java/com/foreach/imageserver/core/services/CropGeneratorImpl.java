@@ -59,6 +59,8 @@ public class CropGeneratorImpl implements CropGenerator
 
 	private ImageResolutionManager imageResolutionManager;
 
+	private ImageResolutionService imageResolutionService;
+
 	@Autowired
 	public void setImageModificationManager( ImageModificationManager imageModificationManager ) {
 		this.imageModificationManager = imageModificationManager;
@@ -77,6 +79,11 @@ public class CropGeneratorImpl implements CropGenerator
 	@Autowired
 	public void setImageResolutionManager( ImageResolutionManager imageResolutionManager ) {
 		this.imageResolutionManager = imageResolutionManager;
+	}
+
+	@Autowired
+	public void setImageResolutionService( ImageResolutionService imageResolutionService ) {
+		this.imageResolutionService = imageResolutionService;
 	}
 
 	@Override
@@ -190,9 +197,9 @@ public class CropGeneratorImpl implements CropGenerator
 		Set<CropCandidate> differentContextCandidates =
 				calculateCropCandidates( image, targetDimensions, crops.getDifferentContext() );
 
-		CropCandidate chosenCandidate = findBestNonCuttingCrop( sameContextCandidates );
+		CropCandidate chosenCandidate = findBestNonCuttingCrop( sameContextCandidates, targetDimensions, modifications );
 		if ( chosenCandidate == null ) {
-			chosenCandidate = findBestNonCuttingCrop( differentContextCandidates );
+			chosenCandidate = findBestNonCuttingCrop( differentContextCandidates, targetDimensions, modifications );
 		}
 		if ( chosenCandidate == null ) {
 			Set<CropCandidate> allCandidates =
@@ -205,7 +212,12 @@ public class CropGeneratorImpl implements CropGenerator
 		return chosenCandidate.getCrop();
 	}
 
-	private CropCandidate findBestNonCuttingCrop( Set<CropCandidate> candidates ) {
+	private CropCandidate findBestNonCuttingCrop( Set<CropCandidate> candidates, Dimensions dimension, List<ImageModification> modifications ) {
+
+		CropCandidate cropCandidate = findBestMatchUsingResolution( dimension, modifications );
+		if ( cropCandidate != null ) return cropCandidate;
+
+
 		Iterator<CropCandidate> candidateIterator = candidates.iterator();
 
 		CropCandidate firstNonCuttingCrop = findFirstNonCuttingCrop( candidateIterator );
@@ -235,6 +247,12 @@ public class CropGeneratorImpl implements CropGenerator
 		}
 
 		return bestFitSoFar;
+	}
+
+	private CropCandidate findBestMatchUsingResolution( Dimensions dimensions, List<ImageModification> modifications ) {
+		Crop crop = imageResolutionService.findBestMatchingCropBasedOnResolution( dimensions, modifications );
+
+		return crop != null ? new CropCandidate( crop, 0, 0, 0 ) : null;
 	}
 
 	private CropCandidate findBestCuttingCrop( Set<CropCandidate> candidates ) {
