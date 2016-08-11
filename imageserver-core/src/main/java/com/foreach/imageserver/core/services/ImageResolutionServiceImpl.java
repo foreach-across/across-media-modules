@@ -9,7 +9,10 @@ import com.foreach.imageserver.math.AspectRatio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author rvd
@@ -23,18 +26,30 @@ public class ImageResolutionServiceImpl implements ImageResolutionService {
 	@Override
 	public Crop findBestMatchingCropBasedOnResolution( Dimensions dimensions, List<ImageModification> modificationList ) {
 		AspectRatio requestedRatio = new AspectRatio( dimensions.getHeight(), dimensions.getWidth() );
+
+		Map<Crop, ImageResolution> cropsThatFit = new HashMap<>(  );
+
 		for ( ImageModification modification : modificationList ) {
 			ImageResolution imageResolution = imageResolutionManager.getById( modification.getResolutionId() );
 			// check dimensions
 			AspectRatio image = new AspectRatio( imageResolution.getHeight(), imageResolution.getWidth() );
 			if ( requestedRatio.equals( image ) ) {
-				// same ratio
-				if ( imageResolution.getHeight() >= dimensions.getHeight() && imageResolution.getWidth() >= dimensions.getWidth() ) {
-					return modification.getCrop();
-				}
+				// collect crops with the same ratio
+				cropsThatFit.put( modification.getCrop(), imageResolution );
 			}
 		}
-		return null;
+
+		// when there are no matching crops, return null
+		if ( cropsThatFit.isEmpty() ) return null;
+
+		// Convert the map to a 'List', order by ascending resolution
+		List<Map.Entry<Crop, ImageResolution>> sorted = cropsThatFit.entrySet().stream().sorted( Map.Entry.comparingByValue( ( a, b ) -> a.getHeight() - b.getHeight() ) )
+				.collect( Collectors.toList() );
+
+		// return the first crop that has a higher resolution then requested
+		// if not possible, return the crop with the highest resolution
+		return sorted.stream().filter( e -> e.getValue().getHeight() >= dimensions.getHeight() || e.getValue().getWidth() >= dimensions.getWidth() )
+				.findFirst().orElse( sorted.get( sorted.size() - 1 ) ).getKey();
 	}
 
 	//

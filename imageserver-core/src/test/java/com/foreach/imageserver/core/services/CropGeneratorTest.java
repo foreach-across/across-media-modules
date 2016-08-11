@@ -137,7 +137,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void inCaseOfSameDistanceTheHigherResolutionShouldBeUsed() {
 		List<ImageModification> registeredModifications = Arrays.asList(
 				createModification( 500, 500, 3500, 1500, 500, 500 ),
@@ -154,7 +153,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void inCaseOfOnlyLowerResolutionCropAvailableThatOneShouldBeUsed() {
 		List<ImageModification> registeredModifications = Arrays.asList(
 				createModification( 800, 800, 3500, 1500, 500, 500 ),
@@ -198,7 +196,7 @@ public class CropGeneratorTest
 		);
 
 		when( imageModificationManager.getAllModifications( 1 ) ).thenReturn( registeredModifications );
-
+		// TODO: I would prefer to always use the highest available best matching crop.
 		// 1000x1000 request should use the 800x800 crop
 		requestModification( 1000, 1000 );
 		assertResolution( 1000, 1000 );
