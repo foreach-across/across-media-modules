@@ -2,6 +2,7 @@ package com.foreach.imageserver.it.core;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.imageserver.client.ImageServerClient;
@@ -9,6 +10,7 @@ import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.config.WebConfiguration;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
@@ -18,6 +20,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -51,6 +54,15 @@ public class ITLocalImageServerClient
 
 	@Autowired
 	private ImageContextService imageContextService;
+
+	@Autowired
+	private AcrossContextBeanRegistry beanRegistry;
+
+	@Test(expected = NoSuchBeanDefinitionException.class)
+	public void noImageRequestHashBuilderShouldBeCreated() {
+		assertNull( beanRegistry.getBeanFromModule( ImageServerCoreModule.NAME,
+		                                            WebConfiguration.IMAGE_REQUEST_HASH_BUILDER ) );
+	}
 
 	@Before
 	public void registerResolutions() {

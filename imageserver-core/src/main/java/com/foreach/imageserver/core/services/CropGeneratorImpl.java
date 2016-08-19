@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageProfileManager;
+import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.services.exceptions.ImageCouldNotBeRetrievedException;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.logging.LogHelper;
@@ -50,14 +51,33 @@ import java.util.Set;
 @Service
 public class CropGeneratorImpl implements CropGenerator
 {
-	@Autowired
 	private ImageModificationManager imageModificationManager;
 
-	@Autowired
 	private CropGeneratorUtil cropGeneratorUtil;
 
-	@Autowired
 	private ImageProfileManager imageProfileManager;
+
+	private ImageResolutionManager imageResolutionManager;
+
+	@Autowired
+	public void setImageModificationManager( ImageModificationManager imageModificationManager ) {
+		this.imageModificationManager = imageModificationManager;
+	}
+
+	@Autowired
+	public void setCropGeneratorUtil( CropGeneratorUtil cropGeneratorUtil ) {
+		this.cropGeneratorUtil = cropGeneratorUtil;
+	}
+
+	@Autowired
+	public void setImageProfileManager( ImageProfileManager imageProfileManager ) {
+		this.imageProfileManager = imageProfileManager;
+	}
+
+	@Autowired
+	public void setImageResolutionManager( ImageResolutionManager imageResolutionManager ) {
+		this.imageResolutionManager = imageResolutionManager;
+	}
 
 	@Override
 	public ImageModificationDto buildModificationDto( Image image,
@@ -88,7 +108,7 @@ public class CropGeneratorImpl implements CropGenerator
 			}
 			else {
 				modificationDto = new ImageModificationDto( imageResolution.getWidth(), imageResolution.getHeight() );
-				modificationDto.setCrop( DtoUtil.toDto( obtainCrop( image, context, imageResolution ) ) );
+				modificationDto.setCrop( DtoUtil.toDto( findBestMatchingCrop( image, context, imageResolution ) ) );
 			}
 		}
 
@@ -97,10 +117,10 @@ public class CropGeneratorImpl implements CropGenerator
 		return modificationDto;
 	}
 
-	private Crop obtainCrop( Image image, ImageContext context, ImageResolution requestedResolution ) {
+	private Crop findBestMatchingCrop( Image image, ImageContext context, ImageResolution requestedResolution ) {
 		if ( image == null || context == null || requestedResolution == null ) {
 			LOG.warn(
-					"Null parameters not allowed - CropGeneratorImpl#obtainCrop: image={}, context={}, requestedResolution={}",
+					"Null parameters not allowed - CropGeneratorImpl#findBestMatchingCrop: image={}, context={}, requestedResolution={}",
 					LogHelper.flatten( image, context, requestedResolution ) );
 		}
 
@@ -125,7 +145,7 @@ public class CropGeneratorImpl implements CropGenerator
 		List<ImageModification> modifications = imageModificationManager.getAllModifications( image.getId() );
 		result = generateCrop( image, context, requestedResolution, modifications );
 		    /*}
-	    }*/
+		}*/
 
 		if ( result == null ) {
 			throw new ImageCouldNotBeRetrievedException( "No crop could be determined for this image." );

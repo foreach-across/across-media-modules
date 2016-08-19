@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -21,7 +23,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 public class TestRemoteImageServerClient
 {
-	private ImageServerClient imageServerClient = new RemoteImageServerClient( "http://localhost:8078", "standalone-access-token" );
+	private RemoteImageServerClient imageServerClient =
+			new RemoteImageServerClient( "http://localhost:8078", "standalone-access-token" );
 	private RestTemplate restTemplate = new RestTemplate();
 	private MockRestServiceServer mockRestServiceServer;
 
@@ -41,6 +44,58 @@ public class TestRemoteImageServerClient
 
 		url = imageServerClient.imageUrl( "someid", "SITE", 1000, 0, ImageTypeDto.TIFF );
 		assertEquals( "http://localhost:8078/view?iid=someid&context=SITE&width=1000&imageType=TIFF", url );
+	}
+
+	@Test
+	public void hashIsAppendedIfHashBuilderAdded() {
+		ImageRequestHashBuilder hashBuilder = mock( ImageRequestHashBuilder.class );
+		imageServerClient.setImageRequestHashBuilder( hashBuilder );
+
+		when(
+				hashBuilder.calculateHash( "ONLINE",
+				                           null,
+				                           new ImageResolutionDto( 1000, 2000 ),
+				                           new ImageVariantDto( ImageTypeDto.TIFF ) )
+		).thenReturn( "one" );
+		String url = imageServerClient.imageUrl( "10", "ONLINE", 1000, 2000, ImageTypeDto.TIFF );
+		assertEquals(
+				"http://localhost:8078/view?iid=10&context=ONLINE&width=1000&height=2000&imageType=TIFF&hash=one",
+				url );
+
+		when(
+				hashBuilder.calculateHash( "DIGITAL",
+				                           null,
+				                           new ImageResolutionDto( 0, 2000 ),
+				                           new ImageVariantDto( ImageTypeDto.TIFF ) )
+		).thenReturn( "two" );
+		url = imageServerClient.imageUrl( "10", "DIGITAL", 0, 2000, ImageTypeDto.TIFF );
+		assertEquals(
+				"http://localhost:8078/view?iid=10&context=DIGITAL&height=2000&imageType=TIFF&hash=two",
+				url );
+
+		when(
+				hashBuilder.calculateHash( "SITE",
+				                           null,
+				                           new ImageResolutionDto( 1000, 0 ),
+				                           new ImageVariantDto( ImageTypeDto.TIFF ) )
+		).thenReturn( "three" );
+		url = imageServerClient.imageUrl( "someid", "SITE", 1000, 0, ImageTypeDto.TIFF );
+		assertEquals(
+				"http://localhost:8078/view?iid=someid&context=SITE&width=1000&imageType=TIFF&hash=three",
+				url );
+
+		ImageVariantDto variant = new ImageVariantDto( ImageTypeDto.JPEG );
+		variant.setBoundaries( new DimensionsDto( 100, 1000 ) );
+		when(
+				hashBuilder.calculateHash( "TABLET",
+				                           "3/2",
+				                           new ImageResolutionDto( 200, 0 ),
+				                           variant )
+		).thenReturn( "four" );
+		url = imageServerClient.imageUrl( "internal:1", "TABLET", "3/2", 200, ImageTypeDto.JPEG, 100, 1000 );
+		assertEquals(
+				"http://localhost:8078/view?iid=internal:1&context=TABLET&ratio=3/2&width=200&imageType=JPEG&boundaries.width=100&boundaries.height=1000&hash=four",
+				url );
 	}
 
 	@Test
@@ -102,7 +157,7 @@ public class TestRemoteImageServerClient
 			ImageModificationDto item = new ImageModificationDto( 100, 101 );
 
 			ImageResolutionDto resolution = new ImageResolutionDto( 110, 111 );
-			item.setResolution(resolution);
+			item.setResolution( resolution );
 
 			CropDto crop = new CropDto( 125, 126, 120, 121 );
 			item.setCrop( crop );
@@ -120,7 +175,7 @@ public class TestRemoteImageServerClient
 			ImageModificationDto item = new ImageModificationDto( 200, 201 );
 
 			ImageResolutionDto resolution = new ImageResolutionDto( 210, 211 );
-			item.setResolution(resolution);
+			item.setResolution( resolution );
 
 			CropDto crop = new CropDto( 225, 226, 220, 221 );
 			item.setCrop( crop );
@@ -139,7 +194,8 @@ public class TestRemoteImageServerClient
 		                     .andExpect( method( HttpMethod.POST ) )
 		                     .andExpect( content().string(
 				                     "resolution.width=110&resolution.width=210&resolution.height=111&resolution.height=211&crop.x=125&crop.x=225&crop.y=126&crop.y=226&crop.width=120&crop.width=220&crop.height=121&crop.height=221&crop.source.width=0&crop.source.width=0&crop.source.height=0&crop.source.height=0&crop.box.width=0&crop.box.width=0&crop.box.height=0&crop.box.height=0&density.width=140&density.width=240&density.height=141&density.height=241&boundaries.width=130&boundaries.width=230&boundaries.height=131&boundaries.height=231" ) )
-		                     .andRespond( withSuccess("{\"result\":\"ok\", \"success\":\"true\"}", MediaType.APPLICATION_JSON) );
+		                     .andRespond( withSuccess( "{\"result\":\"ok\", \"success\":\"true\"}",
+		                                               MediaType.APPLICATION_JSON ) );
 
 		imageServerClient.registerImageModifications( "4938", "ONLINE", imageModificationDtoList );
 	}
