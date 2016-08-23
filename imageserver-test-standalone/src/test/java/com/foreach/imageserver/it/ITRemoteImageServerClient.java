@@ -217,7 +217,7 @@ public class ITRemoteImageServerClient
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
 
 		assertTrue( consumeImage( externalId, "website", 640, 480 ) );
-		assertTrue( consumeImage( externalId, "website", 800, 600 ) );
+		assertTrue( consumeImage( externalId, "tablet", 800, 600 ) );
 		assertTrue( consumeImage( externalId, "website", 1024, 768 ) );
 	}
 
