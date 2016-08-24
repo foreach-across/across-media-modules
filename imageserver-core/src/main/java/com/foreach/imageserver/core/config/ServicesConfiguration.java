@@ -95,4 +95,9 @@ public class ServicesConfiguration
 	public CropGenerator cropGenerator() {
 		return new CropGeneratorImpl();
 	}
+
+	@Bean
+	public ImageResolutionService imageResolutionService() {
+		return new ImageResolutionServiceImpl();
+	}
 }
