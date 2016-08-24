@@ -215,6 +215,16 @@ public class ITRemoteImageServerClient
 		assertTrue( hasResolution( resolutions, 640, 480, false ) );
 		assertTrue( hasResolution( resolutions, 800, 600, true ) );
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
+
+		assertTrue( consumeImage( externalId, "website", 640, 480 ) );
+		assertTrue( consumeImage( externalId, "tablet", 800, 600 ) );
+		assertTrue( consumeImage( externalId, "website", 1024, 768 ) );
+	}
+
+	private boolean consumeImage( String imageId, String context, int width, int height ) throws IOException {
+		InputStream is = imageServerClient.imageStream( imageId, context, width, height, ImageTypeDto.JPEG );
+		byte[] data = IOUtils.toByteArray( is );
+		return data.length > 0;
 	}
 
 	@Test

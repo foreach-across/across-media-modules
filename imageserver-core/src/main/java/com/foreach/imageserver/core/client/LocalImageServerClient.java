@@ -59,6 +59,9 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		request.setImageResolutionDto( imageResolution );
 		request.setImageVariantDto( imageVariant );
 
+		// if the local client contains a hash builder, strict mode should be off and we validate this as a custom request
+		hashBuilder().ifPresent( b -> request.setSecurityCheckCallback( () -> true ) );
+
 		ViewImageResponse response = imageRestService.viewImage( request );
 
 		if ( response.isImageDoesNotExist() ) {

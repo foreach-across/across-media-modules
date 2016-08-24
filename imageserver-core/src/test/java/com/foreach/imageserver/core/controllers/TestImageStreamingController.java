@@ -76,7 +76,7 @@ public class TestImageStreamingController
 	{
 		@Bean
 		public ImageStreamingController imageStreamingController() {
-			return new ImageStreamingController( "abc" );
+			return new ImageStreamingController( "abc", false );
 		}
 	}
 }

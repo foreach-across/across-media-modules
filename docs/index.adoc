@@ -1,0 +1,319 @@
+= ImageServer
+Arne Vandamme, Marc Vanbrabant, Peter Tibackx, Andy Somers, Alain Van Hout, Olivier Verhoogen, Niels Doucet
+4.0.0-SNAPSHOT
+:toc: left
+:sectanchors:
+:module-version: 4.0.0-SNAPSHOT
+:module-url: https://confluence.projects.foreach.be/display/IS
+
+[copyright,verbatim]
+--
+Copyright (C) 2014-2016 +
+[small]#Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.#
+--
+
+[abstract]
+== About
+ImageServer provides a set of Across modules for serving images in different resolutions.
+It focuses on flexibility in use and easy maintenance for developers.
+Apart from a server-side setup for actually serving and storing the images, a client library is also provided for easy connecting to the ImageServer.
+
+.In a nutshell.
+The base principal of ImageServer is that original images are uploaded to ImageServer and should never be removed.
+Variations of that image - for example a crop or resize - are stored for performance but can be removed as they will simply be recreated upon the next request.
+
+Module website: {module-url}
+
+:numbered:
+== Artifacts
+The ImageServer artifacts are only available in the Foreach artifact repository.
+If necessary you should add the following section to your pom.xml:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+<repositories>
+  <repository>
+    <id>foreach-nexus</id>
+    <name>Foreach repository</name>
+    <url>http://repository.foreach.be/nexus/content/groups/public</url>
+  </repository>
+</repositories>
+----
+
+The following artifacts are available for the different <<components>>:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+<!-- Core ImageServer -->
+<dependency>
+  <groupId>com.foreach.imageserver</groupId>
+  <artifactId>imageserver-core</artifactId>
+  <version>{module-version} </version>
+</dependency>
+
+<!-- AdminWebModule integration -->
+<dependency>
+  <groupId>com.foreach.imageserver</groupId>
+  <artifactId>imageserver-admin</artifactId>
+  <version>{module-version}</version>
+</dependency>
+
+<!-- Client library for external applications connecting to imageserver -->
+<dependency>
+  <groupId>com.foreach.imageserver</groupId>
+  <artifactId>imageserver-client</artifactId>
+  <version>{module-version}</version>
+</dependency>
+----
+
+== What's new in this version?
+:numbered!:
+=== 4.0.0-SNAPSHOT
+
+* introduced <<strict-mode,strict mode>> and the <<url-hash-support,`ImageRequestHashBuilder` API>>
+
+:numbered:
+[[components]]
+== Components
+The ImageServer project contains 3 important components:
+
+|===
+
+|<<core, *ImageServerCoreModule*>> | Across module containing the server-side part of ImageServer
+
+|<<admin-web, *ImageServerAdminWebModule*>> | Across module adding an AdminWebModule based UI for connecting to an ImageServer
+
+|<<client, *ImageServer client*>> | Library containing a remote client for interacting with an ImageServer in code
+
+|===
+
+[[core]]
+== ImageServerCoreModule
+Across module that contains the heart of ImageServer, responsible for actually storing and serving images.
+ImageServerCoreModule also provides the controllers and REST API for interacting with the backend.
+
+=== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+<dependency>
+  <groupId>com.foreach.imageserver</groupId>
+  <artifactId>imageserver-core</artifactId>
+  <version>{module-version} </version>
+</dependency>
+----
+
+=== Module dependencies
+ImageServerCoreModule has required dependencies on both *AcrossWebModule* and *AcrossHibernateJpaModule*.
+
+=== Module settings
+All properties start with the *imageServerCore.* prefix.
+
+|===
+|Property |Type |Description |Default
+
+|rootPath
+|`String`
+|Root path for all controllers.  All mappings will be relative to this path.
+|
+
+|strictMode
+|`Boolean`
+|Should ImageServer operate in <<strict-mode,strict mode>>.
+|_false_
+
+|accessToken
+|`String`
+|Access token for the secured services.
+|
+
+|md5HashToken
+|`String`
+|Optional: Token to use for a default MD5 based <<url-hash-support,hash builder>>.
+|
+
+|createLocalClient
+|`Boolean`
+|Should an `ImageServerClient` connecting to this ImageServer be created and exposed.
+|_false_
+
+|imageServerUrl
+|`String`
+|Optional: URL for this ImageServer instance.  In case a local client will be created, this will be the base url for requesting images.
+|
+
+|store.folder
+|`String`
+|Physical root location of where all images should be stored.
+|
+
+|transformers.imageMagick.path
+|`String`
+|Path to the ImageMagick executable binaries.
+|/usr/bin
+
+|transformers.imageMagick.useGraphicsMagick
+|`Boolean`
+|Should GraphicsMagick be used instead of regular ImageMagick.  In that case the path should point to the GraphicsMagick binaries.
+|_false_
+
+|transformers.imageMagick.useGhostScript
+|`Boolean`
+|Is GhostScript supported on the GraphicsMagick installation.
+|_false_
+
+|streaming.imageNotFoundKey
+|`String`
+|Image key for the image that should be returned in case the originally requested image was not found.
+|
+
+|streaming.maxBrowserCacheSeconds
+|`Integer`
+|Number of seconds a browser is allowed to cache the image returned.
+|60
+
+|streaming.provideStackTrace
+|`Boolean`
+|Should exception stacktraces be returned to the caller.
+|_false_
+
+|===
+
+=== Requirements
+ImageServerCoreModule requires either ImageMagick or GraphicsMagick installed to work.
+Additionally Ghostscript is required for processing of certain image types like EPS.
+
+=== Default operating mode
+When serving images using the public urls, ImageServer will only accept requests for registered resolutions or requests having a valid hash.
+
+[[url-hash-support]]
+==== URL hash support
+If a requested image is not for a registered resolution, ImageServer will check if the request can be executed based on the presence of a *hash* parameter.
+If that hash matches an internal hash generated of the requested variant parameters, the request is still considered valid and will be executed.
+
+Configuring ImageServer with hash support alleviates the need to pre-register all resolutions.
+Support for a default MD5 based hash mechanism can be activated by simply setting property *imageServerCore.md5HashToken* with a valid token string.
+
+A hash is ignored if the request matches a registered resolution.
+
+NOTE: The actual image is not taken into account when generating a hash, only the variant parameters requested.
+This means that it is possible to generate a hash a single time and then append it to image urls you create manually.
+However it is usually still easier to use an <<client,`ImageServerClient`>> for generating valid urls.
+
+WARNING: If using hash urls the same `ImageRequestHashBuilder` must be registered on both the server and any <<client,`ImageServerClient`>> connecting to it.
+Be aware that changing the hash mechanism at a later point in time can result in broken urls containing old hashes.
+If you ever run into this problem, consider registering resolutions for the old requests instead, as then the hash will be ignored.
+
+[[strict-mode]]
+=== Strict mode
+ImageServer can be set in strict mode by setting property *imageServerCore.strictMode* to `true`.
+In strict mode only requests for registered resolutions will be accepted and any url hashes will be ignored.
+
+Setting to strict mode decreases the risk of abuse and has a slight performance gain.
+
+NOTE: Before ImageServer 4.0.0 strict mode was the only operating mode for ImageServer.
+
+=== Local ImageServer client
+If enabled, ImageServer can create and expose an `ImageServerClient` bean that connects to the ImageServer.
+This is most useful if the ImageServer is running in the same application as the client code that will connect to it.
+
+Enabling the creation of a local client is done through property *imageServerCore.createLocalClient*.
+
+[[admin-web]]
+== ImageServerAdminWebModule
+
+AcrossModule that provides an administrative user interface for interacting with a single ImageServer.
+Offers the following functionality:
+
+* uploading an image
+* managing the resolutions
+* viewing a stored image and its registered variants
+
+=== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+<dependency>
+  <groupId>com.foreach.imageserver</groupId>
+  <artifactId>imageserver-admin</artifactId>
+  <version>{module-version} </version>
+</dependency>
+----
+
+=== Module dependencies
+ImageServerAdminWebModule has required dependencies on both *AdminWebModule* and *UserModule*.
+
+=== Module settings
+All properties start with the *imageServerAdmin.* prefix.
+
+|===
+|Property |Type |Description
+
+|imageServerUrl
+|`String`
+|URL or relative base path for the ImageServer that this admin should connect to.
+
+|accessToken
+|`String`
+|Access token required for the secured services of the ImageServer.
+
+|===
+
+=== UserModule integration
+ImageServerAdminWebModule will install the following permissions:
+
+* *imageserver view images*: The user can view images and access the imageserver administrative interface.
+* *imageserver upload images*: The user can upload images.
+* *imageserver manage resolutions*: The user can modify and create image resolutions.
+
+=== AdminWebModule integration
+The ImageServerAdminWebModule will add a top menu item *Image server* if the user has the *imageserver view images* permission.
+
+[[client]]
+== ImageServer client
+Library that contains base classes for interacting with an ImageServer from code.
+
+Most useful classes are:
+
+* `RemoteImageServerClient` that is the actual client implementation of `ImageServerClient`
+* `Md5ImageRequestHashBuilder` which is an MD5 hash-based implementation of the `ImageRequestHashBuilder`
+* `ImageServerConversionUtils` which contains utility functions for doing operations on image dimensions (useful for building for example a client-side cropping UI)
+
+The client is the easiest way to create correct URLs to ImageServer images.
+
+=== Creating a new client
+A new remote client can be a singleton instantiated by creating a new `RemoteImageServerClient` with the right url and (optionally) access token.
+The access token is required if the client will be used for using secured parts of the API.
+An access token is not required if the client will only be used for creating image urls.
+
+.RemoteImageServerClient bean
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Bean
+public ImageServerClient imageServerClient() {
+    return new RemoteImageServerClient( "http://imageserverurl/", "access-token );
+}
+----
+
+NOTE: Consumers should program against the `ImageServerClient` interface instead of specific implementations.
+
+If the server is not operating in <<strict-mode,strict mode>>, you can also configure an `ImageRequestHashBuilder` on the client.
+
+.RemoteImageServerClient bean using an md5 hashing
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Bean
+public ImageServerClient imageServerClient() {
+    RemoteImageServerClient client = new RemoteImageServerClient( "http://imageserverurl/", "access-token );
+    client.setImageRequestHashBuilder( ImageRequestHashBuilder.md5( "hash-token" ) );
+    return client;
+}
+----
+
+WARNING: The same `ImageRequestHashBuilder` should be used on the client and the server for hashing to work.
+Be aware that if the hashing mechanism changes (for example the md5 hash token changes) the old urls will no longer be valid.
+

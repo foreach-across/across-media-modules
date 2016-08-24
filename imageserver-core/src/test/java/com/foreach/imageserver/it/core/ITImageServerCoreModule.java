@@ -2,17 +2,20 @@ package com.foreach.imageserver.it.core;
 
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
+import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestWebConfiguration;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
+import com.foreach.imageserver.core.config.WebConfiguration;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.ImageTransformService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -50,6 +53,9 @@ public class ITImageServerCoreModule
 	@Autowired(required = false)
 	private ImageServerClient imageServerClient;
 
+	@Autowired
+	private AcrossContextBeanRegistry beanRegistry;
+
 	@Test
 	public void exposedServices() {
 		assertNotNull( imageService );
@@ -72,6 +78,12 @@ public class ITImageServerCoreModule
 	@Test
 	public void noClientShouldBeCreated() {
 		assertNull( imageServerClient );
+	}
+
+	@Test(expected = NoSuchBeanDefinitionException.class)
+	public void noImageRequestHashBuilderShouldBeCreated() {
+		assertNull( beanRegistry.getBeanFromModule( ImageServerCoreModule.NAME,
+		                                            WebConfiguration.IMAGE_REQUEST_HASH_BUILDER ) );
 	}
 
 	@Configuration
