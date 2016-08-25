@@ -43,7 +43,8 @@ public class ImageResolutionServiceImpl implements ImageResolutionService {
 		if ( cropsThatFit.isEmpty() ) return null;
 
 		// Convert the map to a 'List', order by ascending resolution
-		List<Map.Entry<Crop, ImageResolution>> sorted = cropsThatFit.entrySet().stream().sorted( Map.Entry.comparingByValue( ( a, b ) -> a.getHeight() - b.getHeight() ) )
+		List<Map.Entry<Crop, ImageResolution>> sorted = cropsThatFit.entrySet().stream().sorted( Map.Entry.comparingByValue(
+				( a, b ) -> a.getHeight() * a.getWidth() - b.getHeight() * b.getWidth() ) )
 				.collect( Collectors.toList() );
 
 		// return the first crop that has a higher resolution then requested

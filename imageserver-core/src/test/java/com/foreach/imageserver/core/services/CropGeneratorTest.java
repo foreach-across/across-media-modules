@@ -187,7 +187,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void inCaseOfBigDistanceDifferenceTheClosestResolutionShouldBeUsed() {
 		List<ImageModification> registeredModifications = Arrays.asList(
 				createModification( 800, 800, 3500, 1500, 500, 500 ),
