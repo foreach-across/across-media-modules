@@ -99,15 +99,10 @@ public class CropDto
 	}
 
 	/**
-	 * Translates the current crop coordinates into a new set of coordinates with the assumed
-	 * source dimensions for the current coordinates, and the target box that the new coordinates should fit in.
-	 *
-	 * @param source dimensions of the original file for the current crop coordinates
-	 * @param box dimensions that the new crop should fit in
-	 * @return translated crop coordinates
+	 * @return dimensions of the actual crop
 	 */
-	public CropDto translate( DimensionsDto source, DimensionsDto box ) {
-		return null;
+	public DimensionsDto getDimensions() {
+		return new DimensionsDto( width, height );
 	}
 
 	@Override

@@ -423,7 +423,12 @@ public class ImageServiceImpl implements ImageService
 
 	@Override
 	public List<ImageModification> getModifications( long imageId, long contextId ) {
-		return new ArrayList<>( imageModificationManager.getModifications( imageId, contextId ) );
+		return Collections.unmodifiableList( imageModificationManager.getModifications( imageId, contextId ) );
+	}
+
+	@Override
+	public List<ImageModification> getAllModifications( long imageId ) {
+		return Collections.unmodifiableList( imageModificationManager.getAllModifications( imageId ) );
 	}
 
 	@Override

@@ -8,6 +8,8 @@ import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
+import com.foreach.imageserver.math.AspectRatio;
+import com.foreach.imageserver.math.ImageServerConversionUtils;
 
 public class CropGeneratorUtilImpl implements CropGeneratorUtil
 {
@@ -18,9 +20,10 @@ public class CropGeneratorUtilImpl implements CropGeneratorUtil
 	public void normalizeModificationDto( Image image, ImageModificationDto imageModificationDto ) {
 		// Determine the actual resolution requested based on the original
 		Dimensions originalDimensions = image.getDimensions();
-		Dimensions targetDimensions = new Dimensions( imageModificationDto.getResolution().getWidth(),
-		                                              imageModificationDto.getResolution().getHeight() ).normalize(
-				image.getDimensions() );
+		Dimensions targetDimensions
+				= new Dimensions( imageModificationDto.getResolution().getWidth(),
+				                  imageModificationDto.getResolution().getHeight() )
+				.normalize( image.getDimensions() );
 
 		// If boundaries are specified, scale down the output to fit in the boundaries
 		if ( imageModificationDto.hasBoundaries() ) {
@@ -29,9 +32,7 @@ public class CropGeneratorUtilImpl implements CropGeneratorUtil
 		}
 
 		if ( !imageModificationDto.hasCrop() ) {
-			// No crop is simply a scaling of the image
-			imageModificationDto.setCrop(
-					new CropDto( 0, 0, originalDimensions.getWidth(), originalDimensions.getHeight() ) );
+			imageModificationDto.setCrop( determineDefaultCrop( originalDimensions, targetDimensions ) );
 		}
 		else {
 			// Translate the crop according to the actual original
@@ -43,6 +44,32 @@ public class CropGeneratorUtilImpl implements CropGeneratorUtil
 		imageModificationDto.setBoundaries( new DimensionsDto() );
 
 		calculateDensity( imageModificationDto, originalDimensions );
+	}
+
+	private CropDto determineDefaultCrop( Dimensions originalDimensions, Dimensions targetDimensions ) {
+		AspectRatio targetRatio = targetDimensions.fetchAspectRatio();
+		if ( !originalDimensions.fetchAspectRatio().equals( targetRatio ) ) {
+			int width = originalDimensions.getWidth();
+			int height = originalDimensions.getHeight();
+
+			if ( targetRatio.isLargerOnWidth() ) {
+				height = targetRatio.calculateHeightForWidth( width );
+			}
+			else {
+				width = targetRatio.calculateWidthForHeight( height );
+			}
+
+			DimensionsDto cropDimensions = ImageServerConversionUtils.scaleToFitIn(
+					new DimensionsDto( width, height ),
+					new DimensionsDto( originalDimensions.getWidth(), originalDimensions.getHeight() )
+			);
+			int x = ( originalDimensions.getWidth() - cropDimensions.getWidth() ) / 2;
+			int y = ( originalDimensions.getHeight() - cropDimensions.getHeight() ) / 2;
+			return new CropDto( x, y, cropDimensions.getWidth(), cropDimensions.getHeight() );
+		}
+
+		// simply scale the image
+		return new CropDto( 0, 0, originalDimensions.getWidth(), originalDimensions.getHeight() );
 	}
 
 	private void normalizeCrop( Dimensions originalDimensions, CropDto crop ) {
@@ -144,7 +171,7 @@ public class CropGeneratorUtilImpl implements CropGeneratorUtil
 	public Dimensions applyResolution( Image image, ImageResolution resolution ) {
 		return resolution.getDimensions().normalize( image.getDimensions() );
 		/*
-	    Integer resolutionWidth = resolution.getWidth();
+		Integer resolutionWidth = resolution.getWidth();
         Integer resolutionHeight = resolution.getHeight();
 
         if (resolutionWidth != null && resolutionHeight != null) {

@@ -1,9 +1,11 @@
 package com.foreach.imageserver.dto;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class ImageModificationDto
 {
+	private Long baseResolutionId;
 	private ImageResolutionDto resolution;
 	private CropDto crop;
 	private DimensionsDto density;
@@ -28,6 +30,23 @@ public class ImageModificationDto
 
 		resolution.setWidth( width );
 		resolution.setHeight( height );
+	}
+
+	/**
+	 * The id of the resolution whose modification was used as the base for building this one.
+	 * If this modification is registered directly to the resolution, this id will be the same as
+	 * the id property of {@link #getResolution()}.  If another modification was used as base but then
+	 * translated to match the requested resolution, then this property should return the id of
+	 * the original modification, not the result of the translation.
+	 *
+	 * @return id of the resolution or {@code null} if none
+	 */
+	public Optional<Long> getBaseResolutionId() {
+		return Optional.ofNullable( baseResolutionId );
+	}
+
+	public void setBaseResolutionId( Long baseResolutionId ) {
+		this.baseResolutionId = baseResolutionId;
 	}
 
 	public ImageModificationDto( ImageResolutionDto resolution, CropDto crop, DimensionsDto density ) {
@@ -82,6 +101,16 @@ public class ImageModificationDto
 
 	public boolean hasBoundaries() {
 		return boundaries != null && !boundaries.equals( new DimensionsDto() );
+	}
+
+	/**
+	 * Returns {@code true} if this modification is registered for the resolution it actually returns
+	 * This will be so if {@link #getBaseResolutionId()} equals the id property of {@link #getResolution()}.
+	 *
+	 * @return {@code true} if this modification is registered for the resolution it returns
+	 */
+	public boolean isRegistered() {
+		return baseResolutionId != null && resolution != null && baseResolutionId.equals( resolution.getId() );
 	}
 
 	@Override

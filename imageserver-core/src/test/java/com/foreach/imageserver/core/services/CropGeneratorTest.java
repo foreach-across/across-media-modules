@@ -8,10 +8,10 @@ import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 /**
  * @author Arne Vandamme
  */
+@RunWith(MockitoJUnitRunner.class)
 public class CropGeneratorTest
 {
 	private int resolutionIdCounter;
@@ -45,8 +46,6 @@ public class CropGeneratorTest
 
 	@Before
 	public void before() {
-		MockitoAnnotations.initMocks( this );
-
 		imageResolutionService = new ImageResolutionServiceImpl();
 		cropGenerator = new CropGeneratorImpl();
 		cropGenerator.setCropGeneratorUtil( new CropGeneratorUtilImpl() );
