@@ -1,7 +1,12 @@
 package com.foreach.imageserver.core.transformers;
 
 import com.foreach.imageserver.core.business.Dimensions;
+import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.services.ImageContextService;
+import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.services.ImageStoreService;
+import com.foreach.imageserver.core.services.ImageStoreServiceImpl;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,10 +20,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import static com.foreach.imageserver.core.utils.ImageUtils.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 @ContextConfiguration(classes = ImageMagickImageTransformerTest.Config.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,6 +36,9 @@ public class ImageMagickImageTransformerTest
 
 	@Autowired
 	private ImageMagickImageTransformer imageTransformer;
+
+	@Autowired
+	private ImageStoreService imageStoreService;
 
 	@Test
 	public void canExecute() {
@@ -243,6 +255,52 @@ public class ImageMagickImageTransformerTest
 		assertEquals( 3, imageTransformer.getOrder() );
 	}
 
+	@Test
+	public void animated_gif_to_gif() throws Exception {
+		ImageModifyAction action = modifyAction(
+				ImageType.GIF,
+				"images/animated.gif",
+				250,
+				250,
+				50,
+				50,
+				250,
+				250,
+				ImageType.GIF );
+		InMemoryImageSource result = imageTransformer.execute( action );
+		assertNotNull( result );
+		assertNotNull( result.getImageBytes() );
+
+		Image image = new Image();
+		image.setImageType( ImageType.GIF );
+		image.setOriginalPath( "bla" );
+		image.setId( 0L );
+		imageStoreService.storeOriginalImage( image, result.getImageBytes() );
+	}
+
+	@Test
+	public void animated_gif_to_jpeg() throws Exception {
+		ImageModifyAction action = modifyAction(
+				ImageType.GIF,
+				"images/animated.gif",
+				250,
+				250,
+				50,
+				50,
+				250,
+				250,
+				ImageType.JPEG );
+		InMemoryImageSource result = imageTransformer.execute( action );
+		assertNotNull( result );
+		assertNotNull( result.getImageBytes() );
+
+		Image image = new Image();
+		image.setImageType( ImageType.JPEG );
+		image.setOriginalPath( "bla" );
+		image.setId( 1L );
+		imageStoreService.storeOriginalImage( image, result.getImageBytes() );
+	}
+
 	private ImageCalculateDimensionsAction calculateDimensionsAction( ImageType imageType ) {
 		return new ImageCalculateDimensionsAction( new StreamImageSource( imageType, (InputStream) null ) );
 	}
@@ -301,6 +359,21 @@ public class ImageMagickImageTransformerTest
 		@Bean
 		public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
 			return new PropertySourcesPlaceholderConfigurer();
+		}
+
+		@Bean
+		public ImageStoreService imageStoreService( @Value("${imagestore.folder}") String storeFolder ) throws IOException {
+			return new ImageStoreServiceImpl( new File( storeFolder ).toPath(), "", "" );
+		}
+
+		@Bean
+		public ImageContextService imageContextService() {
+			return mock( ImageContextService.class );
+		}
+
+		@Bean
+		public ImageService imageService() {
+			return mock( ImageService.class );
 		}
 	}
 }

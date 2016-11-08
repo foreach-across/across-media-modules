@@ -52,9 +52,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 		 * I'd rather not set a global system property for this, but this is the only way to have Info use
 		 * GraphicsMagick.
 		 */
-		if ( useGraphicsMagick ) {
-			System.setProperty( "im4java.useGM", "true" );
-		}
+		System.setProperty( "im4java.useGM", String.valueOf( useGraphicsMagick ) );
 
 		magickToImageType = new HashMap<>( 24 );
 		magickToImageType.put( "JPEG", ImageType.JPEG );
@@ -155,9 +153,15 @@ public class ImageMagickImageTransformer implements ImageTransformer
 		}
 
 		ConvertCmd cmd = new ConvertCmd();
+		cmd.getCommand().clear();
+		cmd.setCommand( "magick", "convert" );//when installing imagemagick, the default is to not make the convert command available separately
+
 		IMOperation op = new IMOperation();
 		Dimensions appliedDensity = setDensityIfRequired( op, action );
 		op.addImage( "-" );
+
+		op.coalesce();
+		op.repage( 0, 0 );
 
 		String colorspace = "Transparent";
 
@@ -191,7 +195,11 @@ public class ImageMagickImageTransformer implements ImageTransformer
 			}
 		}
 
+		op.p_repage();
+
 		op.addImage( action.getOutputType().getExtension() + ":-" );
+
+		System.out.println( StringUtils.join( cmd.getCommand(), " " ) + " " + op.toString() );
 
 		try (InputStream imageStream = action.getSourceImageSource().getImageStream()) {
 			try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
