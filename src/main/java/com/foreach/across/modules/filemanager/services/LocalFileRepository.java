@@ -307,7 +307,7 @@ public class LocalFileRepository implements FileRepository
 		Path renamedPath = buildPath( target );
 		try {
 			Path parent = renamedPath.getParent();
-			if ( !Files.isDirectory( parent ) ) {
+			if (parent != null && !Files.isDirectory(parent)) {
 				Files.createDirectories( parent );
 			}
 			result = Files.move( buildPath( source ), renamedPath, StandardCopyOption.ATOMIC_MOVE,
