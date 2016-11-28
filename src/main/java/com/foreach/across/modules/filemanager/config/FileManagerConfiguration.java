@@ -56,7 +56,7 @@ public class FileManagerConfiguration
 		}
 
 		// Register temp repository
-		String tempFolder = settings.getDefaultTempDirectory();
+		String tempFolder = settings.getTempFolder();
 
 		if ( tempFolder != null ) {
 			LOG.info( "Creating file repository for temporary files in folder {}", tempFolder );

@@ -16,27 +16,37 @@
 
 package com.foreach.across.modules.filemanager;
 
-import com.foreach.across.core.AcrossModuleSettings;
-import com.foreach.across.core.AcrossModuleSettingsRegistry;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-public class FileManagerModuleSettings extends AcrossModuleSettings
+@ConfigurationProperties("fileManagerModule")
+public class FileManagerModuleSettings
 {
 	public static final String LOCAL_REPOSITORIES_ROOT = "fileManagerModule.localRepositoriesRoot";
 	public static final String DEFAULT_TEMP_FOLDER = "fileManagerModule.tempFolder";
 
-	@Override
-	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
-		registry.register( DEFAULT_TEMP_FOLDER, String.class, System.getProperty( "java.io.tmpdir" ),
-		                   "Default directory for temporary files." );
-		registry.register( LOCAL_REPOSITORIES_ROOT, String.class, null,
-		                   "Root directory in which local repositories will be created." );
-	}
+	/***
+	 * The location of the root directory in which local repositories will be created.
+	 */
+	private String localRepositoriesRoot;
 
-	public String getDefaultTempDirectory() {
-		return getProperty( DEFAULT_TEMP_FOLDER );
-	}
+	/***
+	 * The location of default directory for temporary files.
+	 */
+	private String tempFolder = System.getProperty("java.io.tmpdir");
 
 	public String getLocalRepositoriesRoot() {
-		return getProperty( LOCAL_REPOSITORIES_ROOT );
+		return localRepositoriesRoot;
+	}
+
+	public void setLocalRepositoriesRoot(String localRepositoriesRoot) {
+		this.localRepositoriesRoot = localRepositoriesRoot;
+	}
+
+	public String getTempFolder() {
+		return tempFolder;
+	}
+
+	public void setTempFolder(String tempFolder) {
+		this.tempFolder = tempFolder;
 	}
 }
