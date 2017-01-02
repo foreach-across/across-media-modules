@@ -26,6 +26,7 @@
 		<version>2.0.0.M1</version>
 	</parent>
 
+	<groupId>com.foreach.across.modules</groupId>
 	<artifactId>web-cms-module-project</artifactId>
 	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
