@@ -34,7 +34,21 @@
 			<groupId>com.foreach.across</groupId>
 			<artifactId>across-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>across-hibernate-module</artifactId>
+		</dependency>
 		<!-- Optional -->
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>admin-web-module</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>entity-module</artifactId>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>

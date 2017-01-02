@@ -16,6 +16,9 @@
 
 package it;
 
+import com.foreach.across.modules.adminweb.AdminWebModule;
+import com.foreach.across.modules.entity.EntityModule;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.test.AcrossTestContext;
 import org.junit.Test;
@@ -30,9 +33,29 @@ import static org.junit.Assert.assertTrue;
 public class ITWebCmsModule
 {
 	@Test
-	public void noAdminOrEntityModule() {
-		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME )
+	public void noAdminWebModule() {
+		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME )
 		                                  .build()) {
+			assertTrue( ctx.contextInfo().hasModule( WebCmsModule.NAME ) );
+		}
+	}
+
+	@Test
+	public void adminWebWithoutEntityModule() {
+		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME,
+		                                            AdminWebModule.NAME )
+		                                  .build()
+		) {
+			assertTrue( ctx.contextInfo().hasModule( WebCmsModule.NAME ) );
+		}
+	}
+
+	@Test
+	public void entityAndAdminWebModule() {
+		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME,
+		                                            AdminWebModule.NAME, EntityModule.NAME )
+		                                  .build()
+		) {
 			assertTrue( ctx.contextInfo().hasModule( WebCmsModule.NAME ) );
 		}
 	}
