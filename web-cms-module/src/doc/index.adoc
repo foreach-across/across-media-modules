@@ -1,0 +1,100 @@
+= WebCmsModule
+Arne Vandamme
+0.0.1-SNAPSHOT
+:toc: left
+:sectanchors:
+:module-version: 0.0.1-SNAPSHOT
+:module-name: WebCmsModule
+:module-artifact: web-cms-module
+:module-url: https://foreach.atlassian.net/wiki/display/AX/WebCmsModule
+:application-info-url: https://foreach.atlassian.net/wiki/display/AX/ApplicationInfoModule
+:spring-security-module-url: https://foreach.atlassian.net/wiki/display/AX/SpringSecurityModule
+:entity-module-url: https://foreach.atlassian.net/wiki/display/AX/EntityModule
+
+[copyright,verbatim]
+--
+Copyright (C) 2014-2017 +
+[small]#Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.#
+--
+
+[abstract]
+== About
+The {module-name} provides infrastructure for basic web CMS features.
+Most important part is that it allows managing web pages using an administration UI.
+
+Module website: {module-url}
+
+:numbered:
+== General information
+
+=== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>{module-artifact}</artifactId>
+			<version>{module-version}</version>
+		</dependency>
+	</dependencies>
+----
+
+=== Module dependencies
+
+{module-name} only has a required dependency on AcrossWebModule.
+
+.Module dependencies
+|===
+|Module |Type |Description
+
+|{entity-module-url}[EntityModule]
+|optional
+|In combination with `AdminWebModule` this enables the management forms in the administration UI.
+|===
+
+=== Module settings
+
+All properties start with the *webCmsModule.* prefix.
+
+|===
+|Property |Type |Description |Default
+
+|property
+|`type`
+|Optional PasswordEncoder instance to be used.  Defaults to BCrypt if none is specified.
+|default
+
+|===
+
+== What's new in this version?
+:numbered!:
+=== 0.0.1-SNAPSHOT
+Initial public release available on http://search.maven.org/[Maven central].
+
+:numbered:
+== How {module-name} works
+
+will install a default controller
+all other request mappings will take precedence
+no specific mapping, an endpoint request will be done
+no endpoint found a 404 will be thrown
+else the typed endpoint handler will be called
+
+in case of a page, a default page will be rendered
+a default webcmspagetemplate will be used if none is specified
+
+== Domain model
+
+WebCmsEndpoint
+- multiple urls
+
+WebCmsPage
+- name
+- url
+- title
+
+Generating a sitemap
+
+=== Programmatically creating pages
+you can use yaml to create pages
