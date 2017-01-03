@@ -87,6 +87,11 @@
 				<artifactId>across-hibernate-module</artifactId>
 				<version>2.0.0.M1</version>
 			</dependency>
+			<dependency>
+				<groupId>com.foreach.across.modules</groupId>
+				<artifactId>user-module</artifactId>
+				<version>2.0.0.M1</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

@@ -17,6 +17,8 @@
 package it;
 
 import com.foreach.across.modules.webcms.WebCmsModule;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageRepository;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.Test;
@@ -29,8 +31,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Arne Vandamme
@@ -44,19 +48,44 @@ public class ITPageControllerPrecedence
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	public void registerWebCmsPages( WebCmsPageRepository repository ) {
+		repository.save(
+				WebCmsPage.builder()
+				          .path( "/about" )
+				          .title( "About page" )
+				          .name( "About" )
+				          .build()
+		);
+
+		repository.save(
+				WebCmsPage.builder()
+				          .path( "/help" )
+				          .title( "Help page" )
+				          .name( "Help" )
+				          .build()
+		);
+	}
+
 	@Test
 	public void aboutIsCustomController() throws Exception {
 		mockMvc.perform( get( "/about" ) )
+		       .andExpect( status().isOk() )
 		       .andExpect( content().string( "about custom controller" ) );
 	}
 
 	@Test
-	public void wildcardController() throws Exception {
-		mockMvc.perform( get( "/unknown/path/name" ) )
-		       .andExpect( content().string( "web cms endpoint" ) );
+	public void helpIsWebCmsPage() throws Exception {
+		mockMvc.perform( get( "/help" ) )
+		       .andExpect( status().isOk() )
+		       .andExpect( content().string( containsString( "Help page" ) ) );
 	}
 
-	// todo: test that unknown page throws 404
+	@Test
+	public void unknownPage() throws Exception {
+		mockMvc.perform( get( "/unknown/path/name" ) )
+		       .andExpect( status().isNotFound() );
+	}
 
 	@AcrossTestConfiguration(modules = WebCmsModule.NAME)
 	@Controller

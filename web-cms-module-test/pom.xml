@@ -31,6 +31,42 @@
 		<sonar.skip>true</sonar.skip>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>web-cms-module</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>admin-web-module</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>entity-module</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>user-module</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>

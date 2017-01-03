@@ -60,10 +60,15 @@ All properties start with the *webCmsModule.* prefix.
 |===
 |Property |Type |Description |Default
 
-|property
-|`type`
-|Optional PasswordEncoder instance to be used.  Defaults to BCrypt if none is specified.
-|default
+|pages.default-template
+|`String`
+|Default template to use if no custom template specified on a page entity.
+
+|pages.template-prefix
+|`String`
+|Prefix to be added to relative template names.
+This corresponds usually with the base directory where the (Thymeleaf) templates are located.
+If unspecified the default resources of any present `@AcrossApplication` will be used.
 
 |===
 
@@ -81,18 +86,48 @@ no specific mapping, an endpoint request will be done
 no endpoint found a 404 will be thrown
 else the typed endpoint handler will be called
 
+WARNING: in case of problems, make sure that the request mapping is last
+
 in case of a page, a default page will be rendered
 a default webcmspagetemplate will be used if none is specified
+
+specify a default template yourself
+add a base location for the template files
 
 == Domain model
 
 WebCmsEndpoint
-- multiple urls
+
+target for one or more endpoint urls
+
+WebCmsEndpointUrl
+
+URL targeting a specific endpoint
+
+* path: url path
+* status code: http status code, will determine what will happen when the url is requested
+** 200 will serve the content
+** 3xx will perform a redirect to the canonical url
+** other status codes will serve the content but with the custom status code (eg custom 404 page)
+* is canonical: only one url for an endpoint can be the canonical url
+* endpoint: the endpoint target
 
 WebCmsPage
-- name
-- url
-- title
+
+a generated path segment will be SEO friendly
+
+* path segment: path (url) of the page - used for default menu
+* name: internal name
+* title: descriptive title of the page
+* template: to render the page
+* canonicalPath: fq path of the page - usually corresponds with the main url
+* generate canonical path: true if the canonical path should be generated based on the parent hierarchy
+* inheritable canonical path: true (default) if the canonical path should be used by children
+* canonical url should match canonical path: if true the main url should equal the canonical path, if the path changes the main url will change
+* parent: optional parent page
+* hidden: if true the page itself cannot be requested (and might not have a url)
+- its properties will still be inherited (eg path, layout, template) - in the default menu it will still insert a group section
+* disabled: this page and all its children will not be rendered
 
 Generating a sitemap
 

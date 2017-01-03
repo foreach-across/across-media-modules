@@ -20,6 +20,7 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
+import com.foreach.across.core.installers.AcrossSequencesInstaller;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 
@@ -45,6 +46,11 @@ public class WebCmsModule extends AcrossModule
 	@Override
 	public String getName() {
 		return NAME;
+	}
+
+	@Override
+	public Object[] getInstallers() {
+		return new Object[] { AcrossSequencesInstaller.class };
 	}
 
 	@Override
