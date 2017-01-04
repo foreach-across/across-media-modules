@@ -41,7 +41,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Setter
-@SuppressWarnings( "squid:S2160" )
+@SuppressWarnings("squid:S2160")
 public class WebCmsPage extends SettableIdAuditableEntity<WebCmsPage>
 {
 	@Id
@@ -57,30 +57,51 @@ public class WebCmsPage extends SettableIdAuditableEntity<WebCmsPage>
 	private Long id;
 
 	/**
-	 * Path segment.  Used as an identification in the hierarchical context.
-	 * Every page should have a unique path relative to its parents' path, resulting in a globally
-	 * unique path containing all its ancestors.
-	 */
-	@Column
-	@NotNull
-	@Length(max = 255)
-	private String path;
-
-	/**
-	 * (internal) name of the page
-	 */
-	@Column
-	@NotBlank
-	@Length(max = 255)
-	private String name;
-
-	/**
-	 * Descriptive title of the page.
+	 * Title of the page.
 	 */
 	@Column
 	@NotBlank
 	@Length(max = 255)
 	private String title;
+
+	/**
+	 * Parent page.  Will determine the administrative hierarchy of pages, but properties
+	 * from the parent might also be inherited or used for generation of values (depending on settings).
+	 */
+	@ManyToOne
+	@JoinColumn(name = "parent_id")
+	private WebCmsPage parent;
+
+	/**
+	 * Path segment.  Used as an identification in the hierarchical context.
+	 * Every page should have a unique path segment relative to its parents' path, resulting in a globally
+	 * unique path containing all its ancestors.
+	 */
+	@Column(name = "path_segment")
+	@NotNull
+	@Length(max = 255)
+	private String pathSegment;
+
+	/**
+	 * Should the path segment be generated based on the title.
+	 */
+	@Column(name = "path_segment_generated")
+	private boolean pathSegmentGenerated = true;
+
+	/**
+	 * Fully qualified canonical path of this page, usually corresponds with the path relative within
+	 * the application.  The canonical path is unique for every page and will always start with a /.
+	 */
+	@Column(name = "canonical_path")
+	@NotNull
+	@Length(max = 500)
+	private String canonicalPath;
+
+	/**
+	 * Should the canonical path be generated based on the path segment and ancestor pages.
+	 */
+	@Column(name = "canonical_path_generated")
+	private boolean canonicalPathGenerated = true;
 
 	/**
 	 * Template to use when rendering the page.

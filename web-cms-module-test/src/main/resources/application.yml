@@ -33,4 +33,3 @@ spring:
     restart:
       additional-paths: src/main/resources
       additional-exclude: "messages/**,views/**"
-

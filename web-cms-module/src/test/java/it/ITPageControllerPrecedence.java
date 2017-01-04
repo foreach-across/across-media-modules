@@ -50,21 +50,23 @@ public class ITPageControllerPrecedence
 
 	@Autowired
 	public void registerWebCmsPages( WebCmsPageRepository repository ) {
-		repository.save(
-				WebCmsPage.builder()
-				          .path( "/about" )
-				          .title( "About page" )
-				          .name( "About" )
-				          .build()
-		);
-
-		repository.save(
-				WebCmsPage.builder()
-				          .path( "/help" )
-				          .title( "Help page" )
-				          .name( "Help" )
-				          .build()
-		);
+		if ( !repository.exists( 1000L ) ) {
+			repository.save(
+					WebCmsPage.builder()
+					          .id( 1000L )
+					          .pathSegment( "about" )
+					          .canonicalPath( "/about" )
+					          .title( "About page" )
+					          .build()
+			);
+			repository.save(
+					WebCmsPage.builder()
+					          .pathSegment( "help" )
+					          .canonicalPath( "/help" )
+					          .title( "Help page" )
+					          .build()
+			);
+		}
 	}
 
 	@Test

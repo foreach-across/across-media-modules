@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.web;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import com.foreach.across.modules.webcms.web.page.template.PageTemplateResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,7 @@ import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * @author Arne Vandamme
@@ -41,18 +42,20 @@ public class WebCmsEndpointController
 {
 	private final UrlPathHelper pathHelper = new UrlPathHelper();
 
-	private WebCmsPageRepository pageRepository;
+	private WebCmsPageService pageService;
 	private PageTemplateResolver pageTemplateResolver;
 
 	@RequestMapping
 	public ModelAndView renderEndpoint( HttpServletRequest request, HttpServletResponse response, ModelAndView mav ) {
 		String path = pathHelper.getPathWithinApplication( request );
-		WebCmsPage page = pageRepository.findByPath( path );
+		Optional<WebCmsPage> found = pageService.findByCanonicalPath( path );
 
-		if ( page == null ) {
+		if ( !found.isPresent() ) {
 			LOG.trace( "No WebCmsEndpoint found for: {}", path );
 			throw new NoSuchEndpointException( path );
 		}
+
+		WebCmsPage page = found.get();
 
 		mav.addObject( "page", page );
 		mav.setViewName( pageTemplateResolver.resolvePageTemplate( page.getTemplate() ) );
@@ -69,8 +72,8 @@ public class WebCmsEndpointController
 	}
 
 	@Autowired
-	void setPageRepository( WebCmsPageRepository pageRepository ) {
-		this.pageRepository = pageRepository;
+	void setPageService( WebCmsPageService pageService ) {
+		this.pageService = pageService;
 	}
 
 	@Autowired

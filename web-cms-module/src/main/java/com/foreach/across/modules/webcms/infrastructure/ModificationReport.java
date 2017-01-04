@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page;
+package com.foreach.across.modules.webcms.infrastructure;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsPageRepository extends IdBasedEntityJpaRepository<WebCmsPage>
+@Getter
+@AllArgsConstructor
+public class ModificationReport<T>
 {
-	WebCmsPage findByCanonicalPath( String canonicalPath );
+	private ModificationType modificationType;
+	private T oldValue;
+	private T newValue;
 }

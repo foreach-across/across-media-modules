@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.web;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import com.foreach.across.modules.webcms.web.page.template.PageTemplateResolver;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +27,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -41,7 +44,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 public class TestWebCmsEndpointController
 {
 	@Mock
-	private WebCmsPageRepository pageRepository;
+	private WebCmsPageService pageService;
 
 	@Mock
 	private PageTemplateResolver pageTemplateResolver;
@@ -58,6 +61,8 @@ public class TestWebCmsEndpointController
 
 	@Test
 	public void pageNotFound() throws Exception {
+		when( pageService.findByCanonicalPath( anyString() ) ).thenReturn( Optional.empty() );
+
 		mockMvc.perform( get( "/page-segment" ) )
 		       .andExpect( status().isNotFound() );
 	}
@@ -66,7 +71,7 @@ public class TestWebCmsEndpointController
 	public void existingPage() throws Exception {
 		WebCmsPage page = mock( WebCmsPage.class );
 		when( page.getTemplate() ).thenReturn( "test" );
-		when( pageRepository.findByPath( "/page-segment" ) ).thenReturn( page );
+		when( pageService.findByCanonicalPath( "/page-segment" ) ).thenReturn( Optional.of( page ) );
 
 		when( pageTemplateResolver.resolvePageTemplate( "test" ) ).thenReturn( "resolvedView" );
 

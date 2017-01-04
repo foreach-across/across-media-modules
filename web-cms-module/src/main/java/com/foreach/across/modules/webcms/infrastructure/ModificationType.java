@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page;
-
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+package com.foreach.across.modules.webcms.infrastructure;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsPageRepository extends IdBasedEntityJpaRepository<WebCmsPage>
+public interface ModificationType
 {
-	WebCmsPage findByCanonicalPath( String canonicalPath );
 }

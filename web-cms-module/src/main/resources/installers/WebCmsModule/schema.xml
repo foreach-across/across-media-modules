@@ -44,15 +44,32 @@
 			<column name="id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_page"/>
 			</column>
-			<column name="path" type="java.sql.Types.VARCHAR(255)"/>
-			<column name="name" type="java.sql.Types.NVARCHAR(255)">
+			<column name="path_segment" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="path_segment_generated" type="java.sql.Types.BOOLEAN" defaultValueBoolean="true">
+				<constraints nullable="false"/>
+			</column>
+			<column name="canonical_path" type="java.sql.Types.VARCHAR(500)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="canonical_path_generated" type="java.sql.Types.BOOLEAN" defaultValueBoolean="true">
 				<constraints nullable="false"/>
 			</column>
 			<column name="title" type="java.sql.Types.NVARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="template" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="parent_id" type="java.sql.Types.BIGINT"/>
 		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.page}"
+		                         baseColumnNames="parent_id"
+		                         constraintName="fk_wcm_page_parent_id"
+		                         referencedTableName="${table.page}"
+		                         referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.page}" indexName="ix_wcm_page_cnp" unique="true">
+			<column name="canonical_path"/>
+		</createIndex>
 	</changeSet>
 
 </databaseChangeLog>

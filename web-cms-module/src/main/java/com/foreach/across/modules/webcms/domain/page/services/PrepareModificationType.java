@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page;
+package com.foreach.across.modules.webcms.domain.page.services;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 
 /**
+ * Holds the possible modification types that can be returned when calling
+ * {@link WebCmsPageService#prepareForSaving(WebCmsPage)}.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsPageRepository extends IdBasedEntityJpaRepository<WebCmsPage>
+public enum PrepareModificationType implements ModificationType
 {
-	WebCmsPage findByCanonicalPath( String canonicalPath );
+	PATH_SEGMENT_GENERATED,
+	CANONICAL_PATH_GENERATED
 }
