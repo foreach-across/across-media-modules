@@ -17,11 +17,25 @@
 package com.foreach.across.modules.webcms.config;
 
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
+import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
+import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
+import com.foreach.across.modules.entity.views.EntityFormView;
+import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.entity.views.processors.WebViewProcessorAdapter;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
+import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Arne Vandamme
@@ -41,6 +55,48 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 		        .listView(
 				        lvb -> lvb.showProperties( "canonicalPath", "title", "parent" )
 				                  .defaultSort( "canonicalPath" )
+		        )
+		        .createOrUpdateFormView( fvb -> fvb
+				        .properties( props -> props
+						        .property( "url-settings" )
+						        .displayName( "URL settings" )
+						        .viewElementType( ViewElementMode.FORM_WRITE, BootstrapUiElements.FIELDSET )
+						        .attribute(
+								        EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
+								        EntityPropertySelector.of( "pathSegmentGenerated", "pathSegment",
+								                                   "canonicalPathGenerated", "canonicalPath" )
+						        )
+				        )
+				        .showProperties(
+						        "*", "~canonicalPath", "~canonicalPathGenerated", "~pathSegment",
+						        "~pathSegmentGenerated"
+				        )
+				        .viewProcessor( new PageFormDependsOnProcessor() )
 		        );
 	}
+
+	static class PageFormDependsOnProcessor extends WebViewProcessorAdapter<EntityFormView>
+	{
+		@Override
+		protected void modifyViewElements( ContainerViewElement elements ) {
+			addDependency( elements, "pathSegment", "pathSegmentGenerated" );
+			addDependency( elements, "canonicalPath", "canonicalPathGenerated" );
+		}
+
+		private void addDependency( ContainerViewElement elements, String from, String to ) {
+			ContainerViewElementUtils
+					.find( elements, "formGroup-" + from, FormGroupElement.class )
+					.ifPresent( group -> {
+						Map<String, Object> qualifiers = new HashMap<>();
+						qualifiers.put( "checked", false );
+
+						group.getControl( HtmlViewElement.class )
+						     .setAttribute(
+								     "data-dependson",
+								     Collections.singletonMap( "[id='entity." + to + "']", qualifiers )
+						     );
+					} );
+		}
+	}
+
 }
