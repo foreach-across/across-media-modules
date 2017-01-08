@@ -18,15 +18,20 @@ package com.foreach.across.modules.webcms.config;
 
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
+import com.foreach.across.modules.bootstrapui.elements.ButtonViewElement;
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.entity.registry.EntityConfiguration;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.EntityFormView;
+import com.foreach.across.modules.entity.views.EntityListView;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.processors.WebViewProcessorAdapter;
+import com.foreach.across.modules.entity.web.EntityLinkBuilder;
+import com.foreach.across.modules.entity.web.WebViewCreationContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
@@ -55,6 +60,7 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 		        .listView(
 				        lvb -> lvb.showProperties( "canonicalPath", "title", "parent" )
 				                  .defaultSort( "canonicalPath" )
+				                  .entityQueryFilter( true )
 		        )
 		        .createOrUpdateFormView( fvb -> fvb
 				        .properties( props -> props
@@ -63,8 +69,8 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 						        .viewElementType( ViewElementMode.FORM_WRITE, BootstrapUiElements.FIELDSET )
 						        .attribute(
 								        EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
-								        EntityPropertySelector.of( "pathSegmentGenerated", "pathSegment",
-								                                   "canonicalPathGenerated", "canonicalPath" )
+								        EntityPropertySelector.of( "pathSegment", "pathSegmentGenerated",
+								                                   "canonicalPath", "canonicalPathGenerated" )
 						        )
 				        )
 				        .showProperties(
@@ -72,7 +78,28 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 						        "~pathSegmentGenerated"
 				        )
 				        .viewProcessor( new PageFormDependsOnProcessor() )
+		        )
+		        .association(
+				        ab -> ab.name( "webCmsPage.parent" )
+				                .listView( lvb -> lvb.viewProcessor( new ChildPageListProcessor() ) )
+				                .createOrUpdateFormView( fvb -> fvb.viewProcessor( new PageFormDependsOnProcessor() ) )
 		        );
+	}
+
+	static class ChildPageListProcessor extends WebViewProcessorAdapter<EntityListView>
+	{
+		@Override
+		protected void applyCustomPostProcessing( WebViewCreationContext creationContext, EntityListView view ) {
+			WebCmsPage parent = (WebCmsPage) view.getParentEntity();
+
+			EntityConfiguration entityConfiguration = creationContext.getEntityConfiguration();
+			EntityLinkBuilder linkBuilder = entityConfiguration.getAttribute( EntityLinkBuilder.class );
+
+			// link create page to parent
+			ContainerViewElementUtils
+					.find( view.getViewElements(), "btn-create", ButtonViewElement.class )
+					.ifPresent( btn -> btn.setUrl( linkBuilder.create() + "?entity.parent=" + parent.getId() ) );
+		}
 	}
 
 	static class PageFormDependsOnProcessor extends WebViewProcessorAdapter<EntityFormView>

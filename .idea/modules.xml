@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/web-cms-module/web-cms-module.iml" filepath="$PROJECT_DIR$/web-cms-module/web-cms-module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web-cms-module/web-cms-module.iml" filepath="$PROJECT_DIR$/web-cms-module/web-cms-module.iml" />
       <module fileurl="file://$PROJECT_DIR$/web-cms-module-project.iml" filepath="$PROJECT_DIR$/web-cms-module-project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web-cms-module-project.iml" filepath="$PROJECT_DIR$/web-cms-module-project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web-cms-module-test/web-cms-module-test.iml" filepath="$PROJECT_DIR$/web-cms-module-test/web-cms-module-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/web-cms-module-test/web-cms-module-test.iml" filepath="$PROJECT_DIR$/web-cms-module-test/web-cms-module-test.iml" />
     </modules>
   </component>

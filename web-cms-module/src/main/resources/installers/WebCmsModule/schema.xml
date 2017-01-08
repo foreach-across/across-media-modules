@@ -31,7 +31,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="201701030859" author="arne">
+	<changeSet id="201701081200" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="${table.page}"/>
@@ -67,7 +67,7 @@
 		                         referencedTableName="${table.page}"
 		                         referencedColumnNames="id"/>
 
-		<createIndex tableName="${table.page}" indexName="ix_wcm_page_cnp" unique="true">
+		<createIndex tableName="${table.page}" indexName="ix_wcm_page_cnp">
 			<column name="canonical_path"/>
 		</createIndex>
 	</changeSet>

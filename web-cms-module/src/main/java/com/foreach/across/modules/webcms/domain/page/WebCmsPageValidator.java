@@ -33,6 +33,7 @@ import org.springframework.validation.Errors;
 class WebCmsPageValidator extends EntityValidatorSupport<WebCmsPage>
 {
 	private WebCmsPageService pageService;
+	private WebCmsPageRepository pageRepository;
 
 	@Override
 	public boolean supports( Class<?> clazz ) {
@@ -40,12 +41,27 @@ class WebCmsPageValidator extends EntityValidatorSupport<WebCmsPage>
 	}
 
 	@Override
-	protected void preValidation( WebCmsPage entity, Errors errors ) {
-		pageService.prepareForSaving( entity );
+	protected void preValidation( WebCmsPage page, Errors errors ) {
+		pageService.prepareForSaving( page );
+	}
+
+	@Override
+	protected void postValidation( WebCmsPage page, Errors errors ) {
+		if ( !errors.hasFieldErrors( "canonicalPath" ) ) {
+			WebCmsPage other = pageRepository.findByCanonicalPath( page.getCanonicalPath() );
+			if ( other != null && !other.equals( page ) ) {
+				errors.rejectValue( "canonicalPath", "alreadyExists" );
+			}
+		}
 	}
 
 	@Autowired
 	void setPageService( WebCmsPageService pageService ) {
 		this.pageService = pageService;
+	}
+
+	@Autowired
+	void setPageRepository( WebCmsPageRepository pageRepository ) {
+		this.pageRepository = pageRepository;
 	}
 }
