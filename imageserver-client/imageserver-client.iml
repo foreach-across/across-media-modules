@@ -24,6 +24,9 @@
     <orderEntry type="library" scope="TEST" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.4.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.4.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.fasterxml.jackson.core:jackson-core:2.4.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.httpcomponents:httpclient:4.3.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.httpcomponents:httpcore:4.3.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: commons-codec:commons-codec:1.10" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.foreach.across:across-test:1.1.1.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.foreach.across:across-core:1.1.1.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.foreach.libs:common-concurrent:0.12" level="project" />

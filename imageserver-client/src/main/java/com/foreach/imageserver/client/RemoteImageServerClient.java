@@ -66,6 +66,14 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		this.restTemplate = new RestTemplate();
 	}
 
+	public RemoteImageServerClient( String imageServerEndpoint, String imageServerAccessToken, RestTemplate restTemplate ) {
+		super( imageServerEndpoint );
+
+		this.imageServerAccessToken = imageServerAccessToken;
+
+		this.restTemplate = restTemplate;
+	}
+
 	@Override
 	public InputStream imageStream( String imageId,
 	                                String context,
