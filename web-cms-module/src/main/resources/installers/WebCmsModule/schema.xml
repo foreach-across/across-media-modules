@@ -24,6 +24,7 @@
 
 	<!-- Default table names -->
 	<property name="table.page" value="wcm_page"/>
+	<property name="table.page_section" value="wcm_page_section"/>
 
 	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
 		<sql>
@@ -69,6 +70,41 @@
 
 		<createIndex tableName="${table.page}" indexName="ix_wcm_page_cnp">
 			<column name="canonical_path"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201801090843" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.page_section}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates page section table</comment>
+
+		<createTable tableName="${table.page_section}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_page_section"/>
+			</column>
+			<column name="page_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="content" type="java.sql.Types.NCLOB"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0"/>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.page_section}"
+		                         baseColumnNames="page_id"
+		                         constraintName="fk_wcm_psect_page_id"
+		                         referencedTableName="${table.page}"
+		                         referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.page_section}" indexName="ix_wcm_psect_pid_name" unique="true">
+			<column name="page_id"/>
+			<column name="name" />
 		</createIndex>
 	</changeSet>
 

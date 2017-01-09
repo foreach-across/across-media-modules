@@ -58,6 +58,7 @@ public class WebCmsEndpointController
 		WebCmsPage page = found.get();
 
 		mav.addObject( "page", page );
+		mav.addObject( "contentSections", pageService.retrieveContentSections( page ) );
 		mav.setViewName( pageTemplateResolver.resolvePageTemplate( page.getTemplate() ) );
 
 		return mav;

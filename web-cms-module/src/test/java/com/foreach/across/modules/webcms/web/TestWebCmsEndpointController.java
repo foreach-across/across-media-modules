@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.Matchers.anyString;
@@ -72,12 +73,15 @@ public class TestWebCmsEndpointController
 		WebCmsPage page = mock( WebCmsPage.class );
 		when( page.getTemplate() ).thenReturn( "test" );
 		when( pageService.findByCanonicalPath( "/page-segment" ) ).thenReturn( Optional.of( page ) );
+		when( pageService.retrieveContentSections( page ) ).thenReturn( Collections.emptyMap() );
 
 		when( pageTemplateResolver.resolvePageTemplate( "test" ) ).thenReturn( "resolvedView" );
 
 		mockMvc.perform( get( "/page-segment" ) )
 		       .andExpect( status().isOk() )
 		       .andExpect( view().name( "resolvedView" ) )
-		       .andExpect( model().attribute( "page", page ) );
+		       .andExpect( model().attribute( "page", page ) )
+		       .andExpect( model().attribute( "contentSections", Collections.emptyMap() ) );
+
 	}
 }

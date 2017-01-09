@@ -4,5 +4,10 @@
 </head>
 <body>
 <h1>[[${page.title}]]</h1>
+
+<div class="content-section" th:each="section : ${contentSections}">
+	[[${section.value.content}]]
+</div>
+
 </body>
 </html>

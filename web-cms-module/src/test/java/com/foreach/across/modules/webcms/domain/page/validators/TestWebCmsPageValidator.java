@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page;
+package com.foreach.across.modules.webcms.domain.page.validators;
 
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageSection;
+import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +28,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.validation.Errors;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
@@ -45,6 +50,12 @@ public class TestWebCmsPageValidator
 
 	@InjectMocks
 	private WebCmsPageValidator validator;
+
+	@Test
+	public void supportsWebCmsPageOnly() {
+		assertTrue( validator.supports( WebCmsPage.class ) );
+		assertFalse( validator.supports( WebCmsPageSection.class ) );
+	}
 
 	@Test
 	public void existingErrorOnCanonicalPath() {
@@ -108,5 +119,4 @@ public class TestWebCmsPageValidator
 		sequence.verify( errors ).rejectValue( "canonicalPath", "alreadyExists" );
 		verifyNoMoreInteractions( errors );
 	}
-
 }

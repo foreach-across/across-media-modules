@@ -17,7 +17,9 @@
 package com.foreach.across.modules.webcms.domain.page.services;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageSection;
+import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageSectionRepository;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import org.junit.Test;
@@ -26,9 +28,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -43,6 +43,9 @@ public class TestDefaultWebCmsPageService
 {
 	@Mock
 	private WebCmsPageRepository pageRepository;
+
+	@Mock
+	private WebCmsPageSectionRepository sectionRepository;
 
 	@Mock
 	private PagePropertyGenerator pagePreparator;
@@ -64,5 +67,21 @@ public class TestDefaultWebCmsPageService
 		Map<ModificationType, ModificationReport> modifications = Collections.emptyMap();
 		when( pagePreparator.prepareForSaving( page ) ).thenReturn( modifications );
 		assertSame( modifications, pageService.prepareForSaving( page ) );
+	}
+
+	@Test
+	public void contentSectionsShouldBeMappedInOrder() {
+		WebCmsPageSection one = WebCmsPageSection.builder().name( "one" ).build();
+		WebCmsPageSection two = WebCmsPageSection.builder().name( "two" ).build();
+
+		when( sectionRepository.findAllByPageOrderBySortIndexAscNameAsc( page ) )
+				.thenReturn( Arrays.asList( two, one ) );
+
+		Map<String, WebCmsPageSection> sections = pageService.retrieveContentSections( page );
+		assertEquals( 2, sections.size() );
+		assertSame( one, sections.get( "one" ) );
+		assertSame( two, sections.get( "two" ) );
+		assertEquals( Arrays.asList( "two", "one" ), new ArrayList<>( sections.keySet() ) );
+		assertEquals( Arrays.asList( two, one ), new ArrayList<>( sections.values() ) );
 	}
 }

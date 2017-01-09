@@ -18,25 +18,23 @@ package com.foreach.across.modules.webcms.config;
 
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
-import com.foreach.across.modules.bootstrapui.elements.ButtonViewElement;
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
-import com.foreach.across.modules.entity.registry.EntityConfiguration;
+import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.EntityFormView;
-import com.foreach.across.modules.entity.views.EntityListView;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.processors.WebViewProcessorAdapter;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
-import com.foreach.across.modules.entity.web.WebViewCreationContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageSection;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,25 +79,21 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 		        )
 		        .association(
 				        ab -> ab.name( "webCmsPage.parent" )
-				                .listView( lvb -> lvb.viewProcessor( new ChildPageListProcessor() ) )
+				                .listView( lvb -> lvb.showProperties( "canonicalPath", "title" )
+				                                     .defaultSort( "canonicalPath" ) )
 				                .createOrUpdateFormView( fvb -> fvb.viewProcessor( new PageFormDependsOnProcessor() ) )
+		        )
+		        .association(
+				        ab -> ab.name( "webCmsPageSection.page" )
+				                .show()
+				                .associationType( EntityAssociation.Type.EMBEDDED )
+				                .listView( lvb -> lvb.showProperties( "name", "sortIndex" )
+				                                     .defaultSort( new Sort( "sortIndex", "name" ) ) )
 		        );
-	}
 
-	static class ChildPageListProcessor extends WebViewProcessorAdapter<EntityListView>
-	{
-		@Override
-		protected void applyCustomPostProcessing( WebViewCreationContext creationContext, EntityListView view ) {
-			WebCmsPage parent = (WebCmsPage) view.getParentEntity();
-
-			EntityConfiguration entityConfiguration = creationContext.getEntityConfiguration();
-			EntityLinkBuilder linkBuilder = entityConfiguration.getAttribute( EntityLinkBuilder.class );
-
-			// link create page to parent
-			ContainerViewElementUtils
-					.find( view.getViewElements(), "btn-create", ButtonViewElement.class )
-					.ifPresent( btn -> btn.setUrl( linkBuilder.create() + "?entity.parent=" + parent.getId() ) );
-		}
+		entities.withType( WebCmsPageSection.class )
+		        .properties( props -> props.property( "page" ).hidden( true ) )
+		        .hide();
 	}
 
 	static class PageFormDependsOnProcessor extends WebViewProcessorAdapter<EntityFormView>

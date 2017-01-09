@@ -18,7 +18,7 @@ package it;
 
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.Test;

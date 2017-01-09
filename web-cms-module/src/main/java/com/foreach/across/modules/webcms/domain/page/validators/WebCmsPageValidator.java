@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page;
+package com.foreach.across.modules.webcms.domain.page.validators;
 
 import com.foreach.across.modules.entity.validators.EntityValidatorSupport;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

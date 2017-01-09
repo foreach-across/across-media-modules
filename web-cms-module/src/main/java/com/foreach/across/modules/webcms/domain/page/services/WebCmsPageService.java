@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.page.services;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageSection;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 
@@ -51,4 +52,12 @@ public interface WebCmsPageService
 	 * @return map of possible modifications that have been performed
 	 */
 	Map<ModificationType, ModificationReport> prepareForSaving( WebCmsPage page );
+
+	/**
+	 * Fetch the content sections for a particular page.
+	 *
+	 * @param page to fetch the sections for
+	 * @return map of content sections by name, ordered according to sortIndex
+	 */
+	Map<String, WebCmsPageSection> retrieveContentSections( WebCmsPage page );
 }
