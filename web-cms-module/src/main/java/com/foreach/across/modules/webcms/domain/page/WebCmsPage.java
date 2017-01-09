@@ -109,4 +109,10 @@ public class WebCmsPage extends SettableIdAuditableEntity<WebCmsPage>
 	@Column
 	@Length(max = 255)
 	private String template;
+
+	@SuppressWarnings( "all" )
+	public static class WebCmsPageBuilder {
+		private boolean pathSegmentGenerated = true;
+		private boolean canonicalPathGenerated = true;
+	}
 }

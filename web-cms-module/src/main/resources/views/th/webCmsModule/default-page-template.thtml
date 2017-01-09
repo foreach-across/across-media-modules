@@ -2,7 +2,7 @@
 <head>
 	<title th:text="${page.title}">Page title</title>
 </head>
-<body>
+<body th:fragment="content">
 <h1>[[${page.title}]]</h1>
 
 <div class="content-section" th:each="section : ${contentSections}">
