@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.util.Assert.notNull;
+
 /**
  * Represents a client for a remote ImageServer endpoint.
  */
@@ -56,14 +58,23 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	private final String imageServerAccessToken;
 
-	private final RestTemplate restTemplate;
+	private RestTemplate restTemplate;
 
 	public RemoteImageServerClient( String imageServerEndpoint, String imageServerAccessToken ) {
+		this( imageServerEndpoint, imageServerAccessToken, new RestTemplate() );
+	}
+
+	public RemoteImageServerClient( String imageServerEndpoint, String imageServerAccessToken, RestTemplate restTemplate ) {
 		super( imageServerEndpoint );
 
 		this.imageServerAccessToken = imageServerAccessToken;
 
-		this.restTemplate = new RestTemplate();
+		this.restTemplate = restTemplate;
+	}
+
+	public void setRestTemplate( RestTemplate restTemplate ) {
+		notNull( restTemplate, "RestTemplate can not be null" );
+		this.restTemplate = restTemplate;
 	}
 
 	@Override
