@@ -56,14 +56,10 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	private final String imageServerAccessToken;
 
-	private final RestTemplate restTemplate;
+	private RestTemplate restTemplate;
 
 	public RemoteImageServerClient( String imageServerEndpoint, String imageServerAccessToken ) {
-		super( imageServerEndpoint );
-
-		this.imageServerAccessToken = imageServerAccessToken;
-
-		this.restTemplate = new RestTemplate();
+		this(imageServerEndpoint,imageServerAccessToken,new RestTemplate(  ));
 	}
 
 	public RemoteImageServerClient( String imageServerEndpoint, String imageServerAccessToken, RestTemplate restTemplate ) {
@@ -71,6 +67,14 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 		this.imageServerAccessToken = imageServerAccessToken;
 
+		this.restTemplate = restTemplate;
+	}
+
+	public void setRestTemplate( RestTemplate restTemplate ) {
+		if(restTemplate == null){
+			LOG.warn("Trying to set a null restTemplate, so setting a default one.  RestTemplate can not be null");
+			this.restTemplate = new RestTemplate(  );
+		}
 		this.restTemplate = restTemplate;
 	}
 
