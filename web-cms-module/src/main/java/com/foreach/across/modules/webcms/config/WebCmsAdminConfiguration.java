@@ -17,28 +17,37 @@
 package com.foreach.across.modules.webcms.config;
 
 import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
-import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
-import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
+import com.foreach.across.modules.bootstrapui.elements.*;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.EntityFormView;
+import com.foreach.across.modules.entity.views.EntityListView;
 import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.entity.views.bootstrapui.processors.element.EntityListActionsProcessor;
+import com.foreach.across.modules.entity.views.bootstrapui.util.SortableTableBuilder;
+import com.foreach.across.modules.entity.views.processors.ListViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.WebViewProcessorAdapter;
+import com.foreach.across.modules.entity.views.support.EntityMessages;
+import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
+import com.foreach.across.modules.entity.web.WebViewCreationContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageSection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.foreach.across.modules.entity.views.EntityFormViewFactory.FORM_RIGHT;
 
 /**
  * @author Arne Vandamme
@@ -48,17 +57,20 @@ import java.util.Map;
 @AcrossDepends(required = "EntityModule")
 public class WebCmsAdminConfiguration implements EntityConfigurer
 {
+	private static final String CANONICAL_PATH = "canonicalPath";
+
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsPage.class )
 		        .properties(
-				        props -> props.property( "canonicalPath" )
+				        props -> props.property( CANONICAL_PATH )
 				                      .attribute( TextboxFormElement.Type.class, TextboxFormElement.Type.TEXT )
 		        )
 		        .listView(
-				        lvb -> lvb.showProperties( "canonicalPath", "title", "parent" )
-				                  .defaultSort( "canonicalPath" )
+				        lvb -> lvb.showProperties( CANONICAL_PATH, "title", "parent" )
+				                  .defaultSort( CANONICAL_PATH )
 				                  .entityQueryFilter( true )
+				                  .viewProcessor( pageListViewProcessor() )
 		        )
 		        .createOrUpdateFormView( fvb -> fvb
 				        .properties( props -> props
@@ -68,20 +80,21 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 						        .attribute(
 								        EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
 								        EntityPropertySelector.of( "pathSegment", "pathSegmentGenerated",
-								                                   "canonicalPath", "canonicalPathGenerated" )
+								                                   CANONICAL_PATH, "canonicalPathGenerated" )
 						        )
 				        )
 				        .showProperties(
 						        "*", "~canonicalPath", "~canonicalPathGenerated", "~pathSegment",
 						        "~pathSegmentGenerated"
 				        )
-				        .viewProcessor( new PageFormDependsOnProcessor() )
+				        .viewProcessor( new PageFormViewProcessor() )
 		        )
 		        .association(
 				        ab -> ab.name( "webCmsPage.parent" )
-				                .listView( lvb -> lvb.showProperties( "canonicalPath", "title" )
-				                                     .defaultSort( "canonicalPath" ) )
-				                .createOrUpdateFormView( fvb -> fvb.viewProcessor( new PageFormDependsOnProcessor() ) )
+				                .listView( lvb -> lvb.showProperties( CANONICAL_PATH, "title" )
+				                                     .defaultSort( CANONICAL_PATH )
+				                                     .viewProcessor( pageListViewProcessor() ) )
+				                .createOrUpdateFormView( fvb -> fvb.viewProcessor( new PageFormViewProcessor() ) )
 		        )
 		        .association(
 				        ab -> ab.name( "webCmsPageSection.page" )
@@ -96,12 +109,48 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 		        .hide();
 	}
 
-	static class PageFormDependsOnProcessor extends WebViewProcessorAdapter<EntityFormView>
+	@Bean
+	PageListViewProcessor pageListViewProcessor() {
+		return new PageListViewProcessor();
+	}
+
+	private static class PageListViewProcessor extends ListViewProcessorAdapter
+	{
+		private BootstrapUiFactory bootstrapUiFactory;
+
+		@Override
+		public void configureSortableTable( WebViewCreationContext creationContext,
+		                                    EntityListView view,
+		                                    SortableTableBuilder sortableTableBuilder ) {
+			EntityMessages messages = view.getEntityMessages();
+
+			sortableTableBuilder.valueRowProcessor( ( ctx, row ) -> {
+				WebCmsPage page = EntityViewElementUtils.currentEntity( ctx, WebCmsPage.class );
+				ContainerViewElementUtils
+						.find( row, EntityListActionsProcessor.CELL_NAME, TableViewElement.Cell.class )
+						.ifPresent( cell -> cell.addFirstChild(
+								bootstrapUiFactory.button()
+								                  .link( page.getCanonicalPath() )
+								                  .attribute( "target", "_blank" )
+								                  .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
+								                  .text( messages.withNameSingular( "actions.open" ) )
+								                  .build( ctx ) )
+						);
+			} );
+		}
+
+		@Autowired
+		public void setBootstrapUiFactory( BootstrapUiFactory bootstrapUiFactory ) {
+			this.bootstrapUiFactory = bootstrapUiFactory;
+		}
+	}
+
+	private static class PageFormViewProcessor extends WebViewProcessorAdapter<EntityFormView>
 	{
 		@Override
 		protected void modifyViewElements( ContainerViewElement elements ) {
 			addDependency( elements, "pathSegment", "pathSegmentGenerated" );
-			addDependency( elements, "canonicalPath", "canonicalPathGenerated" );
+			addDependency( elements, CANONICAL_PATH, "canonicalPathGenerated" );
 		}
 
 		private void addDependency( ContainerViewElement elements, String from, String to ) {
@@ -117,6 +166,24 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 								     Collections.singletonMap( "[id='entity." + to + "']", qualifiers )
 						     );
 					} );
+		}
+
+		@Override
+		protected void applyCustomPostProcessing( WebViewCreationContext creationContext, EntityFormView view ) {
+			WebCmsPage page = view.getEntity();
+
+			if ( !page.isNew() ) {
+				ButtonViewElement button = new ButtonViewElement();
+				button.setIcon( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
+				button.setType( ButtonViewElement.Type.LINK );
+				button.setAttribute( "target", "_blank" );
+				button.setUrl( page.getCanonicalPath() );
+				button.setTitle( view.getEntityMessages().withNameSingular( "actions.open" ) );
+				button.addCssClass( "pull-right" );
+
+				ContainerViewElementUtils.find( view.getViewElements(), FORM_RIGHT, ContainerViewElement.class )
+				                         .ifPresent( c -> c.addFirstChild( button ) );
+			}
 		}
 	}
 
