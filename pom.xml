@@ -56,7 +56,7 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach repository</name>
-			<url>http://repository.foreach.be/nexus/content/groups/public</url>
+			<url>http://repository.foreach.be/nexus/repository/public</url>
 		</repository>
 	</repositories>
 
