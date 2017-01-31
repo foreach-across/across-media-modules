@@ -26,12 +26,12 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach repository</name>
-			<url>http://repository.foreach.be/nexus/content/groups/public</url>
+			<url>https://repository.foreach.be/nexus/repository/public/</url>
 		</repository>
 		<repository>
 			<id>foreach-custom-externals</id>
 			<name>Foreach Custom repository</name>
-			<url>http://repository.foreach.be/nexus/content/repositories/foreach-custom-externals</url>
+			<url>https://repository.foreach.be/nexus/repository/foreach-custom-externals/</url>
 		</repository>
 	</repositories>
 
@@ -252,12 +252,12 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/content/repositories/releases</url>
+			<url>http://repository.foreach.be/nexus/repository/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/content/repositories/snapshots</url>
+			<url>http://repository.foreach.be/nexus/repository/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<scm>
