@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.config;
 
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.modules.adminweb.ui.PageContentStructure;
 import com.foreach.across.modules.bootstrapui.elements.*;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
@@ -35,6 +36,7 @@ import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.entity.web.WebViewCreationContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageSection;
@@ -46,8 +48,6 @@ import org.springframework.data.domain.Sort;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.foreach.across.modules.entity.views.EntityFormViewFactory.FORM_RIGHT;
 
 /**
  * @author Arne Vandamme
@@ -87,14 +87,14 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 						        "*", "~canonicalPath", "~canonicalPathGenerated", "~pathSegment",
 						        "~pathSegmentGenerated"
 				        )
-				        .viewProcessor( new PageFormViewProcessor() )
+				        .viewProcessor( pageFormViewProcessor() )
 		        )
 		        .association(
 				        ab -> ab.name( "webCmsPage.parent" )
 				                .listView( lvb -> lvb.showProperties( CANONICAL_PATH, "title" )
 				                                     .defaultSort( CANONICAL_PATH )
 				                                     .viewProcessor( pageListViewProcessor() ) )
-				                .createOrUpdateFormView( fvb -> fvb.viewProcessor( new PageFormViewProcessor() ) )
+				                .createOrUpdateFormView( fvb -> fvb.viewProcessor( pageFormViewProcessor() ) )
 		        )
 		        .association(
 				        ab -> ab.name( "webCmsPageSection.page" )
@@ -112,6 +112,11 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 	@Bean
 	PageListViewProcessor pageListViewProcessor() {
 		return new PageListViewProcessor();
+	}
+
+	@Bean
+	PageFormViewProcessor pageFormViewProcessor() {
+		return new PageFormViewProcessor();
 	}
 
 	private static class PageListViewProcessor extends ListViewProcessorAdapter
@@ -147,6 +152,8 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 
 	private static class PageFormViewProcessor extends WebViewProcessorAdapter<EntityFormView>
 	{
+		private PageContentStructure adminPage;
+
 		@Override
 		protected void modifyViewElements( ContainerViewElement elements ) {
 			addDependency( elements, "pathSegment", "pathSegmentGenerated" );
@@ -173,18 +180,20 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 			WebCmsPage page = view.getEntity();
 
 			if ( !page.isNew() ) {
-				ButtonViewElement button = new ButtonViewElement();
-				button.setIcon( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
-				button.setType( ButtonViewElement.Type.LINK );
-				button.setAttribute( "target", "_blank" );
-				button.setUrl( page.getCanonicalPath() );
-				button.setTitle( view.getEntityMessages().withNameSingular( "actions.open" ) );
-				button.addCssClass( "pull-right" );
+				LinkViewElement openLink = new LinkViewElement();
+				openLink.setAttribute( "target", "_blank" );
+				openLink.setUrl( page.getCanonicalPath() );
+				openLink.setTitle( view.getEntityMessages().withNameSingular( "actions.open" ) );
+				openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
 
-				ContainerViewElementUtils.find( view.getViewElements(), FORM_RIGHT, ContainerViewElement.class )
-				                         .ifPresent( c -> c.addFirstChild( button ) );
+				adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
+				adminPage.addToPageTitleSubText( openLink );
 			}
 		}
-	}
 
+		@Autowired
+		public void setAdminPage( PageContentStructure adminPage ) {
+			this.adminPage = adminPage;
+		}
+	}
 }
