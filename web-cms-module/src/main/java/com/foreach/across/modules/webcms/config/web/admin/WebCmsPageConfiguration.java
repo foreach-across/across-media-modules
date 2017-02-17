@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.config;
+package com.foreach.across.modules.webcms.config.web.admin;
 
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
@@ -54,8 +54,8 @@ import java.util.Map;
  * @since 0.0.1
  */
 @Configuration
-@AcrossDepends(required = "EntityModule")
-public class WebCmsAdminConfiguration implements EntityConfigurer
+@AcrossDepends(required = { "EntityModule", "AdminWebModule" })
+public class WebCmsPageConfiguration implements EntityConfigurer
 {
 	private static final String CANONICAL_PATH = "canonicalPath";
 
@@ -102,6 +102,11 @@ public class WebCmsAdminConfiguration implements EntityConfigurer
 				                .associationType( EntityAssociation.Type.EMBEDDED )
 				                .listView( lvb -> lvb.showProperties( "name", "sortIndex" )
 				                                     .defaultSort( new Sort( "sortIndex", "name" ) ) )
+		        )
+		        .association(
+				        ab -> ab.name( "webCmsMenuItem.linkedPage" )
+				                .show()
+				                .associationType( EntityAssociation.Type.EMBEDDED )
 		        );
 
 		entities.withType( WebCmsPageSection.class )

@@ -129,6 +129,19 @@ a generated path segment will be SEO friendly
 - its properties will still be inherited (eg path, layout, template) - in the default menu it will still insert a group section
 * disabled: this page and all its children will not be rendered
 
+WebCmsMenu
+
+named menu, consisting of different items
+
+WebCmsMenu item:
+* path: in the menu tree
+* title: of the item
+* url: fixed url - if a page is linked and url is empty the page url will be used
+* linkedPage: optional page this menu is linking to
+* sortIndex: index of the item
+* group: is the item group or not
+
+
 Generating a sitemap
 
 === Programmatically creating pages

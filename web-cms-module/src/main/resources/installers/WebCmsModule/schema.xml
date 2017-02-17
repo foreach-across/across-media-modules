@@ -25,6 +25,8 @@
 	<!-- Default table names -->
 	<property name="table.page" value="wcm_page"/>
 	<property name="table.page_section" value="wcm_page_section"/>
+	<property name="table.menu" value="wcm_menu"/>
+	<property name="table.menu_item" value="wcm_menu_item"/>
 
 	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
 		<sql>
@@ -87,7 +89,7 @@
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_page_section"/>
 			</column>
 			<column name="page_id" type="java.sql.Types.BIGINT">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 			<column name="name" type="java.sql.Types.VARCHAR(255)">
 				<constraints nullable="false"/>
@@ -104,7 +106,82 @@
 
 		<createIndex tableName="${table.page_section}" indexName="ix_wcm_psect_pid_name" unique="true">
 			<column name="page_id"/>
-			<column name="name" />
+			<column name="name"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201802160938" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.menu}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates menu table</comment>
+
+		<createTable tableName="${table.menu}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_menu"/>
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="description" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="true"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.menu}" indexName="ix_wcm_menu_name">
+			<column name="name"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201802160941" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.menu_item}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates menu item table</comment>
+
+		<createTable tableName="${table.menu_item}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_menu_item"/>
+			</column>
+			<column name="menu_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="page_id" type="java.sql.Types.BIGINT" />
+			<column name="menu_path" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="title" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="url" type="java.sql.Types.VARCHAR(500)" />
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0"/>
+			<column name="is_group" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.menu_item}"
+		                         baseColumnNames="page_id"
+		                         constraintName="fk_wcm_mitem_page_id"
+		                         referencedTableName="${table.page}"
+		                         referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="${table.menu_item}"
+		                         baseColumnNames="menu_id"
+		                         constraintName="fk_wcm_mitem_menu_id"
+		                         referencedTableName="${table.menu}"
+		                         referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.menu_item}" indexName="ix_wcm_mitem_mid">
+			<column name="menu_id"/>
+		</createIndex>
+
+		<createIndex tableName="${table.menu_item}" indexName="ix_wcm_mitem_pid">
+			<column name="page_id"/>
 		</createIndex>
 	</changeSet>
 

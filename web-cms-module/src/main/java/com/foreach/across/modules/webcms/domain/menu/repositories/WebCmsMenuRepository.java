@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.installers;
+package com.foreach.across.modules.webcms.domain.menu.repositories;
 
-import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
-import org.springframework.core.annotation.Order;
+import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 2.0.0
  */
-@Order(1)
-@Installer(description = "Installs the required database tables",version = 3)
-public class WebCmsSchemaInstaller extends AcrossLiquibaseInstaller
+@Exposed
+public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>
 {
-	public WebCmsSchemaInstaller() {
-		super( "installers/WebCmsModule/schema.xml" );
-	}
 }
