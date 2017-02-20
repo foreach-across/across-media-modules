@@ -1,0 +1,16 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title th:text="${page.title}">Page title</title>
+</head>
+<body>
+<h1>[[${page.title}]]</h1>
+<nav>
+	<ul>
+		<li th:each="item : ${topNav.items}">[[${item.title}]]</li>
+	</ul>
+</nav>
+<div th:include="${childPage} :: body">
+	insert child page body content...
+</div>
+</body>
+</html>

@@ -141,6 +141,7 @@ WebCmsMenu item:
 * sortIndex: index of the item
 * group: is the item group or not
 
+when a BuildMenuEvent is published for a menu with that name, all items will be added
 
 Generating a sitemap
 
