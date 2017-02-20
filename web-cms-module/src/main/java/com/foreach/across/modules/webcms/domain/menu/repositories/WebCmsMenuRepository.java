@@ -27,4 +27,5 @@ import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
 @Exposed
 public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>
 {
+	WebCmsMenu findByName( String name );
 }

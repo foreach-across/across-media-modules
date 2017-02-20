@@ -30,4 +30,6 @@ import java.util.Collection;
 public interface WebCmsMenuItemRepository extends IdBasedEntityJpaRepository<WebCmsMenuItem>
 {
 	Collection<WebCmsMenuItem> findAllByMenuName( String menuName );
+
+	WebCmsMenuItem findByMenuNameAndPath( String menuName, String path );
 }
