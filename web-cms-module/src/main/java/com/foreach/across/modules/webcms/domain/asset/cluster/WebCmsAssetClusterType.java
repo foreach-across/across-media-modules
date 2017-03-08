@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.menu.repositories;
-
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
+package com.foreach.across.modules.webcms.domain.asset.cluster;
 
 /**
+ * Specific type of {@link WebCmsAssetCluster}.  The cluster type could be used for code hooks, eg. to apply default ordering,
+ * or for posing restrictions on the cluster members.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>
+public class WebCmsAssetClusterType
 {
-	WebCmsMenu findByName( String name );
 }

@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
  * Corresponds to a {@link com.foreach.across.modules.web.menu.Menu} item, used with a {@link com.foreach.across.modules.web.menu.PathBasedMenuBuilder}.
  *
  * @author Arne Vandamme
- * @since 2.0.0
+ * @since 0.0.1
  */
 @NotThreadSafe
 @Entity

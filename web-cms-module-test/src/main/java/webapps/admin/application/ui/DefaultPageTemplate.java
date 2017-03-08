@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author Arne Vandamme
- * @since 2.0.0
+ * @since 0.0.1
  */
 @Component
 public class DefaultPageTemplate extends LayoutTemplateProcessorAdapterBean

@@ -24,7 +24,7 @@ import java.util.Collection;
 
 /**
  * @author Arne Vandamme
- * @since 2.0.0
+ * @since 0.0.1
  */
 @Exposed
 public interface WebCmsMenuItemRepository extends IdBasedEntityJpaRepository<WebCmsMenuItem>

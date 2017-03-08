@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * @author Arne Vandamme
- * @since 2.0.0
+ * @since 0.0.1
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TestWebCmsMenuBuilder

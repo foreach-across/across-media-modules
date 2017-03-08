@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.menu.repositories;
+package com.foreach.across.modules.webcms.domain.asset.path;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 
 /**
+ * Represents a single node in a {@link WebCmsAssetPath}.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>
+public class WebCmsAssetPathNode
 {
-	WebCmsMenu findByName( String name );
+	private WebCmsAssetPath assetPath;
+	private WebCmsAsset asset;
+	private WebCmsAsset nextAsset;
+	private WebCmsAsset previousAsset;
 }

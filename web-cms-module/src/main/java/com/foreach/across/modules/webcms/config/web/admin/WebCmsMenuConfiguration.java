@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Arne Vandamme
- * @since 2.0.0
+ * @since 0.0.1
  */
 @Configuration
 @AcrossDepends(required = { "EntityModule", "AdminWebModule" })

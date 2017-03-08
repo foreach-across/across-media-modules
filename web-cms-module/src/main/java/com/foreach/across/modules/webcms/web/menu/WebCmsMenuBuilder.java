@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  * {@link com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem}s to it.
  *
  * @author Arne Vandamme
- * @since 2.0.0
+ * @since 0.0.1
  */
 @RequiredArgsConstructor
 @Component

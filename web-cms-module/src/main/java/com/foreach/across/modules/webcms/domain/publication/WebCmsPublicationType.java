@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.menu.repositories;
+package com.foreach.across.modules.webcms.domain.publication;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
+import com.foreach.across.modules.webcms.domain.tag.WebCmsTagCollection;
 
 /**
+ * A type specifier for a {@link WebCmsPublication}.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>
+public class WebCmsPublicationType
 {
-	WebCmsMenu findByName( String name );
+	private String uniqueKey;
+	private String name;
+	private WebCmsTagCollection tagCollection;
 }

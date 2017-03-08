@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.menu.repositories;
-
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
+package com.foreach.across.modules.webcms.domain.author;
 
 /**
+ * Represents an author profile for {@link com.foreach.across.modules.webcms.domain.article.WebCmsArticle}.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>
+public class WebCmsAuthor
 {
-	WebCmsMenu findByName( String name );
+	private String name;
+	private String biography;
 }

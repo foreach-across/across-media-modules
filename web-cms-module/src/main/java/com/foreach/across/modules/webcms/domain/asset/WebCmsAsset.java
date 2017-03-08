@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.menu.repositories;
-
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
+package com.foreach.across.modules.webcms.domain.asset;
 
 /**
+ * Generic base class for an identifiable asset in the WebCmsModule.  An asset is of a particular type - identified by the subclass -
+ * and has an automatic long id along with a manually set {@link #uniqueKey}.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>
+public class WebCmsAsset
 {
-	WebCmsMenu findByName( String name );
+	private String uniqueKey;
 }

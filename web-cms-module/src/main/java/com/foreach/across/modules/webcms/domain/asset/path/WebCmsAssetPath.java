@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.menu.repositories;
-
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
+package com.foreach.across.modules.webcms.domain.asset.path;
 
 /**
+ * Represents a navigable path between a collection of {@link com.foreach.across.modules.webcms.domain.asset.WebCmsAsset}s.
+ * A node on the path is represented by a {@link WebCmsAssetPathNode}.  The first node will have no previous item, the last
+ * node will have no next.  All others should have a previous and next and the same asset can only occur once in a path.
+ * <p/>
+ * Can serve as a more efficient construct for previous/next calculation.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>
+public class WebCmsAssetPath
 {
-	WebCmsMenu findByName( String name );
+	private String name;
 }
