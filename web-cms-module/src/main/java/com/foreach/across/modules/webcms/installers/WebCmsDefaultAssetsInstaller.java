@@ -17,22 +17,23 @@
 package com.foreach.across.modules.webcms.installers;
 
 import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.modules.hibernate.installers.AuditableSchemaInstaller;
-import org.springframework.core.annotation.Order;
+import com.foreach.across.core.installers.InstallerPhase;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
-import java.util.Arrays;
-import java.util.Collection;
+import javax.annotation.PostConstruct;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Order(2)
-@Installer(description = "Adds auditing columns to core tables", version = 3)
-public class WebCmsAuditableInstaller extends AuditableSchemaInstaller
+@ConditionalOnProperty(prefix = "webCmsModule.default-data.assets", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 1)
+@RequiredArgsConstructor
+public class WebCmsDefaultAssetsInstaller extends AbstractWebCmsDataInstaller
 {
-	@Override
-	protected Collection<String> getTableNames() {
-		return Arrays.asList( "wcm_page", "wcm_page_section", "wcm_asset" );
+	@PostConstruct
+	public void registerResources() {
+		setResources( "classpath:installers/WebCmsModule/default-assets.yml" );
 	}
 }

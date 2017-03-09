@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "webCmsModule.default-data.assets.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Should default assets news and blogs be created?",
+      "defaultValue": true
+    }
+  ]
+}

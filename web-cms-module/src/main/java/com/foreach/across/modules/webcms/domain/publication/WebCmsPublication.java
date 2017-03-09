@@ -16,7 +16,17 @@
 
 package com.foreach.across.modules.webcms.domain.publication;
 
-import com.foreach.across.modules.webcms.domain.tag.WebCmsTagCollection;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.annotation.concurrent.NotThreadSafe;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * A single publication for a set of articles or other publication-linked assets.
@@ -24,8 +34,46 @@ import com.foreach.across.modules.webcms.domain.tag.WebCmsTagCollection;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class WebCmsPublication
+@NotThreadSafe
+@Entity
+@DiscriminatorValue("publication")
+@Table(name = "wcm_publication")
+@Getter
+@Setter
+@NoArgsConstructor
+public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 {
+	/**
+	 * Unique descriptive name of the publication.
+	 */
+	@Column(name = "name", unique = true)
+	@NotBlank
+	@Length(max = 255)
 	private String name;
-	private WebCmsTagCollection tagCollection;
+
+	/**
+	 * Unique key of the publication.
+	 * Do not confuse with {@link #getAssetKey()} which is a globally unique key across all assets.
+	 */
+	@Column(name = "key", unique = true)
+	@NotBlank
+	@Length(max = 255)
+	private String key;
+
+	@Builder(toBuilder = true)
+	public WebCmsPublication( @Builder.ObtainVia(method = "getId") Long id,
+	                          @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
+	                          @Builder.ObtainVia(method = "getAssetKey") String assetKey,
+	                          @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
+	                          @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
+	                          @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
+	                          @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                          String name,
+	                          String key ) {
+		super( id, newEntityId, assetKey, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		this.name = name;
+		this.key = key;
+	}
+
+	//private WebCmsTagCollection tagCollection;
 }

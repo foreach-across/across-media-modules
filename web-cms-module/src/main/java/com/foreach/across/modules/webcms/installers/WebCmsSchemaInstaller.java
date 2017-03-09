@@ -25,7 +25,7 @@ import org.springframework.core.annotation.Order;
  * @since 0.0.1
  */
 @Order(1)
-@Installer(description = "Installs the required database tables",version = 3)
+@Installer(description = "Installs the required database tables", version = 5)
 public class WebCmsSchemaInstaller extends AcrossLiquibaseInstaller
 {
 	public WebCmsSchemaInstaller() {

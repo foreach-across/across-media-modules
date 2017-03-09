@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.installers;
+package com.foreach.across.modules.webcms.data;
 
-import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.modules.hibernate.installers.AuditableSchemaInstaller;
-import org.springframework.core.annotation.Order;
-
-import java.util.Arrays;
-import java.util.Collection;
+import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.stereotype.Service;
 
 /**
+ * Specific {@link org.springframework.core.convert.ConversionService} used by the {@link WebCmsDataImportService}.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Order(2)
-@Installer(description = "Adds auditing columns to core tables", version = 3)
-public class WebCmsAuditableInstaller extends AuditableSchemaInstaller
+@Service("webCmsDataConversionService")
+public class WebCmsDataConversionService extends DefaultConversionService
 {
-	@Override
-	protected Collection<String> getTableNames() {
-		return Arrays.asList( "wcm_page", "wcm_page_section", "wcm_asset" );
-	}
 }

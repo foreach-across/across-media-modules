@@ -16,14 +16,85 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
+import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
+import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.annotation.concurrent.NotThreadSafe;
+import javax.persistence.*;
+import java.util.Date;
+import java.util.UUID;
+
 /**
  * Generic base class for an identifiable asset in the WebCmsModule.  An asset is of a particular type - identified by the subclass -
- * and has an automatic long id along with a manually set {@link #uniqueKey}.
+ * and has an automatic long id along with a manually set {@link #assetKey}.
+ * <p/>
+ * An asset implements the {@link com.foreach.across.modules.hibernate.business.Auditable} interface.
  *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class WebCmsAsset
+@NotThreadSafe
+@Entity
+@Table(name = "wcm_asset")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "asset_type", discriminatorType = DiscriminatorType.STRING)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
+public class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAuditableEntity<T>
 {
-	private String uniqueKey;
+	@Id
+	@GeneratedValue(generator = "seq_wcm_asset_id")
+	@GenericGenerator(
+			name = "seq_wcm_asset_id",
+			strategy = AcrossSequenceGenerator.STRATEGY,
+			parameters = {
+					@org.hibernate.annotations.Parameter(name = "sequenceName", value = "seq_wcm_asset_id"),
+					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "5")
+			}
+	)
+	private Long id;
+
+	/**
+	 * Globally unique key for this asset. Alternative for the generated id property as the key should be set manually.
+	 * By default a new UUID will be used as the unique key, consumer code should use {@link #isNew()} to determine if the
+	 * asset is represented by a persisted entity or if it is new.
+	 * <p/>
+	 * Can be used for synchronization of assets between environments.
+	 */
+	@Column(name = "asset_key", unique = true)
+	@NotBlank
+	@Length(max = 255)
+	private String assetKey = UUID.randomUUID().toString();
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId( Long id ) {
+		this.id = id;
+	}
+
+	protected WebCmsAsset( Long id, Long newEntityId, String assetKey, String createdBy, Date createdDate, String lastModifiedBy, Date lastModifiedDate ) {
+		setNewEntityId( newEntityId );
+		setId( id );
+		setCreatedBy( createdBy );
+		setCreatedDate( createdDate );
+		setLastModifiedBy( lastModifiedBy );
+		setLastModifiedDate( lastModifiedDate );
+
+		this.assetKey = assetKey;
+	}
+
+	protected WebCmsAsset() {
+	}
 }

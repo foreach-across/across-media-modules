@@ -27,6 +27,8 @@
 	<property name="table.page_section" value="wcm_page_section"/>
 	<property name="table.menu" value="wcm_menu"/>
 	<property name="table.menu_item" value="wcm_menu_item"/>
+	<property name="table.asset" value="wcm_asset"/>
+	<property name="table.publication" value="wcm_publication"/>
 
 	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
 		<sql>
@@ -150,14 +152,14 @@
 			<column name="menu_id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false"/>
 			</column>
-			<column name="page_id" type="java.sql.Types.BIGINT" />
+			<column name="page_id" type="java.sql.Types.BIGINT"/>
 			<column name="menu_path" type="java.sql.Types.VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="title" type="java.sql.Types.NVARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="url" type="java.sql.Types.VARCHAR(500)" />
+			<column name="url" type="java.sql.Types.VARCHAR(500)"/>
 			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0"/>
 			<column name="is_group" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
 				<constraints nullable="false"/>
@@ -182,6 +184,64 @@
 
 		<createIndex tableName="${table.menu_item}" indexName="ix_wcm_mitem_pid">
 			<column name="page_id"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Asset base type -->
+	<changeSet id="201703090927" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.asset}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates asset table</comment>
+
+		<createTable tableName="${table.asset}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_asset"/>
+			</column>
+			<column name="asset_type" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="asset_key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_key" unique="true">
+			<column name="asset_key"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Publication asset -->
+	<changeSet id="201703091028" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.publication}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates publication table</comment>
+
+		<createTable tableName="${table.publication}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_publication"/>
+			</column>
+			<column name="key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="name" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.publication}" baseColumnNames="id"
+		                         constraintName="fk_wcm_pub_asset"
+		                         referencedTableName="${table.asset}" referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.publication}" indexName="ix_wcm_pub_key" unique="true">
+			<column name="key"/>
 		</createIndex>
 	</changeSet>
 

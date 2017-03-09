@@ -1,0 +1,7 @@
+assets:
+  # Default publications: News and Blogs
+  publication:
+    blogs:
+      name: Blogs
+    news:
+      name: News

@@ -70,6 +70,10 @@ All properties start with the *webCmsModule.* prefix.
 This corresponds usually with the base directory where the (Thymeleaf) templates are located.
 If unspecified the default resources of any present `@AcrossApplication` will be used.
 
+|webCmsModule.default-data.assets.enabled
+|
+|Disable default assets data.
+
 |===
 
 == What's new in this version?
@@ -147,3 +151,8 @@ Generating a sitemap
 
 === Programmatically creating pages
 you can use yaml to create pages
+
+=== Default data
+
+disable default data:
+webCmsModule.default-data.assets.enabled = false
