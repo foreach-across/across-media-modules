@@ -33,8 +33,8 @@ public class TestWebCmsPublication
 		                                                 .createdBy( "john" )
 		                                                 .lastModifiedBy( "jack" )
 		                                                 .newEntityId( 123L )
-		                                                 .assetKey( "unique-asset-key" )
-		                                                 .key( "blogs" )
+		                                                 .assetKey( "unique-asset-publicationKey" )
+		                                                 .publicationKey( "blogs" )
 		                                                 .name( "blogs" )
 		                                                 .build();
 

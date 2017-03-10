@@ -32,12 +32,12 @@ public class TestWebCmsDataEntry
 {
 	@Test(expected = IllegalArgumentException.class)
 	public void dataMustNotBeNull() {
-		new WebCmsDataEntry( "key", null );
+		new WebCmsDataEntry( "publicationKey", null );
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void dataMustBeMap() {
-		new WebCmsDataEntry( "key", "some data" );
+		new WebCmsDataEntry( "publicationKey", "some data" );
 	}
 
 	@Test

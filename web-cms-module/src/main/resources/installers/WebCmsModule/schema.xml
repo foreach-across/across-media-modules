@@ -228,7 +228,7 @@
 			<column name="id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_publication"/>
 			</column>
-			<column name="key" type="java.sql.Types.VARCHAR(255)">
+			<column name="publication_key" type="java.sql.Types.VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="name" type="java.sql.Types.NVARCHAR(255)">
@@ -241,7 +241,7 @@
 		                         referencedTableName="${table.asset}" referencedColumnNames="id"/>
 
 		<createIndex tableName="${table.publication}" indexName="ix_wcm_pub_key" unique="true">
-			<column name="key"/>
+			<column name="publication_key"/>
 		</createIndex>
 	</changeSet>
 

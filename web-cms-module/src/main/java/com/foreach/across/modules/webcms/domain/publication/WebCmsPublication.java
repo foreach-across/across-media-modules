@@ -55,10 +55,10 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	 * Unique key of the publication.
 	 * Do not confuse with {@link #getAssetKey()} which is a globally unique key across all assets.
 	 */
-	@Column(name = "key", unique = true)
+	@Column(name = "publication_key", unique = true)
 	@NotBlank
 	@Length(max = 255)
-	private String key;
+	private String publicationKey;
 
 	@Builder(toBuilder = true)
 	public WebCmsPublication( @Builder.ObtainVia(method = "getId") Long id,
@@ -69,10 +69,10 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	                          @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                          @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
 	                          String name,
-	                          String key ) {
+	                          String publicationKey ) {
 		super( id, newEntityId, assetKey, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 		this.name = name;
-		this.key = key;
+		this.publicationKey = publicationKey;
 	}
 
 	//private WebCmsTagCollection tagCollection;

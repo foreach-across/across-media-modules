@@ -25,7 +25,7 @@ adminWebModule:
   title: Admin Web CMS
   login:
     rememberMe:
-      key: webcms
+      publicationKey: webcms
   root-path: /cms
 
 spring:

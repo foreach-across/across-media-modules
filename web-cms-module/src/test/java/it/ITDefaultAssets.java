@@ -42,12 +42,12 @@ public class ITDefaultAssets
 			WebCmsPublication news = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.assetKey.eq( "publication:news" ) );
 			assertEquals( "publication:news", news.getAssetKey() );
 			assertEquals( "News", news.getName() );
-			assertEquals( "news", news.getKey() );
+			assertEquals( "news", news.getPublicationKey() );
 
 			WebCmsPublication blogs = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.assetKey.eq( "publication:blogs" ) );
 			assertEquals( "publication:blogs", blogs.getAssetKey() );
 			assertEquals( "Blogs", blogs.getName() );
-			assertEquals( "blogs", blogs.getKey() );
+			assertEquals( "blogs", blogs.getPublicationKey() );
 		}
 	}
 

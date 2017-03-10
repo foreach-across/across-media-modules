@@ -44,11 +44,11 @@ public final class WebCmsPublicationImporter extends AbstractWebCmsAssetImporter
 	@Override
 	protected WebCmsPublication prepareForSaving( WebCmsPublication itemToBeSaved, WebCmsDataEntry data ) {
 		if ( itemToBeSaved.isNew() ) {
-			if ( itemToBeSaved.getKey() == null ) {
-				itemToBeSaved.setKey( data.getKey() );
+			if ( itemToBeSaved.getPublicationKey() == null ) {
+				itemToBeSaved.setPublicationKey( data.getKey() );
 			}
 			if ( !data.getData().containsKey( "assetKey" ) ) {
-				itemToBeSaved.setAssetKey( "publication:" + itemToBeSaved.getKey() );
+				itemToBeSaved.setAssetKey( "publication:" + itemToBeSaved.getPublicationKey() );
 			}
 		}
 		return itemToBeSaved;
@@ -56,7 +56,7 @@ public final class WebCmsPublicationImporter extends AbstractWebCmsAssetImporter
 
 	@Override
 	protected WebCmsPublication getExistingByEntryKey( String entryKey ) {
-		return publicationRepository.findOne( QWebCmsPublication.webCmsPublication.key.eq( entryKey ) );
+		return publicationRepository.findOne( QWebCmsPublication.webCmsPublication.publicationKey.eq( entryKey ) );
 	}
 
 	@Autowired

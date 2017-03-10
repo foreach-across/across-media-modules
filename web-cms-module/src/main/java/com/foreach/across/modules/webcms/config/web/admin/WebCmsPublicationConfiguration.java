@@ -33,8 +33,8 @@ public class WebCmsPublicationConfiguration implements EntityConfigurer
 		/*entities.withType( WebCmsPublication.class )
 		        .properties( props -> props.property( "name" ).writable( true )
 		                                   .and()
-		                                   .property( "key" ).writable( true )
+		                                   .property( "publicationKey" ).writable( true )
 		        )
-		        .createOrUpdateFormView( fvb -> fvb.showProperties( "name", "key", "assetKey" ) );*/
+		        .createOrUpdateFormView( fvb -> fvb.showProperties( "name", "publicationKey", "assetKey" ) );*/
 	}
 }
