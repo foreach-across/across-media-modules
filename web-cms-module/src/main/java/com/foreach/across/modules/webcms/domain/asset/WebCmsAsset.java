@@ -18,8 +18,6 @@ package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -33,9 +31,11 @@ import java.util.UUID;
 
 /**
  * Generic base class for an identifiable asset in the WebCmsModule.  An asset is of a particular type - identified by the subclass -
- * and has an automatic long id along with a manually set {@link #assetKey}.
+ * and has an automatic long id along with a manually set {@link #assetId}.
  * <p/>
  * An asset implements the {@link com.foreach.across.modules.hibernate.business.Auditable} interface.
+ * <p/>
+ * Any module can extend this base class to hook into the default asset support.
  *
  * @author Arne Vandamme
  * @since 0.0.1
@@ -43,12 +43,12 @@ import java.util.UUID;
 @NotThreadSafe
 @Entity
 @Table(name = "wcm_asset")
+@Access(AccessType.FIELD)
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "asset_type", discriminatorType = DiscriminatorType.STRING)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-public class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAuditableEntity<T>
+public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAuditableEntity<T>
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_asset_id")
@@ -63,16 +63,21 @@ public class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAuditableEn
 	private Long id;
 
 	/**
-	 * Globally unique key for this asset. Alternative for the generated id property as the key should be set manually.
+	 * Globally unique id for this asset. Alternative for the generated id property as the key should be set manually.
 	 * By default a new UUID will be used as the unique key, consumer code should use {@link #isNew()} to determine if the
 	 * asset is represented by a persisted entity or if it is new.
 	 * <p/>
-	 * Can be used for synchronization of assets between environments.
+	 * Can be used for synchronization of assets between environments.  Like the regular id the asset id should never be
+	 * modified after creation of an entity, as it determines the global identity of the asset.
 	 */
-	@Column(name = "asset_key", unique = true)
+	@Column(name = "asset_id", unique = true)
 	@NotBlank
 	@Length(max = 255)
-	private String assetKey = UUID.randomUUID().toString();
+	private String assetId;
+
+	public void setAssetId( String assetId ) {
+		this.assetId = assetId;
+	}
 
 	@Override
 	public Long getId() {
@@ -84,7 +89,7 @@ public class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAuditableEn
 		this.id = id;
 	}
 
-	protected WebCmsAsset( Long id, Long newEntityId, String assetKey, String createdBy, Date createdDate, String lastModifiedBy, Date lastModifiedDate ) {
+	protected WebCmsAsset( Long id, Long newEntityId, String assetId, String createdBy, Date createdDate, String lastModifiedBy, Date lastModifiedDate ) {
 		setNewEntityId( newEntityId );
 		setId( id );
 		setCreatedBy( createdBy );
@@ -92,9 +97,10 @@ public class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAuditableEn
 		setLastModifiedBy( lastModifiedBy );
 		setLastModifiedDate( lastModifiedDate );
 
-		this.assetKey = assetKey;
+		setAssetId( assetId );
 	}
 
 	protected WebCmsAsset() {
+		setAssetId( UUID.randomUUID().toString() );
 	}
 }

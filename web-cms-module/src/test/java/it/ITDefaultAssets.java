@@ -39,13 +39,13 @@ public class ITDefaultAssets
 		                                  .build()) {
 			WebCmsPublicationRepository publicationRepository = ctx.getBeanOfType( WebCmsPublicationRepository.class );
 
-			WebCmsPublication news = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.assetKey.eq( "publication:news" ) );
-			assertEquals( "publication:news", news.getAssetKey() );
+			WebCmsPublication news = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.assetId.eq( "wcm:asset:publication:news" ) );
+			assertEquals( "wcm:asset:publication:news", news.getAssetId() );
 			assertEquals( "News", news.getName() );
 			assertEquals( "news", news.getPublicationKey() );
 
-			WebCmsPublication blogs = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.assetKey.eq( "publication:blogs" ) );
-			assertEquals( "publication:blogs", blogs.getAssetKey() );
+			WebCmsPublication blogs = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.assetId.eq( "wcm:asset:publication:blogs" ) );
+			assertEquals( "wcm:asset:publication:blogs", blogs.getAssetId() );
 			assertEquals( "Blogs", blogs.getName() );
 			assertEquals( "blogs", blogs.getPublicationKey() );
 		}

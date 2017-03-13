@@ -44,9 +44,7 @@ public final class WebCmsDataImportService
 	 * @param data containing everything that should be imported
 	 */
 	public void importData( Map<String, Object> data ) {
-		data.forEach( ( key, value ) -> {
-			importData( new WebCmsDataEntry( key, value ) );
-		} );
+		data.forEach( ( key, value ) -> importData( new WebCmsDataEntry( key, value ) ) );
 	}
 
 	/**

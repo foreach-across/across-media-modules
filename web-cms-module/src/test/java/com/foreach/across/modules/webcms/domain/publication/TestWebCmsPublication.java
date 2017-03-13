@@ -18,8 +18,9 @@ package com.foreach.across.modules.webcms.domain.publication;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import java.util.Date;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -28,21 +29,66 @@ import static org.junit.Assert.assertNull;
 public class TestWebCmsPublication
 {
 	@Test
-	public void newPublicationFromBuilder() {
-		WebCmsPublication publication = WebCmsPublication.builder()
-		                                                 .createdBy( "john" )
-		                                                 .lastModifiedBy( "jack" )
-		                                                 .newEntityId( 123L )
-		                                                 .assetKey( "unique-asset-publicationKey" )
-		                                                 .publicationKey( "blogs" )
-		                                                 .name( "blogs" )
-		                                                 .build();
-
-		assertEquals( Long.valueOf( 123L ), publication.getNewEntityId() );
-
-		publication = publication.toBuilder().id( 111L ).build();
-		assertEquals( Long.valueOf( 111L ), publication.getId() );
-		assertNull( publication.getNewEntityId() );
+	public void defaultValues() {
+		WebCmsPublication publication = new WebCmsPublication();
+		verifyDefaultValues( publication );
+		verifyDefaultValues( WebCmsPublication.builder().build() );
+		verifyDefaultValues( publication.toDto() );
+		verifyDefaultValues( publication.toBuilder().build() );
 	}
 
+	private void verifyDefaultValues( WebCmsPublication publication ) {
+		assertNull( publication.getId() );
+		assertNull( publication.getNewEntityId() );
+		assertTrue( publication.isNew() );
+		assertNotNull( publication.getAssetId() );
+		assertTrue( publication.getAssetId().startsWith( "wcm:asset:publication:" ) );
+		assertNull( publication.getPublicationKey() );
+		assertNull( publication.getName() );
+		assertNull( publication.getCreatedBy() );
+		assertNull( publication.getCreatedDate() );
+		assertNull( publication.getLastModifiedBy() );
+		assertNull( publication.getLastModifiedDate() );
+	}
+
+	@Test
+	public void builderSemantics() {
+		Date timestamp = new Date();
+
+		WebCmsPublication publication = WebCmsPublication.builder()
+		                                                 .newEntityId( 123L )
+		                                                 .assetId( "my-asset" )
+		                                                 .publicationKey( "publication-key" )
+		                                                 .name( "my-publication" )
+		                                                 .createdBy( "john" )
+		                                                 .createdDate( timestamp )
+		                                                 .lastModifiedBy( "josh" )
+		                                                 .build();
+
+		assertNull( publication.getId() );
+		assertEquals( Long.valueOf( 123L ), publication.getNewEntityId() );
+		assertEquals( "wcm:asset:publication:my-asset", publication.getAssetId() );
+		assertEquals( "publication-key", publication.getPublicationKey() );
+		assertEquals( "my-publication", publication.getName() );
+		assertEquals( "john", publication.getCreatedBy() );
+		assertEquals( timestamp, publication.getCreatedDate() );
+		assertEquals( "josh", publication.getLastModifiedBy() );
+		assertNull( publication.getLastModifiedDate() );
+
+		WebCmsPublication other = publication.toBuilder()
+		                                     .id( 333L )
+		                                     .lastModifiedDate( timestamp )
+		                                     .build();
+		assertNotSame( publication, other );
+
+		assertNull( other.getNewEntityId() );
+		assertEquals( Long.valueOf( 333L ), other.getId() );
+		assertEquals( "wcm:asset:publication:my-asset", other.getAssetId() );
+		assertEquals( "publication-key", publication.getPublicationKey() );
+		assertEquals( "my-publication", publication.getName() );
+		assertEquals( "john", other.getCreatedBy() );
+		assertEquals( timestamp, other.getCreatedDate() );
+		assertEquals( "josh", other.getLastModifiedBy() );
+		assertEquals( timestamp, other.getLastModifiedDate() );
+	}
 }

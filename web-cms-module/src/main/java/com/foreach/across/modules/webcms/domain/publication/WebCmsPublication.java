@@ -17,7 +17,11 @@
 package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
-import lombok.*;
+import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -27,6 +31,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * A single publication for a set of articles or other publication-linked assets.
@@ -41,8 +46,13 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
+public final class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 {
+	/**
+	 * Prefix that all asset ids for a WebCmsPublication should have.
+	 */
+	public static final String COLLECTION_ID = "wcm:asset:publication";
+
 	/**
 	 * Unique descriptive name of the publication.
 	 */
@@ -53,27 +63,38 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 
 	/**
 	 * Unique key of the publication.
-	 * Do not confuse with {@link #getAssetKey()} which is a globally unique key across all assets.
+	 * Do not confuse with {@link #getAssetId()} which is a globally unique key across all assets.
 	 */
 	@Column(name = "publication_key", unique = true)
 	@NotBlank
 	@Length(max = 255)
 	private String publicationKey;
 
+	//private WebCmsTagCollection tagCollection;
+
+	@Override
+	public final void setAssetId( String assetId ) {
+		super.setAssetId( WebCmsUtils.prefixAssetIdForCollection( assetId, COLLECTION_ID ) );
+	}
+
 	@Builder(toBuilder = true)
 	public WebCmsPublication( @Builder.ObtainVia(method = "getId") Long id,
 	                          @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
-	                          @Builder.ObtainVia(method = "getAssetKey") String assetKey,
+	                          @Builder.ObtainVia(method = "getAssetId") String assetId,
 	                          @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
 	                          @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                          @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                          @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
 	                          String name,
 	                          String publicationKey ) {
-		super( id, newEntityId, assetKey, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		super( id, newEntityId, assetId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 		this.name = name;
 		this.publicationKey = publicationKey;
 	}
 
-	//private WebCmsTagCollection tagCollection;
+	@SuppressWarnings("all")
+	public static class WebCmsPublicationBuilder
+	{
+		private String assetId = UUID.randomUUID().toString();
+	}
 }

@@ -47,8 +47,8 @@ public final class WebCmsPublicationImporter extends AbstractWebCmsAssetImporter
 			if ( itemToBeSaved.getPublicationKey() == null ) {
 				itemToBeSaved.setPublicationKey( data.getKey() );
 			}
-			if ( !data.getData().containsKey( "assetKey" ) ) {
-				itemToBeSaved.setAssetKey( "publication:" + itemToBeSaved.getPublicationKey() );
+			if ( !data.getData().containsKey( "assetId" ) ) {
+				itemToBeSaved.setAssetId( itemToBeSaved.getPublicationKey() );
 			}
 		}
 		return itemToBeSaved;

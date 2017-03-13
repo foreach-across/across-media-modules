@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.text.Normalizer;
+import java.util.UUID;
 
 /**
  * @author Arne Vandamme
@@ -29,6 +30,32 @@ import java.text.Normalizer;
 public class WebCmsUtils
 {
 	private WebCmsUtils() {
+	}
+
+	/**
+	 * Generate a unique asset id for the given collection.  A collection is represented by an id
+	 * (eg. wcm:asset:page) and a unique id with the collection id as prefix will be returned.
+	 *
+	 * @param collectionId the asset id should have
+	 * @return unique id
+	 */
+	public static String generateAssetId( String collectionId ) {
+		Assert.notNull( collectionId );
+		return prefixAssetIdForCollection( UUID.randomUUID().toString(), collectionId );
+	}
+
+	/**
+	 * Ensures an asset id is for a given collection.  If the asset id starts with the collection id,
+	 * it will be left unchanged, else the collection id will be prefixed.
+	 *
+	 * @param assetId requested
+	 * @param collectionId the asset id should have
+	 * @return collection prefixed asset id
+	 */
+	public static String prefixAssetIdForCollection( String assetId, String collectionId ) {
+		Assert.notNull( collectionId );
+		Assert.notNull( assetId );
+		return StringUtils.startsWith( assetId, collectionId + ":" ) ? assetId : collectionId + ":" + assetId;
 	}
 
 	/**

@@ -16,16 +16,20 @@
 
 package com.foreach.across.modules.webcms.domain.page;
 
-import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
-import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
-import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Main entity representing a custom - static - web page.
@@ -35,26 +39,18 @@ import javax.validation.constraints.NotNull;
  */
 @NotThreadSafe
 @Entity
+@DiscriminatorValue("page")
 @Table(name = "wcm_page")
-@Builder(toBuilder = true)
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Setter
 @SuppressWarnings("squid:S2160")
-public class WebCmsPage extends SettableIdAuditableEntity<WebCmsPage>
+public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 {
-	@Id
-	@GeneratedValue(generator = "seq_wcm_page_id")
-	@GenericGenerator(
-			name = "seq_wcm_page_id",
-			strategy = AcrossSequenceGenerator.STRATEGY,
-			parameters = {
-					@org.hibernate.annotations.Parameter(name = "sequenceName", value = "seq_wcm_page_id"),
-					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "1")
-			}
-	)
-	private Long id;
+	/**
+	 * Prefix that all asset ids for a WebCmsPage should have.
+	 */
+	public static final String COLLECTION_ID = "wcm:asset:page";
 
 	/**
 	 * Title of the page.
@@ -110,8 +106,40 @@ public class WebCmsPage extends SettableIdAuditableEntity<WebCmsPage>
 	@Length(max = 255)
 	private String template;
 
-	@SuppressWarnings( "all" )
-	public static class WebCmsPageBuilder {
+	@Override
+	public final void setAssetId( String assetId ) {
+		super.setAssetId( WebCmsUtils.prefixAssetIdForCollection( assetId, COLLECTION_ID ) );
+	}
+
+	@Builder(toBuilder = true)
+	protected WebCmsPage( @Builder.ObtainVia(method = "getId") Long id,
+	                      @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
+	                      @Builder.ObtainVia(method = "getAssetId") String assetId,
+	                      @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
+	                      @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
+	                      @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
+	                      @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                      String title,
+	                      WebCmsPage parent,
+	                      String pathSegment,
+	                      boolean pathSegmentGenerated,
+	                      String canonicalPath,
+	                      boolean canonicalPathGenerated,
+	                      String template ) {
+		super( id, newEntityId, assetId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		this.title = title;
+		this.parent = parent;
+		this.pathSegment = pathSegment;
+		this.pathSegmentGenerated = pathSegmentGenerated;
+		this.canonicalPath = canonicalPath;
+		this.canonicalPathGenerated = canonicalPathGenerated;
+		this.template = template;
+	}
+
+	@SuppressWarnings("all")
+	public static class WebCmsPageBuilder
+	{
+		private String assetId = UUID.randomUUID().toString();
 		private boolean pathSegmentGenerated = true;
 		private boolean canonicalPathGenerated = true;
 	}

@@ -35,6 +35,6 @@ public class WebCmsPublicationConfiguration implements EntityConfigurer
 		                                   .and()
 		                                   .property( "publicationKey" ).writable( true )
 		        )
-		        .createOrUpdateFormView( fvb -> fvb.showProperties( "name", "publicationKey", "assetKey" ) );*/
+		        .createOrUpdateFormView( fvb -> fvb.showProperties( "name", "publicationKey", "assetId" ) );*/
 	}
 }

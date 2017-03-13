@@ -36,6 +36,33 @@
 		</sql>
 	</changeSet>
 
+	<!-- Asset base type -->
+	<changeSet id="201703090927" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.asset}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates asset table</comment>
+
+		<createTable tableName="${table.asset}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_asset"/>
+			</column>
+			<column name="asset_type" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="asset_id" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_id" unique="true">
+			<column name="asset_id"/>
+		</createIndex>
+	</changeSet>
+
 	<changeSet id="201701081200" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -70,6 +97,12 @@
 		                         baseColumnNames="parent_id"
 		                         constraintName="fk_wcm_page_parent_id"
 		                         referencedTableName="${table.page}"
+		                         referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="${table.page}"
+		                         baseColumnNames="id"
+		                         constraintName="fk_wcm_page_id"
+		                         referencedTableName="${table.asset}"
 		                         referencedColumnNames="id"/>
 
 		<createIndex tableName="${table.page}" indexName="ix_wcm_page_cnp">
@@ -112,6 +145,7 @@
 		</createIndex>
 	</changeSet>
 
+	<!-- Menu items -->
 	<changeSet id="201802160938" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -187,33 +221,6 @@
 		</createIndex>
 	</changeSet>
 
-	<!-- Asset base type -->
-	<changeSet id="201703090927" author="arne">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="${table.asset}"/>
-			</not>
-		</preConditions>
-
-		<comment>Creates asset table</comment>
-
-		<createTable tableName="${table.asset}">
-			<column name="id" type="java.sql.Types.BIGINT">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_asset"/>
-			</column>
-			<column name="asset_type" type="java.sql.Types.VARCHAR(100)">
-				<constraints nullable="false"/>
-			</column>
-			<column name="asset_key" type="java.sql.Types.VARCHAR(255)">
-				<constraints nullable="false"/>
-			</column>
-		</createTable>
-
-		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_key" unique="true">
-			<column name="asset_key"/>
-		</createIndex>
-	</changeSet>
-
 	<!-- Publication asset -->
 	<changeSet id="201703091028" author="arne">
 		<preConditions onFail="MARK_RAN">
@@ -236,9 +243,11 @@
 			</column>
 		</createTable>
 
-		<addForeignKeyConstraint baseTableName="${table.publication}" baseColumnNames="id"
+		<addForeignKeyConstraint baseTableName="${table.publication}"
+		                         baseColumnNames="id"
 		                         constraintName="fk_wcm_pub_asset"
-		                         referencedTableName="${table.asset}" referencedColumnNames="id"/>
+		                         referencedTableName="${table.asset}"
+		                         referencedColumnNames="id"/>
 
 		<createIndex tableName="${table.publication}" indexName="ix_wcm_pub_key" unique="true">
 			<column name="publication_key"/>

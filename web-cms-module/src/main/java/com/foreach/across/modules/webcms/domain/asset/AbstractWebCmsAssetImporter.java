@@ -65,11 +65,11 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 	}
 
 	private void importSingleAsset( WebCmsDataEntry item ) {
-		T existing = retrieveExistingAsset( (String) item.getData().get( "assetKey" ), item.getKey() );
+		T existing = retrieveExistingAsset( (String) item.getData().get( "assetId" ), item.getKey() );
 		T dto = createDto( existing );
 
 		if ( dto != null ) {
-			LOG.trace( "{} WebCmsAsset {} with assetKey {}", dto.isNew() ? "Creating" : "Updating" );
+			LOG.trace( "{} WebCmsAsset {} with assetId {}", dto.isNew() ? "Creating" : "Updating" );
 
 			BeanWrapperImpl beanWrapper = new BeanWrapperImpl( dto );
 
@@ -90,16 +90,16 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 				T itemToSave = prepareForSaving( dto, item );
 
 				if ( itemToSave != null ) {
-					LOG.debug( "Saving WebCmsAsset {} with assetKey {} (insert: {}) - {}",
-					           dataKey, itemToSave.getAssetKey(), dto.isNew(), dto );
+					LOG.debug( "Saving WebCmsAsset {} with assetId {} (insert: {}) - {}",
+					           dataKey, itemToSave.getAssetId(), dto.isNew(), dto );
 					assetRepository.save( itemToSave );
 				}
 				else {
-					LOG.trace( "Skipping WebCmsAsset {} import for assetKey {} - prepareForSaving returned null", dataKey, dto.getAssetKey() );
+					LOG.trace( "Skipping WebCmsAsset {} import for assetId {} - prepareForSaving returned null", dataKey, dto.getAssetId() );
 				}
 			}
 			else {
-				LOG.trace( "Skipping WebCmsAsset {} import for assetKey {} - nothing modified", dataKey, dto.getAssetKey() );
+				LOG.trace( "Skipping WebCmsAsset {} import for assetId {} - nothing modified", dataKey, dto.getAssetId() );
 			}
 		}
 		else {
@@ -107,11 +107,11 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 		}
 	}
 
-	private T retrieveExistingAsset( String assetKey, String entryKey ) {
+	private T retrieveExistingAsset( String assetId, String entryKey ) {
 		WebCmsAsset existing = null;
 
-		if ( assetKey != null ) {
-			existing = assetRepository.findOneByAssetKey( assetKey );
+		if ( assetId != null ) {
+			existing = assetRepository.findOneByAssetId( assetId );
 		}
 
 		return existing != null ? assetType.cast( existing ) : getExistingByEntryKey( entryKey );
