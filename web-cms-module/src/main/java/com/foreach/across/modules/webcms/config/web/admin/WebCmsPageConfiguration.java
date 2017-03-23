@@ -24,16 +24,18 @@ import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
-import com.foreach.across.modules.entity.views.EntityFormView;
-import com.foreach.across.modules.entity.views.EntityListView;
+import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.bootstrapui.processors.element.EntityListActionsProcessor;
 import com.foreach.across.modules.entity.views.bootstrapui.util.SortableTableBuilder;
-import com.foreach.across.modules.entity.views.processors.ListViewProcessorAdapter;
-import com.foreach.across.modules.entity.views.processors.WebViewProcessorAdapter;
+import com.foreach.across.modules.entity.views.context.EntityViewContext;
+import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
+import com.foreach.across.modules.entity.views.processors.SortableTableRenderingViewProcessor;
+import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
+import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
-import com.foreach.across.modules.entity.web.WebViewCreationContext;
+import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
@@ -124,29 +126,29 @@ public class WebCmsPageConfiguration implements EntityConfigurer
 		return new PageFormViewProcessor();
 	}
 
-	private static class PageListViewProcessor extends ListViewProcessorAdapter
+	private static class PageListViewProcessor extends EntityViewProcessorAdapter
 	{
 		private BootstrapUiFactory bootstrapUiFactory;
 
 		@Override
-		public void configureSortableTable( WebViewCreationContext creationContext,
-		                                    EntityListView view,
-		                                    SortableTableBuilder sortableTableBuilder ) {
-			EntityMessages messages = view.getEntityMessages();
-
-			sortableTableBuilder.valueRowProcessor( ( ctx, row ) -> {
-				WebCmsPage page = EntityViewElementUtils.currentEntity( ctx, WebCmsPage.class );
-				ContainerViewElementUtils
-						.find( row, EntityListActionsProcessor.CELL_NAME, TableViewElement.Cell.class )
-						.ifPresent( cell -> cell.addFirstChild(
-								bootstrapUiFactory.button()
-								                  .link( page.getCanonicalPath() )
-								                  .attribute( "target", "_blank" )
-								                  .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
-								                  .text( messages.withNameSingular( "actions.open" ) )
-								                  .build( ctx ) )
-						);
-			} );
+		protected void createViewElementBuilders( EntityViewRequest entityViewRequest, EntityView entityView, ViewElementBuilderMap builderMap ) {
+			builderMap.get( SortableTableRenderingViewProcessor.TABLE_BUILDER, SortableTableBuilder.class )
+			          .valueRowProcessor( ( ctx, row ) -> {
+				          WebCmsPage page = EntityViewElementUtils.currentEntity( ctx, WebCmsPage.class );
+				          ContainerViewElementUtils
+						          .find( row, EntityListActionsProcessor.CELL_NAME, TableViewElement.Cell.class )
+						          .ifPresent( cell -> {
+							                      EntityMessages entityMessages = entityViewRequest.getEntityViewContext().getEntityMessages();
+							                      cell.addFirstChild(
+									                      bootstrapUiFactory.button()
+									                                        .link( page.getCanonicalPath() )
+									                                        .attribute( "target", "_blank" )
+									                                        .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
+									                                        .text( entityMessages.withNameSingular( "actions.open" ) )
+									                                        .build( ctx ) );
+						                      }
+						          );
+			          } );
 		}
 
 		@Autowired
@@ -155,14 +157,31 @@ public class WebCmsPageConfiguration implements EntityConfigurer
 		}
 	}
 
-	private static class PageFormViewProcessor extends WebViewProcessorAdapter<EntityFormView>
+	private static class PageFormViewProcessor extends EntityViewProcessorAdapter
 	{
-		private PageContentStructure adminPage;
-
 		@Override
-		protected void modifyViewElements( ContainerViewElement elements ) {
-			addDependency( elements, "pathSegment", "pathSegmentGenerated" );
-			addDependency( elements, CANONICAL_PATH, "canonicalPathGenerated" );
+		protected void postRender( EntityViewRequest entityViewRequest,
+		                           EntityView entityView,
+		                           ContainerViewElement container,
+		                           ViewElementBuilderContext builderContext ) {
+			addDependency( container, "pathSegment", "pathSegmentGenerated" );
+			addDependency( container, CANONICAL_PATH, "canonicalPathGenerated" );
+
+			EntityViewContext viewContext = entityViewRequest.getEntityViewContext();
+
+			if ( viewContext.holdsEntity() ) {
+				WebCmsPage page = viewContext.getEntity( WebCmsPage.class );
+
+				LinkViewElement openLink = new LinkViewElement();
+				openLink.setAttribute( "target", "_blank" );
+				openLink.setUrl( page.getCanonicalPath() );
+				openLink.setTitle( viewContext.getEntityMessages().withNameSingular( "actions.open" ) );
+				openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
+
+				PageContentStructure adminPage = entityViewRequest.getPageContentStructure();
+				adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
+				adminPage.addToPageTitleSubText( openLink );
+			}
 		}
 
 		private void addDependency( ContainerViewElement elements, String from, String to ) {
@@ -178,27 +197,6 @@ public class WebCmsPageConfiguration implements EntityConfigurer
 								     Collections.singletonMap( "[id='entity." + to + "']", qualifiers )
 						     );
 					} );
-		}
-
-		@Override
-		protected void applyCustomPostProcessing( WebViewCreationContext creationContext, EntityFormView view ) {
-			WebCmsPage page = view.getEntity();
-
-			if ( !page.isNew() ) {
-				LinkViewElement openLink = new LinkViewElement();
-				openLink.setAttribute( "target", "_blank" );
-				openLink.setUrl( page.getCanonicalPath() );
-				openLink.setTitle( view.getEntityMessages().withNameSingular( "actions.open" ) );
-				openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
-
-				adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
-				adminPage.addToPageTitleSubText( openLink );
-			}
-		}
-
-		@Autowired
-		public void setAdminPage( PageContentStructure adminPage ) {
-			this.adminPage = adminPage;
 		}
 	}
 }
