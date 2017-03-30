@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.web.endpoint;
 
 import com.foreach.across.modules.webcms.domain.endpoint.services.WebCmsEndpointService;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.web.endpoint.context.DefaultWebCmsEndpointContext;
 import org.junit.Before;
@@ -46,11 +46,11 @@ public class TestWebCmsContextResolver
 	@Mock
 	private WebCmsEndpointService endpointService;
 	private WebCmsUrl url;
-	private WebCmsPageEndpoint endpoint;
+	private WebCmsAssetEndpoint endpoint;
 
 	@Before
 	public void setUp() throws Exception {
-		endpoint = WebCmsPageEndpoint.builder().build();
+		endpoint = WebCmsAssetEndpoint.builder().build();
 		url = WebCmsUrl.builder()
 		               .endpoint( endpoint ).build();
 		resolver = new DefaultWebCmsContextResolver( endpointService );

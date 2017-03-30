@@ -45,7 +45,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @SuppressWarnings("squid:S2160")
-public class WebCmsUrl extends SettableIdBasedEntity
+public class WebCmsUrl extends SettableIdBasedEntity<WebCmsUrl>
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_url_id")
@@ -82,8 +82,8 @@ public class WebCmsUrl extends SettableIdBasedEntity
 	 * WebCmsEndpoint for this URL.  Will be used to get the correct content that belongs to this URL.
 	 */
 	@NotNull
-	@JoinColumn(name = "endpoint_id")
 	@ManyToOne
+	@JoinColumn(name = "endpoint_id")
 	private WebCmsEndpoint endpoint;
 
 	/**

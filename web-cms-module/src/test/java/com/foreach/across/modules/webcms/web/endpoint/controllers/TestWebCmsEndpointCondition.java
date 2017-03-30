@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.web.endpoint.controllers;
 
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.web.endpoint.WebCmsContextResolver;
@@ -52,12 +52,12 @@ public class TestWebCmsEndpointCondition
 	@Mock
 	private WebCmsContextResolver resolver;
 
-	private WebCmsPageEndpoint endpoint;
+	private WebCmsAssetEndpoint endpoint;
 	private WebCmsUrl url;
 
 	@Before
 	public void setUp() throws Exception {
-		endpoint = WebCmsPageEndpoint.builder().build();
+		endpoint = WebCmsAssetEndpoint.builder().build();
 		url = WebCmsUrl.builder().httpStatus( HttpStatus.I_AM_A_TEAPOT ).build();
 
 		when( context.isResolved() ).thenReturn( true );
@@ -118,7 +118,7 @@ public class TestWebCmsEndpointCondition
 
 	@Test
 	public void subclassHasPreferenceOverParent() throws Exception {
-		WebCmsEndpointCondition conditionWithParent = condition( WebCmsPageEndpoint.class );
+		WebCmsEndpointCondition conditionWithParent = condition( WebCmsAssetEndpoint.class );
 
 		WebCmsEndpointCondition conditionWithSubClass = condition( DummyWebCmsPageEndpoint.class );
 
@@ -129,10 +129,10 @@ public class TestWebCmsEndpointCondition
 
 	@Test
 	public void equalConditions() throws Exception {
-		WebCmsEndpointCondition conditionOne = condition( WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.ACCEPTED },
+		WebCmsEndpointCondition conditionOne = condition( WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.ACCEPTED },
 		                                                  new HttpStatus.Series[] { HttpStatus.Series.CLIENT_ERROR } );
 
-		WebCmsEndpointCondition conditionTwo = condition( WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.NO_CONTENT },
+		WebCmsEndpointCondition conditionTwo = condition( WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.NO_CONTENT },
 		                                                  new HttpStatus.Series[] { HttpStatus.Series.SERVER_ERROR } );
 
 		int actual = conditionOne.compareTo( conditionTwo, new MockHttpServletRequest() );
@@ -144,7 +144,7 @@ public class TestWebCmsEndpointCondition
 	public void resolveContextWhenNotYetResolved() throws Exception {
 		when( context.isResolved() ).thenReturn( false );
 
-		WebCmsEndpointCondition condition = condition( WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.I_AM_A_TEAPOT }, new HttpStatus.Series[0] );
+		WebCmsEndpointCondition condition = condition( WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.I_AM_A_TEAPOT }, new HttpStatus.Series[0] );
 		HttpServletRequest request = new MockHttpServletRequest();
 		WebCmsEndpointCondition actualCondition = condition.getMatchingCondition( request );
 
@@ -153,26 +153,26 @@ public class TestWebCmsEndpointCondition
 
 	@Test
 	public void matchConditionWithEndpointAndStatus() throws Exception {
-		WebCmsEndpointCondition condition = condition( WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.I_AM_A_TEAPOT, HttpStatus.ALREADY_REPORTED },
+		WebCmsEndpointCondition condition = condition( WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.I_AM_A_TEAPOT, HttpStatus.ALREADY_REPORTED },
 		                                               new HttpStatus.Series[0] );
 
 		HttpServletRequest request = new MockHttpServletRequest();
 		WebCmsEndpointCondition actualCondition = condition.getMatchingCondition( request );
 
 		assertNotNull( actualCondition );
-		verifyCondition( actualCondition, WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.I_AM_A_TEAPOT }, new HttpStatus.Series[0] );
+		verifyCondition( actualCondition, WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.I_AM_A_TEAPOT }, new HttpStatus.Series[0] );
 	}
 
 	@Test
 	public void matchConditionWithEndpointAndSeries() throws Exception {
-		WebCmsEndpointCondition condition = condition( WebCmsPageEndpoint.class, new HttpStatus[0],
+		WebCmsEndpointCondition condition = condition( WebCmsAssetEndpoint.class, new HttpStatus[0],
 		                                               new HttpStatus.Series[] { HttpStatus.Series.CLIENT_ERROR, HttpStatus.Series.REDIRECTION } );
 
 		HttpServletRequest request = new MockHttpServletRequest();
 		WebCmsEndpointCondition actualCondition = condition.getMatchingCondition( request );
 
 		assertNotNull( actualCondition );
-		verifyCondition( actualCondition, WebCmsPageEndpoint.class, new HttpStatus[0], new HttpStatus.Series[] { HttpStatus.Series.CLIENT_ERROR } );
+		verifyCondition( actualCondition, WebCmsAssetEndpoint.class, new HttpStatus[0], new HttpStatus.Series[] { HttpStatus.Series.CLIENT_ERROR } );
 	}
 
 	@Test
@@ -187,7 +187,7 @@ public class TestWebCmsEndpointCondition
 
 	@Test
 	public void dontMatchIfWrongSeries() throws Exception {
-		WebCmsEndpointCondition condition = condition( WebCmsPageEndpoint.class, new HttpStatus[0], new HttpStatus.Series[] { HttpStatus.Series.SUCCESSFUL } );
+		WebCmsEndpointCondition condition = condition( WebCmsAssetEndpoint.class, new HttpStatus[0], new HttpStatus.Series[] { HttpStatus.Series.SUCCESSFUL } );
 
 		HttpServletRequest request = new MockHttpServletRequest();
 		WebCmsEndpointCondition actualCondition = condition.getMatchingCondition( request );
@@ -197,7 +197,7 @@ public class TestWebCmsEndpointCondition
 
 	@Test
 	public void dontMatchIfWrongStatus() throws Exception {
-		WebCmsEndpointCondition condition = condition( WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.NO_CONTENT }, new HttpStatus.Series[0] );
+		WebCmsEndpointCondition condition = condition( WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.NO_CONTENT }, new HttpStatus.Series[0] );
 
 		HttpServletRequest request = new MockHttpServletRequest();
 		WebCmsEndpointCondition actualCondition = condition.getMatchingCondition( request );
@@ -207,29 +207,29 @@ public class TestWebCmsEndpointCondition
 
 	@Test
 	public void matchOnlyWithEndpoint() throws Exception {
-		WebCmsEndpointCondition condition = condition( WebCmsPageEndpoint.class );
+		WebCmsEndpointCondition condition = condition( WebCmsAssetEndpoint.class );
 
 		HttpServletRequest request = new MockHttpServletRequest();
 		WebCmsEndpointCondition actualCondition = condition.getMatchingCondition( request );
 
 		assertNotNull( actualCondition );
-		verifyCondition( actualCondition, WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.I_AM_A_TEAPOT }, new HttpStatus.Series[0] );
+		verifyCondition( actualCondition, WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.I_AM_A_TEAPOT }, new HttpStatus.Series[0] );
 	}
 
 	@Test
 	public void combineTwoConditions() throws Exception {
-		WebCmsEndpointCondition conditionOne = condition( WebCmsPageEndpoint.class,
+		WebCmsEndpointCondition conditionOne = condition( WebCmsAssetEndpoint.class,
 		                                                  new HttpStatus[] { HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.NOT_IMPLEMENTED },
 		                                                  new HttpStatus.Series[] { HttpStatus.Series.SUCCESSFUL, HttpStatus.Series.REDIRECTION,
 		                                                                            HttpStatus.Series.CLIENT_ERROR } );
 
-		WebCmsEndpointCondition conditionTwo = condition( WebCmsPageEndpoint.class,
+		WebCmsEndpointCondition conditionTwo = condition( WebCmsAssetEndpoint.class,
 		                                                  new HttpStatus[] { HttpStatus.NOT_IMPLEMENTED, HttpStatus.MOVED_PERMANENTLY },
 		                                                  new HttpStatus.Series[] { HttpStatus.Series.CLIENT_ERROR } );
 
 		WebCmsEndpointCondition actual = conditionOne.combine( conditionTwo );
 		assertNotNull( actual );
-		verifyCondition( actual, WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.MOVED_PERMANENTLY, HttpStatus.NOT_IMPLEMENTED },
+		verifyCondition( actual, WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.MOVED_PERMANENTLY, HttpStatus.NOT_IMPLEMENTED },
 		                 new HttpStatus.Series[] { HttpStatus.Series.CLIENT_ERROR } );
 	}
 
@@ -237,12 +237,12 @@ public class TestWebCmsEndpointCondition
 	public void combineEmtpyAndFullCondition() throws Exception {
 		WebCmsEndpointCondition conditionOne = new WebCmsEndpointCondition( context, resolver );
 
-		WebCmsEndpointCondition conditionTwo = condition( WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.NO_CONTENT },
+		WebCmsEndpointCondition conditionTwo = condition( WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.NO_CONTENT },
 		                                                  new HttpStatus.Series[] { HttpStatus.Series.SERVER_ERROR } );
 
 		WebCmsEndpointCondition actual = conditionOne.combine( conditionTwo );
 		assertNotNull( actual );
-		verifyCondition( actual, WebCmsPageEndpoint.class, new HttpStatus[] { HttpStatus.NO_CONTENT },
+		verifyCondition( actual, WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.NO_CONTENT },
 		                 new HttpStatus.Series[] { HttpStatus.Series.SERVER_ERROR } );
 	}
 
@@ -259,7 +259,7 @@ public class TestWebCmsEndpointCondition
 
 	@Test
 	public void invalidCombineDueToDifferentTypes() throws Exception {
-		WebCmsEndpointCondition conditionOne = condition( WebCmsPageEndpoint.class );
+		WebCmsEndpointCondition conditionOne = condition( WebCmsAssetEndpoint.class );
 
 		WebCmsEndpointCondition conditionTwo = condition( WebCmsRemoteEndpoint.class );
 
@@ -268,7 +268,7 @@ public class TestWebCmsEndpointCondition
 			conditionOne.combine( conditionTwo );
 		}
 		catch ( InvalidWebCmsEndpointConditionCombination e ) {
-			String message = String.format( "A condition with endpoint type %s and type %s cannot be merged", WebCmsPageEndpoint.class,
+			String message = String.format( "A condition with endpoint type %s and type %s cannot be merged", WebCmsAssetEndpoint.class,
 			                                WebCmsRemoteEndpoint.class );
 			assertEquals( message, e.getLocalizedMessage() );
 			exceptionThrown = true;

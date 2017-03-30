@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.web.endpoint.context;
 
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.junit.Test;
 
@@ -33,7 +33,7 @@ public class TestDefaultWebCmsEndpointContext
 	public void isAvailable() throws Exception {
 		DefaultWebCmsEndpointContext context = new DefaultWebCmsEndpointContext();
 		assertFalse( context.isAvailable() );
-		context.setEndpoint( WebCmsPageEndpoint.builder().build() );
+		context.setEndpoint( WebCmsAssetEndpoint.builder().build() );
 		assertFalse( context.isAvailable() );
 		context.setUrl( WebCmsUrl.builder().build() );
 		assertFalse( context.isAvailable() );

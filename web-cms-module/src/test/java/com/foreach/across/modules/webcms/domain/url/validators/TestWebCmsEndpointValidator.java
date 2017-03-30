@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.url.validators;
 
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import org.junit.Test;
@@ -56,9 +56,9 @@ public class TestWebCmsEndpointValidator
 
 	@Test
 	public void multiplePrimariesNotAllowed() throws Exception {
-		WebCmsEndpoint endpoint = WebCmsPageEndpoint.builder()
-		                                            .build();
-		when( repository.findByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
+		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
+		                                             .build();
+		when( repository.findAllByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
 				WebCmsUrl.builder().httpStatus( HttpStatus.OK ).isPrimary( true ).build(),
 				WebCmsUrl.builder().httpStatus( HttpStatus.NO_CONTENT ).isPrimary( true ).build(),
 				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).isPrimary( false ).build()
@@ -73,8 +73,8 @@ public class TestWebCmsEndpointValidator
 
 	@Test
 	public void dontErrorWhenAlreadyRejected() throws Exception {
-		WebCmsEndpoint endpoint = WebCmsPageEndpoint.builder()
-		                                            .build();
+		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
+		                                             .build();
 		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).build();
 		when( errors.hasFieldErrors( "endpoint" ) ).thenReturn( true );
 
@@ -85,9 +85,9 @@ public class TestWebCmsEndpointValidator
 
 	@Test
 	public void dontErrorWhenOnlyOnePrimary() throws Exception {
-		WebCmsEndpoint endpoint = WebCmsPageEndpoint.builder()
-		                                            .build();
-		when( repository.findByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
+		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
+		                                             .build();
+		when( repository.findAllByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
 				WebCmsUrl.builder().httpStatus( HttpStatus.OK ).build(),
 				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).build()
 		) );
@@ -101,9 +101,9 @@ public class TestWebCmsEndpointValidator
 
 	@Test
 	public void dontErrorWhenNoPrimary() throws Exception {
-		WebCmsEndpoint endpoint = WebCmsPageEndpoint.builder()
-		                                            .build();
-		when( repository.findByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
+		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
+		                                             .build();
+		when( repository.findAllByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
 				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_MODIFIED ).build(),
 				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).build()
 		) );

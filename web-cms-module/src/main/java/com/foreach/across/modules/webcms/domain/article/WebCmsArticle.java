@@ -105,4 +105,12 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 	{
 		private String assetId = UUID.randomUUID().toString();
 	}
+
+	@Override
+	public String toString() {
+		return "WebCmsArticle{" +
+				"assetId='" + getAssetId() + "\'," +
+				"title='" + title + '\'' +
+				'}';
+	}
 }

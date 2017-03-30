@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint;
 
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.web.endpoint.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.web.endpoint.context.DefaultWebCmsEndpointContext;
@@ -51,13 +51,13 @@ public class TestWebCmsEndpointHandlerMethodArgumentResolver
 	@Before
 	public void setUp() throws Exception {
 		context = new DefaultWebCmsEndpointContext();
-		endpoint = WebCmsPageEndpoint.builder().build();
+		endpoint = WebCmsAssetEndpoint.builder().build();
 		context.setEndpoint( endpoint );
 		context.setResolved( true );
 		context.setUrl( WebCmsUrl.builder().build() );
 		resolver = new WebCmsEndpointHandlerMethodArgumentResolver( context );
 
-		doReturn( WebCmsPageEndpoint.class ).when( methodThatShouldResolve ).getParameterType();
+		doReturn( WebCmsAssetEndpoint.class ).when( methodThatShouldResolve ).getParameterType();
 		doReturn( String.class ).when( methodThatShouldNotResolve ).getParameterType();
 	}
 

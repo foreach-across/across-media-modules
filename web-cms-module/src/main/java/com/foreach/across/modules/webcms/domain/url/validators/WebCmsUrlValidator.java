@@ -43,7 +43,7 @@ public class WebCmsUrlValidator extends EntityValidatorSupport<WebCmsUrl>
 	@Override
 	protected void preValidation( WebCmsUrl entity, Errors errors ) {
 		if ( !errors.hasFieldErrors( "endpoint" ) && urlRepository
-				.findByEndpoint( entity.getEndpoint() )
+				.findAllByEndpoint( entity.getEndpoint() )
 				.stream()
 				.filter( WebCmsUrl::getIsPrimary )
 				.count() > 1 ) {

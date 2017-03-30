@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.url;
 
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.web.endpoint.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.web.endpoint.context.DefaultWebCmsEndpointContext;
 import org.junit.Before;
@@ -53,7 +53,7 @@ public class TestWebCmsUrlHandlerMethodArgumentResolver
 		context = new DefaultWebCmsEndpointContext();
 		url = WebCmsUrl.builder().build();
 		context.setUrl( url );
-		context.setEndpoint( WebCmsPageEndpoint.builder().build() );
+		context.setEndpoint( WebCmsAssetEndpoint.builder().build() );
 		context.setResolved( true );
 		resolver = new WebCmsUrlHandlerMethodArgumentResolver( context );
 

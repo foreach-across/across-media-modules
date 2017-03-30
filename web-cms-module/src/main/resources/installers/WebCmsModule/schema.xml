@@ -29,7 +29,7 @@
 	<property name="table.menu_item" value="wcm_menu_item"/>
 	<property name="table.url" value="wcm_url"/>
 	<property name="table.endpoint" value="wcm_endpoint"/>
-	<property name="table.page_endpoint" value="wcm_page_endpoint"/>
+	<property name="table.asset_endpoint" value="wcm_asset_endpoint"/>
 	<property name="table.remote_endpoint" value="wcm_remote_endpoint"/>
 	<property name="table.asset" value="wcm_asset"/>
 	<property name="table.type" value="wcm_type"/>
@@ -413,25 +413,25 @@
 	<changeSet id="201703010957" author="svl">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="${table.page_endpoint}"/>
+				<tableExists tableName="${table.asset_endpoint}"/>
 			</not>
 		</preConditions>
 
-		<comment>Creates page endpoint table</comment>
+		<comment>Creates asset endpoint table</comment>
 
-		<createTable tableName="${table.page_endpoint}">
+		<createTable tableName="${table.asset_endpoint}">
 			<column name="id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false" primaryKey="true"
-				             primaryKeyName="pk_wcm_page_endpoint"
+				             primaryKeyName="pk_wcm_asset_endpoint"
 				             referencedTableName="${table.endpoint}"
 				             referencedColumnNames="id"
-				             foreignKeyName="fk_wcm_page_endpoint_endpoint"/>
+				             foreignKeyName="fk_wcm_asset_ep_ep"/>
 			</column>
-			<column name="page_id" type="java.sql.Types.BIGINT">
+			<column name="asset_id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false"
-				             referencedTableName="${table.page}"
+				             referencedTableName="${table.asset}"
 				             referencedColumnNames="id"
-				             foreignKeyName="fk_wcm_page_endpoint_page"/>
+				             foreignKeyName="fk_wcm_asset_ep_asset"/>
 			</column>
 		</createTable>
 	</changeSet>

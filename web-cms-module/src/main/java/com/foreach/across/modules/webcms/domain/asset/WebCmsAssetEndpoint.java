@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page;
+package com.foreach.across.modules.webcms.domain.asset;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import lombok.*;
 
@@ -31,17 +32,17 @@ import javax.validation.constraints.NotNull;
  */
 @NotThreadSafe
 @Entity
-@Table(name = "wcm_page_endpoint")
+@Table(name = "wcm_asset_endpoint")
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Setter
 @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id")
-public class WebCmsPageEndpoint extends WebCmsEndpoint
+public class WebCmsAssetEndpoint extends WebCmsEndpoint
 {
 	@NotNull
-	@JoinColumn(name = "page_id")
+	@JoinColumn(name = "asset_id")
 	@ManyToOne
-	private WebCmsPage page;
+	private WebCmsAsset asset;
 }

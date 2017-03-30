@@ -16,8 +16,10 @@
 
 package com.foreach.across.modules.webcms.web.endpoint.interceptor;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
 import com.foreach.across.modules.webcms.web.endpoint.context.WebCmsEndpointContext;
 import com.foreach.across.modules.webcms.web.page.template.PageTemplateResolver;
 import lombok.RequiredArgsConstructor;
@@ -56,16 +58,25 @@ public class WebCmsPageEndpointInterceptor extends HandlerInterceptorAdapter
 	@Override
 	public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
 		try {
-			String template = context.getEndpoint( WebCmsPageEndpoint.class ).getPage().getTemplate();
-			String resolvedTemplate = templateResolver.resolvePageTemplate( template );
-			if ( modelAndView != null && modelAndView.getViewName() != null && modelAndView.isReference() &&
-					!modelAndView.getViewName().equals( resolvedTemplate ) ) {
-				LOG.trace( "Current model has an incorrect view {}, setting page template {} instead", modelAndView.getViewName(), resolvedTemplate );
-				modelAndView.setViewName( resolvedTemplate );
+			WebCmsEndpoint endpoint = context.getEndpoint();
+
+			if ( endpoint instanceof WebCmsAssetEndpoint ) {
+				WebCmsAsset asset = ( (WebCmsAssetEndpoint) endpoint ).getAsset();
+
+				// todo: generic template resolving for WebCmsAsset
+				if ( asset instanceof WebCmsPage ) {
+					String template = ( (WebCmsPage) asset ).getTemplate();
+					String resolvedTemplate = templateResolver.resolvePageTemplate( template );
+					if ( modelAndView != null && modelAndView.getViewName() != null && modelAndView.isReference() &&
+							!modelAndView.getViewName().equals( resolvedTemplate ) ) {
+						LOG.trace( "Current model has an incorrect view {}, setting page template {} instead", modelAndView.getViewName(), resolvedTemplate );
+						modelAndView.setViewName( resolvedTemplate );
+					}
+				}
 			}
 		}
 		catch ( ClassCastException cce ) {
-			LOG.trace( "Given context {} is not for a WebCmsPageEndpoint", context, cce );
+			LOG.trace( "Given context {} is not for a WebCmsAssetEndpoint", context, cce );
 		}
 		catch ( Exception e ) {
 			LOG.warn( "Something went wrong while checking the view name with the configured template", e );

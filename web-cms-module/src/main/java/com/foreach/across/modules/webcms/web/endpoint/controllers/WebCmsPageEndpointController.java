@@ -16,7 +16,8 @@
 
 package com.foreach.across.modules.webcms.web.endpoint.controllers;
 
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +31,21 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 0.0.1
  */
 @Controller
-@WebCmsEndpointMapping(WebCmsPageEndpoint.class)
+@WebCmsEndpointMapping(WebCmsAssetEndpoint.class)
 public class WebCmsPageEndpointController
 {
 	private WebCmsPageService pageService;
 
 	@WebCmsEndpointMapping(status = HttpStatus.OK)
-	public void render( WebCmsUrl url, WebCmsPageEndpoint endpoint, ModelMap model ) {
-		model.addAttribute( "page", endpoint.getPage() );
-		model.addAttribute( "contentSections", pageService.retrieveContentSections( endpoint.getPage() ) );
+	public void render( WebCmsUrl url, WebCmsAssetEndpoint endpoint, ModelMap model ) {
+		model.addAttribute( "asset", endpoint.getAsset() );
+		if ( endpoint.getAsset() instanceof WebCmsPage ) {
+			model.addAttribute( "contentSections", pageService.retrieveContentSections( (WebCmsPage) endpoint.getAsset() ) );
+		}
 	}
 
 	@WebCmsEndpointMapping(series = HttpStatus.Series.REDIRECTION)
-	public RedirectView redirect( WebCmsUrl url, WebCmsPageEndpoint endpoint ) {
+	public RedirectView redirect( WebCmsUrl url, WebCmsAssetEndpoint endpoint ) {
 		return endpoint.getPrimaryUrl().map( primary -> {
 			RedirectView result = new RedirectView( primary.getPath() );
 			result.setStatusCode( url.getHttpStatus() );

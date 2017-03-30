@@ -17,9 +17,9 @@
 package it;
 
 import com.foreach.across.modules.webcms.WebCmsModule;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
-import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageEndpointRepository;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
@@ -51,7 +51,7 @@ public class ITEndpointLogic
 	private MockMvc mockMvc;
 
 	@Autowired
-	private WebCmsPageEndpointRepository endpointRepository;
+	private WebCmsAssetEndpointRepository endpointRepository;
 
 	@Autowired
 	private WebCmsUrlRepository urlRepository;
@@ -59,7 +59,7 @@ public class ITEndpointLogic
 	@Autowired
 	private WebCmsPageRepository pageRepository;
 	private WebCmsPage page;
-	private WebCmsPageEndpoint endpoint;
+	private WebCmsAssetEndpoint endpoint;
 	private WebCmsUrl url;
 
 	@Before
@@ -72,9 +72,9 @@ public class ITEndpointLogic
 		                 .build();
 		pageRepository.save( page );
 
-		endpoint = WebCmsPageEndpoint.builder()
-		                             .page( page )
-		                             .build();
+		endpoint = WebCmsAssetEndpoint.builder()
+		                              .asset( page )
+		                              .build();
 		endpointRepository.save( endpoint );
 
 		url = WebCmsUrl.builder()

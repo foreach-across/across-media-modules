@@ -59,8 +59,7 @@ public abstract class WebCmsEndpoint extends SettableIdBasedEntity<WebCmsEndpoin
 	@Column(name = "id")
 	protected Long id;
 
-	@OneToMany
-	@JoinColumn(name = "endpoint_id")
+	@OneToMany(mappedBy = "endpoint")
 	protected Collection<WebCmsUrl> urls = Collections.emptySet();
 
 	/**

@@ -16,8 +16,8 @@
 
 package com.foreach.across.modules.webcms.web.endpoint.interceptor;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageEndpoint;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.web.endpoint.context.WebCmsEndpointContext;
 import com.foreach.across.modules.webcms.web.page.template.PageTemplateResolver;
@@ -67,11 +67,11 @@ public class TestWebCmsPageEndpointInterceptor
 	public void setUp() throws Exception {
 		interceptor = new WebCmsPageEndpointInterceptor( context, templateResolver );
 
-		when( context.getEndpoint( WebCmsPageEndpoint.class ) ).thenReturn( WebCmsPageEndpoint.builder()
-		                                                                                      .page( WebCmsPage.builder()
+		when( context.getEndpoint( WebCmsAssetEndpoint.class ) ).thenReturn( WebCmsAssetEndpoint.builder()
+		                                                                                        .asset( WebCmsPage.builder()
 		                                                                                                       .template( template )
 		                                                                                                       .build() )
-		                                                                                      .build() );
+		                                                                                        .build() );
 		when( templateResolver.resolvePageTemplate( template ) ).thenReturn( resolvedTemplate );
 	}
 

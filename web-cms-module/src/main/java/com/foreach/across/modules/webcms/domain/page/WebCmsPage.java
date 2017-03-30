@@ -143,4 +143,12 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 		private boolean pathSegmentGenerated = true;
 		private boolean canonicalPathGenerated = true;
 	}
+
+	@Override
+	public String toString() {
+		return "WebCmsPage{assetId='" +
+				getAssetId() + "'," +
+				"canonicalPath='" + canonicalPath + '\'' +
+				'}';
+	}
 }

@@ -20,8 +20,9 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,5 +34,7 @@ public interface WebCmsUrlRepository extends IdBasedEntityJpaRepository<WebCmsUr
 {
 	List<WebCmsUrl> findByPath( String path );
 
-	Collection<WebCmsUrl> findByEndpoint( WebCmsEndpoint entity );
+	List<WebCmsUrl> findAllByEndpoint( WebCmsEndpoint entity );
+
+	Page<WebCmsUrl> findAllByEndpoint( WebCmsEndpoint entity, Pageable pageable );
 }
