@@ -19,11 +19,12 @@ package com.foreach.across.modules.webcms.data;
 import lombok.Data;
 import org.springframework.util.Assert;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 /**
- * Represents a set of data to be imported or exported.
+ * Represents a set of mapData to be imported or exported.
  *
  * @author Arne Vandamme
  * @see WebCmsDataImportService
@@ -34,19 +35,24 @@ import java.util.Map;
 public final class WebCmsDataEntry
 {
 	/**
-	 * Key of this data entry item.
+	 * Key of this mapData entry item.
 	 */
 	private final String key;
 
 	/**
-	 * Optional parent key of the data entry.
+	 * Optional parent key of the mapData entry.
 	 */
 	private final String parentKey;
 
 	/**
 	 * Data itself - should not be null.
 	 */
-	private final Map<String, Object> data;
+	private final Map<String, Object> mapData;
+
+	/**
+	 * Data itself as a collection of objects.
+	 */
+	private final Collection<Object> collectionData;
 
 	public WebCmsDataEntry( String key, Object data ) {
 		this( key, null, data );
@@ -55,10 +61,24 @@ public final class WebCmsDataEntry
 	@SuppressWarnings("unchecked")
 	public WebCmsDataEntry( String key, String parentKey, Object data ) {
 		Assert.notNull( data );
-		Assert.isTrue( data instanceof Map, "Only Map type data is supported" );
 
 		this.key = key;
 		this.parentKey = parentKey;
-		this.data = Collections.unmodifiableMap( (Map<String, Object>) data );
+
+		if ( data instanceof Map ) {
+			this.mapData = Collections.unmodifiableMap( (Map<String, Object>) data );
+			this.collectionData = null;
+		}
+		else {
+			this.collectionData = (Collection) data;
+			this.mapData = null;
+		}
+	}
+
+	/**
+	 * @return true if data is of type map
+	 */
+	public boolean isMapData() {
+		return mapData != null;
 	}
 }

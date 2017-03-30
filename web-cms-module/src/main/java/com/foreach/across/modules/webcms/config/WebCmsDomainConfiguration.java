@@ -16,12 +16,12 @@
 
 package com.foreach.across.modules.webcms.config;
 
-import com.foreach.across.core.annotations.ModuleConfiguration;
-import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.hibernate.jpa.repositories.config.EnableAcrossJpaRepositories;
-import com.foreach.across.modules.hibernate.provider.HibernatePackageConfigurer;
-import com.foreach.across.modules.hibernate.provider.HibernatePackageRegistry;
 import com.foreach.across.modules.webcms.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
+import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -32,15 +32,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableAcrossJpaRepositories(basePackageClasses = WebCmsDomain.class)
 public class WebCmsDomainConfiguration
 {
-	/**
-	 * Register entities for scanning by the Hibernate module.
-	 */
-	@ModuleConfiguration(AcrossHibernateJpaModule.NAME)
-	public static class EntityScanConfiguration implements HibernatePackageConfigurer
-	{
-		@Override
-		public void configureHibernatePackage( HibernatePackageRegistry hibernatePackageRegistry ) {
-			hibernatePackageRegistry.addPackageToScan( WebCmsDomain.class );
-		}
+	@Autowired
+	public void registerDefaultTypes( WebCmsTypeRegistry typeRegistry ) {
+		typeRegistry.register( WebCmsArticleType.TYPE_GROUP, WebCmsArticleType.class, WebCmsArticleType::new );
+		typeRegistry.register( WebCmsPublicationType.TYPE_GROUP, WebCmsPublicationType.class, WebCmsPublicationType::new );
 	}
 }

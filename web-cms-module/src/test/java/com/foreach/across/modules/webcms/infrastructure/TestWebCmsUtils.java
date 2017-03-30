@@ -88,8 +88,8 @@ public class TestWebCmsUtils
 
 	@Test
 	public void generateAssetId() {
-		String assetId = WebCmsUtils.generateAssetId( "wcm:asset:page" );
-		String other = WebCmsUtils.generateAssetId( "wcm:asset:page" );
+		String assetId = WebCmsUtils.generateUniqueKey( "wcm:asset:page" );
+		String other = WebCmsUtils.generateUniqueKey( "wcm:asset:page" );
 		assertNotEquals( assetId, other );
 		assertTrue( assetId.startsWith( "wcm:asset:page:" ) );
 		assertTrue( other.startsWith( "wcm:asset:page:" ) );
@@ -97,8 +97,8 @@ public class TestWebCmsUtils
 
 	@Test
 	public void prefixAssetIdForCollection() {
-		assertEquals( "wcm:asset:page:test-page", WebCmsUtils.prefixAssetIdForCollection( "test-page", "wcm:asset:page" ) );
-		assertEquals( "wcm:asset:page:tp:tp", WebCmsUtils.prefixAssetIdForCollection( "wcm:asset:page:tp:tp", "wcm:asset:page" ) );
+		assertEquals( "wcm:asset:page:test-page", WebCmsUtils.prefixUniqueKeyForCollection( "test-page", "wcm:asset:page" ) );
+		assertEquals( "wcm:asset:page:tp:tp", WebCmsUtils.prefixUniqueKeyForCollection( "wcm:asset:page:tp:tp", "wcm:asset:page" ) );
 	}
 
 	private WebCmsPage.WebCmsPageBuilder page() {

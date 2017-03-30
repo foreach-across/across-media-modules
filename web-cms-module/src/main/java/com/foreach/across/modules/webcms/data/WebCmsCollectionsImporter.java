@@ -20,7 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Supports the default collections.
+ * Supports the default collections:
+ * <ul>
+ *     <li>assets</li>
+ *     <li>types</li>
+ * </ul>
  *
  * @author Arne Vandamme
  * @since 0.0.1
@@ -32,12 +36,12 @@ public final class WebCmsCollectionsImporter implements WebCmsDataImporter
 
 	@Override
 	public boolean supports( WebCmsDataEntry data ) {
-		return "assets".equals( data.getKey() ) && data.getParentKey() == null;
+		return ( "assets".equals( data.getKey() ) || "types".equals( data.getKey() ) ) && data.getParentKey() == null;
 	}
 
 	@Override
 	public void importData( WebCmsDataEntry data ) {
-		data.getData().forEach( ( key, properties ) -> dataImportService.importData( new WebCmsDataEntry( key, data.getKey(), properties ) ) );
+		data.getMapData().forEach( ( key, properties ) -> dataImportService.importData( new WebCmsDataEntry( key, data.getKey(), properties ) ) );
 	}
 
 	@Autowired

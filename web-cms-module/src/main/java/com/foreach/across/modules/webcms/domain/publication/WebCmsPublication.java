@@ -26,10 +26,8 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
 
@@ -46,7 +44,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public final class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
+public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 {
 	/**
 	 * Prefix that all asset ids for a WebCmsPublication should have.
@@ -56,25 +54,33 @@ public final class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	/**
 	 * Unique descriptive name of the publication.
 	 */
-	@Column(name = "name", unique = true)
 	@NotBlank
 	@Length(max = 255)
+	@Column(name = "name", unique = true)
 	private String name;
 
 	/**
 	 * Unique key of the publication.
 	 * Do not confuse with {@link #getAssetId()} which is a globally unique key across all assets.
 	 */
-	@Column(name = "publication_key", unique = true)
 	@NotBlank
 	@Length(max = 255)
+	@Column(name = "publication_key", unique = true)
 	private String publicationKey;
+
+	/**
+	 * Type of the publication.
+	 */
+	@NotNull
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "publication_type_id")
+	private WebCmsPublicationType publicationType;
 
 	//private WebCmsTagCollection tagCollection;
 
 	@Override
 	public final void setAssetId( String assetId ) {
-		super.setAssetId( WebCmsUtils.prefixAssetIdForCollection( assetId, COLLECTION_ID ) );
+		super.setAssetId( WebCmsUtils.prefixUniqueKeyForCollection( assetId, COLLECTION_ID ) );
 	}
 
 	@Builder(toBuilder = true)

@@ -16,8 +16,15 @@
 
 package com.foreach.across.modules.webcms.data;
 
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Specific {@link org.springframework.core.convert.ConversionService} used by the {@link WebCmsDataImportService}.
@@ -28,4 +35,36 @@ import org.springframework.stereotype.Service;
 @Service("webCmsDataConversionService")
 public class WebCmsDataConversionService extends DefaultConversionService
 {
+	/**
+	 * Convert raw data to property values on a DTO object.  Will convert the separate values
+	 * using the converters registered and will only modify the DTO for those properties where the current value
+	 * is different from the new.
+	 *
+	 * @param data map with the raw values
+	 * @param dto  to set te properties on
+	 * @return true if properties have been set
+	 */
+	public boolean convertToPropertyValues( Map<String, Object> data, Persistable dto ) {
+		BeanWrapperImpl beanWrapper = new BeanWrapperImpl( dto );
+
+		AtomicBoolean modified = new AtomicBoolean( false );
+
+		data.forEach( ( propertyName, propertyValue ) -> {
+			TypeDescriptor typeDescriptor = beanWrapper.getPropertyTypeDescriptor( propertyName );
+
+			if ( typeDescriptor == null ) {
+				throw new IllegalArgumentException( "Unknown property: " + propertyName );
+			}
+
+			Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
+			Object currentValue = beanWrapper.getPropertyValue( propertyName );
+
+			if ( dto.isNew() || !Objects.equals( currentValue, valueToSet ) ) {
+				modified.set( true );
+				beanWrapper.setPropertyValue( propertyName, valueToSet );
+			}
+		} );
+
+		return modified.get();
+	}
 }

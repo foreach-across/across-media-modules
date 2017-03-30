@@ -48,7 +48,7 @@ public class TestWebCmsDataEntry
 		WebCmsDataEntry entry = new WebCmsDataEntry( "mykey", data );
 		assertEquals( "mykey", entry.getKey() );
 		assertNull( entry.getParentKey() );
-		assertEquals( data, entry.getData() );
+		assertEquals( data, entry.getMapData() );
 	}
 
 	@Test
@@ -59,6 +59,6 @@ public class TestWebCmsDataEntry
 		WebCmsDataEntry entry = new WebCmsDataEntry( "mykey", "parentKey", data );
 		assertEquals( "mykey", entry.getKey() );
 		assertEquals( "parentKey", entry.getParentKey() );
-		assertEquals( data, entry.getData() );
+		assertEquals( data, entry.getMapData() );
 	}
 }

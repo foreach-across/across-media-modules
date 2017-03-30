@@ -1,0 +1,14 @@
+types:
+  # Default article types: blog and news
+  article:
+    blog:
+      name: Blog
+    news:
+      name: News
+  # Default publication types: blog and news
+  publication:
+    blog:
+      name: Blog
+    news:
+      name: News
+

@@ -28,12 +28,15 @@ import javax.annotation.PostConstruct;
  * @since 0.0.1
  */
 @ConditionalOnProperty(prefix = "webCmsModule.default-data.assets", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 1)
+@Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 2)
 @RequiredArgsConstructor
 public class WebCmsDefaultAssetsInstaller extends AbstractWebCmsDataInstaller
 {
 	@PostConstruct
 	public void registerResources() {
-		setResources( "classpath:installers/WebCmsModule/default-assets.yml" );
+		setResources(
+				"classpath:installers/WebCmsModule/default-types.yml",
+				"classpath:installers/WebCmsModule/default-assets.yml"
+		);
 	}
 }

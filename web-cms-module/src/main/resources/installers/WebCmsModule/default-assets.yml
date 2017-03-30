@@ -3,5 +3,16 @@ assets:
   publication:
     blogs:
       name: Blogs
+      publicationType: blog
     news:
       name: News
+      publicationType: news
+
+  article:
+    - title: some-title
+      publication: wcm:asset:publication:news
+      subTitle: onder titel
+      description: description of the article that is being imported...
+    - title: another-article
+      publication: wcm:asset:publication:blogs
+      subTitle: foobar ondertitel

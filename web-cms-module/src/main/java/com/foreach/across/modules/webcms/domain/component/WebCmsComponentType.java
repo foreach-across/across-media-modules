@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.installers;
+package com.foreach.across.modules.webcms.domain.component;
 
-import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.modules.hibernate.installers.AuditableSchemaInstaller;
-import org.springframework.core.annotation.Order;
-
-import java.util.Arrays;
-import java.util.Collection;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Order(2)
-@Installer(description = "Adds auditing columns to core tables", version = 3)
-public class WebCmsAuditableInstaller extends AuditableSchemaInstaller
+public class WebCmsComponentType //extends WebCmsTypeSpecifier
 {
-	@Override
-	protected Collection<String> getTableNames() {
-		return Arrays.asList( "wcm_page_section", "wcm_asset", "wcm_type" );
-	}
 }

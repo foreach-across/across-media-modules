@@ -16,14 +16,22 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+
 /**
- * Represents a sub-type specifier for a particular asset. This serves as a base class.
- * Every sub-type has a unique id, a type and key that is expected to be unique within the type.
- * A sub-type also has a more descriptive name that is also expected to be unique within the type.
  *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class WebCmsAssetSubType
+public class WebCmsAssetComponentLink
 {
+	private WebCmsAsset asset;
+
+	private WebCmsComponent component;
+
+	private WebCmsAssetComponentLinkType linkType;
+
+	private String name;
+
+	private int sortIndex;
 }

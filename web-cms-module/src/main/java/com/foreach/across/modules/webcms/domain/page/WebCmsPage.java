@@ -108,7 +108,7 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 
 	@Override
 	public final void setAssetId( String assetId ) {
-		super.setAssetId( WebCmsUtils.prefixAssetIdForCollection( assetId, COLLECTION_ID ) );
+		super.setAssetId( WebCmsUtils.prefixUniqueKeyForCollection( assetId, COLLECTION_ID ) );
 	}
 
 	@Builder(toBuilder = true)

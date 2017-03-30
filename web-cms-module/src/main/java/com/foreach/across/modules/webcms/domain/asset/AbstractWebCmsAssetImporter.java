@@ -16,19 +16,13 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
+import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsDataImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.util.Assert;
-
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Base class for importing a simple asset type.  An asset has a specific data key (in the asset collection)
@@ -42,7 +36,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 	protected final Logger LOG = LoggerFactory.getLogger( getClass() );
 
 	private WebCmsAssetRepository assetRepository;
-	private ConversionService conversionService;
+	private WebCmsDataConversionService conversionService;
 
 	private final String dataKey;
 	private final Class<T> assetType;
@@ -61,32 +55,24 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 
 	@Override
 	public final void importData( WebCmsDataEntry data ) {
-		data.getData().forEach( ( key, properties ) -> importSingleAsset( new WebCmsDataEntry( key, data.getKey(), properties ) ) );
+		if ( data.isMapData() ) {
+			data.getMapData().forEach( ( key, properties ) -> importSingleAsset( new WebCmsDataEntry( key, data.getKey(), properties ) ) );
+		}
+		else {
+			data.getCollectionData().forEach( properties -> importSingleAsset( new WebCmsDataEntry( null, data.getKey(), properties ) ) );
+		}
 	}
 
 	private void importSingleAsset( WebCmsDataEntry item ) {
-		T existing = retrieveExistingAsset( (String) item.getData().get( "assetId" ), item.getKey() );
+		T existing = retrieveExistingAsset( (String) item.getMapData().get( "assetId" ), item.getKey() );
 		T dto = createDto( existing );
 
 		if ( dto != null ) {
 			LOG.trace( "{} WebCmsAsset {} with assetId {}", dto.isNew() ? "Creating" : "Updating" );
 
-			BeanWrapperImpl beanWrapper = new BeanWrapperImpl( dto );
+			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
 
-			AtomicBoolean modified = new AtomicBoolean( false );
-
-			item.getData().forEach( ( propertyName, propertyValue ) -> {
-				TypeDescriptor typeDescriptor = beanWrapper.getPropertyTypeDescriptor( propertyName );
-				Object valueToSet = conversionService.convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
-				Object currentValue = beanWrapper.getPropertyValue( propertyName );
-
-				if ( dto.isNew() || !Objects.equals( currentValue, valueToSet ) ) {
-					modified.set( true );
-					beanWrapper.setPropertyValue( propertyName, valueToSet );
-				}
-			} );
-
-			if ( modified.get() ) {
+			if ( isModified ) {
 				T itemToSave = prepareForSaving( dto, item );
 
 				if ( itemToSave != null ) {
@@ -114,7 +100,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 			existing = assetRepository.findOneByAssetId( assetId );
 		}
 
-		return existing != null ? assetType.cast( existing ) : getExistingByEntryKey( entryKey );
+		return existing != null ? assetType.cast( existing ) : ( entryKey != null ? getExistingByEntryKey( entryKey ) : null );
 	}
 
 	/**
@@ -153,8 +139,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 	}
 
 	@Autowired
-	@Qualifier("webCmsDataConversionService")
-	void setConversionService( ConversionService conversionService ) {
+	void setConversionService( WebCmsDataConversionService conversionService ) {
 		this.conversionService = conversionService;
 	}
 }

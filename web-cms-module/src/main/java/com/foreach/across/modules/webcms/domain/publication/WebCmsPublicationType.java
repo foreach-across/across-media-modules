@@ -16,7 +16,18 @@
 
 package com.foreach.across.modules.webcms.domain.publication;
 
-import com.foreach.across.modules.webcms.domain.tag.WebCmsTagCollection;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.annotation.concurrent.NotThreadSafe;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * A type specifier for a {@link WebCmsPublication}.
@@ -24,9 +35,53 @@ import com.foreach.across.modules.webcms.domain.tag.WebCmsTagCollection;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class WebCmsPublicationType
+@NotThreadSafe
+@Entity
+@DiscriminatorValue(WebCmsPublicationType.TYPE_GROUP)
+@Table(name = "wcm_publication_type")
+@Getter
+@Setter
+@NoArgsConstructor
+public class WebCmsPublicationType extends WebCmsTypeSpecifier<WebCmsPublicationType>
 {
-	private String uniqueKey;
-	private String name;
-	private WebCmsTagCollection tagCollection;
+	/**
+	 * Type group name.
+	 */
+	public static final String TYPE_GROUP = "publication";
+
+	/**
+	 * Prefix that all unique keys for a WebCmsPublicationType should have.
+	 */
+	public static final String COLLECTION_ID = "wcm:type:publication";
+
+	//private WebCmsTagCollection tagCollection;
+
+	@Override
+	public final String getTypeGroup() {
+		return TYPE_GROUP;
+	}
+
+	@Override
+	protected final String getTypeCollectionId() {
+		return COLLECTION_ID;
+	}
+
+	@Builder(toBuilder = true)
+	public WebCmsPublicationType( @Builder.ObtainVia(method = "getId") Long id,
+	                              @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
+	                              @Builder.ObtainVia(method = "getUniqueKey") String uniqueKey,
+	                              @Builder.ObtainVia(method = "getName") String name,
+	                              @Builder.ObtainVia(method = "getTypeKey") String typeKey,
+	                              @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
+	                              @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
+	                              @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
+	                              @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate ) {
+		super( id, newEntityId, uniqueKey, name, typeKey, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+	}
+
+	@SuppressWarnings("all")
+	public static class WebCmsPublicationTypeBuilder
+	{
+		private String uniqueKey = UUID.randomUUID().toString();
+	}
 }

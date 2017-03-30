@@ -18,4 +18,6 @@
 
 <configuration>
 	<include resource="logback-across-test.xml"/>
+
+	<logger name="org.hibernate.type" level="WARN" />
 </configuration>

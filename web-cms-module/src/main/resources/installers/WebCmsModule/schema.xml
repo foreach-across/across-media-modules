@@ -28,7 +28,11 @@
 	<property name="table.menu" value="wcm_menu"/>
 	<property name="table.menu_item" value="wcm_menu_item"/>
 	<property name="table.asset" value="wcm_asset"/>
+	<property name="table.type" value="wcm_type"/>
 	<property name="table.publication" value="wcm_publication"/>
+	<property name="table.publication_type" value="wcm_publication_type"/>
+	<property name="table.article" value="wcm_article"/>
+	<property name="table.article_type" value="wcm_article_type"/>
 
 	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
 		<sql>
@@ -60,6 +64,48 @@
 
 		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_id" unique="true">
 			<column name="asset_id"/>
+		</createIndex>
+
+		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_type">
+			<column name="asset_type"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Type specifier base type -->
+	<changeSet id="201703301205" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates type table</comment>
+
+		<createTable tableName="${table.type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_type"/>
+			</column>
+			<column name="type_group" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="unique_key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="type_key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="name" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.type}" indexName="ix_wcm_type_unq_key" unique="true">
+			<column name="unique_key"/>
+		</createIndex>
+
+		<createIndex tableName="${table.type}" indexName="ix_wcm_type_group_key" unique="true">
+			<column name="type_group"/>
+			<column name="type_key"/>
 		</createIndex>
 	</changeSet>
 
@@ -221,7 +267,30 @@
 		</createIndex>
 	</changeSet>
 
-	<!-- Publication asset -->
+	<!-- Publication type -->
+	<changeSet id="201703301211" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.publication_type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates publication type table</comment>
+
+		<createTable tableName="${table.publication_type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_pubtype"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.publication_type}"
+		                         baseColumnNames="id"
+		                         constraintName="fk_wcm_pubtype_type"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<!-- Publication -->
 	<changeSet id="201703091028" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -241,6 +310,9 @@
 			<column name="name" type="java.sql.Types.NVARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
+			<column name="publication_type_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
 		</createTable>
 
 		<addForeignKeyConstraint baseTableName="${table.publication}"
@@ -249,9 +321,73 @@
 		                         referencedTableName="${table.asset}"
 		                         referencedColumnNames="id"/>
 
+		<addForeignKeyConstraint baseTableName="${table.publication}"
+		                         baseColumnNames="publication_type_id"
+		                         constraintName="fk_wcm_pub_pubtype"
+		                         referencedTableName="${table.publication_type}"
+		                         referencedColumnNames="id"/>
+
 		<createIndex tableName="${table.publication}" indexName="ix_wcm_pub_key" unique="true">
 			<column name="publication_key"/>
 		</createIndex>
+
+		<createIndex tableName="${table.publication}" indexName="ix_wcm_pub_pubtype">
+			<column name="publication_type_id"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Article type -->
+	<changeSet id="201703301611" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.article_type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates article type table</comment>
+
+		<createTable tableName="${table.article_type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_arttype"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.article_type}"
+		                         baseColumnNames="id"
+		                         constraintName="fk_wcm_arttype_type"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<!-- Article -->
+	<changeSet id="201703301708" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.article}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates article table</comment>
+
+		<createTable tableName="${table.article}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_article"/>
+			</column>
+			<column name="publication_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="title" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="sub_title" type="java.sql.Types.NVARCHAR(255)"/>
+			<column name="description" type="java.sql.Types.NVARCHAR(255)"/>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.article}"
+		                         baseColumnNames="publication_id"
+		                         constraintName="fk_wcm_art_pub"
+		                         referencedTableName="${table.publication}"
+		                         referencedColumnNames="id"/>
 	</changeSet>
 
 </databaseChangeLog>

@@ -16,7 +16,20 @@
 
 package com.foreach.across.modules.webcms.domain.article;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.annotation.concurrent.NotThreadSafe;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * A single article from a {@link com.foreach.across.modules.webcms.domain.publication.WebCmsPublication}.
@@ -24,10 +37,72 @@ import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class WebCmsArticle
+@NotThreadSafe
+@Entity
+@DiscriminatorValue("article")
+@Table(name = "wcm_article")
+@NoArgsConstructor
+@Getter
+@Setter
+public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 {
+	/**
+	 * Prefix that all object ids for a WebCmsArticle should have.
+	 */
+	public static final String COLLECTION_ID = "wcm:asset:article";
+
+	/**
+	 * Publication this article belongs to.
+	 */
+	@NotNull
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "publication_id")
 	private WebCmsPublication publication;
+
+	/**
+	 * Title of the article. Used in previews, list views etc.
+	 */
+	@Column(name = "title")
+	@NotBlank
+	@Length(max = 255)
 	private String title;
+
+	/**
+	 * Sub title of the article.
+	 */
+	@Column(name = "sub_title")
+	@Length(max = 255)
 	private String subTitle;
+
+	/**
+	 * Short description of the article contents.
+	 */
+	@Column(name = "description")
+	@Length(max = 255)
 	private String description;
+
+	@Builder(toBuilder = true)
+	protected WebCmsArticle( @Builder.ObtainVia(method = "getId") Long id,
+	                         @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
+	                         @Builder.ObtainVia(method = "getAssetId") String assetId,
+	                         @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
+	                         @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
+	                         @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
+	                         @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                         WebCmsPublication publication,
+	                         String title,
+	                         String subTitle,
+	                         String description ) {
+		super( id, newEntityId, assetId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		this.publication = publication;
+		this.title = title;
+		this.subTitle = subTitle;
+		this.description = description;
+	}
+
+	@SuppressWarnings("all")
+	public static class WebCmsArticleBuilder
+	{
+		private String assetId = UUID.randomUUID().toString();
+	}
 }

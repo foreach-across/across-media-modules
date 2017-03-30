@@ -33,29 +33,29 @@ public class WebCmsUtils
 	}
 
 	/**
-	 * Generate a unique asset id for the given collection.  A collection is represented by an id
-	 * (eg. wcm:asset:page) and a unique id with the collection id as prefix will be returned.
+	 * Generate a unique object key for the given collection.  A collection is represented by an id
+	 * (eg. wcm:asset:page) and a unique key with the collection id as prefix will be returned.
 	 *
-	 * @param collectionId the asset id should have
-	 * @return unique id
+	 * @param collectionId the key should have
+	 * @return unique key
 	 */
-	public static String generateAssetId( String collectionId ) {
+	public static String generateUniqueKey( String collectionId ) {
 		Assert.notNull( collectionId );
-		return prefixAssetIdForCollection( UUID.randomUUID().toString(), collectionId );
+		return prefixUniqueKeyForCollection( UUID.randomUUID().toString(), collectionId );
 	}
 
 	/**
-	 * Ensures an asset id is for a given collection.  If the asset id starts with the collection id,
+	 * Ensures a unique keyis for a given collection.  If the key starts with the collection id,
 	 * it will be left unchanged, else the collection id will be prefixed.
 	 *
-	 * @param assetId requested
-	 * @param collectionId the asset id should have
-	 * @return collection prefixed asset id
+	 * @param uniqueKey    requested
+	 * @param collectionId the key should have
+	 * @return collection prefixed key
 	 */
-	public static String prefixAssetIdForCollection( String assetId, String collectionId ) {
+	public static String prefixUniqueKeyForCollection( String uniqueKey, String collectionId ) {
 		Assert.notNull( collectionId );
-		Assert.notNull( assetId );
-		return StringUtils.startsWith( assetId, collectionId + ":" ) ? assetId : collectionId + ":" + assetId;
+		Assert.notNull( uniqueKey );
+		return StringUtils.startsWith( uniqueKey, collectionId + ":" ) ? uniqueKey : collectionId + ":" + uniqueKey;
 	}
 
 	/**
