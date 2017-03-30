@@ -27,6 +27,10 @@
 	<property name="table.page_section" value="wcm_page_section"/>
 	<property name="table.menu" value="wcm_menu"/>
 	<property name="table.menu_item" value="wcm_menu_item"/>
+	<property name="table.url" value="wcm_url"/>
+	<property name="table.endpoint" value="wcm_endpoint"/>
+	<property name="table.page_endpoint" value="wcm_page_endpoint"/>
+	<property name="table.remote_endpoint" value="wcm_remote_endpoint"/>
 	<property name="table.asset" value="wcm_asset"/>
 	<property name="table.type" value="wcm_type"/>
 	<property name="table.publication" value="wcm_publication"/>
@@ -388,6 +392,106 @@
 		                         constraintName="fk_wcm_art_pub"
 		                         referencedTableName="${table.publication}"
 		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="201703010956" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.endpoint}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates base endpoint table</comment>
+
+		<createTable tableName="${table.endpoint}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_endpoint"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="201703010957" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.page_endpoint}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates page endpoint table</comment>
+
+		<createTable tableName="${table.page_endpoint}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true"
+				             primaryKeyName="pk_wcm_page_endpoint"
+				             referencedTableName="${table.endpoint}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_page_endpoint_endpoint"/>
+			</column>
+			<column name="page_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             referencedTableName="${table.page}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_page_endpoint_page"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="201703010958" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.remote_endpoint}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates remote endpoint table</comment>
+
+		<createTable tableName="${table.remote_endpoint}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true"
+				             primaryKeyName="pk_wcm_remote_endpoint"
+				             referencedTableName="${table.endpoint}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_remote_endpoint"/>
+			</column>
+			<column name="target_url" type="java.sql.Types.VARCHAR(2000)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="201703011056" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.url}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates url table</comment>
+
+		<createTable tableName="${table.url}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_url"/>
+			</column>
+			<column name="path" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="http_status" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="is_primary" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+			<column name="endpoint_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             referencedTableName="${table.endpoint}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_url_endpoint"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="201703031547" author="svl">
+		<addUniqueConstraint tableName="${table.url}" columnNames="path" constraintName="uq_wcm_url_path"/>
 	</changeSet>
 
 </databaseChangeLog>

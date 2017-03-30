@@ -84,11 +84,19 @@ Initial public release available on http://search.maven.org/[Maven central].
 :numbered:
 == How {module-name} works
 
-will install a default controller
-all other request mappings will take precedence
-no specific mapping, an endpoint request will be done
-no endpoint found a 404 will be thrown
-else the typed endpoint handler will be called
+annotate controller method with `WebCmsEndpointMapping`
+Specify type of endpoint and Http status code(s) to listen to
+body of method describes how to show endpoint
+
+default `WebCmsPageEndpoint` puts page on model and uses default Thymeleaf template
+default `WebCmsRemoteEndpoint` does redirect to target url
+
+=== Create your own endpoint
+Create an entity that extends `WebCmsEndpoint` which contains all properties needed to display the endpoint
+Create a corresponding repository
+Reference the endpoint and/or HTTP status code(s) in annotation of controller method
+Handle your properties according how you want to display your endpoint.  If needed, provide a default Thymeleaf template.
+
 
 WARNING: in case of problems, make sure that the request mapping is last
 
@@ -100,23 +108,32 @@ add a base location for the template files
 
 == Domain model
 
-WebCmsEndpoint
 
-target for one or more endpoint urls
 
-WebCmsEndpointUrl
+=== WebCmsEndpoint
 
-URL targeting a specific endpoint
+An endpoint can be anything that can be accessed by a collection or URLs.  The endpoint should contain all the data needed to display itself when accessing.
 
-* path: url path
-* status code: http status code, will determine what will happen when the url is requested
-** 200 will serve the content
-** 3xx will perform a redirect to the canonical url
-** other status codes will serve the content but with the custom status code (eg custom 404 page)
-* is canonical: only one url for an endpoint can be the canonical url
-* endpoint: the endpoint target
+This module provides two endpoints, one for pages and one for redirects.  The first - `WebCmsPageEndpoint` - will reference the page and the urls for that page.
+The latter - `WebCmsRemoteEndpoint` - has a collection of urls which should be redirected and contains the target url which url should be targeted.
 
-WebCmsPage
+A `WebCmsEndpoint` or one of its subclasses can be used as method parameter.
+
+=== WebCmsUrl
+
+URL targeting a specific endpoint and HTTP-status code.  A `WebCmsUrl` must be coupled with an `WebCmsEndpoint`.
+
+//* path: url path
+//* status code: http status code, will determine what will happen when the url is requested
+//** 200 will serve the content
+//** 3xx will perform a redirect to the canonical url
+//** other status codes will serve the content but with the custom status code (eg custom 404 page)
+//* is canonical: only one url for an endpoint can be the canonical url
+//* endpoint: the endpoint target
+
+A `WebCmsUrl` or one of its subclasses can be used as method parameter.
+
+=== WebCmsPage
 
 a generated path segment will be SEO friendly
 

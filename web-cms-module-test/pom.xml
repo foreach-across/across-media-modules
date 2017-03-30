@@ -47,6 +47,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>debug-web-module</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>user-module</artifactId>
 		</dependency>
 		<dependency>
