@@ -18,6 +18,7 @@ package webapps.admin;
 
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.modules.adminweb.AdminWebModule;
+import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.user.UserModuleSettings;
@@ -39,7 +40,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 		modules = {
 				WebCmsModule.NAME,
 				EntityModule.NAME,
-				AdminWebModule.NAME
+				AdminWebModule.NAME,
+				DebugWebModule.NAME
 		}
 )
 @Import({ DataSourceAutoConfiguration.class, H2ConsoleAutoConfiguration.class })

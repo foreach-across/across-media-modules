@@ -28,6 +28,10 @@ adminWebModule:
       key: webcms
   root-path: /cms
 
+debugWebModule:
+  security:
+    password: debug
+
 spring:
   datasource:
     url: jdbc:h2:../db/adminwebcms
