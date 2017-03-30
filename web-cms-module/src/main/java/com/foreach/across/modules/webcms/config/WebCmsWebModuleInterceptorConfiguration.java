@@ -28,8 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @Configuration
 @RequiredArgsConstructor

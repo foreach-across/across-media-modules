@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServletResponse;
  * it was not yet set.  It is important that this interceptor is handled before the {@link com.foreach.across.modules.web.template.WebTemplateInterceptor}
  * because the view of the {@link WebCmsPage} in the context must be set before applying the layout.
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @RequiredArgsConstructor
 @Slf4j

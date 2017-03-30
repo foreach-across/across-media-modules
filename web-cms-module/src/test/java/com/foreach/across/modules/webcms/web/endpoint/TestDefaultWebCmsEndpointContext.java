@@ -19,8 +19,8 @@ package com.foreach.across.modules.webcms.web.endpoint;
 import org.junit.Test;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 public class TestDefaultWebCmsEndpointContext
 {

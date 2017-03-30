@@ -25,8 +25,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @Exposed
 public interface WebCmsUrlRepository extends IdBasedEntityJpaRepository<WebCmsUrl>

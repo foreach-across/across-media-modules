@@ -23,8 +23,8 @@ import org.springframework.http.HttpStatus;
 import java.lang.annotation.*;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

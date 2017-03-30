@@ -27,8 +27,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 /**
  *  This {@link HandlerMethodArgumentResolver} enables the usage of {@link WebCmsEndpoint} as argument
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @RequiredArgsConstructor
 public class WebCmsEndpointHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver

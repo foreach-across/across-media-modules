@@ -26,8 +26,8 @@ import org.springframework.validation.Errors;
 /**
  * This class validates that only one {@code WebCmsUrl} from a {@code WebCmsEndpoint} has status code 2xx
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @Component
 @RequiredArgsConstructor

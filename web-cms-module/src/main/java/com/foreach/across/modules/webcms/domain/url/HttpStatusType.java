@@ -31,8 +31,8 @@ import java.util.Objects;
 /**
  * A custom Hibernate type to persist {@link HttpStatus} objects with their status code.
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  * @see HttpStatus#value
  */
 @Slf4j

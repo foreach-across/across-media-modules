@@ -26,8 +26,8 @@ import javax.validation.constraints.NotNull;
 /**
  * This endpoint represents a WebCmsPage
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @NotThreadSafe
 @Entity

@@ -33,8 +33,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TestHttpStatusType

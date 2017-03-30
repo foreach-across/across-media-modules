@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @Configuration
 @RequiredArgsConstructor

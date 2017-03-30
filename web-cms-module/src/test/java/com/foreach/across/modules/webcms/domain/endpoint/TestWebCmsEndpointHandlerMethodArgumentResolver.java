@@ -32,8 +32,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TestWebCmsEndpointHandlerMethodArgumentResolver

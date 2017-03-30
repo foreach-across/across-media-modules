@@ -38,8 +38,8 @@ import java.util.stream.Stream;
  * A condition to use for retrieving the correct {@link WebCmsEndpoint}.  This condition takes all properties of
  * {@link WebCmsEndpointMapping} into account.
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  * @see com.foreach.across.modules.web.mvc.condition.CustomRequestCondition
  */
 @RequiredArgsConstructor

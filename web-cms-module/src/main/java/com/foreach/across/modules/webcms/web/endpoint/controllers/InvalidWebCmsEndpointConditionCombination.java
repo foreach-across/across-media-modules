@@ -19,8 +19,8 @@ package com.foreach.across.modules.webcms.web.endpoint.controllers;
 /**
  * Thrown when two {@link WebCmsEndpointCondition}s should be merged but they form an invalid combination.
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 public class InvalidWebCmsEndpointConditionCombination extends RuntimeException
 {

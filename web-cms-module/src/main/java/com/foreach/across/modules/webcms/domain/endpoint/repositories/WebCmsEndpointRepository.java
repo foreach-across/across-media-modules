@@ -20,8 +20,8 @@ import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRep
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 public interface WebCmsEndpointRepository extends IdBasedEntityJpaRepository<WebCmsEndpoint>
 {

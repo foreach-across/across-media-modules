@@ -33,8 +33,8 @@ import javax.validation.constraints.NotNull;
 /**
  * Entity for targeting a specific endpoint
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @NotThreadSafe
 @Entity

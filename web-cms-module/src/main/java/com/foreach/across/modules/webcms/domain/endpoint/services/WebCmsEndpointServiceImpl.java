@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @Component
 @Slf4j

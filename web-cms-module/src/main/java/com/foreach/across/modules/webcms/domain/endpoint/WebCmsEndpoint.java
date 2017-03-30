@@ -32,8 +32,8 @@ import java.util.Optional;
  * An endpoint can be anything that can be accessed by a collection or URLs.  The endpoint should contain all the data needed to
  * display itself when accessing.
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @NotThreadSafe
 @NoArgsConstructor

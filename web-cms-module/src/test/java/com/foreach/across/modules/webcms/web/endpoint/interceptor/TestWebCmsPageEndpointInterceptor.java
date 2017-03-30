@@ -35,8 +35,8 @@ import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 /**
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TestWebCmsPageEndpointInterceptor

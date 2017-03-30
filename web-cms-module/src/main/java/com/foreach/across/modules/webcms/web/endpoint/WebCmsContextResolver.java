@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * This class is responsible for resolving a {@code WebCmsEndpointContext} based on a {@code HttpServletRequest}.
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 public interface WebCmsContextResolver
 {

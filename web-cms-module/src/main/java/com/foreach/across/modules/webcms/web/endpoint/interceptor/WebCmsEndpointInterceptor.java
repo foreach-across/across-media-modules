@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * This interceptor is responsible for putting the status code of the resolved {@link WebCmsEndpointContext} on the {@link HttpServletResponse}.
  *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Sander Van Loock
+ * @since 0.0.1
  */
 @RequiredArgsConstructor
 public class WebCmsEndpointInterceptor extends HandlerInterceptorAdapter
