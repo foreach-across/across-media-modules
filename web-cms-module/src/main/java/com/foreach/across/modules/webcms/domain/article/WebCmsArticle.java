@@ -81,6 +81,12 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 	@Length(max = 255)
 	private String description;
 
+	/**
+	 * Temporary: body of the article.
+	 */
+	@Column(name = "body")
+	private String body;
+
 	@Builder(toBuilder = true)
 	protected WebCmsArticle( @Builder.ObtainVia(method = "getId") Long id,
 	                         @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
@@ -92,12 +98,14 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 	                         WebCmsPublication publication,
 	                         String title,
 	                         String subTitle,
-	                         String description ) {
+	                         String description,
+	                         String body ) {
 		super( id, newEntityId, assetId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 		this.publication = publication;
 		this.title = title;
 		this.subTitle = subTitle;
 		this.description = description;
+		this.body = body;
 	}
 
 	@SuppressWarnings("all")

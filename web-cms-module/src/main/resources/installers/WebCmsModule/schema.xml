@@ -385,6 +385,7 @@
 			</column>
 			<column name="sub_title" type="java.sql.Types.NVARCHAR(255)"/>
 			<column name="description" type="java.sql.Types.NVARCHAR(255)"/>
+			<column name="body" type="java.sql.Types.NCLOB" />
 		</createTable>
 
 		<addForeignKeyConstraint baseTableName="${table.article}"
