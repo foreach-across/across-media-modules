@@ -1,0 +1,14 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Test template for rendering images...</title>
+</head>
+<body th:fragment="content">
+
+<div th:each="image : ${items.content}" style="float: left; display: block; margin-right: 10px;">
+    <a th:href="${entityViewContext.linkBuilder.update(image)}">
+        <img th:src="@{${@localImageServerClient.imageUrl(image.externalId,'default',300,0)}}" border="1"/>
+    </a>
+</div>
+
+</body>
+</html>

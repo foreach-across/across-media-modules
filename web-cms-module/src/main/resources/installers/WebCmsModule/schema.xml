@@ -37,6 +37,7 @@
 	<property name="table.publication_type" value="wcm_publication_type"/>
 	<property name="table.article" value="wcm_article"/>
 	<property name="table.article_type" value="wcm_article_type"/>
+	<property name="table.image" value="wcm_image"/>
 
 	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
 		<sql>
@@ -387,7 +388,12 @@
 
 		<createTable tableName="${table.article}">
 			<column name="id" type="java.sql.Types.BIGINT">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_article"/>
+				<constraints nullable="false"
+				             primaryKey="true"
+				             primaryKeyName="pk_wcm_article"
+				             referencedTableName="${table.asset}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_article_asset"/>
 			</column>
 			<column name="publication_id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false"/>
@@ -511,6 +517,32 @@
 
 	<changeSet id="201703031547" author="svl">
 		<addUniqueConstraint tableName="${table.url}" columnNames="path" constraintName="uq_wcm_url_path"/>
+	</changeSet>
+
+	<!-- Image -->
+	<changeSet id="201704021429" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.image}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates image table</comment>
+
+		<createTable tableName="${table.image}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             primaryKey="true"
+				             primaryKeyName="pk_wcm_image"
+				             referencedTableName="${table.asset}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_image_asset"/>
+			</column>
+			<column name="name" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="external_id" type="java.sql.Types.VARCHAR(255)"/>
+		</createTable>
 	</changeSet>
 
 </databaseChangeLog>

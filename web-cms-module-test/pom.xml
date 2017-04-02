@@ -69,6 +69,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.foreach.imageserver</groupId>
+			<artifactId>imageserver-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.imageserver</groupId>
+			<artifactId>imageserver-admin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.imageserver</groupId>
+			<artifactId>imageserver-client</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
