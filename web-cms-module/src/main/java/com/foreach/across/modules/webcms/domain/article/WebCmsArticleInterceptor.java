@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.article;
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
@@ -59,7 +60,7 @@ public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArt
 			WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( article );
 
 			WebCmsUrl newPrimaryUrl = new WebCmsUrl();
-			newPrimaryUrl.setPath( "/" + WebCmsUtils.generateUrlPathSegment( article.getTitle() ) );
+			newPrimaryUrl.setPath( generateUrl( article ) );
 			newPrimaryUrl.setHttpStatus( HttpStatus.OK );
 			newPrimaryUrl.setPrimary( true );
 			newPrimaryUrl.setEndpoint( endpoint );
@@ -84,5 +85,15 @@ public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArt
 				urlRepository.save( newPrimaryUrl );
 			}
 		}
+	}
+
+	private String generateUrl( WebCmsArticle article ) {
+		WebCmsPage articleTemplatePage = article.getPublication().getArticleTemplatePage();
+
+		if ( articleTemplatePage != null ) {
+			return WebCmsUtils.combineUrlSegments( articleTemplatePage.getCanonicalPath(), WebCmsUtils.generateUrlPathSegment( article.getTitle() ) );
+		}
+
+		return "/" + WebCmsUtils.generateUrlPathSegment( article.getTitle() );
 	}
 }

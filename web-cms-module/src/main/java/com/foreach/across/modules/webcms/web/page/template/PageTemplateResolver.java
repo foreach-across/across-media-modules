@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.web.page.template;
 
 import com.foreach.across.core.DynamicAcrossModule;
 import com.foreach.across.core.annotations.Event;
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@Exposed
 @Component
 @EnableConfigurationProperties(PageTemplateProperties.class)
 @RequiredArgsConstructor

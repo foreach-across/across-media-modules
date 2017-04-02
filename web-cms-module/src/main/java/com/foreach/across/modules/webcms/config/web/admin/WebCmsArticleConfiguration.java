@@ -85,8 +85,7 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 						        ContainerViewElementUtils.move( container, "formGroup-title", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 						        ContainerViewElementUtils.move( container, "formGroup-subTitle", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 						        ContainerViewElementUtils.move( container, "formGroup-description", SingleEntityFormViewProcessor.RIGHT_COLUMN );
-						        ContainerViewElementUtils.move( container, "formGroup-published", SingleEntityFormViewProcessor.RIGHT_COLUMN );
-						        ContainerViewElementUtils.move( container, "formGroup-publicationDate", SingleEntityFormViewProcessor.RIGHT_COLUMN );
+						        ContainerViewElementUtils.move( container, "publish-settings", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 						        ContainerViewElementUtils.move( container, "formGroup-created", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 						        ContainerViewElementUtils.move( container, "formGroup-lastModified", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 					        }

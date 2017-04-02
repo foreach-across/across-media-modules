@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.Builder;
 import lombok.Getter;
@@ -76,6 +77,15 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	@JoinColumn(name = "publication_type_id")
 	private WebCmsPublicationType publicationType;
 
+	/**
+	 * Page that is considered the template for an article detail.
+	 * This page should be loaded when rendering an article from this publication, and the
+	 * canonicalPath of the page will be used when generating the default urls.
+	 */
+	@ManyToOne
+	@JoinColumn(name = "article_page_id")
+	private WebCmsPage articleTemplatePage;
+
 	//private WebCmsTagCollection tagCollection;
 
 	@Override
@@ -94,10 +104,12 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	                          @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                          @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
 	                          String name,
-	                          String publicationKey ) {
+	                          String publicationKey,
+	                          WebCmsPage articleTemplatePage ) {
 		super( id, newEntityId, assetId, published, publicationDate, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 		this.name = name;
 		this.publicationKey = publicationKey;
+		this.articleTemplatePage = articleTemplatePage;
 	}
 
 	@SuppressWarnings("all")

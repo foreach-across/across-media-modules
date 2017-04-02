@@ -97,4 +97,24 @@ public class WebCmsUtils
 
 		return "/" + StringUtils.defaultString( page.getPathSegment() );
 	}
+
+	/**
+	 * Create a full url by combining a base with a path segment.
+	 * If the baseUrl contains a <strong>*</strong> marker, the path will be injected into the marker,
+	 * else the path will simply be appended.
+	 *
+	 * @param baseUrl that may or may not contain a * marker
+	 * @param path    to inject into the base url
+	 * @return combined
+	 */
+	public static String combineUrlSegments( String baseUrl, String path ) {
+		Assert.notNull( baseUrl );
+		Assert.notNull( path );
+
+		if ( StringUtils.contains( baseUrl, '*' ) ) {
+			return StringUtils.replace( baseUrl, "*", path );
+		}
+
+		return StringUtils.removeEnd( baseUrl, "/" ) + "/" + path;
+	}
 }

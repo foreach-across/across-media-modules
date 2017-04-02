@@ -101,6 +101,16 @@ public class TestWebCmsUtils
 		assertEquals( "wcm:asset:page:tp:tp", WebCmsUtils.prefixUniqueKeyForCollection( "wcm:asset:page:tp:tp", "wcm:asset:page" ) );
 	}
 
+	@Test
+	public void combineUrlSegments() {
+		assertEquals( "/base/page/my-path", WebCmsUtils.combineUrlSegments( "/base/page", "my-path" ) );
+		assertEquals( "/base/page/my-path", WebCmsUtils.combineUrlSegments( "/base/page/*", "my-path" ) );
+		assertEquals( "/base/page/my-path/*", WebCmsUtils.combineUrlSegments( "/base/page", "my-path/*" ) );
+		assertEquals( "/base/my-path", WebCmsUtils.combineUrlSegments( "/base/*", "my-path" ) );
+		assertEquals( "/base/my-path/detail", WebCmsUtils.combineUrlSegments( "/base/*/detail", "my-path" ) );
+		assertEquals( "/my-path/page/my-path", WebCmsUtils.combineUrlSegments( "/*/page/*", "my-path" ) );
+	}
+
 	private WebCmsPage.WebCmsPageBuilder page() {
 		return WebCmsPage.builder();
 	}

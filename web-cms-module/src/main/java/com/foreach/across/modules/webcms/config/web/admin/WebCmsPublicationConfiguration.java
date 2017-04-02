@@ -34,7 +34,9 @@ public class WebCmsPublicationConfiguration implements EntityConfigurer
 		        .properties(
 				        props -> props
 						        .property( "assetId" ).order( 0 ).writable( false ).and()
-						        .property( "publicationDate" ).hidden( true )
+						        .property( "publish-settings" ).hidden( true ).and()
+						        .property( "published" ).hidden( false )
+
 		        );
 	}
 }

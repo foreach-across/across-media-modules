@@ -323,6 +323,12 @@
 			<column name="publication_type_id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false"/>
 			</column>
+			<column name="article_page_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="true"
+				             referencedTableName="${table.page}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_pub_art_page"/>
+			</column>
 		</createTable>
 
 		<addForeignKeyConstraint baseTableName="${table.publication}"

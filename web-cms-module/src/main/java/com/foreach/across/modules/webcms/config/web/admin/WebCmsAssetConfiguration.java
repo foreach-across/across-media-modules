@@ -16,8 +16,12 @@
 
 package com.foreach.across.modules.webcms.config.web.admin;
 
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
+import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
+import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.web.asset.WebCmsAssetListViewProcessor;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +36,21 @@ public class WebCmsAssetConfiguration implements EntityConfigurer
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.assignableTo( WebCmsAsset.class )
+		        .properties(
+				        props -> props.property( "published" ).hidden( true ).and()
+				                      .property( "publicationDate" ).hidden( true ).and()
+				                      .property( "publish-settings" )
+				                      .writable( true )
+				                      .readable( false )
+				                      .displayName( "Publish settings" )
+				                      .viewElementType( ViewElementMode.FORM_WRITE, BootstrapUiElements.FIELDSET )
+				                      .viewElementType( ViewElementMode.FORM_READ, BootstrapUiElements.FIELDSET )
+				                      .attribute(
+						                      EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
+						                      EntityPropertySelector.of( "published", "publicationDate" )
+				                      )
+		        )
+		        .updateFormView( fvb -> fvb.showProperties( ".", "~created" ) )
 		        .listView( lvb -> lvb.viewProcessor( new WebCmsAssetListViewProcessor() ) );
 	}
 }
