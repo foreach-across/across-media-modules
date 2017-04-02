@@ -20,6 +20,7 @@ import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -65,11 +66,17 @@ public abstract class WebCmsEndpoint extends SettableIdBasedEntity<WebCmsEndpoin
 	/**
 	 * Get the primary url for this {@code WebCmsEndpoint}
 	 *
-	 * @see WebCmsUrl#getIsPrimary()
+	 * @see WebCmsUrl#isPrimary()
 	 */
 	public Optional<WebCmsUrl> getPrimaryUrl() {
 		return getUrls().stream()
-		                .filter( WebCmsUrl::getIsPrimary )
+		                .filter( WebCmsUrl::isPrimary )
+		                .findFirst();
+	}
+
+	public Optional<WebCmsUrl> getUrlWithPath( String path ) {
+		return getUrls().stream()
+		                .filter( url -> StringUtils.equalsIgnoreCase( url.getPath(), path ) )
 		                .findFirst();
 	}
 }

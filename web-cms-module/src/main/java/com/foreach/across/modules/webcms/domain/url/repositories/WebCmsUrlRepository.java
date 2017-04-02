@@ -22,6 +22,7 @@ import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ import java.util.List;
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsUrlRepository extends IdBasedEntityJpaRepository<WebCmsUrl>
+public interface WebCmsUrlRepository extends IdBasedEntityJpaRepository<WebCmsUrl>, QueryDslPredicateExecutor<WebCmsUrl>
 {
 	List<WebCmsUrl> findByPath( String path );
 

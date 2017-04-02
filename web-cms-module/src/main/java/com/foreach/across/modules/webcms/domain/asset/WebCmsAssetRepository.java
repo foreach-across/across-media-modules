@@ -26,5 +26,5 @@ import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRep
 @Exposed
 public interface WebCmsAssetRepository extends IdBasedEntityJpaRepository<WebCmsAsset>
 {
-	WebCmsAsset findOneByAssetId( String assetId );
+	<T extends WebCmsAsset<T>> T findOneByAssetId( String assetId );
 }

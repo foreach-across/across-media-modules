@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Sander Van Loock
  * @since 0.0.1
  */
-public interface WebCmsContextResolver
+public interface WebCmsEndpointContextResolver
 {
 	/**
 	 * If a {@code WebCmsUrl} can be found on the given request, this will be put on the given context. This lookup is expensive may only be called once per request.

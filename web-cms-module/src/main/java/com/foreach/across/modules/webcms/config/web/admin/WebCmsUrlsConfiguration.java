@@ -23,10 +23,10 @@ import com.foreach.across.modules.entity.query.EntityQuery;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.EntityFactory;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
+import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
@@ -92,13 +92,13 @@ public class WebCmsUrlsConfiguration implements EntityConfigurer
 		{
 			@Override
 			public List<WebCmsUrl> findAll( Object parent, EntityQuery query ) {
-				WebCmsAssetEndpoint endpoint = pageEndpointRepository.findOneByAsset( (WebCmsAsset) parent );
+				val endpoint = pageEndpointRepository.findOneByAsset( (WebCmsAsset) parent );
 				return urlRepository.findAllByEndpoint( endpoint );
 			}
 
 			@Override
 			public Page<WebCmsUrl> findAll( Object parent, EntityQuery query, Pageable pageable ) {
-				WebCmsAssetEndpoint endpoint = pageEndpointRepository.findOneByAsset( (WebCmsAsset) parent );
+				val endpoint = pageEndpointRepository.findOneByAsset( (WebCmsAsset) parent );
 				return urlRepository.findAllByEndpoint( endpoint, pageable );
 			}
 		};

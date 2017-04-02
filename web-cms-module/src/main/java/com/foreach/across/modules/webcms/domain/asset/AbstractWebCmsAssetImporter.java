@@ -94,7 +94,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 	}
 
 	private T retrieveExistingAsset( String assetId, String entryKey ) {
-		WebCmsAsset existing = null;
+		WebCmsAsset<?> existing = null;
 
 		if ( assetId != null ) {
 			existing = assetRepository.findOneByAssetId( assetId );

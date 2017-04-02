@@ -20,7 +20,7 @@ import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import com.foreach.across.modules.webcms.web.endpoint.WebCmsContextResolver;
+import com.foreach.across.modules.webcms.web.endpoint.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.web.endpoint.context.ConfigurableWebCmsEndpointContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class TestWebCmsEndpointCondition
 	private ConfigurableWebCmsEndpointContext context;
 
 	@Mock
-	private WebCmsContextResolver resolver;
+	private WebCmsEndpointContextResolver resolver;
 
 	private WebCmsAssetEndpoint endpoint;
 	private WebCmsUrl url;

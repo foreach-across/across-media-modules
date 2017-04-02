@@ -17,18 +17,25 @@
 package com.foreach.across.modules.webcms.web.endpoint;
 
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.services.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.web.endpoint.context.ConfigurableWebCmsEndpointContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
+ * Resolves the url into an endpoint and subsequently validates that the endpoint is accessible.
+ * The first validator that applies for that endpoint will be used.
+ *
  * @author Sander Van Loock
  * @since 0.0.1
  */
@@ -36,18 +43,20 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @Slf4j
 @Exposed
-public class DefaultWebCmsContextResolver implements WebCmsContextResolver
+public class DefaultWebCmsEndpointContextResolver implements WebCmsEndpointContextResolver
 {
 	private final UrlPathHelper pathHelper = new UrlPathHelper();
 	private final WebCmsEndpointService endpointService;
 
+	private Collection<WebCmsEndpointAccessValidator<?>> endpointAccessValidators = Collections.emptyList();
+
 	@Override
 	public void resolve( ConfigurableWebCmsEndpointContext context, HttpServletRequest request ) {
 		String path = pathHelper.getPathWithinApplication( request );
+		context.setResolved( true );
 		LOG.trace( "Resolving path for {}", path );
 		endpointService.getUrlForPath( path )
 		               .ifPresent( url -> resolve( context, url ) );
-		context.setResolved( true );
 		LOG.debug( "Context after resolving {}", context );
 	}
 
@@ -55,7 +64,28 @@ public class DefaultWebCmsContextResolver implements WebCmsContextResolver
 		WebCmsEndpoint endpoint = url.getEndpoint();
 		LOG.trace( "Found {} as endpoint", endpoint );
 
-		context.setUrl( url );
-		context.setEndpoint( endpoint );
+		if ( validateAccess( endpoint ) ) {
+			context.setUrl( url );
+			context.setEndpoint( endpoint );
+		}
+		else {
+			LOG.trace( "Not using endpoint {} as the responsible validator vetoed.", endpoint );
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean validateAccess( WebCmsEndpoint endpoint ) {
+		for ( WebCmsEndpointAccessValidator validator : endpointAccessValidators ) {
+			if ( validator.appliesFor( endpoint ) ) {
+				return validator.validateAccess( endpoint );
+			}
+		}
+
+		return true;
+	}
+
+	@Autowired
+	void setEndpointAccessValidators( @RefreshableCollection(includeModuleInternals = true) Collection<WebCmsEndpointAccessValidator<?>> endpointAccessValidators ) {
+		this.endpointAccessValidators = endpointAccessValidators;
 	}
 }

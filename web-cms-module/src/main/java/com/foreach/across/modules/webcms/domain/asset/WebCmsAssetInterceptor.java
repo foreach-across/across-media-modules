@@ -18,11 +18,16 @@ package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 /**
+ * Sets the publication date and ensures that there is a single endpoint pointing to the asset.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
@@ -39,15 +44,31 @@ public class WebCmsAssetInterceptor extends EntityInterceptorAdapter<WebCmsAsset
 	}
 
 	@Override
+	public void beforeCreate( WebCmsAsset entity ) {
+		setPublicationDate( entity );
+	}
+
+	@Override
+	public void beforeUpdate( WebCmsAsset entity ) {
+		setPublicationDate( entity );
+	}
+
+	private void setPublicationDate( WebCmsAsset asset ) {
+		if ( asset.isPublished() && asset.getPublicationDate() == null ) {
+			asset.setPublicationDate( new Date() );
+		}
+	}
+
+	@Override
 	public void afterCreate( WebCmsAsset entity ) {
-		WebCmsAssetEndpoint endpoint = new WebCmsAssetEndpoint();
+		val endpoint = new WebCmsAssetEndpoint<WebCmsAsset>();
 		endpoint.setAsset( entity );
 		endpointRepository.save( endpoint );
 	}
 
 	@Override
 	public void afterUpdate( WebCmsAsset entity ) {
-		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( entity );
+		WebCmsAssetEndpoint<?> endpoint = endpointRepository.findOneByAsset( entity );
 
 		if ( endpoint == null ) {
 			afterCreate( entity );

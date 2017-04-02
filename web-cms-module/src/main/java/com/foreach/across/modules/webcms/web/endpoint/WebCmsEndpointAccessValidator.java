@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.asset;
+package com.foreach.across.modules.webcms.web.endpoint;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 
 /**
- * @author Sander Van Loock
+ * Validates that a resolved endpoint should be available.  If any validator returns
+ * {@code false}, this should result in an endpoint not found.
+ *
+ * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsAssetEndpointRepository extends IdBasedEntityJpaRepository<WebCmsAssetEndpoint>
+public interface WebCmsEndpointAccessValidator<T extends WebCmsEndpoint>
 {
-	<T extends WebCmsAsset> WebCmsAssetEndpoint<T> findOneByAsset( T asset );
+	/**
+	 * @return true if this validator should be used for that endpoint
+	 */
+	boolean appliesFor( WebCmsEndpoint endpoint );
+
+	/**
+	 * @return true if access is allowed
+	 */
+	boolean validateAccess( T endpoint );
 }

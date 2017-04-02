@@ -59,9 +59,9 @@ public class TestWebCmsEndpointValidator
 		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
 		                                             .build();
 		when( repository.findAllByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
-				WebCmsUrl.builder().httpStatus( HttpStatus.OK ).isPrimary( true ).build(),
-				WebCmsUrl.builder().httpStatus( HttpStatus.NO_CONTENT ).isPrimary( true ).build(),
-				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).isPrimary( false ).build()
+				WebCmsUrl.builder().httpStatus( HttpStatus.OK ).primary( true ).build(),
+				WebCmsUrl.builder().httpStatus( HttpStatus.NO_CONTENT ).primary( true ).build(),
+				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).primary( false ).build()
 		) );
 		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).build();
 		when( errors.hasFieldErrors( "endpoint" ) ).thenReturn( false );

@@ -35,4 +35,9 @@ public interface WebCmsEndpointContext
 	 * Returns true if and only if this context is resolved and a url can be found.
 	 */
 	boolean isAvailable();
+
+	/**
+	 * @return true if the context is available and of the expected type
+	 */
+	<T extends WebCmsEndpoint> boolean isOfType( Class<T> endpointType );
 }

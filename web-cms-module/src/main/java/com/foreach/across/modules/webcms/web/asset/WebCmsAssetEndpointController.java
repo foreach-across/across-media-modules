@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.web.endpoint.controllers;
+package com.foreach.across.modules.webcms.web.asset;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
@@ -31,12 +32,11 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 0.0.1
  */
 @Controller
-@WebCmsEndpointMapping(WebCmsAssetEndpoint.class)
-public class WebCmsPageEndpointController
+public class WebCmsAssetEndpointController
 {
 	private WebCmsPageService pageService;
 
-	@WebCmsEndpointMapping(status = HttpStatus.OK)
+	@WebCmsAssetMapping(value = WebCmsAsset.class, status = HttpStatus.OK)
 	public void render( WebCmsUrl url, WebCmsAssetEndpoint endpoint, ModelMap model ) {
 		model.addAttribute( "asset", endpoint.getAsset() );
 		if ( endpoint.getAsset() instanceof WebCmsPage ) {
@@ -44,7 +44,7 @@ public class WebCmsPageEndpointController
 		}
 	}
 
-	@WebCmsEndpointMapping(series = HttpStatus.Series.REDIRECTION)
+	@WebCmsAssetMapping(value = WebCmsAsset.class, series = HttpStatus.Series.REDIRECTION)
 	public RedirectView redirect( WebCmsUrl url, WebCmsAssetEndpoint endpoint ) {
 		return endpoint.getPrimaryUrl().map( primary -> {
 			RedirectView result = new RedirectView( primary.getPath() );

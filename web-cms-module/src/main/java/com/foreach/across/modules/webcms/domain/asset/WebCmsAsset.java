@@ -75,6 +75,20 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAu
 	@Length(max = 255)
 	private String assetId;
 
+	/**
+	 * Is this asset published.  The exact meaning of published depends on the type of asset, but in general
+	 * not published means it would not be available online.
+	 */
+	@Column(name = "published")
+	private boolean published;
+
+	/**
+	 * Timestamp when this asset was published.
+	 */
+	@Column(name = "publication_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date publicationDate;
+
 	public void setAssetId( String assetId ) {
 		this.assetId = assetId;
 	}
@@ -89,7 +103,15 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAu
 		this.id = id;
 	}
 
-	protected WebCmsAsset( Long id, Long newEntityId, String assetId, String createdBy, Date createdDate, String lastModifiedBy, Date lastModifiedDate ) {
+	protected WebCmsAsset( Long id,
+	                       Long newEntityId,
+	                       String assetId,
+	                       boolean published,
+	                       Date publicationDate,
+	                       String createdBy,
+	                       Date createdDate,
+	                       String lastModifiedBy,
+	                       Date lastModifiedDate ) {
 		setNewEntityId( newEntityId );
 		setId( id );
 		setCreatedBy( createdBy );
@@ -98,6 +120,8 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAu
 		setLastModifiedDate( lastModifiedDate );
 
 		setAssetId( assetId );
+		setPublished( published );
+		setPublicationDate( publicationDate );
 	}
 
 	protected WebCmsAsset() {

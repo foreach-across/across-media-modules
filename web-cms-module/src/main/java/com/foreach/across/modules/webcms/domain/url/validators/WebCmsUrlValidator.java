@@ -42,12 +42,20 @@ public class WebCmsUrlValidator extends EntityValidatorSupport<WebCmsUrl>
 
 	@Override
 	protected void preValidation( WebCmsUrl entity, Errors errors ) {
-		if ( !errors.hasFieldErrors( "endpoint" ) && urlRepository
-				.findAllByEndpoint( entity.getEndpoint() )
-				.stream()
-				.filter( WebCmsUrl::getIsPrimary )
-				.count() > 1 ) {
-			errors.rejectValue( "endpoint", "onlyOnePrimaryUrlPerEndpoint" );
+		if ( !errors.hasErrors() && entity.isPrimary() ) {
+			urlRepository
+					.findAllByEndpoint( entity.getEndpoint() )
+					.stream()
+					.filter( url -> !url.equals( entity ) && url.isPrimary() )
+					.findFirst()
+					.ifPresent(
+							existingPrimary -> errors.rejectValue(
+									"primary",
+									"onlyOnePrimaryUrlPerEndpoint",
+									new Object[] { existingPrimary.getPath() },
+									"Another primary URL exists."
+							)
+					);
 		}
 	}
 }

@@ -115,6 +115,8 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	protected WebCmsPage( @Builder.ObtainVia(method = "getId") Long id,
 	                      @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
 	                      @Builder.ObtainVia(method = "getAssetId") String assetId,
+	                      @Builder.ObtainVia(method = "isPublished") boolean published,
+	                      @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
 	                      @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
 	                      @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                      @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
@@ -126,7 +128,7 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	                      String canonicalPath,
 	                      boolean canonicalPathGenerated,
 	                      String template ) {
-		super( id, newEntityId, assetId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		super( id, newEntityId, assetId, published, publicationDate, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 		this.title = title;
 		this.parent = parent;
 		this.pathSegment = pathSegment;

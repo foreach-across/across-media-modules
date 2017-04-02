@@ -18,7 +18,6 @@ package com.foreach.across.modules.webcms.web.endpoint.interceptor;
 
 import com.foreach.across.modules.webcms.web.endpoint.context.WebCmsEndpointContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +35,10 @@ public class WebCmsEndpointInterceptor extends HandlerInterceptorAdapter
 	private final WebCmsEndpointContext context;
 
 	@Override
-	public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
-		response.setStatus( context.getUrl().getHttpStatus().value() );
+	public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
+		if ( context.isAvailable() ) {
+			response.setStatus( context.getUrl().getHttpStatus().value() );
+		}
+		return true;
 	}
 }

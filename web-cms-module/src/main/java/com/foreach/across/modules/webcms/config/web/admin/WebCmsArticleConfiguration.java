@@ -32,7 +32,10 @@ import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
+import com.foreach.across.modules.webcms.web.article.WebCmsArticleListViewProcessor;
+import com.foreach.across.modules.webcms.web.asset.WebCmsAssetListViewProcessor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort;
 
 /**
  * @author Arne Vandamme
@@ -48,21 +51,27 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 				        .property( "assetId" ).hidden( true ).and()
 				        .property( "body" )
 				        .<HtmlViewElement>viewElementPostProcessor(
-						        ViewElementMode.FORM_WRITE,
+						        ViewElementMode.CONTROL,
 						        ( builderContext, element ) -> {
 							        element.setAttribute( "placeholder", "Some placeholder text..." );
 							        element.addCssClass( "js-ckeditor" );
 							        WebResourceRegistry registry = builderContext.getAttribute( WebResourceRegistry.class );
 
-							        registry.addWithKey( WebResource.JAVASCRIPT, "ckeditor", "https://cdn.ckeditor.com/4.6.2/full-all/ckeditor.js",
+							        registry.addWithKey( WebResource.JAVASCRIPT, "ckeditor", "https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js",
 							                             WebResource.EXTERNAL );
 							        registry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "custom-js", "/static/WebCmsModule/js/wcm-components.js",
 							                             WebResource.VIEWS );
+							        registry.addWithKey( WebResource.CSS, "wcm-styles", "/static/WebCmsModule/css/wcm-styles.css", WebResource.VIEWS );
 
 						        } )
 		        )
+		        .listView(
+				        lvb -> lvb.showProperties( "publication", "title", "publicationDate", "lastModified" )
+				                  .defaultSort( new Sort( Sort.Direction.DESC, "lastModifiedDate" ) )
+				                  .viewProcessor( new WebCmsArticleListViewProcessor() )
+		        )
 		        .createOrUpdateFormView( fvb -> fvb
-				        .properties( props -> props.property( "body" ).viewElementType( ViewElementMode.FORM_WRITE, BootstrapUiElements.TEXTAREA ) )
+				        .properties( props -> props.property( "body" ).viewElementType( ViewElementMode.CONTROL, BootstrapUiElements.TEXTAREA ) )
 				        //.properties( props -> props.property( "title" ).viewElementType( ViewElementMode.FORM_WRITE, BootstrapUiElements.TEXTAREA ) )
 				        .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 9, 3 ) ) )
 				        .viewProcessor( new EntityViewProcessorAdapter()
@@ -76,6 +85,8 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 						        ContainerViewElementUtils.move( container, "formGroup-title", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 						        ContainerViewElementUtils.move( container, "formGroup-subTitle", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 						        ContainerViewElementUtils.move( container, "formGroup-description", SingleEntityFormViewProcessor.RIGHT_COLUMN );
+						        ContainerViewElementUtils.move( container, "formGroup-published", SingleEntityFormViewProcessor.RIGHT_COLUMN );
+						        ContainerViewElementUtils.move( container, "formGroup-publicationDate", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 						        ContainerViewElementUtils.move( container, "formGroup-created", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 						        ContainerViewElementUtils.move( container, "formGroup-lastModified", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 					        }

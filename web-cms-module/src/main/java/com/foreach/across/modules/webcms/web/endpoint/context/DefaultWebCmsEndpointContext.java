@@ -25,6 +25,7 @@ import lombok.ToString;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 /**
  * @author Sander Van Loock
@@ -52,4 +53,9 @@ public class DefaultWebCmsEndpointContext implements ConfigurableWebCmsEndpointC
 		return url != null && endpoint != null && resolved;
 	}
 
+	@Override
+	public <T extends WebCmsEndpoint> boolean isOfType( Class<T> endpointType ) {
+		Assert.notNull( endpointType );
+		return isAvailable() && endpointType.isInstance( endpoint );
+	}
 }

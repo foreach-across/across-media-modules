@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.foreach.across.modules.webcms.domain.asset;
-
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-
-/**
- * @author Sander Van Loock
- * @since 0.0.1
- */
-@Exposed
-public interface WebCmsAssetEndpointRepository extends IdBasedEntityJpaRepository<WebCmsAssetEndpoint>
-{
-	<T extends WebCmsAsset> WebCmsAssetEndpoint<T> findOneByAsset( T asset );
+.cke_editable_inline {
+    padding: 5px 10px;
+    border: dashed 1px silver;
 }
+
+table tr.info td[data-tbl-field=publicationDate] {
+    font-weight: bold;
+}
+
+table tr.publication-offline td[data-tbl-field=publication] {
+    font-weight: bold;
+    text-decoration: line-through;
+}
+

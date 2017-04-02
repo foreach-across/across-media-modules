@@ -64,6 +64,12 @@
 			<column name="asset_id" type="java.sql.Types.VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
+			<column name="published" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+			<column name="publication_date" type="java.sql.Types.TIMESTAMP">
+				<constraints nullable="true"/>
+			</column>
 		</createTable>
 
 		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_id" unique="true">
@@ -385,7 +391,7 @@
 			</column>
 			<column name="sub_title" type="java.sql.Types.NVARCHAR(255)"/>
 			<column name="description" type="java.sql.Types.NVARCHAR(255)"/>
-			<column name="body" type="java.sql.Types.NCLOB" />
+			<column name="body" type="java.sql.Types.NCLOB"/>
 		</createTable>
 
 		<addForeignKeyConstraint baseTableName="${table.article}"
@@ -435,6 +441,12 @@
 				             foreignKeyName="fk_wcm_asset_ep_asset"/>
 			</column>
 		</createTable>
+
+		<createIndex tableName="${table.asset_endpoint}"
+		             indexName="iw_wcm_ep_asset_aid"
+		             unique="true">
+			<column name="asset_id"/>
+		</createIndex>
 	</changeSet>
 
 	<changeSet id="201703010958" author="svl">

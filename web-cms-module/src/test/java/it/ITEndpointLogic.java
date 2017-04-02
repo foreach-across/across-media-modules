@@ -80,7 +80,7 @@ public class ITEndpointLogic
 		url = WebCmsUrl.builder()
 		               .path( "/a" )
 		               .httpStatus( HttpStatus.OK )
-		               .isPrimary( true )
+		               .primary( true )
 		               .endpoint( endpoint ).build();
 		urlRepository.save( url );
 	}
@@ -89,7 +89,7 @@ public class ITEndpointLogic
 	public void twoUrlsWithSameEndpointWhereOneRedirectsShouldRender() throws Exception {
 		WebCmsUrl redirectUrl = WebCmsUrl.builder()
 		                                 .path( "/previous-a" )
-		                                 .isPrimary( false )
+		                                 .primary( false )
 		                                 .httpStatus( HttpStatus.MOVED_PERMANENTLY )
 		                                 .endpoint( endpoint ).build();
 		urlRepository.save( redirectUrl );

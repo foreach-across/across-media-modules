@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.config;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetHandlerMethodArgumentResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointHandlerMethodArgumentResolver;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrlHandlerMethodArgumentResolver;
 import com.foreach.across.modules.webcms.web.endpoint.context.WebCmsEndpointContext;
@@ -39,7 +40,8 @@ public class WebCmsWebModuleConfiguration extends WebMvcConfigurerAdapter
 
 	@Override
 	public void addArgumentResolvers( List<HandlerMethodArgumentResolver> argumentResolvers ) {
-		argumentResolvers.addAll(
-				Arrays.asList( new WebCmsEndpointHandlerMethodArgumentResolver( context ), new WebCmsUrlHandlerMethodArgumentResolver( context ) ) );
+		argumentResolvers.add( new WebCmsEndpointHandlerMethodArgumentResolver( context ) );
+		argumentResolvers.add( new WebCmsUrlHandlerMethodArgumentResolver( context ) );
+		argumentResolvers.add( new WebCmsAssetHandlerMethodArgumentResolver( context ) );
 	}
 }

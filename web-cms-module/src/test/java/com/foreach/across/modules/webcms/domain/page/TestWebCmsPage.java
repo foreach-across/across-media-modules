@@ -41,6 +41,8 @@ public class TestWebCmsPage
 		assertNull( built.getId() );
 		assertNull( built.getNewEntityId() );
 		assertTrue( built.isNew() );
+		assertFalse( built.isPublished() );
+		assertNull( built.getPublicationDate() );
 		assertNotNull( built.getAssetId() );
 		assertTrue( built.getAssetId().startsWith( "wcm:asset:page:" ) );
 		assertTrue( built.isPathSegmentGenerated() );

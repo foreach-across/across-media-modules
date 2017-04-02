@@ -91,5 +91,5 @@ public class WebCmsUrl extends SettableIdBasedEntity<WebCmsUrl>
 	 */
 	@NotNull
 	@Column(name = "is_primary")
-	private Boolean isPrimary;
+	private boolean primary;
 }

@@ -19,7 +19,8 @@ $( document ).on( 'ready', function ()
 
     $('textarea').each( function() {
         CKEDITOR.disableAutoInline = true;
-        CKEDITOR.inline( $(this).attr('id') );
+        // { extraPlugins: 'autogrow', autoGrow_minHeight : 300, autoGrow_onStartup: true }
+        CKEDITOR.inline( $(this).attr('id'), {});
     })
 
 } );

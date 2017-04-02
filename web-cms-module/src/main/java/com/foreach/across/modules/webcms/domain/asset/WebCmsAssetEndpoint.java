@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import lombok.*;
 
@@ -25,7 +24,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * This endpoint represents a WebCmsPage
+ * This endpoint represents a {@link WebCmsAsset}.
  *
  * @author Sander Van Loock
  * @since 0.0.1
@@ -39,10 +38,10 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id")
-public class WebCmsAssetEndpoint extends WebCmsEndpoint
+public class WebCmsAssetEndpoint<T extends WebCmsAsset> extends WebCmsEndpoint
 {
 	@NotNull
 	@JoinColumn(name = "asset_id")
-	@ManyToOne
-	private WebCmsAsset asset;
+	@ManyToOne(targetEntity = WebCmsAsset.class)
+	private T asset;
 }

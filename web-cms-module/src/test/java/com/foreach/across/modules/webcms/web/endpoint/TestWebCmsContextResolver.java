@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TestWebCmsContextResolver
 {
-	private WebCmsContextResolver resolver;
+	private WebCmsEndpointContextResolver resolver;
 
 	@Mock
 	private WebCmsEndpointService endpointService;
@@ -53,7 +53,7 @@ public class TestWebCmsContextResolver
 		endpoint = WebCmsAssetEndpoint.builder().build();
 		url = WebCmsUrl.builder()
 		               .endpoint( endpoint ).build();
-		resolver = new DefaultWebCmsContextResolver( endpointService );
+		resolver = new DefaultWebCmsEndpointContextResolver( endpointService );
 	}
 
 	@Test

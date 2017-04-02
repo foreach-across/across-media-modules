@@ -87,13 +87,15 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	public WebCmsPublication( @Builder.ObtainVia(method = "getId") Long id,
 	                          @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
 	                          @Builder.ObtainVia(method = "getAssetId") String assetId,
+	                          @Builder.ObtainVia(method = "isPublished") boolean published,
+	                          @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
 	                          @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
 	                          @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                          @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                          @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
 	                          String name,
 	                          String publicationKey ) {
-		super( id, newEntityId, assetId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		super( id, newEntityId, assetId, published, publicationDate, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 		this.name = name;
 		this.publicationKey = publicationKey;
 	}

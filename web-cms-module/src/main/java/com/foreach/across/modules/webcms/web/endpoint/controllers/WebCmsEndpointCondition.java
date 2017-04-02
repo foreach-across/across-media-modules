@@ -18,7 +18,7 @@ package com.foreach.across.modules.webcms.web.endpoint.controllers;
 
 import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestCondition;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.web.endpoint.WebCmsContextResolver;
+import com.foreach.across.modules.webcms.web.endpoint.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.web.endpoint.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.web.endpoint.context.WebCmsEndpointContext;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,7 @@ import java.util.stream.Stream;
 public class WebCmsEndpointCondition extends AbstractCustomRequestCondition<WebCmsEndpointCondition>
 {
 	private final ConfigurableWebCmsEndpointContext context;
-	private final WebCmsContextResolver resolver;
+	private final WebCmsEndpointContextResolver resolver;
 
 	private Class<? extends WebCmsEndpoint> endpointType = WebCmsEndpoint.class;
 	private HttpStatus[] statuses = {};
