@@ -17,15 +17,14 @@
 package com.foreach.across.modules.webcms.domain.article;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsArticleTypeRepository extends IdBasedEntityJpaRepository<WebCmsArticleType>, QueryDslPredicateExecutor<WebCmsArticleType>
+public interface WebCmsArticleTypeRepository extends WebCmsObjectEntityRepository<WebCmsArticleType>
 {
 	WebCmsArticleType findOneByTypeKey( String typeKey );
 }

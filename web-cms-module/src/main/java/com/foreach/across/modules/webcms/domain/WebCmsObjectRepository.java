@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.type;
-
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
+package com.foreach.across.modules.webcms.domain;
 
 /**
+ * Base interface for a repository allowing lookups by global object id.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsTypeSpecifierRepository extends WebCmsObjectEntityRepository<WebCmsTypeSpecifier<?>>
+public interface WebCmsObjectRepository<T extends WebCmsObject>
 {
-	WebCmsTypeSpecifier<?> findOneByObjectTypeAndTypeKey( String objectType, String typeKey );
+	T findOneByObjectId( String objectId );
 }

@@ -52,11 +52,11 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 		val implementationType = typeRegistry.retrieveTypeSpecifierClass( item.getParentKey() )
 		                                     .orElseThrow( () -> new IllegalArgumentException( "Unable to import type: " + item.getParentKey() ) );
 
-		WebCmsTypeSpecifier existing = retrieveExistingType( typeGroup, (String) item.getMapData().get( "uniqueKey" ), item.getKey() );
+		WebCmsTypeSpecifier existing = retrieveExistingType( typeGroup, (String) item.getMapData().get( "objectId" ), item.getKey() );
 		WebCmsTypeSpecifier dto = createDto( existing, implementationType );
 
 		if ( dto != null ) {
-			LOG.trace( "{} WebCmsTypeSpecifier {} with uniqueKey {}", dto.isNew() ? "Creating" : "Updating" );
+			LOG.trace( "{} WebCmsTypeSpecifier {} with objectId {}", dto.isNew() ? "Creating" : "Updating" );
 
 			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
 
@@ -64,16 +64,16 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 				WebCmsTypeSpecifier itemToSave = prepareForSaving( dto, item );
 
 				if ( itemToSave != null ) {
-					LOG.debug( "Saving WebCmsTypeSpecifier {} with uniqueKey {} (insert: {}) - {}",
-					           typeGroup, itemToSave.getUniqueKey(), dto.isNew(), dto );
+					LOG.debug( "Saving WebCmsTypeSpecifier {} with objectId {} (insert: {}) - {}",
+					           typeGroup, itemToSave.getObjectId(), dto.isNew(), dto );
 					typeRepository.save( itemToSave );
 				}
 				else {
-					LOG.trace( "Skipping WebCmsTypeSpecifier {} import for uniqueKey {} - prepareForSaving returned null", typeGroup, dto.getUniqueKey() );
+					LOG.trace( "Skipping WebCmsTypeSpecifier {} import for objectId {} - prepareForSaving returned null", typeGroup, dto.getObjectId() );
 				}
 			}
 			else {
-				LOG.trace( "Skipping WebCmsTypeSpecifier {} import for uniqueKey {} - nothing modified", typeGroup, dto.getUniqueKey() );
+				LOG.trace( "Skipping WebCmsTypeSpecifier {} import for objectId {} - nothing modified", typeGroup, dto.getObjectId() );
 			}
 		}
 		else {
@@ -86,8 +86,8 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 			if ( itemToBeSaved.getTypeKey() == null ) {
 				itemToBeSaved.setTypeKey( data.getKey() );
 			}
-			if ( !data.getMapData().containsKey( "uniqueKey" ) ) {
-				itemToBeSaved.setUniqueKey( itemToBeSaved.getTypeKey() );
+			if ( !data.getMapData().containsKey( "objectId" ) ) {
+				itemToBeSaved.setObjectId( itemToBeSaved.getTypeKey() );
 			}
 		}
 		return itemToBeSaved;
@@ -103,13 +103,13 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 		return supplier.get();
 	}
 
-	private WebCmsTypeSpecifier retrieveExistingType( String typeGroup, String uniqueKey, String typeKey ) {
+	private WebCmsTypeSpecifier retrieveExistingType( String typeGroup, String objectId, String typeKey ) {
 		WebCmsTypeSpecifier existing = null;
 
-		if ( uniqueKey != null ) {
-			existing = typeRepository.findOneByUniqueKey( uniqueKey );
+		if ( objectId != null ) {
+			existing = typeRepository.findOneByObjectId( objectId );
 		}
 
-		return existing != null ? existing : typeRepository.findOneByTypeGroupAndTypeKey( typeGroup, typeKey );
+		return existing != null ? existing : typeRepository.findOneByObjectTypeAndTypeKey( typeGroup, typeKey );
 	}
 }

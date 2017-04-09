@@ -30,7 +30,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
-import java.util.UUID;
+
+import static com.foreach.across.modules.webcms.domain.image.WebCmsImage.OBJECT_TYPE;
 
 /**
  * A single image asset.
@@ -40,7 +41,7 @@ import java.util.UUID;
  */
 @NotThreadSafe
 @Entity
-@DiscriminatorValue("image")
+@DiscriminatorValue(OBJECT_TYPE)
 @Table(name = "wcm_image")
 @NoArgsConstructor
 @Getter
@@ -48,7 +49,12 @@ import java.util.UUID;
 public class WebCmsImage extends WebCmsAsset<WebCmsImage>
 {
 	/**
-	 * Prefix that all object ids for a WebCmsImage should have.
+	 * Object type name (discriminator value).
+	 */
+	public static final String OBJECT_TYPE = "image";
+
+	/**
+	 * Prefix that all object ids for a WebCmsImage have.
 	 */
 	public static final String COLLECTION_ID = "wcm:asset:image";
 
@@ -70,30 +76,34 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage>
 	@Builder(toBuilder = true)
 	protected WebCmsImage( @Builder.ObtainVia(method = "getId") Long id,
 	                       @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
-	                       @Builder.ObtainVia(method = "getAssetId") String assetId,
-	                       @Builder.ObtainVia(method = "isPublished") boolean published,
-	                       @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
+	                       @Builder.ObtainVia(method = "getObjectId") String objectId,
 	                       @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
 	                       @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                       @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                       @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                       @Builder.ObtainVia(method = "isPublished") boolean published,
+	                       @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
 	                       String name,
 	                       String externalId ) {
-		super( id, newEntityId, assetId, published, publicationDate, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
 		this.name = name;
 		this.externalId = externalId;
 	}
 
-	@SuppressWarnings("all")
-	public static class WebCmsImageBuilder
-	{
-		private String assetId = UUID.randomUUID().toString();
+	@Override
+	public final String getObjectType() {
+		return OBJECT_TYPE;
+	}
+
+	@Override
+	protected final String getObjectCollectionId() {
+		return COLLECTION_ID;
 	}
 
 	@Override
 	public String toString() {
 		return "WebCmsImage{" +
-				"assetId='" + getAssetId() + "\'," +
+				"objectId='" + getObjectId() + "\'," +
 				"externalId='" + name + '\'' +
 				'}';
 	}

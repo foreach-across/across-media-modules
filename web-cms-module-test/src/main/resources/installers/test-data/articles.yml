@@ -1,9 +1,9 @@
 assets:
   # Update article template pages to point to article template
   page:
-    - assetId: "wcm:asset:page:blog-detail"
+    - objectId: "wcm:asset:page:blog-detail"
       template: article
-    - assetId: "wcm:asset:page:news-detail"
+    - objectId: "wcm:asset:page:news-detail"
       template: article
 
   article:

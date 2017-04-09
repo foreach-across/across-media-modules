@@ -41,8 +41,8 @@ public class TestWebCmsPublication
 		assertNull( publication.getId() );
 		assertNull( publication.getNewEntityId() );
 		assertTrue( publication.isNew() );
-		assertNotNull( publication.getAssetId() );
-		assertTrue( publication.getAssetId().startsWith( "wcm:asset:publication:" ) );
+		assertNotNull( publication.getObjectId() );
+		assertTrue( publication.getObjectId().startsWith( "wcm:asset:publication:" ) );
 		assertNull( publication.getPublicationKey() );
 		assertNull( publication.getName() );
 		assertNull( publication.getCreatedBy() );
@@ -57,7 +57,7 @@ public class TestWebCmsPublication
 
 		WebCmsPublication publication = WebCmsPublication.builder()
 		                                                 .newEntityId( 123L )
-		                                                 .assetId( "my-asset" )
+		                                                 .objectId( "my-asset" )
 		                                                 .publicationKey( "publication-key" )
 		                                                 .name( "my-publication" )
 		                                                 .createdBy( "john" )
@@ -67,7 +67,7 @@ public class TestWebCmsPublication
 
 		assertNull( publication.getId() );
 		assertEquals( Long.valueOf( 123L ), publication.getNewEntityId() );
-		assertEquals( "wcm:asset:publication:my-asset", publication.getAssetId() );
+		assertEquals( "wcm:asset:publication:my-asset", publication.getObjectId() );
 		assertEquals( "publication-key", publication.getPublicationKey() );
 		assertEquals( "my-publication", publication.getName() );
 		assertEquals( "john", publication.getCreatedBy() );
@@ -83,7 +83,7 @@ public class TestWebCmsPublication
 
 		assertNull( other.getNewEntityId() );
 		assertEquals( Long.valueOf( 333L ), other.getId() );
-		assertEquals( "wcm:asset:publication:my-asset", other.getAssetId() );
+		assertEquals( "wcm:asset:publication:my-asset", other.getObjectId() );
 		assertEquals( "publication-key", publication.getPublicationKey() );
 		assertEquals( "my-publication", publication.getName() );
 		assertEquals( "john", other.getCreatedBy() );

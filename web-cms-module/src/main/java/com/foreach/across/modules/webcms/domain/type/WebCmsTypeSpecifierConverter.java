@@ -44,13 +44,13 @@ public class WebCmsTypeSpecifierConverter implements ConverterFactory<String, We
 	@Override
 	public <T extends WebCmsTypeSpecifier> Converter<String, T> getConverter( Class<T> targetType ) {
 		return ( id ) -> {
-			WebCmsTypeSpecifier type = typeSpecifierRepository.findOneByUniqueKey( id );
+			WebCmsTypeSpecifier type = typeSpecifierRepository.findOneByObjectId( id );
 
 			if ( type == null ) {
-				String typeGroup = typeRegistry.retrieveTypeGroup( targetType ).orElse( null );
+				String typeGroup = typeRegistry.retrieveObjectType( targetType ).orElse( null );
 
 				if ( typeGroup != null ) {
-					type = typeSpecifierRepository.findOneByTypeGroupAndTypeKey( typeGroup, id );
+					type = typeSpecifierRepository.findOneByObjectTypeAndTypeKey( typeGroup, id );
 				}
 			}
 

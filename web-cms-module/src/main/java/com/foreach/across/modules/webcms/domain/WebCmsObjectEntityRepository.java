@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.type;
+package com.foreach.across.modules.webcms.domain;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
+import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.repository.NoRepositoryBean;
 
 /**
+ * Base interface for a repository managing either {@link WebCmsObjectSuperClass} or {@link WebCmsObjectInheritanceSuperClass}.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsTypeSpecifierRepository extends WebCmsObjectEntityRepository<WebCmsTypeSpecifier<?>>
+@NoRepositoryBean
+public interface WebCmsObjectEntityRepository<T extends WebCmsObjectSuperClass> extends WebCmsObjectRepository<T>, IdBasedEntityJpaRepository<T>, QueryDslPredicateExecutor<T>
 {
-	WebCmsTypeSpecifier<?> findOneByObjectTypeAndTypeKey( String objectType, String typeKey );
 }

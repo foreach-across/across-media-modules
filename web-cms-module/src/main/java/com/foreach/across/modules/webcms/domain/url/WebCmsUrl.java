@@ -69,7 +69,7 @@ public class WebCmsUrl extends SettableIdBasedEntity<WebCmsUrl>
 	private String path;
 
 	/**
-	 * HTTP status for this URL.  The string representation of the HttpStatus enum is persisted.
+	 * HTTP status for this URL.  The status code of the HttpStatus enum is persisted.
 	 *
 	 * @see org.springframework.http.HttpStatus
 	 */

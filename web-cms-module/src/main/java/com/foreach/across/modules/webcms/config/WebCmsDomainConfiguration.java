@@ -34,7 +34,7 @@ public class WebCmsDomainConfiguration
 {
 	@Autowired
 	public void registerDefaultTypes( WebCmsTypeRegistry typeRegistry ) {
-		typeRegistry.register( WebCmsArticleType.TYPE_GROUP, WebCmsArticleType.class, WebCmsArticleType::new );
-		typeRegistry.register( WebCmsPublicationType.TYPE_GROUP, WebCmsPublicationType.class, WebCmsPublicationType::new );
+		typeRegistry.register( WebCmsArticleType.OBJECT_TYPE, WebCmsArticleType.class, WebCmsArticleType::new );
+		typeRegistry.register( WebCmsPublicationType.OBJECT_TYPE, WebCmsPublicationType.class, WebCmsPublicationType::new );
 	}
 }

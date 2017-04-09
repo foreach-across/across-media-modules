@@ -24,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,23 +49,20 @@ public class TestWebCmsEndpointInterceptor
 	@Mock
 	private Object handler;
 
-	@Mock
-	private ModelAndView mav;
-
 	@InjectMocks
 	private WebCmsEndpointInterceptor interceptor;
 
 	@Test
-	public void postHandle() throws Exception {
+	public void preHandle() throws Exception {
 		HttpStatus expectedStatus = HttpStatus.ALREADY_REPORTED;
 		int expectedStatusCode = expectedStatus.value();
+		when( context.isAvailable() ).thenReturn( true );
 		when( context.getUrl() ).thenReturn( WebCmsUrl.builder().httpStatus( expectedStatus ).build() );
 		interceptor = new WebCmsEndpointInterceptor( context );
 
-		interceptor.postHandle( request, response, handler, mav );
+		interceptor.preHandle( request, response, handler );
 
 		verify( response, times( 1 ) ).setStatus( expectedStatusCode );
-		verifyNoMoreInteractions( request, handler, mav );
+		verifyNoMoreInteractions( request, handler );
 	}
-
 }

@@ -1,11 +1,11 @@
 assets:
   # Article template pages for publications
   page:
-    - assetId: "wcm:asset:page:blog-detail"
+    - objectId: "wcm:asset:page:blog-detail"
       title: Blog detail template
       canonicalPath: /blog/*
       canonicalPathGenerated: false
-    - assetId: "wcm:asset:page:news-detail"
+    - objectId: "wcm:asset:page:news-detail"
       title: News detail template
       canonicalPath: /news/*
       canonicalPathGenerated: false

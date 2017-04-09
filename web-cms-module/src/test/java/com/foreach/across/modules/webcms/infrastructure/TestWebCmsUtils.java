@@ -87,18 +87,18 @@ public class TestWebCmsUtils
 	}
 
 	@Test
-	public void generateAssetId() {
-		String assetId = WebCmsUtils.generateUniqueKey( "wcm:asset:page" );
-		String other = WebCmsUtils.generateUniqueKey( "wcm:asset:page" );
-		assertNotEquals( assetId, other );
-		assertTrue( assetId.startsWith( "wcm:asset:page:" ) );
+	public void generateObjectId() {
+		String objectId = WebCmsUtils.generateObjectId( "wcm:asset:page" );
+		String other = WebCmsUtils.generateObjectId( "wcm:asset:page" );
+		assertNotEquals( objectId, other );
+		assertTrue( objectId.startsWith( "wcm:asset:page:" ) );
 		assertTrue( other.startsWith( "wcm:asset:page:" ) );
 	}
 
 	@Test
-	public void prefixAssetIdForCollection() {
-		assertEquals( "wcm:asset:page:test-page", WebCmsUtils.prefixUniqueKeyForCollection( "test-page", "wcm:asset:page" ) );
-		assertEquals( "wcm:asset:page:tp:tp", WebCmsUtils.prefixUniqueKeyForCollection( "wcm:asset:page:tp:tp", "wcm:asset:page" ) );
+	public void prefixObjectIdForCollection() {
+		assertEquals( "wcm:asset:page:test-page", WebCmsUtils.prefixObjectIdForCollection( "test-page", "wcm:asset:page" ) );
+		assertEquals( "wcm:asset:page:tp:tp", WebCmsUtils.prefixObjectIdForCollection( "wcm:asset:page:tp:tp", "wcm:asset:page" ) );
 	}
 
 	@Test

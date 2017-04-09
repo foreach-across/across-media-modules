@@ -67,11 +67,11 @@ public class TestWebCmsPageEndpointInterceptor
 	public void setUp() throws Exception {
 		interceptor = new WebCmsPageEndpointInterceptor( context, templateResolver );
 
-		when( context.getEndpoint( WebCmsAssetEndpoint.class ) ).thenReturn( WebCmsAssetEndpoint.builder()
-		                                                                                        .asset( WebCmsPage.builder()
-		                                                                                                       .template( template )
-		                                                                                                       .build() )
-		                                                                                        .build() );
+		when( context.getEndpoint() ).thenReturn( WebCmsAssetEndpoint.builder()
+		                                                             .asset( WebCmsPage.builder()
+		                                                                               .template( template )
+		                                                                               .build() )
+		                                                             .build() );
 		when( templateResolver.resolvePageTemplate( template ) ).thenReturn( resolvedTemplate );
 	}
 

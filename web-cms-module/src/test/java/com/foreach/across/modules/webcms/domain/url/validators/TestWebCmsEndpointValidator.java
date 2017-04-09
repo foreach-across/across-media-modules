@@ -16,8 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain.url.validators;
 
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import org.junit.Test;
@@ -59,16 +59,16 @@ public class TestWebCmsEndpointValidator
 		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
 		                                             .build();
 		when( repository.findAllByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
-				WebCmsUrl.builder().httpStatus( HttpStatus.OK ).primary( true ).build(),
-				WebCmsUrl.builder().httpStatus( HttpStatus.NO_CONTENT ).primary( true ).build(),
-				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).primary( false ).build()
+				WebCmsUrl.builder().id( 1L ).path( "/ok" ).httpStatus( HttpStatus.OK ).primary( true ).build(),
+				WebCmsUrl.builder().id( 2L ).path( "/no-content" ).httpStatus( HttpStatus.NO_CONTENT ).primary( true ).build(),
+				WebCmsUrl.builder().id( 3L ).httpStatus( HttpStatus.NOT_FOUND ).primary( false ).build()
 		) );
-		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).build();
+		WebCmsUrl url = WebCmsUrl.builder().primary( true ).endpoint( endpoint ).build();
 		when( errors.hasFieldErrors( "endpoint" ) ).thenReturn( false );
 
 		validator.preValidation( url, errors );
 
-		verify( errors ).rejectValue( "endpoint", "onlyOnePrimaryUrlPerEndpoint" );
+		verify( errors ).rejectValue( "primary", "onlyOnePrimaryUrlPerEndpoint", new Object[] { "/ok" }, "Another primary URL exists." );
 	}
 
 	@Test

@@ -16,10 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain.type;
 
-import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
-import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
-import lombok.AccessLevel;
+import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -29,7 +27,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import java.util.Date;
-import java.util.UUID;
+
+import static com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass.DISCRIMINATOR_COLUMN;
 
 /**
  * Represents a sub-type specifier for a particular asset or component. This serves as a base class.
@@ -44,10 +43,10 @@ import java.util.UUID;
 @Table(name = "wcm_type")
 @Access(AccessType.FIELD)
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "type_group", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = DISCRIMINATOR_COLUMN, discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> extends SettableIdAuditableEntity<T>
+public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> extends WebCmsObjectInheritanceSuperClass<T>
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_type_id")
@@ -61,23 +60,6 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	)
 	private Long id;
 
-	@Setter(AccessLevel.NONE)
-	@Column(name = "type_group", insertable = false, updatable = false)
-	private String typeGroup = getTypeGroup();
-
-	/**
-	 * Globally unique key for this type. Alternative for the generated id property as the key should be set manually.
-	 * Consumer code should use {@link #isNew()} to determine if the
-	 * asset is represented by a persisted entity or if it is new.
-	 * <p/>
-	 * Can be used for synchronization of assets between environments.  Like the regular id the key should preferably
-	 * never be modified after creation of an entity, as it determines the global identity of the asset.
-	 */
-	@Column(name = "unique_key", unique = true)
-	@NotBlank
-	@Length(max = 255)
-	private String uniqueKey;
-
 	/**
 	 * Name of the type, should be unique within the type group.
 	 */
@@ -87,53 +69,33 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	private String name;
 
 	/**
-	 * Key of the type, should be unique within the type group.
+	 * Key of the type, should be unique within the object type.
 	 */
 	@Column(name = "type_key")
 	@NotBlank
 	@Length(max = 255)
 	private String typeKey;
 
+	public WebCmsTypeSpecifier() {
+		super();
+	}
+
 	protected WebCmsTypeSpecifier( Long id,
-	                               Long newEntityId,
-	                               String uniqueKey,
-	                               String name,
-	                               String typeKey,
-	                               String createdBy,
-	                               Date createdDate,
-	                               String lastModifiedBy,
-	                               Date lastModifiedDate ) {
-		setNewEntityId( newEntityId );
-		setId( id );
-		setCreatedBy( createdBy );
-		setCreatedDate( createdDate );
-		setLastModifiedBy( lastModifiedBy );
-		setLastModifiedDate( lastModifiedDate );
-
-		setUniqueKey( uniqueKey );
-		setName( name );
-		setTypeKey( typeKey );
+	                            Long newEntityId,
+	                            String objectId,
+	                            String createdBy,
+	                            Date createdDate,
+	                            String lastModifiedBy,
+	                            Date lastModifiedDate, String name, String typeKey ) {
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		this.name = name;
+		this.typeKey = typeKey;
 	}
-
-	protected WebCmsTypeSpecifier() {
-		setUniqueKey( UUID.randomUUID().toString() );
-	}
-
-	public final void setUniqueKey( String uniqueKey ) {
-		this.uniqueKey = WebCmsUtils.prefixUniqueKeyForCollection( uniqueKey, getTypeCollectionId() );
-	}
-
-	/**
-	 * @return the type group name
-	 */
-	public abstract String getTypeGroup();
-
-	protected abstract String getTypeCollectionId();
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "{" +
-				"uniqueKey='" + uniqueKey + '\'' +
+				"objectId='" + getObjectId() + '\'' +
 				", typeKey='" + typeKey + '\'' +
 				'}';
 	}

@@ -79,7 +79,7 @@ public class WebCmsPageConfiguration implements EntityConfigurer
 
 		entities.withType( WebCmsPage.class )
 		        .properties(
-				        props -> props.property( "assetId" ).hidden( true ).and()
+				        props -> props.property( "objectId" ).hidden( true ).and()
 				                      .property( CANONICAL_PATH )
 				                      .attribute( TextboxFormElement.Type.class, TextboxFormElement.Type.TEXT )
 		        )

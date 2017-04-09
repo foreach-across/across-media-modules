@@ -46,7 +46,7 @@ public final class WebCmsArticleImporter extends AbstractWebCmsAssetImporter<Web
 
 	@Override
 	protected WebCmsArticle getExistingByEntryKey( String entryKey ) {
-		return articleRepository.findOneByAssetId( entryKey );
+		return articleRepository.findOneByObjectId( entryKey );
 	}
 
 	@Autowired

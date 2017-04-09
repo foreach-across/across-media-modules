@@ -43,12 +43,12 @@ public class TestWebCmsPublicationType
 	}
 
 	private void verifyDefaultValues( WebCmsPublicationType publicationType ) {
-		assertEquals( "publication", publicationType.getTypeGroup() );
+		assertEquals( "publication", publicationType.getObjectType() );
 		assertNull( publicationType.getId() );
 		assertNull( publicationType.getNewEntityId() );
 		assertTrue( publicationType.isNew() );
-		assertNotNull( publicationType.getUniqueKey() );
-		assertTrue( publicationType.getUniqueKey().startsWith( "wcm:type:publication:" ) );
+		assertNotNull( publicationType.getObjectId() );
+		assertTrue( publicationType.getObjectId().startsWith( "wcm:type:publication:" ) );
 		assertNull( publicationType.getTypeKey() );
 		assertNull( publicationType.getName() );
 		assertNull( publicationType.getCreatedBy() );
@@ -63,7 +63,7 @@ public class TestWebCmsPublicationType
 
 		WebCmsPublicationType publicationType = WebCmsPublicationType.builder()
 		                                                             .newEntityId( 123L )
-		                                                             .uniqueKey( "my-type" )
+		                                                             .objectId( "my-type" )
 		                                                             .typeKey( "publicationType-key" )
 		                                                             .name( "my-publicationType" )
 		                                                             .createdBy( "john" )
@@ -73,7 +73,7 @@ public class TestWebCmsPublicationType
 
 		assertNull( publicationType.getId() );
 		assertEquals( Long.valueOf( 123L ), publicationType.getNewEntityId() );
-		assertEquals( "wcm:type:publication:my-type", publicationType.getUniqueKey() );
+		assertEquals( "wcm:type:publication:my-type", publicationType.getObjectId() );
 		assertEquals( "publicationType-key", publicationType.getTypeKey() );
 		assertEquals( "my-publicationType", publicationType.getName() );
 		assertEquals( "john", publicationType.getCreatedBy() );
@@ -89,7 +89,7 @@ public class TestWebCmsPublicationType
 
 		assertNull( other.getNewEntityId() );
 		assertEquals( Long.valueOf( 333L ), other.getId() );
-		assertEquals( "wcm:type:publication:my-type", other.getUniqueKey() );
+		assertEquals( "wcm:type:publication:my-type", other.getObjectId() );
 		assertEquals( "publicationType-key", publicationType.getTypeKey() );
 		assertEquals( "my-publicationType", publicationType.getName() );
 		assertEquals( "john", other.getCreatedBy() );

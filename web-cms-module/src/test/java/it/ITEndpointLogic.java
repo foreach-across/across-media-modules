@@ -58,9 +58,9 @@ public class ITEndpointLogic
 
 	@Autowired
 	private WebCmsPageRepository pageRepository;
+
 	private WebCmsPage page;
 	private WebCmsAssetEndpoint endpoint;
-	private WebCmsUrl url;
 
 	@Before
 	public void setUp() throws Exception {
@@ -69,20 +69,11 @@ public class ITEndpointLogic
 		                 .pathSegment( "about" )
 		                 .canonicalPath( "/a" )
 		                 .title( "About page" )
+		                 .published( true )
 		                 .build();
 		pageRepository.save( page );
 
-		endpoint = WebCmsAssetEndpoint.builder()
-		                              .asset( page )
-		                              .build();
-		endpointRepository.save( endpoint );
-
-		url = WebCmsUrl.builder()
-		               .path( "/a" )
-		               .httpStatus( HttpStatus.OK )
-		               .primary( true )
-		               .endpoint( endpoint ).build();
-		urlRepository.save( url );
+		endpoint = endpointRepository.findOneByAsset( page );
 	}
 
 	@Test

@@ -48,7 +48,7 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsArticle.class )
 		        .properties( props -> props
-				        .property( "assetId" ).hidden( true ).and()
+				        .property( "objectId" ).hidden( true ).and()
 				        .property( "body" )
 				        .<HtmlViewElement>viewElementPostProcessor(
 						        ViewElementMode.CONTROL,

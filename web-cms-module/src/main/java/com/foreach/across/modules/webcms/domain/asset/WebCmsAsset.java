@@ -16,22 +16,21 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
-import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import java.util.Date;
-import java.util.UUID;
+
+import static com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass.DISCRIMINATOR_COLUMN;
 
 /**
  * Generic base class for an identifiable asset in the WebCmsModule.  An asset is of a particular type - identified by the subclass -
- * and has an automatic long id along with a manually set {@link #assetId}.
+ * and has an automatic long id along with a manually set {@link #setObjectId(String)}.
  * <p/>
  * An asset implements the {@link com.foreach.across.modules.hibernate.business.Auditable} interface.
  * <p/>
@@ -45,10 +44,10 @@ import java.util.UUID;
 @Table(name = "wcm_asset")
 @Access(AccessType.FIELD)
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "asset_type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = DISCRIMINATOR_COLUMN, discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAuditableEntity<T>
+public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObjectInheritanceSuperClass<T>
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_asset_id")
@@ -61,19 +60,6 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAu
 			}
 	)
 	private Long id;
-
-	/**
-	 * Globally unique id for this asset. Alternative for the generated id property as the key should be set manually.
-	 * By default a new UUID will be used as the unique key, consumer code should use {@link #isNew()} to determine if the
-	 * asset is represented by a persisted entity or if it is new.
-	 * <p/>
-	 * Can be used for synchronization of assets between environments.  Like the regular id the asset id should never be
-	 * modified after creation of an entity, as it determines the global identity of the asset.
-	 */
-	@Column(name = "asset_id", unique = true)
-	@NotBlank
-	@Length(max = 255)
-	private String assetId;
 
 	/**
 	 * Is this asset published.  The exact meaning of published depends on the type of asset, but in general
@@ -89,8 +75,22 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAu
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date publicationDate;
 
-	public void setAssetId( String assetId ) {
-		this.assetId = assetId;
+	public WebCmsAsset() {
+		super();
+	}
+
+	protected WebCmsAsset( Long id,
+	                    Long newEntityId,
+	                    String objectId,
+	                    String createdBy,
+	                    Date createdDate,
+	                    String lastModifiedBy,
+	                    Date lastModifiedDate,
+	                    boolean published,
+	                    Date publicationDate ) {
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		setPublished( published );
+		setPublicationDate( publicationDate );
 	}
 
 	@Override
@@ -103,28 +103,10 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends SettableIdAu
 		this.id = id;
 	}
 
-	protected WebCmsAsset( Long id,
-	                       Long newEntityId,
-	                       String assetId,
-	                       boolean published,
-	                       Date publicationDate,
-	                       String createdBy,
-	                       Date createdDate,
-	                       String lastModifiedBy,
-	                       Date lastModifiedDate ) {
-		setNewEntityId( newEntityId );
-		setId( id );
-		setCreatedBy( createdBy );
-		setCreatedDate( createdDate );
-		setLastModifiedBy( lastModifiedBy );
-		setLastModifiedDate( lastModifiedDate );
-
-		setAssetId( assetId );
-		setPublished( published );
-		setPublicationDate( publicationDate );
-	}
-
-	protected WebCmsAsset() {
-		setAssetId( UUID.randomUUID().toString() );
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "{" +
+				"objectId='" + getObjectId() + '\'' +
+				'}';
 	}
 }

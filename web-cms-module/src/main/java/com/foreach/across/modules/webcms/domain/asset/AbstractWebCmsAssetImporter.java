@@ -64,11 +64,11 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 	}
 
 	private void importSingleAsset( WebCmsDataEntry item ) {
-		T existing = retrieveExistingAsset( (String) item.getMapData().get( "assetId" ), item.getKey() );
+		T existing = retrieveExistingAsset( (String) item.getMapData().get( "objectId" ), item.getKey() );
 		T dto = createDto( existing );
 
 		if ( dto != null ) {
-			LOG.trace( "{} WebCmsAsset {} with assetId {}", dto.isNew() ? "Creating" : "Updating" );
+			LOG.trace( "{} WebCmsAsset {} with objectId {}", dto.isNew() ? "Creating" : "Updating" );
 
 			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
 
@@ -76,16 +76,16 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 				T itemToSave = prepareForSaving( dto, item );
 
 				if ( itemToSave != null ) {
-					LOG.debug( "Saving WebCmsAsset {} with assetId {} (insert: {}) - {}",
-					           dataKey, itemToSave.getAssetId(), dto.isNew(), dto );
+					LOG.debug( "Saving WebCmsAsset {} with objectId {} (insert: {}) - {}",
+					           dataKey, itemToSave.getObjectId(), dto.isNew(), dto );
 					assetRepository.save( itemToSave );
 				}
 				else {
-					LOG.trace( "Skipping WebCmsAsset {} import for assetId {} - prepareForSaving returned null", dataKey, dto.getAssetId() );
+					LOG.trace( "Skipping WebCmsAsset {} import for objectId {} - prepareForSaving returned null", dataKey, dto.getObjectId() );
 				}
 			}
 			else {
-				LOG.trace( "Skipping WebCmsAsset {} import for assetId {} - nothing modified", dataKey, dto.getAssetId() );
+				LOG.trace( "Skipping WebCmsAsset {} import for objectId {} - nothing modified", dataKey, dto.getObjectId() );
 			}
 		}
 		else {
@@ -93,11 +93,11 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 		}
 	}
 
-	private T retrieveExistingAsset( String assetId, String entryKey ) {
+	private T retrieveExistingAsset( String objectId, String entryKey ) {
 		WebCmsAsset<?> existing = null;
 
-		if ( assetId != null ) {
-			existing = assetRepository.findOneByAssetId( assetId );
+		if ( objectId != null ) {
+			existing = assetRepository.findOneByObjectId( objectId );
 		}
 
 		return existing != null ? assetType.cast( existing ) : ( entryKey != null ? getExistingByEntryKey( entryKey ) : null );

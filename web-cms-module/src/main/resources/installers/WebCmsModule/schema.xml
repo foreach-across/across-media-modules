@@ -37,6 +37,8 @@
 	<property name="table.publication_type" value="wcm_publication_type"/>
 	<property name="table.article" value="wcm_article"/>
 	<property name="table.article_type" value="wcm_article_type"/>
+	<property name="table.component" value="wcm_component"/>
+	<property name="table.component_type" value="wcm_component_type"/>
 	<property name="table.image" value="wcm_image"/>
 
 	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
@@ -59,10 +61,10 @@
 			<column name="id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_asset"/>
 			</column>
-			<column name="asset_type" type="java.sql.Types.VARCHAR(100)">
+			<column name="object_type" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="asset_id" type="java.sql.Types.VARCHAR(255)">
+			<column name="object_id" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="published" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
@@ -73,12 +75,12 @@
 			</column>
 		</createTable>
 
-		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_id" unique="true">
-			<column name="asset_id"/>
+		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_oid" unique="true">
+			<column name="object_id"/>
 		</createIndex>
 
 		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_type">
-			<column name="asset_type"/>
+			<column name="object_type"/>
 		</createIndex>
 	</changeSet>
 
@@ -96,10 +98,10 @@
 			<column name="id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_type"/>
 			</column>
-			<column name="type_group" type="java.sql.Types.VARCHAR(100)">
+			<column name="object_type" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="unique_key" type="java.sql.Types.VARCHAR(255)">
+			<column name="object_id" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="type_key" type="java.sql.Types.VARCHAR(255)">
@@ -110,12 +112,12 @@
 			</column>
 		</createTable>
 
-		<createIndex tableName="${table.type}" indexName="ix_wcm_type_unq_key" unique="true">
-			<column name="unique_key"/>
+		<createIndex tableName="${table.type}" indexName="ix_wcm_type_oid" unique="true">
+			<column name="object_id"/>
 		</createIndex>
 
-		<createIndex tableName="${table.type}" indexName="ix_wcm_type_group_key" unique="true">
-			<column name="type_group"/>
+		<createIndex tableName="${table.type}" indexName="ix_wcm_type_otype_key" unique="true">
+			<column name="object_type"/>
 			<column name="type_key"/>
 		</createIndex>
 	</changeSet>
@@ -500,7 +502,7 @@
 			<column name="path" type="java.sql.Types.VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="http_status" type="java.sql.Types.VARCHAR(255)">
+			<column name="http_status" type="java.sql.Types.INTEGER">
 				<constraints nullable="false"/>
 			</column>
 			<column name="is_primary" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
@@ -517,6 +519,36 @@
 
 	<changeSet id="201703031547" author="svl">
 		<addUniqueConstraint tableName="${table.url}" columnNames="path" constraintName="uq_wcm_url_path"/>
+	</changeSet>
+
+	<!-- Component type -->
+	<changeSet id="201704091046" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.component}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates component table</comment>
+
+		<createTable tableName="${table.component}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_component"/>
+			</column>
+			<column name="object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="owner_object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="title" type="java.sql.Types.NVARCHAR(255)"/>
+			<column name="body" type="java.sql.Types.NCLOB"/>
+			<column name="metadata" type="java.sql.Types.NCLOB"/>
+		</createTable>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_component_oid" unique="true">
+			<column name="object_id"/>
+		</createIndex>
 	</changeSet>
 
 	<!-- Image -->

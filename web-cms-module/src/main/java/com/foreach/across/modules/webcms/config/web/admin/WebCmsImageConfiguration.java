@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.webcms.config.web.admin;
 
+import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
 import com.foreach.across.modules.bootstrapui.elements.TableViewElement;
@@ -54,6 +56,7 @@ import java.util.UUID;
  */
 @Configuration
 @RequiredArgsConstructor
+@AcrossDepends(required = BootstrapUiModule.NAME)
 public class WebCmsImageConfiguration implements EntityConfigurer
 {
 	private final CreateFormProcessor createFormProcessor;
@@ -65,7 +68,7 @@ public class WebCmsImageConfiguration implements EntityConfigurer
 		entities.withType( WebCmsImage.class )
 		        .properties(
 				        props -> props.property( "publish-settings" ).hidden( true ).and()
-				                      .property( "assetId" ).hidden( true ).and()
+				                      .property( "objectId" ).hidden( true ).and()
 				                      .property( "externalId" ).writable( false ).and()
 				                      .property( "image-upload" )
 				                      .displayName( "Image file" )
@@ -105,6 +108,7 @@ public class WebCmsImageConfiguration implements EntityConfigurer
 	}
 
 	@Component
+	@AcrossDepends(required = BootstrapUiModule.NAME)
 	private static class ListViewProcessor extends EntityViewProcessorAdapter
 	{
 		@Override
@@ -118,6 +122,7 @@ public class WebCmsImageConfiguration implements EntityConfigurer
 	}
 
 	@Component
+	@AcrossDepends(required = BootstrapUiModule.NAME)
 	@RequiredArgsConstructor
 	public static class ThumbnailViewElementBuilder implements ViewElementBuilder<ViewElement>
 	{
@@ -136,6 +141,7 @@ public class WebCmsImageConfiguration implements EntityConfigurer
 	}
 
 	@Component
+	@AcrossDepends(required = BootstrapUiModule.NAME)
 	@RequiredArgsConstructor
 	public static class CreateFormProcessor extends EntityViewProcessorAdapter
 	{

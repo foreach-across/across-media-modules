@@ -69,9 +69,12 @@ public final class WebCmsDataEntry
 			this.mapData = Collections.unmodifiableMap( (Map<String, Object>) data );
 			this.collectionData = null;
 		}
-		else {
+		else if ( data instanceof Collection ) {
 			this.collectionData = (Collection) data;
 			this.mapData = null;
+		}
+		else {
+			throw new IllegalArgumentException( "Only Collection or Map data is supported." );
 		}
 	}
 

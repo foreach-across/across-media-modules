@@ -52,56 +52,56 @@ public class ITDefaultObjects
 		WebCmsTypeSpecifierRepository typeSpecifierRepository = beanRegistry.getBeanOfType( WebCmsTypeSpecifierRepository.class );
 		WebCmsArticleTypeRepository articleTypeRepository = beanRegistry.getBeanOfType( WebCmsArticleTypeRepository.class );
 
-		WebCmsArticleType newsType = articleTypeRepository.findOne( webCmsArticleType.uniqueKey.eq( "wcm:type:article:news" ) );
+		WebCmsArticleType newsType = articleTypeRepository.findOne( webCmsArticleType.objectId.eq( "wcm:type:article:news" ) );
 		assertNotNull( newsType );
-		assertEquals( "wcm:type:article:news", newsType.getUniqueKey() );
-		assertEquals( "article", newsType.getTypeGroup() );
+		assertEquals( "wcm:type:article:news", newsType.getObjectId() );
+		assertEquals( "article", newsType.getObjectType() );
 		assertEquals( "News", newsType.getName() );
 		assertEquals( "news", newsType.getTypeKey() );
-		assertEquals( newsType, typeSpecifierRepository.findOneByTypeGroupAndTypeKey( "article", "news" ) );
+		assertEquals( newsType, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "article", "news" ) );
 
-		WebCmsArticleType blogType = articleTypeRepository.findOne( webCmsArticleType.uniqueKey.eq( "wcm:type:article:blog" ) );
+		WebCmsArticleType blogType = articleTypeRepository.findOne( webCmsArticleType.objectId.eq( "wcm:type:article:blog" ) );
 		assertNotNull( blogType );
-		assertEquals( "wcm:type:article:blog", blogType.getUniqueKey() );
-		assertEquals( "article", blogType.getTypeGroup() );
+		assertEquals( "wcm:type:article:blog", blogType.getObjectId() );
+		assertEquals( "article", blogType.getObjectType() );
 		assertEquals( "Blog", blogType.getName() );
 		assertEquals( "blog", blogType.getTypeKey() );
-		assertEquals( blogType, typeSpecifierRepository.findOneByTypeGroupAndTypeKey( "article", "blog" ) );
+		assertEquals( blogType, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "article", "blog" ) );
 	}
 
 	private void verifyPublicationTypes( AcrossContextBeanRegistry beanRegistry ) {
 		WebCmsTypeSpecifierRepository typeSpecifierRepository = beanRegistry.getBeanOfType( WebCmsTypeSpecifierRepository.class );
 		WebCmsPublicationTypeRepository publicationTypeRepository = beanRegistry.getBeanOfType( WebCmsPublicationTypeRepository.class );
 
-		WebCmsPublicationType newsType = publicationTypeRepository.findOne( webCmsPublicationType.uniqueKey.eq( "wcm:type:publication:news" ) );
+		WebCmsPublicationType newsType = publicationTypeRepository.findOne( webCmsPublicationType.objectId.eq( "wcm:type:publication:news" ) );
 		assertNotNull( newsType );
-		assertEquals( "wcm:type:publication:news", newsType.getUniqueKey() );
-		assertEquals( "publication", newsType.getTypeGroup() );
+		assertEquals( "wcm:type:publication:news", newsType.getObjectId() );
+		assertEquals( "publication", newsType.getObjectType() );
 		assertEquals( "News", newsType.getName() );
 		assertEquals( "news", newsType.getTypeKey() );
-		assertEquals( newsType, typeSpecifierRepository.findOneByTypeGroupAndTypeKey( "publication", "news" ) );
+		assertEquals( newsType, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "publication", "news" ) );
 
-		WebCmsPublicationType blogType = publicationTypeRepository.findOne( webCmsPublicationType.uniqueKey.eq( "wcm:type:publication:blog" ) );
+		WebCmsPublicationType blogType = publicationTypeRepository.findOne( webCmsPublicationType.objectId.eq( "wcm:type:publication:blog" ) );
 		assertNotNull( blogType );
-		assertEquals( "wcm:type:publication:blog", blogType.getUniqueKey() );
-		assertEquals( "publication", blogType.getTypeGroup() );
+		assertEquals( "wcm:type:publication:blog", blogType.getObjectId() );
+		assertEquals( "publication", blogType.getObjectType() );
 		assertEquals( "Blog", blogType.getName() );
 		assertEquals( "blog", blogType.getTypeKey() );
-		assertEquals( blogType, typeSpecifierRepository.findOneByTypeGroupAndTypeKey( "publication", "blog" ) );
+		assertEquals( blogType, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "publication", "blog" ) );
 	}
 
 	private void verifyPublications( AcrossContextBeanRegistry beanRegistry ) {
 		WebCmsPublicationRepository publicationRepository = beanRegistry.getBeanOfType( WebCmsPublicationRepository.class );
 		WebCmsPublicationTypeRepository publicationTypeRepository = beanRegistry.getBeanOfType( WebCmsPublicationTypeRepository.class );
 
-		WebCmsPublication news = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.assetId.eq( "wcm:asset:publication:news" ) );
-		assertEquals( "wcm:asset:publication:news", news.getAssetId() );
+		WebCmsPublication news = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.objectId.eq( "wcm:asset:publication:news" ) );
+		assertEquals( "wcm:asset:publication:news", news.getObjectId() );
 		assertEquals( "News", news.getName() );
 		assertEquals( "news", news.getPublicationKey() );
 		assertEquals( publicationTypeRepository.findOneByTypeKey( "news" ), news.getPublicationType() );
 
-		WebCmsPublication blogs = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.assetId.eq( "wcm:asset:publication:blogs" ) );
-		assertEquals( "wcm:asset:publication:blogs", blogs.getAssetId() );
+		WebCmsPublication blogs = publicationRepository.findOne( QWebCmsPublication.webCmsPublication.objectId.eq( "wcm:asset:publication:blogs" ) );
+		assertEquals( "wcm:asset:publication:blogs", blogs.getObjectId() );
 		assertEquals( "Blogs", blogs.getName() );
 		assertEquals( "blogs", blogs.getPublicationKey() );
 		assertEquals( publicationTypeRepository.findOneByTypeKey( "blog" ), blogs.getPublicationType() );

@@ -36,7 +36,7 @@ public class TestWebCmsDataEntry
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void dataMustBeMap() {
+	public void dataMustBeMapOrCollection() {
 		new WebCmsDataEntry( "publicationKey", "some data" );
 	}
 

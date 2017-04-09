@@ -43,8 +43,8 @@ public class TestWebCmsPage
 		assertTrue( built.isNew() );
 		assertFalse( built.isPublished() );
 		assertNull( built.getPublicationDate() );
-		assertNotNull( built.getAssetId() );
-		assertTrue( built.getAssetId().startsWith( "wcm:asset:page:" ) );
+		assertNotNull( built.getObjectId() );
+		assertTrue( built.getObjectId().startsWith( "wcm:asset:page:" ) );
 		assertTrue( built.isPathSegmentGenerated() );
 		assertTrue( built.isCanonicalPathGenerated() );
 		assertNull( built.getCanonicalPath() );
@@ -65,7 +65,7 @@ public class TestWebCmsPage
 
 		WebCmsPage page = WebCmsPage.builder()
 		                            .newEntityId( 123L )
-		                            .assetId( "my-asset" )
+		                            .objectId( "my-asset" )
 		                            .title( "some page" )
 		                            .parent( parent )
 		                            .pathSegment( "path" )
@@ -79,7 +79,7 @@ public class TestWebCmsPage
 
 		assertNull( page.getId() );
 		assertEquals( Long.valueOf( 123L ), page.getNewEntityId() );
-		assertEquals( "wcm:asset:page:my-asset", page.getAssetId() );
+		assertEquals( "wcm:asset:page:my-asset", page.getObjectId() );
 		assertEquals( "some page", page.getTitle() );
 		assertSame( parent, page.getParent() );
 		assertEquals( "path", page.getPathSegment() );
@@ -102,7 +102,7 @@ public class TestWebCmsPage
 
 		assertNull( other.getNewEntityId() );
 		assertEquals( Long.valueOf( 333L ), other.getId() );
-		assertEquals( "wcm:asset:page:my-asset", other.getAssetId() );
+		assertEquals( "wcm:asset:page:my-asset", other.getObjectId() );
 		assertEquals( "some page", other.getTitle() );
 		assertSame( parent, other.getParent() );
 		assertEquals( "path", other.getPathSegment() );

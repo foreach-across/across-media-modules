@@ -43,6 +43,6 @@ public class WebCmsAssetConverter implements ConverterFactory<String, WebCmsAsse
 
 	@Override
 	public <T extends WebCmsAsset> Converter<String, T> getConverter( Class<T> targetType ) {
-		return ( id ) -> targetType.cast( assetRepository.findOneByAssetId( id ) );
+		return ( id ) -> targetType.cast( assetRepository.findOneByObjectId( id ) );
 	}
 }

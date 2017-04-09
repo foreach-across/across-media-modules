@@ -29,7 +29,8 @@ import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.UUID;
+
+import static com.foreach.across.modules.webcms.domain.article.WebCmsArticle.OBJECT_TYPE;
 
 /**
  * A single article from a {@link com.foreach.across.modules.webcms.domain.publication.WebCmsPublication}.
@@ -39,7 +40,7 @@ import java.util.UUID;
  */
 @NotThreadSafe
 @Entity
-@DiscriminatorValue("article")
+@DiscriminatorValue(OBJECT_TYPE)
 @Table(name = "wcm_article")
 @NoArgsConstructor
 @Getter
@@ -47,7 +48,12 @@ import java.util.UUID;
 public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 {
 	/**
-	 * Prefix that all object ids for a WebCmsArticle should have.
+	 * Object type name (discriminator value).
+	 */
+	public static final String OBJECT_TYPE = "article";
+
+	/**
+	 * Prefix that all object ids for a WebCmsArticle have.
 	 */
 	public static final String COLLECTION_ID = "wcm:asset:article";
 
@@ -90,19 +96,19 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 	@Builder(toBuilder = true)
 	protected WebCmsArticle( @Builder.ObtainVia(method = "getId") Long id,
 	                         @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
-	                         @Builder.ObtainVia(method = "getAssetId") String assetId,
-	                         @Builder.ObtainVia(method = "isPublished") boolean published,
-	                         @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
+	                         @Builder.ObtainVia(method = "getObjectId") String objectId,
 	                         @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
 	                         @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                         @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                         @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                         @Builder.ObtainVia(method = "isPublished") boolean published,
+	                         @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
 	                         WebCmsPublication publication,
 	                         String title,
 	                         String subTitle,
 	                         String description,
 	                         String body ) {
-		super( id, newEntityId, assetId, published, publicationDate, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
 		this.publication = publication;
 		this.title = title;
 		this.subTitle = subTitle;
@@ -110,16 +116,20 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 		this.body = body;
 	}
 
-	@SuppressWarnings("all")
-	public static class WebCmsArticleBuilder
-	{
-		private String assetId = UUID.randomUUID().toString();
+	@Override
+	public final String getObjectType() {
+		return OBJECT_TYPE;
+	}
+
+	@Override
+	protected final String getObjectCollectionId() {
+		return COLLECTION_ID;
 	}
 
 	@Override
 	public String toString() {
 		return "WebCmsArticle{" +
-				"assetId='" + getAssetId() + "\'," +
+				"objectId='" + getObjectId() + "\'," +
 				"title='" + title + '\'' +
 				'}';
 	}

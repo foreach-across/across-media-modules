@@ -27,5 +27,5 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 @Exposed
 public interface WebCmsArticleRepository extends IdBasedEntityJpaRepository<WebCmsArticle>, QueryDslPredicateExecutor<WebCmsArticle>
 {
-	WebCmsArticle findOneByAssetId( String assetId );
+	WebCmsArticle findOneByObjectId( String objectId );
 }

@@ -39,29 +39,29 @@ public final class WebCmsTypeRegistry
 	private final Map<String, Supplier> suppliersForImplementationType = new HashMap<>();
 
 	/**
-	 * Registers a type group to an implementation type along with a {@link Supplier} that returns a new instance.
+	 * Registers an object type to an implementation type along with a {@link Supplier} that returns a new instance.
 	 *
-	 * @param typeGroup          name
+	 * @param objectType          name
 	 * @param implementationType class
 	 * @param supplier           that returns a new instance
 	 * @param <U>                actual type
 	 */
-	public <U extends WebCmsTypeSpecifier> void register( String typeGroup, Class<U> implementationType, Supplier<U> supplier ) {
-		Assert.notNull( typeGroup );
+	public <U extends WebCmsTypeSpecifier> void register( String objectType, Class<U> implementationType, Supplier<U> supplier ) {
+		Assert.notNull( objectType );
 		Assert.notNull( implementationType );
 		Assert.notNull( supplier );
-		typesForGroup.put( typeGroup, implementationType );
+		typesForGroup.put( objectType, implementationType );
 		suppliersForImplementationType.put( implementationType.getName(), supplier );
-		groupsForType.put( implementationType.getName(), typeGroup );
+		groupsForType.put( implementationType.getName(), objectType );
 	}
 
 	/**
-	 * @param typeGroup for which to get the implementation type
+	 * @param objectType for which to get the implementation type
 	 * @return implementation type or {@code null} if not exists
 	 */
-	public Optional<Class<? extends WebCmsTypeSpecifier>> retrieveTypeSpecifierClass( String typeGroup ) {
-		Assert.notNull( typeGroup );
-		return Optional.ofNullable( typesForGroup.get( typeGroup ) );
+	public Optional<Class<? extends WebCmsTypeSpecifier>> retrieveTypeSpecifierClass( String objectType ) {
+		Assert.notNull( objectType );
+		return Optional.ofNullable( typesForGroup.get( objectType ) );
 	}
 
 	@SuppressWarnings("unchecked")
@@ -70,7 +70,7 @@ public final class WebCmsTypeRegistry
 		return Optional.ofNullable( suppliersForImplementationType.get( implementationType.getName() ) );
 	}
 
-	public <U extends WebCmsTypeSpecifier> Optional<String> retrieveTypeGroup( Class<U> implementationType ) {
+	public <U extends WebCmsTypeSpecifier> Optional<String> retrieveObjectType( Class<U> implementationType ) {
 		Assert.notNull( implementationType );
 		return Optional.ofNullable( groupsForType.get( implementationType.getName() ) );
 	}
