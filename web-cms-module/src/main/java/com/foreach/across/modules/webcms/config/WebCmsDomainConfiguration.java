@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.config;
 import com.foreach.across.modules.hibernate.jpa.repositories.config.EnableAcrossJpaRepositories;
 import com.foreach.across.modules.webcms.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ public class WebCmsDomainConfiguration
 {
 	@Autowired
 	public void registerDefaultTypes( WebCmsTypeRegistry typeRegistry ) {
+		typeRegistry.register( WebCmsComponentType.OBJECT_TYPE, WebCmsComponentType.class, WebCmsComponentType::new );
 		typeRegistry.register( WebCmsArticleType.OBJECT_TYPE, WebCmsArticleType.class, WebCmsArticleType::new );
 		typeRegistry.register( WebCmsPublicationType.OBJECT_TYPE, WebCmsPublicationType.class, WebCmsPublicationType::new );
 	}

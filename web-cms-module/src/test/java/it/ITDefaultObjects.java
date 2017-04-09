@@ -21,12 +21,15 @@ import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeRepository;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
 import com.foreach.across.modules.webcms.domain.publication.*;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierRepository;
 import com.foreach.across.test.AcrossTestContext;
 import org.junit.Test;
 
 import static com.foreach.across.modules.webcms.domain.article.QWebCmsArticleType.webCmsArticleType;
+import static com.foreach.across.modules.webcms.domain.component.QWebCmsComponentType.webCmsComponentType;
 import static com.foreach.across.modules.webcms.domain.publication.QWebCmsPublicationType.webCmsPublicationType;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.Assert.assertEquals;
@@ -42,10 +45,34 @@ public class ITDefaultObjects
 	public void byDefaultTheAssetsShouldBeImported() {
 		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME )
 		                                  .build()) {
+			verifyComponentTypes( ctx );
 			verifyArticleTypes( ctx );
 			verifyPublicationTypes( ctx );
 			verifyPublications( ctx );
 		}
+	}
+
+	private void verifyComponentTypes( AcrossContextBeanRegistry beanRegistry ) {
+		WebCmsTypeSpecifierRepository typeSpecifierRepository = beanRegistry.getBeanOfType( WebCmsTypeSpecifierRepository.class );
+		WebCmsComponentTypeRepository publicationTypeRepository = beanRegistry.getBeanOfType( WebCmsComponentTypeRepository.class );
+
+		WebCmsComponentType textField = publicationTypeRepository.findOne( webCmsComponentType.objectId.eq( "wcm:type:component:text-field" ) );
+		assertNotNull( textField );
+		assertEquals( "wcm:type:component:text-field", textField.getObjectId() );
+		assertEquals( "component", textField.getObjectType() );
+		assertEquals( "Text field", textField.getName() );
+		assertEquals( "text-field", textField.getTypeKey() );
+		assertNotNull( textField.getDescription() );
+		assertEquals( textField, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "component", "text-field" ) );
+
+		WebCmsComponentType richText = publicationTypeRepository.findOne( webCmsComponentType.objectId.eq( "wcm:type:component:rich-text" ) );
+		assertNotNull( richText );
+		assertEquals( "wcm:type:component:rich-text", richText.getObjectId() );
+		assertEquals( "component", richText.getObjectType() );
+		assertEquals( "Rich text", richText.getName() );
+		assertEquals( "rich-text", richText.getTypeKey() );
+		assertNotNull( richText.getDescription() );
+		assertEquals( richText, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "component", "rich-text" ) );
 	}
 
 	private void verifyArticleTypes( AcrossContextBeanRegistry beanRegistry ) {

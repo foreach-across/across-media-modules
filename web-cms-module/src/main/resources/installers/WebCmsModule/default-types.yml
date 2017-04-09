@@ -1,4 +1,12 @@
 types:
+  # Default component types
+  component:
+    text-field:
+      name: Text field
+      description: A single line of plain text.
+    rich-text:
+      name: Rich text
+      description: Rich text component - supporting HTML markup and default assets if enabled by other modules.
   # Default article types: blog and news
   article:
     blog:

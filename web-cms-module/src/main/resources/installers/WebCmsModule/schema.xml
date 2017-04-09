@@ -39,6 +39,7 @@
 	<property name="table.article_type" value="wcm_article_type"/>
 	<property name="table.component" value="wcm_component"/>
 	<property name="table.component_type" value="wcm_component_type"/>
+	<property name="table.asset_component_link" value="wcm_asset_component_link"/>
 	<property name="table.image" value="wcm_image"/>
 
 	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
@@ -522,6 +523,27 @@
 	</changeSet>
 
 	<!-- Component type -->
+	<changeSet id="201704091339" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.component_type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates component type table</comment>
+
+		<createTable tableName="${table.component_type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_comptype"
+				             referencedTableName="${table.type}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_comptype_type"/>
+			</column>
+			<column name="description" type="java.sql.Types.NVARCHAR(500)"/>
+		</createTable>
+	</changeSet>
+
+	<!-- Component -->
 	<changeSet id="201704091046" author="arne">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -533,13 +555,23 @@
 
 		<createTable tableName="${table.component}">
 			<column name="id" type="java.sql.Types.BIGINT">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_component"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_component"
+				             referencedTableName="${table.asset}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_comp_asset"/>
+
 			</column>
 			<column name="object_id" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="owner_object_id" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
+			</column>
+			<column name="component_type_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             foreignKeyName="fk_wcm_comp_comptype"
+				             referencedTableName="${table.component_type}"
+				             referencedColumnNames="id"/>
 			</column>
 			<column name="title" type="java.sql.Types.NVARCHAR(255)"/>
 			<column name="body" type="java.sql.Types.NCLOB"/>
@@ -548,6 +580,43 @@
 
 		<createIndex tableName="${table.component}" indexName="ix_wcm_component_oid" unique="true">
 			<column name="object_id"/>
+		</createIndex>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_comp_ownerid">
+			<column name="owner_object_id"/>
+		</createIndex>
+
+	</changeSet>
+
+	<!-- Asset - Component link -->
+	<changeSet id="201704091420" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.asset_component_link}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates asset component link table</comment>
+
+		<createTable tableName="${table.asset_component_link}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_as_comp_link"/>
+			</column>
+			<column name="asset_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" referencedTableName="${table.asset}" referencedColumnNames="id" foreignKeyName="fk_wcm_ascmp_asid"/>
+			</column>
+			<column name="component_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" referencedTableName="${table.component}" referencedColumnNames="id" foreignKeyName="fk_wcm_ascmp_compid"/>
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(100)"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.asset_component_link}" indexName="ix_wcm_ascmp_asid">
+			<column name="asset_id"/>
+			<column name="sort_index"/>
 		</createIndex>
 	</changeSet>
 

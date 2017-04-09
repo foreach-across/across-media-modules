@@ -25,7 +25,7 @@ import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts a {@link String} to {@link WebCmsTypeSpecifier}.
+ * Converts a {@link String} to {@link WebCmsAsset}.
  *
  * @author Arne Vandamme
  * @since 0.0.1

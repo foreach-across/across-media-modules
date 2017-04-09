@@ -61,7 +61,13 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	)
 	private Long id;
 
-	// WebCmsComponentType componentType;
+	/**
+	 * Type of the WebCmsComponent.
+	 */
+	@ManyToOne
+	@JoinColumn(name = "component_type_id")
+	@NotNull
+	WebCmsComponentType componentType;
 
 	/**
 	 * Unique object id of the asset that owns this component.

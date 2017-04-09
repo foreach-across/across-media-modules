@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.asset;
+package com.foreach.across.modules.webcms.domain.asset.component;
 
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 /**
- *
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class WebCmsAssetComponentLink
+@Exposed
+public interface WebCmsAssetComponentLinkRepository extends IdBasedEntityJpaRepository<WebCmsAssetComponentLink>, QueryDslPredicateExecutor<WebCmsAssetComponentLink>
 {
-	private WebCmsAsset asset;
-
-	private WebCmsComponent component;
-
-	private WebCmsAssetComponentLinkType linkType;
-
-	private String name;
-
-	private int sortIndex;
 }

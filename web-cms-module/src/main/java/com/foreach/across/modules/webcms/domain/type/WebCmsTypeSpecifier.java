@@ -61,7 +61,7 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	private Long id;
 
 	/**
-	 * Name of the type, should be unique within the type group.
+	 * Name of the type, should be unique within the object type.
 	 */
 	@Column(name = "name")
 	@NotBlank
