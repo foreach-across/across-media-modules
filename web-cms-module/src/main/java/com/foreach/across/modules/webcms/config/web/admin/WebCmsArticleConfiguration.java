@@ -33,7 +33,9 @@ import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.web.article.WebCmsArticleListViewProcessor;
-import com.foreach.across.modules.webcms.web.asset.WebCmsAssetListViewProcessor;
+import com.foreach.across.modules.webcms.web.asset.builders.ImageUploadViewElementBuilder;
+import com.foreach.across.modules.webcms.web.asset.processors.WebCmsArticleImageFormViewProcessor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 
@@ -42,14 +44,25 @@ import org.springframework.data.domain.Sort;
  * @since 0.0.1
  */
 @Configuration
+@RequiredArgsConstructor
 public class WebCmsArticleConfiguration implements EntityConfigurer
 {
+	private final WebCmsArticleImageFormViewProcessor articleImageFormViewProcessor;
+	private final ImageUploadViewElementBuilder thumbnailViewElementBuilder;
+
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsArticle.class )
 		        .properties( props -> props
 				        .property( "objectId" ).hidden( true ).and()
-				        .property( "body" )
+				        .property( "body" ).and()
+				        .property( "image" )
+				        .displayName( "Image" )
+				        .order( 1 )
+				        .viewElementBuilder(
+						        ViewElementMode.CONTROL,
+						        thumbnailViewElementBuilder
+				        )
 				        .<HtmlViewElement>viewElementPostProcessor(
 						        ViewElementMode.CONTROL,
 						        ( builderContext, element ) -> {
@@ -74,6 +87,7 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 				        .properties( props -> props.property( "body" ).viewElementType( ViewElementMode.CONTROL, BootstrapUiElements.TEXTAREA ) )
 				        //.properties( props -> props.property( "title" ).viewElementType( ViewElementMode.FORM_WRITE, BootstrapUiElements.TEXTAREA ) )
 				        .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 9, 3 ) ) )
+				        .viewProcessor( articleImageFormViewProcessor )
 				        .viewProcessor( new EntityViewProcessorAdapter()
 				        {
 					        @Override
@@ -90,7 +104,7 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 						        ContainerViewElementUtils.move( container, "formGroup-lastModified", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 					        }
 				        } )
-		        )
-		;
+		        );
 	}
+
 }

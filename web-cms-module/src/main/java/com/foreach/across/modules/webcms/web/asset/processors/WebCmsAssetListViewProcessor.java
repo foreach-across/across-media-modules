@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.web.asset;
+package com.foreach.across.modules.webcms.web.asset.processors;
 
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.entity.views.EntityView;

@@ -23,7 +23,7 @@ import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBu
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
-import com.foreach.across.modules.webcms.web.asset.WebCmsAssetListViewProcessor;
+import com.foreach.across.modules.webcms.web.asset.processors.WebCmsAssetListViewProcessor;
 import org.springframework.context.annotation.Configuration;
 
 /**

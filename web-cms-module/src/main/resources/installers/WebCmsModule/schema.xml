@@ -646,4 +646,13 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="20170404115900" author="svl">
+		<addColumn tableName="${table.article}">
+			<column name="image_id" type="java.sql.Types.BIGINT"/>
+		</addColumn>
+		<addForeignKeyConstraint baseTableName="${table.article}" baseColumnNames="image_id" constraintName="fk_article_image"
+		                         referencedTableName="${table.image}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
 </databaseChangeLog>

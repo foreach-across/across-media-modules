@@ -17,6 +17,8 @@
 package com.foreach.across.modules.webcms.domain.article;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.image.ImageOwner;
+import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +31,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.Optional;
 
 import static com.foreach.across.modules.webcms.domain.article.WebCmsArticle.OBJECT_TYPE;
 
@@ -45,7 +48,7 @@ import static com.foreach.across.modules.webcms.domain.article.WebCmsArticle.OBJ
 @NoArgsConstructor
 @Getter
 @Setter
-public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
+public class WebCmsArticle extends WebCmsAsset<WebCmsArticle> implements ImageOwner
 {
 	/**
 	 * Object type name (discriminator value).
@@ -93,6 +96,13 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 	@Column(name = "body")
 	private String body;
 
+	/**
+	 * Temporary: The image of this post
+	 */
+	@ManyToOne
+	@JoinColumn(name = "image_id")
+	private WebCmsImage image;
+
 	@Builder(toBuilder = true)
 	protected WebCmsArticle( @Builder.ObtainVia(method = "getId") Long id,
 	                         @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
@@ -132,5 +142,10 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 				"objectId='" + getObjectId() + "\'," +
 				"title='" + title + '\'' +
 				'}';
+	}
+
+	@Override
+	public Optional<String> getImageServerKey() {
+		return image != null ? Optional.ofNullable( image.getExternalId() ) : Optional.empty();
 	}
 }

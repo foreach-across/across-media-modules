@@ -30,6 +30,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.Optional;
 
 import static com.foreach.across.modules.webcms.domain.image.WebCmsImage.OBJECT_TYPE;
 
@@ -46,7 +47,7 @@ import static com.foreach.across.modules.webcms.domain.image.WebCmsImage.OBJECT_
 @NoArgsConstructor
 @Getter
 @Setter
-public class WebCmsImage extends WebCmsAsset<WebCmsImage>
+public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 {
 	/**
 	 * Object type name (discriminator value).
@@ -106,5 +107,10 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage>
 				"objectId='" + getObjectId() + "\'," +
 				"externalId='" + name + '\'' +
 				'}';
+	}
+
+	@Override
+	public Optional<String> getImageServerKey() {
+		return Optional.ofNullable( externalId );
 	}
 }

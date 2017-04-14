@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.installers;
+package com.foreach.across.modules.webcms.domain.image;
 
-import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
-import org.springframework.core.annotation.Order;
+import java.util.Optional;
 
 /**
- * @author Arne Vandamme
- * @since 0.0.1
+ * Interface for entities that are linked with an image via image server
+ *
+ * @author: Sander Van Loock
+ * @since: 0.0.1
  */
-@Order(1)
-@Installer(description = "Installs the required database tables", version = 6)
-public class WebCmsSchemaInstaller extends AcrossLiquibaseInstaller
+public interface ImageOwner
 {
-	public WebCmsSchemaInstaller() {
-		super( "installers/WebCmsModule/schema.xml" );
-	}
+	/**
+	 * This method returns the key used to retrieve the image in image server.
+	 */
+	Optional<String> getImageServerKey();
 }

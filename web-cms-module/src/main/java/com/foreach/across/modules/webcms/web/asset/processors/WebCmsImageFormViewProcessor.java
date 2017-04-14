@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.installers;
+package com.foreach.across.modules.webcms.web.asset.processors;
 
-import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
-import org.springframework.core.annotation.Order;
+import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.stereotype.Component;
 
 /**
- * @author Arne Vandamme
- * @since 0.0.1
+ * @author: Sander Van Loock
+ * @since: 0.0.1
  */
-@Order(1)
-@Installer(description = "Installs the required database tables", version = 6)
-public class WebCmsSchemaInstaller extends AcrossLiquibaseInstaller
+@Component
+public class WebCmsImageFormViewProcessor extends ImageFormViewProcessor<WebCmsImage>
 {
-	public WebCmsSchemaInstaller() {
-		super( "installers/WebCmsModule/schema.xml" );
+	public WebCmsImageFormViewProcessor( BeanFactory beanFactory ) {
+		super( beanFactory );
+	}
+
+	@Override
+	protected void processImageHolder( WebCmsImage image, String externalId ) {
+		image.setExternalId( externalId );
 	}
 }
