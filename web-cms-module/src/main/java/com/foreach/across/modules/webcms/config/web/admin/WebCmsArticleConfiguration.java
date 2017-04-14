@@ -58,14 +58,7 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 		entities.withType( WebCmsArticle.class )
 		        .properties( props -> props
 				        .property( "objectId" ).hidden( true ).and()
-				        .property( "body" ).and()
-				        .property( "image" )
-				        .displayName( "Image" )
-				        .order( 1 )
-				        .viewElementBuilder(
-						        ViewElementMode.CONTROL,
-						        thumbnailViewElementBuilder
-				        )
+				        .property( "body" )
 				        .<HtmlViewElement>viewElementPostProcessor(
 						        ViewElementMode.CONTROL,
 						        ( builderContext, element ) -> {
@@ -79,7 +72,14 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 							                             WebResource.VIEWS );
 							        registry.addWithKey( WebResource.CSS, "wcm-styles", "/static/WebCmsModule/css/wcm-styles.css", WebResource.VIEWS );
 
-						        } )
+						        } ).and()
+				                   .property( "image" )
+				                   .displayName( "Image" )
+				                   .order( 1 )
+				                   .viewElementBuilder(
+						                   ViewElementMode.CONTROL,
+						                   thumbnailViewElementBuilder
+				                   )
 		        )
 		        .listView(
 				        lvb -> lvb.showProperties( "publication", "title", "publicationDate", "lastModified" )

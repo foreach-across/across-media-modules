@@ -76,10 +76,7 @@ public abstract class ImageFormViewProcessor<T extends ImageOwner> extends Entit
 			ImageHolder imageHolder = command.getExtension( "image", ImageHolder.class );
 			T imageOwner = (T) command.getEntity();
 
-			if ( imageHolder.getImageData().isEmpty() ) {
-				bindingResult.reject( "noImage", "Please select a valid image." );
-			}
-			else {
+			if ( !imageHolder.getImageData().isEmpty() ) {
 				String externalId = UUID.randomUUID().toString();
 
 				ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
