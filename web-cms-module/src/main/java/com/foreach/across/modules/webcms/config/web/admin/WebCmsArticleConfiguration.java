@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.webcms.config.web.admin;
 
+import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
@@ -44,6 +46,7 @@ import org.springframework.data.domain.Sort;
  * @since 0.0.1
  */
 @Configuration
+@AcrossDepends(required = BootstrapUiModule.NAME)
 @RequiredArgsConstructor
 public class WebCmsArticleConfiguration implements EntityConfigurer
 {
