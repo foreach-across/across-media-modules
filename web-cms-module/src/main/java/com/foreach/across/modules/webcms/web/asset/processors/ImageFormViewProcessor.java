@@ -68,8 +68,7 @@ public abstract class ImageFormViewProcessor<T extends ImageOwner> extends Entit
 	}
 
 	@Override
-	public void preProcess( EntityViewRequest entityViewRequest, EntityView entityView ) {
-		EntityViewCommand command = entityViewRequest.getCommand();
+	protected void preProcess( EntityViewRequest entityViewRequest, EntityView entityView, EntityViewCommand command ) {
 		BindingResult bindingResult = entityViewRequest.getBindingResult();
 		if ( entityViewRequest.getHttpMethod().equals( HttpMethod.POST ) && bindingResult != null && !bindingResult.hasErrors() ) {
 
