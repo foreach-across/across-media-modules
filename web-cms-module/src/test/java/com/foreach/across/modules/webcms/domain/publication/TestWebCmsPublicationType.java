@@ -55,6 +55,7 @@ public class TestWebCmsPublicationType
 		assertNull( publicationType.getCreatedDate() );
 		assertNull( publicationType.getLastModifiedBy() );
 		assertNull( publicationType.getLastModifiedDate() );
+		assertTrue( publicationType.getAttributes().isEmpty() );
 	}
 
 	@Test
@@ -69,6 +70,7 @@ public class TestWebCmsPublicationType
 		                                                             .createdBy( "john" )
 		                                                             .createdDate( timestamp )
 		                                                             .lastModifiedBy( "josh" )
+		                                                             .attribute( "profile", "test" )
 		                                                             .build();
 
 		assertNull( publicationType.getId() );
@@ -79,6 +81,7 @@ public class TestWebCmsPublicationType
 		assertEquals( "john", publicationType.getCreatedBy() );
 		assertEquals( timestamp, publicationType.getCreatedDate() );
 		assertEquals( "josh", publicationType.getLastModifiedBy() );
+		assertEquals( "test", publicationType.getAttributes().get( "profile" ) );
 		assertNull( publicationType.getLastModifiedDate() );
 
 		WebCmsPublicationType other = publicationType.toBuilder()
@@ -95,6 +98,7 @@ public class TestWebCmsPublicationType
 		assertEquals( "john", other.getCreatedBy() );
 		assertEquals( timestamp, other.getCreatedDate() );
 		assertEquals( "josh", other.getLastModifiedBy() );
+		assertEquals( "test", publicationType.getAttributes().get( "profile" ) );
 		assertEquals( timestamp, other.getLastModifiedDate() );
 	}
 }

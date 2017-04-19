@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
@@ -74,7 +75,6 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	 * There is no actual referential integrity here, custom asset implementations must make sure they perform the required cleanup.
 	 */
 	@Column(name = "owner_object_id")
-	@NotNull
 	@Length(max = 100)
 	private String ownerObjectId;
 
@@ -82,8 +82,23 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	 * Optional descriptive title of the component.
 	 */
 	@Column(name = "title")
+	@NotBlank(groups = SharedComponentValidation.class)
 	@Length(max = 255)
 	private String title;
+
+	/**
+	 * Name of the component - if set must be unique within the owner.
+	 */
+	@Column(name = "name")
+	@NotBlank(groups = SharedComponentValidation.class)
+	@Length(max = 100)
+	private String name;
+
+	/**
+	 * Sort index of the component within the owner.
+	 */
+	@Column(name = "sort_index")
+	private int sortIndex;
 
 	/**
 	 * Raw body of the component. How the body can be managed is determined by the component type.
@@ -109,17 +124,41 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	                        @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                        @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                        @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
-	                        String ownerObjectId, String title, String body, String metadata ) {
+	                        String ownerObjectId, String name, int sortIndex, String title, String body, String metadata ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 
 		this.ownerObjectId = ownerObjectId;
+		this.name = name;
+		this.sortIndex = sortIndex;
 		this.title = title;
 		this.body = body;
 		this.metadata = metadata;
 	}
 
+	/**
+	 * @return true if this component has an owner id set
+	 */
+	public boolean hasOwner() {
+		return getOwnerObjectId() != null;
+	}
+
 	@Override
 	protected String getObjectCollectionId() {
 		return COLLECTION_ID;
+	}
+
+	@Override
+	public String toString() {
+		return "WebCmsComponent{" +
+				"objectId='" + getObjectId() + "'," +
+				"componentType=" + componentType +
+				'}';
+	}
+
+	/**
+	 * Marker interface for validation related to creating a globally shared component without a specific owner.
+	 */
+	public interface SharedComponentValidation
+	{
 	}
 }

@@ -20,13 +20,18 @@ import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SortNatural;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass.DISCRIMINATOR_COLUMN;
 
@@ -76,20 +81,35 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	@Length(max = 255)
 	private String typeKey;
 
+	/**
+	 * Attributes of the type specifier, simple key values usually used for rendering.
+	 */
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@CollectionTable(name = "wcm_type_attributes", joinColumns = @JoinColumn(name = "type_id"))
+	@MapKeyColumn(name = "attribute_key")
+	@Column(name = "attribute_value")
+	@SortNatural
+	private SortedMap<String, String> attributes = new TreeMap<>();
+
 	public WebCmsTypeSpecifier() {
 		super();
 	}
 
 	protected WebCmsTypeSpecifier( Long id,
-	                            Long newEntityId,
-	                            String objectId,
-	                            String createdBy,
-	                            Date createdDate,
-	                            String lastModifiedBy,
-	                            Date lastModifiedDate, String name, String typeKey ) {
+	                               Long newEntityId,
+	                               String objectId,
+	                               String createdBy,
+	                               Date createdDate,
+	                               String lastModifiedBy,
+	                               Date lastModifiedDate,
+	                               String name,
+	                               String typeKey,
+	                               Map<String, String> attributes ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 		this.name = name;
 		this.typeKey = typeKey;
+		this.attributes = new TreeMap<>( attributes );
 	}
 
 	@Override

@@ -173,3 +173,10 @@ you can use yaml to create pages
 
 disable default data:
 webCmsModule.default-data.assets.enabled = false
+
+
+== Web components
+
+Creating shared web components
+Name must be globally unique and is required
+Title is also required - must not be unique however (?)

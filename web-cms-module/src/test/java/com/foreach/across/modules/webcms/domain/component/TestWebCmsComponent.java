@@ -38,6 +38,8 @@ public class TestWebCmsComponent
 	}
 
 	private void verifyDefaultValues( WebCmsComponent component ) {
+		assertNull( component.getName() );
+		assertEquals( 0, component.getSortIndex() );
 		assertNull( component.getTitle() );
 		assertNull( component.getOwnerObjectId() );
 		assertNull( component.getBody() );
@@ -61,6 +63,8 @@ public class TestWebCmsComponent
 		WebCmsComponent component = WebCmsComponent.builder()
 		                                           .newEntityId( 123L )
 		                                           .objectId( "my-asset" )
+		                                           .name( "component-name" )
+		                                           .sortIndex( 5 )
 		                                           .title( "component-title" )
 		                                           .body( "component-body" )
 		                                           .metadata( "component-metadata" )
@@ -73,6 +77,8 @@ public class TestWebCmsComponent
 		assertNull( component.getId() );
 		assertEquals( Long.valueOf( 123L ), component.getNewEntityId() );
 		assertEquals( "wcm:component:my-asset", component.getObjectId() );
+		assertEquals( "component-name", component.getName() );
+		assertEquals( 5, component.getSortIndex() );
 		assertEquals( "component-title", component.getTitle() );
 		assertEquals( "component-body", component.getBody() );
 		assertEquals( "component-metadata", component.getMetadata() );
@@ -91,6 +97,8 @@ public class TestWebCmsComponent
 		assertNull( other.getNewEntityId() );
 		assertEquals( Long.valueOf( 333L ), other.getId() );
 		assertEquals( "wcm:component:my-asset", other.getObjectId() );
+		assertEquals( "component-name", component.getName() );
+		assertEquals( 5, component.getSortIndex() );
 		assertEquals( "component-title", other.getTitle() );
 		assertEquals( "component-body", other.getBody() );
 		assertEquals( "component-metadata", other.getMetadata() );

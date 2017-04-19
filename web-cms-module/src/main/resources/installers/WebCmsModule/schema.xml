@@ -33,14 +33,17 @@
 	<property name="table.remote_endpoint" value="wcm_remote_endpoint"/>
 	<property name="table.asset" value="wcm_asset"/>
 	<property name="table.type" value="wcm_type"/>
+	<property name="table.type_attributes" value="wcm_type_attributes"/>
 	<property name="table.publication" value="wcm_publication"/>
 	<property name="table.publication_type" value="wcm_publication_type"/>
 	<property name="table.article" value="wcm_article"/>
 	<property name="table.article_type" value="wcm_article_type"/>
 	<property name="table.component" value="wcm_component"/>
 	<property name="table.component_type" value="wcm_component_type"/>
-	<property name="table.asset_component_link" value="wcm_asset_component_link"/>
 	<property name="table.image" value="wcm_image"/>
+
+	<!-- Obsolete table names - these are both created/modified and removed in the changeset -->
+	<property name="table.asset_component_link" value="wcm_asset_component_link"/>
 
 	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
 		<sql>
@@ -121,6 +124,27 @@
 			<column name="object_type"/>
 			<column name="type_key"/>
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="201704201458" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.type_attributes}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates type attributes table</comment>
+
+		<createTable tableName="${table.type_attributes}">
+			<column name="type_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_type_attr"
+				             referencedTableName="${table.type}" referencedColumnNames="id" foreignKeyName="fk_wcm_type_attr_type"/>
+			</column>
+			<column name="attribute_key" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_type_attr"/>
+			</column>
+			<column name="attribute_value" type="java.sql.Types.NVARCHAR(255)"/>
+		</createTable>
 	</changeSet>
 
 	<changeSet id="201701081200" author="arne">
@@ -616,6 +640,44 @@
 
 		<createIndex tableName="${table.asset_component_link}" indexName="ix_wcm_ascmp_asid">
 			<column name="asset_id"/>
+			<column name="sort_index"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201704200937" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="${table.asset_component_link}"/>
+		</preConditions>
+		<comment>Drop asset component link table</comment>
+		<dropTable tableName="${table.asset_component_link}"/>
+	</changeSet>
+
+	<changeSet id="201704200938" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.component}" columnName="name"/>
+			</not>
+		</preConditions>
+
+		<comment>Modify component table for core attributes</comment>
+
+		<addColumn tableName="${table.component}">
+			<column name="name" type="java.sql.Types.VARCHAR(100)"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+
+		<dropForeignKeyConstraint baseTableName="${table.component}" constraintName="fk_wcm_comp_asset"/>
+		<dropNotNullConstraint tableName="${table.component}" columnName="owner_object_id" columnDataType="java.sql.Types.VARCHAR(100)"/>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_comp_name">
+			<column name="owner_object_id"/>
+			<column name="name"/>
+		</createIndex>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_comp_sort">
+			<column name="owner_object_id"/>
 			<column name="sort_index"/>
 		</createIndex>
 	</changeSet>

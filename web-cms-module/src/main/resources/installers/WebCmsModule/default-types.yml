@@ -4,9 +4,27 @@ types:
     text-field:
       name: Text field
       description: A single line of plain text.
+      attributes:
+        type: plain-text
+        multiLine: false
+    plain-text:
+      name: Plain text
+      description: Plain text component.
+      attributes:
+        type: plain-text
+        rows: 1
     rich-text:
       name: Rich text
       description: Rich text component - supporting HTML markup and default assets if enabled by other modules.
+      attributes:
+        type: rich-text
+        profile: rich-text
+    html:
+      name: HTML
+      description: A snippet of HTML.
+      attributes:
+        type: html
+
   # Default article types: blog and news
   article:
     blog:
