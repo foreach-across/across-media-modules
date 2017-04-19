@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.cke_editable_inline {
-    padding: 5px 10px;
-    border: solid 1px rgb(233, 233, 233);
-    /*-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;*/
-}
+EntityModule.registerInitializer( function ( node ) {
+    $( '[data-wcm-markup-type=rich-text]', node ).each( function () {
+        CKEDITOR.disableAutoInline = true;
+        // { extraPlugins: 'autogrow', autoGrow_minHeight : 300, autoGrow_onStartup: true }
+        CKEDITOR.inline( $( this ).attr( 'id' ), {} );
+    } );
 
-table tr.info td[data-tbl-field=publicationDate] {
-    font-weight: bold;
-}
-
-table tr.publication-offline td[data-tbl-field=publication] {
-    font-weight: bold;
-    text-decoration: line-through;
-}
-
+    $( '[data-wcm-markup-type=markup]', node ).each( function () {
+        CodeMirror.fromTextArea( $( this )[0], {lineNumbers: true, mode: 'htmlmixed'} );
+    } );
+} );

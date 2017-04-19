@@ -17,15 +17,22 @@
 package com.foreach.across.modules.webcms.domain.component.text;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.WebComponentModel;
-import lombok.Data;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.stream.Stream;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Data
-public class TextWebComponentModel implements WebComponentModel
+@Getter
+@Setter
+@NoArgsConstructor
+public class TextWebComponentModel extends WebComponentModel
 {
 	/**
 	 * Attributes supported on a {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponentType}.
@@ -55,11 +62,35 @@ public class TextWebComponentModel implements WebComponentModel
 		String ROWS = "rows";
 	}
 
-	public enum TextType
+	/**
+	 * Basic supported text component types.
+	 */
+	public enum MarkupType
 	{
-		PLAIN_TEXT,
-		RICH_TEXT,
-		HTML
+		PLAIN_TEXT( "plain-text" ),
+		RICH_TEXT( "rich-text" ),
+		MARKUP( "markup" );
+
+		private final String attributeValue;
+
+		MarkupType( String attributeValue ) {
+			this.attributeValue = attributeValue;
+		}
+
+		public String asAttributeValue() {
+			return attributeValue;
+		}
+
+		public static MarkupType forComponent( WebCmsComponent component ) {
+			return fromAttributeValue( component.getComponentType().getAttribute( Attributes.TYPE ) );
+		}
+
+		public static MarkupType fromAttributeValue( String attributeValue ) {
+			return Stream.of( values() )
+			             .filter( v -> StringUtils.equals( v.attributeValue, attributeValue ) )
+			             .findFirst()
+			             .orElse( null );
+		}
 	}
 
 	private String content;
@@ -68,9 +99,9 @@ public class TextWebComponentModel implements WebComponentModel
 
 	private boolean multiLine;
 
-	private TextType textType;
+	private MarkupType markupType;
 
-	public void writeToComponent( WebCmsComponent component ) {
-		component.setBody( content );
+	public TextWebComponentModel( WebCmsComponent component ) {
+		super( component );
 	}
 }

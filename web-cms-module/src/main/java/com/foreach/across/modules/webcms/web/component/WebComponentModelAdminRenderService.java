@@ -18,7 +18,8 @@ package com.foreach.across.modules.webcms.web.component;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.webcms.domain.component.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.UnknownWebComponentModelException;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,12 +36,12 @@ public class WebComponentModelAdminRenderService
 	private Collection<WebComponentModelAdminRenderer> renderers = Collections.emptyList();
 
 	@SuppressWarnings("unchecked")
-	public ViewElementBuilder createContentViewElementBuilder( WebComponentModel componentModel ) {
+	public ViewElementBuilder createContentViewElementBuilder( WebComponentModel componentModel, String controlNamePrefix ) {
 		return renderers.stream()
 		                .filter( r -> r.supports( componentModel ) )
 		                .findFirst()
-		                .orElseThrow( () -> new IllegalArgumentException( "Unknown component model" ) )
-		                .createContentViewElementBuilder( componentModel );
+		                .orElseThrow( () -> new UnknownWebComponentModelException( componentModel ) )
+		                .createContentViewElementBuilder( componentModel, controlNamePrefix );
 	}
 
 	@Autowired

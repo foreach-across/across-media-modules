@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.web.component;
+package com.foreach.across.modules.webcms.domain.component.text;
 
-import com.foreach.across.modules.web.ui.ViewElementBuilder;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelWriter;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public interface WebComponentModelAdminRenderer<T extends WebComponentModel>
+@Component
+public class TextWebComponentModelWriter implements WebComponentModelWriter<TextWebComponentModel>
 {
-	boolean supports( WebComponentModel componentModel );
+	@Override
+	public boolean supports( WebComponentModel componentModel ) {
+		return TextWebComponentModel.class.isInstance( componentModel );
+	}
 
-	ViewElementBuilder createContentViewElementBuilder( T componentModel, String controlNamePrefix );
+	@Override
+	public void writeToComponent( TextWebComponentModel componentModel, WebCmsComponent component ) {
+		component.setBody( componentModel.getContent() );
+	}
 }

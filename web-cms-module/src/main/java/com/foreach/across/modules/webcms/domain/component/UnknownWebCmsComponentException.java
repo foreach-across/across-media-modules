@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.asset.component;
-
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+package com.foreach.across.modules.webcms.domain.component;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Exposed
-public interface WebCmsAssetComponentLinkRepository extends IdBasedEntityJpaRepository<WebCmsAssetComponentLink>, QueryDslPredicateExecutor<WebCmsAssetComponentLink>
+public final class UnknownWebCmsComponentException extends RuntimeException
 {
+	public UnknownWebCmsComponentException( WebCmsComponent component ) {
+		super( "Unknown WebCmsComponent " + component );
+	}
 }

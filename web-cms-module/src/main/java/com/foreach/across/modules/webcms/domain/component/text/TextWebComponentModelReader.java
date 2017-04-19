@@ -17,7 +17,9 @@
 package com.foreach.across.modules.webcms.domain.component.text;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.WebComponentModelFactory;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelReader;
+import com.foreach.across.modules.webcms.domain.component.text.TextWebComponentModel.Attributes;
+import lombok.val;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,20 +27,22 @@ import org.springframework.stereotype.Component;
  * @since 0.0.1
  */
 @Component
-public class PlainTextComponentModelFactory implements WebComponentModelFactory<TextWebComponentModel>
+public class TextWebComponentModelReader implements WebComponentModelReader<TextWebComponentModel>
 {
 	@Override
 	public boolean supports( WebCmsComponent component ) {
-		return "text-field".equals( component.getComponentType().getTypeKey() );
+		return TextWebComponentModel.MarkupType.forComponent( component ) != null;
 	}
 
 	@Override
-	public TextWebComponentModel createWebComponentModel( WebCmsComponent component ) {
-		TextWebComponentModel model = new TextWebComponentModel();
+	public TextWebComponentModel readFromComponent( WebCmsComponent component ) {
+		val attributes = component.getComponentType().getAttributes();
+
+		TextWebComponentModel model = new TextWebComponentModel( component );
 		model.setContent( component.getBody() );
-		model.setTextType( TextWebComponentModel.TextType.PLAIN_TEXT );
-		model.setMultiLine( true );
-		model.setProfile( component.getComponentType().getTypeKey() );
+		model.setMarkupType( TextWebComponentModel.MarkupType.forComponent( component ) );
+		model.setMultiLine( !"false".equalsIgnoreCase( attributes.get( Attributes.MULTI_LINE ) ) );
+		model.setProfile( attributes.get( Attributes.PROFILE ) );
 
 		return model;
 	}

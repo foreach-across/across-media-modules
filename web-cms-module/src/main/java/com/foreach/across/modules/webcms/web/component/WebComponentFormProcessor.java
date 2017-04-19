@@ -30,9 +30,8 @@ import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.component.text.PlainTextComponentModelFactory;
-import com.foreach.across.modules.webcms.domain.component.text.TextWebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -50,19 +49,24 @@ import org.springframework.web.bind.WebDataBinder;
 @RequiredArgsConstructor
 public class WebComponentFormProcessor extends EntityViewProcessorAdapter
 {
-	private final PlainTextComponentModelFactory componentModelFactory;
+	private final static String EXTENSION_NAME = "componentModel";
+
+	private final WebComponentModelService componentModelService;
 	private final WebComponentModelAdminRenderService componentModelAdminRenderService;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
-		WebComponentModel componentModel = componentModelFactory.createWebComponentModel( command.getEntity( WebCmsComponent.class ) );
-		command.addExtension( "componentModel", componentModel );
+		WebComponentModel componentModel = componentModelService.readFromComponent( command.getEntity( WebCmsComponent.class ) );
+		command.addExtension( EXTENSION_NAME, componentModel );
 	}
 
 	@Override
 	protected void validateCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, Errors errors, HttpMethod httpMethod ) {
-		if ( !errors.hasErrors() ) {
-			command.getExtension( "componentModel", TextWebComponentModel.class ).writeToComponent( command.getEntity( WebCmsComponent.class ) );
+		if ( !errors.hasErrors() && httpMethod.equals( HttpMethod.POST ) ) {
+			componentModelService.writeToComponent(
+					command.getExtension( EXTENSION_NAME, WebComponentModel.class ),
+					command.getEntity( WebCmsComponent.class )
+			);
 		}
 	}
 
@@ -72,10 +76,10 @@ public class WebComponentFormProcessor extends EntityViewProcessorAdapter
 	                       ContainerViewElementBuilderSupport<?, ?> containerBuilder,
 	                       ViewElementBuilderMap builderMap,
 	                       ViewElementBuilderContext builderContext ) {
-		WebComponentModel componentModel = entityViewRequest.getCommand().getExtension( "componentModel", WebComponentModel.class );
+		WebComponentModel componentModel = entityViewRequest.getCommand().getExtension( EXTENSION_NAME, WebComponentModel.class );
 
 		builderMap.get( SingleEntityFormViewProcessor.LEFT_COLUMN, ColumnViewElementBuilder.class )
-		          .add( componentModelAdminRenderService.createContentViewElementBuilder( componentModel ) );
+		          .add( componentModelAdminRenderService.createContentViewElementBuilder( componentModel, "extensions[" + EXTENSION_NAME + "]" ) );
 	}
 
 	@Override

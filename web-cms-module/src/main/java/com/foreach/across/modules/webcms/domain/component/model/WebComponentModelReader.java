@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.cke_editable_inline {
-    padding: 5px 10px;
-    border: solid 1px rgb(233, 233, 233);
-    /*-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;*/
-}
 
-table tr.info td[data-tbl-field=publicationDate] {
-    font-weight: bold;
-}
+package com.foreach.across.modules.webcms.domain.component.model;
 
-table tr.publication-offline td[data-tbl-field=publication] {
-    font-weight: bold;
-    text-decoration: line-through;
-}
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 
+/**
+ * @author Arne Vandamme
+ * @since 0.0.1
+ */
+public interface WebComponentModelReader<T extends WebComponentModel>
+{
+	boolean supports( WebCmsComponent component );
+
+	T readFromComponent( WebCmsComponent component );
+}

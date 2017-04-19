@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.component;
+package com.foreach.across.modules.webcms.domain.image;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public interface WebComponentModelFactory<T extends WebComponentModel>
+public class WebCmsImageComponent
 {
-	boolean supports( WebCmsComponent component );
+	private WebCmsComponent rawComponent;
 
-	T createWebComponentModel( WebCmsComponent component );
+
+	private WebCmsImage image;
 }

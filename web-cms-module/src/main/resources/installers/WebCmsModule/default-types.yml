@@ -23,7 +23,7 @@ types:
       name: HTML
       description: A snippet of HTML.
       attributes:
-        type: html
+        type: markup
 
   # Default article types: blog and news
   article:

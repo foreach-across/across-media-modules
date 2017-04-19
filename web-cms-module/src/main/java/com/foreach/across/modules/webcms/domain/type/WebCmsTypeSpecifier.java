@@ -112,6 +112,27 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 		this.attributes = new TreeMap<>( attributes );
 	}
 
+	/**
+	 * @return attribute value or null if not present (or value is null)
+	 */
+	public final String getAttribute( String attributeKey ) {
+		return getAttributes().get( attributeKey );
+	}
+
+	/**
+	 * @return attribute value, null if present and null value, defaultValue if not present
+	 */
+	public final String getAttribute( String attributeKey, String defaultValue ) {
+		return getAttributes().getOrDefault( attributeKey, defaultValue );
+	}
+
+	/**
+	 * @return true if the attribute key is present (value can be null)
+	 */
+	public final boolean hasAttribute( String attributeKey ) {
+		return getAttributes().containsKey( attributeKey );
+	}
+
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "{" +
