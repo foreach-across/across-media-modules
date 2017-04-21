@@ -42,7 +42,7 @@ public class TextWebComponentModel extends WebComponentModel
 		/**
 		 * Type of component: plain-text, rich-text or html are supported
 		 */
-		String TYPE = "type";
+		String TYPE = TYPE_ATTRIBUTE;
 
 		/**
 		 * If set to false, the component will behave as a single line of text.

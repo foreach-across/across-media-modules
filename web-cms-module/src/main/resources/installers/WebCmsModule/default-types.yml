@@ -24,6 +24,18 @@ types:
       description: A snippet of HTML.
       attributes:
         type: markup
+    image:
+      name: Image
+      description: Image asset or external image link.
+      attributes:
+        type: image
+    custom-text:
+      name: Custom
+      description: blabla
+      attributes:
+        type: plain-text
+        rows: 5
+        profile: custom-profile
 
   # Default article types: blog and news
   article:

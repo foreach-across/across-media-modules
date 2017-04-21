@@ -4,10 +4,12 @@
 </head>
 <body th:fragment="content">
 
-<div th:each="image : ${items.content}" style="float: left; display: block; margin-right: 10px;">
-    <a th:href="${entityViewContext.linkBuilder.update(image)}">
-        <img th:src="@{${@localImageServerClient.imageUrl(image.externalId,'default',300,0)}}" border="1"/>
-    </a>
+<div class="image-thumbnail-list">
+    <div th:each="image : ${items.content}" class="image-thumbnail-container">
+        <a th:href="${entityViewContext.linkBuilder.update(image)}" th:data-wcm-image-id="${image.objectId}">
+            <img th:src="@{${imageUrl.apply(image.externalId)}}" border="1"/>
+        </a>
+    </div>
 </div>
 
 </body>

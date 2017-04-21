@@ -30,3 +30,61 @@ table tr.publication-offline td[data-tbl-field=publication] {
     text-decoration: line-through;
 }
 
+.modal {
+    z-index: 9999;
+}
+
+.modal .pcs {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.image-selector .modal-footer {
+    border-top: none;
+    padding: 0 15px 15px 15px;
+    text-align: left;
+}
+
+.pcs.webCmsImage .pcs-nav {
+    font-size: 90%;
+    margin-bottom: 10px;
+}
+
+.image-thumbnail-container {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    height: 164px;
+    width: 196px;
+    padding: 4px;
+
+    /* Internet Explorer 10 */
+    display: -ms-flexbox;
+    -ms-flex-pack: center;
+    -ms-flex-align: center;
+
+    /* Firefox */
+    display: -moz-box;
+    -moz-box-pack: center;
+    -moz-box-align: center;
+
+    /* Safari, Opera, and Chrome */
+    display: -webkit-box;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+
+    /* W3C */
+    display: box;
+    box-pack: center;
+    box-align: center;
+}
+
+.image-thumbnail-container.selected {
+    background-color: #279cd3;
+}
+
+.image-thumbnail-container img {
+    border: solid 1px black;
+    max-width: 188px;
+}

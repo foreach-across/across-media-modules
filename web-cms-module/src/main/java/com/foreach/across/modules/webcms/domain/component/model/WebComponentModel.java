@@ -35,6 +35,11 @@ import java.util.Objects;
 public abstract class WebComponentModel
 {
 	/**
+	 * Common attribute used to specify the base type of the component type.
+	 */
+	public static final String TYPE_ATTRIBUTE = "type";
+
+	/**
 	 * Original component this model represents.
 	 */
 	private WebCmsComponent component;

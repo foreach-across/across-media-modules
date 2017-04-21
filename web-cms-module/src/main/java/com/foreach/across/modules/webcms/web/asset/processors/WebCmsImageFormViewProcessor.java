@@ -16,9 +16,22 @@
 
 package com.foreach.across.modules.webcms.web.asset.processors;
 
+import com.foreach.across.modules.adminweb.ui.PageContentStructure;
+import com.foreach.across.modules.bootstrapui.components.BootstrapUiComponentFactory;
+import com.foreach.across.modules.entity.views.EntityView;
+import com.foreach.across.modules.entity.views.request.EntityViewRequest;
+import com.foreach.across.modules.entity.web.EntityLinkBuilder;
+import com.foreach.across.modules.web.menu.Menu;
+import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
+import com.foreach.across.modules.web.menu.RequestMenuSelector;
+import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author: Sander Van Loock
@@ -27,8 +40,38 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebCmsImageFormViewProcessor extends ImageFormViewProcessor<WebCmsImage>
 {
+	@Autowired
+	private BootstrapUiComponentFactory bootstrapUiComponentFactory;
+
 	public WebCmsImageFormViewProcessor( BeanFactory beanFactory ) {
 		super( beanFactory );
+	}
+
+	@Override
+	protected void postRender( EntityViewRequest entityViewRequest,
+	                           EntityView entityView,
+	                           ContainerViewElement container,
+	                           ViewElementBuilderContext builderContext ) {
+		PageContentStructure page = entityViewRequest.getPageContentStructure();
+		page.getNav().clearChildren();
+		page.setRenderAsTabs( false );
+
+		EntityLinkBuilder linkBuilder = entityViewRequest.getEntityViewContext().getLinkBuilder();
+
+		if ( !entityViewRequest.getEntityViewContext().holdsEntity() ) {
+			page.getHeader().clearChildren();
+
+			Menu menu = new PathBasedMenuBuilder()
+					.item( "/details", "Search images", linkBuilder.overview() ).order( 1 ).and()
+					.item( "/associations", "Upload new image", linkBuilder.create() ).order( 2 ).and()
+					.build();
+			menu.sort();
+			menu.select( new RequestMenuSelector( entityViewRequest.getWebRequest().getNativeRequest( HttpServletRequest.class ) ) );
+
+				page.addToNav( bootstrapUiComponentFactory.nav( menu ).pills().build() );
+		}
+
+		super.postRender( entityViewRequest, entityView, container, builderContext );
 	}
 
 	@Override

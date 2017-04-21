@@ -16,13 +16,20 @@
 
 package com.foreach.across.modules.webcms.web.asset.processors;
 
+import com.foreach.across.modules.adminweb.ui.PageContentStructure;
 import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
+import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
+import com.foreach.across.modules.entity.web.EntityLinkBuilder;
+import com.foreach.across.modules.web.menu.Menu;
+import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
+import com.foreach.across.modules.web.menu.RequestMenuSelector;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.image.ImageOwner;
 import com.foreach.imageserver.client.ImageServerClient;
@@ -34,6 +41,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
