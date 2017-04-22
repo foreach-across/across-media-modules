@@ -42,6 +42,14 @@ public class ImageWebComponentModel extends WebComponentModel
 		super( component );
 	}
 
+	public String getImageServerKey() {
+		if ( imageServerKey != null ) {
+			return imageServerKey;
+		}
+
+		return image != null ? image.getExternalId() : null;
+	}
+
 	public boolean hasImageServerKey() {
 		return imageServerKey != null || image != null;
 	}

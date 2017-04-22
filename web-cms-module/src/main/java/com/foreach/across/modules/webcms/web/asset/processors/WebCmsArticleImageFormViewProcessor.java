@@ -41,6 +41,7 @@ public class WebCmsArticleImageFormViewProcessor extends ImageFormViewProcessor<
 		WebCmsImage image = WebCmsImage.builder()
 		                               .name( article.getTitle() + "-" + externalId )
 		                               .externalId( externalId )
+		                               .published( true )
 		                               .build();
 		imageRepository.save( image );
 		article.setImage( image );

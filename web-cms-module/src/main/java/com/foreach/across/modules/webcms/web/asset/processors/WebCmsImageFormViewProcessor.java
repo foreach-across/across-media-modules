@@ -77,5 +77,6 @@ public class WebCmsImageFormViewProcessor extends ImageFormViewProcessor<WebCmsI
 	@Override
 	protected void processImageHolder( WebCmsImage image, String externalId ) {
 		image.setExternalId( externalId );
+		image.setPublished( true );
 	}
 }

@@ -49,6 +49,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,6 +96,7 @@ public class WebCmsImageConfiguration implements EntityConfigurer
 		        )
 		        .listView( lvb -> lvb.viewProcessor( listViewProcessor )
 		                             .entityQueryFilter( true )
+		                             .defaultSort( new Sort( Sort.Direction.DESC, "publicationDate" ) )
 		                             .postProcess( ListFormViewProcessor.class, listFormViewProcessor -> listFormViewProcessor.setAddDefaultButtons( false ) ) )
 
 		;

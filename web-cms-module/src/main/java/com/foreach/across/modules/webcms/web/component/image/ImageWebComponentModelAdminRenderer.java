@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.web.component.image;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
@@ -27,7 +28,12 @@ import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
 import com.foreach.across.modules.webcms.domain.image.component.ImageWebComponentModel;
 import com.foreach.across.modules.webcms.web.component.WebComponentModelAdminRenderer;
+import com.foreach.imageserver.client.ImageServerClient;
+import com.foreach.imageserver.dto.DimensionsDto;
+import com.foreach.imageserver.dto.ImageTypeDto;
+import com.foreach.imageserver.dto.ImageVariantDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,6 +45,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ImageWebComponentModelAdminRenderer implements WebComponentModelAdminRenderer<ImageWebComponentModel>
 {
+	private final BeanFactory beanFactory;
 	private final BootstrapUiFactory bootstrapUiFactory;
 
 	@Override
@@ -48,6 +55,16 @@ public class ImageWebComponentModelAdminRenderer implements WebComponentModelAdm
 
 	@Override
 	public ViewElementBuilder createContentViewElementBuilder( ImageWebComponentModel componentModel, String controlNamePrefix ) {
+		ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
+
+		ImageVariantDto variant = new ImageVariantDto();
+		variant.setBoundaries( new DimensionsDto( 188, 154 ) );
+		variant.setImageType( ImageTypeDto.PNG );
+
+		String thumbnailUrl = componentModel.hasImageServerKey()
+				? imageServerClient.imageUrl( componentModel.getImageServerKey(), "default", 0, 0, variant )
+				: null;
+
 		return bootstrapUiFactory
 				.formGroup()
 				.label( bootstrapUiFactory.label( componentModel.getTitle() ).attribute( "title", componentModel.getName() ) )
@@ -60,11 +77,40 @@ public class ImageWebComponentModelAdminRenderer implements WebComponentModelAdm
 								.add(
 										bootstrapUiFactory.hidden()
 										                  .controlName( controlNamePrefix + ".image" )
+										                  .attribute( "data-wcm-component-property", "image" )
 										                  .value( componentModel.hasImage() ? componentModel.getImage().getObjectId() : null )
+								)
+								.add(
+										bootstrapUiFactory.div()
+										                  .css( "image-thumbnail-container", thumbnailUrl != null ? "" : "hidden" )
+										                  .add(
+												                  bootstrapUiFactory.node( "img" )
+												                                    .attribute( "src", thumbnailUrl )
+												                                    .attribute( "border", "1" )
+										                  )
+								)
+								.add(
+										bootstrapUiFactory.div()
+										                  .css( "image-thumbnail-actions", thumbnailUrl != null ? "" : "hidden" )
+										                  .add(
+												                  bootstrapUiFactory.button()
+												                                    .link()
+												                                    .attribute( "data-wcm-image-action", "edit" )
+												                                    .iconOnly( new GlyphIcon( GlyphIcon.EDIT ) )
+												                                    .text( "Change image" )
+										                  )
+										                  .add(
+												                  bootstrapUiFactory.button()
+												                                    .link()
+												                                    .attribute( "data-wcm-image-action", "delete" )
+												                                    .iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) )
+												                                    .text( "Remove image" )
+										                  )
 								)
 								.add(
 										bootstrapUiFactory.button()
 										                  .name( "btn-select-image" )
+										                  .css( thumbnailUrl != null ? "hidden" : "" )
 										                  .style( Style.PRIMARY )
 										                  .text( "Select image" )
 								)

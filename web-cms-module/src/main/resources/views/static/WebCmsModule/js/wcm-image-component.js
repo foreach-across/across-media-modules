@@ -13,11 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var adminPrefix = '/cms';
 
 EntityModule.registerInitializer( function ( node ) {
     $( '[data-wcm-component-base-type=image]', node ).each( function () {
         var container = $( this );
-        $( 'button[name=btn-select-image]', container ).on( 'click', function () {
+
+        var selectImage = function ( imageId ) {
+            $.get( adminPrefix + '/utils/buildImageUrl', {width: 188, height: 154, 'imageId': imageId} )
+                    .done( function ( url ) {
+                        container.find( '[data-wcm-component-property=image]' ).val( imageId );
+                        container.find( 'img' ).attr( 'src', url );
+                        container.find( '.image-thumbnail-container' ).removeClass( 'hidden' );
+                        container.find( '.image-thumbnail-actions' ).removeClass( 'hidden' );
+                        container.find( 'button[name=btn-select-image]' ).addClass( 'hidden' );
+                    } );
+        };
+
+        $( 'a[data-wcm-image-action=delete]' ).on( 'click', function () {
+            container.find( '[data-wcm-component-property=image]' ).val( '' );
+            container.find( 'img' ).attr( 'src', '' );
+            container.find( '.image-thumbnail-container' ).addClass( 'hidden' );
+            container.find( '.image-thumbnail-actions' ).addClass( 'hidden' );
+            container.find( 'button[name=btn-select-image]' ).removeClass( 'hidden' );
+        } );
+
+        $( 'button[name=btn-select-image], a[data-wcm-image-action=edit]', container ).on( 'click', function () {
             var imageObjectId = '';
             var dialog = bootbox.dialog(
                     {
@@ -30,7 +51,7 @@ EntityModule.registerInitializer( function ( node ) {
                                 label: 'Use selected image',
                                 className: 'btn-primary',
                                 callback: function () {
-                                    alert( 'using' + imageObjectId );
+                                    selectImage( imageObjectId );
                                 }
                             },
                             cancel: {
@@ -111,8 +132,7 @@ EntityModule.registerInitializer( function ( node ) {
                 } );
             };
 
-            get( '/cms/entities/webCmsImage' );
-
+            get( adminPrefix + '/entities/webCmsImage' );
         } )
     } );
 } );

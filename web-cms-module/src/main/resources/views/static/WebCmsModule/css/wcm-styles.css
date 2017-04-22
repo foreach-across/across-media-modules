@@ -88,3 +88,12 @@ table tr.publication-offline td[data-tbl-field=publication] {
     border: solid 1px black;
     max-width: 188px;
 }
+
+.image-thumbnail-actions {
+    display: inline-block;
+}
+.image-thumbnail-actions .btn {
+    clear: both;
+    display: block;
+    padding: 0;
+}
