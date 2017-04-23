@@ -16,9 +16,12 @@
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
 import org.thymeleaf.dialect.AbstractProcessorDialect;
+import org.thymeleaf.dialect.IPostProcessorDialect;
+import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,7 +31,7 @@ import java.util.Set;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class WebCmsDialect extends AbstractProcessorDialect
+public class WebCmsDialect extends AbstractProcessorDialect implements IPostProcessorDialect
 {
 	public static final String PREFIX = "wcm";
 
@@ -42,4 +45,15 @@ public class WebCmsDialect extends AbstractProcessorDialect
 		processors.add( new WebComponentModelProcessor() );
 		return processors;
 	}
+
+	@Override
+	public int getDialectPostProcessorPrecedence() {
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public Set<IPostProcessor> getPostProcessors() {
+		return Collections.singleton( new WebComponentModelTemplateProcessor() );
+	}
+
 }

@@ -3,11 +3,10 @@
     <title th:text="${asset.title}">Page title</title>
 </head>
 <body th:fragment="content">
-<h1>[[${asset.title}]]</h1>
 
-<across:view th:each="component : ${components.ordered}" element="${component}">
-    section content
-</across:view>
+<th:block wcm:component="${component.name}" th:each="component : ${components.ordered}">
+    <across:view element="${component}" />
+</th:block>
 
 </body>
 </html>

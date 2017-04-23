@@ -15,18 +15,18 @@
  */
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
-import com.foreach.across.modules.web.ui.elements.TextViewElement;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentAutoCreateQueue;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.thymeleaf.context.IEngineContext;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.context.WebEngineContext;
+import org.thymeleaf.engine.AttributeName;
 import org.thymeleaf.model.IModel;
 import org.thymeleaf.model.IModelFactory;
 import org.thymeleaf.model.IProcessableElementTag;
-import org.thymeleaf.processor.element.AbstractElementTagProcessor;
-import org.thymeleaf.processor.element.IElementTagStructureHandler;
+import org.thymeleaf.processor.element.AbstractAttributeModelProcessor;
+import org.thymeleaf.processor.element.IElementModelStructureHandler;
 import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
@@ -35,7 +35,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 /**
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
  */
-class WebComponentModelProcessor extends AbstractElementTagProcessor
+class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 {
 	private static final String ATTRIBUTE_COMPONENT = "component";
 
@@ -47,13 +47,33 @@ class WebComponentModelProcessor extends AbstractElementTagProcessor
 				false,          // Apply dialect prefix to tag name
 				ATTRIBUTE_COMPONENT,              // No attribute name: will match by tag name
 				true,          // No prefix to be applied to attribute name
-				10000
+				10000,
+				true
 		);
 	}
 
 	@Override
-	protected final void doProcess( final ITemplateContext context, final IProcessableElementTag tag, final IElementTagStructureHandler structureHandler ) {
-		WebComponentModel componentModel = retrieveComponentFromAttribute( context, tag );
+	protected void doProcess( ITemplateContext context,
+	                          IModel model,
+	                          AttributeName attributeName,
+	                          String attributeValue,
+	                          IElementModelStructureHandler structureHandler ) {
+		final IModelFactory modelFactory = context.getModelFactory();
+
+		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
+		WebComponentAutoCreateQueue queue = appCtx.getBean( WebComponentAutoCreateQueue.class );
+
+		queue.schedule( attributeValue, null, null );
+
+		model.insert( 1, modelFactory.createProcessingInstruction( "create-component", attributeValue ) );
+		model.insert( model.size() - 1, modelFactory.createProcessingInstruction( "stop-component", attributeValue ) );
+
+//		model.add( modelFactory.createComment( "end writing comment" ) );
+
+//model.reset();
+//	structureHandler.removeLocalVariable( "test" );
+
+		/*WebComponentModel componentModel = retrieveComponentFromAttribute( context, tag );
 		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
 
 		String atrId = "_generatedComponentName" + System.currentTimeMillis();
@@ -66,6 +86,7 @@ class WebComponentModelProcessor extends AbstractElementTagProcessor
 		model.add( modelFactory.createCloseElementTag( "across:view" ) );
 
 		structureHandler.replaceWith( model, true );
+		*/
 	}
 
 	private WebComponentModel retrieveComponentFromAttribute( ITemplateContext context, IProcessableElementTag element ) {

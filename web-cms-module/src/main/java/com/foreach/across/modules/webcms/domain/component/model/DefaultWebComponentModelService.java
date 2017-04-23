@@ -48,6 +48,7 @@ public class DefaultWebComponentModelService implements WebComponentModelService
 		Assert.notNull( object );
 
 		WebComponentModelSet modelSet = new WebComponentModelSet();
+		modelSet.setOwner( object );
 		componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
 		                   .forEach( component -> modelSet.add( readFromComponent( component ) ) );
 

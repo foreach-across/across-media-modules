@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.web.asset;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelSet;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
@@ -35,6 +36,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequiredArgsConstructor
 public class WebCmsAssetEndpointController
 {
+	private final WebComponentModelHierarchy componentModelHierarchy;
 	private final WebComponentModelService componentModelService;
 
 	@WebCmsAssetMapping(value = WebCmsAsset.class, status = HttpStatus.OK)
@@ -43,7 +45,9 @@ public class WebCmsAssetEndpointController
 
 		WebComponentModelSet componentModelSet = componentModelService.getWebComponentsForOwner( endpoint.getAsset() );
 		componentModelSet.setScopeName( "asset" );
-		model.addAttribute( "assetComponents", componentModelSet );
+		componentModelHierarchy.setComponents( componentModelSet );
+
+		model.addAttribute( "componentHierarchy", componentModelHierarchy );
 		model.addAttribute( "components", componentModelSet );
 	}
 

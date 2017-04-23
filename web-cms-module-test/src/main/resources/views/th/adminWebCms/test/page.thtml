@@ -13,8 +13,23 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<html>
+<html xmlns:wcm="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <body>
 other test page
+
+<div wcm:component="test-component" wcm:auto-create wcm:type="html">
+    Default body van de test component.
+    <strong wcm:component="vet">[[${'vette tekst'}]]
+        <span wcm:component="icon">some fecking icon</span>
+    </strong>
+</div>
+
+<div wcm:component="another:component">
+    another component text...
+</div>
+
+<th:block wcm:component="blocksit">
+    sdjfmlkqdsjflk qsdjflms qdjmlkfqs d
+</th:block>
 </body>
 </html>

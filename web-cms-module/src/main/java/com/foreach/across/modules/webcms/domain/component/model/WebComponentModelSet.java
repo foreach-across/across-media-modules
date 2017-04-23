@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.model;
 
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,19 +46,15 @@ public class WebComponentModelSet
 
 	@Getter
 	@Setter
+	private WebCmsObject owner;
+
+	@Getter
+	@Setter
 	private String scopeName;
 
 	@Getter
 	@Setter
 	private WebComponentModelSet parent;
-
-	public WebComponentModelSet( String scopeName ) {
-		this.scopeName = scopeName;
-	}
-
-	public WebComponentModelSet( WebComponentModelSet parent ) {
-		this.parent = parent;
-	}
 
 	/**
 	 * Add a component to the ordered list.
