@@ -16,11 +16,13 @@
 
 package com.foreach.across.modules.webcms.domain.component.model;
 
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Objects;
@@ -32,7 +34,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class WebComponentModel
+public abstract class WebComponentModel implements ViewElement
 {
 	/**
 	 * Common attribute used to specify the base type of the component type.
@@ -70,9 +72,29 @@ public abstract class WebComponentModel
 	 */
 	private String name;
 
+	/**
+	 * Custom template that should be used to render this component.
+	 */
+	private String customTemplate;
+
+	/**
+	 * @return fixed ViewElement type
+	 */
+	@Override
+	public final String getElementType() {
+		return WebComponentModel.class.getSimpleName();
+	}
+
 	protected WebComponentModel( WebCmsComponent component ) {
 		this.component = component;
 		BeanUtils.copyProperties( component, this, "body", "metadata" );
+	}
+
+	/**
+	 * @return title (if set) or name
+	 */
+	public String getTitle() {
+		return StringUtils.isEmpty( title ) ? name : title;
 	}
 
 	@Override
@@ -96,7 +118,8 @@ public abstract class WebComponentModel
 	@Override
 	public String toString() {
 		return "WebComponentModel{" +
-				"componentType=" + componentType +
+				"name='" + name + '\'' +
+				", componentType=" + componentType +
 				", objectId='" + objectId + '\'' +
 				'}';
 	}

@@ -17,11 +17,15 @@
 package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.UnknownWebCmsComponentException;
 import com.foreach.across.modules.webcms.domain.component.UnknownWebComponentModelException;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,10 +35,24 @@ import java.util.Collections;
  * @since 0.0.1
  */
 @Service
+@RequiredArgsConstructor
 public class DefaultWebComponentModelService implements WebComponentModelService
 {
+	private final WebCmsComponentRepository componentRepository;
+
 	private Collection<WebComponentModelReader> modelReaders = Collections.emptyList();
 	private Collection<WebComponentModelWriter> modelWriters = Collections.emptyList();
+
+	@Override
+	public WebComponentModelSet getWebComponentsForOwner( WebCmsObject object ) {
+		Assert.notNull( object );
+
+		WebComponentModelSet modelSet = new WebComponentModelSet();
+		componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
+		                   .forEach( component -> modelSet.add( readFromComponent( component ) ) );
+
+		return modelSet;
+	}
 
 	@Override
 	public WebComponentModel readFromComponent( WebCmsComponent component ) {
@@ -45,7 +63,7 @@ public class DefaultWebComponentModelService implements WebComponentModelService
 		                   .readFromComponent( component );
 	}
 
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Override
 	public void writeToComponent( WebComponentModel componentModel, WebCmsComponent component ) {
 		modelWriters.stream()

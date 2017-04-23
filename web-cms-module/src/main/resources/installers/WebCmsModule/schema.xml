@@ -717,4 +717,15 @@
 		                         referencedColumnNames="id"/>
 	</changeSet>
 
+	<changeSet id="201704231111" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="${table.page_section}"/>
+		</preConditions>
+
+		<comment>Drop page section table</comment>
+
+		<delete tableName="${table.page_section}"/>
+		<dropTable tableName="${table.page_section}"/>
+	</changeSet>
+
 </databaseChangeLog>

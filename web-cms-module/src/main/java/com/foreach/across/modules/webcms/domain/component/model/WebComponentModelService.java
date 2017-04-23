@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.model;
 
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 
 /**
@@ -24,6 +25,15 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
  */
 public interface WebComponentModelService
 {
+	/**
+	 * Get all {@link WebComponentModel}s owned by a the {@link WebCmsObject}.
+	 * The returned set will have all components according to their index order.
+	 *
+	 * @param object owner
+	 * @return set of components
+	 */
+	WebComponentModelSet getWebComponentsForOwner( WebCmsObject object );
+
 	WebComponentModel readFromComponent( WebCmsComponent component );
 
 	void writeToComponent( WebComponentModel componentModel, WebCmsComponent component );

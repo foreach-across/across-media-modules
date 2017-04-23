@@ -17,19 +17,14 @@
 package com.foreach.across.modules.webcms.domain.page.services;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageSection;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
-import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageSectionRepository;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author Arne Vandamme
@@ -40,7 +35,6 @@ class DefaultWebCmsPageService implements WebCmsPageService
 {
 	private PagePropertyGenerator pagePropertyGenerator;
 	private WebCmsPageRepository pageRepository;
-	private WebCmsPageSectionRepository sectionRepository;
 
 	@Override
 	public Optional<WebCmsPage> findByCanonicalPath( String canonicalPath ) {
@@ -52,20 +46,6 @@ class DefaultWebCmsPageService implements WebCmsPageService
 		return pagePropertyGenerator.prepareForSaving( page );
 	}
 
-	@Override
-	public Map<String, WebCmsPageSection> retrieveContentSections( WebCmsPage page ) {
-		return sectionRepository.findAllByPageOrderBySortIndexAscNameAsc( page )
-		                        .stream()
-		                        .collect( Collectors.toMap(
-				                        WebCmsPageSection::getName,
-				                        Function.identity(),
-				                        ( a, b ) -> {
-					                        throw new IllegalStateException(
-							                        "Found multiple sections with same name." );
-				                        }, LinkedHashMap::new
-		                        ) );
-	}
-
 	@Autowired
 	public void setPageRepository( WebCmsPageRepository pageRepository ) {
 		this.pageRepository = pageRepository;
@@ -74,10 +54,5 @@ class DefaultWebCmsPageService implements WebCmsPageService
 	@Autowired
 	public void setPagePropertyGenerator( PagePropertyGenerator pagePropertyGenerator ) {
 		this.pagePropertyGenerator = pagePropertyGenerator;
-	}
-
-	@Autowired
-	public void setSectionRepository( WebCmsPageSectionRepository sectionRepository ) {
-		this.sectionRepository = sectionRepository;
 	}
 }

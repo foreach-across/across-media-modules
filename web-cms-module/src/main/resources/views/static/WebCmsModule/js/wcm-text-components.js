@@ -21,6 +21,6 @@ EntityModule.registerInitializer( function ( node ) {
     } );
 
     $( '[data-wcm-markup-type=markup]', node ).each( function () {
-        CodeMirror.fromTextArea( $( this )[0], {lineNumbers: true, mode: 'htmlmixed'} );
+        CodeMirror.fromTextArea( $( this )[0], {lineNumbers: true, mode: 'htmlmixed', viewportMargin: Infinity} );
     } );
 } );

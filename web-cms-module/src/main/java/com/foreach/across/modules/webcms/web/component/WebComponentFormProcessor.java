@@ -90,6 +90,7 @@ public class WebComponentFormProcessor extends EntityViewProcessorAdapter
 		ContainerViewElementUtils.move( container, "formGroup-componentType", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 		ContainerViewElementUtils.move( container, "formGroup-title", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 		ContainerViewElementUtils.move( container, "formGroup-name", SingleEntityFormViewProcessor.RIGHT_COLUMN );
+		ContainerViewElementUtils.move( container, "formGroup-sortIndex", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 		ContainerViewElementUtils.move( container, "formGroup-lastModified", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 	}
 }

@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+body .CodeMirror {
+    height: auto;
+}
+
 .cke_editable_inline {
     padding: 5px 10px;
     border: solid 1px rgb(233, 233, 233);

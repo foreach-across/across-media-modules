@@ -42,13 +42,11 @@ import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageSection;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -114,21 +112,10 @@ public class WebCmsPageConfiguration implements EntityConfigurer
 				                .createOrUpdateFormView( fvb -> fvb.viewProcessor( pageFormViewProcessor() ) )
 		        )
 		        .association(
-				        ab -> ab.name( "webCmsPageSection.page" )
-				                .show()
-				                .associationType( EntityAssociation.Type.EMBEDDED )
-				                .listView( lvb -> lvb.showProperties( "name", "sortIndex" )
-				                                     .defaultSort( new Sort( "sortIndex", "name" ) ) )
-		        )
-		        .association(
 				        ab -> ab.name( "webCmsMenuItem.linkedPage" )
 				                .show()
 				                .associationType( EntityAssociation.Type.EMBEDDED )
 		        );
-
-		entities.withType( WebCmsPageSection.class )
-		        .properties( props -> props.property( "page" ).hidden( true ) )
-		        .hide();
 	}
 
 	@Bean

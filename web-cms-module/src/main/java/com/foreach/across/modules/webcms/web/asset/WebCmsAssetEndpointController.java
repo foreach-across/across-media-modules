@@ -18,10 +18,10 @@ package com.foreach.across.modules.webcms.web.asset;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelService;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelSet;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -32,16 +32,19 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 0.0.1
  */
 @Controller
+@RequiredArgsConstructor
 public class WebCmsAssetEndpointController
 {
-	private WebCmsPageService pageService;
+	private final WebComponentModelService componentModelService;
 
 	@WebCmsAssetMapping(value = WebCmsAsset.class, status = HttpStatus.OK)
 	public void render( WebCmsUrl url, WebCmsAssetEndpoint endpoint, ModelMap model ) {
 		model.addAttribute( "asset", endpoint.getAsset() );
-		if ( endpoint.getAsset() instanceof WebCmsPage ) {
-			model.addAttribute( "contentSections", pageService.retrieveContentSections( (WebCmsPage) endpoint.getAsset() ) );
-		}
+
+		WebComponentModelSet componentModelSet = componentModelService.getWebComponentsForOwner( endpoint.getAsset() );
+		componentModelSet.setScopeName( "asset" );
+		model.addAttribute( "assetComponents", componentModelSet );
+		model.addAttribute( "components", componentModelSet );
 	}
 
 	@WebCmsAssetMapping(value = WebCmsAsset.class, series = HttpStatus.Series.REDIRECTION)
@@ -55,10 +58,5 @@ public class WebCmsAssetEndpointController
 			result.setStatusCode( HttpStatus.NOT_FOUND );
 			return result;
 		} );
-	}
-
-	@Autowired
-	protected void setPageService( WebCmsPageService pageService ) {
-		this.pageService = pageService;
 	}
 }

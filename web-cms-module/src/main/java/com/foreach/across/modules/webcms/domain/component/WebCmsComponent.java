@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.component;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectSuperClass;
 import lombok.Builder;
 import lombok.Getter;
@@ -133,6 +134,15 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 		this.title = title;
 		this.body = body;
 		this.metadata = metadata;
+	}
+
+	/**
+	 * Set the owner of this component, will use {@link WebCmsObject#getObjectId()} to get the owner object id.
+	 *
+	 * @param owner or null to detach
+	 */
+	public void setOwner( WebCmsObject owner ) {
+		setOwnerObjectId( owner != null ? owner.getObjectId() : null );
 	}
 
 	/**

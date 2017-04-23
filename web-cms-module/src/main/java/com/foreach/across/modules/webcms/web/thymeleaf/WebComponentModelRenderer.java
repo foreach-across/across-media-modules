@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page.repositories;
+package com.foreach.across.modules.webcms.web.thymeleaf;
 
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageSection;
-
-import java.util.Collection;
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public interface WebCmsPageSectionRepository extends IdBasedEntityJpaRepository<WebCmsPageSection>
+public interface WebComponentModelRenderer<T extends WebComponentModel>
 {
-	Collection<WebCmsPageSection> findAllByPageOrderBySortIndexAscNameAsc( WebCmsPage page );
+	boolean supports( WebComponentModel componentModel );
+
+	void writeComponent( T component, ThymeleafModelBuilder model );
 }
