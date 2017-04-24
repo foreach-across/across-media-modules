@@ -27,14 +27,15 @@ import javax.annotation.PostConstruct;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Installer(description = "Install some test data", phase = InstallerPhase.AfterModuleBootstrap, version = 2)
+@Installer(description = "Install some test data", phase = InstallerPhase.AfterModuleBootstrap, version = 4)
 @RequiredArgsConstructor
 public class TestDataInstaller extends AbstractWebCmsDataInstaller
 {
 	@PostConstruct
 	public void registerResources() {
 		setResources(
-				"classpath:installers/test-data/articles.yml"
+				"classpath:installers/test-data/articles.yml",
+				"classpath:installers/test-data/pages.yml"
 		);
 	}
 }

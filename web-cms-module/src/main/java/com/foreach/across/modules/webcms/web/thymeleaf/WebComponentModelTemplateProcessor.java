@@ -35,6 +35,9 @@ import java.util.ArrayDeque;
  */
 final class WebComponentModelTemplateProcessor implements IPostProcessor
 {
+	static final String START_INSTRUCTION = "auto-create-component-start";
+	static final String STOP_INSTRUCTION = "auto-create-component-finish";
+
 	@Override
 	public TemplateMode getTemplateMode() {
 		return TemplateMode.HTML;
@@ -165,14 +168,14 @@ final class WebComponentModelTemplateProcessor implements IPostProcessor
 
 		@Override
 		public void handleProcessingInstruction( IProcessingInstruction processingInstruction ) {
-			if ( "create-component".equals( processingInstruction.getTarget() ) ) {
+			if ( START_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
 				queue.outputStarted( processingInstruction.getContent() );
 				this.output = new Output();
 				tree.push( this.output );
 
 				enabled = true;
 			}
-			else if ( "stop-component".equals( processingInstruction.getTarget() ) ) {
+			else if ( STOP_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
 				queue.outputFinished( processingInstruction.getContent(), tree.pop().buffer.toString() );
 				this.output = tree.peek();
 				enabled = this.output != null;

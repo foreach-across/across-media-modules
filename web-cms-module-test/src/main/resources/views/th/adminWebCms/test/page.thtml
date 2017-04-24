@@ -24,7 +24,7 @@ other test page
     </strong>
 </div>
 
-<div wcm:component="another:component">
+<div wcm:component="another:component" th:remove="tag">
     another component text...
 </div>
 

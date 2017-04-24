@@ -26,13 +26,22 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 public interface WebComponentModelService
 {
 	/**
+	 * Get a single {@link WebComponentModel} by name.
+	 *
+	 * @param componentName name of the component
+	 * @param owner         of the component
+	 * @return component or null if not found
+	 */
+	WebComponentModel getWebComponent( String componentName, WebCmsObject owner );
+
+	/**
 	 * Get all {@link WebComponentModel}s owned by a the {@link WebCmsObject}.
 	 * The returned set will have all components according to their index order.
 	 *
 	 * @param object owner
 	 * @return set of components
 	 */
-	WebComponentModelSet getWebComponentsForOwner( WebCmsObject object );
+	OrderedWebComponentModelSet getWebComponentsForOwner( WebCmsObject object );
 
 	WebComponentModel readFromComponent( WebCmsComponent component );
 

@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.web.component.image;
 
-import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
 import com.foreach.across.modules.webcms.domain.image.component.ImageWebComponentModel;
@@ -36,8 +35,6 @@ public class ImageWebComponentModelRenderer implements WebComponentModelRenderer
 {
 	private final BeanFactory beanFactory;
 
-	private ImageServerClient imageServerClient;
-
 	@Override
 	public boolean supports( WebComponentModel componentModel ) {
 		return ImageWebComponentModel.class.isInstance( componentModel );
@@ -45,15 +42,11 @@ public class ImageWebComponentModelRenderer implements WebComponentModelRenderer
 
 	@Override
 	public void writeComponent( ImageWebComponentModel component, ThymeleafModelBuilder model ) {
+		ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
 		if ( imageServerClient != null && component.hasImageServerKey() ) {
 			model.addOpenElement( "img" );
 			model.addAttribute( "src", imageServerClient.imageUrl( component.getImageServerKey(), "default", 0, 0 ) );
 			model.addCloseElement();
 		}
-	}
-
-	@PostRefresh
-	void loadImageServerClient() {
-		imageServerClient = beanFactory.getBean( ImageServerClient.class );
 	}
 }

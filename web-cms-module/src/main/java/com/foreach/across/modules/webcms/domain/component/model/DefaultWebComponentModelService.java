@@ -29,6 +29,7 @@ import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * @author Arne Vandamme
@@ -44,10 +45,17 @@ public class DefaultWebComponentModelService implements WebComponentModelService
 	private Collection<WebComponentModelWriter> modelWriters = Collections.emptyList();
 
 	@Override
-	public WebComponentModelSet getWebComponentsForOwner( WebCmsObject object ) {
+	public WebComponentModel getWebComponent( String componentName, WebCmsObject owner ) {
+		return Optional.ofNullable( componentRepository.findOneByOwnerObjectIdAndName( owner != null ? owner.getObjectId() : null, componentName ) )
+		               .map( this::readFromComponent )
+		               .orElse( null );
+	}
+
+	@Override
+	public OrderedWebComponentModelSet getWebComponentsForOwner( WebCmsObject object ) {
 		Assert.notNull( object );
 
-		WebComponentModelSet modelSet = new WebComponentModelSet();
+		OrderedWebComponentModelSet modelSet = new OrderedWebComponentModelSet();
 		modelSet.setOwner( object );
 		componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
 		                   .forEach( component -> modelSet.add( readFromComponent( component ) ) );

@@ -17,14 +17,21 @@
 package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.core.annotations.Exposed;
-import lombok.Data;
+import com.foreach.across.modules.entity.util.EntityUtils;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.*;
 
 /**
  * @author Arne Vandamme
@@ -33,50 +40,94 @@ import java.util.Deque;
 @Component
 @Exposed
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@RequiredArgsConstructor
 public class WebComponentAutoCreateQueue
 {
+	private final Set<String> created = new HashSet<>();
+
+	private final Map<String, Task> tasksByKey = new HashMap<>();
 	private final ArrayDeque<Task> tasks = new ArrayDeque<>();
 	private final ArrayDeque<Task> outputQueue = new ArrayDeque<>();
 
-	public void schedule( String componentName, String scope, String type ) {
-		tasks.add( new Task( componentName, scope, type ) );
+	private final WebCmsComponentRepository componentRepository;
+	private final WebCmsComponentTypeRepository componentTypeRepository;
+	private final WebComponentModelHierarchy componentModelHierarchy;
+
+	public String schedule( String componentName, String scope, String type ) {
+		String key = componentName + ":" + scope;
+
+		Task creationTask = tasksByKey.computeIfAbsent( key, k -> new Task( componentName, scope, type ) );
+		tasks.add( creationTask );
+
+		return creationTask.getObjectId();
 	}
 
-	public void outputStarted( String componentName ) {
+	public void outputStarted( String objectId ) {
 		Task current;
 
 		do {
 			current = tasks.remove();
 		}
-		while ( current != null && !componentName.equals( current.componentName ) );
+		while ( current != null && !objectId.equals( current.getObjectId() ) );
 
 		outputQueue.push( current );
 	}
 
-	public void outputFinished( String componentName, String output ) {
+	public void outputFinished( String objectId, String output ) {
 		Task current = outputQueue.pop();
-		Assert.isTrue( componentName.equals( current.componentName ) );
+		Assert.isTrue( objectId.equals( current.getObjectId() ) );
 
 		current.setOutput( output );
 
 		Task next = outputQueue.peek();
 
+		// todo: nested components in case of container
 		if ( next != null ) {
 			next.addChild( current );
 		}
 
-		System.err.println( current );
+		saveComponent( current, output );
 	}
 
-	@Data
+	private void saveComponent( Task creationTask, String output ) {
+		WebCmsComponent component = creationTask.getComponent();
+		component.setComponentType( determineComponentType( creationTask.getComponentType() ) );
+
+		component.setTitle( EntityUtils.generateDisplayName( component.getName().replace( '-', '_' ) ) );
+
+		OrderedWebComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( creationTask.getScopeName() );
+		component.setOwner( componentModelSet.getOwner() );
+		component.setBody( output );
+
+		componentRepository.save( component );
+	}
+
+	private WebCmsComponentType determineComponentType( String requestedComponentType ) {
+		return componentTypeRepository.findOneByTypeKey( StringUtils.isEmpty( requestedComponentType ) ? "rich-text" : requestedComponentType );
+	}
+
+	@Getter
+	@Setter
 	private static class Task
 	{
-		private final String componentName;
+		private final WebCmsComponent component;
 		private final String scopeName;
 		private final String componentType;
 		private final Deque<Task> children = new ArrayDeque<>();
 
+		public Task( String componentName, String scopeName, String componentType ) {
+			this.scopeName = scopeName;
+			this.componentType = componentType;
+
+			component = new WebCmsComponent();
+			component.setName( componentName );
+		}
+
 		private String output;
+
+		public String getObjectId() {
+			return component.getObjectId();
+		}
 
 		public void addChild( Task task ) {
 			children.add( task );

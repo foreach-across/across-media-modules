@@ -27,22 +27,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * Represents an ordered collection of {@link WebComponentModel}s that are accessible by name.
- * If a parent is set and a component is not found by name in the current set, the request will go to the parent by default.
+ * Components can be both added in order or accessible by name.
  *
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @NoArgsConstructor
 @AllArgsConstructor
-public class WebComponentModelSet
+public class OrderedWebComponentModelSet
 {
 	private final List<WebComponentModel> orderedComponents = new ArrayList<>();
 	private final Map<String, WebComponentModel> componentsByName = new HashMap<>();
 
 	private final List<WebComponentModel> unmodifiableOrdered = orderedComponents;
+
+	private static final WebComponentModel NOT_FOUND_MARKER = new WebComponentModel()
+	{
+	};
 
 	@Getter
 	@Setter
@@ -52,9 +57,21 @@ public class WebComponentModelSet
 	@Setter
 	private String scopeName;
 
-	@Getter
+	/**
+	 * Function to be used to fetch a component by name if it is not found.
+	 * This function will only be called the first time the component is looked for.
+	 */
 	@Setter
-	private WebComponentModelSet parent;
+	private BiFunction<WebCmsObject, String, WebComponentModel> fetcherFunction;
+
+	public OrderedWebComponentModelSet( String scopeName ) {
+		this.scopeName = scopeName;
+	}
+
+	public OrderedWebComponentModelSet( WebCmsObject owner, String scopeName ) {
+		this.owner = owner;
+		this.scopeName = scopeName;
+	}
 
 	/**
 	 * Add a component to the ordered list.
@@ -194,18 +211,26 @@ public class WebComponentModelSet
 	}
 
 	/**
-	 * @return component with that name, lookup in parents if not found directly
+	 * @return true if the set contains a component with that name
+	 */
+	public boolean contains( String name ) {
+		return get( name ) != null;
+	}
+
+	/**
+	 * Gets the component with that name.
+	 * If a {@link #fetcherFunction} has been specified, it will be used to retrieve the component if it is not yet present.
+	 *
+	 * @return component or null if not found
 	 */
 	public WebComponentModel get( String name ) {
-		return get( name, true );
-	}
+		WebComponentModel model = componentsByName.get( name );
+		if ( model == null && fetcherFunction != null ) {
+			model = fetcherFunction.apply( owner, name );
+			componentsByName.put( name, model != null ? model : NOT_FOUND_MARKER );
+		}
 
-	public WebComponentModel get( String name, boolean lookupInParent ) {
-		return componentsByName.get( name );
-	}
-
-	public WebComponentModel getFromScope( String componentName, String scopeName ) {
-		return null;
+		return model != NOT_FOUND_MARKER ? model : null;
 	}
 
 	/**
@@ -225,6 +250,13 @@ public class WebComponentModelSet
 		return existing;
 	}
 
+	/**
+	 * Removes the component model both from the ordered collection and from the ordered components.
+	 * If the same component model were to be registered under multiple names, all of them would be removed.
+	 *
+	 * @param componentModel to remove
+	 * @return true if at least one entry has been removed
+	 */
 	public boolean remove( WebComponentModel componentModel ) {
 		Assert.notNull( componentModel );
 
@@ -246,10 +278,16 @@ public class WebComponentModelSet
 		return unmodifiableOrdered;
 	}
 
+	/**
+	 * @return true if the collection of ordered components is not empty
+	 */
 	public boolean hasOrderedComponents() {
 		return !orderedComponents.isEmpty();
 	}
 
+	/**
+	 * @return number of ordered components
+	 */
 	public int getOrderedCount() {
 		return orderedComponents.size();
 	}

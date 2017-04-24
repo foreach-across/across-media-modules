@@ -16,28 +16,31 @@
 
 package com.foreach.across.modules.webcms.domain.component.model;
 
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.BiFunction;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class TestWebComponentModelSet
+public class TestOrderedWebComponentModelSet
 {
-	private WebComponentModelSet components;
+	private OrderedWebComponentModelSet components;
 
 	private Model noName, one, two, three;
 
 	@Before
 	public void setUp() throws Exception {
-		components = new WebComponentModelSet();
+		components = new OrderedWebComponentModelSet();
 
 		noName = new Model( null );
 		one = new Model( "one" );
@@ -51,7 +54,6 @@ public class TestWebComponentModelSet
 	@Test
 	public void defaultValues() {
 		assertNull( components.getScopeName() );
-		assertNull( components.getParent() );
 		assertFalse( components.hasOrderedComponents() );
 		assertEquals( 0, components.getOrderedCount() );
 		assertEquals( Collections.emptyList(), components.getOrdered() );
@@ -164,9 +166,57 @@ public class TestWebComponentModelSet
 		assertEquals( Collections.singletonList( two ), components.getOrdered() );
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void fetcherIsOnlyCalledTheFirstTimeIfResult() {
+		BiFunction<WebCmsObject, String, WebComponentModel> fetcher = mock( BiFunction.class );
+		components.setFetcherFunction( fetcher );
+
+		when( fetcher.apply( null, "someComponent" ) ).thenReturn( one );
+		assertEquals( one, components.get( "someComponent" ) );
+		assertEquals( one, components.get( "someComponent" ) );
+
+		verify( fetcher, times( 1 ) ).apply( null, "someComponent" );
+
+		WebCmsObject owner = mock( WebCmsObject.class );
+		when( fetcher.apply( owner, "two" ) ).thenReturn( three );
+
+		components.setOwner( owner );
+
+		assertEquals( one, components.get( "someComponent" ) );
+		assertEquals( three, components.get( "two" ) );
+		assertEquals( three, components.get( "two" ) );
+		verify( fetcher, times( 1 ) ).apply( owner, "two" );
+		verifyNoMoreInteractions( fetcher );
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void fetchedIsOnlyCalledTheFirstTimeIfNoResult() {
+		BiFunction<WebCmsObject, String, WebComponentModel> fetcher = mock( BiFunction.class );
+		components.setFetcherFunction( fetcher );
+
+		when( fetcher.apply( null, "someComponent" ) ).thenReturn( null );
+		assertNull( components.get( "someComponent" ) );
+		assertNull( components.get( "someComponent" ) );
+
+		verify( fetcher, times( 1 ) ).apply( null, "someComponent" );
+
+		WebCmsObject owner = mock( WebCmsObject.class );
+		when( fetcher.apply( owner, "two" ) ).thenReturn( null );
+
+		components.setOwner( owner );
+
+		assertNull( components.get( "someComponent" ) );
+		assertNull( components.get( "two" ) );
+		assertNull( components.get( "two" ) );
+		verify( fetcher, times( 1 ) ).apply( owner, "two" );
+		verifyNoMoreInteractions( fetcher );
+	}
+
 	private class Model extends WebComponentModel
 	{
-		public Model( String name ) {
+		Model( String name ) {
 			setName( name );
 			setComponentType( WebCmsComponentType.builder().id( 1L ).build() );
 			setObjectId( name );

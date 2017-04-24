@@ -1,0 +1,204 @@
+/*
+ * Copyright 2017 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.foreach.across.modules.webcms.domain.component.model;
+
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import lombok.val;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
+
+/**
+ * @author Arne Vandamme
+ * @since 0.0.1
+ */
+@RunWith(MockitoJUnitRunner.class)
+public class TestWebComponentModelHierarchy
+{
+	@Mock
+	private HttpServletRequest request;
+
+	@Mock
+	private WebComponentModelService componentModelService;
+
+	private WebComponentModelHierarchy components;
+
+	private OrderedWebComponentModelSet page, asset;
+
+	@Before
+	public void setUp() throws Exception {
+		components = new WebComponentModelHierarchy();
+
+		page = new OrderedWebComponentModelSet( "page" );
+		asset = new OrderedWebComponentModelSet( "asset" );
+	}
+
+	@Test
+	public void addAndGetByScopeName() {
+		components.addComponents( page );
+		assertSame( page, components.getComponentsForScope( "page" ) );
+
+		components.addComponents( asset );
+		assertSame( asset, components.getComponentsForScope( "asset" ) );
+	}
+
+	@Test
+	public void scopesAddedInOrder() {
+		assertTrue( components.getScopeNames().isEmpty() );
+		assertNull( components.getDefaultScope() );
+
+		components.addComponents( page );
+		assertEquals( Collections.singletonList( "page" ), components.getScopeNames() );
+		assertEquals( "page", components.getDefaultScope() );
+
+		components.addComponents( asset );
+		assertEquals( Arrays.asList( "page", "asset" ), components.getScopeNames() );
+		assertEquals( "asset", components.getDefaultScope() );
+	}
+
+	@Test
+	public void reorderScopes() {
+		OrderedWebComponentModelSet global = new OrderedWebComponentModelSet( "global" );
+		components.addComponents( global );
+		components.addComponents( asset );
+		components.addComponentsBefore( page, "asset" );
+		assertEquals( Arrays.asList( "global", "page", "asset" ), components.getScopeNames() );
+		assertEquals( "asset", components.getDefaultScope() );
+
+		components.setScopeOrder( "asset", "global", "page" );
+		assertEquals( Arrays.asList( "asset", "global", "page" ), components.getScopeNames() );
+		assertEquals( "page", components.getDefaultScope() );
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void scopeNamesMustBeUnique() {
+		components.addComponents( page );
+		components.addComponents( page );
+	}
+
+	@Test
+	public void removeAndContainsScope() {
+		assertFalse( components.containsScope( "page" ) );
+
+		components.addComponents( page );
+		components.addComponents( asset );
+		assertTrue( components.containsScope( "page" ) );
+		assertTrue( components.containsScope( "asset" ) );
+
+		assertTrue( components.removeComponents( page ) );
+		assertFalse( components.removeComponents( page ) );
+		assertFalse( components.containsScope( "page" ) );
+		assertTrue( components.containsScope( "asset" ) );
+
+		assertTrue( components.removeComponents( "asset" ) );
+		assertFalse( components.removeComponents( "asset" ) );
+		assertFalse( components.containsScope( "page" ) );
+		assertFalse( components.containsScope( "asset" ) );
+	}
+
+	@Test
+	public void globalScope() {
+		components.buildGlobalComponentModelSet( componentModelService );
+
+		val global = components.getComponentsForScope( WebComponentModelHierarchy.GLOBAL );
+		assertNotNull( global );
+
+		global.get( "123" );
+		verify( componentModelService ).getWebComponent( "123", null );
+	}
+
+	@Test
+	public void requestAttribute() {
+		components.registerAsRequestAttribute( request );
+		verify( request ).setAttribute( WebComponentModelHierarchy.REQUEST_ATTRIBUTE, components );
+	}
+
+	@Test
+	public void getComponentsOnEmptyHierarchy() {
+		assertNull( components.get( "one" ) );
+		assertNull( components.get( "one", false ) );
+		assertNull( components.getFromScope( "one", "scope" ) );
+		assertNull( components.getFromScope( "one", "scope", false ) );
+	}
+
+	@Test
+	public void getComponents() {
+		Model one = new Model( "one" );
+		Model two = new Model( "two" );
+		Model three = new Model( "three" );
+
+		Model anotherThree = new Model( "four" );
+		anotherThree.setName( "three" );
+
+		OrderedWebComponentModelSet global = new OrderedWebComponentModelSet( "global" );
+		components.addComponents( global );
+		components.addComponents( page );
+		components.addComponents( asset );
+
+		assertNull( components.get( "one" ) );
+
+		global.add( one );
+		page.add( two );
+		page.add( anotherThree );
+		asset.add( three );
+
+		assertSame( one, components.get( "one" ) );
+		assertSame( two, components.get( "two" ) );
+		assertSame( three, components.get( "three" ) );
+		assertSame( one, components.get( "one", true ) );
+		assertSame( two, components.get( "two", true ) );
+		assertSame( three, components.get( "three", true ) );
+
+		assertNull( components.get( "one", false ) );
+		assertNull( components.get( "two", false ) );
+		assertSame( three, components.get( "three", false ) );
+
+		assertSame( one, components.getFromScope( "one", "asset" ) );
+		assertSame( two, components.getFromScope( "two", "asset" ) );
+		assertSame( three, components.getFromScope( "three", "asset" ) );
+
+		assertSame( one, components.getFromScope( "one", "page" ) );
+		assertSame( two, components.getFromScope( "two", "page" ) );
+		assertSame( anotherThree, components.getFromScope( "three", "page" ) );
+
+		assertSame( one, components.getFromScope( "one", "global" ) );
+		assertNull( components.getFromScope( "two", "global" ) );
+		assertNull( components.getFromScope( "three", "global" ) );
+
+		assertNull( components.getFromScope( "one", "page", false ) );
+		assertSame( two, components.getFromScope( "two", "page", false ) );
+		assertSame( anotherThree, components.getFromScope( "three", "page", false ) );
+	}
+
+	private class Model extends WebComponentModel
+	{
+		Model( String name ) {
+			setName( name );
+			setComponentType( WebCmsComponentType.builder().id( 1L ).build() );
+			setObjectId( name );
+		}
+	}
+}

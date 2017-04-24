@@ -180,3 +180,31 @@ webCmsModule.default-data.assets.enabled = false
 Creating shared web components
 Name must be globally unique and is required
 Title is also required - must not be unique however (?)
+
+Thymeleaf dialect
+
+[cols=2]
+|===
+
+| wcm:component
+| body will be replaced with the rendering of the component if it is present
+
+| wcm:scope
+| name of the scope in which the component should be looked for - if omitted wil look in the default components set and all scopes upwards
+
+| wcm:search-parent-scopes
+| Set explicitly to `false` if you only want the component to be looked up in the scope specified (or the default scope) but none of the parent scopes.
+If omitted, parent scopes will always be queried.
+
+| wcm:auto-create
+| if present, the component will be auto-created with the markup body
+ Optionally the attribute value can be be the scope name in which the component should be created.
+
+| wcm:type
+| type key of the WebCmsComponentType of the component - will only be used for auto-creation or in case of inline editing a non-existing component
+
+| wcm:always-replace
+| If present (without an attribute value) the body of the element will always be replaced.
+If the component is not found, the body will be empty.
+
+|===

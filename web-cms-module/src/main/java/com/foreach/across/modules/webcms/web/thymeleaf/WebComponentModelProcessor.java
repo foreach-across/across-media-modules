@@ -17,38 +17,51 @@ package com.foreach.across.modules.webcms.web.thymeleaf;
 
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentAutoCreateQueue;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelHierarchy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.thymeleaf.context.IEngineContext;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.engine.AttributeName;
-import org.thymeleaf.model.IModel;
-import org.thymeleaf.model.IModelFactory;
-import org.thymeleaf.model.IProcessableElementTag;
+import org.thymeleaf.model.*;
 import org.thymeleaf.processor.element.AbstractAttributeModelProcessor;
 import org.thymeleaf.processor.element.IElementModelStructureHandler;
-import org.thymeleaf.standard.expression.IStandardExpression;
-import org.thymeleaf.standard.expression.IStandardExpressionParser;
-import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREFIX;
+import static com.foreach.across.modules.webcms.web.thymeleaf.WebComponentModelTemplateProcessor.START_INSTRUCTION;
+import static com.foreach.across.modules.webcms.web.thymeleaf.WebComponentModelTemplateProcessor.STOP_INSTRUCTION;
 
 /**
  * Enables generic {@link com.foreach.across.modules.web.ui.ViewElement} rendering support.
  */
 class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 {
-	private static final String ATTRIBUTE_COMPONENT = "component";
+	private static final String ATTR_COMPONENT = "component";
+	private static final String ATTR_SCOPE = "scope";
+	private static final String ATTR_SEARCH_PARENTS = "search-parent-scopes";
+	private static final String ATTR_AUTO_CREATE = "auto-create";
+	private static final String ATTR_TYPE = "type";
+	private static final String ATTR_REPLACE = "always-replace";
+
+	private static final Collection<String> ATTRIBUTES_TO_REMOVE = Arrays.asList(
+			ATTR_COMPONENT, ATTR_SCOPE, ATTR_SEARCH_PARENTS, ATTR_AUTO_CREATE, ATTR_TYPE, ATTR_REPLACE
+	);
 
 	WebComponentModelProcessor() {
 		super(
 				TemplateMode.HTML,              // This processor will apply only to HTML mode
-				WebCmsDialect.PREFIX,        // Prefix to be applied to name for matching
+				PREFIX,        // Prefix to be applied to name for matching
 				null,               // Tag name: match specifically this tag
 				false,          // Apply dialect prefix to tag name
-				ATTRIBUTE_COMPONENT,              // No attribute name: will match by tag name
+				ATTR_COMPONENT,              // No attribute name: will match by tag name
 				true,          // No prefix to be applied to attribute name
 				10000,
-				true
+				false
 		);
 	}
 
@@ -58,50 +71,132 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 	                          AttributeName attributeName,
 	                          String attributeValue,
 	                          IElementModelStructureHandler structureHandler ) {
-		final IModelFactory modelFactory = context.getModelFactory();
+		if ( model.size() > 0 && model.get( 0 ) instanceof IProcessableElementTag ) {
+			IProcessableElementTag elementTag = (IProcessableElementTag) model.get( 0 );
+			boolean isStandaloneTag = elementTag instanceof IStandaloneElementTag;
+			IModelFactory modelFactory = context.getModelFactory();
 
+			ApplicationContext applicationContext = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
+			WebComponentModelHierarchy components = applicationContext.getBean( WebComponentModelHierarchy.class );
+
+			String scopeName = elementTag.getAttributeValue( PREFIX, ATTR_SCOPE );
+			WebComponentModel component = fetchWebComponentModel( attributeValue, elementTag, components, scopeName );
+
+			if ( component != null ) {
+				elementTag = renderComponentModel( (IEngineContext) context, model, elementTag, modelFactory, component );
+			}
+			else {
+				String creationScope = determineCreationScope( elementTag, components, scopeName );
+
+				if ( creationScope != null ) {
+					String componentType = elementTag.getAttributeValue( PREFIX, ATTR_TYPE );
+					WebComponentAutoCreateQueue queue = applicationContext.getBean( WebComponentAutoCreateQueue.class );
+					String componentId = queue.schedule( attributeValue, creationScope, componentType );
+
+					if ( isStandaloneTag ) {
+						renderEmptyBody( model, elementTag );
+					}
+
+					model.insert( 1, modelFactory.createProcessingInstruction( START_INSTRUCTION, componentId ) );
+					model.insert( model.size() - 1, modelFactory.createProcessingInstruction( STOP_INSTRUCTION, componentId ) );
+
+				}
+				else {
+					boolean alwaysReplaceBody = elementTag.hasAttribute( PREFIX, ATTR_REPLACE );
+
+					if ( alwaysReplaceBody ) {
+						renderEmptyBody( model, elementTag );
+					}
+				}
+			}
+
+			removeAttributes( model, elementTag, modelFactory );
+		}
+
+/*
 		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-		WebComponentAutoCreateQueue queue = appCtx.getBean( WebComponentAutoCreateQueue.class );
+
 
 		queue.schedule( attributeValue, null, null );
 
 		model.insert( 1, modelFactory.createProcessingInstruction( "create-component", attributeValue ) );
 		model.insert( model.size() - 1, modelFactory.createProcessingInstruction( "stop-component", attributeValue ) );
+		*/
 
 //		model.add( modelFactory.createComment( "end writing comment" ) );
-
-//model.reset();
-//	structureHandler.removeLocalVariable( "test" );
-
-		/*WebComponentModel componentModel = retrieveComponentFromAttribute( context, tag );
-		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-
-		String atrId = "_generatedComponentName" + System.currentTimeMillis();
-		( (IEngineContext) context ).setVariable( atrId, TextViewElement.text( componentModel.toString() ) );
-
-		final IModelFactory modelFactory = context.getModelFactory();
-
-		final IModel model = modelFactory.createModel();
-		model.add( modelFactory.createOpenElementTag( "across:view", "element", "${" + atrId + "}", false ) );
-		model.add( modelFactory.createCloseElementTag( "across:view" ) );
-
-		structureHandler.replaceWith( model, true );
-		*/
 	}
 
-	private WebComponentModel retrieveComponentFromAttribute( ITemplateContext context, IProcessableElementTag element ) {
-		String expr = element.getAttributeValue( WebCmsDialect.PREFIX, ATTRIBUTE_COMPONENT );
-		IStandardExpressionParser parser = StandardExpressions.getExpressionParser( context.getConfiguration() );
-		IStandardExpression expression = parser.parseExpression( context, expr );
+	private void renderEmptyBody( IModel model, IProcessableElementTag elementTag ) {
+		ITemplateEvent closeElementTag = null;
+		if ( elementTag instanceof IOpenElementTag && model.size() > 1 ) {
+			closeElementTag = model.get( model.size() - 1 );
+		}
+		model.reset();
+		model.add( elementTag );
+		if ( closeElementTag != null ) {
+			model.add( closeElementTag );
+		}
+	}
 
-		Object component = expression.execute( context );
+	private String determineCreationScope( IProcessableElementTag elementTag, WebComponentModelHierarchy components, String scopeName ) {
+		String creationScope = null;
+		IAttribute attribute = elementTag.getAttribute( PREFIX, ATTR_AUTO_CREATE );
 
-		if ( component instanceof WebComponentModel ) {
-			return (WebComponentModel) component;
+		if ( attribute != null ) {
+			creationScope = attribute.getValue();
+			if ( creationScope == null ) {
+				creationScope = scopeName;
+			}
+			if ( creationScope == null ) {
+				creationScope = components.getDefaultScope();
+			}
 		}
 
-		throw new IllegalArgumentException(
-				WebCmsDialect.PREFIX + ":" + ATTRIBUTE_COMPONENT + " requires a value of type WebComponentModel"
-		);
+		return creationScope;
+	}
+
+	private IProcessableElementTag renderComponentModel( IEngineContext context,
+	                                                     IModel model,
+	                                                     IProcessableElementTag elementTag,
+	                                                     IModelFactory modelFactory,
+	                                                     WebComponentModel component ) {
+		model.reset();
+		if ( elementTag instanceof IOpenElementTag ) {
+			model.add( elementTag );
+		}
+		else {
+			model.add( modelFactory.createOpenElementTag(
+					elementTag.getElementCompleteName(), elementTag.getAttributeMap(), AttributeValueQuotes.DOUBLE, false
+			) );
+			elementTag = (IProcessableElementTag) model.get( 0 );
+		}
+
+		String atrId = "_generatedComponentName" + System.currentTimeMillis();
+		context.setVariable( atrId, component );
+		model.add( modelFactory.createStandaloneElementTag( "across:view", "element", "${" + atrId + "}" ) );
+		model.add( modelFactory.createCloseElementTag( elementTag.getElementCompleteName() ) );
+		return elementTag;
+	}
+
+	private WebComponentModel fetchWebComponentModel( String componentName,
+	                                                  IProcessableElementTag elementTag,
+	                                                  WebComponentModelHierarchy components,
+	                                                  String scopeName ) {
+		boolean searchParentScopes = !"false".equalsIgnoreCase( elementTag.getAttributeValue( PREFIX, ATTR_SEARCH_PARENTS ) );
+		return scopeName != null
+				? components.getFromScope( componentName, scopeName, searchParentScopes )
+				: components.get( componentName, searchParentScopes );
+	}
+
+	private void removeAttributes( IModel model, IProcessableElementTag elementTag, IModelFactory modelFactory ) {
+		IProcessableElementTag newFirstEvent = elementTag;
+
+		for ( String attributeToRemove : ATTRIBUTES_TO_REMOVE ) {
+			newFirstEvent = modelFactory.removeAttribute( newFirstEvent, PREFIX, attributeToRemove );
+		}
+
+		if ( newFirstEvent != elementTag ) {
+			model.replace( 0, newFirstEvent );
+		}
 	}
 }

@@ -8,14 +8,16 @@ assets:
 
   article:
     - title: some-title
+      objectId: "wcm:asset:article:some-title"
       publication: "wcm:asset:publication:news"
       subTitle: onder titel
       description: description of the article that is being imported...
-    - title: "Coming Up: Ship It Days 2017"
+    - title: "Coming Up: Ship It Days 2019"
+      objectId: "wcm:asset:article:ship-it-2019"
       publication: "wcm:asset:publication:blogs"
       subTitle:
       body: |
-        <h1>Coming Up: Ship It Days 2017</h1>
+        <h1>Coming Up: Ship It Days 2019</h1>
         <p>In 2016 we had our first <a title="Ship It Day" href="https://foreach.be/blog/ship-it-day-2016-about-being-grid-24-hours" target="_blank">Ship It Day</a> ever. More than expected, it proved to be a means to use our brain cells even more creatively. So this year we’re doing it again!</p>
         <p>The main rules of the 24-hour Ship It Day? All participants have 24 hours to make something shippable, together, that will benefit the company as a whole. Management will leave the building and, after those 24 hours, they will serve us some outstanding home-made spaghetti.</p>
         <p>Last year more than half of all employees participated in the Ship It Days 2016. This resulted in some permanent home-made products, such as: <a title="The CurveFever" href="https://foreach.be/blog/ship-it-day-webgame-curvefever" target="_blank">The CurveFever</a> web game; our <a title="Empty Coffee Can Detector" href="https://foreach.be/blog/shipit-day-how-empty-coffee-can-detector" target="_blank">Empty Coffee Can Detector</a> (a device that tells you exactly how much percentage of coffee still remains before a refill becomes urgent); and our Lounge Room (which, admittedly, isn’t shippable - but a huge benefit nonetheless).</p>
