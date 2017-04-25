@@ -1,6 +1,11 @@
 types:
   # Default component types
   component:
+    container:
+      name: Container
+      description: Container of multiple ordered components.
+      attributes:
+        type: container
     text-field:
       name: Text field
       description: A single line of plain text.
@@ -41,12 +46,19 @@ types:
   article:
     blog:
       name: Blog
+      attributes:
+        parent: news
+        bodyTemplate: body-template
+      wcm:components:
+        body-template:
+          title: Article body template
+          componentType: plain-text
     news:
       name: News
+
   # Default publication types: blog and news
   publication:
     blog:
       name: Blog
     news:
       name: News
-

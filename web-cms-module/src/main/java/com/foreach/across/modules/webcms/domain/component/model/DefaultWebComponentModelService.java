@@ -25,6 +25,7 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponentReposit
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -79,7 +80,13 @@ public class DefaultWebComponentModelService implements WebComponentModelService
 		            .filter( r -> r.supports( componentModel ) )
 		            .findFirst()
 		            .orElseThrow( () -> new UnknownWebComponentModelException( componentModel ) )
-		            .writeToComponent( componentModel, component );
+		            .save( componentModel );
+	}
+
+	@Transactional
+	@Override
+	public WebCmsComponent save( WebComponentModel componentModel ) {
+		return null;
 	}
 
 	@Autowired

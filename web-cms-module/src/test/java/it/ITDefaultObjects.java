@@ -113,7 +113,7 @@ public class ITDefaultObjects
 				"wcm:type:component:html",
 				"HTML",
 				"html",
-				Collections.singletonMap( "type", "html" )
+				Collections.singletonMap( "type", "markup" )
 		);
 	}
 

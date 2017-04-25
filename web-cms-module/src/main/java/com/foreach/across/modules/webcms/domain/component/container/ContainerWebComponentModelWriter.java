@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.image.component;
+package com.foreach.across.modules.webcms.domain.component.container;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.AbstractWebComponentModelWriter;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
+import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,16 +28,22 @@ import org.springframework.stereotype.Component;
  * @since 0.0.1
  */
 @Component
-public class ImageWebComponentModelWriter extends AbstractWebComponentModelWriter<ImageWebComponentModel>
+@RequiredArgsConstructor
+public class ContainerWebComponentModelWriter extends AbstractWebComponentModelWriter<ContainerWebComponentModel>
 {
+	private final WebComponentModelService webComponentModelService;
+
 	@Override
 	public boolean supports( WebComponentModel componentModel ) {
-		return ImageWebComponentModel.class.isInstance( componentModel );
+		return ContainerWebComponentModel.class.isInstance( componentModel );
 	}
 
 	@Override
-	protected void buildMainComponent( ImageWebComponentModel componentModel, WebCmsComponent component ) {
-		WebCmsImage image = componentModel.getImage();
-		component.setMetadata( image != null ? image.getObjectId() : null );
+	protected void buildMainComponent( ContainerWebComponentModel componentModel, WebCmsComponent component ) {
+	}
+
+	@Override
+	protected void afterUpdate( ContainerWebComponentModel componentModel, WebCmsComponent mainComponent ) {
+		componentModel.getComponents().getOrdered().forEach( webComponentModelService::save );
 	}
 }

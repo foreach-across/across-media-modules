@@ -18,13 +18,17 @@ package com.foreach.across.modules.webcms.web.component;
 
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.AdminWebModule;
+import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.builder.ColumnViewElementBuilder;
 import com.foreach.across.modules.entity.views.EntityView;
-import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
+import com.foreach.across.modules.entity.views.context.EntityViewContext;
+import com.foreach.across.modules.entity.views.processors.SaveEntityViewProcessor;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
+import com.foreach.across.modules.entity.views.processors.support.EntityViewPageHelper;
 import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
+import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
@@ -33,10 +37,10 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Layouts the web component form pages, builds the actual component model and renders the form.
@@ -47,26 +51,55 @@ import org.springframework.web.bind.WebDataBinder;
 @AcrossDepends(required = AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
-public class WebComponentFormProcessor extends EntityViewProcessorAdapter
+public class WebComponentFormProcessor extends SaveEntityViewProcessor
 {
 	private final static String EXTENSION_NAME = "componentModel";
+
+	private final EntityViewPageHelper entityViewPageHelper;
 
 	private final WebComponentModelService componentModelService;
 	private final WebComponentModelAdminRenderService componentModelAdminRenderService;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
+		super.initializeCommandObject( entityViewRequest, command, dataBinder );
+
 		WebComponentModel componentModel = componentModelService.readFromComponent( command.getEntity( WebCmsComponent.class ) );
 		command.addExtension( EXTENSION_NAME, componentModel );
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void validateCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, Errors errors, HttpMethod httpMethod ) {
-		if ( !errors.hasErrors() && httpMethod.equals( HttpMethod.POST ) ) {
-			componentModelService.writeToComponent(
-					command.getExtension( EXTENSION_NAME, WebComponentModel.class ),
-					command.getEntity( WebCmsComponent.class )
-			);
+	protected void doPost( EntityViewRequest entityViewRequest, EntityView entityView, EntityViewCommand command, BindingResult bindingResult ) {
+		if ( !bindingResult.hasErrors() ) {
+			try {
+				EntityViewContext entityViewContext = entityViewRequest.getEntityViewContext();
+
+				WebComponentModel componentModel = command.getExtension( EXTENSION_NAME, WebComponentModel.class );
+				componentModel.setComponent( command.getEntity( WebCmsComponent.class ) );
+
+				boolean isNew = componentModel.isNew();
+
+				WebCmsComponent savedEntity = componentModelService.save( componentModel );
+
+				entityViewPageHelper.addGlobalFeedbackAfterRedirect( entityViewRequest, Style.SUCCESS,
+				                                                     isNew ? "feedback.entityCreated" : "feedback.entityUpdated" );
+
+				if ( entityViewRequest.hasPartialFragment() ) {
+					entityView.setRedirectUrl(
+							UriComponentsBuilder.fromUriString( entityViewContext.getLinkBuilder().update( savedEntity ) )
+							                    .queryParam( WebTemplateInterceptor.PARTIAL_PARAMETER, entityViewRequest.getPartialFragment() )
+							                    .toUriString()
+					);
+				}
+				else {
+					entityView.setRedirectUrl( entityViewContext.getLinkBuilder().update( savedEntity ) );
+				}
+
+			}
+			catch ( RuntimeException e ) {
+				entityViewPageHelper.throwOrAddExceptionFeedback( entityViewRequest, "feedback.entitySaveFailed", e );
+			}
 		}
 	}
 

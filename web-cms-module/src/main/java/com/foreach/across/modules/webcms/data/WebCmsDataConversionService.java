@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.data;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.support.DefaultConversionService;
@@ -32,6 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@Slf4j
 @Service("webCmsDataConversionService")
 public class WebCmsDataConversionService extends DefaultConversionService
 {
@@ -50,18 +52,23 @@ public class WebCmsDataConversionService extends DefaultConversionService
 		AtomicBoolean modified = new AtomicBoolean( false );
 
 		data.forEach( ( propertyName, propertyValue ) -> {
-			TypeDescriptor typeDescriptor = beanWrapper.getPropertyTypeDescriptor( propertyName );
-
-			if ( typeDescriptor == null ) {
-				throw new IllegalArgumentException( "Unknown property: " + propertyName );
+			if ( propertyName.contains( ":" ) ) {
+				LOG.trace( "Skipping property {} - assuming seperate importer wil be used" );
 			}
+			else {
+				TypeDescriptor typeDescriptor = beanWrapper.getPropertyTypeDescriptor( propertyName );
 
-			Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
-			Object currentValue = beanWrapper.getPropertyValue( propertyName );
+				if ( typeDescriptor == null ) {
+					throw new IllegalArgumentException( "Unknown property: " + propertyName );
+				}
 
-			if ( dto.isNew() || !Objects.equals( currentValue, valueToSet ) ) {
-				modified.set( true );
-				beanWrapper.setPropertyValue( propertyName, valueToSet );
+				Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
+				Object currentValue = beanWrapper.getPropertyValue( propertyName );
+
+				if ( dto.isNew() || !Objects.equals( currentValue, valueToSet ) ) {
+					modified.set( true );
+					beanWrapper.setPropertyValue( propertyName, valueToSet );
+				}
 			}
 		} );
 

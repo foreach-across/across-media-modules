@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.component.model;
+package com.foreach.across.modules.webcms.data.json;
 
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import org.springframework.boot.jackson.JsonObjectSerializer;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public interface WebComponentModelWriter<T extends WebComponentModel>
+@Component
+public final class WebCmsObjectSerializer extends JsonObjectSerializer<WebCmsObject>
 {
-	boolean supports( WebComponentModel componentModel );
-
-	WebCmsComponent save( T componentModel );
+	@Override
+	protected void serializeObject( WebCmsObject value, JsonGenerator jgen, SerializerProvider provider ) throws IOException {
+		jgen.writeString( value.getObjectId() );
+	}
 }

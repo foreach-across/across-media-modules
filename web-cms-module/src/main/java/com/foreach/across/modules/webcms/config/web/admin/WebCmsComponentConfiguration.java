@@ -26,6 +26,7 @@ import com.foreach.across.modules.entity.query.AssociatedEntityQueryExecutor;
 import com.foreach.across.modules.entity.query.EntityQuery;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.views.processors.DefaultValidationViewProcessor;
+import com.foreach.across.modules.entity.views.processors.SaveEntityViewProcessor;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
@@ -67,7 +68,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 
 			@Override
 			public Page<WebCmsComponent> findAll( Object parent, EntityQuery query, Pageable pageable ) {
-				return new PageImpl<WebCmsComponent>( findAll( parent, query ) );
+				return new PageImpl<>( findAll( parent, query ) );
 			}
 		};
 	}
@@ -102,6 +103,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				        fvb -> fvb.properties( props -> props.property( "componentType" ).writable( false ) )
 				                  .showProperties( "componentType", "title", "name", "lastModified" )
 				                  .viewProcessor( formProcessor )
+				                  .removeViewProcessor( SaveEntityViewProcessor.class.getName() )
 				                  .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 8, 4 ) ) )
 		        );
 

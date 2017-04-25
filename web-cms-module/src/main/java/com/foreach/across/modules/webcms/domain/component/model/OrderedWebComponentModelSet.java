@@ -64,6 +64,10 @@ public class OrderedWebComponentModelSet
 	@Setter
 	private BiFunction<WebCmsObject, String, WebComponentModel> fetcherFunction;
 
+	public OrderedWebComponentModelSet( WebCmsObject owner ) {
+		this.owner = owner;
+	}
+
 	public OrderedWebComponentModelSet( String scopeName ) {
 		this.scopeName = scopeName;
 	}

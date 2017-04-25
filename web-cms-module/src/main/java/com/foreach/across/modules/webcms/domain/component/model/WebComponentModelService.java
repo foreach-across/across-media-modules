@@ -46,4 +46,6 @@ public interface WebComponentModelService
 	WebComponentModel readFromComponent( WebCmsComponent component );
 
 	void writeToComponent( WebComponentModel componentModel, WebCmsComponent component );
+
+	WebCmsComponent save( WebComponentModel componentModel );
 }

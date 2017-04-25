@@ -29,6 +29,7 @@ import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author: Sander Van Loock
  * @since: 0.0.1
  */
+@ConditionalOnBean(BootstrapUiComponentFactory.class)
 @Component
 public class WebCmsImageFormViewProcessor extends ImageFormViewProcessor<WebCmsImage>
 {
@@ -68,7 +70,7 @@ public class WebCmsImageFormViewProcessor extends ImageFormViewProcessor<WebCmsI
 			menu.sort();
 			menu.select( new RequestMenuSelector( entityViewRequest.getWebRequest().getNativeRequest( HttpServletRequest.class ) ) );
 
-				page.addToNav( bootstrapUiComponentFactory.nav( menu ).pills().build() );
+			page.addToNav( bootstrapUiComponentFactory.nav( menu ).pills().build() );
 		}
 
 		super.postRender( entityViewRequest, entityView, container, builderContext );

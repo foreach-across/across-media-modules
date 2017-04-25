@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.image.component;
+package com.foreach.across.modules.webcms.domain.component.container;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.model.AbstractWebComponentModelWriter;
+import com.foreach.across.modules.webcms.domain.component.model.OrderedWebComponentModelSet;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
-import org.springframework.stereotype.Component;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Component
-public class ImageWebComponentModelWriter extends AbstractWebComponentModelWriter<ImageWebComponentModel>
+@Getter
+@Setter
+public class ContainerWebComponentModel extends WebComponentModel
 {
-	@Override
-	public boolean supports( WebComponentModel componentModel ) {
-		return ImageWebComponentModel.class.isInstance( componentModel );
+	private final OrderedWebComponentModelSet components;
+
+	public ContainerWebComponentModel() {
+		this.components = new OrderedWebComponentModelSet( this );
 	}
 
-	@Override
-	protected void buildMainComponent( ImageWebComponentModel componentModel, WebCmsComponent component ) {
-		WebCmsImage image = componentModel.getImage();
-		component.setMetadata( image != null ? image.getObjectId() : null );
+	public ContainerWebComponentModel( WebCmsComponent component, OrderedWebComponentModelSet components ) {
+		super( component );
+		this.components = components;
 	}
 }

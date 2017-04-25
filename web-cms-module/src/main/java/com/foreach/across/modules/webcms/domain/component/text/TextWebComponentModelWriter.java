@@ -17,8 +17,8 @@
 package com.foreach.across.modules.webcms.domain.component.text;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.model.AbstractWebComponentModelWriter;
 import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelWriter;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  * @since 0.0.1
  */
 @Component
-public class TextWebComponentModelWriter implements WebComponentModelWriter<TextWebComponentModel>
+public class TextWebComponentModelWriter extends AbstractWebComponentModelWriter<TextWebComponentModel>
 {
 	@Override
 	public boolean supports( WebComponentModel componentModel ) {
@@ -34,7 +34,7 @@ public class TextWebComponentModelWriter implements WebComponentModelWriter<Text
 	}
 
 	@Override
-	public void writeToComponent( TextWebComponentModel componentModel, WebCmsComponent component ) {
+	protected void buildMainComponent( TextWebComponentModel componentModel, WebCmsComponent component ) {
 		component.setBody( componentModel.getContent() );
 	}
 }

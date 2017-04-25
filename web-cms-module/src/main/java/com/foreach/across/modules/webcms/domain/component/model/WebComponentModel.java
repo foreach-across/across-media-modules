@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import lombok.Getter;
@@ -34,7 +35,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class WebComponentModel implements ViewElement
+public abstract class WebComponentModel implements ViewElement, WebCmsObject
 {
 	/**
 	 * Common attribute used to specify the base type of the component type.
@@ -95,6 +96,10 @@ public abstract class WebComponentModel implements ViewElement
 	 */
 	public String getTitle() {
 		return StringUtils.isEmpty( title ) ? name : title;
+	}
+
+	public boolean isNew() {
+		return StringUtils.isEmpty( objectId );
 	}
 
 	@Override
