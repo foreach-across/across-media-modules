@@ -93,12 +93,14 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle> implements ImageOw
 	/**
 	 * Temporary: body of the article.
 	 */
+	@Deprecated
 	@Column(name = "body")
 	private String body;
 
 	/**
 	 * Temporary: The image of this post
 	 */
+	@Deprecated
 	@ManyToOne
 	@JoinColumn(name = "image_id")
 	private WebCmsImage image;

@@ -52,7 +52,7 @@ types:
       wcm:components:
         body-template:
           title: Article body template
-          componentType: plain-text
+          componentType: rich-text
     news:
       name: News
 
@@ -60,5 +60,20 @@ types:
   publication:
     blog:
       name: Blog
+      attributes:
+        parent: news
+
     news:
       name: News
+      wcm:components:
+        articleTemplate:
+          title: Generic article template
+          componentType: container
+          wcm:components:
+            body:
+              title: Body
+              componentType: rich-text
+              body: |
+                <h1>@@title@@</h1>
+                <p></p>
+              sortIndex: 0

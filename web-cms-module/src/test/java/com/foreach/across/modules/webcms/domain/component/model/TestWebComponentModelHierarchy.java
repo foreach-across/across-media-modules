@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.component.model;
 
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,15 +41,15 @@ public class TestWebComponentModelHierarchy
 	private HttpServletRequest request;
 
 	@Mock
-	private WebComponentModelService componentModelService;
+	private WebCmsComponentModelService componentModelService;
 
-	private WebComponentModelHierarchy components;
+	private WebCmsComponentModelHierarchy components;
 
 	private OrderedWebComponentModelSet page, asset;
 
 	@Before
 	public void setUp() throws Exception {
-		components = new WebComponentModelHierarchy();
+		components = new WebCmsComponentModelHierarchy();
 
 		page = new OrderedWebComponentModelSet( "page" );
 		asset = new OrderedWebComponentModelSet( "asset" );
@@ -123,17 +122,17 @@ public class TestWebComponentModelHierarchy
 	public void globalScope() {
 		components.buildGlobalComponentModelSet( componentModelService );
 
-		val global = components.getComponentsForScope( WebComponentModelHierarchy.GLOBAL );
+		val global = components.getComponentsForScope( WebCmsComponentModelHierarchy.GLOBAL );
 		assertNotNull( global );
 
 		global.get( "123" );
-		verify( componentModelService ).getWebComponent( "123", null );
+		verify( componentModelService ).getComponentModel( "123", null );
 	}
 
 	@Test
 	public void requestAttribute() {
 		components.registerAsRequestAttribute( request );
-		verify( request ).setAttribute( WebComponentModelHierarchy.REQUEST_ATTRIBUTE, components );
+		verify( request ).setAttribute( WebCmsComponentModelHierarchy.REQUEST_ATTRIBUTE, components );
 	}
 
 	@Test
@@ -193,12 +192,15 @@ public class TestWebComponentModelHierarchy
 		assertSame( anotherThree, components.getFromScope( "three", "page", false ) );
 	}
 
-	private class Model extends WebComponentModel
+	private class Model extends WebCmsComponentModel
 	{
 		Model( String name ) {
 			setName( name );
-			setComponentType( WebCmsComponentType.builder().id( 1L ).build() );
-			setObjectId( name );
+		}
+
+		@Override
+		public WebCmsComponentModel asTemplate() {
+			return new Model( getName() );
 		}
 	}
 }

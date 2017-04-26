@@ -65,6 +65,17 @@ public class WebCmsComponentImporter implements WebCmsDataImporter
 
 	private void importSingleComponent( WebCmsDataEntry item ) {
 		WebCmsComponent existing = retrieveExistingAsset( (String) item.getMapData().get( "objectId" ), item.getKey() );
+
+		String action = (String) item.getMapData().get( "wcm:action" );
+
+		if ( action != null ) {
+			if ( "delete".equals( action ) && existing != null ) {
+				LOG.trace( "WebCmsComponent {} with objectId {}: removing component", dataKey, existing.getObjectId() );
+				componentRepository.delete( existing );
+				return;
+			}
+		}
+
 		WebCmsComponent dto = createDto( existing );
 
 		if ( dto != null ) {

@@ -16,15 +16,15 @@
 
 package com.foreach.across.modules.webcms.domain.component;
 
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public final class UnknownWebComponentModelException extends RuntimeException
+public final class UnknownWebCmsComponentModelException extends RuntimeException
 {
-	public UnknownWebComponentModelException( WebComponentModel componentModel ) {
+	public UnknownWebCmsComponentModelException( WebCmsComponentModel componentModel ) {
 		super( "Unable to handle component model: " + componentModel );
 	}
 }

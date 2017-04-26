@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.image.component;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +30,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ImageWebComponentModel extends WebComponentModel
+public class ImageWebCmsComponentModel extends WebCmsComponentModel
 {
 	private WebCmsImage image;
 
@@ -38,7 +38,7 @@ public class ImageWebComponentModel extends WebComponentModel
 
 	private String imageUrl;
 
-	public ImageWebComponentModel( WebCmsComponent component ) {
+	public ImageWebCmsComponentModel( WebCmsComponent component ) {
 		super( component );
 	}
 
@@ -60,5 +60,15 @@ public class ImageWebComponentModel extends WebComponentModel
 
 	public boolean hasImage() {
 		return image != null;
+	}
+
+	@Override
+	public ImageWebCmsComponentModel asTemplate() {
+		ImageWebCmsComponentModel template = new ImageWebCmsComponentModel( getComponent().asTemplate() );
+		template.image = image;
+		template.imageServerKey = imageServerKey;
+		template.imageUrl = imageUrl;
+
+		return template;
 	}
 }

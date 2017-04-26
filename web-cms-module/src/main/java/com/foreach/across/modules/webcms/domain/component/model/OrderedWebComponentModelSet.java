@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
- * Represents an ordered collection of {@link WebComponentModel}s that are accessible by name.
+ * Represents an ordered collection of {@link WebCmsComponentModel}s that are accessible by name.
  * Components can be both added in order or accessible by name.
  *
  * @author Arne Vandamme
@@ -40,13 +40,17 @@ import java.util.function.BiFunction;
 @AllArgsConstructor
 public class OrderedWebComponentModelSet
 {
-	private final List<WebComponentModel> orderedComponents = new ArrayList<>();
-	private final Map<String, WebComponentModel> componentsByName = new HashMap<>();
+	private final List<WebCmsComponentModel> orderedComponents = new ArrayList<>();
+	private final Map<String, WebCmsComponentModel> componentsByName = new HashMap<>();
 
-	private final List<WebComponentModel> unmodifiableOrdered = orderedComponents;
+	private final List<WebCmsComponentModel> unmodifiableOrdered = orderedComponents;
 
-	private static final WebComponentModel NOT_FOUND_MARKER = new WebComponentModel()
+	private static final WebCmsComponentModel NOT_FOUND_MARKER = new WebCmsComponentModel()
 	{
+		@Override
+		public WebCmsComponentModel asTemplate() {
+			return null;
+		}
 	};
 
 	@Getter
@@ -62,7 +66,7 @@ public class OrderedWebComponentModelSet
 	 * This function will only be called the first time the component is looked for.
 	 */
 	@Setter
-	private BiFunction<WebCmsObject, String, WebComponentModel> fetcherFunction;
+	private BiFunction<WebCmsObject, String, WebCmsComponentModel> fetcherFunction;
 
 	public OrderedWebComponentModelSet( WebCmsObject owner ) {
 		this.owner = owner;
@@ -83,7 +87,7 @@ public class OrderedWebComponentModelSet
 	 *
 	 * @param componentModel to add
 	 */
-	public void add( WebComponentModel componentModel ) {
+	public void add( WebCmsComponentModel componentModel ) {
 		addByNameOnly( componentModel );
 		orderedComponents.add( componentModel );
 	}
@@ -96,8 +100,8 @@ public class OrderedWebComponentModelSet
 	 * @param componentModel to replace with
 	 * @return existing component that was replaced
 	 */
-	public WebComponentModel replace( String name, WebComponentModel componentModel ) {
-		WebComponentModel existing = componentsByName.remove( name );
+	public WebCmsComponentModel replace( String name, WebCmsComponentModel componentModel ) {
+		WebCmsComponentModel existing = componentsByName.remove( name );
 		if ( existing != null ) {
 			addByNameOnly( componentModel );
 			orderedComponents.replaceAll( current -> existing.equals( current ) ? componentModel : current );
@@ -110,18 +114,18 @@ public class OrderedWebComponentModelSet
 	 * Add a component to the ordered collection positioned after another existing component.
 	 * Only if there is an existing component will the new component be added.
 	 * <p/>
-	 * NOTE: Call {@link #addByNameOnly(WebComponentModel)} separately if you also want to register the component by name.
+	 * NOTE: Call {@link #addByNameOnly(WebCmsComponentModel)} separately if you also want to register the component by name.
 	 *
 	 * @param componentToAdd        to add
 	 * @param nameOfComponentBefore name of the existing component
 	 * @return true if component was added
 	 */
-	public boolean addAfter( WebComponentModel componentToAdd, String nameOfComponentBefore ) {
+	public boolean addAfter( WebCmsComponentModel componentToAdd, String nameOfComponentBefore ) {
 		Assert.notNull( nameOfComponentBefore );
-		WebComponentModel existing = orderedComponents.stream()
-		                                              .filter( c -> nameOfComponentBefore.equals( c.getName() ) )
-		                                              .findFirst()
-		                                              .orElse( null );
+		WebCmsComponentModel existing = orderedComponents.stream()
+		                                                 .filter( c -> nameOfComponentBefore.equals( c.getName() ) )
+		                                                 .findFirst()
+		                                                 .orElse( null );
 
 		return addAfter( componentToAdd, existing );
 	}
@@ -130,13 +134,13 @@ public class OrderedWebComponentModelSet
 	 * Add a component to the ordered collection positioned after another existing component.
 	 * Only if there is an existing component will the new component be added.
 	 * <p/>
-	 * NOTE: Call {@link #addByNameOnly(WebComponentModel)} separately if you also want to register the component by name.
+	 * NOTE: Call {@link #addByNameOnly(WebCmsComponentModel)} separately if you also want to register the component by name.
 	 *
 	 * @param componentToAdd  to add
 	 * @param componentBefore existing component
 	 * @return true if component was added
 	 */
-	public boolean addAfter( WebComponentModel componentToAdd, WebComponentModel componentBefore ) {
+	public boolean addAfter( WebCmsComponentModel componentToAdd, WebCmsComponentModel componentBefore ) {
 		int index = orderedComponents.indexOf( componentBefore );
 
 		if ( index >= 0 ) {
@@ -157,18 +161,18 @@ public class OrderedWebComponentModelSet
 	 * Add a component to the ordered collection positioned before another existing component.
 	 * Only if there is an existing component will the new component be added.
 	 * <p/>
-	 * NOTE: Call {@link #addByNameOnly(WebComponentModel)} separately if you also want to register the component by name.
+	 * NOTE: Call {@link #addByNameOnly(WebCmsComponentModel)} separately if you also want to register the component by name.
 	 *
 	 * @param componentToAdd       to add
 	 * @param nameOfComponentAfter name of the existing component
 	 * @return true if component was added
 	 */
-	public boolean addBefore( WebComponentModel componentToAdd, String nameOfComponentAfter ) {
+	public boolean addBefore( WebCmsComponentModel componentToAdd, String nameOfComponentAfter ) {
 		Assert.notNull( nameOfComponentAfter );
-		WebComponentModel existing = orderedComponents.stream()
-		                                              .filter( c -> nameOfComponentAfter.equals( c.getName() ) )
-		                                              .findFirst()
-		                                              .orElse( null );
+		WebCmsComponentModel existing = orderedComponents.stream()
+		                                                 .filter( c -> nameOfComponentAfter.equals( c.getName() ) )
+		                                                 .findFirst()
+		                                                 .orElse( null );
 
 		return addBefore( componentToAdd, existing );
 	}
@@ -177,13 +181,13 @@ public class OrderedWebComponentModelSet
 	 * Add a component to the ordered collection positioned before another existing component.
 	 * Only if there is an existing component will the new component be added.
 	 * <p/>
-	 * NOTE: Call {@link #addByNameOnly(WebComponentModel)} separately if you also want to register the component by name.
+	 * NOTE: Call {@link #addByNameOnly(WebCmsComponentModel)} separately if you also want to register the component by name.
 	 *
 	 * @param componentToAdd to add
 	 * @param componentAfter existing component
 	 * @return true if component was added
 	 */
-	public boolean addBefore( WebComponentModel componentToAdd, WebComponentModel componentAfter ) {
+	public boolean addBefore( WebCmsComponentModel componentToAdd, WebCmsComponentModel componentAfter ) {
 		int index = orderedComponents.indexOf( componentAfter );
 
 		if ( index >= 0 ) {
@@ -199,7 +203,7 @@ public class OrderedWebComponentModelSet
 	 *
 	 * @param componentModel to add
 	 */
-	public void addToOrderedOnly( WebComponentModel componentModel ) {
+	public void addToOrderedOnly( WebCmsComponentModel componentModel ) {
 		orderedComponents.add( componentModel );
 	}
 
@@ -208,7 +212,7 @@ public class OrderedWebComponentModelSet
 	 *
 	 * @param componentModel to add
 	 */
-	public void addByNameOnly( WebComponentModel componentModel ) {
+	public void addByNameOnly( WebCmsComponentModel componentModel ) {
 		if ( componentModel.getName() != null ) {
 			componentsByName.put( componentModel.getName(), componentModel );
 		}
@@ -227,8 +231,8 @@ public class OrderedWebComponentModelSet
 	 *
 	 * @return component or null if not found
 	 */
-	public WebComponentModel get( String name ) {
-		WebComponentModel model = componentsByName.get( name );
+	public WebCmsComponentModel get( String name ) {
+		WebCmsComponentModel model = componentsByName.get( name );
 		if ( model == null && fetcherFunction != null ) {
 			model = fetcherFunction.apply( owner, name );
 			componentsByName.put( name, model != null ? model : NOT_FOUND_MARKER );
@@ -244,8 +248,8 @@ public class OrderedWebComponentModelSet
 	 * @param name of the component to remove
 	 * @return component removed
 	 */
-	public WebComponentModel remove( String name ) {
-		WebComponentModel existing = get( name );
+	public WebCmsComponentModel remove( String name ) {
+		WebCmsComponentModel existing = get( name );
 
 		if ( existing != null ) {
 			remove( existing );
@@ -261,7 +265,7 @@ public class OrderedWebComponentModelSet
 	 * @param componentModel to remove
 	 * @return true if at least one entry has been removed
 	 */
-	public boolean remove( WebComponentModel componentModel ) {
+	public boolean remove( WebCmsComponentModel componentModel ) {
 		Assert.notNull( componentModel );
 
 		List<String> namesToRemove = new ArrayList<>();
@@ -278,7 +282,7 @@ public class OrderedWebComponentModelSet
 	/**
 	 * @return immutable ordered components
 	 */
-	public List<WebComponentModel> getOrdered() {
+	public List<WebCmsComponentModel> getOrdered() {
 		return unmodifiableOrdered;
 	}
 

@@ -17,9 +17,9 @@
 package com.foreach.across.modules.webcms.domain.component.container;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.model.AbstractWebComponentModelWriter;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelService;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelReader;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -29,21 +29,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class ContainerWebComponentModelWriter extends AbstractWebComponentModelWriter<ContainerWebComponentModel>
+public class ContainerWebCmsComponentModelReader implements WebCmsComponentModelReader<ContainerWebCmsComponentModel>
 {
-	private final WebComponentModelService webComponentModelService;
+	private final WebCmsComponentModelService webCmsComponentModelService;
 
 	@Override
-	public boolean supports( WebComponentModel componentModel ) {
-		return ContainerWebComponentModel.class.isInstance( componentModel );
+	public boolean supports( WebCmsComponent component ) {
+		return "container".equals( component.getComponentType().getAttribute( WebCmsComponentModel.TYPE_ATTRIBUTE ) );
 	}
 
 	@Override
-	protected void buildMainComponent( ContainerWebComponentModel componentModel, WebCmsComponent component ) {
-	}
-
-	@Override
-	protected void afterUpdate( ContainerWebComponentModel componentModel, WebCmsComponent mainComponent ) {
-		componentModel.getComponents().getOrdered().forEach( webComponentModelService::save );
+	public ContainerWebCmsComponentModel readFromComponent( WebCmsComponent component ) {
+		return new ContainerWebCmsComponentModel( component, webCmsComponentModelService.getComponentModelsForOwner( component ) );
 	}
 }

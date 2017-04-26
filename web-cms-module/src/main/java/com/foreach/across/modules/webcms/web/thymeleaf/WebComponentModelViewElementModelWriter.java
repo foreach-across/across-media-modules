@@ -19,8 +19,8 @@ package com.foreach.across.modules.webcms.web.thymeleaf;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
-import com.foreach.across.modules.webcms.domain.component.UnknownWebComponentModelException;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.UnknownWebCmsComponentModelException;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,17 +31,17 @@ import java.util.Collection;
  * @since 0.0.1
  */
 @Component
-public class WebComponentModelViewElementModelWriter implements ViewElementModelWriter<WebComponentModel>
+public class WebComponentModelViewElementModelWriter implements ViewElementModelWriter<WebCmsComponentModel>
 {
 	private Collection<WebComponentModelRenderer> renderers;
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void writeModel( WebComponentModel webComponentModel, ThymeleafModelBuilder model ) {
+	public void writeModel( WebCmsComponentModel webComponentModel, ThymeleafModelBuilder model ) {
 		renderers.stream()
 		         .filter( r -> r.supports( webComponentModel ) )
 		         .findFirst()
-		         .orElseThrow( () -> new UnknownWebComponentModelException( webComponentModel ) )
+		         .orElseThrow( () -> new UnknownWebCmsComponentModelException( webComponentModel ) )
 		         .writeComponent( webComponentModel, model );
 	}
 

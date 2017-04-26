@@ -25,8 +25,8 @@ import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.WebCmsModule;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.image.component.ImageWebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
 import com.foreach.across.modules.webcms.web.component.WebComponentModelAdminRenderer;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.dto.DimensionsDto;
@@ -43,18 +43,18 @@ import org.springframework.stereotype.Component;
 @AcrossDepends(required = AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
-public class ImageWebComponentModelAdminRenderer implements WebComponentModelAdminRenderer<ImageWebComponentModel>
+public class ImageWebComponentModelAdminRenderer implements WebComponentModelAdminRenderer<ImageWebCmsComponentModel>
 {
 	private final BeanFactory beanFactory;
 	private final BootstrapUiFactory bootstrapUiFactory;
 
 	@Override
-	public boolean supports( WebComponentModel componentModel ) {
-		return ImageWebComponentModel.class.isInstance( componentModel );
+	public boolean supports( WebCmsComponentModel componentModel ) {
+		return ImageWebCmsComponentModel.class.isInstance( componentModel );
 	}
 
 	@Override
-	public ViewElementBuilder createContentViewElementBuilder( ImageWebComponentModel componentModel, String controlNamePrefix ) {
+	public ViewElementBuilder createContentViewElementBuilder( ImageWebCmsComponentModel componentModel, String controlNamePrefix ) {
 		ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
 
 		ImageVariantDto variant = new ImageVariantDto();
@@ -74,6 +74,7 @@ public class ImageWebComponentModelAdminRenderer implements WebComponentModelAdm
 								.div()
 								.attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
 								.attribute( "data-wcm-component-base-type", "image" )
+								.css( "image-selected-container", "clearfix" )
 								.add(
 										bootstrapUiFactory.hidden()
 										                  .controlName( controlNamePrefix + ".image" )

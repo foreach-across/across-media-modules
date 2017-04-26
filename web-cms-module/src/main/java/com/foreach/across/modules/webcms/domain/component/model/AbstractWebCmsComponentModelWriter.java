@@ -24,8 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * @author Arne Vandamme
  * @since 0.0.1
+ * @see WebCmsComponentModelWriter
  */
-public abstract class AbstractWebComponentModelWriter<T extends WebComponentModel> implements WebComponentModelWriter<T>
+public abstract class AbstractWebCmsComponentModelWriter<T extends WebCmsComponentModel> implements WebCmsComponentModelWriter<T>
 {
 	private WebCmsComponentRepository componentRepository;
 

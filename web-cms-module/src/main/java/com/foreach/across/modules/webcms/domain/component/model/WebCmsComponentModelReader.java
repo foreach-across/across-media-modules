@@ -22,9 +22,9 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public interface WebComponentModelWriter<T extends WebComponentModel>
+public interface WebCmsComponentModelReader<T extends WebCmsComponentModel>
 {
-	boolean supports( WebComponentModel componentModel );
+	boolean supports( WebCmsComponent component );
 
-	WebCmsComponent save( T componentModel );
+	T readFromComponent( WebCmsComponent component );
 }

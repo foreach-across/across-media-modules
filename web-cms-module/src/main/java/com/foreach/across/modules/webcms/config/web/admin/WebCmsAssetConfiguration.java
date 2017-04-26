@@ -23,8 +23,12 @@ import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBu
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.web.asset.processors.WebCmsAssetListViewProcessor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+
+import java.util.EnumSet;
 
 /**
  * @author Arne Vandamme
@@ -35,6 +39,15 @@ public class WebCmsAssetConfiguration implements EntityConfigurer
 {
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.withType( WebCmsUrl.class )
+		        .properties(
+				        props -> props.property( "httpStatus" )
+				                      .attribute(
+						                      EntityAttributes.OPTIONS_ALLOWED_VALUES,
+						                      EnumSet.of( HttpStatus.OK, HttpStatus.MOVED_PERMANENTLY, HttpStatus.MOVED_TEMPORARILY, HttpStatus.NOT_FOUND )
+				                      )
+		        );
+
 		entities.assignableTo( WebCmsAsset.class )
 		        .properties(
 				        props -> props.property( "published" ).hidden( true ).and()

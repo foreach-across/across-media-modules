@@ -208,3 +208,6 @@ If omitted, parent scopes will always be queried.
 If the component is not found, the body will be empty.
 
 |===
+
+
+Enabling urls for WebCmsAsset implementations: wire WebCmsAssetUrlConfiguration

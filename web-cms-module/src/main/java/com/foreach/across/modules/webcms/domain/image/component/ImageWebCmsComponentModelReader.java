@@ -17,14 +17,11 @@
 package com.foreach.across.modules.webcms.domain.image.component;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelReader;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelReader;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Arne Vandamme
@@ -32,18 +29,18 @@ import java.util.Map;
  */
 @Component
 @RequiredArgsConstructor
-public class ImageWebComponentModelReader implements WebComponentModelReader<ImageWebComponentModel>
+public class ImageWebCmsComponentModelReader implements WebCmsComponentModelReader<ImageWebCmsComponentModel>
 {
 	private final WebCmsImageRepository imageRepository;
 
 	@Override
 	public boolean supports( WebCmsComponent component ) {
-		return "image".equals( component.getComponentType().getAttribute( WebComponentModel.TYPE_ATTRIBUTE ) );
+		return "image".equals( component.getComponentType().getAttribute( WebCmsComponentModel.TYPE_ATTRIBUTE ) );
 	}
 
 	@Override
-	public ImageWebComponentModel readFromComponent( WebCmsComponent component ) {
-		ImageWebComponentModel model = new ImageWebComponentModel( component );
+	public ImageWebCmsComponentModel readFromComponent( WebCmsComponent component ) {
+		ImageWebCmsComponentModel model = new ImageWebCmsComponentModel( component );
 		model.setImage( imageRepository.findOneByObjectId( component.getMetadata() ) );
 		return model;
 	}

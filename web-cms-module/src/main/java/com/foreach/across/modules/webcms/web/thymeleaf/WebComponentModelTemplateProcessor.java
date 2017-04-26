@@ -15,7 +15,7 @@
  */
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentAutoCreateQueue;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentAutoCreateQueue;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
@@ -69,7 +69,7 @@ final class WebComponentModelTemplateProcessor implements IPostProcessor
 			private OutputTemplateHandler handler = new OutputTemplateHandler( buffer );
 		}
 
-		private WebComponentAutoCreateQueue queue;
+		private WebCmsComponentAutoCreateQueue queue;
 
 		@Override
 		public void setNext( ITemplateHandler next ) {
@@ -81,7 +81,7 @@ final class WebComponentModelTemplateProcessor implements IPostProcessor
 			this.context = context;
 
 			ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-			queue = appCtx.getBean( WebComponentAutoCreateQueue.class );
+			queue = appCtx.getBean( WebCmsComponentAutoCreateQueue.class );
 		}
 
 		@Override

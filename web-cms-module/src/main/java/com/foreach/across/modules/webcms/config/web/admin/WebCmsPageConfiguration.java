@@ -23,7 +23,6 @@ import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
-import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.ViewElementMode;
@@ -44,6 +43,7 @@ import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUt
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,12 +58,15 @@ import java.util.Map;
  */
 @Configuration
 @AcrossDepends(required = { "EntityModule", "AdminWebModule" })
+@RequiredArgsConstructor
 public class WebCmsPageConfiguration implements EntityConfigurer
 {
 	private static final String CANONICAL_PATH = "canonicalPath";
 
 	@Autowired
-	private EntityRegistry entityRegistry;
+	void enableUrls( WebCmsAssetUrlConfiguration urlConfiguration ) {
+		urlConfiguration.enable( WebCmsPage.class );
+	}
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {

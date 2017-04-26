@@ -17,8 +17,8 @@
 package com.foreach.across.modules.webcms.web.component.image;
 
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.image.component.ImageWebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
 import com.foreach.across.modules.webcms.web.thymeleaf.WebComponentModelRenderer;
 import com.foreach.imageserver.client.ImageServerClient;
 import lombok.RequiredArgsConstructor;
@@ -31,17 +31,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class ImageWebComponentModelRenderer implements WebComponentModelRenderer<ImageWebComponentModel>
+public class ImageWebComponentModelRenderer implements WebComponentModelRenderer<ImageWebCmsComponentModel>
 {
 	private final BeanFactory beanFactory;
 
 	@Override
-	public boolean supports( WebComponentModel componentModel ) {
-		return ImageWebComponentModel.class.isInstance( componentModel );
+	public boolean supports( WebCmsComponentModel componentModel ) {
+		return ImageWebCmsComponentModel.class.isInstance( componentModel );
 	}
 
 	@Override
-	public void writeComponent( ImageWebComponentModel component, ThymeleafModelBuilder model ) {
+	public void writeComponent( ImageWebCmsComponentModel component, ThymeleafModelBuilder model ) {
 		ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
 		if ( imageServerClient != null && component.hasImageServerKey() ) {
 			model.addOpenElement( "img" );

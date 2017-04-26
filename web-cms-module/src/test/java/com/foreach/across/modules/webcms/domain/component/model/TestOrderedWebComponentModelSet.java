@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -169,7 +168,7 @@ public class TestOrderedWebComponentModelSet
 	@SuppressWarnings("unchecked")
 	@Test
 	public void fetcherIsOnlyCalledTheFirstTimeIfResult() {
-		BiFunction<WebCmsObject, String, WebComponentModel> fetcher = mock( BiFunction.class );
+		BiFunction<WebCmsObject, String, WebCmsComponentModel> fetcher = mock( BiFunction.class );
 		components.setFetcherFunction( fetcher );
 
 		when( fetcher.apply( null, "someComponent" ) ).thenReturn( one );
@@ -193,7 +192,7 @@ public class TestOrderedWebComponentModelSet
 	@SuppressWarnings("unchecked")
 	@Test
 	public void fetchedIsOnlyCalledTheFirstTimeIfNoResult() {
-		BiFunction<WebCmsObject, String, WebComponentModel> fetcher = mock( BiFunction.class );
+		BiFunction<WebCmsObject, String, WebCmsComponentModel> fetcher = mock( BiFunction.class );
 		components.setFetcherFunction( fetcher );
 
 		when( fetcher.apply( null, "someComponent" ) ).thenReturn( null );
@@ -214,12 +213,15 @@ public class TestOrderedWebComponentModelSet
 		verifyNoMoreInteractions( fetcher );
 	}
 
-	private class Model extends WebComponentModel
+	private class Model extends WebCmsComponentModel
 	{
 		Model( String name ) {
 			setName( name );
-			setComponentType( WebCmsComponentType.builder().id( 1L ).build() );
-			setObjectId( name );
+		}
+
+		@Override
+		public WebCmsComponentModel asTemplate() {
+			return new Model( getName() );
 		}
 	}
 }

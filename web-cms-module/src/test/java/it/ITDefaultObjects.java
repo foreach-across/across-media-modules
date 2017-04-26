@@ -23,7 +23,7 @@ import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
-import com.foreach.across.modules.webcms.domain.component.text.TextWebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.publication.*;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierRepository;
 import com.foreach.across.test.AcrossTestContext;
@@ -64,8 +64,8 @@ public class ITDefaultObjects
 
 		{
 			val attr = new HashMap<String, String>();
-			attr.put( TextWebComponentModel.Attributes.TYPE, "plain-text" );
-			attr.put( TextWebComponentModel.Attributes.MULTI_LINE, "false" );
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "plain-text" );
+			attr.put( TextWebCmsComponentModel.Attributes.MULTI_LINE, "false" );
 
 			verifyComponentType(
 					componentTypeRepository,
@@ -79,8 +79,8 @@ public class ITDefaultObjects
 
 		{
 			val attr = new HashMap<String, String>();
-			attr.put( TextWebComponentModel.Attributes.TYPE, "rich-text" );
-			attr.put( TextWebComponentModel.Attributes.PROFILE, "rich-text" );
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "rich-text" );
+			attr.put( TextWebCmsComponentModel.Attributes.PROFILE, "rich-text" );
 
 			verifyComponentType(
 					componentTypeRepository,
@@ -94,8 +94,8 @@ public class ITDefaultObjects
 
 		{
 			val attr = new HashMap<String, String>();
-			attr.put( TextWebComponentModel.Attributes.TYPE, "plain-text" );
-			attr.put( TextWebComponentModel.Attributes.ROWS, "1" );
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "plain-text" );
+			attr.put( TextWebCmsComponentModel.Attributes.ROWS, "1" );
 
 			verifyComponentType(
 					componentTypeRepository,

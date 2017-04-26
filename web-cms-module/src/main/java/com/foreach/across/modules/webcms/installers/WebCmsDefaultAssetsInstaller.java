@@ -28,7 +28,7 @@ import javax.annotation.PostConstruct;
  * @since 0.0.1
  */
 @ConditionalOnProperty(prefix = "webCmsModule.default-data.assets", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 7)
+@Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 12)
 @RequiredArgsConstructor
 public class WebCmsDefaultAssetsInstaller extends AbstractWebCmsDataInstaller
 {

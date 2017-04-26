@@ -15,9 +15,9 @@
  */
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentAutoCreateQueue;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModelHierarchy;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentAutoCreateQueue;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.IEngineContext;
@@ -77,10 +77,10 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 			IModelFactory modelFactory = context.getModelFactory();
 
 			ApplicationContext applicationContext = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-			WebComponentModelHierarchy components = applicationContext.getBean( WebComponentModelHierarchy.class );
+			WebCmsComponentModelHierarchy components = applicationContext.getBean( WebCmsComponentModelHierarchy.class );
 
 			String scopeName = elementTag.getAttributeValue( PREFIX, ATTR_SCOPE );
-			WebComponentModel component = fetchWebComponentModel( attributeValue, elementTag, components, scopeName );
+			WebCmsComponentModel component = fetchWebComponentModel( attributeValue, elementTag, components, scopeName );
 
 			if ( component != null ) {
 				elementTag = renderComponentModel( (IEngineContext) context, model, elementTag, modelFactory, component );
@@ -90,7 +90,7 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 
 				if ( creationScope != null ) {
 					String componentType = elementTag.getAttributeValue( PREFIX, ATTR_TYPE );
-					WebComponentAutoCreateQueue queue = applicationContext.getBean( WebComponentAutoCreateQueue.class );
+					WebCmsComponentAutoCreateQueue queue = applicationContext.getBean( WebCmsComponentAutoCreateQueue.class );
 					String componentId = queue.schedule( attributeValue, creationScope, componentType );
 
 					if ( isStandaloneTag ) {
@@ -138,7 +138,7 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 		}
 	}
 
-	private String determineCreationScope( IProcessableElementTag elementTag, WebComponentModelHierarchy components, String scopeName ) {
+	private String determineCreationScope( IProcessableElementTag elementTag, WebCmsComponentModelHierarchy components, String scopeName ) {
 		String creationScope = null;
 		IAttribute attribute = elementTag.getAttribute( PREFIX, ATTR_AUTO_CREATE );
 
@@ -159,7 +159,7 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 	                                                     IModel model,
 	                                                     IProcessableElementTag elementTag,
 	                                                     IModelFactory modelFactory,
-	                                                     WebComponentModel component ) {
+	                                                     WebCmsComponentModel component ) {
 		model.reset();
 		if ( elementTag instanceof IOpenElementTag ) {
 			model.add( elementTag );
@@ -178,10 +178,10 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 		return elementTag;
 	}
 
-	private WebComponentModel fetchWebComponentModel( String componentName,
-	                                                  IProcessableElementTag elementTag,
-	                                                  WebComponentModelHierarchy components,
-	                                                  String scopeName ) {
+	private WebCmsComponentModel fetchWebComponentModel( String componentName,
+	                                                     IProcessableElementTag elementTag,
+	                                                     WebCmsComponentModelHierarchy components,
+	                                                     String scopeName ) {
 		boolean searchParentScopes = !"false".equalsIgnoreCase( elementTag.getAttributeValue( PREFIX, ATTR_SEARCH_PARENTS ) );
 		return scopeName != null
 				? components.getFromScope( componentName, scopeName, searchParentScopes )

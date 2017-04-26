@@ -17,15 +17,15 @@
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public interface WebComponentModelRenderer<T extends WebComponentModel>
+public interface WebComponentModelRenderer<T extends WebCmsComponentModel>
 {
-	boolean supports( WebComponentModel componentModel );
+	boolean supports( WebCmsComponentModel componentModel );
 
 	void writeComponent( T component, ThymeleafModelBuilder model );
 }

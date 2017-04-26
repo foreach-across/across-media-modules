@@ -22,6 +22,7 @@ import com.foreach.across.modules.webcms.domain.WebCmsObjectSuperClass;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -125,9 +126,10 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	                        @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                        @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                        @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
-	                        String ownerObjectId, String name, int sortIndex, String title, String body, String metadata ) {
+	                        WebCmsComponentType componentType, String ownerObjectId, String name, int sortIndex, String title, String body, String metadata ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 
+		this.componentType = componentType;
 		this.ownerObjectId = ownerObjectId;
 		this.name = name;
 		this.sortIndex = sortIndex;
@@ -155,6 +157,20 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	@Override
 	protected String getObjectCollectionId() {
 		return COLLECTION_ID;
+	}
+
+	/**
+	 * @return a new WebCmsComponent with all properties of this one, but all ids and ownership reset
+	 */
+	public WebCmsComponent asTemplate() {
+		val template = new WebCmsComponent();
+		template.componentType = componentType;
+		template.title = title;
+		template.name = name;
+		template.body = body;
+		template.metadata = metadata;
+		template.sortIndex = sortIndex;
+		return template;
 	}
 
 	@Override

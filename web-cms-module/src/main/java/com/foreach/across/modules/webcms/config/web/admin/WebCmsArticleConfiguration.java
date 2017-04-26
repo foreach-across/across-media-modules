@@ -17,9 +17,10 @@
 package com.foreach.across.modules.webcms.config.web.admin;
 
 import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
+import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
+import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.views.EntityView;
@@ -27,17 +28,14 @@ import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
-import com.foreach.across.modules.web.resource.WebResource;
-import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
-import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.web.article.WebCmsArticleListViewProcessor;
-import com.foreach.across.modules.webcms.web.asset.builders.ImageUploadViewElementBuilder;
-import com.foreach.across.modules.webcms.web.asset.processors.WebCmsArticleImageFormViewProcessor;
+import com.foreach.across.modules.webcms.web.component.OrderedWebCmsComponentsFormProcessor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 
@@ -46,40 +44,24 @@ import org.springframework.data.domain.Sort;
  * @since 0.0.1
  */
 @Configuration
-@AcrossDepends(required = BootstrapUiModule.NAME)
+@AcrossDepends(required = { AdminWebModule.NAME, EntityModule.NAME })
 @RequiredArgsConstructor
 public class WebCmsArticleConfiguration implements EntityConfigurer
 {
-	private final WebCmsArticleImageFormViewProcessor articleImageFormViewProcessor;
-	private final ImageUploadViewElementBuilder thumbnailViewElementBuilder;
+	private final OrderedWebCmsComponentsFormProcessor componentsFormProcessor;
+
+	@Autowired
+	void enableUrls( WebCmsAssetUrlConfiguration urlConfiguration ) {
+		urlConfiguration.enable( WebCmsArticle.class );
+	}
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsArticle.class )
 		        .properties( props -> props
 				        .property( "objectId" ).hidden( true ).and()
-				        .property( "body" )
-				        .<HtmlViewElement>viewElementPostProcessor(
-						        ViewElementMode.CONTROL,
-						        ( builderContext, element ) -> {
-							        element.setAttribute( "placeholder", "Some placeholder text..." );
-							        element.addCssClass( "js-ckeditor" );
-							        WebResourceRegistry registry = builderContext.getAttribute( WebResourceRegistry.class );
-
-							        registry.addWithKey( WebResource.JAVASCRIPT, "ckeditor", "https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js",
-							                             WebResource.EXTERNAL );
-							        registry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "custom-js", "/static/WebCmsModule/js/wcm-components.js",
-							                             WebResource.VIEWS );
-							        registry.addWithKey( WebResource.CSS, "wcm-styles", "/static/WebCmsModule/css/wcm-styles.css", WebResource.VIEWS );
-
-						        } ).and()
-				                   .property( "image" )
-				                   .displayName( "Image" )
-				                   .order( 1 )
-				                   .viewElementBuilder(
-						                   ViewElementMode.CONTROL,
-						                   thumbnailViewElementBuilder
-				                   )
+				        .property( "body" ).hidden( true ).and()
+				        .property( "image" ).hidden( true )
 		        )
 		        .listView(
 				        lvb -> lvb.showProperties( "publication", "title", "publicationDate", "lastModified" )
@@ -90,7 +72,6 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 				        .properties( props -> props.property( "body" ).viewElementType( ViewElementMode.CONTROL, BootstrapUiElements.TEXTAREA ) )
 				        //.properties( props -> props.property( "title" ).viewElementType( ViewElementMode.FORM_WRITE, BootstrapUiElements.TEXTAREA ) )
 				        .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 9, 3 ) ) )
-				        .viewProcessor( articleImageFormViewProcessor )
 				        .viewProcessor( new EntityViewProcessorAdapter()
 				        {
 					        @Override
@@ -107,6 +88,9 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 						        ContainerViewElementUtils.move( container, "formGroup-lastModified", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 					        }
 				        } )
+		        )
+		        .updateFormView(
+				        fvb -> fvb.viewProcessor( componentsFormProcessor )
 		        );
 	}
 

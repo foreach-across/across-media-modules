@@ -16,7 +16,7 @@
 package com.foreach.across.modules.webcms.config;
 
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.web.thymeleaf.WebComponentModelViewElementModelWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +32,6 @@ public class ThymeleafConfiguration
 
 	@Autowired
 	public void registerViewElements( ViewElementModelWriterRegistry modelWriterRegistry ) {
-		modelWriterRegistry.registerModelWriter( WebComponentModel.class.getSimpleName(), modelViewElementModelWriter );
+		modelWriterRegistry.registerModelWriter( WebCmsComponentModel.class.getSimpleName(), modelViewElementModelWriter );
 	}
 }

@@ -14,30 +14,18 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.component.container;
+package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.model.OrderedWebComponentModelSet;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author Arne Vandamme
+ * @see AbstractWebCmsComponentModelWriter
  * @since 0.0.1
  */
-@Getter
-@Setter
-public class ContainerWebComponentModel extends WebComponentModel
+public interface WebCmsComponentModelWriter<T extends WebCmsComponentModel>
 {
-	private final OrderedWebComponentModelSet components;
+	boolean supports( WebCmsComponentModel componentModel );
 
-	public ContainerWebComponentModel() {
-		this.components = new OrderedWebComponentModelSet( this );
-	}
-
-	public ContainerWebComponentModel( WebCmsComponent component, OrderedWebComponentModelSet components ) {
-		super( component );
-		this.components = components;
-	}
+	WebCmsComponent save( T componentModel );
 }

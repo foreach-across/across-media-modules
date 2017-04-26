@@ -21,8 +21,8 @@ import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
-import com.foreach.across.modules.webcms.domain.component.text.TextWebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.web.component.WebComponentModelAdminRenderer;
 import com.foreach.across.modules.webcms.web.resources.TextWebComponentResources;
 import lombok.RequiredArgsConstructor;
@@ -35,17 +35,17 @@ import org.springframework.stereotype.Component;
 @AcrossDepends(required = AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
-public class TextWebComponentModelAdminRenderer implements WebComponentModelAdminRenderer<TextWebComponentModel>
+public class TextWebComponentModelAdminRenderer implements WebComponentModelAdminRenderer<TextWebCmsComponentModel>
 {
 	private final BootstrapUiFactory bootstrapUiFactory;
 
 	@Override
-	public boolean supports( WebComponentModel componentModel ) {
-		return TextWebComponentModel.class.isInstance( componentModel );
+	public boolean supports( WebCmsComponentModel componentModel ) {
+		return TextWebCmsComponentModel.class.isInstance( componentModel );
 	}
 
 	@Override
-	public ViewElementBuilder createContentViewElementBuilder( TextWebComponentModel componentModel, String controlNamePrefix ) {
+	public ViewElementBuilder createContentViewElementBuilder( TextWebCmsComponentModel componentModel, String controlNamePrefix ) {
 		return bootstrapUiFactory
 				.formGroup()
 				.label( bootstrapUiFactory.label( componentModel.getTitle() ).attribute( "title", componentModel.getName() ) )
@@ -54,7 +54,7 @@ public class TextWebComponentModelAdminRenderer implements WebComponentModelAdmi
 						                  .controlName( controlNamePrefix + ".content" )
 						                  .rows(
 								                  Integer.parseInt( componentModel.getComponentType()
-								                                                  .getAttribute( TextWebComponentModel.Attributes.ROWS, "3" ) )
+								                                                  .getAttribute( TextWebCmsComponentModel.Attributes.ROWS, "3" ) )
 						                  )
 						                  .multiLine( componentModel.isMultiLine() )
 						                  .text( componentModel.getContent() )

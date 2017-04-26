@@ -19,15 +19,23 @@ package com.foreach.across.modules.webcms.domain.article;
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
+import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
+import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationTypeRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 /**
+ * Add the article type components.
  * Generate primary url when article is being saved.
  *
  * @author Arne Vandamme
@@ -39,6 +47,8 @@ public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArt
 {
 	private final WebCmsAssetEndpointRepository endpointRepository;
 	private final WebCmsUrlRepository urlRepository;
+	private final WebCmsComponentModelService componentModelService;
+	private final WebCmsPublicationTypeRepository publicationTypeRepository;
 
 	@Override
 	public boolean handles( Class<?> entityClass ) {
@@ -47,7 +57,53 @@ public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArt
 
 	@Override
 	public void afterCreate( WebCmsArticle entity ) {
+		registerArticleTypeComponents( entity );
 		updatePrimaryUrl( entity );
+	}
+
+	private void registerArticleTypeComponents( WebCmsArticle article ) {
+		WebCmsPublicationType publicationType = article.getPublication().getPublicationType();
+		WebCmsComponentModel template = retrieveArticleTemplateComponent( publicationType );
+
+		if ( template != null ) {
+			template = template.asTemplate();
+
+			if ( template instanceof ContainerWebCmsComponentModel ) {
+				ContainerWebCmsComponentModel container = (ContainerWebCmsComponentModel) template;
+				container.getMembers().forEach( member -> {
+					member.setOwner( article );
+					replaceTitleInTextComponents( article.getTitle(), member );
+					componentModelService.save( member );
+				} );
+			}
+			else {
+				// not sure what to do, just add the template directly
+				template.setOwner( article );
+				componentModelService.save( template );
+			}
+		}
+	}
+
+	// replace the @@title@@ placeholder
+	private void replaceTitleInTextComponents( String title, WebCmsComponentModel componentModel ) {
+		if ( componentModel instanceof TextWebCmsComponentModel ) {
+			TextWebCmsComponentModel text = (TextWebCmsComponentModel) componentModel;
+			text.setContent( StringUtils.replace( text.getContent(), "@@title@@", title ) );
+		}
+	}
+
+	private WebCmsComponentModel retrieveArticleTemplateComponent( WebCmsPublicationType publicationType ) {
+		String articleTemplateName = StringUtils.defaultString( publicationType.getAttribute( "articleTemplate" ), "articleTemplate" );
+		WebCmsComponentModel model = componentModelService.getComponentModel( articleTemplateName, publicationType );
+
+		if ( model == null && publicationType.hasAttribute( "parent" ) ) {
+			WebCmsPublicationType parentPublication = publicationTypeRepository.findOneByTypeKey( publicationType.getAttribute( "parent" ) );
+			if ( parentPublication != null ) {
+				return retrieveArticleTemplateComponent( parentPublication );
+			}
+		}
+
+		return model;
 	}
 
 	@Override

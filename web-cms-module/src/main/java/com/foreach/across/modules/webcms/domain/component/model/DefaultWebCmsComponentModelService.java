@@ -18,10 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
-import com.foreach.across.modules.webcms.domain.component.UnknownWebCmsComponentException;
-import com.foreach.across.modules.webcms.domain.component.UnknownWebComponentModelException;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
+import com.foreach.across.modules.webcms.domain.component.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,34 +35,44 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class DefaultWebComponentModelService implements WebComponentModelService
+final class DefaultWebCmsComponentModelService implements WebCmsComponentModelService
 {
 	private final WebCmsComponentRepository componentRepository;
 
-	private Collection<WebComponentModelReader> modelReaders = Collections.emptyList();
-	private Collection<WebComponentModelWriter> modelWriters = Collections.emptyList();
+	private Collection<WebCmsComponentModelReader> modelReaders = Collections.emptyList();
+	private Collection<WebCmsComponentModelWriter> modelWriters = Collections.emptyList();
 
 	@Override
-	public WebComponentModel getWebComponent( String componentName, WebCmsObject owner ) {
+	public WebCmsComponentModel createComponentModel( WebCmsComponentType componentType ) {
+		Assert.notNull( componentType );
+
+		WebCmsComponent component = new WebCmsComponent();
+		component.setComponentType( componentType );
+		return buildModelForComponent( component );
+	}
+
+	@Override
+	public WebCmsComponentModel getComponentModel( String componentName, WebCmsObject owner ) {
 		return Optional.ofNullable( componentRepository.findOneByOwnerObjectIdAndName( owner != null ? owner.getObjectId() : null, componentName ) )
-		               .map( this::readFromComponent )
+		               .map( this::buildModelForComponent )
 		               .orElse( null );
 	}
 
 	@Override
-	public OrderedWebComponentModelSet getWebComponentsForOwner( WebCmsObject object ) {
+	public OrderedWebComponentModelSet getComponentModelsForOwner( WebCmsObject object ) {
 		Assert.notNull( object );
 
 		OrderedWebComponentModelSet modelSet = new OrderedWebComponentModelSet();
 		modelSet.setOwner( object );
 		componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
-		                   .forEach( component -> modelSet.add( readFromComponent( component ) ) );
+		                   .forEach( component -> modelSet.add( buildModelForComponent( component ) ) );
 
 		return modelSet;
 	}
 
 	@Override
-	public WebComponentModel readFromComponent( WebCmsComponent component ) {
+	public WebCmsComponentModel buildModelForComponent( WebCmsComponent component ) {
+		Assert.notNull( component );
 		return modelReaders.stream()
 		                   .filter( r -> r.supports( component ) )
 		                   .findFirst()
@@ -74,28 +81,23 @@ public class DefaultWebComponentModelService implements WebComponentModelService
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public void writeToComponent( WebComponentModel componentModel, WebCmsComponent component ) {
-		modelWriters.stream()
-		            .filter( r -> r.supports( componentModel ) )
-		            .findFirst()
-		            .orElseThrow( () -> new UnknownWebComponentModelException( componentModel ) )
-		            .save( componentModel );
-	}
-
 	@Transactional
 	@Override
-	public WebCmsComponent save( WebComponentModel componentModel ) {
-		return null;
+	public WebCmsComponent save( WebCmsComponentModel componentModel ) {
+		return modelWriters.stream()
+		                   .filter( r -> r.supports( componentModel ) )
+		                   .findFirst()
+		                   .orElseThrow( () -> new UnknownWebCmsComponentModelException( componentModel ) )
+		                   .save( componentModel );
 	}
 
 	@Autowired
-	void setModelReaders( @RefreshableCollection(includeModuleInternals = true) Collection<WebComponentModelReader> modelReaders ) {
+	void setModelReaders( @RefreshableCollection(includeModuleInternals = true) Collection<WebCmsComponentModelReader> modelReaders ) {
 		this.modelReaders = modelReaders;
 	}
 
 	@Autowired
-	void setModelWriters( @RefreshableCollection(includeModuleInternals = true) Collection<WebComponentModelWriter> modelWriters ) {
+	void setModelWriters( @RefreshableCollection(includeModuleInternals = true) Collection<WebCmsComponentModelWriter> modelWriters ) {
 		this.modelWriters = modelWriters;
 	}
 }

@@ -41,7 +41,7 @@ import java.util.*;
 @Exposed
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @RequiredArgsConstructor
-public class WebComponentAutoCreateQueue
+public class WebCmsComponentAutoCreateQueue
 {
 	private final Set<String> created = new HashSet<>();
 
@@ -51,7 +51,7 @@ public class WebComponentAutoCreateQueue
 
 	private final WebCmsComponentRepository componentRepository;
 	private final WebCmsComponentTypeRepository componentTypeRepository;
-	private final WebComponentModelHierarchy componentModelHierarchy;
+	private final WebCmsComponentModelHierarchy componentModelHierarchy;
 
 	public String schedule( String componentName, String scope, String type ) {
 		String key = componentName + ":" + scope;

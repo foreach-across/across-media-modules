@@ -21,6 +21,8 @@ import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -60,6 +62,7 @@ public abstract class WebCmsEndpoint extends SettableIdBasedEntity<WebCmsEndpoin
 	@Column(name = "id")
 	protected Long id;
 
+	@Cascade(CascadeType.DELETE)
 	@OneToMany(mappedBy = "endpoint")
 	protected Collection<WebCmsUrl> urls = Collections.emptySet();
 

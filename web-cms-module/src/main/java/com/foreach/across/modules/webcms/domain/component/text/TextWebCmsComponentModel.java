@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.component.text;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,13 +26,19 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.stream.Stream;
 
 /**
+ * Represents a text component that can be either plain text, rich text or markup (defined by {@link MarkupType}.
+ * In all cases an optional profile is supported that can indicate the sub-types of content that are supported.
+ * <p/>
+ * The actual {@link #getComponentType()} can contain attributes that will determine the additional property values of this component.
+ * See the {@link Attributes} interface for attribute names that are supported by default.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class TextWebComponentModel extends WebComponentModel
+public class TextWebCmsComponentModel extends WebCmsComponentModel
 {
 	/**
 	 * Attributes supported on a {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponentType}.
@@ -57,7 +63,7 @@ public class TextWebComponentModel extends WebComponentModel
 
 		/**
 		 * Size indicator: number of rows the component should have by default.
-		 * Only applicable in case of a multiline component.
+		 * Only applicable in case of a multi-line component.
 		 */
 		String ROWS = "rows";
 	}
@@ -93,15 +99,48 @@ public class TextWebComponentModel extends WebComponentModel
 		}
 	}
 
+	/**
+	 * The actual text content of this component.
+	 */
 	private String content;
 
+	/**
+	 * Optional profile hint for management or parsing UIs.
+	 * Determined by the {@link #getComponentType()}.
+	 */
 	private String profile;
 
-	private boolean multiLine;
+	/**
+	 * Hint if this text component allows multiple lines or not.
+	 * Usually determined by the {@link #getComponentType}.
+	 */
+	private boolean multiLine = true;
 
-	private MarkupType markupType;
+	/**
+	 * Specific type of markup this component contains.
+	 * Usually determined by the {@link #getComponentType}.
+	 */
+	private MarkupType markupType = MarkupType.MARKUP;
 
-	public TextWebComponentModel( WebCmsComponent component ) {
+	public TextWebCmsComponentModel( WebCmsComponent component ) {
 		super( component );
+	}
+
+	/**
+	 * @return true if there is no actual content set
+	 */
+	public boolean isEmpty() {
+		return StringUtils.isEmpty( content );
+	}
+
+	@Override
+	public TextWebCmsComponentModel asTemplate() {
+		TextWebCmsComponentModel template = new TextWebCmsComponentModel( getComponent().asTemplate() );
+		template.content = content;
+		template.markupType = markupType;
+		template.multiLine = multiLine;
+		template.profile = profile;
+
+		return template;
 	}
 }

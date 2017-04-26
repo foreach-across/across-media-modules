@@ -42,19 +42,19 @@ import java.util.stream.Collectors;
 @Component
 @Exposed
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class WebComponentModelHierarchy
+public class WebCmsComponentModelHierarchy
 {
-	public static final String REQUEST_ATTRIBUTE = "webComponents";
+	public static final String REQUEST_ATTRIBUTE = "webCmsComponents";
 
 	public static final String GLOBAL = "global";
 
 	private List<OrderedWebComponentModelSet> componentModelSets = new ArrayList<>();
 
 	@Autowired
-	void buildGlobalComponentModelSet( WebComponentModelService webComponentModelService ) {
+	void buildGlobalComponentModelSet( WebCmsComponentModelService webCmsComponentModelService ) {
 		addComponents( new OrderedWebComponentModelSet(
 				null, GLOBAL,
-				( owner, componentName ) -> webComponentModelService.getWebComponent( componentName, owner )
+				( owner, componentName ) -> webCmsComponentModelService.getComponentModel( componentName, owner )
 		) );
 	}
 
@@ -160,7 +160,7 @@ public class WebComponentModelHierarchy
 	 * @param componentName name of the component
 	 * @return component or null if not found
 	 */
-	public WebComponentModel get( String componentName ) {
+	public WebCmsComponentModel get( String componentName ) {
 		return get( componentName, true );
 	}
 
@@ -171,8 +171,8 @@ public class WebComponentModelHierarchy
 	 * @param searchParentScopes true if parent scopes should be searched as well
 	 * @return component or null if not found
 	 */
-	public WebComponentModel get( String componentName, boolean searchParentScopes ) {
-		WebComponentModel component = null;
+	public WebCmsComponentModel get( String componentName, boolean searchParentScopes ) {
+		WebCmsComponentModel component = null;
 
 		for ( int i = componentModelSets.size() - 1; i >= 0 && component == null; i-- ) {
 			component = componentModelSets.get( i ).get( componentName );
@@ -192,7 +192,7 @@ public class WebComponentModelHierarchy
 	 * @param scopeName     name of the scope to start with
 	 * @return component or null if not found
 	 */
-	public WebComponentModel getFromScope( String componentName, String scopeName ) {
+	public WebCmsComponentModel getFromScope( String componentName, String scopeName ) {
 		return getFromScope( componentName, scopeName, true );
 	}
 
@@ -204,9 +204,9 @@ public class WebComponentModelHierarchy
 	 * @param searchParentScopes true if parent scopes should be searched as well
 	 * @return component or null if not found
 	 */
-	public WebComponentModel getFromScope( String componentName, String scopeName, boolean searchParentScopes ) {
+	public WebCmsComponentModel getFromScope( String componentName, String scopeName, boolean searchParentScopes ) {
 		Assert.notNull( scopeName );
-		WebComponentModel component = null;
+		WebCmsComponentModel component = null;
 
 		boolean scopeFound = false;
 

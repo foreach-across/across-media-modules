@@ -17,15 +17,15 @@
 package com.foreach.across.modules.webcms.web.component;
 
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.webcms.domain.component.model.WebComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public interface WebComponentModelAdminRenderer<T extends WebComponentModel>
+public interface WebComponentModelAdminRenderer<T extends WebCmsComponentModel>
 {
-	boolean supports( WebComponentModel componentModel );
+	boolean supports( WebCmsComponentModel componentModel );
 
 	ViewElementBuilder createContentViewElementBuilder( T componentModel, String controlNamePrefix );
 }

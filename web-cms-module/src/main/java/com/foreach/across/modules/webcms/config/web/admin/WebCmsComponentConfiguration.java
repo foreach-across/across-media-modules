@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.config.web.admin;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
+import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.config.builders.EntityConfigurationBuilder;
@@ -29,11 +30,12 @@ import com.foreach.across.modules.entity.views.processors.DefaultValidationViewP
 import com.foreach.across.modules.entity.views.processors.SaveEntityViewProcessor;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.web.component.WebComponentFormProcessor;
+import com.foreach.across.modules.webcms.web.component.WebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -48,12 +50,12 @@ import java.util.List;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@AcrossDepends(required = AdminWebModule.NAME)
+@AcrossDepends(required = { AdminWebModule.NAME, EntityModule.NAME })
 @Configuration
 @RequiredArgsConstructor
 class WebCmsComponentConfiguration implements EntityConfigurer
 {
-	private final WebComponentFormProcessor formProcessor;
+	private final WebCmsComponentFormProcessor formProcessor;
 
 	private AssociatedEntityQueryExecutor<WebCmsComponent> componentAssociatedEntityQueryExecutor;
 
@@ -90,7 +92,8 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 		        )
 		        .listView(
 				        lvb -> lvb.entityQueryFilter( true )
-				                  .showProperties( "componentType", "title", "name", "lastModified" )
+				                  .entityQueryPredicate( "ownerObjectId is NULL" )
+				                  .showProperties( "title", "name", "componentType", "lastModified" )
 				                  .defaultSort( "title" )
 		        )
 		        .createOrUpdateFormView(
@@ -108,6 +111,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 		        );
 
 		registerComponentsAssociation( entities.withType( WebCmsPage.class ) );
+		registerComponentsAssociation( entities.withType( WebCmsArticle.class ) );
 	}
 
 	private void registerComponentsAssociation( EntityConfigurationBuilder<? extends WebCmsObject> configuration ) {
@@ -116,9 +120,10 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				.targetEntityType( WebCmsComponent.class )
 				.targetProperty( "owner" )
 				.associationType( EntityAssociation.Type.EMBEDDED )
+				.parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
 				.attribute( AssociatedEntityQueryExecutor.class, componentAssociatedEntityQueryExecutor )
 				.listView(
-						lvb -> lvb.showProperties( "componentType", "title", "name", "sortIndex", "lastModified" )
+						lvb -> lvb.showProperties( "title", "name", "componentType", "sortIndex", "lastModified" )
 						          .sortableOn()
 				)
 				.createOrUpdateFormView( fvb -> fvb.properties( props -> props.property( "sortIndex" ).hidden( false ) ) )

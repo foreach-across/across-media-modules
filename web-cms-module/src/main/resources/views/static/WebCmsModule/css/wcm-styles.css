@@ -84,6 +84,10 @@ table tr.publication-offline td[data-tbl-field=publication] {
     box-align: center;
 }
 
+.image-selected-container .image-thumbnail-container {
+    margin-bottom: 0;
+}
+
 .image-thumbnail-container.selected {
     background-color: #279cd3;
 }

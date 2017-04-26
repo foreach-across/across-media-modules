@@ -1,3 +1,18 @@
+types:
+  publication:
+    news:
+      wcm:components:
+        articleTemplate:
+          wcm:components:
+            other:
+              wcm:action: delete
+            main-image:
+              componentType: image
+              title: Image
+              sortIndex: 0
+            body:
+              sortIndex: 1
+
 assets:
   # Update article template pages to point to article template
   page:
