@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.config.web.admin;
 
-import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
 import com.foreach.across.modules.bootstrapui.elements.*;
 import com.foreach.across.modules.entity.EntityAttributes;
@@ -40,9 +39,12 @@ import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
+import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -56,8 +58,8 @@ import java.util.Map;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@ConditionalOnAdminUI
 @Configuration
-@AcrossDepends(required = { "EntityModule", "AdminWebModule" })
 @RequiredArgsConstructor
 public class WebCmsPageConfiguration implements EntityConfigurer
 {
@@ -66,6 +68,11 @@ public class WebCmsPageConfiguration implements EntityConfigurer
 	@Autowired
 	void enableUrls( WebCmsAssetUrlConfiguration urlConfiguration ) {
 		urlConfiguration.enable( WebCmsPage.class );
+	}
+
+	@Autowired
+	void enableComponents( WebCmsObjectComponentViewsConfiguration componentViewsConfiguration ) {
+		componentViewsConfiguration.enable( WebCmsPage.class );
 	}
 
 	@Override

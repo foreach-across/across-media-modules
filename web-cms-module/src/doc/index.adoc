@@ -211,3 +211,4 @@ If the component is not found, the body will be empty.
 
 
 Enabling urls for WebCmsAsset implementations: wire WebCmsAssetUrlConfiguration
+Enableing components for WebCmsObject implementations: wire WebCmsObjectComponentViewsConfiguration: registerComponentsAssociation

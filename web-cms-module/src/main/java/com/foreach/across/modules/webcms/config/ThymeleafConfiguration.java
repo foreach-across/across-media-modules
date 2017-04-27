@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnBean(ViewElementModelWriterRegistry.class)
 @RequiredArgsConstructor
-public class ThymeleafConfiguration
+class ThymeleafConfiguration
 {
 	private final WebComponentModelViewElementModelWriter modelViewElementModelWriter;
 

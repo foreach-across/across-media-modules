@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.config.web.admin;
+package com.foreach.across.modules.webcms.domain.url.config;
 
-import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.adminweb.AdminWebModule;
-import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.query.AssociatedEntityQueryExecutor;
 import com.foreach.across.modules.entity.query.EntityQuery;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.EntityFactory;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
@@ -64,7 +62,7 @@ public class WebCmsAssetUrlConfiguration
 	}
 
 	/**
-	 * Enable URL endpoints for a specific {@link WebCmsAsset} implementation.
+	 * Disable URL endpoints for a specific {@link WebCmsAsset} implementation.
 	 * Note: this method should be called before the actual entity configuration happens by {@link com.foreach.across.modules.entity.EntityModule}.
 	 *
 	 * @param assetType to disable
@@ -83,7 +81,7 @@ public class WebCmsAssetUrlConfiguration
 		return asset != null && assetTypes.contains( ClassUtils.getUserClass( asset ) );
 	}
 
-	@AcrossDepends(required = { AdminWebModule.NAME, EntityModule.NAME })
+	@ConditionalOnAdminUI
 	@Bean
 	EntityConfigurer webCmsAssetUrlAssociationConfigurer(
 			EntityFactory<WebCmsUrl> webCmsUrlEntityFactory,
@@ -110,7 +108,7 @@ public class WebCmsAssetUrlConfiguration
 				        );
 	}
 
-	@AcrossDepends(required = { AdminWebModule.NAME, EntityModule.NAME })
+	@ConditionalOnAdminUI
 	@Bean
 	EntityFactory<WebCmsUrl> webCmsUrlEntityFactory( WebCmsAssetEndpointRepository endpointRepository ) {
 		return new EntityFactory<WebCmsUrl>()
@@ -132,7 +130,7 @@ public class WebCmsAssetUrlConfiguration
 		};
 	}
 
-	@AcrossDepends(required = { AdminWebModule.NAME, EntityModule.NAME })
+	@ConditionalOnAdminUI
 	@Bean
 	AssociatedEntityQueryExecutor<WebCmsUrl> webCmsUrlExecutorForPage( WebCmsAssetEndpointRepository pageEndpointRepository,
 	                                                                   WebCmsUrlRepository urlRepository ) {

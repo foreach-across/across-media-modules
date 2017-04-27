@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.config.web.admin;
+package com.foreach.across.modules.webcms.domain.article.config;
 
-import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
-import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.views.EntityView;
@@ -31,7 +28,9 @@ import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
+import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
 import com.foreach.across.modules.webcms.web.article.WebCmsArticleListViewProcessor;
 import com.foreach.across.modules.webcms.web.component.OrderedWebCmsComponentsFormProcessor;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +42,8 @@ import org.springframework.data.domain.Sort;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@ConditionalOnAdminUI
 @Configuration
-@AcrossDepends(required = { AdminWebModule.NAME, EntityModule.NAME })
 @RequiredArgsConstructor
 public class WebCmsArticleConfiguration implements EntityConfigurer
 {

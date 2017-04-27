@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
-import com.foreach.across.modules.webcms.config.web.admin.WebCmsAssetUrlConfiguration;
+import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.core.Ordered;

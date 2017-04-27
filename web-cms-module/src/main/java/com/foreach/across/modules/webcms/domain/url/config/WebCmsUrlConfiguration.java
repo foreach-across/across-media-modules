@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.config.web.admin;
+package com.foreach.across.modules.webcms.domain.url.config;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
-import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
-import com.foreach.across.modules.entity.views.ViewElementMode;
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import com.foreach.across.modules.webcms.web.asset.processors.WebCmsAssetListViewProcessor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 
 import java.util.EnumSet;
 
 /**
+ * Base configuration for the {@link com.foreach.across.modules.webcms.domain.url.WebCmsUrl} entity.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@ConditionalOnAdminUI
 @Configuration
-public class WebCmsAssetConfiguration implements EntityConfigurer
+class WebCmsUrlConfiguration implements EntityConfigurer
 {
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
@@ -47,23 +46,5 @@ public class WebCmsAssetConfiguration implements EntityConfigurer
 						                      EnumSet.of( HttpStatus.OK, HttpStatus.MOVED_PERMANENTLY, HttpStatus.MOVED_TEMPORARILY, HttpStatus.NOT_FOUND )
 				                      )
 		        );
-
-		entities.assignableTo( WebCmsAsset.class )
-		        .properties(
-				        props -> props.property( "published" ).hidden( true ).and()
-				                      .property( "publicationDate" ).hidden( true ).and()
-				                      .property( "publish-settings" )
-				                      .writable( true )
-				                      .readable( false )
-				                      .displayName( "Publish settings" )
-				                      .viewElementType( ViewElementMode.FORM_WRITE, BootstrapUiElements.FIELDSET )
-				                      .viewElementType( ViewElementMode.FORM_READ, BootstrapUiElements.FIELDSET )
-				                      .attribute(
-						                      EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
-						                      EntityPropertySelector.of( "published", "publicationDate" )
-				                      )
-		        )
-		        .updateFormView( fvb -> fvb.showProperties( ".", "~created" ) )
-		        .listView( lvb -> lvb.viewProcessor( new WebCmsAssetListViewProcessor() ) );
 	}
 }

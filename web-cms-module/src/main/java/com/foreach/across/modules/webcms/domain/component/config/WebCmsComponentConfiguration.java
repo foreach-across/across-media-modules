@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.config.web.admin;
+package com.foreach.across.modules.webcms.domain.component.config;
 
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.AdminWebModule;
@@ -22,63 +22,34 @@ import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
-import com.foreach.across.modules.entity.config.builders.EntityConfigurationBuilder;
-import com.foreach.across.modules.entity.query.AssociatedEntityQueryExecutor;
-import com.foreach.across.modules.entity.query.EntityQuery;
-import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.views.processors.DefaultValidationViewProcessor;
 import com.foreach.across.modules.entity.views.processors.SaveEntityViewProcessor;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
-import com.foreach.across.modules.webcms.domain.WebCmsObject;
-import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.web.component.WebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import javax.validation.groups.Default;
-import java.util.List;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@AcrossDepends(required = { AdminWebModule.NAME, EntityModule.NAME })
+@ConditionalOnAdminUI
 @Configuration
 @RequiredArgsConstructor
 class WebCmsComponentConfiguration implements EntityConfigurer
 {
 	private final WebCmsComponentFormProcessor formProcessor;
 
-	private AssociatedEntityQueryExecutor<WebCmsComponent> componentAssociatedEntityQueryExecutor;
-
-	@Autowired
-	void createExecutorForWebCmsObject( WebCmsComponentRepository componentRepository ) {
-		componentAssociatedEntityQueryExecutor = new AssociatedEntityQueryExecutor<WebCmsComponent>( null, null )
-		{
-			@Override
-			public List<WebCmsComponent> findAll( Object parent, EntityQuery query ) {
-				return componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( ( (WebCmsObject) parent ).getObjectId() );
-			}
-
-			@Override
-			public Page<WebCmsComponent> findAll( Object parent, EntityQuery query, Pageable pageable ) {
-				return new PageImpl<>( findAll( parent, query ) );
-			}
-		};
-	}
-
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsComponentType.class ).hide();
 
+		// Configure the globally shared components
 		entities.withType( WebCmsComponent.class )
 		        .properties(
 				        props -> props.property( "componentType" ).order( 0 ).and()
@@ -109,32 +80,5 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				                  .removeViewProcessor( SaveEntityViewProcessor.class.getName() )
 				                  .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 8, 4 ) ) )
 		        );
-
-		registerComponentsAssociation( entities.withType( WebCmsPage.class ) );
-		registerComponentsAssociation( entities.withType( WebCmsArticle.class ) );
 	}
-
-	private void registerComponentsAssociation( EntityConfigurationBuilder<? extends WebCmsObject> configuration ) {
-		configuration.association( ab -> ab
-				.name( "components" )
-				.targetEntityType( WebCmsComponent.class )
-				.targetProperty( "owner" )
-				.associationType( EntityAssociation.Type.EMBEDDED )
-				.parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
-				.attribute( AssociatedEntityQueryExecutor.class, componentAssociatedEntityQueryExecutor )
-				.listView(
-						lvb -> lvb.showProperties( "title", "name", "componentType", "sortIndex", "lastModified" )
-						          .sortableOn()
-				)
-				.createOrUpdateFormView( fvb -> fvb.properties( props -> props.property( "sortIndex" ).hidden( false ) ) )
-				.updateFormView(
-						fvb -> fvb.properties( props -> props.property( "componentType" ).writable( false ) )
-						          .showProperties( "componentType", "title", "name", "sortIndex", "lastModified" )
-						          .viewProcessor( formProcessor )
-						          .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 8, 4 ) ) )
-				)
-				.deleteFormView()
-		);
-	}
-
 }

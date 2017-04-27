@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.*;
  * @since 0.0.1
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TestWebCmsEndpointValidator
+public class TestWebCmsUrlValidator
 {
 	@Mock
 	private WebCmsUrlRepository repository;
@@ -63,24 +64,34 @@ public class TestWebCmsEndpointValidator
 				WebCmsUrl.builder().id( 2L ).path( "/no-content" ).httpStatus( HttpStatus.NO_CONTENT ).primary( true ).build(),
 				WebCmsUrl.builder().id( 3L ).httpStatus( HttpStatus.NOT_FOUND ).primary( false ).build()
 		) );
-		WebCmsUrl url = WebCmsUrl.builder().primary( true ).endpoint( endpoint ).build();
-		when( errors.hasFieldErrors( "endpoint" ) ).thenReturn( false );
+		WebCmsUrl url = WebCmsUrl.builder().httpStatus( HttpStatus.OK ).primary( true ).endpoint( endpoint ).build();
 
-		validator.preValidation( url, errors );
+		validator.postValidation( url, errors );
 
 		verify( errors ).rejectValue( "primary", "onlyOnePrimaryUrlPerEndpoint", new Object[] { "/ok" }, "Another primary URL exists." );
+	}
+
+	@Test
+	public void primaryUrlMustNotBeRedirect() throws Exception {
+		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
+		                                             .build();
+		when( repository.findAllByEndpoint( endpoint ) ).thenReturn( Collections.emptyList() );
+		WebCmsUrl url = WebCmsUrl.builder().httpStatus( HttpStatus.MOVED_PERMANENTLY ).primary( true ).endpoint( endpoint ).build();
+
+		validator.postValidation( url, errors );
+
+		verify( errors ).rejectValue( "httpStatus", "primaryUrlCannotBeRedirect", new Object[0], "Primary URL may not have a redirection HttpStatus." );
 	}
 
 	@Test
 	public void dontErrorWhenAlreadyRejected() throws Exception {
 		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
 		                                             .build();
-		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).build();
-		when( errors.hasFieldErrors( "endpoint" ) ).thenReturn( true );
+		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).primary( true ).build();
+		when( errors.hasErrors() ).thenReturn( true );
+		validator.postValidation( url, errors );
 
-		validator.preValidation( url, errors );
-
-		verify( errors, never() ).rejectValue( "endpoint", "onlyOnePrimaryUrlPerEndpoint" );
+		verifyNoMoreInteractions( repository );
 	}
 
 	@Test
@@ -92,11 +103,10 @@ public class TestWebCmsEndpointValidator
 				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).build()
 		) );
 		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).build();
-		when( errors.hasFieldErrors( "endpoint" ) ).thenReturn( true );
 
-		validator.preValidation( url, errors );
+		validator.postValidation( url, errors );
 
-		verify( errors, never() ).rejectValue( "endpoint", "onlyOnePrimaryUrlPerEndpoint" );
+		verify( errors, never() ).rejectValue( eq( "primary" ), eq( "onlyOnePrimaryUrlPerEndpoint" ), any(), any() );
 	}
 
 	@Test
@@ -108,11 +118,10 @@ public class TestWebCmsEndpointValidator
 				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).build()
 		) );
 		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).build();
-		when( errors.hasFieldErrors( "endpoint" ) ).thenReturn( true );
 
-		validator.preValidation( url, errors );
+		validator.postValidation( url, errors );
 
-		verify( errors, never() ).rejectValue( "endpoint", "onlyOnePrimaryUrlPerEndpoint" );
+		verify( errors, never() ).rejectValue( eq( "primary" ), eq( "onlyOnePrimaryUrlPerEndpoint" ), any(), any() );
 	}
 
 }
