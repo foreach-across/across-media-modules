@@ -112,18 +112,6 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 
 			removeAttributes( model, elementTag, modelFactory );
 		}
-
-/*
-		ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-
-
-		queue.schedule( attributeValue, null, null );
-
-		model.insert( 1, modelFactory.createProcessingInstruction( "create-component", attributeValue ) );
-		model.insert( model.size() - 1, modelFactory.createProcessingInstruction( "stop-component", attributeValue ) );
-		*/
-
-//		model.add( modelFactory.createComment( "end writing comment" ) );
 	}
 
 	private void renderEmptyBody( IModel model, IProcessableElementTag elementTag ) {

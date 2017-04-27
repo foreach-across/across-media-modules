@@ -31,8 +31,8 @@ import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUt
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
-import com.foreach.across.modules.webcms.web.article.WebCmsArticleListViewProcessor;
-import com.foreach.across.modules.webcms.web.component.OrderedWebCmsComponentsFormProcessor;
+import com.foreach.across.modules.webcms.domain.article.web.WebCmsArticleListViewProcessor;
+import com.foreach.across.modules.webcms.domain.component.web.OrderedWebCmsComponentsFormProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

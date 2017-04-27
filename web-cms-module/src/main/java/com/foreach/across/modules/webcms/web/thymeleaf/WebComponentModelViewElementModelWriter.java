@@ -19,9 +19,11 @@ package com.foreach.across.modules.webcms.web.thymeleaf;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriter;
+import com.foreach.across.modules.web.ui.thymeleaf.ViewElementModelWriterRegistry;
 import com.foreach.across.modules.webcms.domain.component.UnknownWebCmsComponentModelException;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -30,8 +32,9 @@ import java.util.Collection;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@ConditionalOnBean(ViewElementModelWriterRegistry.class)
 @Component
-public class WebComponentModelViewElementModelWriter implements ViewElementModelWriter<WebCmsComponentModel>
+class WebComponentModelViewElementModelWriter implements ViewElementModelWriter<WebCmsComponentModel>
 {
 	private Collection<WebComponentModelRenderer> renderers;
 
@@ -48,5 +51,10 @@ public class WebComponentModelViewElementModelWriter implements ViewElementModel
 	@Autowired
 	void setRenderers( @RefreshableCollection(includeModuleInternals = true) Collection<WebComponentModelRenderer> renderers ) {
 		this.renderers = renderers;
+	}
+
+	@Autowired
+	void registerModelWriter( ViewElementModelWriterRegistry modelWriterRegistry ) {
+		modelWriterRegistry.registerModelWriter( WebCmsComponentModel.class.getSimpleName(), this );
 	}
 }

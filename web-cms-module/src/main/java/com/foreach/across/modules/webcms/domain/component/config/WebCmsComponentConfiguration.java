@@ -16,10 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.config;
 
-import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
-import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.views.processors.DefaultValidationViewProcessor;
@@ -28,7 +25,7 @@ import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewPr
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
-import com.foreach.across.modules.webcms.web.component.WebCmsComponentFormProcessor;
+import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 

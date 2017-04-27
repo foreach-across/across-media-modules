@@ -28,7 +28,7 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
-import com.foreach.across.modules.webcms.web.component.WebCmsComponentFormProcessor;
+import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

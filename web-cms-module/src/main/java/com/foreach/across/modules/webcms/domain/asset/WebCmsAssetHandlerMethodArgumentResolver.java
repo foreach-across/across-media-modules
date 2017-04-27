@@ -16,8 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.web.endpoint.context.WebCmsEndpointContext;
+import com.foreach.across.modules.webcms.domain.endpoint.web.context.WebCmsEndpointContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
