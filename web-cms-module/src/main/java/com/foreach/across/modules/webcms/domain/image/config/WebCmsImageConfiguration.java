@@ -38,7 +38,7 @@ import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUt
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.asset.web.builders.ImageUploadViewElementBuilder;
-import com.foreach.across.modules.webcms.domain.asset.web.processors.WebCmsImageFormViewProcessor;
+import com.foreach.across.modules.webcms.domain.image.web.WebCmsImageFormViewProcessor;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageTypeDto;

@@ -33,6 +33,6 @@ public class WebCmsAuditableInstaller extends AuditableSchemaInstaller
 {
 	@Override
 	protected Collection<String> getTableNames() {
-		return Arrays.asList( "wcm_asset", "wcm_type", "wcm_component" );
+		return Arrays.asList( "wcm_asset", "wcm_type", "wcm_component", "wcm_object_type_link", "wcm_object_asset_link" );
 	}
 }

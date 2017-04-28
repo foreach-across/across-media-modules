@@ -41,6 +41,8 @@
 	<property name="table.component" value="wcm_component"/>
 	<property name="table.component_type" value="wcm_component_type"/>
 	<property name="table.image" value="wcm_image"/>
+	<property name="table.object_type_link" value="wcm_object_type_link"/>
+	<property name="table.object_asset_link" value="wcm_object_asset_link"/>
 
 	<!-- Obsolete table names - these are both created/modified and removed in the changeset -->
 	<property name="table.asset_component_link" value="wcm_asset_component_link"/>
@@ -726,6 +728,131 @@
 
 		<delete tableName="${table.page_section}"/>
 		<dropTable tableName="${table.page_section}"/>
+	</changeSet>
+
+	<!-- Article type on Article -->
+	<changeSet id="201704280746" author="arne" runInTransaction="true">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.article}" columnName="article_type_id"/>
+			</not>
+		</preConditions>
+
+		<comment>Drop body and image column on article table - add article type</comment>
+
+		<dropColumn tableName="${table.article}" columnName="body"/>
+		<dropForeignKeyConstraint baseTableName="${table.article}" constraintName="fk_article_image"/>
+		<dropColumn tableName="${table.article}" columnName="image_id"/>
+
+		<addColumn tableName="${table.article}">
+			<column name="article_type_id" type="java.sql.Types.BIGINT">
+				<constraints referencedTableName="${table.article_type}" referencedColumnNames="id" foreignKeyName="fk_wcm_art_art_type"/>
+			</column>
+		</addColumn>
+
+		<update tableName="${table.article}">
+			<column name="article_type_id">1</column>
+		</update>
+
+		<addNotNullConstraint tableName="${table.article}" columnName="article_type_id" columnDataType="java.sql.Types.BIGINT"/>
+	</changeSet>
+
+	<!-- Object to type link table -->
+	<changeSet id="201704280816" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.object_type_link}"/>
+			</not>
+		</preConditions>
+
+		<comment>Create object to type link table</comment>
+
+		<createTable tableName="${table.object_type_link}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             primaryKey="true"
+				             primaryKeyName="pk_wcm_object_type_lnk"/>
+			</column>
+			<column name="discriminator" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="owner_object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="type_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" referencedTableName="${table.type}" referencedColumnNames="id" foreignKeyName="fk_wcm_object_type_tid"/>
+			</column>
+			<column name="link_type" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.object_type_link}" indexName="ix_wcm_object_type_unq" unique="true">
+			<column name="owner_object_id"/>
+			<column name="type_id"/>
+			<column name="link_type"/>
+		</createIndex>
+
+		<createIndex tableName="${table.object_type_link}" indexName="ix_wcm_object_type_oidl">
+			<column name="owner_object_id"/>
+			<column name="link_type"/>
+			<column name="sort_index"/>
+		</createIndex>
+
+		<createIndex tableName="${table.object_type_link}" indexName="ix_wcm_object_type_tidl">
+			<column name="type_id"/>
+			<column name="link_type"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Object to asset link table -->
+	<changeSet id="201704280833" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.object_asset_link}"/>
+			</not>
+		</preConditions>
+
+		<comment>Create object to asset link table</comment>
+
+		<createTable tableName="${table.object_asset_link}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             primaryKey="true"
+				             primaryKeyName="pk_wcm_object_asset_lnk"/>
+			</column>
+			<column name="discriminator" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="owner_object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="asset_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" referencedTableName="${table.asset}" referencedColumnNames="id" foreignKeyName="fk_wcm_object_asset_aid"/>
+			</column>
+			<column name="link_type" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.object_asset_link}" indexName="ix_wcm_object_asset_unq" unique="true">
+			<column name="owner_object_id"/>
+			<column name="asset_id"/>
+			<column name="link_type"/>
+		</createIndex>
+
+		<createIndex tableName="${table.object_asset_link}" indexName="ix_wcm_object_asset_oidl">
+			<column name="owner_object_id"/>
+			<column name="link_type"/>
+			<column name="sort_index"/>
+		</createIndex>
+
+		<createIndex tableName="${table.object_asset_link}" indexName="ix_wcm_object_asset_aidl">
+			<column name="asset_id"/>
+			<column name="link_type"/>
+		</createIndex>
 	</changeSet>
 
 </databaseChangeLog>

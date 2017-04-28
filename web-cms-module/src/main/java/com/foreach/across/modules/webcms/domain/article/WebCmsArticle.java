@@ -17,8 +17,6 @@
 package com.foreach.across.modules.webcms.domain.article;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
-import com.foreach.across.modules.webcms.domain.image.ImageOwner;
-import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,7 +29,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.Optional;
 
 import static com.foreach.across.modules.webcms.domain.article.WebCmsArticle.OBJECT_TYPE;
 
@@ -48,7 +45,7 @@ import static com.foreach.across.modules.webcms.domain.article.WebCmsArticle.OBJ
 @NoArgsConstructor
 @Getter
 @Setter
-public class WebCmsArticle extends WebCmsAsset<WebCmsArticle> implements ImageOwner
+public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 {
 	/**
 	 * Object type name (discriminator value).
@@ -67,6 +64,14 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle> implements ImageOw
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "publication_id")
 	private WebCmsPublication publication;
+
+	/**
+	 * Type of this article.
+	 */
+	@NotNull
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "article_type_id")
+	private WebCmsArticleType articleType;
 
 	/**
 	 * Title of the article. Used in previews, list views etc.
@@ -90,21 +95,6 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle> implements ImageOw
 	@Length(max = 255)
 	private String description;
 
-	/**
-	 * Temporary: body of the article.
-	 */
-	@Deprecated
-	@Column(name = "body")
-	private String body;
-
-	/**
-	 * Temporary: The image of this post
-	 */
-	@Deprecated
-	@ManyToOne
-	@JoinColumn(name = "image_id")
-	private WebCmsImage image;
-
 	@Builder(toBuilder = true)
 	protected WebCmsArticle( @Builder.ObtainVia(method = "getId") Long id,
 	                         @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
@@ -116,16 +106,16 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle> implements ImageOw
 	                         @Builder.ObtainVia(method = "isPublished") boolean published,
 	                         @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
 	                         WebCmsPublication publication,
+	                         WebCmsArticleType articleType,
 	                         String title,
 	                         String subTitle,
-	                         String description,
-	                         String body ) {
+	                         String description ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
 		this.publication = publication;
+		this.articleType = articleType;
 		this.title = title;
 		this.subTitle = subTitle;
 		this.description = description;
-		this.body = body;
 	}
 
 	@Override
@@ -144,10 +134,5 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle> implements ImageOw
 				"objectId='" + getObjectId() + "\'," +
 				"title='" + title + '\'' +
 				'}';
-	}
-
-	@Override
-	public Optional<String> getImageServerKey() {
-		return image != null ? Optional.ofNullable( image.getExternalId() ) : Optional.empty();
 	}
 }
