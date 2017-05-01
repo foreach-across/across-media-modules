@@ -28,7 +28,7 @@ import java.util.Collection;
  * @since 0.0.1
  */
 @Order(2)
-@Installer(description = "Adds auditing columns to core tables", version = 4)
+@Installer(description = "Adds auditing columns to core tables", version = 5)
 public class WebCmsAuditableInstaller extends AuditableSchemaInstaller
 {
 	@Override

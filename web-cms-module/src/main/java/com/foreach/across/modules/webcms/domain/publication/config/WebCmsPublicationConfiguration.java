@@ -53,8 +53,7 @@ class WebCmsPublicationConfiguration implements EntityConfigurer
 				                      .writable( true )
 				                      .readable( false )
 		        )
-		        .createOrUpdateFormView( fvb -> fvb.viewProcessor( publicationTypeFormProcessor ) )
-		;
+		        .createOrUpdateFormView( fvb -> fvb.viewProcessor( publicationTypeFormProcessor ) );
 
 		entities.withType( WebCmsPublication.class )
 		        .properties(
@@ -62,7 +61,6 @@ class WebCmsPublicationConfiguration implements EntityConfigurer
 						        .property( "objectId" ).order( 0 ).writable( false ).and()
 						        .property( "publish-settings" ).hidden( true ).and()
 						        .property( "published" ).hidden( false )
-
 		        );
 	}
 }

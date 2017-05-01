@@ -18,23 +18,31 @@ package com.foreach.across.modules.webcms.domain.publication.web;
 
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
+import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.entity.views.support.ValueFetcher;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeLink;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeLinkRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author Arne Vandamme
@@ -48,6 +56,7 @@ public class PublicationTypeFormProcessor extends EntityViewProcessorAdapter imp
 	public static final String ARTICLE_TYPES_CONTROL_NAME = "extensions[articleTypes].allowed";
 
 	private final EntityViewRequest entityViewRequest;
+	private final WebCmsArticleTypeLinkRepository articleTypeLinkRepository;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
@@ -55,16 +64,36 @@ public class PublicationTypeFormProcessor extends EntityViewProcessorAdapter imp
 	}
 
 	@Override
+	protected void doPost( EntityViewRequest entityViewRequest, EntityView entityView, EntityViewCommand command, BindingResult bindingResult ) {
+		if ( !bindingResult.hasErrors() ) {
+			WebCmsObject owner = command.getEntity( WebCmsObject.class );
+			ArticleTypesHolder typesHolder = command.getExtension( "articleTypes", ArticleTypesHolder.class );
+
+			Map<WebCmsArticleType, WebCmsArticleTypeLink> currentLinks
+					= articleTypeLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( owner.getObjectId(), null )
+					                           .stream()
+					                           .collect( Collectors.toMap( WebCmsArticleTypeLink::getTypeSpecifier, Function.identity() ) );
+
+			typesHolder.getAllowed().forEach( articleType -> {
+				if ( currentLinks.remove( articleType ) == null ) {
+					WebCmsArticleTypeLink link = new WebCmsArticleTypeLink();
+					link.setOwner( owner );
+					link.setTypeSpecifier( articleType );
+
+					articleTypeLinkRepository.save( link );
+				}
+			} );
+
+			currentLinks.values().forEach( articleTypeLinkRepository::delete );
+		}
+	}
+
+	@Override
 	protected void postRender( EntityViewRequest entityViewRequest,
 	                           EntityView entityView,
 	                           ContainerViewElement container,
 	                           ViewElementBuilderContext builderContext ) {
-		/*container.find( "formGroup-articleTypes", FormGroupElement.class )
-		         .ifPresent(
-				         group -> group.findAll( CheckboxFormElement.class,
-				                                 checkbox -> StringUtils.startsWith( checkbox.getControlName(), "entity." + ARTICLE_TYPES_CONTROL_NAME ) )
-				                       .forEach( checkbox -> checkbox.setControlName( ARTICLE_TYPES_CONTROL_NAME ) )
-		         );*/
+		ContainerViewElementUtils.move( container, "formGroup-articleTypes", SingleEntityFormViewProcessor.RIGHT_COLUMN );
 	}
 
 	@Override
@@ -73,7 +102,12 @@ public class PublicationTypeFormProcessor extends EntityViewProcessorAdapter imp
 			return entityViewRequest.getCommand().getExtension( "articleTypes", ArticleTypesHolder.class ).allowed;
 		}
 
-		return Collections.emptySet();
+		return entity.isNew()
+				? Collections.emptySet()
+				: articleTypeLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( entity.getObjectId(), null )
+				                           .stream()
+				                           .map( WebCmsArticleTypeLink::getTypeSpecifier )
+				                           .collect( Collectors.toSet() );
 	}
 
 	@Data

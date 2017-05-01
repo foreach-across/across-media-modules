@@ -29,7 +29,5 @@ import java.util.List;
 @Exposed
 public interface WebCmsArticleTypeLinkRepository extends IdBasedEntityJpaRepository<WebCmsArticleTypeLink>, QueryDslPredicateExecutor<WebCmsArticleTypeLink>
 {
-	List<WebCmsArticleTypeLink> findAllByOwnerObjectIdOrderBySortIndexAsc( String ownerObjectId );
-
 	List<WebCmsArticleTypeLink> findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( String ownerObjectId, String linkType );
 }

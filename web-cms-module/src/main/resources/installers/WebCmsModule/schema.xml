@@ -749,12 +749,6 @@
 				<constraints referencedTableName="${table.article_type}" referencedColumnNames="id" foreignKeyName="fk_wcm_art_art_type"/>
 			</column>
 		</addColumn>
-
-		<update tableName="${table.article}">
-			<column name="article_type_id">1</column>
-		</update>
-
-		<addNotNullConstraint tableName="${table.article}" columnName="article_type_id" columnDataType="java.sql.Types.BIGINT"/>
 	</changeSet>
 
 	<!-- Object to type link table -->

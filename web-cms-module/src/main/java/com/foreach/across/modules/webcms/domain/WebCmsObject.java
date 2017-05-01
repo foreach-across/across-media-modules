@@ -26,4 +26,9 @@ public interface WebCmsObject
 	 * @return the globally unique id of this object in the entire repository
 	 */
 	String getObjectId();
+
+	/**
+	 * @return true if we're dealing with a new entity and the object id might not be set
+	 */
+	boolean isNew();
 }

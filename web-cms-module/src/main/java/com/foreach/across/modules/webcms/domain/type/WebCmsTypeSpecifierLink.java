@@ -36,7 +36,7 @@ import java.util.Date;
  * @since 0.0.1
  */
 @NotThreadSafe
-@MappedSuperclass
+@Entity
 @Table(name = "wcm_object_type_link")
 @Access(AccessType.FIELD)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
