@@ -97,6 +97,7 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 		        );
 	}
 
+	@ConditionalOnAdminUI
 	@Component
 	@RequiredArgsConstructor
 	static class ArticleTypeForPublicationIterableBuilder implements OptionIterableBuilder

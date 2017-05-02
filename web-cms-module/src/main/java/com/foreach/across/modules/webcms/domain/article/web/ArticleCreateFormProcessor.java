@@ -25,6 +25,7 @@ import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,7 @@ import java.util.Map;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@ConditionalOnAdminUI
 @Component
 @RequiredArgsConstructor
 final class ArticleCreateFormProcessor extends EntityViewProcessorAdapter
