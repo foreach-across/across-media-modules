@@ -34,7 +34,7 @@
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/content/groups/public/</url>
+			<url>http://repository.foreach.be/nexus/repository/public/</url>
 		</repository>
 	</repositories>
 
@@ -90,7 +90,7 @@
 				<configuration>
 					<finalName>${project.artifactId}</finalName>
 					<descriptors>
-						<descriptor>${project.basedir}\site.xml</descriptor>
+						<descriptor>site.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>
@@ -139,4 +139,22 @@
 		<developerConnection>scm:git:https://bitbucket.org/beforeach/file-manager-module.git</developerConnection>
 		<url>https://bitbucket.org/beforeach/file-manager-module</url>
 	</scm>
+
+	<profiles>
+		<profile>
+			<id>foreach</id>
+			<distributionManagement>
+				<repository>
+					<id>foreach-nexus</id>
+					<name>Foreach nexus</name>
+					<url>http://repository.foreach.be/nexus/repository/releases</url>
+				</repository>
+				<snapshotRepository>
+					<id>foreach-nexus</id>
+					<name>Foreach nexus</name>
+					<url>http://repository.foreach.be/nexus/repository/snapshots</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 </project>
