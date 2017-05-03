@@ -1,13 +1,13 @@
 = FileManagerModule
 Arne Vandamme
-1.1.0-SNAPSHOT
+1.1.0.RELEASE
 :toc: left
 :sectanchors:
-:module-version: 1.1.0-SNAPSHOT
+:module-version: 1.1.0.RELEASE
 :module-name: FileManagerModule
 :module-artifact: file-manager-module
 :module-url: https://foreach.atlassian.net/wiki/display/AX/FileManagerModule
-:javadoc-filerepository: http://across.foreach.be/docs/across-standard-modules/FileManagerModule/1.1.0-SNAPSHOT/javadoc/index.html?com/foreach/across/modules/filemanager/services/FileRepository.html
+:javadoc-filerepository: http://across.foreach.be/docs/across-standard-modules/FileManagerModule/1.1.0.RELEASE/javadoc/index.html?com/foreach/across/modules/filemanager/services/FileRepository.html
 
 [copyright,verbatim]
 --
@@ -63,7 +63,7 @@ Module website: {module-url}
 
 == What's new in this version?
 :numbered!:
-=== 1.1.0-SNAPSHOT
+=== 1.1.0.RELEASE
 
 * Switched the settings to `@ConfigurationProperties`
 
