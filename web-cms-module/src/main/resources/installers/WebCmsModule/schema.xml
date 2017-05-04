@@ -767,9 +767,6 @@
 				             primaryKey="true"
 				             primaryKeyName="pk_wcm_object_type_lnk"/>
 			</column>
-			<column name="discriminator" type="java.sql.Types.VARCHAR(255)">
-				<constraints nullable="false"/>
-			</column>
 			<column name="owner_object_id" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
@@ -815,9 +812,6 @@
 				<constraints nullable="false"
 				             primaryKey="true"
 				             primaryKeyName="pk_wcm_object_asset_lnk"/>
-			</column>
-			<column name="discriminator" type="java.sql.Types.VARCHAR(255)">
-				<constraints nullable="false"/>
 			</column>
 			<column name="owner_object_id" type="java.sql.Types.VARCHAR(100)">
 				<constraints nullable="false"/>

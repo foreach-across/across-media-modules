@@ -46,27 +46,9 @@ types:
   article:
     blog:
       name: Blog
-      attributes:
-        parent: news
-        bodyTemplate: body-template
       wcm:components:
-        body-template:
-          title: Article body template
-          componentType: rich-text
-    news:
-      name: News
-
-  # Default publication types: blog and news
-  publication:
-    blog:
-      name: Blog
-      attributes:
-        parent: news
-
-    news:
-      name: News
-      wcm:components:
-        articleTemplate:
+        # Default component name that contains the body components template for this article type
+        bodyTemplate:
           title: Generic article template
           componentType: container
           wcm:components:
@@ -77,3 +59,21 @@ types:
                 <h1>@@title@@</h1>
                 <p></p>
               sortIndex: 0
+    news:
+      name: News
+      attributes:
+        # Key of the parent type from which the attributes (and component) should be inherited
+        parent: blog
+
+  # Default publication types: blog and news
+  publication:
+    blog:
+      name: Blog
+      wcm:types:
+        - typeSpecifier: wcm:type:article:blog
+          linkType: article
+    news:
+      name: News
+      wcm:types:
+        - typeSpecifier: wcm:type:article:news
+          linkType: article

@@ -49,6 +49,7 @@ final class ArticleUpdateFormProcessor extends EntityViewProcessorAdapter
 		         .ifPresent( target -> {
 			         target.addChild(
 					         bootstrapUiFactory.row()
+					                           .name( "pub-metadata" )
 					                           .add( bootstrapUiFactory.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-left" ) )
 					                           .add( bootstrapUiFactory.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-right" ) )
 					                           .build( builderContext )
@@ -66,7 +67,6 @@ final class ArticleUpdateFormProcessor extends EntityViewProcessorAdapter
 
 			         ContainerViewElementUtils.move( container, "formGroup-publication", "pub-metadata-left" );
 			         ContainerViewElementUtils.move( container, "formGroup-articleType", "pub-metadata-right" );
-
 		         } );
 	}
 }

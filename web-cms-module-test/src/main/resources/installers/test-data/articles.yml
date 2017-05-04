@@ -1,8 +1,8 @@
 types:
-  publication:
-    news:
+  article:
+    blog:
       wcm:components:
-        articleTemplate:
+        bodyTemplate:
           wcm:components:
             other:
               wcm:action: delete

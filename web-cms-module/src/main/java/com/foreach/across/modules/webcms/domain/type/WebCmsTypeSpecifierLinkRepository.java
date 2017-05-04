@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.article;
+package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
@@ -27,7 +27,9 @@ import java.util.List;
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsArticleTypeLinkRepository extends IdBasedEntityJpaRepository<WebCmsArticleTypeLink>, QueryDslPredicateExecutor<WebCmsArticleTypeLink>
+public interface WebCmsTypeSpecifierLinkRepository extends IdBasedEntityJpaRepository<WebCmsTypeSpecifierLink>, QueryDslPredicateExecutor<WebCmsTypeSpecifierLink>
 {
-	List<WebCmsArticleTypeLink> findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( String ownerObjectId, String linkType );
+	List<WebCmsTypeSpecifierLink> findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( String ownerObjectId, String linkType );
+
+	WebCmsTypeSpecifierLink findOneByOwnerObjectIdAndLinkTypeAndTypeSpecifier( String ownerObjectId, String linkType, WebCmsTypeSpecifier typeSpecifier );
 }

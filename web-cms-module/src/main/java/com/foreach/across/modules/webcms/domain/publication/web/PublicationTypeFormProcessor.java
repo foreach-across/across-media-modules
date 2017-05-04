@@ -28,8 +28,9 @@ import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUt
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
-import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeLink;
-import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeLinkRepository;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -56,7 +57,7 @@ public class PublicationTypeFormProcessor extends EntityViewProcessorAdapter imp
 	public static final String ARTICLE_TYPES_CONTROL_NAME = "extensions[articleTypes].allowed";
 
 	private final EntityViewRequest entityViewRequest;
-	private final WebCmsArticleTypeLinkRepository articleTypeLinkRepository;
+	private final WebCmsTypeSpecifierLinkRepository typeLinkRepository;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
@@ -69,22 +70,23 @@ public class PublicationTypeFormProcessor extends EntityViewProcessorAdapter imp
 			WebCmsObject owner = command.getEntity( WebCmsObject.class );
 			ArticleTypesHolder typesHolder = command.getExtension( "articleTypes", ArticleTypesHolder.class );
 
-			Map<WebCmsArticleType, WebCmsArticleTypeLink> currentLinks
-					= articleTypeLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( owner.getObjectId(), null )
-					                           .stream()
-					                           .collect( Collectors.toMap( WebCmsArticleTypeLink::getTypeSpecifier, Function.identity() ) );
+			Map<WebCmsTypeSpecifier, WebCmsTypeSpecifierLink> currentLinks
+					= typeLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( owner.getObjectId(), null )
+					                    .stream()
+					                    .collect( Collectors.toMap( WebCmsTypeSpecifierLink::getTypeSpecifier, Function.identity() ) );
 
 			typesHolder.getAllowed().forEach( articleType -> {
 				if ( currentLinks.remove( articleType ) == null ) {
-					WebCmsArticleTypeLink link = new WebCmsArticleTypeLink();
+					WebCmsTypeSpecifierLink link = new WebCmsTypeSpecifierLink();
 					link.setOwner( owner );
 					link.setTypeSpecifier( articleType );
+					link.setLinkType( WebCmsArticleType.OBJECT_TYPE );
 
-					articleTypeLinkRepository.save( link );
+					typeLinkRepository.save( link );
 				}
 			} );
 
-			currentLinks.values().forEach( articleTypeLinkRepository::delete );
+			currentLinks.values().forEach( typeLinkRepository::delete );
 		}
 	}
 
@@ -104,10 +106,10 @@ public class PublicationTypeFormProcessor extends EntityViewProcessorAdapter imp
 
 		return entity.isNew()
 				? Collections.emptySet()
-				: articleTypeLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( entity.getObjectId(), null )
-				                           .stream()
-				                           .map( WebCmsArticleTypeLink::getTypeSpecifier )
-				                           .collect( Collectors.toSet() );
+				: typeLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( entity.getObjectId(), WebCmsArticleType.OBJECT_TYPE )
+				                    .stream()
+				                    .map( WebCmsTypeSpecifierLink::getTypeSpecifier )
+				                    .collect( Collectors.toSet() );
 	}
 
 	@Data

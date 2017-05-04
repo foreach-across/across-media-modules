@@ -13,21 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-EntityModule.registerInitializer( function( node ) {
-    var container = node ? node : $(document);
-    if ( container.find('[id="entity.articleType"] option').length == 1 ) {
-        container.find('[id="entity.articleType"]').attr('readonly', 'readonly');
-    }
-});
+(function ( $ ) {
 
-$( document ).ready( function () {
-    $( "[id='entity.publication']" ).on( 'change', function ( e ) {
-        var selected = $( this ).val();
+    EntityModule.registerInitializer( function ( node ) {
+        var container = node ? node : $( document );
+        if ( container.find( '[id="entity.articleType"] option' ).length == 1 ) {
+            container.find( '[id="entity.articleType"]' ).attr( 'readonly', 'readonly' );
+        }
+    } );
 
-        $.get( window.url, $.param( {'_partial': '::articleType', 'entity.publication': selected} ) )
-                .done( function ( data ) {
-                    $( '[id="entity.articleType"]' ).replaceWith( data );
-                    EntityModule.initializeFormElements( $( '[id="entity.articleType"]' ).parent() );
-                } );
-    } )
-} );
+    $( document ).ready( function () {
+        var loadArticleTypes = function ( publicationSelect ) {
+            var selected = publicationSelect.val();
+
+            $.get( window.url, $.param( {'_partial': '::articleType', 'entity.publication': selected} ) )
+                    .done( function ( data ) {
+                        $( '[id="entity.articleType"]' ).replaceWith( data );
+                        EntityModule.initializeFormElements( $( '[id="entity.articleType"]' ).parent() );
+                    } );
+        };
+
+        $( "[id='entity.publication']" )
+                .on( 'change', function ( e ) {
+                    loadArticleTypes( $( this ) );
+                } )
+                .each( function () {
+                    if ( $( this ).find( 'option' ).length ) {
+                        loadArticleTypes( $( this ) );
+                    }
+                } )
+    } );
+
+})( jQuery );

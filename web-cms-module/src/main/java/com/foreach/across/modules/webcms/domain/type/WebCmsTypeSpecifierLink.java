@@ -39,12 +39,9 @@ import java.util.Date;
 @Entity
 @Table(name = "wcm_object_type_link")
 @Access(AccessType.FIELD)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "discriminator", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-public abstract class WebCmsTypeSpecifierLink<T extends WebCmsTypeSpecifierLink<T, U>, U extends WebCmsTypeSpecifier<U>>
-		extends SettableIdAuditableEntity<T>
+public class WebCmsTypeSpecifierLink extends SettableIdAuditableEntity<WebCmsTypeSpecifierLink>
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_object_type_link_id")
@@ -72,7 +69,7 @@ public abstract class WebCmsTypeSpecifierLink<T extends WebCmsTypeSpecifierLink<
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "type_id")
-	private U typeSpecifier;
+	private WebCmsTypeSpecifier typeSpecifier;
 
 	/**
 	 * Optional type descriptor for the link.
@@ -98,7 +95,7 @@ public abstract class WebCmsTypeSpecifierLink<T extends WebCmsTypeSpecifierLink<
 	                                   String lastModifiedBy,
 	                                   Date lastModifiedDate,
 	                                   String ownerObjectId,
-	                                   U typeSpecifier,
+	                                   WebCmsTypeSpecifier typeSpecifier,
 	                                   String linkType,
 	                                   int sortIndex ) {
 		setId( id );
@@ -115,6 +112,13 @@ public abstract class WebCmsTypeSpecifierLink<T extends WebCmsTypeSpecifierLink<
 
 	public void setOwner( WebCmsObject owner ) {
 		setOwnerObjectId( owner != null ? owner.getObjectId() : null );
+	}
+
+	/**
+	 * @return type coerced version
+	 */
+	public <U extends WebCmsTypeSpecifier<U>> U getTypeSpecifier( Class<U> specifierType ) {
+		return specifierType.cast( getTypeSpecifier() );
 	}
 
 	@Override

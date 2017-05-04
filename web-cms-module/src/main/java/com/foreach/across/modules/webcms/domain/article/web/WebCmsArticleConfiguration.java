@@ -29,10 +29,11 @@ import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
-import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeLink;
-import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeLinkRepository;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
 import com.foreach.across.modules.webcms.domain.component.web.OrderedWebCmsComponentsFormProcessor;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepository;
 import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,12 +98,15 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 		        );
 	}
 
+	/**
+	 * Selects the possible article types for a particular publication.
+	 */
 	@ConditionalOnAdminUI
 	@Component
 	@RequiredArgsConstructor
 	static class ArticleTypeForPublicationIterableBuilder implements OptionIterableBuilder
 	{
-		private final WebCmsArticleTypeLinkRepository linkRepository;
+		private final WebCmsTypeSpecifierLinkRepository linkRepository;
 
 		@Override
 		public Iterable<OptionFormElementBuilder> buildOptions( ViewElementBuilderContext builderContext ) {
@@ -112,9 +116,10 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 			WebCmsPublication publication = article.getPublication();
 
 			if ( publication != null ) {
-				linkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( publication.getPublicationType().getObjectId(), null )
+				linkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( publication.getPublicationType().getObjectId(),
+				                                                                     WebCmsArticleType.OBJECT_TYPE )
 				              .stream()
-				              .map( WebCmsArticleTypeLink::getTypeSpecifier )
+				              .map( WebCmsTypeSpecifierLink::getTypeSpecifier )
 				              .forEach( type ->
 						                        options.add( new OptionFormElementBuilder()
 								                                     .rawValue( type )
