@@ -32,6 +32,9 @@ debugWebModule:
   security:
     password: debug
 
+ehcacheModule:
+  cacheManagerName: webCmsModuleTestCacheManager
+
 spring:
   datasource:
     url: jdbc:h2:../db/adminwebcms
