@@ -20,6 +20,7 @@ import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -33,9 +34,13 @@ class WebCmsTypeSpecifierConfiguration implements EntityConfigurer
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.assignableTo( WebCmsTypeSpecifier.class )
+		        .hide()
 		        .properties(
 				        props -> props.property( "attributes" ).hidden( true ).and()
-				                      .property( "objectId" ).hidden( true )
-		        );
+				                      .property( "objectId" ).order( 0 ).writable( false )
+		        )
+		        .updateFormView( fvb -> fvb.showProperties( "objectId", "." ) );
+
+		entities.assignableTo( WebCmsTypeSpecifierLink.class ).hide();
 	}
 }

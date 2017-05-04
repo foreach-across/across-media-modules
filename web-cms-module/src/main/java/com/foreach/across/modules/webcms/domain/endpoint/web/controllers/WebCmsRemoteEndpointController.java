@@ -19,7 +19,6 @@ package com.foreach.across.modules.webcms.domain.endpoint.web.controllers;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
@@ -32,14 +31,6 @@ public class WebCmsRemoteEndpointController
 	@WebCmsEndpointMapping(WebCmsRemoteEndpoint.class)
 	public RedirectView redirectToRemote( WebCmsUrl url, WebCmsRemoteEndpoint endpoint ) {
 		RedirectView redirectView = new RedirectView( endpoint.getTargetUrl() );
-		redirectView.setStatusCode( url.getHttpStatus() );
-		return redirectView;
-	}
-
-	@WebCmsEndpointMapping(WebCmsRemoteEndpoint.class)
-	@GetMapping(params = "name=test")
-	public RedirectView redirectToRemote2( WebCmsUrl url, WebCmsRemoteEndpoint endpoint ) {
-		RedirectView redirectView = new RedirectView( endpoint.getTargetUrl() + "?name=test" );
 		redirectView.setStatusCode( url.getHttpStatus() );
 		return redirectView;
 	}

@@ -44,6 +44,14 @@ public class WebCmsUrlValidator extends EntityValidatorSupport<WebCmsUrl>
 
 	@Override
 	protected void postValidation( WebCmsUrl entity, Errors errors, Object... validationHints ) {
+		if ( !errors.hasFieldErrors( "path" ) ) {
+			WebCmsUrl existing = urlRepository.findOneByPath( entity.getPath() );
+
+			if ( existing != null && !existing.equals( entity ) ) {
+				errors.rejectValue( "path", "alreadyExists" );
+			}
+		}
+
 		if ( !errors.hasErrors() && entity.isPrimary() ) {
 			if ( HttpStatus.Series.valueOf( entity.getHttpStatus() ) == HttpStatus.Series.REDIRECTION ) {
 				errors.rejectValue( "httpStatus", "primaryUrlCannotBeRedirect", new Object[0], "Primary URL may not have a redirection HttpStatus." );

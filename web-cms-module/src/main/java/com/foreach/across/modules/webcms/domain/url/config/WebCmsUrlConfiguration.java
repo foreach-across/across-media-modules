@@ -43,7 +43,7 @@ class WebCmsUrlConfiguration implements EntityConfigurer
 				        props -> props.property( "httpStatus" )
 				                      .attribute(
 						                      EntityAttributes.OPTIONS_ALLOWED_VALUES,
-						                      EnumSet.of( HttpStatus.OK, HttpStatus.MOVED_PERMANENTLY, HttpStatus.MOVED_TEMPORARILY, HttpStatus.NOT_FOUND )
+						                      EnumSet.of( HttpStatus.OK, HttpStatus.MOVED_PERMANENTLY, HttpStatus.FOUND, HttpStatus.NOT_FOUND )
 				                      )
 		        );
 	}

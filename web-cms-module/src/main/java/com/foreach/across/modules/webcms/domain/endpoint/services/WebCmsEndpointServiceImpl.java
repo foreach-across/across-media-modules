@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,8 +37,6 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 
 	@Override
 	public Optional<WebCmsUrl> getUrlForPath( String path ) {
-		List<WebCmsUrl> urls = repository.findByPath( path );
-		LOG.trace( "Found {} urls that correspond to path {}", urls.size(), path );
-		return urls.stream().findFirst();
+		return Optional.ofNullable( repository.findOneByPath( path ) );
 	}
 }

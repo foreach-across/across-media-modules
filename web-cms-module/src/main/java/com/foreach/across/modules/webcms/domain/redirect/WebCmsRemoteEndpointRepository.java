@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.redirect.repositories;
+package com.foreach.across.modules.webcms.domain.redirect;
 
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;

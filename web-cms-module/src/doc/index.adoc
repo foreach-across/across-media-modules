@@ -227,3 +227,18 @@ WebCmsArticle
 An article requires a specific article type.
 
 WebCmsArticleType
+
+modifying the default components:
+
+types:
+  article:
+    blog:
+      wcm:components:
+        bodyTemplate:
+          wcm:components:
+            main-image:
+              componentType: image
+              title: Image
+              sortIndex: 0
+            body:
+              sortIndex: 1
