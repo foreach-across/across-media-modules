@@ -36,7 +36,6 @@ import com.foreach.across.modules.entity.views.bootstrapui.util.SortableTableBui
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SimpleEntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
-import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
@@ -45,7 +44,8 @@ import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
-import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
+import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
@@ -55,7 +55,10 @@ import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * @author Arne Vandamme
@@ -102,6 +105,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 						                          )
 				                )
 				                .createFormView( fvb -> fvb.viewProcessor( new CreateUrlFormProcessor() ) )
+				                .updateFormView( fvb -> fvb.viewProcessor( new UpdateUrlFormProcessor() ) )
 				                .listView( lvb -> lvb.viewProcessor( new ListUrlFormProcessor() ) )
 		        );
 	}
@@ -126,7 +130,11 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			tableBuilder.properties( EntityPropertySelector.of( "path", "httpStatus" ) );
 			tableBuilder.noSorting();
 			tableBuilder.tableName( "urls" );
-			tableBuilder.items( EntityUtils.asPage( endpoint.getUrls() ) );
+
+			List<WebCmsUrl> urls = new ArrayList<>( endpoint.getUrls());
+			urls.sort( Comparator.comparing( WebCmsUrl::getPath ) );
+
+			tableBuilder.items( EntityUtils.asPage( urls ) );
 			tableBuilder.tableOnly();
 			tableBuilder.hideResultNumber();
 			tableBuilder.noResults( bootstrapUiFactory.container() );
@@ -142,13 +150,16 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			tableBuilder.headerRowProcessor( actionsProcessor );
 			tableBuilder.valueRowProcessor( actionsProcessor );
 
+			String message = entityViewContext.getMessageCodeResolver()
+			                                  .getMessage( "properties.urls.add", "Add a path to redirect" );
+
 			return bootstrapUiFactory.div()
 			                         .name( "formGroup-urls" )
 			                         .add( tableBuilder )
 			                         .add( bootstrapUiFactory.button()
 			                                                 .link( associationLinkBuilder.create() )
 			                                                 .style( Style.PRIMARY )
-			                                                 .text( "Add a redirect path" ) )
+			                                                 .text( message ) )
 			                         .build( new DefaultViewElementBuilderContext() );
 		}
 	}
@@ -181,6 +192,33 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 		@Override
 		protected void doGet( EntityViewRequest entityViewRequest, EntityView entityView, EntityViewCommand command ) {
 			command.getEntity( WebCmsUrl.class ).setHttpStatus( HttpStatus.MOVED_PERMANENTLY );
+		}
+
+		@Override
+		protected void postRender( EntityViewRequest entityViewRequest,
+		                           EntityView entityView,
+		                           ContainerViewElement container,
+		                           ViewElementBuilderContext builderContext ) {
+			String message = entityViewRequest.getEntityViewContext().getMessageCodeResolver()
+			                                  .getMessage( "bodyTitle.create", "Add a path to redirect" );
+
+			container.addFirstChild( new NodeViewElementBuilder( "h4" )
+					                         .add( TextViewElement.html( message ) ).build( builderContext ) );
+		}
+	}
+
+	private static class UpdateUrlFormProcessor extends EntityViewProcessorAdapter
+	{
+		@Override
+		protected void postRender( EntityViewRequest entityViewRequest,
+		                           EntityView entityView,
+		                           ContainerViewElement container,
+		                           ViewElementBuilderContext builderContext ) {
+			String message = entityViewRequest.getEntityViewContext().getMessageCodeResolver()
+			                                  .getMessage( "bodyTitle.update", "Update redirect path" );
+
+			container.addFirstChild( new NodeViewElementBuilder( "h4" )
+					                         .add( TextViewElement.html( message ) ).build( builderContext ) );
 		}
 	}
 }

@@ -88,6 +88,7 @@ public class TestWebCmsUrlValidator
 		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
 		                                             .build();
 		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).primary( true ).build();
+		when( errors.hasFieldErrors( "path" ) ).thenReturn( true );
 		when( errors.hasErrors() ).thenReturn( true );
 		validator.postValidation( url, errors );
 
