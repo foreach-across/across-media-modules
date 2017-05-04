@@ -16,10 +16,14 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint.services;
 
+import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.support.NoOpCache;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,11 +39,38 @@ import java.util.Optional;
 public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 {
 	private final WebCmsUrlRepository repository;
+	private final CacheManager cacheManager;
+
+	private Cache cache = new NoOpCache( "urls" );
 
 	@Override
 	public Optional<WebCmsUrl> getUrlForPath( String path ) {
-		List<WebCmsUrl> urls = repository.findByPath( path );
-		LOG.trace( "Found {} urls that correspond to path {}", urls.size(), path );
-		return urls.stream().findFirst();
+		Optional<Long> urlId = retrieveFromCache( path );
+
+		if ( urlId == null ) {
+			List<WebCmsUrl> urls = repository.findByPath( path );
+			LOG.trace( "Found {} urls that correspond to path {}", urls.size(), path );
+			Optional<WebCmsUrl> actual = urls.stream().findFirst();
+			putInCache( path, actual.map( WebCmsUrl::getId ) );
+			return actual;
+		}
+		else {
+			return urlId.map( repository::findOne );
+		}
+	}
+
+	@SuppressWarnings( "all" )
+	private void putInCache( String path, Optional<Long> urlId ) {
+		cache.put( path, urlId );
+	}
+
+	@SuppressWarnings("unchecked")
+	private Optional<Long> retrieveFromCache( String path ) {
+		return cache.get( path, Optional.class );
+	}
+
+	@PostRefresh
+	void loadActualCache() {
+		cache = cacheManager.getCache( "urls" );
 	}
 }
