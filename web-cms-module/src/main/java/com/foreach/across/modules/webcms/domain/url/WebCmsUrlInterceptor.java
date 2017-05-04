@@ -20,10 +20,7 @@ import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * @author Arne Vandamme
@@ -34,7 +31,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 public class WebCmsUrlInterceptor extends EntityInterceptorAdapter<WebCmsUrl>
 {
 	private final WebCmsUrlRepository urlRepository;
-	private final CacheManager cacheManager;
+	private final WebCmsUrlCacheHelper webCmsUrlCacheHelper;
 
 	@Override
 	public boolean handles( Class<?> entityClass ) {
@@ -46,22 +43,13 @@ public class WebCmsUrlInterceptor extends EntityInterceptorAdapter<WebCmsUrl>
 		WebCmsUrl current = urlRepository.findOne( updatedUrl.getId() );
 
 		if ( current != null && !StringUtils.equals( current.getPath(), updatedUrl.getPath() ) ) {
-			flushFromCache( current );
+			webCmsUrlCacheHelper.flushFromCache( current );
 		}
 	}
 
 	@Override
 	public void beforeDelete( WebCmsUrl entity ) {
-		flushFromCache( entity );
+		webCmsUrlCacheHelper.flushFromCache( entity );
 	}
 
-	private void flushFromCache( WebCmsUrl url ) {
-		TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronizationAdapter()
-		{
-			@Override
-			public void afterCommit() {
-				cacheManager.getCache( "urls" ).evict( url.getPath() );
-			}
-		} );
-	}
 }

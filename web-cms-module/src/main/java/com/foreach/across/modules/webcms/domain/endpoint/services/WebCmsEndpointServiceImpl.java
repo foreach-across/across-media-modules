@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.endpoint.services;
 
 import com.foreach.across.core.annotations.PostRefresh;
+import com.foreach.across.modules.webcms.config.WebCmsModuleCache;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.support.NoOpCache;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ import java.util.Optional;
  * @author Sander Van Loock
  * @since 0.0.1
  */
-@Component
+@Service
 @Slf4j
 @RequiredArgsConstructor
 public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
@@ -41,7 +42,7 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 	private final WebCmsUrlRepository repository;
 	private final CacheManager cacheManager;
 
-	private Cache cache = new NoOpCache( "urls" );
+	private Cache cache = new NoOpCache( WebCmsModuleCache.PATH_TO_URL_CACHE );
 
 	@Override
 	public Optional<WebCmsUrl> getUrlForPath( String path ) {
@@ -71,6 +72,6 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 
 	@PostRefresh
 	void loadActualCache() {
-		cache = cacheManager.getCache( "urls" );
+		cache = cacheManager.getCache( WebCmsModuleCache.PATH_TO_URL_CACHE );
 	}
 }
