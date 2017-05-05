@@ -49,6 +49,7 @@ import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
+import com.foreach.across.modules.webcms.domain.redirect.web.WebCmsRemoteEndpointViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -70,6 +71,7 @@ import java.util.List;
 class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 {
 	private final UrlsControlViewElementBuilder urlsControlViewElementBuilder;
+	private final WebCmsRemoteEndpointViewElementBuilder remoteEndpointViewElementBuilder;
 
 	@Event
 	void hideUrlsTab( EntityAdminMenuEvent<WebCmsRemoteEndpoint> menu ) {
@@ -80,6 +82,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsRemoteEndpoint.class )
+		        .attribute( "endpointValueBuilder",  remoteEndpointViewElementBuilder )
 		        .label( "targetUrl" )
 		        .properties(
 				        props -> props
@@ -95,6 +98,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 		        .association(
 				        ab -> ab.name( "webCmsRemoteEndpoint.urls" )
 				                .associationType( EntityAssociation.Type.EMBEDDED )
+				                .parentDeleteMode( EntityAssociation.ParentDeleteMode.IGNORE )
 				                .createOrUpdateFormView(
 						                fvb -> fvb.showProperties( "path", "httpStatus" )
 						                          .properties( props -> props
@@ -110,6 +114,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 		        );
 	}
 
+	@ConditionalOnAdminUI
 	@Component
 	@RequiredArgsConstructor
 	private static class UrlsControlViewElementBuilder implements ViewElementBuilder<ContainerViewElement>
@@ -164,6 +169,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 		}
 	}
 
+	@ConditionalOnAdminUI
 	@Component
 	@RequiredArgsConstructor
 	private static class UpdateRedirectFormProcessor extends EntityViewProcessorAdapter

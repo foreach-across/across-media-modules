@@ -22,8 +22,12 @@ import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.web.builders.WebCmsAssetEndpointViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.asset.web.processors.WebCmsAssetListViewProcessor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -32,11 +36,19 @@ import org.springframework.context.annotation.Configuration;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@ConditionalOnAdminUI
 @Configuration
+@RequiredArgsConstructor
 class WebCmsAssetConfiguration implements EntityConfigurer
 {
+	private final WebCmsAssetEndpointViewElementBuilder assetEndpointViewElementBuilder;
+
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.withType( WebCmsAssetEndpoint.class )
+		        .attribute( "endpointValueBuilder",  assetEndpointViewElementBuilder )
+		        .hide();
+
 		entities.assignableTo( WebCmsAsset.class )
 		        .properties(
 				        props -> props.property( "published" ).hidden( true ).and()
