@@ -1,9 +1,9 @@
 = WebCmsModule
 Arne Vandamme
-0.0.1-SNAPSHOT
+0.0.2-SNAPSHOT
 :toc: left
 :sectanchors:
-:module-version: 0.0.1-SNAPSHOT
+:module-version: 0.0.2-SNAPSHOT
 :module-name: WebCmsModule
 :module-artifact: web-cms-module
 :module-url: https://foreach.atlassian.net/wiki/display/AX/WebCmsModule
@@ -78,7 +78,7 @@ If unspecified the default resources of any present `@AcrossApplication` will be
 
 == What's new in this version?
 :numbered!:
-=== 0.0.1-SNAPSHOT
+=== 0.0.2-SNAPSHOT
 Initial public release available on http://search.maven.org/[Maven central].
 
 :numbered:
