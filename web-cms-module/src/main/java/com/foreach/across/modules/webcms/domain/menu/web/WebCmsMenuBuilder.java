@@ -43,15 +43,17 @@ final class WebCmsMenuBuilder
 
 		menuItemRepository.findAllByMenuName( buildMenuEvent.getMenuName() )
 		                  .forEach( item -> {
-			                  String url = item.getUrl();
+			                  if ( item.getLinkedPage() == null || item.getLinkedPage().isPublished() ) {
+				                  String url = item.getUrl();
 
-			                  if ( item.getLinkedPage() != null && StringUtils.isEmpty( url ) ) {
-				                  url = item.getLinkedPage().getCanonicalPath();
+				                  if ( item.getLinkedPage() != null && StringUtils.isEmpty( url ) ) {
+					                  url = item.getLinkedPage().getCanonicalPath();
+				                  }
+
+				                  builder.item( item.getPath(), item.getTitle(), url )
+				                         .group( item.isGroup() )
+				                         .order( item.getSortIndex() );
 			                  }
-
-			                  builder.item( item.getPath(), item.getTitle(), url )
-			                         .group( item.isGroup() )
-			                         .order( item.getSortIndex() );
 		                  } );
 	}
 }

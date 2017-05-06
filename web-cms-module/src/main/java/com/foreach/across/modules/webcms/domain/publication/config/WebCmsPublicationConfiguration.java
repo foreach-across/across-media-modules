@@ -21,6 +21,7 @@ import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
 import com.foreach.across.modules.webcms.domain.publication.web.PublicationTypeFormProcessor;
@@ -43,6 +44,9 @@ class WebCmsPublicationConfiguration implements EntityConfigurer
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.withType( WebCmsPage.class )
+		        .association( ab -> ab.name( "webCmsPublication.articleTemplatePage" ).hide() );
+
 		entities.withType( WebCmsPublicationType.class )
 		        .properties(
 				        props -> props.property( "articleTypes" )
