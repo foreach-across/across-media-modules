@@ -220,7 +220,7 @@ public class TestOrderedWebComponentModelSet
 		}
 
 		@Override
-		public WebCmsComponentModel asTemplate() {
+		public WebCmsComponentModel asComponentTemplate() {
 			return new Model( getName() );
 		}
 	}

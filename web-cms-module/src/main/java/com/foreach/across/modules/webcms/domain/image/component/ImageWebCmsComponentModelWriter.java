@@ -36,7 +36,7 @@ public class ImageWebCmsComponentModelWriter extends AbstractWebCmsComponentMode
 
 	@Override
 	protected void buildMainComponent( ImageWebCmsComponentModel componentModel, WebCmsComponent component ) {
-		WebCmsImage image = componentModel.getImage();
-		component.setMetadata( image != null ? image.getObjectId() : null );
+		//WebCmsImage image = componentModel.getImage();
+		//component.setMetadata( image != null ? image.getObjectId() : null );
 	}
 }

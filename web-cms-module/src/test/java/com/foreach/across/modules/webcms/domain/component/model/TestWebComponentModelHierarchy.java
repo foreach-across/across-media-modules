@@ -199,7 +199,7 @@ public class TestWebComponentModelHierarchy
 		}
 
 		@Override
-		public WebCmsComponentModel asTemplate() {
+		public WebCmsComponentModel asComponentTemplate() {
 			return new Model( getName() );
 		}
 	}

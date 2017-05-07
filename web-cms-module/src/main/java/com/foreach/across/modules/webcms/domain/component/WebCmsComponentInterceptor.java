@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.component.container;
+package com.foreach.across.modules.webcms.domain.component;
 
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.model.AbstractWebCmsComponentModelReader;
+import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import lombok.RequiredArgsConstructor;
@@ -25,21 +24,30 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @Component
 @RequiredArgsConstructor
-public class ContainerWebCmsComponentModelReader extends AbstractWebCmsComponentModelReader<ContainerWebCmsComponentModel>
+class WebCmsComponentInterceptor extends EntityInterceptorAdapter<WebCmsComponent>
 {
-	private final WebCmsComponentModelService webCmsComponentModelService;
+	private static final String TEMPLATE_COMPONENT = "componentTemplate";
+
+	private final WebCmsComponentModelService componentModelService;
 
 	@Override
-	public boolean supports( WebCmsComponent component ) {
-		return "container".equals( component.getComponentType().getAttribute( WebCmsComponentModel.TYPE_ATTRIBUTE ) );
+	public boolean handles( Class<?> aClass ) {
+		return WebCmsComponent.class.isAssignableFrom( aClass );
 	}
 
 	@Override
-	protected ContainerWebCmsComponentModel buildComponentModel( WebCmsComponent component ) {
-		return new ContainerWebCmsComponentModel( component, webCmsComponentModelService.getComponentModelsForOwner( component ) );
+	public void afterCreate( WebCmsComponent component ) {
+		WebCmsComponentModel model = componentModelService.getComponentModel( TEMPLATE_COMPONENT, component.getComponentType() );
+
+		if ( model != null ) {
+			WebCmsComponentModel template = model.asComponentTemplate();
+			template.setComponent( component );
+
+			componentModelService.save( template );
+		}
 	}
 }

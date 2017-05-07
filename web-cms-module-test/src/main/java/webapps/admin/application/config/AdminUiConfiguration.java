@@ -16,20 +16,34 @@
 
 package webapps.admin.application.config;
 
+import com.foreach.across.modules.entity.config.EntityConfigurer;
+import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import webapps.admin.application.ui.SectionComponentMetadata;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @Configuration
-class AdminUiConfiguration
+class AdminUiConfiguration implements EntityConfigurer
 {
 	@Autowired
 	void enableComponents( WebCmsObjectComponentViewsConfiguration componentViewsConfiguration ) {
 		componentViewsConfiguration.enable( WebCmsPublicationType.class );
+		componentViewsConfiguration.enable( WebCmsComponentType.class );
+	}
+
+	@Override
+	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.withType( WebCmsComponentType.class ).show();
+
+		entities.create()
+		        .entityType( SectionComponentMetadata.class, true )
+		        .properties( props -> props.property( "shortTitle" ).order( -50 ) );
 	}
 }

@@ -18,29 +18,44 @@ package com.foreach.across.modules.webcms.data.json;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Locale;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL;
+import static com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE;
+
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @Service
+@Slf4j
 public final class WebCmsDataObjectMapper
 {
 	private final ObjectMapper objectMapper;
 
-	public WebCmsDataObjectMapper( WebCmsObjectSerializer cmsObjectSerializer,
-	                               WebCmsObjectDeserializer cmsObjectDeserializer ) {
+	public WebCmsDataObjectMapper( WebCmsObjectSerializer cmsObjectSerializer, WebCmsObjectDeserializers cmsObjectDeserializers ) {
+		SimpleModule jsonModule = new SimpleModule( WebCmsModule.NAME );
+		jsonModule.addSerializer( WebCmsObject.class, cmsObjectSerializer );
+		jsonModule.setDeserializers( cmsObjectDeserializers );
+
 		objectMapper = Jackson2ObjectMapperBuilder.json()
-		                                          .serializerByType( WebCmsObject.class, cmsObjectSerializer )
-		                                          .deserializerByType( WebCmsObject.class, cmsObjectDeserializer )
 		                                          .locale( Locale.US )
 		                                          .indentOutput( false )
+		                                          .modules( jsonModule )
+		                                          .failOnUnknownProperties( false )
+		                                          .failOnEmptyBeans( false )
+		                                          .featuresToEnable(
+				                                          READ_UNKNOWN_ENUM_VALUES_AS_NULL,
+				                                          READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE
+		                                          )
 		                                          .build();
 	}
 
@@ -51,6 +66,29 @@ public final class WebCmsDataObjectMapper
 		catch ( IOException ioe ) {
 			throw new RuntimeException( ioe );
 		}
+	}
+
+	/**
+	 * Update an object with properties defined in a JSON string.
+	 *
+	 * @param json        containing the values
+	 * @param target      object to update (should not be null)
+	 * @param failOnError true if an exception should be thrown if an error occurs
+	 * @return true if parsing was complete, false if an error has occurred
+	 */
+	public boolean updateFromString( String json, Object target, boolean failOnError ) {
+		try {
+			objectMapper.readerForUpdating( target ).readValue( json );
+			return true;
+		}
+		catch ( IOException ioe ) {
+			LOG.error( "Exception updating object from JSON - failing: {}", failOnError, ioe );
+			if ( failOnError ) {
+				throw new RuntimeException( ioe );
+			}
+		}
+
+		return false;
 	}
 
 	public <T> T readFromString( String json, Class<T> valueType ) {

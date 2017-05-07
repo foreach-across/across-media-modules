@@ -16,7 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import lombok.Getter;
 import lombok.Setter;

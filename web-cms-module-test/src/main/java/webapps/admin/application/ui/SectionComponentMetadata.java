@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain;
+package webapps.admin.application.ui;
+
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+import static webapps.admin.application.ui.SectionComponentMetadata.Layout.LEFT;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
-
-public interface WebCmsObject
+@Data
+public class SectionComponentMetadata
 {
-	/**
-	 * @return the globally unique id of this object in the entire repository
-	 */
-	String getObjectId();
+	enum Layout
+	{
+		BACKGROUND,
+		LEFT,
+		RIGHT
+	}
 
-	/**
-	 * @return true if we're dealing with a new entity and the object id might not be set
-	 */
-	boolean isNew();
+	private Layout layout = LEFT;
+
+	@Length(max=50)
+	@NotBlank
+	private String shortTitle;
 }

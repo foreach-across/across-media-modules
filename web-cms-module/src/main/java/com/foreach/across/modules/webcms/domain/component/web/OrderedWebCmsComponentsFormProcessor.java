@@ -54,7 +54,7 @@ import java.util.Map;
 public class OrderedWebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 {
 	private final WebCmsComponentModelService componentModelService;
-	private final WebComponentModelAdminRenderService componentModelAdminRenderService;
+	private final WebCmsComponentModelAdminRenderService componentModelAdminRenderService;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {

@@ -36,7 +36,7 @@ import java.util.Collection;
 @Component
 class WebComponentModelViewElementModelWriter implements ViewElementModelWriter<WebCmsComponentModel>
 {
-	private Collection<WebComponentModelRenderer> renderers;
+	private Collection<WebCmsComponentModelRenderer> renderers;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -49,7 +49,7 @@ class WebComponentModelViewElementModelWriter implements ViewElementModelWriter<
 	}
 
 	@Autowired
-	void setRenderers( @RefreshableCollection(includeModuleInternals = true) Collection<WebComponentModelRenderer> renderers ) {
+	void setRenderers( @RefreshableCollection(includeModuleInternals = true) Collection<WebCmsComponentModelRenderer> renderers ) {
 		this.renderers = renderers;
 	}
 

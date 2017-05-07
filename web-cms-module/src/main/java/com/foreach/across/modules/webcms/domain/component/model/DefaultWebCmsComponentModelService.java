@@ -38,17 +38,25 @@ import java.util.Optional;
 final class DefaultWebCmsComponentModelService implements WebCmsComponentModelService
 {
 	private final WebCmsComponentRepository componentRepository;
+	private final WebCmsComponentTypeRepository componentTypeRepository;
 
 	private Collection<WebCmsComponentModelReader> modelReaders = Collections.emptyList();
 	private Collection<WebCmsComponentModelWriter> modelWriters = Collections.emptyList();
 
 	@Override
-	public WebCmsComponentModel createComponentModel( WebCmsComponentType componentType ) {
+	public <U extends WebCmsComponentModel> U createComponentModel( String componentTypeKey, Class<U> expectedType ) {
+		Assert.notNull( componentTypeKey );
+		return createComponentModel( componentTypeRepository.findOneByTypeKey( componentTypeKey ), expectedType );
+	}
+
+	@Override
+	public <U extends WebCmsComponentModel> U createComponentModel( WebCmsComponentType componentType, Class<U> expectedType ) {
 		Assert.notNull( componentType );
+		Assert.notNull( expectedType );
 
 		WebCmsComponent component = new WebCmsComponent();
 		component.setComponentType( componentType );
-		return buildModelForComponent( component );
+		return expectedType.cast( buildModelForComponent( component ) );
 	}
 
 	@Override
@@ -72,12 +80,19 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 
 	@Override
 	public WebCmsComponentModel buildModelForComponent( WebCmsComponent component ) {
+		return buildModelForComponent( component, WebCmsComponentModel.class );
+	}
+
+	@Override
+	public <U extends WebCmsComponentModel> U buildModelForComponent( WebCmsComponent component, Class<U> expectedType ) {
 		Assert.notNull( component );
-		return modelReaders.stream()
-		                   .filter( r -> r.supports( component ) )
-		                   .findFirst()
-		                   .orElseThrow( () -> new UnknownWebCmsComponentException( component ) )
-		                   .readFromComponent( component );
+		return expectedType.cast(
+				modelReaders.stream()
+				            .filter( r -> r.supports( component ) )
+				            .findFirst()
+				            .orElseThrow( () -> new UnknownWebCmsComponentException( component ) )
+				            .readFromComponent( component )
+		);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -19,7 +19,7 @@ package com.foreach.across.modules.webcms.domain.image.web;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
-import com.foreach.across.modules.webcms.web.thymeleaf.WebComponentModelRenderer;
+import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsComponentModelRenderer;
 import com.foreach.imageserver.client.ImageServerClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.BeanFactory;
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class ImageWebComponentModelRenderer implements WebComponentModelRenderer<ImageWebCmsComponentModel>
+public class ImageWebCmsComponentModelRenderer implements WebCmsComponentModelRenderer<ImageWebCmsComponentModel>
 {
 	private final BeanFactory beanFactory;
 

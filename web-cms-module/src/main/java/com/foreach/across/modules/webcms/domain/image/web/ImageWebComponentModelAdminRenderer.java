@@ -27,7 +27,7 @@ import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.component.web.WebComponentModelAdminRenderer;
+import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 @AcrossDepends(required = AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
-public class ImageWebComponentModelAdminRenderer implements WebComponentModelAdminRenderer<ImageWebCmsComponentModel>
+public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<ImageWebCmsComponentModel>
 {
 	private final BeanFactory beanFactory;
 	private final BootstrapUiFactory bootstrapUiFactory;

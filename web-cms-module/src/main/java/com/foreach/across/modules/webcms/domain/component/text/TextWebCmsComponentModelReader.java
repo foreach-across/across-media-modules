@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.component.text;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelReader;
+import com.foreach.across.modules.webcms.domain.component.model.AbstractWebCmsComponentModelReader;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel.Attributes;
 import lombok.val;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  * @since 0.0.1
  */
 @Component
-public class TextWebCmsComponentModelReader implements WebCmsComponentModelReader<TextWebCmsComponentModel>
+public class TextWebCmsComponentModelReader extends AbstractWebCmsComponentModelReader<TextWebCmsComponentModel>
 {
 	@Override
 	public boolean supports( WebCmsComponent component ) {
@@ -35,7 +35,7 @@ public class TextWebCmsComponentModelReader implements WebCmsComponentModelReade
 	}
 
 	@Override
-	public TextWebCmsComponentModel readFromComponent( WebCmsComponent component ) {
+	public TextWebCmsComponentModel buildComponentModel( WebCmsComponent component ) {
 		val attributes = component.getComponentType().getAttributes();
 
 		TextWebCmsComponentModel model = new TextWebCmsComponentModel( component );

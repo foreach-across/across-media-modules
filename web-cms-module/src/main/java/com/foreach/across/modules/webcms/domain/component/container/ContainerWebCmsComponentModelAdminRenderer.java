@@ -21,10 +21,9 @@ import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.bootstrapui.elements.builder.FieldsetFormElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.component.web.WebComponentModelAdminRenderService;
-import com.foreach.across.modules.webcms.domain.component.web.WebComponentModelAdminRenderer;
+import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelAdminRenderService;
+import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -35,10 +34,10 @@ import org.springframework.stereotype.Component;
 @AcrossDepends(required = AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
-public class ContainerWebCmsComponentModelAdminRenderer implements WebComponentModelAdminRenderer<ContainerWebCmsComponentModel>
+public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<ContainerWebCmsComponentModel>
 {
 	private final BootstrapUiFactory bootstrapUiFactory;
-	private final WebComponentModelAdminRenderService adminRenderService;
+	private final WebCmsComponentModelAdminRenderService adminRenderService;
 
 	@Override
 	public boolean supports( WebCmsComponentModel componentModel ) {

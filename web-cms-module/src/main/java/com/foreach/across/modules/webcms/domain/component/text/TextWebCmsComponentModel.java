@@ -134,7 +134,7 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 	}
 
 	@Override
-	public TextWebCmsComponentModel asTemplate() {
+	public TextWebCmsComponentModel asComponentTemplate() {
 		TextWebCmsComponentModel template = new TextWebCmsComponentModel( getComponent().asTemplate() );
 		template.content = content;
 		template.markupType = markupType;

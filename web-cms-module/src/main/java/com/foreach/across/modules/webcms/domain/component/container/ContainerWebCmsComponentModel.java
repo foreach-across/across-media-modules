@@ -80,9 +80,9 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 	}
 
 	@Override
-	public ContainerWebCmsComponentModel asTemplate() {
+	public ContainerWebCmsComponentModel asComponentTemplate() {
 		ContainerWebCmsComponentModel template = new ContainerWebCmsComponentModel( getComponent().asTemplate() );
-		members.forEach( member -> template.addMember( member.asTemplate() ) );
+		members.forEach( member -> template.addMember( member.asComponentTemplate() ) );
 		return template;
 	}
 }

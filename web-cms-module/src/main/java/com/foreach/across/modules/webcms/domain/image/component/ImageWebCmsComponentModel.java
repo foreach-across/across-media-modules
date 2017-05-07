@@ -16,12 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.image.component;
 
+import com.foreach.across.modules.hibernate.business.EntityWithDto;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Arne Vandamme
@@ -29,17 +28,39 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 public class ImageWebCmsComponentModel extends WebCmsComponentModel
 {
-	private WebCmsImage image;
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder(toBuilder = true)
+	public static class Metadata implements EntityWithDto<Metadata>
+	{
+		private WebCmsImage image;
 
+		@Override
+		public Metadata toDto() {
+			return toBuilder().build();
+		}
+	}
+
+	@Deprecated
 	private String imageServerKey;
 
+	@Deprecated
 	private String imageUrl;
+
+	public ImageWebCmsComponentModel() {
+		setMetadata( new Metadata() );
+	}
 
 	public ImageWebCmsComponentModel( WebCmsComponent component ) {
 		super( component );
+		setMetadata( new Metadata() );
+	}
+
+	protected ImageWebCmsComponentModel( ImageWebCmsComponentModel template ) {
+		super( template );
 	}
 
 	public String getImageServerKey() {
@@ -47,11 +68,11 @@ public class ImageWebCmsComponentModel extends WebCmsComponentModel
 			return imageServerKey;
 		}
 
-		return image != null ? image.getExternalId() : null;
+		return getImage() != null ? getImage().getExternalId() : null;
 	}
 
 	public boolean hasImageServerKey() {
-		return imageServerKey != null || image != null;
+		return imageServerKey != null || getImage() != null;
 	}
 
 	public boolean isExternalImage() {
@@ -59,13 +80,20 @@ public class ImageWebCmsComponentModel extends WebCmsComponentModel
 	}
 
 	public boolean hasImage() {
-		return image != null;
+		return getImage() != null;
+	}
+
+	public WebCmsImage getImage() {
+		return getMetadata( Metadata.class ).getImage();
+	}
+
+	public void setImage( WebCmsImage image ) {
+		getMetadata( Metadata.class ).setImage( image );
 	}
 
 	@Override
-	public ImageWebCmsComponentModel asTemplate() {
-		ImageWebCmsComponentModel template = new ImageWebCmsComponentModel( getComponent().asTemplate() );
-		template.image = image;
+	public ImageWebCmsComponentModel asComponentTemplate() {
+		ImageWebCmsComponentModel template = new ImageWebCmsComponentModel( this );
 		template.imageServerKey = imageServerKey;
 		template.imageUrl = imageUrl;
 

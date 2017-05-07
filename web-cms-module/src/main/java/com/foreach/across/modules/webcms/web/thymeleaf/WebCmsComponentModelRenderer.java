@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain;
+package com.foreach.across.modules.webcms.web.thymeleaf;
+
+import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-
-public interface WebCmsObject
+public interface WebCmsComponentModelRenderer<T extends WebCmsComponentModel>
 {
-	/**
-	 * @return the globally unique id of this object in the entire repository
-	 */
-	String getObjectId();
+	boolean supports( WebCmsComponentModel componentModel );
 
-	/**
-	 * @return true if we're dealing with a new entity and the object id might not be set
-	 */
-	boolean isNew();
+	void writeComponent( T component, ThymeleafModelBuilder model );
 }

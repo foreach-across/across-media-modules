@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain;
+package com.foreach.across.modules.webcms.domain.component.web;
+
+import com.foreach.across.modules.web.ui.ViewElementBuilder;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-
-public interface WebCmsObject
+public interface WebCmsComponentModelMetadataAdminRenderer<T extends WebCmsComponentModel, U>
 {
-	/**
-	 * @return the globally unique id of this object in the entire repository
-	 */
-	String getObjectId();
+	boolean supports( WebCmsComponentModel componentModel, Object metadata );
 
-	/**
-	 * @return true if we're dealing with a new entity and the object id might not be set
-	 */
-	boolean isNew();
+	ViewElementBuilder createMetadataViewElementBuilder( T componentModel, U metadata, String controlNamePrefix );
 }

@@ -18,8 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.text;
 
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
-import com.foreach.across.modules.webcms.web.thymeleaf.WebComponentModelRenderer;
+import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsComponentModelRenderer;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,7 +26,7 @@ import org.springframework.stereotype.Component;
  * @since 0.0.1
  */
 @Component
-public class TextWebComponentModelRenderer implements WebComponentModelRenderer<TextWebCmsComponentModel>
+class TextWebCmsComponentModelRenderer implements WebCmsComponentModelRenderer<TextWebCmsComponentModel>
 {
 	@Override
 	public boolean supports( WebCmsComponentModel componentModel ) {

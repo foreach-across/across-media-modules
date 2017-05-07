@@ -19,7 +19,6 @@ package com.foreach.across.modules.webcms.domain.component;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.Column;
@@ -58,7 +57,6 @@ public class WebCmsComponentType extends WebCmsTypeSpecifier<WebCmsComponentType
 	 * Description of the component type.
 	 */
 	@Column(name = "description")
-	@NotBlank
 	@Length(max = 500)
 	private String description;
 

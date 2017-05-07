@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.model;
 
+import com.foreach.across.modules.webcms.data.json.WebCmsDataObjectMapper;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
  * @see WebCmsComponentModelWriter
+ * @since 0.0.1
  */
 public abstract class AbstractWebCmsComponentModelWriter<T extends WebCmsComponentModel> implements WebCmsComponentModelWriter<T>
 {
 	private WebCmsComponentRepository componentRepository;
+	private WebCmsDataObjectMapper dataObjectMapper;
 
 	@Transactional
 	@Override
@@ -37,6 +39,7 @@ public abstract class AbstractWebCmsComponentModelWriter<T extends WebCmsCompone
 
 		WebCmsComponent mainComponent = componentModel.getComponent();
 		buildMainComponent( componentModel, mainComponent );
+		writeMetadata( componentModel, mainComponent );
 
 		mainComponent = saveComponent( mainComponent );
 
@@ -54,11 +57,24 @@ public abstract class AbstractWebCmsComponentModelWriter<T extends WebCmsCompone
 
 	protected abstract void buildMainComponent( T componentModel, WebCmsComponent component );
 
+	/**
+	 * Serializes the metadata class using the {@link com.foreach.across.modules.webcms.data.json.WebCmsDataObjectMapper}.
+	 * Override this method if you want to manually control how metadata gets written.
+	 */
+	protected void writeMetadata( T componentModel, WebCmsComponent component ) {
+		component.setMetadata( componentModel.hasMetadata() ? dataObjectMapper.writeToString( componentModel.getMetadata() ) : null );
+	}
+
 	protected void afterUpdate( T componentModel, WebCmsComponent mainComponent ) {
 	}
 
 	@Autowired
 	void setComponentRepository( WebCmsComponentRepository componentRepository ) {
 		this.componentRepository = componentRepository;
+	}
+
+	@Autowired
+	void setDataObjectMapper( WebCmsDataObjectMapper dataObjectMapper ) {
+		this.dataObjectMapper = dataObjectMapper;
 	}
 }

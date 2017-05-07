@@ -17,9 +17,8 @@
 package com.foreach.across.modules.webcms.domain.image.component;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.model.AbstractWebCmsComponentModelReader;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelReader;
-import com.foreach.across.modules.webcms.domain.image.WebCmsImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -29,19 +28,15 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class ImageWebCmsComponentModelReader implements WebCmsComponentModelReader<ImageWebCmsComponentModel>
+public class ImageWebCmsComponentModelReader extends AbstractWebCmsComponentModelReader<ImageWebCmsComponentModel>
 {
-	private final WebCmsImageRepository imageRepository;
-
 	@Override
 	public boolean supports( WebCmsComponent component ) {
 		return "image".equals( component.getComponentType().getAttribute( WebCmsComponentModel.TYPE_ATTRIBUTE ) );
 	}
 
 	@Override
-	public ImageWebCmsComponentModel readFromComponent( WebCmsComponent component ) {
-		ImageWebCmsComponentModel model = new ImageWebCmsComponentModel( component );
-		model.setImage( imageRepository.findOneByObjectId( component.getMetadata() ) );
-		return model;
+	protected ImageWebCmsComponentModel buildComponentModel( WebCmsComponent component ) {
+		return new ImageWebCmsComponentModel( component );
 	}
 }

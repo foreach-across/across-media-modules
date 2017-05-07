@@ -14,18 +14,29 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.web.thymeleaf;
+package com.foreach.across.modules.webcms.domain.component.container;
 
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsComponentModelRenderer;
+import org.springframework.stereotype.Component;
 
 /**
+ * Renders a {@link ContainerWebCmsComponentModel} by simply rendering its member components in order.
+ *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
-public interface WebComponentModelRenderer<T extends WebCmsComponentModel>
+@Component
+class ContainerWebCmsComponentModelRenderer implements WebCmsComponentModelRenderer<ContainerWebCmsComponentModel>
 {
-	boolean supports( WebCmsComponentModel componentModel );
+	@Override
+	public boolean supports( WebCmsComponentModel componentModel ) {
+		return ContainerWebCmsComponentModel.class.isInstance( componentModel );
+	}
 
-	void writeComponent( T component, ThymeleafModelBuilder model );
+	@Override
+	public void writeComponent( ContainerWebCmsComponentModel component, ThymeleafModelBuilder model ) {
+		component.getMembers().forEach( model::addViewElement );
+	}
 }

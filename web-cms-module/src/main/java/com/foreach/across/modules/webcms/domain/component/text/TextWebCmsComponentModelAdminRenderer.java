@@ -22,7 +22,7 @@ import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.component.web.WebComponentModelAdminRenderer;
+import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
 import com.foreach.across.modules.webcms.web.TextWebComponentResources;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 @AcrossDepends(required = AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
-public class TextWebComponentModelAdminRenderer implements WebComponentModelAdminRenderer<TextWebCmsComponentModel>
+public class TextWebCmsComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<TextWebCmsComponentModel>
 {
 	private final BootstrapUiFactory bootstrapUiFactory;
 

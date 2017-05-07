@@ -17,9 +17,10 @@
 package com.foreach.across.modules.webcms.data.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
-import org.springframework.boot.jackson.JsonObjectSerializer;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -29,10 +30,10 @@ import java.io.IOException;
  * @since 0.0.1
  */
 @Component
-public final class WebCmsObjectSerializer extends JsonObjectSerializer<WebCmsObject>
+public final class WebCmsObjectSerializer extends JsonSerializer<WebCmsObject>
 {
 	@Override
-	protected void serializeObject( WebCmsObject value, JsonGenerator jgen, SerializerProvider provider ) throws IOException {
-		jgen.writeString( value.getObjectId() );
+	public void serialize( WebCmsObject value, JsonGenerator gen, SerializerProvider serializers ) throws IOException, JsonProcessingException {
+		gen.writeString( value.getObjectId() );
 	}
 }

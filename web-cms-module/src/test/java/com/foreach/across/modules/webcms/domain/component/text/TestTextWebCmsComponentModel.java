@@ -27,13 +27,15 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class TestTextWebCmsComponent
+public class TestTextWebCmsComponentModel
 {
 	private TextWebCmsComponentModel model;
 
 	@Test
 	public void defaultValues() {
 		model = new TextWebCmsComponentModel();
+		assertNull(  model.getMetadata() );
+		assertFalse( model.hasMetadata() );
 		assertNull( model.getComponentType() );
 		assertNull( model.getName() );
 		assertNotNull( model.getObjectId() );
@@ -52,7 +54,7 @@ public class TestTextWebCmsComponent
 
 	@Test
 	public void fromComponent() {
-		WebCmsComponentType componentType = new WebCmsComponentType();
+		WebCmsComponentType componentType = WebCmsComponentType.builder().attribute( WebCmsComponentModel.TEMPLATE_ATTRIBUTE, "th/mytemplate" ).build();
 
 		WebCmsComponent component = WebCmsComponent.builder()
 		                                           .id( 123L )
@@ -76,6 +78,10 @@ public class TestTextWebCmsComponent
 		assertTrue( model.isMultiLine() );
 		assertNull( model.getContent() );
 		assertTrue( model.isEmpty() );
+
+		assertEquals( "th/mytemplate", model.getCustomTemplate() );
+		model.setRenderTemplate( "specific-template" );
+		assertEquals( "specific-template", model.getCustomTemplate() );
 	}
 
 	@Test
@@ -119,7 +125,7 @@ public class TestTextWebCmsComponent
 		model.setProfile( "some-profile" );
 		model.setContent( "body content..." );
 
-		TextWebCmsComponentModel template = model.asTemplate();
+		TextWebCmsComponentModel template = model.asComponentTemplate();
 		assertNotEquals( component, template.getComponent() );
 		assertSame( componentType, template.getComponentType() );
 		assertEquals( "component-name", template.getName() );

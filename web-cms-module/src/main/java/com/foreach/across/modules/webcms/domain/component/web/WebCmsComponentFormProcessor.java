@@ -59,7 +59,7 @@ public class WebCmsComponentFormProcessor extends SaveEntityViewProcessor
 	private final EntityViewPageHelper entityViewPageHelper;
 
 	private final WebCmsComponentModelService componentModelService;
-	private final WebComponentModelAdminRenderService componentModelAdminRenderService;
+	private final WebCmsComponentModelAdminRenderService componentModelAdminRenderService;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
@@ -113,6 +113,7 @@ public class WebCmsComponentFormProcessor extends SaveEntityViewProcessor
 		WebCmsComponentModel componentModel = entityViewRequest.getCommand().getExtension( EXTENSION_NAME, WebCmsComponentModel.class );
 
 		builderMap.get( SingleEntityFormViewProcessor.LEFT_COLUMN, ColumnViewElementBuilder.class )
+		          .add( componentModelAdminRenderService.createMetadataViewElementBuilder( componentModel, "extensions[" + EXTENSION_NAME + "]" ) )
 		          .add( componentModelAdminRenderService.createContentViewElementBuilder( componentModel, "extensions[" + EXTENSION_NAME + "]" ) );
 	}
 

@@ -48,7 +48,7 @@ public class OrderedWebComponentModelSet
 	private static final WebCmsComponentModel NOT_FOUND_MARKER = new WebCmsComponentModel()
 	{
 		@Override
-		public WebCmsComponentModel asTemplate() {
+		public WebCmsComponentModel asComponentTemplate() {
 			return null;
 		}
 	};

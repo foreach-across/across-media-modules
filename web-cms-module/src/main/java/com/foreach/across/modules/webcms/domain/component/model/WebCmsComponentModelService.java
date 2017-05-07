@@ -31,10 +31,20 @@ public interface WebCmsComponentModelService
 	/**
 	 * Create a new component model for a specific component type.
 	 *
-	 * @param componentType to create model for
+	 * @param componentTypeKey to create model for
+	 * @param expectedType     type to coerce to
 	 * @return model
 	 */
-	WebCmsComponentModel createComponentModel( WebCmsComponentType componentType );
+	<U extends WebCmsComponentModel> U createComponentModel( String componentTypeKey, Class<U> expectedType );
+
+	/**
+	 * Create a new component model for a specific component type.
+	 *
+	 * @param componentType to create model for
+	 * @param expectedType  type to coerce to
+	 * @return model
+	 */
+	<U extends WebCmsComponentModel> U createComponentModel( WebCmsComponentType componentType, Class<U> expectedType );
 
 	/**
 	 * Get a single {@link WebCmsComponentModel} by name.
@@ -61,6 +71,15 @@ public interface WebCmsComponentModelService
 	 * @return model
 	 */
 	WebCmsComponentModel buildModelForComponent( WebCmsComponent component );
+
+	/**
+	 * Build the {@link WebCmsComponentModel} for a particular {@link WebCmsComponent} entity.
+	 *
+	 * @param component    to build the model for
+	 * @param expectedType type to coerce to
+	 * @return model
+	 */
+	<U extends WebCmsComponentModel> U buildModelForComponent( WebCmsComponent component, Class<U> expectedType );
 
 	/**
 	 * Save a {@link WebCmsComponentModel} to the repository.

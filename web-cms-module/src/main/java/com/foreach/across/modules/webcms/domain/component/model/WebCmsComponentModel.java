@@ -16,15 +16,19 @@
 
 package com.foreach.across.modules.webcms.domain.component.model;
 
+import com.foreach.across.modules.hibernate.business.EntityWithDto;
+import com.foreach.across.modules.hibernate.util.DtoUtils;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
+import javax.validation.Valid;
 import java.util.Objects;
 
 /**
@@ -42,20 +46,48 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	public static final String TYPE_ATTRIBUTE = "type";
 
 	/**
+	 * Common attribute used to specify the (Thymeleaf) template that should be used to render components of that type.
+	 */
+	public static final String TEMPLATE_ATTRIBUTE = "template";
+
+	/**
+	 * Common attribute used to specify the fully qualified class name of the metadata for a particular component type.
+	 */
+	public static final String METADATA_CLASS_ATTRIBUTE = "metadata";
+
+	/**
 	 * Original component this model represents.
 	 */
 	@Getter
 	private WebCmsComponent component;
 
 	/**
-	 * Custom template that should be used to render this component.
+	 * Specific template that should be used to render this component.
 	 */
 	@Getter
 	@Setter
-	private String customTemplate;
+	private String renderTemplate;
+
+	/**
+	 * The typed metadata for this component, can be {@code null} if no metadata is supported,
+	 * else should contain an instance.
+	 */
+	@Valid
+	@Getter
+	@Setter
+	private Object metadata;
 
 	protected WebCmsComponentModel() {
 		this.component = new WebCmsComponent();
+	}
+
+	/**
+	 * Base constructor for {@link #asComponentTemplate()} calls, uses the parent component as template
+	 * and attempts to convert the metadata to a new instance.
+	 */
+	protected WebCmsComponentModel( WebCmsComponentModel template ) {
+		setComponent( template.getComponent().asTemplate() );
+		setMetadata( cloneMetadata( template ) );
 	}
 
 	protected WebCmsComponentModel( WebCmsComponent component ) {
@@ -63,9 +95,42 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	}
 
 	/**
+	 * Implements {@link ViewElement#getCustomTemplate()}.  This method returns the custom template that should be used
+	 * for rendering this component model.  If none is configured using {@link #setRenderTemplate(String)}, the template set
+	 * as {@link WebCmsComponentModel#TEMPLATE_ATTRIBUTE} attribute on the {@link WebCmsComponentType} will be used.
+	 *
+	 * @return optional custom template for rendering
+	 * @see #renderTemplate
+	 */
+	@Override
+	public String getCustomTemplate() {
+		if ( renderTemplate != null ) {
+			return renderTemplate;
+		}
+
+		val componentType = getComponentType();
+		return componentType != null ? componentType.getAttribute( TEMPLATE_ATTRIBUTE ) : null;
+	}
+
+	/**
+	 * @return true if there is metadata attached to this model
+	 */
+	public boolean hasMetadata() {
+		return metadata != null;
+	}
+
+	/**
+	 * Coerce the metadata to the type specified.
+	 */
+	@SuppressWarnings("unchecked")
+	public <V extends U, U> V getMetadata( Class<U> metadataType ) {
+		return (V) metadataType.cast( metadata );
+	}
+
+	/**
 	 * Set the original component backing this model, can never be {@code null}.
 	 * If you want to create a new instance with all settings but remove the attachment
-	 * to the original component, use {@link #asTemplate()}.
+	 * to the original component, use {@link #asComponentTemplate()}.
 	 *
 	 * @param component that backs this model
 	 */
@@ -184,7 +249,7 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	 * @return templated version of this model - attached to a new backing component
 	 * @see WebCmsComponent#asTemplate()
 	 */
-	public abstract WebCmsComponentModel asTemplate();
+	public abstract WebCmsComponentModel asComponentTemplate();
 
 	@Override
 	public boolean equals( Object o ) {
@@ -210,5 +275,29 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 				", componentType=" + getComponentType() +
 				", objectId='" + getObjectId() + '\'' +
 				'}';
+	}
+
+	/**
+	 * Attempt to forcibly clone the metadata of a {@link WebCmsComponentModel}.
+	 * Throws an exception if impossible.
+	 *
+	 * @param componentModel to clone the metadata from
+	 * @return clone
+	 * @see com.foreach.across.modules.hibernate.util.DtoUtils
+	 * @see com.foreach.across.modules.hibernate.business.EntityWithDto
+	 */
+	public static Object cloneMetadata( WebCmsComponentModel componentModel ) {
+		if ( componentModel.hasMetadata() ) {
+			val metadata = componentModel.getMetadata();
+			if ( metadata instanceof EntityWithDto ) {
+				return ( (EntityWithDto) metadata ).toDto();
+			}
+			if ( metadata instanceof Cloneable ) {
+				return org.apache.commons.lang3.ObjectUtils.clone( metadata );
+			}
+			return DtoUtils.createDto( metadata );
+		}
+
+		return null;
 	}
 }

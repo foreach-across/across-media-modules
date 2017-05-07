@@ -17,14 +17,10 @@
 package com.foreach.across.modules.webcms.data.json;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
-import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.jackson.JsonObjectDeserializer;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -32,15 +28,19 @@ import java.io.IOException;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Component
 @RequiredArgsConstructor
-public final class WebCmsObjectDeserializer extends JsonObjectDeserializer<WebCmsObject>
+public final class WebCmsObjectDeserializer extends JsonDeserializer<Object>
 {
+	private final Class<?> targetType;
 	private final WebCmsDataConversionService cmsDataConversionService;
 
 	@Override
-	protected WebCmsObject deserializeObject( JsonParser jsonParser, DeserializationContext context, ObjectCodec codec, JsonNode tree ) throws IOException {
-		return WebCmsObject.class.cast( cmsDataConversionService.convert( jsonParser.getValueAsString(), context.getContextualType().getRawClass() ) );
+	public Class<?> handledType() {
+		return targetType;
+	}
 
+	@Override
+	public Object deserialize( JsonParser jsonParser, DeserializationContext context ) throws IOException {
+		return cmsDataConversionService.convert( jsonParser.getValueAsString(), targetType );
 	}
 }

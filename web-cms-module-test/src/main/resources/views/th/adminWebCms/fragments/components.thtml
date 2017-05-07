@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<div th:fragment="section(component)" class="page-section"
+    th:with="body=${component.getMember('body')},image=${component.getMember('image')}">
+    <table th:if="${image.hasImageServerKey()}" border="1">
+        <tr>
+            <td><across:view element="${image}" /></td>
+            <td><across:view element="${body}" /></td>
+        </tr>
+    </table>
+    <across:view th:unless="${image.hasImageServerKey()}" element="${body}" />
+</div>
+
+</html>

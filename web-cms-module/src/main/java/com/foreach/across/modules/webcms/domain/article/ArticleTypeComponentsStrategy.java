@@ -43,7 +43,7 @@ final class ArticleTypeComponentsStrategy implements WebCmsArticleComponentsStra
 		WebCmsComponentModel template = retrieveArticleTemplateComponent( articleType );
 
 		if ( template != null ) {
-			template = template.asTemplate();
+			template = template.asComponentTemplate();
 
 			if ( template instanceof ContainerWebCmsComponentModel ) {
 				ContainerWebCmsComponentModel container = (ContainerWebCmsComponentModel) template;

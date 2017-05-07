@@ -36,6 +36,8 @@ public class TestContainerWebCmsComponentModel
 	@Test
 	public void addComponentModels() {
 		model = new ContainerWebCmsComponentModel();
+		assertNull(  model.getMetadata() );
+		assertFalse( model.hasMetadata() );
 		assertTrue( model.isEmpty() );
 
 		TextWebCmsComponentModel title = new TextWebCmsComponentModel( WebCmsComponent.builder().id( 1L ).name( "title" ).build() );
@@ -72,7 +74,7 @@ public class TestContainerWebCmsComponentModel
 		model.addMember( title );
 		model.addMember( body );
 
-		ContainerWebCmsComponentModel template = model.asTemplate();
+		ContainerWebCmsComponentModel template = model.asComponentTemplate();
 		assertNotEquals( component, template.getComponent() );
 		assertSame( componentType, template.getComponentType() );
 		assertEquals( "component-name", template.getName() );

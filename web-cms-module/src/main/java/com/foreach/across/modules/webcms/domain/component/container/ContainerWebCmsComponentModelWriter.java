@@ -50,6 +50,7 @@ public class ContainerWebCmsComponentModelWriter extends AbstractWebCmsComponent
 		for ( int i = 0; i < members.size(); i++ ) {
 			WebCmsComponentModel member = members.get( i );
 			member.getComponent().setSortIndex( i );
+			member.setOwner( componentModel );
 			webCmsComponentModelService.save( member );
 		}
 	}
