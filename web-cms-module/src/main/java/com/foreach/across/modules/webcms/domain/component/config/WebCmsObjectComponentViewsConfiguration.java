@@ -119,7 +119,7 @@ public class WebCmsObjectComponentViewsConfiguration
 				.createOrUpdateFormView( fvb -> fvb.properties( props -> props.property( "sortIndex" ).hidden( false ) ) )
 				.updateFormView(
 						fvb -> fvb.properties( props -> props.property( "componentType" ).writable( false ) )
-						          .showProperties( "componentType", "title", "name", "sortIndex", "lastModified" )
+						          .showProperties()
 						          .viewProcessor( formProcessor )
 						          .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 8, 4 ) ) )
 				)

@@ -26,8 +26,8 @@ import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
+import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
@@ -66,57 +66,51 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 				: null;
 
 		return bootstrapUiFactory
-				.formGroup()
-				.label( bootstrapUiFactory.label( componentModel.getTitle() ).attribute( "title", componentModel.getName() ) )
-				.control(
-
-						bootstrapUiFactory
-								.div()
-								.attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
-								.attribute( "data-wcm-component-base-type", "image" )
-								.css( "image-selected-container", "clearfix" )
-								.add(
-										bootstrapUiFactory.hidden()
-										                  .controlName( controlNamePrefix + ".image" )
-										                  .attribute( "data-wcm-component-property", "image" )
-										                  .value( componentModel.hasImage() ? componentModel.getImage().getObjectId() : null )
-								)
-								.add(
-										bootstrapUiFactory.div()
-										                  .css( "image-thumbnail-container", thumbnailUrl != null ? "" : "hidden" )
-										                  .add(
-												                  bootstrapUiFactory.node( "img" )
-												                                    .attribute( "src", thumbnailUrl )
-												                                    .attribute( "border", "1" )
-										                  )
-								)
-								.add(
-										bootstrapUiFactory.div()
-										                  .css( "image-thumbnail-actions", thumbnailUrl != null ? "" : "hidden" )
-										                  .add(
-												                  bootstrapUiFactory.button()
-												                                    .link()
-												                                    .attribute( "data-wcm-image-action", "edit" )
-												                                    .iconOnly( new GlyphIcon( GlyphIcon.EDIT ) )
-												                                    .text( "Change image" )
-										                  )
-										                  .add(
-												                  bootstrapUiFactory.button()
-												                                    .link()
-												                                    .attribute( "data-wcm-image-action", "delete" )
-												                                    .iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) )
-												                                    .text( "Remove image" )
-										                  )
-								)
-								.add(
-										bootstrapUiFactory.button()
-										                  .name( "btn-select-image" )
-										                  .css( thumbnailUrl != null ? "hidden" : "" )
-										                  .style( Style.PRIMARY )
-										                  .text( "Select image" )
-								)
+				.div()
+				.attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
+				.attribute( "data-wcm-component-base-type", "image" )
+				.css( "image-selected-container", "clearfix" )
+				.add(
+						bootstrapUiFactory.hidden()
+						                  .controlName( controlNamePrefix + ".image" )
+						                  .attribute( "data-wcm-component-property", "image" )
+						                  .value( componentModel.hasImage() ? componentModel.getImage().getObjectId() : null )
 				)
-				.postProcessor( ( builderContext, formGroup ) -> {
+				.add(
+						bootstrapUiFactory.div()
+						                  .css( "image-thumbnail-container", thumbnailUrl != null ? "" : "hidden" )
+						                  .add(
+								                  bootstrapUiFactory.node( "img" )
+								                                    .attribute( "src", thumbnailUrl )
+								                                    .attribute( "border", "1" )
+						                  )
+				)
+				.add(
+						bootstrapUiFactory.div()
+						                  .css( "image-thumbnail-actions", thumbnailUrl != null ? "" : "hidden" )
+						                  .add(
+								                  bootstrapUiFactory.button()
+								                                    .link()
+								                                    .attribute( "data-wcm-image-action", "edit" )
+								                                    .iconOnly( new GlyphIcon( GlyphIcon.EDIT ) )
+								                                    .text( "Change image" )
+						                  )
+						                  .add(
+								                  bootstrapUiFactory.button()
+								                                    .link()
+								                                    .attribute( "data-wcm-image-action", "delete" )
+								                                    .iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) )
+								                                    .text( "Remove image" )
+						                  )
+				)
+				.add(
+						bootstrapUiFactory.button()
+						                  .name( "btn-select-image" )
+						                  .css( thumbnailUrl != null ? "hidden" : "" )
+						                  .style( Style.PRIMARY )
+						                  .text( "Select image" )
+				)
+				.postProcessor( ( builderContext, wrapper ) -> {
 					WebResourceRegistry resourceRegistry = builderContext.getAttribute( WebResourceRegistry.class );
 					resourceRegistry.addWithKey( WebResource.CSS, WebCmsModule.NAME, "/static/WebCmsModule/css/wcm-styles.css", WebResource.VIEWS );
 					resourceRegistry.addWithKey(
@@ -127,6 +121,5 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 					resourceRegistry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "wcm-image-component", "/static/WebCmsModule/js/wcm-image-component.js",
 					                             WebResource.VIEWS );
 				} );
-
 	}
 }

@@ -19,8 +19,8 @@ package com.foreach.across.modules.webcms.domain.component.container;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
-import com.foreach.across.modules.bootstrapui.elements.builder.FieldsetFormElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
+import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelAdminRenderService;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
@@ -46,13 +46,21 @@ public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsCompone
 
 	@Override
 	public ViewElementBuilder createContentViewElementBuilder( ContainerWebCmsComponentModel componentModel, String controlNamePrefix ) {
-		FieldsetFormElementBuilder fieldset = bootstrapUiFactory
+		/*FieldsetFormElementBuilder fieldset = bootstrapUiFactory
 				.fieldset( componentModel.getTitle() )
 				.attribute( "title", componentModel.getName() );
 
 		for ( int i = 0; i < componentModel.getMembers().size(); i++ ) {
 			String scopedPrefix = controlNamePrefix + ".members[" + i + "]";
 			fieldset.add( adminRenderService.createContentViewElementBuilder( componentModel.getMembers().get( i ), scopedPrefix ) );
+		}
+
+		return fieldset;*/
+
+		ContainerViewElementBuilder fieldset = bootstrapUiFactory.container();
+		for ( int i = 0; i < componentModel.getMembers().size(); i++ ) {
+			String scopedPrefix = controlNamePrefix + ".members[" + i + "]";
+			fieldset.add( adminRenderService.createFormElement( componentModel.getMembers().get( i ), scopedPrefix ) );
 		}
 
 		return fieldset;

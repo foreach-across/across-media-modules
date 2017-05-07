@@ -17,16 +17,25 @@
 package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.FormInputElement;
+import com.foreach.across.modules.bootstrapui.elements.processor.ControlNamePrefixingPostProcessor;
+import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
+import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
+import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.entity.views.helpers.EntityViewElementBatch;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
+import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.UnknownWebCmsComponentModelException;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * Central API for building the administration UI for editing components.
@@ -34,11 +43,65 @@ import java.util.Collections;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@ConditionalOnAdminUI
 @Service
+@RequiredArgsConstructor
 public final class WebCmsComponentModelAdminRenderService
 {
+	private final BootstrapUiFactory bootstrapUiFactory;
+	private final EntityViewElementBuilderHelper builderHelper;
+
 	private Collection<WebCmsComponentModelContentAdminRenderer> contentRenderers = Collections.emptyList();
 	private Collection<WebCmsComponentModelMetadataAdminRenderer> metadataRenderers = Collections.emptyList();
+
+	public ViewElementBuilder createFormElement( WebCmsComponentModel componentModel, String controlNamePrefix ) {
+		NodeViewElementBuilder wrapper = bootstrapUiFactory
+				.div()
+				.customTemplate( "th/adminWebCms/playground :: body" )
+				.name( "formControl-" + componentModel.getName() )
+				.attribute( "componentModel", componentModel )
+				.htmlId( componentModel.getObjectId() )
+				.add( createSettingsViewElementBuilder( componentModel, controlNamePrefix ) )
+				.add(
+						bootstrapUiFactory.container()
+						                  .name( "content" )
+						                  .add( createContentViewElementBuilder( componentModel, controlNamePrefix ) )
+				);
+
+		createMetadataViewElementBuilder( componentModel, controlNamePrefix )
+				.ifPresent( metadata ->
+						            wrapper.add(
+								            bootstrapUiFactory.container()
+								                              .name( "metadata" )
+								                              .add( metadata )
+						            )
+				);
+
+		return wrapper;
+	}
+
+	public ViewElementBuilder createSettingsViewElementBuilder( WebCmsComponentModel componentModel, String controlNamePrefix ) {
+		Map<String, Object> builderHints = new HashMap<>();
+		builderHints.put( "componentType", ViewElementMode.FORM_READ );
+		builderHints.put( "lastModified", ViewElementMode.FORM_READ );
+
+		EntityViewElementBatch<WebCmsComponent> generalSettingsBuilder = builderHelper.createBatchForEntityType( WebCmsComponent.class );
+		generalSettingsBuilder.setPropertySelector( EntityPropertySelector.of( "componentType", "title", "name", "sortIndex", "lastModified" ) );
+		generalSettingsBuilder.setViewElementMode( ViewElementMode.FORM_WRITE );
+		generalSettingsBuilder.setBuilderHints( builderHints );
+		generalSettingsBuilder.setEntity( componentModel.getComponent() );
+
+		ContainerViewElementBuilder settings = bootstrapUiFactory.container().name( "settings" );
+		settings.addAll( generalSettingsBuilder.build().values() );
+
+		settings.postProcessor( ( builderContext, container ) -> {
+			ControlNamePrefixingPostProcessor controlNamePrefixingPostProcessor = new ControlNamePrefixingPostProcessor( controlNamePrefix + ".component" );
+			container.findAll( FormInputElement.class )
+			         .forEach( e -> controlNamePrefixingPostProcessor.postProcess( builderContext, e ) );
+		} );
+
+		return settings;
+	}
 
 	@SuppressWarnings("unchecked")
 	public ViewElementBuilder createContentViewElementBuilder( WebCmsComponentModel componentModel, String controlNamePrefix ) {
@@ -50,16 +113,15 @@ public final class WebCmsComponentModelAdminRenderService
 	}
 
 	@SuppressWarnings("unchecked")
-	public ViewElementBuilder createMetadataViewElementBuilder( WebCmsComponentModel componentModel, String controlNamePrefix ) {
+	public Optional<ViewElementBuilder> createMetadataViewElementBuilder( WebCmsComponentModel componentModel, String controlNamePrefix ) {
 		if ( componentModel.hasMetadata() ) {
 			return metadataRenderers.stream()
 			                        .filter( r -> r.supports( componentModel, componentModel.getMetadata() ) )
 			                        .findFirst()
-			                        .map( r -> r.createMetadataViewElementBuilder( componentModel, componentModel.getMetadata(), controlNamePrefix ) )
-			                        .orElseGet( ContainerViewElementBuilder::new );
+			                        .map( r -> r.createMetadataViewElementBuilder( componentModel, componentModel.getMetadata(), controlNamePrefix ) );
 		}
 
-		return new ContainerViewElementBuilder();
+		return Optional.empty();
 	}
 
 	@Autowired

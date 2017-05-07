@@ -72,10 +72,10 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 		        )
 		        .updateFormView(
 				        fvb -> fvb.properties( props -> props.property( "componentType" ).writable( false ) )
-				                  .showProperties( "componentType", "title", "name", "lastModified" )
+				                  .showProperties()
 				                  .viewProcessor( formProcessor )
 				                  .removeViewProcessor( SaveEntityViewProcessor.class.getName() )
-				                  .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 8, 4 ) ) )
+				                  .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 12 ) ) )
 		        );
 	}
 }

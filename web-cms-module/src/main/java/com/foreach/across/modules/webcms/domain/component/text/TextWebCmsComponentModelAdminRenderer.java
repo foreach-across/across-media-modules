@@ -19,11 +19,9 @@ package com.foreach.across.modules.webcms.domain.component.text;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
-import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
-import com.foreach.across.modules.webcms.web.TextWebComponentResources;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -45,25 +43,16 @@ public class TextWebCmsComponentModelAdminRenderer implements WebCmsComponentMod
 
 	@Override
 	public ViewElementBuilder createContentViewElementBuilder( TextWebCmsComponentModel componentModel, String controlNamePrefix ) {
-		return bootstrapUiFactory
-				.formGroup()
-				.label( bootstrapUiFactory.label( componentModel.getTitle() ).attribute( "title", componentModel.getName() ) )
-				.control(
-						bootstrapUiFactory.textbox()
-						                  .controlName( controlNamePrefix + ".content" )
-						                  .rows(
-								                  Integer.parseInt( componentModel.getComponentType()
-								                                                  .getAttribute( TextWebCmsComponentModel.Attributes.ROWS, "3" ) )
-						                  )
-						                  .multiLine( componentModel.isMultiLine() )
-						                  .text( componentModel.getContent() )
-						                  .attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
-						                  .attribute( "data-wcm-markup-type", componentModel.getMarkupType().asAttributeValue() )
-						                  .attribute( "data-wcm-profile", componentModel.getProfile() )
-				)
-				.postProcessor( ( builderContext, formGroup ) -> {
-					builderContext.getAttribute( WebResourceRegistry.class ).addPackage( TextWebComponentResources.NAME );
-				} );
-
+		return bootstrapUiFactory.textbox()
+		                         .controlName( controlNamePrefix + ".content" )
+		                         .rows(
+				                         Integer.parseInt( componentModel.getComponentType()
+				                                                         .getAttribute( TextWebCmsComponentModel.Attributes.ROWS, "3" ) )
+		                         )
+		                         .multiLine( componentModel.isMultiLine() )
+		                         .text( componentModel.getContent() )
+		                         .attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
+		                         .attribute( "data-wcm-markup-type", componentModel.getMarkupType().asAttributeValue() )
+		                         .attribute( "data-wcm-profile", componentModel.getProfile() );
 	}
 }

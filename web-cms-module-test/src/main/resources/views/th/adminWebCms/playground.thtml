@@ -1,0 +1,37 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<div th:fragment="body(component)"
+     class="form-group main-component-form-group"
+     th:with="settings=${component.find('settings')},content=${component.find('content')},metadata=${component.find('metadata')},model=${component.getAttribute('componentModel')},htmlId=${#ids.seq('component-tab')}">
+    <div class="pull-right">
+        <ul class="component-tabs">
+            <li class="active content-tab">
+                <a th:href="${'#content-' + htmlId}" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span></a>
+            </li>
+            <li th:if="${metadata.isPresent()}">
+                <a th:href="${'#metadata-' + htmlId}"
+                   data-toggle="tab"><span class="glyphicon glyphicon-th-list"></span></a>
+            </li>
+            <li th:if="${settings.isPresent()}">
+                <a th:href="${'#settings-' + htmlId}" data-toggle="tab"><span class="glyphicon glyphicon-cog"></span></a>
+            </li>
+            <!--/*<li><a href="#delete"><span class="glyphicon glyphicon-remove"></span></a></li>*/-->
+        </ul>
+    </div>
+    <label class="control-label" th:title="${model.name}"
+           th:text="${#strings.isEmpty(model.title) ? model.componentType.name : model.title}">My component</label>
+    <!--/* content */-->
+    <div class="active content-tab component-tab-pane" th:id="${'content-' + htmlId}">
+        <across:view element="${content.get()}"/>
+    </div>
+    <!--/* metadata */-->
+    <div class="component-tab-pane" th:if="${metadata.isPresent()}" th:id="${'metadata-' + htmlId}">
+        <across:view element="${metadata.get()}"/>
+    </div>
+    <!--/* settings */-->
+    <div class="component-tab-pane" id="settings" th:if="${settings.isPresent()}" th:id="${'settings-' + htmlId}">
+        <across:view element="${settings.get()}"/>
+    </div>
+</div>
+
+</html>
