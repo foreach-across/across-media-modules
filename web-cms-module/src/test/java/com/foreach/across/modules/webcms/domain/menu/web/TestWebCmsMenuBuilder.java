@@ -21,7 +21,6 @@ import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItemRepository;
-import com.foreach.across.modules.webcms.domain.menu.web.WebCmsMenuBuilder;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import org.junit.Before;
 import org.junit.Test;
@@ -116,7 +115,7 @@ public class TestWebCmsMenuBuilder
 
 	@Test
 	public void linkedPageWithoutSpecificUrl() {
-		WebCmsPage linkedPage = WebCmsPage.builder().canonicalPath( "canonicalPath" ).build();
+		WebCmsPage linkedPage = WebCmsPage.builder().canonicalPath( "canonicalPath" ).published( true ).build();
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).linkedPage( linkedPage ).build();
 
 		when( itemRepository.findAllByMenuName( "myMenu" ) ).thenReturn( Collections.singletonList( item ) );
@@ -133,7 +132,7 @@ public class TestWebCmsMenuBuilder
 
 	@Test
 	public void specificUrlTakesPrecedenceOverLinkedPageUrl() {
-		WebCmsPage linkedPage = WebCmsPage.builder().canonicalPath( "canonicalPath" ).build();
+		WebCmsPage linkedPage = WebCmsPage.builder().canonicalPath( "canonicalPath" ).published( true ).build();
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).url( "item url" ).linkedPage( linkedPage ).build();
 
 		when( itemRepository.findAllByMenuName( "myMenu" ) ).thenReturn( Collections.singletonList( item ) );
