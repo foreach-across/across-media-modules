@@ -21,6 +21,7 @@ import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelAdminRenderService;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Component;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@AcrossDepends(required = AdminWebModule.NAME)
+@ConditionalOnAdminUI
 @Component
 @RequiredArgsConstructor
 public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<ContainerWebCmsComponentModel>
