@@ -35,6 +35,7 @@ public class TextWebComponentResources extends SimpleWebResourcePackage
 		adminWebResourcePackageManager.register( NAME, this );
 
 		setWebResources(
+				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "jquery-ui", "https://code.jquery.com/ui/1.12.1/jquery-ui.min.js", WebResource.EXTERNAL ),
 				new WebResource( WebResource.CSS, WebCmsModule.NAME, "/static/WebCmsModule/css/wcm-styles.css", WebResource.VIEWS ),
 				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "ckeditor", "https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js", WebResource.EXTERNAL ),
 

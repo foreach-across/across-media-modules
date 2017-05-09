@@ -19,19 +19,19 @@ package com.foreach.across.modules.webcms.domain.component.web;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.bootstrapui.elements.FormInputElement;
+import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.bootstrapui.elements.processor.ControlNamePrefixingPostProcessor;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.helpers.EntityViewElementBatch;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
-import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
-import com.foreach.across.modules.webcms.domain.component.UnknownWebCmsComponentModelException;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,63 +53,79 @@ public final class WebCmsComponentModelAdminRenderService
 
 	private Collection<WebCmsComponentModelContentAdminRenderer> contentRenderers = Collections.emptyList();
 	private Collection<WebCmsComponentModelMetadataAdminRenderer> metadataRenderers = Collections.emptyList();
+	private Collection<WebCmsComponentModelMembersAdminRenderer> membersRenderers = Collections.emptyList();
 
-	public ViewElementBuilder createFormElement( WebCmsComponentModel componentModel, String controlNamePrefix ) {
-		NodeViewElementBuilder wrapper = bootstrapUiFactory
-				.div()
-				.customTemplate( "th/adminWebCms/playground :: body" )
-				.name( "formControl-" + componentModel.getName() )
-				.attribute( "componentModel", componentModel )
-				.htmlId( componentModel.getObjectId() )
-				.add( createSettingsViewElementBuilder( componentModel, controlNamePrefix ) )
-				.add(
-						bootstrapUiFactory.container()
-						                  .name( "content" )
-						                  .add( createContentViewElementBuilder( componentModel, controlNamePrefix ) )
-				);
+	public WebCmsComponentModelFormElementBuilder createFormElement( WebCmsComponentModel componentModel, String controlNamePrefix ) {
+		WebCmsComponentModelFormElementBuilder formElementBuilder = new WebCmsComponentModelFormElementBuilder( componentModel );
+		formElementBuilder.settings( createSettingsViewElementBuilder( componentModel, controlNamePrefix ) );
 
-		createMetadataViewElementBuilder( componentModel, controlNamePrefix )
-				.ifPresent( metadata ->
-						            wrapper.add(
-								            bootstrapUiFactory.container()
-								                              .name( "metadata" )
-								                              .add( metadata )
-						            )
-				);
+		createContentViewElementBuilder( componentModel, controlNamePrefix ).ifPresent( formElementBuilder::content );
+		createMembersViewElementBuilder( componentModel, controlNamePrefix ).ifPresent( formElementBuilder::members );
+		createMetadataViewElementBuilder( componentModel, controlNamePrefix ).ifPresent( formElementBuilder::metadata );
 
-		return wrapper;
+		// if we're dealing with an extensible container - determine if sort and or add options should be shown
+		if ( componentModel instanceof ContainerWebCmsComponentModel && !( (ContainerWebCmsComponentModel) componentModel ).isFixed() ) {
+			formElementBuilder.showAddComponentButton( true );
+			formElementBuilder.sortableContainer( true );
+		}
+
+		formElementBuilder.add(
+				bootstrapUiFactory.hidden()
+				                  .controlName( controlNamePrefix + ".component.sortIndex" )
+				                  .value( componentModel.getComponent().getSortIndex() )
+		);
+
+		return formElementBuilder;
 	}
 
 	public ViewElementBuilder createSettingsViewElementBuilder( WebCmsComponentModel componentModel, String controlNamePrefix ) {
 		Map<String, Object> builderHints = new HashMap<>();
 		builderHints.put( "componentType", ViewElementMode.FORM_READ );
 		builderHints.put( "lastModified", ViewElementMode.FORM_READ );
+		//builderHints.put( "sortIndex", BootstrapUiElements.HIDDEN );
 
 		EntityViewElementBatch<WebCmsComponent> generalSettingsBuilder = builderHelper.createBatchForEntityType( WebCmsComponent.class );
-		generalSettingsBuilder.setPropertySelector( EntityPropertySelector.of( "componentType", "title", "name", "sortIndex", "lastModified" ) );
+		generalSettingsBuilder.setPropertySelector( EntityPropertySelector.of( "componentType", "title", "name", "lastModified" ) );
 		generalSettingsBuilder.setViewElementMode( ViewElementMode.FORM_WRITE );
 		generalSettingsBuilder.setBuilderHints( builderHints );
 		generalSettingsBuilder.setEntity( componentModel.getComponent() );
 
-		ContainerViewElementBuilder settings = bootstrapUiFactory.container().name( "settings" );
-		settings.addAll( generalSettingsBuilder.build().values() );
+		val formGroups = generalSettingsBuilder.build();
 
-		settings.postProcessor( ( builderContext, container ) -> {
-			ControlNamePrefixingPostProcessor controlNamePrefixingPostProcessor = new ControlNamePrefixingPostProcessor( controlNamePrefix + ".component" );
-			container.findAll( FormInputElement.class )
-			         .forEach( e -> controlNamePrefixingPostProcessor.postProcess( builderContext, e ) );
-		} );
-
-		return settings;
+		return bootstrapUiFactory.row()
+		                         .add(
+				                         bootstrapUiFactory.column( Grid.Device.MEDIUM.width( 6 ) )
+				                                           .add( formGroups.get( "title" ) )
+				                                           .add( formGroups.get( "name" ) )
+				                                           .add( formGroups.get( "sortIndex" ) )
+		                         )
+		                         .add(
+				                         bootstrapUiFactory.column( Grid.Device.MEDIUM.width( 6 ) )
+				                                           .add( formGroups.get( "componentType" ) )
+				                                           .add( formGroups.get( "lastModified" ) )
+		                         )
+		                         .postProcessor( ( builderContext, container ) -> {
+			                         ControlNamePrefixingPostProcessor controlNamePrefixingPostProcessor = new ControlNamePrefixingPostProcessor(
+					                         controlNamePrefix + ".component" );
+			                         container.findAll( FormInputElement.class )
+			                                  .forEach( e -> controlNamePrefixingPostProcessor.postProcess( builderContext, e ) );
+		                         } );
 	}
 
 	@SuppressWarnings("unchecked")
-	public ViewElementBuilder createContentViewElementBuilder( WebCmsComponentModel componentModel, String controlNamePrefix ) {
+	public Optional<ViewElementBuilder> createContentViewElementBuilder( WebCmsComponentModel componentModel, String controlNamePrefix ) {
 		return contentRenderers.stream()
 		                       .filter( r -> r.supports( componentModel ) )
 		                       .findFirst()
-		                       .orElseThrow( () -> new UnknownWebCmsComponentModelException( componentModel ) )
-		                       .createContentViewElementBuilder( componentModel, controlNamePrefix );
+		                       .map( r -> r.createContentViewElementBuilder( componentModel, controlNamePrefix ) );
+	}
+
+	@SuppressWarnings("unchecked")
+	public Optional<ViewElementBuilder> createMembersViewElementBuilder( WebCmsComponentModel componentModel, String controlNamePrefix ) {
+		return membersRenderers.stream()
+		                       .filter( r -> r.supports( componentModel ) )
+		                       .findFirst()
+		                       .map( r -> r.createMembersViewElementBuilder( componentModel, controlNamePrefix ) );
 	}
 
 	@SuppressWarnings("unchecked")
@@ -132,5 +148,10 @@ public final class WebCmsComponentModelAdminRenderService
 	@Autowired
 	void setMetadataRenderers( @RefreshableCollection(includeModuleInternals = true) Collection<WebCmsComponentModelMetadataAdminRenderer> metadataRenderers ) {
 		this.metadataRenderers = metadataRenderers;
+	}
+
+	@Autowired
+	void setMembersRenderers( @RefreshableCollection(includeModuleInternals = true) Collection<WebCmsComponentModelMembersAdminRenderer> membersRenderers ) {
+		this.membersRenderers = membersRenderers;
 	}
 }

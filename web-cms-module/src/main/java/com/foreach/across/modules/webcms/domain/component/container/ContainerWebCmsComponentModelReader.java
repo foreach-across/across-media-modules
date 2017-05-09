@@ -21,7 +21,11 @@ import com.foreach.across.modules.webcms.domain.component.model.AbstractWebCmsCo
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel.TYPE_DYNAMIC;
+import static com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel.TYPE_FIXED;
 
 /**
  * @author Arne Vandamme
@@ -31,11 +35,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ContainerWebCmsComponentModelReader extends AbstractWebCmsComponentModelReader<ContainerWebCmsComponentModel>
 {
+	private static final String[] SUPPORTED_TYPES = new String[] { TYPE_DYNAMIC, TYPE_FIXED };
+
 	private final WebCmsComponentModelService webCmsComponentModelService;
 
 	@Override
 	public boolean supports( WebCmsComponent component ) {
-		return "container".equals( component.getComponentType().getAttribute( WebCmsComponentModel.TYPE_ATTRIBUTE ) );
+		return ArrayUtils.contains( SUPPORTED_TYPES, component.getComponentType().getAttribute( WebCmsComponentModel.TYPE_ATTRIBUTE ) );
 	}
 
 	@Override

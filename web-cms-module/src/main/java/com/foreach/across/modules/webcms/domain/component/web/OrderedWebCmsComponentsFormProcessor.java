@@ -84,7 +84,7 @@ public class OrderedWebCmsComponentsFormProcessor extends EntityViewProcessorAda
 
 		ColumnViewElementBuilder body = builderMap.get( SingleEntityFormViewProcessor.LEFT_COLUMN, ColumnViewElementBuilder.class );
 		componentsById.forEach( ( objectId, model ) -> body
-				.add( componentModelAdminRenderService.createContentViewElementBuilder( model, "extensions[webCmsComponents]['" + objectId + "']" ) )
+				.add( componentModelAdminRenderService.createFormElement( model, "extensions[webCmsComponents]['" + objectId + "']" ) )
 		);
 		/*
 		body

@@ -23,6 +23,7 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -47,9 +48,11 @@ public class ContainerWebCmsComponentModelWriter extends AbstractWebCmsComponent
 	@Override
 	protected void afterUpdate( ContainerWebCmsComponentModel componentModel, WebCmsComponent mainComponent ) {
 		List<WebCmsComponentModel> members = componentModel.getMembers();
+		members.sort( Comparator.comparingInt( m -> m.getComponent().getSortIndex() ) );
+
 		for ( int i = 0; i < members.size(); i++ ) {
 			WebCmsComponentModel member = members.get( i );
-			member.getComponent().setSortIndex( i );
+			member.getComponent().setSortIndex( i + 1 );
 			member.setOwner( componentModel );
 			webCmsComponentModelService.save( member );
 		}

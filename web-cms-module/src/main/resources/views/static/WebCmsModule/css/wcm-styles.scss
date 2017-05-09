@@ -15,6 +15,8 @@
  */
 body .CodeMirror {
   height: auto;
+  border: solid 1px #eaeaea;
+  font-size: 13px;
 }
 
 .cke_editable_inline {
@@ -107,47 +109,169 @@ table tr.publication-offline td[data-tbl-field=publication] {
   padding: 0;
 }
 
-.main-component-form-group {
+/**
+ * Component admin UI styling.
+ */
+.wcm-component-form-group {
   > label {
     margin-top: 5px;
-    height: 30px;
+    height: 23px;
   }
 }
-.component-tabs {
-  border-color: #eaeaea;
+
+.wcm-component-tabs {
   > li {
     position: relative;
     float: left;
     display: block;
-    padding: 5px 10px;
+    padding: 0;
+
+    &:only-child {
+      display: none;
+    }
+
+    a {
+      display: block;
+      padding: 5px 10px;
+      &:hover {
+        background-color: #eaeaea;
+        border-radius: 4px;
+        padding: 3px 8px;
+        margin: 2px;
+      }
+    }
+
+    &.has-error {
+      a {
+        color: #dd000c;
+      }
+    }
 
     &.active {
-      border: solid 1px #eaeaea;
-      border-bottom-color: white;
-
-      &.content-tab {
-        border: none;
+      a {
+        background-color: rgb(0, 44, 65);
+        border-radius: 4px;
+        padding: 2px 7px;
+        margin: 3px 3px;
+        color: white;
       }
-
-      a {color: silver;}
     }
   }
 }
 
-.component-tab-pane {
+.wcm-component-tab-pane {
   display: none;
-  margin-top: -8px;
 
   &.active {
     display: block;
-    padding: 15px;
     border: solid 1px #eaeaea;
+    padding: 20px 15px 0 15px;
 
-    &.content-tab {
-      margin-top: -4px;
-      padding: 0 0 0 0;
-
+    &.wcm-component-content-tab {
       border: none;
+      padding: 0;
     }
+  }
+
+  .wcm-component-tabs li.active a {
+    background-color: transparent;
+    color: #eaeaea;
+  }
+
+  .wcm-component-tab-pane.active {
+    border: dotted 1px #eaeaea;
+
+    &.wcm-component-content-tab {
+      border: none;
+      padding: 0;
+    }
+  }
+
+  &.wcm-sortable-component {
+    &.active {
+      border: none;
+      padding: 0;
+    }
+  }
+}
+
+.wcm-sortable-component-title {
+  display: none;
+}
+
+.wcm-sortable-component-handle {
+  display: none;
+  margin-right: 5px;
+  color: #eaeaea;
+}
+
+.wcm-sortable-component {
+  .wcm-sortable-component-title {
+    display: block;
+  }
+
+  .wcm-linked-component {
+    margin-bottom: 0;
+    padding: 5px 10px;
+    cursor: move;
+    border: 1px dotted #eaeaea;
+    border-left: 3px solid #eaeaea;
+    border-bottom: none;
+
+    &.ui-sortable-helper {
+      border-bottom: 1px dotted #eaeaea !important;
+    }
+
+    &:last-child {
+      border-bottom: 1px dotted #eaeaea;
+    }
+
+    &:hover {
+      color: #29ab29;
+      border-left: 3px solid #29ab29;
+      background-color: rgba(41, 171, 41, 0.05);
+      background-image: linear-gradient(to bottom, #f1fcf1 0%, #f5fdf5 100%);
+
+      .wcm-sortable-component-handle {
+        color: #29ab29;
+      }
+    }
+
+    > label {
+      height: auto;
+      cursor: move;
+
+    }
+
+    .wcm-sortable-component-handle {
+      display: inline-block;
+    }
+
+    .wcm-component-tab-pane {
+      display: none;
+    }
+
+    .wcm-component-tabs li {
+      padding: 5px;
+
+      a {
+        background-color: transparent;
+        padding: 0;
+        &:hover {
+          padding: 0;
+          margin: 0;
+        }
+      }
+
+    }
+  }
+}
+
+.wcm-component-owner-trail {
+  border-radius: 5px;
+  background-color: #f9f9f9;
+
+  a {
+    font-weight: bold;
   }
 }

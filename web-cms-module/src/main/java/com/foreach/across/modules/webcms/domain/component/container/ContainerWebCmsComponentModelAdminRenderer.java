@@ -16,15 +16,14 @@
 
 package com.foreach.across.modules.webcms.domain.component.container;
 
-import com.foreach.across.core.annotations.AcrossDepends;
-import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelAdminRenderService;
-import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
+import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelFormElementBuilder;
+import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelMembersAdminRenderer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +34,7 @@ import org.springframework.stereotype.Component;
 @ConditionalOnAdminUI
 @Component
 @RequiredArgsConstructor
-public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<ContainerWebCmsComponentModel>
+public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsComponentModelMembersAdminRenderer<ContainerWebCmsComponentModel>
 {
 	private final BootstrapUiFactory bootstrapUiFactory;
 	private final WebCmsComponentModelAdminRenderService adminRenderService;
@@ -46,7 +45,7 @@ public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsCompone
 	}
 
 	@Override
-	public ViewElementBuilder createContentViewElementBuilder( ContainerWebCmsComponentModel componentModel, String controlNamePrefix ) {
+	public ViewElementBuilder createMembersViewElementBuilder( ContainerWebCmsComponentModel componentModel, String controlNamePrefix ) {
 		/*FieldsetFormElementBuilder fieldset = bootstrapUiFactory
 				.fieldset( componentModel.getTitle() )
 				.attribute( "title", componentModel.getName() );
@@ -58,12 +57,18 @@ public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsCompone
 
 		return fieldset;*/
 
-		ContainerViewElementBuilder fieldset = bootstrapUiFactory.container();
+		// if not a fixed container, add the
+
+		ContainerViewElementBuilder members = bootstrapUiFactory.container();
 		for ( int i = 0; i < componentModel.getMembers().size(); i++ ) {
 			String scopedPrefix = controlNamePrefix + ".members[" + i + "]";
-			fieldset.add( adminRenderService.createFormElement( componentModel.getMembers().get( i ), scopedPrefix ) );
+			WebCmsComponentModelFormElementBuilder member = adminRenderService.createFormElement( componentModel.getMembers().get( i ), scopedPrefix );
+			member.showAsLinkedComponent( !componentModel.isFixed() );
+			member.showDeleteButton( !componentModel.isFixed() );
+			member.showSettings( !componentModel.isFixed() );
+			members.add( member );
 		}
 
-		return fieldset;
+		return members;
 	}
 }

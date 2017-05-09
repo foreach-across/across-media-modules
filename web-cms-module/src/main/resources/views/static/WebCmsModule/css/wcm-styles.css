@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 body .CodeMirror {
-  height: auto; }
+  height: auto;
+  border: solid 1px #eaeaea;
+  font-size: 13px; }
 
 .cke_editable_inline {
   padding: 5px 10px;
@@ -89,35 +91,106 @@ table tr.publication-offline td[data-tbl-field=publication] {
   display: block;
   padding: 0; }
 
-.main-component-form-group > label {
+/**
+ * Component admin UI styling.
+ */
+.wcm-component-form-group > label {
   margin-top: 5px;
-  height: 30px; }
+  height: 23px; }
 
-.component-tabs {
-  border-color: #eaeaea; }
-  .component-tabs > li {
-    position: relative;
-    float: left;
+.wcm-component-tabs > li {
+  position: relative;
+  float: left;
+  display: block;
+  padding: 0; }
+  .wcm-component-tabs > li:only-child {
+    display: none; }
+  .wcm-component-tabs > li a {
     display: block;
     padding: 5px 10px; }
-    .component-tabs > li.active {
-      border: solid 1px #eaeaea;
-      border-bottom-color: white; }
-      .component-tabs > li.active.content-tab {
-        border: none; }
-      .component-tabs > li.active a {
-        color: silver; }
+    .wcm-component-tabs > li a:hover {
+      background-color: #eaeaea;
+      border-radius: 4px;
+      padding: 3px 8px;
+      margin: 2px; }
+  .wcm-component-tabs > li.has-error a {
+    color: #dd000c; }
+  .wcm-component-tabs > li.active a {
+    background-color: #002c41;
+    border-radius: 4px;
+    padding: 2px 7px;
+    margin: 3px 3px;
+    color: white; }
 
-.component-tab-pane {
-  display: none;
-  margin-top: -8px; }
-  .component-tab-pane.active {
+.wcm-component-tab-pane {
+  display: none; }
+  .wcm-component-tab-pane.active {
     display: block;
-    padding: 15px;
-    border: solid 1px #eaeaea; }
-    .component-tab-pane.active.content-tab {
-      margin-top: -4px;
-      padding: 0 0 0 0;
-      border: none; }
+    border: solid 1px #eaeaea;
+    padding: 20px 15px 0 15px; }
+    .wcm-component-tab-pane.active.wcm-component-content-tab {
+      border: none;
+      padding: 0; }
+  .wcm-component-tab-pane .wcm-component-tabs li.active a {
+    background-color: transparent;
+    color: #eaeaea; }
+  .wcm-component-tab-pane .wcm-component-tab-pane.active {
+    border: dotted 1px #eaeaea; }
+    .wcm-component-tab-pane .wcm-component-tab-pane.active.wcm-component-content-tab {
+      border: none;
+      padding: 0; }
+  .wcm-component-tab-pane.wcm-sortable-component.active {
+    border: none;
+    padding: 0; }
+
+.wcm-sortable-component-title {
+  display: none; }
+
+.wcm-sortable-component-handle {
+  display: none;
+  margin-right: 5px;
+  color: #eaeaea; }
+
+.wcm-sortable-component .wcm-sortable-component-title {
+  display: block; }
+.wcm-sortable-component .wcm-linked-component {
+  margin-bottom: 0;
+  padding: 5px 10px;
+  cursor: move;
+  border: 1px dotted #eaeaea;
+  border-left: 3px solid #eaeaea;
+  border-bottom: none; }
+  .wcm-sortable-component .wcm-linked-component.ui-sortable-helper {
+    border-bottom: 1px dotted #eaeaea !important; }
+  .wcm-sortable-component .wcm-linked-component:last-child {
+    border-bottom: 1px dotted #eaeaea; }
+  .wcm-sortable-component .wcm-linked-component:hover {
+    color: #29ab29;
+    border-left: 3px solid #29ab29;
+    background-color: rgba(41, 171, 41, 0.05);
+    background-image: linear-gradient(to bottom, #f1fcf1 0%, #f5fdf5 100%); }
+    .wcm-sortable-component .wcm-linked-component:hover .wcm-sortable-component-handle {
+      color: #29ab29; }
+  .wcm-sortable-component .wcm-linked-component > label {
+    height: auto;
+    cursor: move; }
+  .wcm-sortable-component .wcm-linked-component .wcm-sortable-component-handle {
+    display: inline-block; }
+  .wcm-sortable-component .wcm-linked-component .wcm-component-tab-pane {
+    display: none; }
+  .wcm-sortable-component .wcm-linked-component .wcm-component-tabs li {
+    padding: 5px; }
+    .wcm-sortable-component .wcm-linked-component .wcm-component-tabs li a {
+      background-color: transparent;
+      padding: 0; }
+      .wcm-sortable-component .wcm-linked-component .wcm-component-tabs li a:hover {
+        padding: 0;
+        margin: 0; }
+
+.wcm-component-owner-trail {
+  border-radius: 5px;
+  background-color: #f9f9f9; }
+  .wcm-component-owner-trail a {
+    font-weight: bold; }
 
 /*# sourceMappingURL=wcm-styles.css.map */

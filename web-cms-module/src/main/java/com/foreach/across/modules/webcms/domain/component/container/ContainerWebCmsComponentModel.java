@@ -33,6 +33,9 @@ import java.util.List;
  */
 public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 {
+	public static final String TYPE_DYNAMIC = "container";
+	public static final String TYPE_FIXED = "fixed-container";
+
 	@Getter
 	private final List<WebCmsComponentModel> members = new ArrayList<>();
 
@@ -73,10 +76,24 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 	}
 
 	/**
+	 * @return number of members in this container
+	 */
+	public int size() {
+		return members.size();
+	}
+
+	/**
 	 * @return true if container has no members
 	 */
 	public boolean isEmpty() {
 		return members.isEmpty();
+	}
+
+	/**
+	 * @return true if the container does not allow dynamic adding/sorting of members
+	 */
+	public boolean isFixed() {
+		return TYPE_FIXED.equals( getComponentType().getAttribute( WebCmsComponentModel.TYPE_ATTRIBUTE ) );
 	}
 
 	@Override

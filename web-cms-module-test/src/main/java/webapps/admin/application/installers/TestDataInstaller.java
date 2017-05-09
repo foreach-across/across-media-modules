@@ -27,7 +27,7 @@ import javax.annotation.PostConstruct;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Installer(description = "Install some test data", phase = InstallerPhase.AfterModuleBootstrap, version = 8)
+@Installer(description = "Install some test data", phase = InstallerPhase.AfterModuleBootstrap, version = 9)
 @RequiredArgsConstructor
 public class TestDataInstaller extends AbstractWebCmsDataInstaller
 {

@@ -58,6 +58,7 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	/**
 	 * Original component this model represents.
 	 */
+	@Valid
 	@Getter
 	private WebCmsComponent component;
 
@@ -248,6 +249,7 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	 *
 	 * @return templated version of this model - attached to a new backing component
 	 * @see WebCmsComponent#asTemplate()
+	 * @see #cloneMetadata(WebCmsComponentModel)
 	 */
 	public abstract WebCmsComponentModel asComponentTemplate();
 
@@ -286,7 +288,7 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	 * @see com.foreach.across.modules.hibernate.util.DtoUtils
 	 * @see com.foreach.across.modules.hibernate.business.EntityWithDto
 	 */
-	public static Object cloneMetadata( WebCmsComponentModel componentModel ) {
+	protected static Object cloneMetadata( WebCmsComponentModel componentModel ) {
 		if ( componentModel.hasMetadata() ) {
 			val metadata = componentModel.getMetadata();
 			if ( metadata instanceof EntityWithDto ) {

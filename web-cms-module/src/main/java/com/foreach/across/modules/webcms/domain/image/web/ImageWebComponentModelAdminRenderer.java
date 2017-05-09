@@ -107,7 +107,7 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 						bootstrapUiFactory.button()
 						                  .name( "btn-select-image" )
 						                  .css( thumbnailUrl != null ? "hidden" : "" )
-						                  .style( Style.PRIMARY )
+						                  .style( Style.DEFAULT )
 						                  .text( "Select image" )
 				)
 				.postProcessor( ( builderContext, wrapper ) -> {
