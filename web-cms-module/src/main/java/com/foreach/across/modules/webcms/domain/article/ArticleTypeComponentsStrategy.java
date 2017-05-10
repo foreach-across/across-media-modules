@@ -40,43 +40,37 @@ final class ArticleTypeComponentsStrategy implements WebCmsArticleComponentsStra
 	@Override
 	public void createDefaultComponents( WebCmsArticle article ) {
 		WebCmsArticleType articleType = article.getArticleType();
-		WebCmsComponentModel template = retrieveArticleTemplateComponent( articleType );
+		WebCmsComponentModel template = retrieveContentTemplate( articleType );
 
 		if ( template != null ) {
 			template = template.asComponentTemplate();
-
-			if ( template instanceof ContainerWebCmsComponentModel ) {
-				ContainerWebCmsComponentModel container = (ContainerWebCmsComponentModel) template;
-				container.getMembers().forEach( member -> {
-					member.setOwner( article );
-					replaceTitleInTextComponents( article.getTitle(), member );
-					componentModelService.save( member );
-				} );
-			}
-			else {
-				// not sure what to do, just add the template directly
-				template.setOwner( article );
-				componentModelService.save( template );
-			}
+			template.setOwner( article );
+			replaceAttributesInTextComponents( article, template );
+			componentModelService.save( template );
 		}
 	}
 
 	// replace the @@title@@ placeholder
-	private void replaceTitleInTextComponents( String title, WebCmsComponentModel componentModel ) {
+	private void replaceAttributesInTextComponents( WebCmsArticle article, WebCmsComponentModel componentModel ) {
 		if ( componentModel instanceof TextWebCmsComponentModel ) {
 			TextWebCmsComponentModel text = (TextWebCmsComponentModel) componentModel;
-			text.setContent( StringUtils.replace( text.getContent(), "@@title@@", title ) );
+			text.setContent( StringUtils.replace( text.getContent(), "@@title@@", article.getTitle() ) );
+			text.setContent( StringUtils.replace( text.getContent(), "@@subTitle@@", article.getSubTitle() ) );
+			text.setContent( StringUtils.replace( text.getContent(), "@@description@@", article.getDescription() ) );
+		}
+		else if ( componentModel instanceof ContainerWebCmsComponentModel ) {
+			( (ContainerWebCmsComponentModel) componentModel ).getMembers().forEach( m -> replaceAttributesInTextComponents( article, m ) );
 		}
 	}
 
-	private WebCmsComponentModel retrieveArticleTemplateComponent( WebCmsArticleType articleType ) {
-		String articleTemplateName = StringUtils.defaultString( articleType.getAttribute( "bodyTemplate" ), "bodyTemplate" );
-		WebCmsComponentModel model = componentModelService.getComponentModel( articleTemplateName, articleType );
+	private WebCmsComponentModel retrieveContentTemplate( WebCmsArticleType articleType ) {
+		String contentTemplateName = StringUtils.defaultString( articleType.getAttribute( "contentTemplate" ), "contentTemplate" );
+		WebCmsComponentModel model = componentModelService.getComponentModel( contentTemplateName, articleType );
 
 		if ( model == null && articleType.hasAttribute( "parent" ) ) {
 			WebCmsArticleType parentArticleType = articleTypeRepository.findOneByTypeKey( articleType.getAttribute( "parent" ) );
 			if ( parentArticleType != null ) {
-				return retrieveArticleTemplateComponent( parentArticleType );
+				return retrieveContentTemplate( parentArticleType );
 			}
 		}
 

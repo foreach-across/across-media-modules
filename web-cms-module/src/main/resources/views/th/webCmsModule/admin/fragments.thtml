@@ -37,8 +37,7 @@
         </ul>
     </div>
     <span class="wcm-sortable-component-handle glyphicon glyphicon-menu-hamburger"></span>
-    <label class="control-label" th:title="${model.name}"
-           th:text="${#strings.isEmpty(model.title) ? model.componentType.name : model.title}">Component title</label>
+    <label class="control-label" th:title="${model.name}" th:text="${element.label}">Component title</label>
     <!--/* content */-->
     <div th:if="${element.hasContent()}" class="wcm-component-tab-pane wcm-component-content-tab" th:id="${'content-' + htmlId}">
         <across:view element="${element.content}"/>
@@ -46,7 +45,6 @@
     <!--/* members */-->
     <div th:if="${element.hasMembers()}" class="wcm-component-tab-pane wcm-component-members-tab"
          th:classappend="${element.sortableContainer} ? 'wcm-sortable-component'" th:id="${'members-' + htmlId}">
-        <h5 th:id="${element.sortableContainer}" class="wcm-sortable-component-title">Drag the container members to reorder them.</h5>
         <across:view element="${element.members}"/>
     </div>
     <!--/* metadata */-->

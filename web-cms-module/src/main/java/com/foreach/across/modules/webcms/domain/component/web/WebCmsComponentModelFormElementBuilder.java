@@ -24,6 +24,7 @@ import com.foreach.across.modules.web.ui.elements.builder.AbstractNodeViewElemen
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Configurable builder for a form element for manage a single {@link WebCmsComponentModel}.
@@ -182,6 +183,14 @@ public final class WebCmsComponentModelFormElementBuilder extends AbstractNodeVi
 
 		public boolean hasMetadata() {
 			return !isShowAsLinkedComponent() && metadata != null;
+		}
+
+		public String getLabel() {
+			WebCmsComponentModel componentModel = getComponentModel();
+			return StringUtils.defaultIfBlank(
+					componentModel.getTitle(),
+					StringUtils.defaultIfBlank( componentModel.getName(), componentModel.getComponentType().getName() )
+			);
 		}
 	}
 }

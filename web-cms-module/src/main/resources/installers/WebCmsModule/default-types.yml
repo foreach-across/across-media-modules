@@ -39,10 +39,12 @@ types:
   article:
     blog:
       name: Blog
+      attributes:
+        contentTemplate: content
       wcm:components:
-        # Default component name that contains the body components template for this article type
-        bodyTemplate:
-          title: Generic article template
+        # Default component name that contains the content components for this article type
+        content:
+          title: Main article content
           componentType: container
           wcm:components:
             body:

@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.page.config;
 
+import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
 import com.foreach.across.modules.bootstrapui.elements.*;
 import com.foreach.across.modules.entity.EntityAttributes;
@@ -27,9 +28,9 @@ import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.bootstrapui.processors.element.EntityListActionsProcessor;
 import com.foreach.across.modules.entity.views.bootstrapui.util.SortableTableBuilder;
-import com.foreach.across.modules.entity.views.context.EntityViewContext;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SortableTableRenderingViewProcessor;
+import com.foreach.across.modules.entity.views.processors.support.EntityPageStructureRenderedEvent;
 import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
@@ -171,6 +172,24 @@ class WebCmsPageConfiguration
 
 	private static class PageFormViewProcessor extends EntityViewProcessorAdapter
 	{
+		@SuppressWarnings( "unused" )
+		@Event
+		void setPreviewLinkOnMenu( EntityPageStructureRenderedEvent<WebCmsPage> event ) {
+			if ( event.holdsEntity() ) {
+				WebCmsPage page = event.getEntity();
+
+				LinkViewElement openLink = new LinkViewElement();
+				openLink.setAttribute( "target", "_blank" );
+				openLink.setUrl( page.getCanonicalPath() );
+				openLink.setTitle( event.getEntityViewContext().getEntityMessages().withNameSingular( "actions.open" ) );
+				openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
+
+				PageContentStructure adminPage = event.getPageContentStructure();
+				adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
+				adminPage.addToPageTitleSubText( openLink );
+			}
+		}
+
 		@Override
 		protected void postRender( EntityViewRequest entityViewRequest,
 		                           EntityView entityView,
@@ -178,22 +197,6 @@ class WebCmsPageConfiguration
 		                           ViewElementBuilderContext builderContext ) {
 			addDependency( container, "pathSegment", "pathSegmentGenerated" );
 			addDependency( container, CANONICAL_PATH, "canonicalPathGenerated" );
-
-			EntityViewContext viewContext = entityViewRequest.getEntityViewContext();
-
-			if ( viewContext.holdsEntity() ) {
-				WebCmsPage page = viewContext.getEntity( WebCmsPage.class );
-
-				LinkViewElement openLink = new LinkViewElement();
-				openLink.setAttribute( "target", "_blank" );
-				openLink.setUrl( page.getCanonicalPath() );
-				openLink.setTitle( viewContext.getEntityMessages().withNameSingular( "actions.open" ) );
-				openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
-
-				PageContentStructure adminPage = entityViewRequest.getPageContentStructure();
-				adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
-				adminPage.addToPageTitleSubText( openLink );
-			}
 		}
 
 		private void addDependency( ContainerViewElement elements, String from, String to ) {

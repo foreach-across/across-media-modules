@@ -46,20 +46,14 @@ public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsCompone
 
 	@Override
 	public ViewElementBuilder createMembersViewElementBuilder( ContainerWebCmsComponentModel componentModel, String controlNamePrefix ) {
-		/*FieldsetFormElementBuilder fieldset = bootstrapUiFactory
-				.fieldset( componentModel.getTitle() )
-				.attribute( "title", componentModel.getName() );
-
-		for ( int i = 0; i < componentModel.getMembers().size(); i++ ) {
-			String scopedPrefix = controlNamePrefix + ".members[" + i + "]";
-			fieldset.add( adminRenderService.createContentViewElementBuilder( componentModel.getMembers().get( i ), scopedPrefix ) );
+		if ( componentModel.isEmpty() ) {
+			return bootstrapUiFactory.alert().warning().text( "This container is currently empty." );
 		}
 
-		return fieldset;*/
-
-		// if not a fixed container, add the
-
 		ContainerViewElementBuilder members = bootstrapUiFactory.container();
+		if ( !componentModel.isFixed() ) {
+			members.add( bootstrapUiFactory.html( "<h5 class=\"wcm-sortable-component-title\">Drag the container members to reorder them.</h5>" ) );
+		}
 		for ( int i = 0; i < componentModel.getMembers().size(); i++ ) {
 			String scopedPrefix = controlNamePrefix + ".members[" + i + "]";
 			WebCmsComponentModelFormElementBuilder member = adminRenderService.createFormElement( componentModel.getMembers().get( i ), scopedPrefix );

@@ -60,6 +60,12 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 	}
 
 	@Override
+	public WebCmsComponentModel getComponentModel( String objectId ) {
+		WebCmsComponent component = componentRepository.findOneByObjectId( objectId );
+		return component != null ? buildModelForComponent( component ) : null;
+	}
+
+	@Override
 	public WebCmsComponentModel getComponentModel( String componentName, WebCmsObject owner ) {
 		return Optional.ofNullable( componentRepository.findOneByOwnerObjectIdAndName( owner != null ? owner.getObjectId() : null, componentName ) )
 		               .map( this::buildModelForComponent )

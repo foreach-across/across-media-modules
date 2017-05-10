@@ -53,7 +53,16 @@ public class TestWebCmsComponentValidator
 	}
 
 	@Test
-	public void assignedNameIsKept() {
+	public void titleIsAssignedFromNameIfNotSet() {
+		WebCmsComponent component = WebCmsComponent.builder().name( "my-title" ).build();
+		validator.preValidation( component, errors );
+
+		assertEquals( "My title", component.getTitle() );
+		assertEquals( "my-title", component.getName() );
+	}
+
+	@Test
+	public void assignedNameAndTitleAreKept() {
 		WebCmsComponent component = WebCmsComponent.builder().title( "My title" ).name( "some name" ).build();
 		validator.preValidation( component, errors );
 

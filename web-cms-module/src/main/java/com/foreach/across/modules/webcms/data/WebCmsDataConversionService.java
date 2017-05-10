@@ -53,7 +53,7 @@ public class WebCmsDataConversionService extends DefaultConversionService
 
 		data.forEach( ( propertyName, propertyValue ) -> {
 			if ( propertyName.contains( ":" ) ) {
-				LOG.trace( "Skipping property {} - assuming separate importer wil be used" );
+				LOG.trace( "Skipping property {} - assuming separate importer wil be used", propertyName );
 			}
 			else {
 				TypeDescriptor typeDescriptor = beanWrapper.getPropertyTypeDescriptor( propertyName );

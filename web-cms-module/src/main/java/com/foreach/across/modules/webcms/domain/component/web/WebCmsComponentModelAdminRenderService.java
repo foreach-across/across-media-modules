@@ -18,16 +18,19 @@ package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.FormInputElement;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.bootstrapui.elements.processor.ControlNamePrefixingPostProcessor;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
+import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.helpers.EntityViewElementBatch;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +53,7 @@ public final class WebCmsComponentModelAdminRenderService
 {
 	private final BootstrapUiFactory bootstrapUiFactory;
 	private final EntityViewElementBuilderHelper builderHelper;
+	private final WebCmsComponentRepository componentRepository;
 
 	private Collection<WebCmsComponentModelContentAdminRenderer> contentRenderers = Collections.emptyList();
 	private Collection<WebCmsComponentModelMetadataAdminRenderer> metadataRenderers = Collections.emptyList();
@@ -82,7 +86,6 @@ public final class WebCmsComponentModelAdminRenderService
 		Map<String, Object> builderHints = new HashMap<>();
 		builderHints.put( "componentType", ViewElementMode.FORM_READ );
 		builderHints.put( "lastModified", ViewElementMode.FORM_READ );
-		//builderHints.put( "sortIndex", BootstrapUiElements.HIDDEN );
 
 		EntityViewElementBatch<WebCmsComponent> generalSettingsBuilder = builderHelper.createBatchForEntityType( WebCmsComponent.class );
 		generalSettingsBuilder.setPropertySelector( EntityPropertySelector.of( "componentType", "title", "name", "lastModified" ) );
@@ -90,7 +93,15 @@ public final class WebCmsComponentModelAdminRenderService
 		generalSettingsBuilder.setBuilderHints( builderHints );
 		generalSettingsBuilder.setEntity( componentModel.getComponent() );
 
+		val messageCodeResolver = generalSettingsBuilder.getAttribute( EntityMessageCodeResolver.class );
+		generalSettingsBuilder.setAttribute(
+				EntityMessageCodeResolver.class,
+				messageCodeResolver.prefixedResolver( componentModel.hasOwner() ? "views[updateMember]" : "views[updateView]" )
+		);
+
 		val formGroups = generalSettingsBuilder.build();
+
+		WebCmsComponent ownerContainer = componentModel.hasOwner() ? componentRepository.findOneByObjectId( componentModel.getOwnerObjectId() ) : null;
 
 		return bootstrapUiFactory.row()
 		                         .add(
@@ -109,6 +120,14 @@ public final class WebCmsComponentModelAdminRenderService
 					                         controlNamePrefix + ".component" );
 			                         container.findAll( FormInputElement.class )
 			                                  .forEach( e -> controlNamePrefixingPostProcessor.postProcess( builderContext, e ) );
+		                         } )
+		                         .postProcessor( ( builderContext, container ) -> {
+			                         if ( ownerContainer != null ) {
+				                         container.find( "formGroup-title", FormGroupElement.class )
+				                                  .ifPresent( group -> group.setRequired( false ) );
+				                         container.find( "formGroup-name", FormGroupElement.class )
+				                                  .ifPresent( group -> group.setRequired( false ) );
+			                         }
 		                         } );
 	}
 

@@ -19,20 +19,18 @@ package com.foreach.across.modules.webcms.domain.component.config;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
-import com.foreach.across.modules.entity.views.EntityView;
-import com.foreach.across.modules.entity.views.processors.*;
-import com.foreach.across.modules.entity.views.request.EntityViewCommand;
-import com.foreach.across.modules.entity.views.request.EntityViewRequest;
+import com.foreach.across.modules.entity.views.processors.DefaultValidationViewProcessor;
+import com.foreach.across.modules.entity.views.processors.SaveEntityViewProcessor;
+import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
+import com.foreach.across.modules.entity.views.processors.SingleEntityPageStructureViewProcessor;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.component.web.ContainerMemberViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.BindingResult;
 
 import javax.validation.groups.Default;
 
@@ -45,6 +43,7 @@ import javax.validation.groups.Default;
 @RequiredArgsConstructor
 class WebCmsComponentConfiguration implements EntityConfigurer
 {
+	private final ContainerMemberViewProcessor containerMemberViewProcessor;
 	private final WebCmsComponentFormProcessor formProcessor;
 
 	@Override
@@ -69,7 +68,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				                  .showProperties( "title", "name", "componentType", "lastModified" )
 				                  .defaultSort( "title" )
 		        )
-		        .createOrUpdateFormView(
+		        .createFormView(
 				        fvb -> fvb.postProcess(
 						        DefaultValidationViewProcessor.class,
 						        processor -> processor.setValidationHints( Default.class, WebCmsComponent.SharedComponentValidation.class )
@@ -78,53 +77,18 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 		        .formView(
 				        "createMember",
 				        fvb -> fvb.messagePrefix( "views[createMember]", "views[updateView]" )
-				                  .viewProcessor( new ContainerMemberViewProcessor() )
+				                  .viewProcessor( containerMemberViewProcessor )
 				                  .postProcess( SingleEntityPageStructureViewProcessor.class,
 				                                processor -> processor.setTitleMessageCode( EntityMessages.PAGE_TITLE_CREATE ) )
 		        )
-		        .deleteFormView( fvb -> fvb.viewProcessor( new ContainerMemberViewProcessor() ) )
+		        .deleteFormView( fvb -> fvb.viewProcessor( containerMemberViewProcessor ) )
 		        .updateFormView(
 				        fvb -> fvb.properties( props -> props.property( "componentType" ).writable( false ) )
 				                  .showProperties()
 				                  .viewProcessor( formProcessor )
 				                  .removeViewProcessor( SaveEntityViewProcessor.class.getName() )
+				                  .removeViewProcessor( DefaultValidationViewProcessor.class.getName() )
 				                  .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 12 ) ) )
 		        );
-	}
-
-	/**
-	 * Applies some UI changes when modifying a member of a container.
-	 */
-	private static class ContainerMemberViewProcessor extends EntityViewProcessorAdapter
-	{
-		@Override
-		protected void doPost( EntityViewRequest entityViewRequest,
-		                       EntityView entityView,
-		                       EntityViewCommand command,
-		                       BindingResult bindingResult ) {
-			if ( entityView.isRedirect() ) {
-				String redirectTargetUrl = entityViewRequest.getWebRequest().getParameter( "from" );
-
-				if ( redirectTargetUrl != null ) {
-					entityView.setRedirectUrl( redirectTargetUrl );
-				}
-			}
-		}
-
-		@Override
-		protected void postRender( EntityViewRequest entityViewRequest,
-		                           EntityView entityView,
-		                           ContainerViewElement container,
-		                           ViewElementBuilderContext builderContext ) {
-			WebCmsComponent component = entityViewRequest.getCommand().getEntity( WebCmsComponent.class );
-
-			if ( component == null ) {
-				component = entityViewRequest.getEntityViewContext().getEntity( WebCmsComponent.class );
-			}
-
-			if ( component != null && component.hasOwner() ) {
-				entityViewRequest.getPageContentStructure().withNav( ContainerViewElement::clearChildren );
-			}
-		}
 	}
 }

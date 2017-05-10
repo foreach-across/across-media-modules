@@ -65,6 +65,8 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		componentsFormProcessor.setComponentNames( "content" );
+
 		entities.withType( WebCmsArticle.class )
 		        .properties( props -> props
 				        .property( "objectId" ).hidden( true ).and()

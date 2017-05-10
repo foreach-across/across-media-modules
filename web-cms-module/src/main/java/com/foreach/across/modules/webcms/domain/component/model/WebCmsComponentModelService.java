@@ -47,6 +47,14 @@ public interface WebCmsComponentModelService
 	<U extends WebCmsComponentModel> U createComponentModel( WebCmsComponentType componentType, Class<U> expectedType );
 
 	/**
+	 * Get the component model for a specific {@link WebCmsComponent} identified by its object id.
+	 *
+	 * @param objectId of the component
+	 * @return component model or {@code null} if not a valid component
+	 */
+	WebCmsComponentModel getComponentModel( String objectId );
+
+	/**
 	 * Get a single {@link WebCmsComponentModel} by name.
 	 *
 	 * @param componentName name of the component

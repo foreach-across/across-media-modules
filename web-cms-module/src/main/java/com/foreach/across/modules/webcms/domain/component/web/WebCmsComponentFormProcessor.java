@@ -26,6 +26,7 @@ import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewPr
 import com.foreach.across.modules.entity.views.processors.support.EntityViewPageHelper;
 import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
+import com.foreach.across.modules.entity.views.request.EntityViewCommandValidator;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.entity.web.EntityLinkBuilder;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
@@ -52,6 +53,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.groups.Default;
 
 /**
  * Layouts the web component form pages, builds the actual component model and renders the form.
@@ -70,11 +72,14 @@ public class WebCmsComponentFormProcessor extends SaveEntityViewProcessor
 	private final WebCmsComponentModelService componentModelService;
 	private final WebCmsComponentRepository componentRepository;
 	private final WebCmsComponentModelAdminRenderService componentModelAdminRenderService;
+	private final EntityViewCommandValidator entityViewCommandValidator;
 	private final WebCmsComponentValidator componentValidator;
 	private final BootstrapUiFactory bootstrapUiFactory;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
+		dataBinder.setValidator( entityViewCommandValidator );
+
 		super.initializeCommandObject( entityViewRequest, command, dataBinder );
 
 		WebCmsComponentModel componentModel = componentModelService.buildModelForComponent( command.getEntity( WebCmsComponent.class ) );
@@ -83,12 +88,18 @@ public class WebCmsComponentFormProcessor extends SaveEntityViewProcessor
 
 	@Override
 	protected void validateCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, Errors errors, HttpMethod httpMethod ) {
-		if ( HttpMethod.POST.equals( httpMethod ) && !errors.hasErrors() ) {
-			WebCmsComponentModel componentModel = command.getExtension( EXTENSION_NAME, WebCmsComponentModel.class );
+		WebCmsComponentModel componentModel = command.getExtension( EXTENSION_NAME, WebCmsComponentModel.class );
 
-			errors.pushNestedPath( "extensions[" + EXTENSION_NAME + "].component" );
-			componentValidator.validate( componentModel.getComponent(), errors );
-			errors.popNestedPath();
+		if ( HttpMethod.POST.equals( httpMethod ) ) {
+			boolean sharedValidation = !componentModel.hasOwner() || componentRepository.findOneByObjectId( componentModel.getOwnerObjectId() ) == null;
+			Object[] validationHints = sharedValidation ? new Object[] { Default.class, WebCmsComponent.SharedComponentValidation.class } : new Object[0];
+			entityViewRequest.getDataBinder().validate( validationHints );
+
+			if ( !errors.hasErrors() ) {
+				errors.pushNestedPath( "extensions[" + EXTENSION_NAME + "].component" );
+				componentValidator.validate( componentModel.getComponent(), errors, validationHints );
+				errors.popNestedPath();
+			}
 		}
 	}
 
@@ -175,7 +186,7 @@ public class WebCmsComponentFormProcessor extends SaveEntityViewProcessor
 	private boolean addToOwnerTrail( NodeViewElementBuilder breadcrumb, String objectId, EntityLinkBuilder linkBuilder, boolean createLink ) {
 		WebCmsComponent owner = componentRepository.findOneByObjectId( objectId );
 		if ( owner != null ) {
-			String title = StringUtils.isEmpty( owner.getTitle() ) ? owner.getComponentType().getName() : owner.getTitle();
+			String title = StringUtils.defaultIfBlank( owner.getTitle(), StringUtils.defaultIfBlank( owner.getName(), owner.getComponentType().getName() ) );
 			breadcrumb.addFirst(
 					bootstrapUiFactory.node( "li" )
 					                  .attribute( "title", owner.getName() )

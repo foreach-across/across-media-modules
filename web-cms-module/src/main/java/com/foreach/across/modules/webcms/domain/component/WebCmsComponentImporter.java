@@ -16,11 +16,13 @@
 
 package com.foreach.across.modules.webcms.domain.component;
 
+import com.foreach.across.modules.entity.util.EntityUtils;
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsDataImporter;
 import com.foreach.across.modules.webcms.data.WebCmsPropertyDataImportService;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,8 @@ public class WebCmsComponentImporter implements WebCmsDataImporter
 	}
 
 	private void importSingleComponent( WebCmsDataEntry item ) {
+		LOG.trace( "Importing data entry {}", item );
+
 		WebCmsComponent existing = retrieveExistingAsset( (String) item.getMapData().get( "objectId" ), item.getKey() );
 
 		String action = (String) item.getMapData().get( "wcm:action" );
@@ -137,6 +141,9 @@ public class WebCmsComponentImporter implements WebCmsDataImporter
 	private WebCmsComponent prepareForSaving( WebCmsComponent itemToBeSaved, WebCmsDataEntry data ) {
 		if ( itemToBeSaved.getName() == null ) {
 			itemToBeSaved.setName( data.getKey() );
+		}
+		if ( !StringUtils.isBlank( itemToBeSaved.getName() ) && StringUtils.isEmpty( itemToBeSaved.getTitle() ) ) {
+			itemToBeSaved.setTitle( EntityUtils.generateDisplayName( itemToBeSaved.getName() ) );
 		}
 		return itemToBeSaved;
 	}

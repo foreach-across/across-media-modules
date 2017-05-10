@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component;
 
+import com.foreach.across.modules.entity.util.EntityUtils;
 import com.foreach.across.modules.entity.validators.EntityValidatorSupport;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,9 @@ public class WebCmsComponentValidator extends EntityValidatorSupport<WebCmsCompo
 	protected void preValidation( WebCmsComponent entity, Errors errors, Object... validationHints ) {
 		if ( StringUtils.isBlank( entity.getName() ) && !StringUtils.isBlank( entity.getTitle() ) ) {
 			entity.setName( WebCmsUtils.generateUrlPathSegment( entity.getTitle() ) );
+		}
+		else if ( !StringUtils.isBlank( entity.getName() ) && StringUtils.isBlank( entity.getTitle() ) ) {
+			entity.setTitle( EntityUtils.generateDisplayName( entity.getName() ) );
 		}
 	}
 

@@ -21,24 +21,26 @@ import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntityConfigurationBuilder;
 import com.foreach.across.modules.entity.query.AssociatedEntityQueryExecutor;
-import com.foreach.across.modules.entity.query.EntityQuery;
+import com.foreach.across.modules.entity.query.EntityQueryCondition;
+import com.foreach.across.modules.entity.query.EntityQueryExecutor;
+import com.foreach.across.modules.entity.query.EntityQueryOps;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
+import com.foreach.across.modules.entity.registry.EntityConfiguration;
+import com.foreach.across.modules.entity.registry.EntityRegistry;
+import com.foreach.across.modules.entity.views.processors.DefaultValidationViewProcessor;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent.SharedComponentValidation;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
+import javax.validation.groups.Default;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -57,8 +59,7 @@ public class WebCmsObjectComponentViewsConfiguration
 {
 	private final WebCmsComponentFormProcessor formProcessor;
 	private final Set<Class<?>> assetTypes = new HashSet<>();
-
-	private AssociatedEntityQueryExecutor<WebCmsComponent> componentAssociatedEntityQueryExecutor;
+	private final EntityRegistry entityRegistry;
 
 	/**
 	 * Enable the web components UI for a specific {@link WebCmsObject} implementation.
@@ -80,22 +81,6 @@ public class WebCmsObjectComponentViewsConfiguration
 		assetTypes.remove( assetType );
 	}
 
-	@Autowired
-	void createExecutorForWebCmsObject( WebCmsComponentRepository componentRepository ) {
-		componentAssociatedEntityQueryExecutor = new AssociatedEntityQueryExecutor<WebCmsComponent>( null, null )
-		{
-			@Override
-			public List<WebCmsComponent> findAll( Object parent, EntityQuery query ) {
-				return componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( ( (WebCmsObject) parent ).getObjectId() );
-			}
-
-			@Override
-			public Page<WebCmsComponent> findAll( Object parent, EntityQuery query, Pageable pageable ) {
-				return new PageImpl<>( findAll( parent, query ) );
-			}
-		};
-	}
-
 	/**
 	 * Manually register a {@link WebCmsComponent} association on the configuration builder.
 	 * Will add the association as embedded and will not suppress delete but warn about linked components.
@@ -105,26 +90,50 @@ public class WebCmsObjectComponentViewsConfiguration
 	 * @param configuration builder
 	 */
 	public void registerComponentsAssociation( EntityConfigurationBuilder<?> configuration ) {
-		configuration.association( ab -> ab
-				.name( "webCmsComponents" )
-				.targetEntityType( WebCmsComponent.class )
-				.targetProperty( "owner" )
-				.associationType( EntityAssociation.Type.EMBEDDED )
-				.parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
-				.attribute( AssociatedEntityQueryExecutor.class, componentAssociatedEntityQueryExecutor )
-				.listView(
-						lvb -> lvb.showProperties( "title", "name", "componentType", "sortIndex", "lastModified" )
-						          .sortableOn()
+		configuration
+				.association(
+						ab -> ab
+								.name( "webCmsComponents" )
+								.targetEntityType( WebCmsComponent.class )
+								.targetProperty( "owner" )
+								.associationType( EntityAssociation.Type.EMBEDDED )
+								.parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
+								.listView(
+										lvb -> lvb.showProperties( "title", "name", "componentType", "lastModified" )
+										          .defaultSort( "title" )
+								)
+								.createFormView( fvb -> fvb
+										.postProcess(
+												DefaultValidationViewProcessor.class,
+												viewProcessor -> viewProcessor.setValidationHints( Default.class, SharedComponentValidation.class )
+										)
+								)
+								.updateFormView(
+										fvb -> fvb.properties( props -> props.property( "componentType" ).writable( false ) )
+										          .showProperties()
+										          .viewProcessor( formProcessor )
+										          .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 12 ) ) )
+								)
+								.deleteFormView()
 				)
-				.createOrUpdateFormView( fvb -> fvb.properties( props -> props.property( "sortIndex" ).hidden( false ) ) )
-				.updateFormView(
-						fvb -> fvb.properties( props -> props.property( "componentType" ).writable( false ) )
-						          .showProperties()
-						          .viewProcessor( formProcessor )
-						          .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 8, 4 ) ) )
-				)
-				.deleteFormView()
-		);
+				.postProcessor(
+						cfg -> cfg.association( "webCmsComponents" )
+						          .setAttribute( AssociatedEntityQueryExecutor.class, createExecutorForWebCmsObject() )
+				);
+	}
+
+	@SuppressWarnings("unchecked")
+	private AssociatedEntityQueryExecutor<WebCmsComponent> createExecutorForWebCmsObject() {
+		EntityConfiguration<WebCmsComponent> entityConfiguration = entityRegistry.getEntityConfiguration( WebCmsComponent.class );
+		val entityQueryExecutor = entityConfiguration.getAttribute( EntityQueryExecutor.class );
+
+		return new AssociatedEntityQueryExecutor<WebCmsComponent>( null, entityQueryExecutor )
+		{
+			@Override
+			protected EntityQueryCondition buildEqualsOrContainsCondition( Object value ) {
+				return new EntityQueryCondition( "ownerObjectId", EntityQueryOps.EQ, ( (WebCmsObject) value ).getObjectId() );
+			}
+		};
 	}
 
 	@Bean

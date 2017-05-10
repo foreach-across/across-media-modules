@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.installers;
 
 import com.foreach.across.core.annotations.InstallerMethod;
 import com.foreach.across.modules.webcms.data.WebCmsDataImportService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -33,6 +34,7 @@ import java.util.stream.Stream;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@Slf4j
 public abstract class AbstractWebCmsDataInstaller
 {
 	private ApplicationContext applicationContext;
@@ -72,8 +74,10 @@ public abstract class AbstractWebCmsDataInstaller
 		Stream.of( resources )
 		      .forEach( resource -> {
 			      try {
+				      LOG.info( "Importing YAML data from: " + resource );
 				      Map<String, Object> data = (Map<String, Object>) yaml.load( resource.getInputStream() );
 				      dataImportService.importData( data );
+				      LOG.info( "Finished importing YAML data from: " + resource );
 			      }
 			      catch ( IOException ioe ) {
 				      throw new RuntimeException( ioe );

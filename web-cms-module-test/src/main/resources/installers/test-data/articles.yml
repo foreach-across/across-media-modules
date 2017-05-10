@@ -2,7 +2,7 @@ types:
   article:
     blog:
       wcm:components:
-        bodyTemplate:
+        content:
           wcm:components:
             other:
               wcm:action: delete
@@ -35,17 +35,19 @@ assets:
       subTitle:
       published: true
       wcm:components:
-        body:
-          body: |
-            <h1>Coming Up: Ship It Days 2019</h1>
-            <p>In 2016 we had our first <a title="Ship It Day" href="https://foreach.be/blog/ship-it-day-2016-about-being-grid-24-hours" target="_blank">Ship It Day</a> ever. More than expected, it proved to be a means to use our brain cells even more creatively. So this year we’re doing it again!</p>
-            <p>The main rules of the 24-hour Ship It Day? All participants have 24 hours to make something shippable, together, that will benefit the company as a whole. Management will leave the building and, after those 24 hours, they will serve us some outstanding home-made spaghetti.</p>
-            <p>Last year more than half of all employees participated in the Ship It Days 2016. This resulted in some permanent home-made products, such as: <a title="The CurveFever" href="https://foreach.be/blog/ship-it-day-webgame-curvefever" target="_blank">The CurveFever</a> web game; our <a title="Empty Coffee Can Detector" href="https://foreach.be/blog/shipit-day-how-empty-coffee-can-detector" target="_blank">Empty Coffee Can Detector</a> (a device that tells you exactly how much percentage of coffee still remains before a refill becomes urgent); and our Lounge Room (which, admittedly, isn’t shippable - but a huge benefit nonetheless).</p>
-            <p>This year, out of all proposals, four main projects seem to be in the making:</p>
-            <ul>
-            <li>the Foreach chatbot - which might come in handy for job interviews;</li>
-            <li>a smart mirror - which tells us exactly how beautiful we look today;</li>
-            <li>a stock management tool - perhaps to foresee who is to blame for the lack of soda in the Lounge Room;</li>
-            <li>a Docker orchestrator - a tool that automates the setup of test environments (this is the place where an application is tested before it officially 'goes live').</li>
-            </ul>
-            <p>This year’s first edition starts on Thursday the 16th of March 2017. For the Ship It Day-products that meet the 24-hour deadline, we hope to keep you up to date of the outcome. That way maybe you, too, can make your very own shippable “smart mirror”. For more information on that, do keep an eye on our blog.</p>
+        content:
+          wcm:components:
+            body:
+              body: |
+                <h1>Coming Up: Ship It Days 2019</h1>
+                <p>In 2016 we had our first <a title="Ship It Day" href="https://foreach.be/blog/ship-it-day-2016-about-being-grid-24-hours" target="_blank">Ship It Day</a> ever. More than expected, it proved to be a means to use our brain cells even more creatively. So this year we’re doing it again!</p>
+                <p>The main rules of the 24-hour Ship It Day? All participants have 24 hours to make something shippable, together, that will benefit the company as a whole. Management will leave the building and, after those 24 hours, they will serve us some outstanding home-made spaghetti.</p>
+                <p>Last year more than half of all employees participated in the Ship It Days 2016. This resulted in some permanent home-made products, such as: <a title="The CurveFever" href="https://foreach.be/blog/ship-it-day-webgame-curvefever" target="_blank">The CurveFever</a> web game; our <a title="Empty Coffee Can Detector" href="https://foreach.be/blog/shipit-day-how-empty-coffee-can-detector" target="_blank">Empty Coffee Can Detector</a> (a device that tells you exactly how much percentage of coffee still remains before a refill becomes urgent); and our Lounge Room (which, admittedly, isn’t shippable - but a huge benefit nonetheless).</p>
+                <p>This year, out of all proposals, four main projects seem to be in the making:</p>
+                <ul>
+                <li>the Foreach chatbot - which might come in handy for job interviews;</li>
+                <li>a smart mirror - which tells us exactly how beautiful we look today;</li>
+                <li>a stock management tool - perhaps to foresee who is to blame for the lack of soda in the Lounge Room;</li>
+                <li>a Docker orchestrator - a tool that automates the setup of test environments (this is the place where an application is tested before it officially 'goes live').</li>
+                </ul>
+                <p>This year’s first edition starts on Thursday the 16th of March 2017. For the Ship It Day-products that meet the 24-hour deadline, we hope to keep you up to date of the outcome. That way maybe you, too, can make your very own shippable “smart mirror”. For more information on that, do keep an eye on our blog.</p>
