@@ -32,14 +32,16 @@ import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
-import com.foreach.across.modules.webcms.web.TextWebComponentResources;
+import com.foreach.across.modules.webcms.web.WebCmsComponentAdminResources;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
@@ -58,16 +60,24 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Expects the entity to be the {@link com.foreach.across.modules.webcms.domain.WebCmsObject} that owns the components.
+ * Processor that renders a number of components as direct form controls.
+ * Useful if you want to create a single form that allows direct editing of a number of components,
+ * including optionally the members of a container ({@link #setRenderMembersIfContainer(boolean)}).
+ * <p/>
+ * This processor is for example used to render the content components of a {@link WebCmsArticle}
+ * as if they are direct fields on the article entity.
+ * <p/>
+ * Should work with any entity that is a {@link com.foreach.across.modules.webcms.domain.WebCmsObject},
+ * except possibly with other {@link WebCmsComponent}s.
  *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @Component
 @Exposed
 @Scope("prototype")
 @RequiredArgsConstructor
-public class OrderedWebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
+public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 {
 	private final BootstrapUiFactory bootstrapUiFactory;
 	private final WebCmsComponentRepository componentRepository;
@@ -75,10 +85,17 @@ public class OrderedWebCmsComponentsFormProcessor extends EntityViewProcessorAda
 	private final WebCmsComponentModelAdminRenderService componentModelAdminRenderService;
 
 	private String[] componentNames = new String[0];
+
+	/**
+	 * Should containers be rendered as their members instead (default).
+	 * This is useful to create a single page that allows editing all members of a single container.
+	 */
+	@Setter
 	private boolean renderMembersIfContainer = true;
 
 	/**
 	 * Set the names of the component models that should be editable.
+	 * These will be rendered in specification order.
 	 */
 	public void setComponentNames( String... componentNames ) {
 		this.componentNames = componentNames;
@@ -109,10 +126,11 @@ public class OrderedWebCmsComponentsFormProcessor extends EntityViewProcessorAda
 		);
 
 		if ( componentObjectId != null ) {
-			command.addExtension(
-					"configuredWebCmsComponents",
-					command.getExtension( "webCmsComponents" )
-			);
+			entityViewRequest.getModel()
+			                 .addAttribute(
+					                 "configuredWebCmsComponents",
+					                 command.getExtension( "webCmsComponents" )
+			                 );
 			command.addExtension(
 					"webCmsComponents",
 					new ModelsHolder( new WebCmsComponentModel[] { componentModelService.getComponentModel( componentObjectId ) } )
@@ -168,7 +186,7 @@ public class OrderedWebCmsComponentsFormProcessor extends EntityViewProcessorAda
 			val ownerTrail = bootstrapUiFactory.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
 			val baseUrl = entityViewRequest.getEntityViewContext().getLinkBuilder().update( entityViewRequest.getEntityViewContext().getEntity() );
 			WebCmsObject root = entityViewRequest.getEntityViewContext().getEntity( WebCmsObject.class );
-			ModelsHolder rootComponents = command.getExtension( "configuredWebCmsComponents", ModelsHolder.class );
+			ModelsHolder rootComponents = entityView.getAttribute( "configuredWebCmsComponents", ModelsHolder.class );
 			if ( addToOwnerTrail( ownerTrail, componentModel.getObjectId(), componentLinkBuilder, rootComponents, root, baseUrl, false ) ) {
 				columnViewElementBuilder.add( ownerTrail );
 			}
@@ -239,7 +257,7 @@ public class OrderedWebCmsComponentsFormProcessor extends EntityViewProcessorAda
 
 	@Override
 	protected void registerWebResources( EntityViewRequest entityViewRequest, EntityView entityView, WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.addPackage( TextWebComponentResources.NAME );
+		webResourceRegistry.addPackage( WebCmsComponentAdminResources.NAME );
 	}
 
 	/**

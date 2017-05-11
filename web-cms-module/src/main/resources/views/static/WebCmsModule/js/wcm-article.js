@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 (function ( $ ) {
-
     EntityModule.registerInitializer( function ( node ) {
         var container = node ? node : $( document );
         if ( container.find( '[id="entity.articleType"] option' ).length == 1 ) {
@@ -43,5 +42,4 @@
                     }
                 } )
     } );
-
 })( jQuery );

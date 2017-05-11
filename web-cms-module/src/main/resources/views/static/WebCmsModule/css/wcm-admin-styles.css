@@ -13,18 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-body .CodeMirror {
-  height: auto;
-  border: solid 1px #eaeaea;
-  font-size: 13px; }
-
-.cke_editable_inline {
-  padding: 5px 10px;
-  border: solid 1px #e9e9e9;
-  /*-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;*/ }
-
+/**
+ * Contains the general styles for WebCmsComponent and WebCmsAsset management.
+ */
 table tr.info td[data-tbl-field=publicationDate] {
   font-weight: bold; }
 
@@ -38,58 +29,6 @@ table tr.publication-offline td[data-tbl-field=publication] {
 .modal .pcs {
   margin-top: 15px;
   margin-bottom: 15px; }
-
-.image-selector .modal-footer {
-  border-top: none;
-  padding: 0 15px 15px 15px;
-  text-align: left; }
-
-.pcs.webCmsImage .pcs-nav {
-  font-size: 90%;
-  margin-bottom: 10px; }
-
-.image-thumbnail-container {
-  float: left;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  text-align: center;
-  height: 164px;
-  width: 196px;
-  padding: 4px;
-  /* Internet Explorer 10 */
-  display: -ms-flexbox;
-  -ms-flex-pack: center;
-  -ms-flex-align: center;
-  /* Firefox */
-  display: -moz-box;
-  -moz-box-pack: center;
-  -moz-box-align: center;
-  /* Safari, Opera, and Chrome */
-  display: -webkit-box;
-  -webkit-box-pack: center;
-  -webkit-box-align: center;
-  /* W3C */
-  display: box;
-  box-pack: center;
-  box-align: center; }
-
-.image-selected-container .image-thumbnail-container {
-  margin-bottom: 0; }
-
-.image-thumbnail-container.selected {
-  background-color: #279cd3; }
-
-.image-thumbnail-container img {
-  border: solid 1px black;
-  max-width: 188px; }
-
-.image-thumbnail-actions {
-  display: inline-block; }
-
-.image-thumbnail-actions .btn {
-  clear: both;
-  display: block;
-  padding: 0; }
 
 /**
  * Component admin UI styling.
@@ -193,4 +132,4 @@ table tr.publication-offline td[data-tbl-field=publication] {
   .wcm-component-owner-trail a {
     font-weight: bold; }
 
-/*# sourceMappingURL=wcm-styles.css.map */
+/*# sourceMappingURL=wcm-admin-styles.css.map */

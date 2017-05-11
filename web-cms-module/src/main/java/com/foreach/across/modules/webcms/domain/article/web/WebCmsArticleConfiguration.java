@@ -30,7 +30,7 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
-import com.foreach.across.modules.webcms.domain.component.web.OrderedWebCmsComponentsFormProcessor;
+import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentsFormProcessor;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepository;
@@ -53,7 +53,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebCmsArticleConfiguration implements EntityConfigurer
 {
-	private final OrderedWebCmsComponentsFormProcessor componentsFormProcessor;
+	private final WebCmsComponentsFormProcessor componentsFormProcessor;
 	private final ArticleCreateFormProcessor createFormProcessor;
 	private final ArticleUpdateFormProcessor updateFormProcessor;
 	private final ArticleTypeForPublicationIterableBuilder articleTypeForPublicationIterableBuilder;

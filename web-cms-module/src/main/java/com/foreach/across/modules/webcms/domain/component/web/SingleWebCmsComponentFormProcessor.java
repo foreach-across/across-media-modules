@@ -38,9 +38,10 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentValidator;
+import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
-import com.foreach.across.modules.webcms.web.TextWebComponentResources;
+import com.foreach.across.modules.webcms.web.WebCmsComponentAdminResources;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -57,14 +58,19 @@ import javax.validation.groups.Default;
 
 /**
  * Layouts the web component form pages, builds the actual component model and renders the form.
+ * Mainly intended for indirect use by the {@link WebCmsObjectComponentViewsConfiguration}.
+ * See the {@link WebCmsComponentsFormProcessor} if you want to add the ability to edit certain
+ * component to another form page.
  *
  * @author Arne Vandamme
+ * @see WebCmsComponentsFormProcessor
+ * @see WebCmsObjectComponentViewsConfiguration
  * @since 0.0.1
  */
 @ConditionalOnAdminUI
 @Component
 @RequiredArgsConstructor
-public class WebCmsComponentFormProcessor extends SaveEntityViewProcessor
+public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 {
 	private final static String EXTENSION_NAME = "componentModel";
 
@@ -136,6 +142,12 @@ public class WebCmsComponentFormProcessor extends SaveEntityViewProcessor
 				                                                     isNew ? "feedback.entityCreated" : "feedback.entityUpdated" );
 
 				String redirectTargetUrl = entityViewRequest.getWebRequest().getParameter( "from" );
+
+				if ( !isNew && redirectTargetUrl != null ) {
+					redirectTargetUrl = UriComponentsBuilder.fromUriString( entityViewContext.getLinkBuilder().update( savedEntity ) )
+					                                        .queryParam( "from", redirectTargetUrl )
+					                                        .toUriString();
+				}
 
 				if ( redirectTargetUrl == null ) {
 					redirectTargetUrl = entityViewContext.getLinkBuilder().update( savedEntity );
@@ -209,6 +221,6 @@ public class WebCmsComponentFormProcessor extends SaveEntityViewProcessor
 
 	@Override
 	protected void registerWebResources( EntityViewRequest entityViewRequest, EntityView entityView, WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.addPackage( TextWebComponentResources.NAME );
+		webResourceRegistry.addPackage( WebCmsComponentAdminResources.NAME );
 	}
 }

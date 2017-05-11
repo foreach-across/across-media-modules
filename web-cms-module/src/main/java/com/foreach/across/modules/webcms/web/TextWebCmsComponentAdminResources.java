@@ -19,26 +19,31 @@ package com.foreach.across.modules.webcms.web;
 import com.foreach.across.modules.web.resource.SimpleWebResourcePackage;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourcePackageManager;
-import com.foreach.across.modules.webcms.WebCmsModule;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import org.springframework.stereotype.Component;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@ConditionalOnAdminUI
 @Component
-public class TextWebComponentResources extends SimpleWebResourcePackage
+public class TextWebCmsComponentAdminResources extends SimpleWebResourcePackage
 {
-	public static final String NAME = "wcm-text-components";
+	public static final String NAME = "wcm-text-components-admin";
 
-	public TextWebComponentResources( WebResourcePackageManager adminWebResourcePackageManager ) {
+	public TextWebCmsComponentAdminResources( WebResourcePackageManager adminWebResourcePackageManager ) {
 		adminWebResourcePackageManager.register( NAME, this );
 
+		setDependencies( WebCmsComponentAdminResources.NAME );
+
 		setWebResources(
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "jquery-ui", "https://code.jquery.com/ui/1.12.1/jquery-ui.min.js", WebResource.EXTERNAL ),
-				new WebResource( WebResource.CSS, WebCmsModule.NAME, "/static/WebCmsModule/css/wcm-styles.css", WebResource.VIEWS ),
+				new WebResource( WebResource.CSS, NAME, "/static/WebCmsModule/css/wcm-admin-text-component-styles.css", WebResource.VIEWS ),
+
+				// ckeditor
 				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "ckeditor", "https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js", WebResource.EXTERNAL ),
 
+				// codemirror
 				new WebResource( WebResource.CSS, "codemirror-css", "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css",
 				                 WebResource.EXTERNAL ),
 				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "codemirror", "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js",
@@ -50,7 +55,7 @@ public class TextWebComponentResources extends SimpleWebResourcePackage
 				                 "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js",
 				                 WebResource.EXTERNAL ),
 
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, NAME, "/static/WebCmsModule/js/wcm-text-components.js", WebResource.VIEWS )
+				new WebResource( WebResource.JAVASCRIPT_PAGE_END, NAME, "/static/WebCmsModule/js/wcm-admin-text-components.js", WebResource.VIEWS )
 		);
 	}
 }

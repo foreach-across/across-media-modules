@@ -19,9 +19,11 @@ package com.foreach.across.modules.webcms.domain.component.text;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
+import com.foreach.across.modules.webcms.web.TextWebCmsComponentAdminResources;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -53,6 +55,9 @@ public class TextWebCmsComponentModelAdminRenderer implements WebCmsComponentMod
 		                         .text( componentModel.getContent() )
 		                         .attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
 		                         .attribute( "data-wcm-markup-type", componentModel.getMarkupType().asAttributeValue() )
-		                         .attribute( "data-wcm-profile", componentModel.getProfile() );
+		                         .attribute( "data-wcm-profile", componentModel.getProfile() )
+		                         .postProcessor( ( ( builderContext, element ) -> {
+			                         builderContext.getAttribute( WebResourceRegistry.class ).addPackage( TextWebCmsComponentAdminResources.NAME );
+		                         } ) );
 	}
 }

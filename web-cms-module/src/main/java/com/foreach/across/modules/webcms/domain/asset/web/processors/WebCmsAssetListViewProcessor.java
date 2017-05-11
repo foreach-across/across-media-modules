@@ -63,6 +63,6 @@ public class WebCmsAssetListViewProcessor extends EntityViewProcessorAdapter
 
 	@Override
 	protected void registerWebResources( EntityViewRequest entityViewRequest, EntityView entityView, WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.addWithKey( WebResource.CSS, "wcm-styles", "/static/WebCmsModule/css/wcm-styles.css", WebResource.VIEWS );
+		webResourceRegistry.addWithKey( WebResource.CSS, "wcm-styles", "/static/WebCmsModule/css/wcm-admin-styles.css", WebResource.VIEWS );
 	}
 }

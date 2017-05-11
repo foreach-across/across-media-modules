@@ -28,7 +28,7 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.web.ContainerMemberViewProcessor;
-import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentFormProcessor;
+import com.foreach.across.modules.webcms.domain.component.web.SingleWebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,7 +44,7 @@ import javax.validation.groups.Default;
 class WebCmsComponentConfiguration implements EntityConfigurer
 {
 	private final ContainerMemberViewProcessor containerMemberViewProcessor;
-	private final WebCmsComponentFormProcessor formProcessor;
+	private final SingleWebCmsComponentFormProcessor formProcessor;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {

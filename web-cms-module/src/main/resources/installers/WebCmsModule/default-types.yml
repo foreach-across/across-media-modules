@@ -44,7 +44,7 @@ types:
       wcm:components:
         # Default component name that contains the content components for this article type
         content:
-          title: Main article content
+          title: Article content
           componentType: container
           wcm:components:
             body:

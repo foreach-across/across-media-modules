@@ -21,13 +21,12 @@ import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.Style;
-import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
 import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
+import com.foreach.across.modules.webcms.web.ImageWebCmsComponentAdminResources;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
@@ -111,15 +110,7 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 						                  .text( "Select image" )
 				)
 				.postProcessor( ( builderContext, wrapper ) -> {
-					WebResourceRegistry resourceRegistry = builderContext.getAttribute( WebResourceRegistry.class );
-					resourceRegistry.addWithKey( WebResource.CSS, WebCmsModule.NAME, "/static/WebCmsModule/css/wcm-styles.css", WebResource.VIEWS );
-					resourceRegistry.addWithKey(
-							WebResource.JAVASCRIPT_PAGE_END,
-							"bootbox",
-							"https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js",
-							WebResource.EXTERNAL );
-					resourceRegistry.addWithKey( WebResource.JAVASCRIPT_PAGE_END, "wcm-image-component", "/static/WebCmsModule/js/wcm-image-component.js",
-					                             WebResource.VIEWS );
+					builderContext.getAttribute( WebResourceRegistry.class ).addPackage( ImageWebCmsComponentAdminResources.NAME );
 				} );
 	}
 }

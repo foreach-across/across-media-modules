@@ -33,7 +33,7 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent.SharedComponentValidation;
-import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentFormProcessor;
+import com.foreach.across.modules.webcms.domain.component.web.SingleWebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.annotation.Bean;
@@ -57,7 +57,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class WebCmsObjectComponentViewsConfiguration
 {
-	private final WebCmsComponentFormProcessor formProcessor;
+	private final SingleWebCmsComponentFormProcessor formProcessor;
 	private final Set<Class<?>> assetTypes = new HashSet<>();
 	private final EntityRegistry entityRegistry;
 
