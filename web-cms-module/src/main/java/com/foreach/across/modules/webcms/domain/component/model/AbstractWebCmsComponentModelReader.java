@@ -54,7 +54,7 @@ public abstract class AbstractWebCmsComponentModelReader<T extends WebCmsCompone
 
 		if ( metadataClassName != null ) {
 			try {
-				Class<?> metadataType = Class.forName( metadataClassName );
+				Class<?> metadataType = Class.forName( metadataClassName, true, Thread.currentThread().getContextClassLoader() );
 				if ( currentMetadata == null || !metadataType.isInstance( currentMetadata ) ) {
 					metadata = metadataType.newInstance();
 				}
