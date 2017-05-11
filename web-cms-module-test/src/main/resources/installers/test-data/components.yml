@@ -20,3 +20,4 @@ types:
               componentType: rich-text
               title: Body
               sortIndex: 1
+              body: "<h3>@@container.title@@</h3>"

@@ -20,7 +20,9 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.AbstractWebCmsComponentModelWriter;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
+import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
@@ -50,11 +52,26 @@ public class ContainerWebCmsComponentModelWriter extends AbstractWebCmsComponent
 		List<WebCmsComponentModel> members = componentModel.getMembers();
 		members.sort( Comparator.comparingInt( m -> m.getComponent().getSortIndex() ) );
 
+		members.forEach( m -> replaceAttributesInTextComponents( componentModel, m ) );
+
 		for ( int i = 0; i < members.size(); i++ ) {
 			WebCmsComponentModel member = members.get( i );
 			member.getComponent().setSortIndex( i + 1 );
 			member.setOwner( componentModel );
 			webCmsComponentModelService.save( member );
+		}
+	}
+
+	private void replaceAttributesInTextComponents( WebCmsComponentModel container, WebCmsComponentModel componentModel ) {
+		if ( componentModel.isNew() ) {
+			if ( componentModel instanceof TextWebCmsComponentModel ) {
+				TextWebCmsComponentModel text = (TextWebCmsComponentModel) componentModel;
+				text.setContent( StringUtils.replace( text.getContent(), "@@container.title@@", container.getTitle() ) );
+				text.setContent( StringUtils.replace( text.getContent(), "@@container.name@@", container.getName() ) );
+			}
+			else if ( componentModel instanceof ContainerWebCmsComponentModel ) {
+				( (ContainerWebCmsComponentModel) componentModel ).getMembers().forEach( m -> replaceAttributesInTextComponents( componentModel, m ) );
+			}
 		}
 	}
 }
