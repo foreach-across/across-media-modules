@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.web.thymeleaf;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentAutoCreateQueue;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
+import com.foreach.across.modules.webcms.domain.component.placeholder.WebCmsPlaceholderContentModel;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -33,6 +34,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static com.foreach.across.modules.webcms.web.thymeleaf.PlaceholderTemplateProcessor.DECREASE_PLACEHOLDER_LEVEL;
 import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREFIX;
 import static com.foreach.across.modules.webcms.web.thymeleaf.WebComponentModelTemplateProcessor.START_INSTRUCTION;
 import static com.foreach.across.modules.webcms.web.thymeleaf.WebComponentModelTemplateProcessor.STOP_INSTRUCTION;
@@ -48,9 +50,10 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 	private static final String ATTR_AUTO_CREATE = "auto-create";
 	private static final String ATTR_TYPE = "type";
 	private static final String ATTR_REPLACE = "always-replace";
+	private static final String ATTR_PLACEHOLDERS = "placeholders";
 
 	private static final Collection<String> ATTRIBUTES_TO_REMOVE = Arrays.asList(
-			ATTR_COMPONENT, ATTR_SCOPE, ATTR_SEARCH_PARENTS, ATTR_AUTO_CREATE, ATTR_TYPE, ATTR_REPLACE
+			ATTR_COMPONENT, ATTR_SCOPE, ATTR_SEARCH_PARENTS, ATTR_AUTO_CREATE, ATTR_TYPE, ATTR_REPLACE, ATTR_PLACEHOLDERS
 	);
 
 	WebComponentModelProcessor() {
@@ -79,12 +82,19 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 
 			ApplicationContext applicationContext = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
 			WebCmsComponentModelHierarchy components = applicationContext.getBean( WebCmsComponentModelHierarchy.class );
+			WebCmsPlaceholderContentModel placeholderContentModel = applicationContext.getBean( WebCmsPlaceholderContentModel.class );
 
 			String scopeName = elementTag.getAttributeValue( PREFIX, ATTR_SCOPE );
 			WebCmsComponentModel component = fetchWebComponentModel( attributeValue, elementTag, components, scopeName );
 
+			boolean hasPlaceholders = elementTag.getAttribute( PREFIX, ATTR_PLACEHOLDERS ) != null;
+
+			if ( hasPlaceholders ) {
+				placeholderContentModel.increaseLevel();
+			}
+
 			if ( component != null ) {
-				elementTag = renderComponentModel( (IEngineContext) context, model, elementTag, modelFactory, component );
+				elementTag = renderComponentModel( (IEngineContext) context, model, elementTag, modelFactory, component, hasPlaceholders );
 			}
 			else {
 				WebCmsComponentAutoCreateQueue queue = applicationContext.getBean( WebCmsComponentAutoCreateQueue.class );
@@ -102,7 +112,6 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 
 					model.insert( 1, modelFactory.createProcessingInstruction( START_INSTRUCTION, componentId ) );
 					model.insert( model.size() - 1, modelFactory.createProcessingInstruction( STOP_INSTRUCTION, componentId ) );
-
 				}
 				else {
 					boolean alwaysReplaceBody = elementTag.hasAttribute( PREFIX, ATTR_REPLACE );
@@ -111,6 +120,10 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 						renderEmptyBody( model, elementTag );
 					}
 				}
+			}
+
+			if ( hasPlaceholders ) {
+				model.add( modelFactory.createProcessingInstruction( DECREASE_PLACEHOLDER_LEVEL, "" ) );
 			}
 
 			removeAttributes( model, elementTag, modelFactory );
@@ -150,16 +163,24 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 	                                                     IModel model,
 	                                                     IProcessableElementTag elementTag,
 	                                                     IModelFactory modelFactory,
-	                                                     WebCmsComponentModel component ) {
-		model.reset();
-		if ( elementTag instanceof IOpenElementTag ) {
-			model.add( elementTag );
+	                                                     WebCmsComponentModel component,
+	                                                     boolean hasPlaceholders ) {
+		if ( hasPlaceholders ) {
+			model.insert( 1, modelFactory.createProcessingInstruction( PlaceholderTemplateProcessor.START_INSTRUCTION, "" ) );
+			model.replace( model.size() - 1, modelFactory.createProcessingInstruction( PlaceholderTemplateProcessor.STOP_INSTRUCTION, "" ) );
 		}
 		else {
-			model.add( modelFactory.createOpenElementTag(
-					elementTag.getElementCompleteName(), elementTag.getAttributeMap(), AttributeValueQuotes.DOUBLE, false
-			) );
-			elementTag = (IProcessableElementTag) model.get( 0 );
+			model.reset();
+
+			if ( elementTag instanceof IOpenElementTag ) {
+				model.add( elementTag );
+			}
+			else {
+				model.add( modelFactory.createOpenElementTag(
+						elementTag.getElementCompleteName(), elementTag.getAttributeMap(), AttributeValueQuotes.DOUBLE, false
+				) );
+				elementTag = (IProcessableElementTag) model.get( 0 );
+			}
 		}
 
 		String atrId = "_generatedComponentName" + System.currentTimeMillis();

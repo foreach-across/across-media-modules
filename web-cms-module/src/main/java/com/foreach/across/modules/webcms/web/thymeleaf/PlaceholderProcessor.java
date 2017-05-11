@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
+import com.foreach.across.modules.webcms.domain.component.placeholder.WebCmsPlaceholderContentModel;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
@@ -26,8 +27,6 @@ import org.thymeleaf.processor.element.AbstractAttributeModelProcessor;
 import org.thymeleaf.processor.element.IElementModelStructureHandler;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import static com.foreach.across.modules.webcms.web.thymeleaf.PlaceholderTemplateProcessor.START_INSTRUCTION;
-import static com.foreach.across.modules.webcms.web.thymeleaf.PlaceholderTemplateProcessor.STOP_INSTRUCTION;
 import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREFIX;
 
 /**
@@ -43,7 +42,7 @@ class PlaceholderProcessor extends AbstractAttributeModelProcessor
 				false,          // Apply dialect prefix to tag name
 				"placeholder",              // No attribute name: will match by tag name
 				true,          // No prefix to be applied to attribute name
-				99999,
+				1000,
 				false
 		);
 	}
@@ -67,13 +66,11 @@ class PlaceholderProcessor extends AbstractAttributeModelProcessor
 			}
 
 			ApplicationContext applicationContext = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
+			WebCmsPlaceholderContentModel placeholders = applicationContext.getBean( WebCmsPlaceholderContentModel.class );
 
-			if ( isStandaloneTag ) {
-				renderEmptyBody( model, elementTag );
-			}
+			placeholders.setPlaceholderContent( placeholderName, model.cloneModel() );
 
-			model.insert( 0, modelFactory.createProcessingInstruction( START_INSTRUCTION, placeholderName ) );
-			model.insert( model.size(), modelFactory.createProcessingInstruction( STOP_INSTRUCTION, placeholderName ) );
+			model.reset();
 		}
 	}
 

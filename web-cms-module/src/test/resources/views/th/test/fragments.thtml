@@ -3,6 +3,11 @@
     header text
 </h1>
 
+<h1 th:fragment="renderPlaceholder(component)" class="some-header"
+    th:text="${@webCmsPlaceholderContentModel.getPlaceholderContent(component.placeholderName).get()}">
+    header text
+</h1>
+
 <div th:fragment="customText(component)" th:with="metadata=${component.metadata}">
     <h1 th:if="${metadata.enabled}">[[${metadata.country}]]</h1>
     <p>[[${component.content}]]</p>

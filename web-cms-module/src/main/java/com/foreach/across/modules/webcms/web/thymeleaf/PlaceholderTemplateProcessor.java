@@ -16,8 +16,12 @@
 
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
+import com.foreach.across.modules.webcms.domain.component.placeholder.WebCmsPlaceholderContentModel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.engine.ITemplateHandler;
 import org.thymeleaf.engine.OutputTemplateHandler;
 import org.thymeleaf.model.*;
@@ -35,6 +39,7 @@ final class PlaceholderTemplateProcessor implements IPostProcessor
 {
 	static final String START_INSTRUCTION = "render-to-placeholder-start";
 	static final String STOP_INSTRUCTION = "render-to-placeholder-finish";
+	static final String DECREASE_PLACEHOLDER_LEVEL = "decrease-placeholder-level";
 
 	@Override
 	public TemplateMode getTemplateMode() {
@@ -61,6 +66,8 @@ final class PlaceholderTemplateProcessor implements IPostProcessor
 		private Output output;
 		private ArrayDeque<Output> tree = new ArrayDeque<>();
 
+		private WebCmsPlaceholderContentModel placeholderContentModel;
+
 		@RequiredArgsConstructor
 		private static class Output
 		{
@@ -79,8 +86,8 @@ final class PlaceholderTemplateProcessor implements IPostProcessor
 		public void setContext( ITemplateContext context ) {
 			this.context = context;
 
-			//ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-			//queue = appCtx.getBean( WebCmsComponentAutoCreateQueue.class );
+			ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
+			placeholderContentModel = appCtx.getBean( WebCmsPlaceholderContentModel.class );
 		}
 
 		@Override
@@ -144,11 +151,15 @@ final class PlaceholderTemplateProcessor implements IPostProcessor
 				next = output.handler;
 			}
 			else if ( STOP_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
-				System.err.println( "{" + tree.pop().buffer.toString()+ "}" );
+				tree.pop();
+				//System.err.println( "{" + tree.pop().buffer.toString()+ "}" );
 				//queue.outputFinished( processingInstruction.getContent(), tree.pop().buffer.toString() );
 				this.output = tree.peek();
 				enabled = this.output != null;
 				next = enabled ? output.handler : original;
+			}
+			else if ( DECREASE_PLACEHOLDER_LEVEL.equals( processingInstruction.getTarget() ) ) {
+				placeholderContentModel.decreaseLevel();
 			}
 			else {
 				next.handleProcessingInstruction( processingInstruction );

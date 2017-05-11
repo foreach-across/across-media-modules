@@ -223,5 +223,10 @@ public class TestOrderedWebComponentModelSet
 		public WebCmsComponentModel asComponentTemplate() {
 			return new Model( getName() );
 		}
+
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
 	}
 }

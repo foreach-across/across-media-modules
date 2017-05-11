@@ -27,6 +27,7 @@ import com.foreach.across.modules.entity.views.support.EntityMessages;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.ContainerMemberViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.web.SingleWebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.create().entityType( PlaceholderWebCmsComponentModel.Metadata.class, true );
 		entities.withType( WebCmsComponentType.class ).hide();
 
 		// Configure the globally shared components

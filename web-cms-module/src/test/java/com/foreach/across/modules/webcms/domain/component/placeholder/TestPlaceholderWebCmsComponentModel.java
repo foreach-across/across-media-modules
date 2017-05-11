@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.component.text;
+package com.foreach.across.modules.webcms.domain.component.placeholder;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
@@ -27,15 +27,15 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class TestTextWebCmsComponentModel
+public class TestPlaceholderWebCmsComponentModel
 {
-	private TextWebCmsComponentModel model;
+	private PlaceholderWebCmsComponentModel model;
 
 	@Test
 	public void defaultValues() {
-		model = new TextWebCmsComponentModel();
-		assertNull(  model.getMetadata() );
-		assertFalse( model.hasMetadata() );
+		model = new PlaceholderWebCmsComponentModel();
+		assertNotNull( model.getMetadata() );
+		assertTrue( model.hasMetadata() );
 		assertNull( model.getComponentType() );
 		assertNull( model.getName() );
 		assertNotNull( model.getObjectId() );
@@ -44,11 +44,6 @@ public class TestTextWebCmsComponentModel
 		assertEquals( WebCmsComponentModel.class.getSimpleName(), model.getElementType() );
 		assertNull( model.getCustomTemplate() );
 		assertTrue( model.isNew() );
-
-		assertEquals( TextWebCmsComponentModel.MarkupType.MARKUP, model.getMarkupType() );
-		assertNull( model.getProfile() );
-		assertTrue( model.isMultiLine() );
-		assertNull( model.getContent() );
 		assertTrue( model.isEmpty() );
 	}
 
@@ -63,7 +58,7 @@ public class TestTextWebCmsComponentModel
 		                                           .componentType( componentType )
 		                                           .ownerObjectId( "123" )
 		                                           .build();
-		model = new TextWebCmsComponentModel( component );
+		model = new PlaceholderWebCmsComponentModel( component );
 
 		assertEquals( component, model.getComponent() );
 		assertSame( componentType, model.getComponentType() );
@@ -73,22 +68,23 @@ public class TestTextWebCmsComponentModel
 		assertEquals( "123", model.getOwnerObjectId() );
 		assertFalse( model.isNew() );
 
-		assertEquals( TextWebCmsComponentModel.MarkupType.MARKUP, model.getMarkupType() );
-		assertNull( model.getProfile() );
-		assertTrue( model.isMultiLine() );
-		assertNull( model.getContent() );
+		assertNull( model.getPlaceholderName() );
 		assertTrue( model.isEmpty() );
 
 		assertEquals( "th/mytemplate", model.getCustomTemplate() );
 		model.setRenderTemplate( "specific-template" );
 		assertEquals( "specific-template", model.getCustomTemplate() );
+
+		model.setPlaceholderName( "someName" );
+		assertFalse( model.isEmpty() );
+		assertEquals( "someName", model.getPlaceholderName() );
 	}
 
 	@Test
 	public void backingComponentShouldBeDto() {
 		WebCmsComponent component = WebCmsComponent.builder().id( 1L ).build();
 
-		model = new TextWebCmsComponentModel( component );
+		model = new PlaceholderWebCmsComponentModel( component );
 		assertEquals( component, model.getComponent() );
 		assertNotSame( component, model.getComponent() );
 
@@ -104,7 +100,7 @@ public class TestTextWebCmsComponentModel
 		WebCmsComponent component = WebCmsComponent.builder()
 		                                           .name( "component-name" )
 		                                           .build();
-		model = new TextWebCmsComponentModel( component );
+		model = new PlaceholderWebCmsComponentModel( component );
 		assertEquals( "component-name", model.getTitle() );
 	}
 
@@ -119,13 +115,10 @@ public class TestTextWebCmsComponentModel
 		                                           .componentType( componentType )
 		                                           .ownerObjectId( "123" )
 		                                           .build();
-		model = new TextWebCmsComponentModel( component );
-		model.setMultiLine( false );
-		model.setMarkupType( TextWebCmsComponentModel.MarkupType.RICH_TEXT );
-		model.setProfile( "some-profile" );
-		model.setContent( "body content..." );
+		model = new PlaceholderWebCmsComponentModel( component );
+		model.setPlaceholderName( "my-placeholder-name" );
 
-		TextWebCmsComponentModel template = model.asComponentTemplate();
+		PlaceholderWebCmsComponentModel template = model.asComponentTemplate();
 		assertNotEquals( component, template.getComponent() );
 		assertSame( componentType, template.getComponentType() );
 		assertEquals( "component-name", template.getName() );
@@ -134,10 +127,6 @@ public class TestTextWebCmsComponentModel
 		assertNotEquals( "123", template.getOwnerObjectId() );
 		assertTrue( template.isNew() );
 
-		assertEquals( TextWebCmsComponentModel.MarkupType.RICH_TEXT, template.getMarkupType() );
-		assertEquals( "some-profile", template.getProfile() );
-		assertFalse( template.isMultiLine() );
-		assertEquals( "body content...", template.getContent() );
-		assertFalse( template.isEmpty() );
+		assertEquals( "my-placeholder-name", template.getPlaceholderName() );
 	}
 }

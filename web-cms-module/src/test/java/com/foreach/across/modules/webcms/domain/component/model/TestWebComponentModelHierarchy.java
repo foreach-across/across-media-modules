@@ -202,5 +202,10 @@ public class TestWebComponentModelHierarchy
 		public WebCmsComponentModel asComponentTemplate() {
 			return new Model( getName() );
 		}
+
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
 	}
 }

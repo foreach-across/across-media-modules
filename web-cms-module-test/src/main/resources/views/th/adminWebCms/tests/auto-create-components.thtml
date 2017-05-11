@@ -40,16 +40,25 @@
         </td>
     </tr>
     <tr>
-       <td>block with container and member</td>
-        <td class="four" wcm:component="create-four" wcm:auto-create wcm:type="container">
+        <td>block with container and member</td>
+        <td class="four" wcm:component="create-four" wcm:auto-create wcm:type="container" wcm:placeholders>
             all of this
             <th:block wcm:component="member-one">block with container</th:block>
             should be
             <th:block wcm:component="member-two" wcm:type="html"> and member</th:block>
             ignored
-            <div wcm:placeholder="some-placeholder" data-toggle="someTabName">
+            <div wcm:placeholder="some-placeholder" data-toggle="someTabName" th:remove="tag">
                 This is placeholder content.
             </div>
+            <div wcm:placeholder="available-for-use" th:remove="tag">
+                Overruled placeholder content :-)
+            </div>
+
+        </td>
+    </tr>
+    <tr>
+        <td>block with container and member</td>
+        <td class="five" wcm:component="create-five" wcm:auto-create wcm:type="container">
         </td>
     </tr>
 </table>

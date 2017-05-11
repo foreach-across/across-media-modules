@@ -1,6 +1,11 @@
 types:
   # Default component types
   component:
+    placeholder:
+      name: Placeholder
+      description: Represents a placeholder for content provided by code or templates.
+      attributes:
+        type: placeholder
     container:
       name: Container
       description: Container of multiple ordered components.

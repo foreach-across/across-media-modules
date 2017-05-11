@@ -253,6 +253,13 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	 */
 	public abstract WebCmsComponentModel asComponentTemplate();
 
+	/**
+	 * Base implementation that can be used to check if the component contains any relevant data.
+	 *
+	 * @return {@code true} if no relevant data is present
+	 */
+	public abstract boolean isEmpty();
+
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {

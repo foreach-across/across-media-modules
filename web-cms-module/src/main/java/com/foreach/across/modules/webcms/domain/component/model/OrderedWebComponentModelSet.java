@@ -51,6 +51,11 @@ public class OrderedWebComponentModelSet
 		public WebCmsComponentModel asComponentTemplate() {
 			return null;
 		}
+
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
 	};
 
 	@Getter

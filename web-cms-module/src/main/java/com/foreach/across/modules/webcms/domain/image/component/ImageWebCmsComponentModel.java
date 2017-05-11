@@ -71,6 +71,11 @@ public class ImageWebCmsComponentModel extends WebCmsComponentModel
 		return getImage() != null ? getImage().getExternalId() : null;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return !hasImageServerKey();
+	}
+
 	public boolean hasImageServerKey() {
 		return imageServerKey != null || getImage() != null;
 	}
