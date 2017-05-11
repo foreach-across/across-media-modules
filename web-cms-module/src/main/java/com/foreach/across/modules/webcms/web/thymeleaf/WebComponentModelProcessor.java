@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.web.thymeleaf;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentAutoCreateQueue;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.IEngineContext;
@@ -86,11 +87,13 @@ class WebComponentModelProcessor extends AbstractAttributeModelProcessor
 				elementTag = renderComponentModel( (IEngineContext) context, model, elementTag, modelFactory, component );
 			}
 			else {
-				String creationScope = determineCreationScope( elementTag, components, scopeName );
+				WebCmsComponentAutoCreateQueue queue = applicationContext.getBean( WebCmsComponentAutoCreateQueue.class );
+				val task = queue.getCurrentTask();
+
+				String creationScope = task != null ? task.getScopeName() : determineCreationScope( elementTag, components, scopeName );
 
 				if ( creationScope != null ) {
 					String componentType = elementTag.getAttributeValue( PREFIX, ATTR_TYPE );
-					WebCmsComponentAutoCreateQueue queue = applicationContext.getBean( WebCmsComponentAutoCreateQueue.class );
 					String componentId = queue.schedule( attributeValue, creationScope, componentType );
 
 					if ( isStandaloneTag ) {

@@ -35,6 +35,16 @@
             block with html type create on the global level: <em>[[${#dates.createNow()}]]</em>
         </td>
     </tr>
+    <tr>
+       <td>block with container and member</td>
+        <td class="four" wcm:component="create-four" wcm:auto-create wcm:type="container">
+            all of this
+            <th:block wcm:component="member-one">block with container</th:block>
+            should be
+            <th:block wcm:component="member-two" wcm:type="html"> and member</th:block>
+            ignored
+        </td>
+    </tr>
 </table>
 
 </body>

@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.entity.util.EntityUtils;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
@@ -31,7 +32,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Arne Vandamme
@@ -43,8 +47,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class WebCmsComponentAutoCreateQueue
 {
-	private final Set<String> created = new HashSet<>();
-
 	private final Map<String, Task> tasksByKey = new HashMap<>();
 	private final ArrayDeque<Task> tasks = new ArrayDeque<>();
 	private final ArrayDeque<Task> outputQueue = new ArrayDeque<>();
@@ -60,6 +62,10 @@ public class WebCmsComponentAutoCreateQueue
 		tasks.add( creationTask );
 
 		return creationTask.getObjectId();
+	}
+
+	public Task getCurrentTask() {
+		return outputQueue.peek();
 	}
 
 	public void outputStarted( String objectId ) {
@@ -85,21 +91,21 @@ public class WebCmsComponentAutoCreateQueue
 		if ( next != null ) {
 			next.addChild( current );
 		}
-
-		saveComponent( current, output );
+		else {
+			OrderedWebComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( current.getScopeName() );
+			saveComponent( current, output, componentModelSet.getOwner() );
+		}
 	}
 
-	private void saveComponent( Task creationTask, String output ) {
+	private void saveComponent( Task creationTask, String output, WebCmsObject owner ) {
 		WebCmsComponent component = creationTask.getComponent();
 		component.setComponentType( determineComponentType( creationTask.getComponentType() ) );
-
 		component.setTitle( EntityUtils.generateDisplayName( component.getName().replace( '-', '_' ) ) );
-
-		OrderedWebComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( creationTask.getScopeName() );
-		component.setOwner( componentModelSet.getOwner() );
+		component.setOwner( owner );
 		component.setBody( output );
-
 		componentRepository.save( component );
+
+		creationTask.getChildren().forEach( childTask -> saveComponent( childTask, childTask.getOutput(), component ) );
 	}
 
 	private WebCmsComponentType determineComponentType( String requestedComponentType ) {
@@ -108,12 +114,13 @@ public class WebCmsComponentAutoCreateQueue
 
 	@Getter
 	@Setter
-	private static class Task
+	public static class Task
 	{
 		private final WebCmsComponent component;
 		private final String scopeName;
 		private final String componentType;
 		private final Deque<Task> children = new ArrayDeque<>();
+		private int sortIndex;
 
 		public Task( String componentName, String scopeName, String componentType ) {
 			this.scopeName = scopeName;
@@ -130,6 +137,7 @@ public class WebCmsComponentAutoCreateQueue
 		}
 
 		public void addChild( Task task ) {
+			task.sortIndex = children.size() + 1;
 			children.add( task );
 		}
 	}
