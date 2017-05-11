@@ -42,6 +42,7 @@ public class WebCmsDialect extends AbstractProcessorDialect implements IPostProc
 	@Override
 	public Set<IProcessor> getProcessors( final String dialectPrefix ) {
 		Set<IProcessor> processors = new HashSet<>();
+		processors.add( new PlaceholderProcessor() );
 		processors.add( new WebComponentModelProcessor() );
 		return processors;
 	}
@@ -53,7 +54,9 @@ public class WebCmsDialect extends AbstractProcessorDialect implements IPostProc
 
 	@Override
 	public Set<IPostProcessor> getPostProcessors() {
-		return Collections.singleton( new WebComponentModelTemplateProcessor() );
+		Set<IPostProcessor> processors = new HashSet<>();
+		processors.add( new PlaceholderTemplateProcessor() );
+		processors.add( new WebComponentModelTemplateProcessor() );
+		return processors;
 	}
-
 }

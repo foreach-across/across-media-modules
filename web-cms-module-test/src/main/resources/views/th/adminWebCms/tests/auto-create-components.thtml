@@ -16,6 +16,10 @@
 <html xmlns:wcm="http://www.w3.org/1999/xhtml">
 <body>
 
+<div wcm:placeholder="available-for-use">
+    i'm available for use later in the markup!
+</div>
+
 <table cellpadding="5" border="1">
     <tr>
         <th>Expected</th>
@@ -43,6 +47,9 @@
             should be
             <th:block wcm:component="member-two" wcm:type="html"> and member</th:block>
             ignored
+            <div wcm:placeholder="some-placeholder" data-toggle="someTabName">
+                This is placeholder content.
+            </div>
         </td>
     </tr>
 </table>
