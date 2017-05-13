@@ -56,6 +56,7 @@ import org.springframework.web.util.UrlPathHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -120,6 +121,7 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 									      return Stream.of( model );
 								      }
 						      )
+						      .filter( Objects::nonNull )
 						      .collect( Collectors.toList() )
 						      .toArray( new WebCmsComponentModel[0] )
 				)

@@ -34,6 +34,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 final class ArticleTypeComponentsStrategy implements WebCmsArticleComponentsStrategy
 {
+	public static final String DEFAULT_CONTENT_COMPONENT = "content";
+
 	private final WebCmsComponentModelService componentModelService;
 	private final WebCmsArticleTypeRepository articleTypeRepository;
 
@@ -64,7 +66,7 @@ final class ArticleTypeComponentsStrategy implements WebCmsArticleComponentsStra
 	}
 
 	private WebCmsComponentModel retrieveContentTemplate( WebCmsArticleType articleType ) {
-		String contentTemplateName = StringUtils.defaultString( articleType.getAttribute( "contentTemplate" ), "contentTemplate" );
+		String contentTemplateName = StringUtils.defaultString( articleType.getAttribute( "contentTemplate" ), DEFAULT_CONTENT_COMPONENT );
 		WebCmsComponentModel model = componentModelService.getComponentModel( contentTemplateName, articleType );
 
 		if ( model == null && articleType.hasAttribute( "parent" ) ) {

@@ -47,7 +47,7 @@ public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsCompone
 	@Override
 	public ViewElementBuilder createMembersViewElementBuilder( ContainerWebCmsComponentModel componentModel, String controlNamePrefix ) {
 		if ( componentModel.isEmpty() ) {
-			return bootstrapUiFactory.alert().warning().text( "This container is currently empty." );
+			return componentModel.isFixed() ? null : bootstrapUiFactory.alert().warning().text( "This container is currently empty." );
 		}
 
 		ContainerViewElementBuilder members = bootstrapUiFactory.container();

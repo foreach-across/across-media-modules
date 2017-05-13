@@ -38,10 +38,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -71,10 +68,11 @@ public class PublicationTypeFormProcessor extends EntityViewProcessorAdapter imp
 			ArticleTypesHolder typesHolder = command.getExtension( "articleTypes", ArticleTypesHolder.class );
 
 			Map<WebCmsTypeSpecifier, WebCmsTypeSpecifierLink> currentLinks
-					= typeLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( owner.getObjectId(), null )
+					= typeLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( owner.getObjectId(), WebCmsArticleType.OBJECT_TYPE )
 					                    .stream()
 					                    .collect( Collectors.toMap( WebCmsTypeSpecifierLink::getTypeSpecifier, Function.identity() ) );
 
+			List<WebCmsTypeSpecifierLink> linksToCreate = new ArrayList<>();
 			typesHolder.getAllowed().forEach( articleType -> {
 				if ( currentLinks.remove( articleType ) == null ) {
 					WebCmsTypeSpecifierLink link = new WebCmsTypeSpecifierLink();
@@ -82,11 +80,12 @@ public class PublicationTypeFormProcessor extends EntityViewProcessorAdapter imp
 					link.setTypeSpecifier( articleType );
 					link.setLinkType( WebCmsArticleType.OBJECT_TYPE );
 
-					typeLinkRepository.save( link );
+					linksToCreate.add( link );
 				}
 			} );
 
 			currentLinks.values().forEach( typeLinkRepository::delete );
+			linksToCreate.forEach( typeLinkRepository::save );
 		}
 	}
 
