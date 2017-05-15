@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.data;
 
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.convert.TypeDescriptor;
@@ -44,9 +45,10 @@ public class WebCmsDataConversionService extends DefaultConversionService
 	 *
 	 * @param data map with the raw values
 	 * @param dto  to set te properties on
-	 * @return true if properties have been set
+	 * @return true if properties have been set (values were different)
 	 */
-	public boolean convertToPropertyValues( Map<String, Object> data, Persistable dto ) {
+	@SuppressWarnings( "unchecked" )
+	public boolean convertToPropertyValues( Map<String, Object> data, Object dto ) {
 		BeanWrapperImpl beanWrapper = new BeanWrapperImpl( dto );
 
 		AtomicBoolean modified = new AtomicBoolean( false );
@@ -62,12 +64,26 @@ public class WebCmsDataConversionService extends DefaultConversionService
 					throw new IllegalArgumentException( "Unknown property: " + propertyName );
 				}
 
-				Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
-				Object currentValue = beanWrapper.getPropertyValue( propertyName );
+				if ( propertyValue instanceof Map && !typeDescriptor.isMap() ) {
+					Object target = beanWrapper.getPropertyValue( propertyName );
 
-				if ( dto.isNew() || !Objects.equals( currentValue, valueToSet ) ) {
-					modified.set( true );
-					beanWrapper.setPropertyValue( propertyName, valueToSet );
+					if ( target == null ) {
+						LOG.error( "Unable to convert property {} - target is null", propertyName );
+						throw new RuntimeException( "Unable to converted nested object - value is null for property " + propertyName );
+					}
+
+					if ( convertToPropertyValues( (Map<String, Object>) propertyValue, target ) ) {
+						modified.set( true );
+					}
+				}
+				else {
+					Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
+					Object currentValue = beanWrapper.getPropertyValue( propertyName );
+
+					if ( !Objects.equals( currentValue, valueToSet ) ) {
+						modified.set( true );
+						beanWrapper.setPropertyValue( propertyName, valueToSet );
+					}
 				}
 			}
 		} );

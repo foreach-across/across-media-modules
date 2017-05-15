@@ -66,7 +66,7 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 
 			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
 
-			if ( isModified ) {
+			if ( isModified || dto.isNew() ) {
 				WebCmsTypeSpecifier itemToSave = prepareForSaving( dto, item );
 
 				if ( itemToSave != null ) {

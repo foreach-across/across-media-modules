@@ -61,6 +61,16 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 	}
 
 	/**
+	 * @param name         of the component
+	 * @param expectedType to coerce to
+	 * @return member with the given name or null if not found
+	 */
+	public <U extends WebCmsComponentModel> U getMember( String name, Class<U> expectedType ) {
+		Assert.notNull( expectedType );
+		return expectedType.cast( getMember( name ) );
+	}
+
+	/**
 	 * @param name of the component
 	 * @return member with the given name or null if not found
 	 */

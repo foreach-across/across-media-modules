@@ -33,7 +33,7 @@ import java.util.ArrayDeque;
  * @author Arne Vandamme
  * @since 2.0.0
  */
-final class WebComponentModelTemplateProcessor implements IPostProcessor
+final class ComponentTemplatePostProcessor implements IPostProcessor
 {
 	static final String START_INSTRUCTION = "auto-create-component-start";
 	static final String STOP_INSTRUCTION = "auto-create-component-finish";

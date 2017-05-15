@@ -20,12 +20,32 @@ import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 
 /**
+ * API for rendering a {@link WebCmsComponentModel} in a Thymeleaf template.
+ * The {@link WebComponentModelViewElementModelWriter} will retrieve all {@link WebCmsComponentModelRenderer}
+ * beans and find the appropriate one when rendering a particular component model.
+ * <p/>
+ * Implementations can be ordered as the first renderer that supports a component model
+ * will be used to render it.
+ *
  * @author Arne Vandamme
+ * @see ThymeleafModelBuilder
  * @since 0.0.1
  */
 public interface WebCmsComponentModelRenderer<T extends WebCmsComponentModel>
 {
+	/**
+	 * Can this renderer write this component model?
+	 *
+	 * @param componentModel to render
+	 * @return true if renderer can write it
+	 */
 	boolean supports( WebCmsComponentModel componentModel );
 
+	/**
+	 * Build the Thymeleaf model for the {@link WebCmsComponentModel}.
+	 *
+	 * @param component to render
+	 * @param model     to add the output instructions to
+	 */
 	void writeComponent( T component, ThymeleafModelBuilder model );
 }

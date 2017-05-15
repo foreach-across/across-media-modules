@@ -1,0 +1,27 @@
+assets:
+  component:
+    # Globally defined content component - used for testing that assets don't fallback to global level for their content
+    content:
+      title: Content
+      componentType: plain-text
+      content: "Global component: content"
+
+    footer:
+      title: Footer
+      componentType: plain-text
+      content: "Global component: footer"
+
+    with-placeholders:
+      title: With placeholders
+      componentType: container
+      wcm:components:
+        - componentType: plain-text
+          name: heading
+          content: "Global placeholders:"
+          sortIndex: 0
+        - componentType: placeholder
+          name: two
+          sortIndex: 1
+        - componentType: placeholder
+          name: three
+          sortIndex: 2

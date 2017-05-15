@@ -60,13 +60,27 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 	}
 
 	@Override
+	public <U extends WebCmsComponentModel> U getComponentModel( String objectId, Class<U> expectedType ) {
+		Assert.notNull( expectedType );
+		return expectedType.cast( getComponentModel( objectId ) );
+	}
+
+	@Override
 	public WebCmsComponentModel getComponentModel( String objectId ) {
+		Assert.notNull( objectId );
 		WebCmsComponent component = componentRepository.findOneByObjectId( objectId );
 		return component != null ? buildModelForComponent( component ) : null;
 	}
 
 	@Override
-	public WebCmsComponentModel getComponentModel( String componentName, WebCmsObject owner ) {
+	public <U extends WebCmsComponentModel> U getComponentModelByName( String componentName, WebCmsObject owner, Class<U> expectedType ) {
+		Assert.notNull( expectedType );
+		return expectedType.cast( getComponentModelByName( componentName, owner ) );
+	}
+
+	@Override
+	public WebCmsComponentModel getComponentModelByName( String componentName, WebCmsObject owner ) {
+		Assert.notNull( componentName );
 		return Optional.ofNullable( componentRepository.findOneByOwnerObjectIdAndName( owner != null ? owner.getObjectId() : null, componentName ) )
 		               .map( this::buildModelForComponent )
 		               .orElse( null );
@@ -113,12 +127,12 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 	}
 
 	@Autowired
-	void setModelReaders( @RefreshableCollection(includeModuleInternals = true) Collection<WebCmsComponentModelReader> modelReaders ) {
+	void setModelReaders( @RefreshableCollection(includeModuleInternals = true, incremental = true) Collection<WebCmsComponentModelReader> modelReaders ) {
 		this.modelReaders = modelReaders;
 	}
 
 	@Autowired
-	void setModelWriters( @RefreshableCollection(includeModuleInternals = true) Collection<WebCmsComponentModelWriter> modelWriters ) {
+	void setModelWriters( @RefreshableCollection(includeModuleInternals = true, incremental = true) Collection<WebCmsComponentModelWriter> modelWriters ) {
 		this.modelWriters = modelWriters;
 	}
 }

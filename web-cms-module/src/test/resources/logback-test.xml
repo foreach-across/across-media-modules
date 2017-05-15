@@ -20,4 +20,5 @@
 	<include resource="logback-across-test.xml"/>
 
 	<logger name="org.hibernate.type" level="WARN" />
+	<logger name="com.foreach.across.modules.webcms" level="TRACE" />
 </configuration>

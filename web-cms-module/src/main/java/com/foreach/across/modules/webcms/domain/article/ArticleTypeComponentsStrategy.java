@@ -67,7 +67,7 @@ final class ArticleTypeComponentsStrategy implements WebCmsArticleComponentsStra
 
 	private WebCmsComponentModel retrieveContentTemplate( WebCmsArticleType articleType ) {
 		String contentTemplateName = StringUtils.defaultString( articleType.getAttribute( "contentTemplate" ), DEFAULT_CONTENT_COMPONENT );
-		WebCmsComponentModel model = componentModelService.getComponentModel( contentTemplateName, articleType );
+		WebCmsComponentModel model = componentModelService.getComponentModelByName( contentTemplateName, articleType );
 
 		if ( model == null && articleType.hasAttribute( "parent" ) ) {
 			WebCmsArticleType parentArticleType = articleTypeRepository.findOneByTypeKey( articleType.getAttribute( "parent" ) );

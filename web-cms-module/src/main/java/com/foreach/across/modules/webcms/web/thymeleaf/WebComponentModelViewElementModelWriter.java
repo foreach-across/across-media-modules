@@ -29,6 +29,9 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 
 /**
+ * Base Thymeleaf writer for {@link WebCmsComponentModel} view element.
+ * Simply dispatches to a {@link WebCmsComponentModelRenderer} for the corresponding component model.
+ *
  * @author Arne Vandamme
  * @since 0.0.1
  */

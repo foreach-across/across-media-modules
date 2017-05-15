@@ -22,12 +22,18 @@ import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsDataImporter;
 import com.foreach.across.modules.webcms.data.WebCmsPropertyDataImportService;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Base class for importing a simple asset type.  An asset has a specific data key (in the asset collection)
@@ -43,6 +49,7 @@ public class WebCmsComponentImporter implements WebCmsDataImporter
 	protected final Logger LOG = LoggerFactory.getLogger( getClass() );
 
 	private WebCmsComponentRepository componentRepository;
+	private WebCmsComponentModelService componentModelService;
 	private WebCmsDataConversionService conversionService;
 	private WebCmsPropertyDataImportService propertyDataImportService;
 
@@ -68,19 +75,19 @@ public class WebCmsComponentImporter implements WebCmsDataImporter
 	private void importSingleComponent( WebCmsDataEntry item ) {
 		LOG.trace( "Importing data entry {}", item );
 
-		WebCmsComponent existing = retrieveExistingAsset( (String) item.getMapData().get( "objectId" ), item.getKey() );
+		WebCmsComponentModel existing = retrieveExistingAsset( (String) item.getMapData().get( "objectId" ), item.getKey() );
 
 		String action = (String) item.getMapData().get( "wcm:action" );
 
 		if ( action != null ) {
-			if ( "delete".equals( action ) && existing != null ) {
+			if ( "delete".equals( action ) && existing != null && !existing.isNew() ) {
 				LOG.trace( "WebCmsComponent {} with objectId {}: removing component", dataKey, existing.getObjectId() );
-				componentRepository.delete( existing );
+				componentRepository.delete( existing.getComponent() );
 				return;
 			}
 		}
 
-		WebCmsComponent dto = createDto( existing );
+		WebCmsComponentModel dto = createDto( existing, item );
 
 		if ( dto != null ) {
 			if ( propertyDataImportService.executeBeforeAssetSaved( item, item.getMapData(), dto ) ) {
@@ -89,15 +96,18 @@ public class WebCmsComponentImporter implements WebCmsDataImporter
 
 			LOG.trace( "{} WebCmsComponent {} with objectId {}", dto.isNew() ? "Creating" : "Updating", dataKey, dto.getObjectId() );
 
-			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
+			Map<String, Object> mapData = new HashMap<>( item.getMapData() );
+			mapData.remove( "componentType" );
 
-			if ( isModified ) {
-				WebCmsComponent itemToSave = prepareForSaving( dto, item );
+			boolean isModified = conversionService.convertToPropertyValues( mapData, dto );
+
+			if ( isModified || dto.isNew() ) {
+				WebCmsComponentModel itemToSave = prepareForSaving( dto, item );
 
 				if ( itemToSave != null ) {
 					LOG.debug( "Saving WebCmsComponent {} with objectId {} (insert: {}) - {}",
 					           dataKey, itemToSave.getObjectId(), dto.isNew(), dto );
-					componentRepository.save( itemToSave );
+					componentModelService.save( itemToSave );
 				}
 				else {
 					LOG.trace( "Skipping WebCmsComponent {} import for objectId {} - prepareForSaving returned null", dataKey, dto.getObjectId() );
@@ -116,15 +126,15 @@ public class WebCmsComponentImporter implements WebCmsDataImporter
 		}
 	}
 
-	private WebCmsComponent retrieveExistingAsset( String objectId, String entryKey ) {
-		WebCmsComponent existing = null;
+	private WebCmsComponentModel retrieveExistingAsset( String objectId, String entryKey ) {
+		WebCmsComponentModel existing = null;
 
 		if ( objectId != null ) {
-			existing = componentRepository.findOneByObjectId( objectId );
+			existing = componentModelService.getComponentModel( objectId );
 		}
 
-		if ( existing == null ) {
-			existing = componentRepository.findOneByOwnerObjectIdAndName( getOwnerObjectId(), entryKey );
+		if ( existing == null && entryKey != null ) {
+			existing = componentModelService.getComponentModelByName( entryKey, WebCmsObject.forObjectId( getOwnerObjectId() ) );
 		}
 
 		return existing;
@@ -138,18 +148,27 @@ public class WebCmsComponentImporter implements WebCmsDataImporter
 	 * @param data          that was used to build the item
 	 * @return new item to be saved instead - null if saving should be skipped
 	 */
-	private WebCmsComponent prepareForSaving( WebCmsComponent itemToBeSaved, WebCmsDataEntry data ) {
+	private WebCmsComponentModel prepareForSaving( WebCmsComponentModel itemToBeSaved, WebCmsDataEntry data ) {
 		if ( itemToBeSaved.getName() == null ) {
 			itemToBeSaved.setName( data.getKey() );
 		}
-		if ( !StringUtils.isBlank( itemToBeSaved.getName() ) && StringUtils.isEmpty( itemToBeSaved.getTitle() ) ) {
+		if ( !StringUtils.isBlank( itemToBeSaved.getName() ) && StringUtils.isEmpty( itemToBeSaved.getComponent().getTitle() ) ) {
 			itemToBeSaved.setTitle( EntityUtils.generateDisplayName( itemToBeSaved.getName() ) );
 		}
 		return itemToBeSaved;
 	}
 
-	private WebCmsComponent createDto( WebCmsComponent itemToUpdate ) {
-		return itemToUpdate != null ? itemToUpdate.toDto() : WebCmsComponent.builder().ownerObjectId( getOwnerObjectId() ).build();
+	private WebCmsComponentModel createDto( WebCmsComponentModel itemToUpdate, WebCmsDataEntry data ) {
+		if ( itemToUpdate == null ) {
+			WebCmsComponentModel componentModel = componentModelService.createComponentModel(
+					Objects.toString( data.getMapData().get( "componentType" ) ),
+					WebCmsComponentModel.class );
+			componentModel.setName( data.getKey() );
+			componentModel.setOwnerObjectId( getOwnerObjectId() );
+			return componentModel;
+		}
+
+		return itemToUpdate;
 	}
 
 	private String getOwnerObjectId() {
@@ -161,6 +180,11 @@ public class WebCmsComponentImporter implements WebCmsDataImporter
 	 */
 	public void setOwner( WebCmsObject owner ) {
 		this.owner = owner;
+	}
+
+	@Autowired
+	void setComponentModelService( WebCmsComponentModelService componentModelService ) {
+		this.componentModelService = componentModelService;
 	}
 
 	@Autowired

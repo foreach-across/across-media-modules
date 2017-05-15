@@ -126,7 +126,7 @@ public class TestWebComponentModelHierarchy
 		assertNotNull( global );
 
 		global.get( "123" );
-		verify( componentModelService ).getComponentModel( "123", null );
+		verify( componentModelService ).getComponentModelByName( "123", null );
 	}
 
 	@Test

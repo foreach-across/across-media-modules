@@ -54,7 +54,7 @@ public class WebCmsComponentModelHierarchy
 	void buildGlobalComponentModelSet( WebCmsComponentModelService webCmsComponentModelService ) {
 		addComponents( new OrderedWebComponentModelSet(
 				null, GLOBAL,
-				( owner, componentName ) -> webCmsComponentModelService.getComponentModel( componentName, owner )
+				( owner, componentName ) -> webCmsComponentModelService.getComponentModelByName( componentName, owner )
 		) );
 	}
 

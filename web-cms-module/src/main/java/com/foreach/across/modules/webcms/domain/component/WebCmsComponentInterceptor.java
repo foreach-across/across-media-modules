@@ -41,7 +41,7 @@ class WebCmsComponentInterceptor extends EntityInterceptorAdapter<WebCmsComponen
 
 	@Override
 	public void afterCreate( WebCmsComponent component ) {
-		WebCmsComponentModel model = componentModelService.getComponentModel( TEMPLATE_COMPONENT, component.getComponentType() );
+		WebCmsComponentModel model = componentModelService.getComponentModelByName( TEMPLATE_COMPONENT, component.getComponentType() );
 
 		if ( model != null ) {
 			WebCmsComponentModel template = model.asComponentTemplate();

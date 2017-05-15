@@ -67,6 +67,15 @@ public class PlaceholderWebCmsComponentModel extends WebCmsComponentModel
 		return super.getMetadata( Metadata.class );
 	}
 
+	@Override
+	public void setName( String name ) {
+		super.setName( name );
+
+		if ( isNew() && getPlaceholderName() == null ) {
+			setPlaceholderName( name );
+		}
+	}
+
 	public String getPlaceholderName() {
 		return getMetadata().getPlaceholderName();
 	}

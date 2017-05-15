@@ -32,4 +32,25 @@ public interface WebCmsObject
 	 * @return true if we're dealing with a new entity and the object id might not be set
 	 */
 	boolean isNew();
+
+	/**
+	 * Wraps an objectId as representing an existing {@link WebCmsObject}.
+	 *
+	 * @param objectId string
+	 * @return object instance
+	 */
+	static WebCmsObject forObjectId( String objectId ) {
+		return new WebCmsObject()
+		{
+			@Override
+			public String getObjectId() {
+				return objectId;
+			}
+
+			@Override
+			public boolean isNew() {
+				return false;
+			}
+		};
+	}
 }

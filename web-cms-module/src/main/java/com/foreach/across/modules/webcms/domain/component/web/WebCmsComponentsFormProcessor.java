@@ -112,7 +112,7 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 				"webCmsComponents",
 				new ModelsHolder(
 						Stream.of( componentNames )
-						      .map( componentName -> componentModelService.getComponentModel( componentName, owner ) )
+						      .map( componentName -> componentModelService.getComponentModelByName( componentName, owner ) )
 						      .flatMap(
 								      model -> {
 									      if ( model instanceof ContainerWebCmsComponentModel && renderMembersIfContainer ) {

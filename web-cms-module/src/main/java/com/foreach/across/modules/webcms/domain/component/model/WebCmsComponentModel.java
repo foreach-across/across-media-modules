@@ -230,6 +230,20 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	}
 
 	/**
+	 * @return sortIndex of the component in its owner scope
+	 */
+	public int getSortIndex() {
+		return component.getSortIndex();
+	}
+
+	/**
+	 * @param sortIndex of the component in its owner scope
+	 */
+	public void setSortIndex( int sortIndex ) {
+		component.setSortIndex( sortIndex );
+	}
+
+	/**
 	 * @return fixed ViewElement type
 	 */
 	@Override

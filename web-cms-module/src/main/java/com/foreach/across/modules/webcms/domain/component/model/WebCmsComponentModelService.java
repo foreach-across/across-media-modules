@@ -55,13 +55,32 @@ public interface WebCmsComponentModelService
 	WebCmsComponentModel getComponentModel( String objectId );
 
 	/**
-	 * Get a single {@link WebCmsComponentModel} by name.
+	 * Get the component model for a specific {@link WebCmsComponent} identified by its object id.
+	 *
+	 * @param objectId     of the component
+	 * @param expectedType type to coerce to
+	 * @return component model or {@code null} if not a valid component
+	 */
+	<U extends WebCmsComponentModel> U getComponentModel( String objectId, Class<U> expectedType );
+
+	/**
+	 * Get a single {@link WebCmsComponentModel} for a specific owner by name.
 	 *
 	 * @param componentName name of the component
 	 * @param owner         of the component
 	 * @return component or null if not found
 	 */
-	WebCmsComponentModel getComponentModel( String componentName, WebCmsObject owner );
+	WebCmsComponentModel getComponentModelByName( String componentName, WebCmsObject owner );
+
+	/**
+	 * Get a single {@link WebCmsComponentModel} by name.
+	 *
+	 * @param componentName name of the component
+	 * @param owner         of the component
+	 * @param expectedType  type to coerce to
+	 * @return component or null if not found
+	 */
+	<U extends WebCmsComponentModel> U getComponentModelByName( String componentName, WebCmsObject owner, Class<U> expectedType );
 
 	/**
 	 * Get all {@link WebCmsComponentModel}s owned by a the {@link WebCmsObject}.

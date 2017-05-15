@@ -21,7 +21,6 @@ import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,8 +41,8 @@ public class WebCmsDialect extends AbstractProcessorDialect implements IPostProc
 	@Override
 	public Set<IProcessor> getProcessors( final String dialectPrefix ) {
 		Set<IProcessor> processors = new HashSet<>();
-		processors.add( new PlaceholderProcessor() );
-		processors.add( new WebComponentModelProcessor() );
+		processors.add( new PlaceholderAttributeProcessor() );
+		processors.add( new ComponentAttributesProcessor() );
 		return processors;
 	}
 
@@ -55,8 +54,8 @@ public class WebCmsDialect extends AbstractProcessorDialect implements IPostProc
 	@Override
 	public Set<IPostProcessor> getPostProcessors() {
 		Set<IPostProcessor> processors = new HashSet<>();
-		processors.add( new PlaceholderTemplateProcessor() );
-		processors.add( new WebComponentModelTemplateProcessor() );
+		processors.add( new PlaceholderTemplatePostProcessor() );
+		processors.add( new ComponentTemplatePostProcessor() );
 		return processors;
 	}
 }

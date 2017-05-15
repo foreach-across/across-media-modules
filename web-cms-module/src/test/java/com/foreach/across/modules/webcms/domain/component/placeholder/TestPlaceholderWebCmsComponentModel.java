@@ -48,6 +48,25 @@ public class TestPlaceholderWebCmsComponentModel
 	}
 
 	@Test
+	public void placeholderNameIsSetWithComponentNameIfNullAndNewComponent() {
+		model = new PlaceholderWebCmsComponentModel();
+		model.setName( "test" );
+		assertEquals( "test", model.getPlaceholderName() );
+		assertFalse( model.isEmpty() );
+		model.setName( "test2" );
+		assertEquals( "test", model.getPlaceholderName() );
+		assertEquals( "test2", model.getName() );
+		model.setPlaceholderName( null );
+		assertEquals( "test2", model.getName() );
+		assertNull( model.getPlaceholderName() );
+
+		model = new PlaceholderWebCmsComponentModel( WebCmsComponent.builder().id( 123L ).build() );
+		model.setName( "test" );
+		assertEquals( "test", model.getName() );
+		assertNull( model.getPlaceholderName() );
+	}
+
+	@Test
 	public void fromComponent() {
 		WebCmsComponentType componentType = WebCmsComponentType.builder().attribute( WebCmsComponentModel.TEMPLATE_ATTRIBUTE, "th/mytemplate" ).build();
 

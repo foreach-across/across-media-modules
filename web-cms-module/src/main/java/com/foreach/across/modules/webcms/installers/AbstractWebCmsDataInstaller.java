@@ -24,9 +24,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * Base installer class for importing data from one or more YAML resources.
@@ -40,49 +43,59 @@ public abstract class AbstractWebCmsDataInstaller
 	private ApplicationContext applicationContext;
 	private WebCmsDataImportService dataImportService;
 
-	private Resource[] resources = new Resource[0];
+	private Collection<Resource> resources = new ArrayList<>();
 
-	/**
-	 * Set one or more resources that represent YAML files that contain data that should be imported.
-	 *
-	 * @param resources to the resources
-	 */
-	public void setResources( Resource... resources ) {
-		this.resources = resources;
+	@PostConstruct
+	final void autoRegisterResources() {
+		List<String> list = new ArrayList<>();
+		registerResources( list );
+
+		list.forEach( this::addResource );
 	}
 
 	/**
-	 * Set one or more resources that represent YAML files that contain data that should be imported.
-	 * Specify the resource locations, these will be resolved on the {@link ApplicationContext}.
-	 * <p/>
-	 * NOTE: can only be called after post construct or the applicationContext might not be set.
+	 * Add a single YAML resource to import by specifying the resource location.
 	 *
-	 * @param locations to the resources
+	 * @param location of the resource
 	 */
-	public void setResources( String... locations ) {
-		resources = new Resource[locations.length];
-		for ( int i = 0; i < locations.length; i++ ) {
-			resources[i] = applicationContext.getResource( locations[i] );
-		}
+	public void addResource( String location ) {
+		addResource( applicationContext.getResource( location ) );
 	}
+
+	/**
+	 * Add a single YAML resource to import.
+	 *
+	 * @param resource to add
+	 */
+	public void addResource( Resource resource ) {
+		resources.add( resource );
+	}
+
+	/**
+	 * Register YAML resources to import.
+	 * Will be called after the installer bean has been constructed.
+	 *
+	 * @param locations to add
+	 */
+	protected abstract void registerResources( List<String> locations );
 
 	@InstallerMethod
 	@SuppressWarnings("unchecked")
 	public void install() throws Exception {
 		Yaml yaml = new Yaml();
 
-		Stream.of( resources )
-		      .forEach( resource -> {
-			      try {
-				      LOG.info( "Importing YAML data from: " + resource );
-				      Map<String, Object> data = (Map<String, Object>) yaml.load( resource.getInputStream() );
-				      dataImportService.importData( data );
-				      LOG.info( "Finished importing YAML data from: " + resource );
-			      }
-			      catch ( IOException ioe ) {
-				      throw new RuntimeException( ioe );
-			      }
-		      } );
+		resources
+				.forEach( resource -> {
+					try {
+						LOG.info( "Importing YAML data from: " + resource );
+						Map<String, Object> data = (Map<String, Object>) yaml.load( resource.getInputStream() );
+						dataImportService.importData( data );
+						LOG.info( "Finished importing YAML data from: " + resource );
+					}
+					catch ( IOException ioe ) {
+						throw new RuntimeException( ioe );
+					}
+				} );
 	}
 
 	@Autowired

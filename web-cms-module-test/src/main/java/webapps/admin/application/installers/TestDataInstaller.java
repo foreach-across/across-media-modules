@@ -21,7 +21,7 @@ import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.modules.webcms.installers.AbstractWebCmsDataInstaller;
 import lombok.RequiredArgsConstructor;
 
-import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * @author Arne Vandamme
@@ -31,12 +31,10 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 public class TestDataInstaller extends AbstractWebCmsDataInstaller
 {
-	@PostConstruct
-	public void registerResources() {
-		setResources(
-				"classpath:installers/test-data/components.yml",
-				"classpath:installers/test-data/articles.yml",
-				"classpath:installers/test-data/pages.yml"
-		);
+	@Override
+	protected void registerResources( List<String> locations ) {
+		locations.add( "classpath:installers/test-data/components.yml" );
+		locations.add( "classpath:installers/test-data/articles.yml" );
+		locations.add( "classpath:installers/test-data/pages.yml" );
 	}
 }

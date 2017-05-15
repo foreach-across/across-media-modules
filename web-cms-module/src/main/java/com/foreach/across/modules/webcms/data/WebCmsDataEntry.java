@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.data;
 
 import lombok.Data;
+import lombok.NonNull;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -53,6 +54,12 @@ public final class WebCmsDataEntry
 	 * Data itself as a collection of objects.
 	 */
 	private final Collection<Object> collectionData;
+
+	/**
+	 * Action that should be performed with this data.
+	 */
+	@NonNull
+	private WebCmsDataImportAction importAction = WebCmsDataImportAction.CREATE_OR_UPDATE;
 
 	public WebCmsDataEntry( String key, Object data ) {
 		this( key, null, data );

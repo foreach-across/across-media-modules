@@ -78,7 +78,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 
 			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
 
-			if ( isModified ) {
+			if ( isModified || dto.isNew() ) {
 				T itemToSave = prepareForSaving( dto, item );
 
 				if ( itemToSave != null ) {

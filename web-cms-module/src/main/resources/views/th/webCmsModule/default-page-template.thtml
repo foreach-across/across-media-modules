@@ -1,10 +1,8 @@
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" xmlns:wcm="http://across.foreach.be/wcm">
 <head>
     <title th:text="${asset.title}">Page title</title>
 </head>
 <body th:fragment="content">
-
-<across:view th:each="component : ${webCmsComponents.getComponentsForScope('asset').ordered}" element="${component}"/>
-
+<th:block wcm:component="content" wcm:scope="asset" />
 </body>
 </html>

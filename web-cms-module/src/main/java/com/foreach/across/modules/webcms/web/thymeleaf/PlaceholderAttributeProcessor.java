@@ -16,25 +16,22 @@
 
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
-import com.foreach.across.modules.webcms.domain.component.placeholder.WebCmsPlaceholderContentModel;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.engine.AttributeName;
 import org.thymeleaf.model.*;
 import org.thymeleaf.processor.element.AbstractAttributeModelProcessor;
 import org.thymeleaf.processor.element.IElementModelStructureHandler;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import static com.foreach.across.modules.webcms.web.thymeleaf.ComponentAttributesProcessor.MARKER_NEVER_REPLACE;
 import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREFIX;
 
 /**
  * Renders the markup represented by the element to a placeholder variable instead of the direct output.
  */
-class PlaceholderProcessor extends AbstractAttributeModelProcessor
+final class PlaceholderAttributeProcessor extends AbstractAttributeModelProcessor
 {
-	PlaceholderProcessor() {
+	PlaceholderAttributeProcessor() {
 		super(
 				TemplateMode.HTML,              // This processor will apply only to HTML mode
 				PREFIX,        // Prefix to be applied to name for matching
@@ -51,13 +48,10 @@ class PlaceholderProcessor extends AbstractAttributeModelProcessor
 	protected void doProcess( ITemplateContext context,
 	                          IModel model,
 	                          AttributeName attributeName,
-	                          String attributeValue,
+	                          String placeholderName,
 	                          IElementModelStructureHandler structureHandler ) {
 		if ( model.size() > 0 && model.get( 0 ) instanceof IProcessableElementTag ) {
-			String placeholderName = attributeValue;
-
 			IProcessableElementTag elementTag = (IProcessableElementTag) model.get( 0 );
-			boolean isStandaloneTag = elementTag instanceof IStandaloneElementTag;
 			IModelFactory modelFactory = context.getModelFactory();
 
 			IProcessableElementTag newFirstEvent = modelFactory.removeAttribute( elementTag, attributeName );
@@ -65,24 +59,25 @@ class PlaceholderProcessor extends AbstractAttributeModelProcessor
 				model.replace( 0, newFirstEvent );
 			}
 
-			ApplicationContext applicationContext = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-			WebCmsPlaceholderContentModel placeholders = applicationContext.getBean( WebCmsPlaceholderContentModel.class );
+			if ( placeholderName != null ) {
+				enableDisabledComponentBlocks( model, modelFactory );
 
-			placeholders.setPlaceholderContent( placeholderName, model.cloneModel() );
-
-			model.reset();
+				model.insert( 0, modelFactory.createProcessingInstruction( PlaceholderTemplatePostProcessor.START_PLACEHOLDER, placeholderName ) );
+				model.add( modelFactory.createProcessingInstruction( PlaceholderTemplatePostProcessor.STOP_PLACEHOLDER, placeholderName ) );
+			}
 		}
 	}
 
-	private void renderEmptyBody( IModel model, IProcessableElementTag elementTag ) {
-		ITemplateEvent closeElementTag = null;
-		if ( elementTag instanceof IOpenElementTag && model.size() > 1 ) {
-			closeElementTag = model.get( model.size() - 1 );
-		}
-		model.reset();
-		model.add( elementTag );
-		if ( closeElementTag != null ) {
-			model.add( closeElementTag );
+	private void enableDisabledComponentBlocks( IModel model, IModelFactory modelFactory ) {
+		// all components inside (or on) the placeholder should be rendered - even if the ComponentAttributeProcessor had put them hidden
+		for ( int i = 0; i < model.size(); i++ ) {
+			ITemplateEvent event = model.get( i );
+			if ( event instanceof IOpenElementTag || event instanceof IStandaloneElementTag ) {
+				IProcessableElementTag openElementTag = (IProcessableElementTag) event;
+				if ( openElementTag.hasAttribute( MARKER_NEVER_REPLACE ) ) {
+					model.replace( i, modelFactory.removeAttribute( openElementTag, MARKER_NEVER_REPLACE ) );
+				}
+			}
 		}
 	}
 }
