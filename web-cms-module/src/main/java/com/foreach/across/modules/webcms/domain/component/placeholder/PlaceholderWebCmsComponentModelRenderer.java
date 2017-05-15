@@ -21,7 +21,6 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsComponentModelRenderer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.model.IModel;
 
 import java.util.Objects;
 
@@ -47,9 +46,6 @@ class PlaceholderWebCmsComponentModelRenderer implements WebCmsComponentModelRen
 			                        .ifPresent( value -> {
 				                        if ( value instanceof WebCmsComponentModel ) {
 					                        model.addViewElement( (WebCmsComponentModel) value );
-				                        }
-				                        else if ( value instanceof IModel ) {
-					                        model.addModel( (IModel) value );
 				                        }
 				                        else {
 					                        model.addHtml( Objects.toString( value ) );

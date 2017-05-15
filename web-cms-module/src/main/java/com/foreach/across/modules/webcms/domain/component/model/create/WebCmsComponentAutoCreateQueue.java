@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.component.model;
+package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.entity.util.EntityUtils;
@@ -23,9 +23,12 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
-import lombok.Getter;
+import com.foreach.across.modules.webcms.domain.component.model.OrderedWebComponentModelSet;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
+import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -33,13 +36,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Represents the request-bound queue for auto-creation of components.
+ * Used by template parsers to signal to manage the actual component rendering blocks.
+ *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @see WebCmsComponentAutoCreateService
+ * @since 0.0.2
  */
 @Component
 @Exposed
@@ -47,57 +53,81 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WebCmsComponentAutoCreateQueue
 {
-	private final Map<String, Task> tasksByKey = new HashMap<>();
-	private final ArrayDeque<Task> tasks = new ArrayDeque<>();
-	private final ArrayDeque<Task> outputQueue = new ArrayDeque<>();
+	private final Map<String, WebCmsComponentModel> componentsCreated = new HashMap<>();
+	private final Map<String, WebCmsComponentAutoCreateTask> tasksByKey = new HashMap<>();
+	private final ArrayDeque<WebCmsComponentAutoCreateTask> tasks = new ArrayDeque<>();
+	private final ArrayDeque<WebCmsComponentAutoCreateTask> outputQueue = new ArrayDeque<>();
 
 	private final WebCmsComponentRepository componentRepository;
 	private final WebCmsComponentTypeRepository componentTypeRepository;
 	private final WebCmsComponentModelHierarchy componentModelHierarchy;
+	private final WebCmsComponentAutoCreateService autoCreateService;
 
 	public String schedule( String componentName, String scope, String type ) {
 		String key = componentName + ":" + scope;
 
-		Task creationTask = tasksByKey.computeIfAbsent( key, k -> new Task( componentName, scope, type ) );
+		WebCmsComponentAutoCreateTask creationTask = tasksByKey.computeIfAbsent( key, k -> new WebCmsComponentAutoCreateTask( componentName, scope, type ) );
 		tasks.add( creationTask );
 
-		return creationTask.getObjectId();
+		return creationTask.getTaskId();
 	}
 
-	public Task getCurrentTask() {
+	public WebCmsComponentAutoCreateTask getCurrentTask() {
 		return outputQueue.peek();
 	}
 
-	public void outputStarted( String objectId ) {
-		Task current;
+	public void outputStarted( String taskId ) {
+		WebCmsComponentAutoCreateTask current;
 
 		do {
 			current = tasks.remove();
 		}
-		while ( current != null && !objectId.equals( current.getObjectId() ) );
+		while ( current != null && !taskId.equals( current.getTaskId() ) );
 
 		outputQueue.push( current );
 	}
 
-	public void outputFinished( String objectId, String output ) {
-		Task current = outputQueue.pop();
-		Assert.isTrue( objectId.equals( current.getObjectId() ) );
+	public void outputFinished( String taskId, String output ) {
+		WebCmsComponentAutoCreateTask current = outputQueue.pop();
+		Assert.isTrue( taskId.equals( current.getTaskId() ) );
 
 		current.setOutput( output );
 
-		Task next = outputQueue.peek();
+		WebCmsComponentAutoCreateTask next = outputQueue.peek();
 
-		// todo: nested components in case of container
 		if ( next != null ) {
 			next.addChild( current );
 		}
 		else {
 			OrderedWebComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( current.getScopeName() );
-			saveComponent( current, output, componentModelSet.getOwner() );
+			current.setOwner( componentModelSet.getOwner() );
+
+			componentsCreated.put( current.getTaskId(), autoCreateService.createComponent( current ) );
 		}
 	}
 
-	private void saveComponent( Task creationTask, String output, WebCmsObject owner ) {
+	/**
+	 * Single a placeholder block has just been rendered.
+	 * If a component is being created, the placeholder should be added to that component.
+	 *
+	 * @param placeholderName name of the placeholder
+	 */
+	public void placeholderRendered( String placeholderName ) {
+		val current = getCurrentTask();
+
+		if ( current != null ) {
+			current.addChild( new WebCmsComponentAutoCreateTask( placeholderName, null, PlaceholderWebCmsComponentModel.TYPE ) );
+		}
+	}
+
+	/**
+	 * @return component created by that task
+	 */
+	public WebCmsComponentModel getComponentCreated( String taskId ) {
+		return componentsCreated.get( taskId );
+	}
+
+	private void saveComponent( WebCmsComponentAutoCreateTask creationTask, String output, WebCmsObject owner ) {
 		WebCmsComponent component = creationTask.getComponent();
 		component.setComponentType( determineComponentType( creationTask.getComponentType() ) );
 		component.setTitle( EntityUtils.generateDisplayName( component.getName().replace( '-', '_' ) ) );
@@ -110,35 +140,5 @@ public class WebCmsComponentAutoCreateQueue
 
 	private WebCmsComponentType determineComponentType( String requestedComponentType ) {
 		return componentTypeRepository.findOneByTypeKey( StringUtils.isEmpty( requestedComponentType ) ? "rich-text" : requestedComponentType );
-	}
-
-	@Getter
-	@Setter
-	public static class Task
-	{
-		private final WebCmsComponent component;
-		private final String scopeName;
-		private final String componentType;
-		private final Deque<Task> children = new ArrayDeque<>();
-		private int sortIndex;
-
-		public Task( String componentName, String scopeName, String componentType ) {
-			this.scopeName = scopeName;
-			this.componentType = componentType;
-
-			component = new WebCmsComponent();
-			component.setName( componentName );
-		}
-
-		private String output;
-
-		public String getObjectId() {
-			return component.getObjectId();
-		}
-
-		public void addChild( Task task ) {
-			task.sortIndex = children.size() + 1;
-			children.add( task );
-		}
 	}
 }

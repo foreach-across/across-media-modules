@@ -209,6 +209,14 @@ Otherwise adding the attribute will ensure that parent scopes are always searche
 | If present (without an attribute value) the body of the element will always be replaced.
 If the component is not found, the body will be empty.
 
+| wcm:parse-placeholders
+| If present on an element attributed with wcm:component, the body of the element will always be parsed and all sections marked wcm:placeholder will be made available in the WebCmsPlaceholderContentModel.
+
+| wcm:placeholder
+| Attribute to indicate that a section should be rendered to a placeholder.
+ The name of the placeholder is the value of the attribute.
+ Note that the element itself will also be part of the placeholder content, not just the body of the element.
+
 |===
 
 

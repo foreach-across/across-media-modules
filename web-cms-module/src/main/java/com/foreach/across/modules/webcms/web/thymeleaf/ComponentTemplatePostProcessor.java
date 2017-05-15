@@ -15,7 +15,8 @@
  */
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentAutoCreateQueue;
+import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateQueue;
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
@@ -182,6 +183,12 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 				queue.outputFinished( processingInstruction.getContent(), tree.pop().buffer.toString() );
 				this.output = tree.peek();
 				enabled = this.output != null;
+			}
+			else if ( PlaceholderTemplatePostProcessor.STOP_PLACEHOLDER.equals( processingInstruction.getTarget() ) ) {
+				queue.placeholderRendered( processingInstruction.getContent() );
+
+				// forward to the PlaceholderTemplatePostProcessor
+				next.handleProcessingInstruction( processingInstruction );
 			}
 			else {
 				next.handleProcessingInstruction( processingInstruction );

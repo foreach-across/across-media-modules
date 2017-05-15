@@ -79,3 +79,24 @@ assets:
             - componentType: placeholder
               name: two
               sortIndex: 3
+
+    #
+    # Page with a custom template for automatically creating simple components upon rendering.
+    #
+    - objectId: "wcm:asset:page:auto-create-components"
+      title: Auto create components
+      template: th/test/pages/auto-create-components
+      pathSegmentGenerated: false
+      pathSegment: auto-create-components
+      published: true
+
+    #
+    # Page with a custom template for automatically creating complex components upon rendering.
+    # Complex components are components with placeholders and referring other components from other scopes.
+    #
+    - objectId: "wcm:asset:page:auto-create-complex-components"
+      title: Auto create complex components
+      template: th/test/pages/auto-create-complex-components
+      pathSegmentGenerated: false
+      pathSegment: auto-create-complex-components
+      published: true

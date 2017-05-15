@@ -1,0 +1,24 @@
+<html xmlns:wcm="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Auto create complex components</title>
+</head>
+<body>
+
+<div id="container-single-placeholder" wcm:component="container-single-placeholder" wcm:type="container" wcm:auto-create wcm:parse-placeholders>
+    <div wcm:placeholder="one">single placeholder content</div>
+</div>
+
+<div id="nested-placeholders" wcm:component="container-nested-placeholders" wcm:type="container" wcm:auto-create wcm:parse-placeholders>
+    <div wcm:placeholder="title" th:remove="tag">container title</div>
+    <th:block wcm:component="body">
+        <th:block wcm:component="subtitle">container sub title</th:block>
+        <th:block wcm:placeholder="before-text">before text placeholder</th:block>
+        <th:block wcm:component="text" wcm:type="container"/>
+    </th:block>
+    <div wcm:component="footer">
+        <div wcm:placeholder="footer-text">footer text placeholder</div>
+    </div>
+</div>
+
+</body>
+</html>

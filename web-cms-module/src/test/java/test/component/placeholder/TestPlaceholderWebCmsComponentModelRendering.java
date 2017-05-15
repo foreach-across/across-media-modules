@@ -17,7 +17,6 @@
 package test.component.placeholder;
 
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
@@ -25,11 +24,6 @@ import com.foreach.across.modules.webcms.domain.component.placeholder.WebCmsPlac
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.thymeleaf.IEngineConfiguration;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.model.IModel;
-import org.thymeleaf.model.IModelFactory;
-import org.thymeleaf.templatemode.TemplateMode;
 import test.AbstractWebCmsComponentModelRenderingTest;
 
 /**
@@ -99,24 +93,6 @@ public class TestPlaceholderWebCmsComponentModelRendering extends AbstractWebCms
 				component,
 				model -> placeholderContentModel.setPlaceholderContent( "my-placeholder", text ),
 				"<strong>some html text</strong>"
-		);
-	}
-
-	@Test
-	public void thymeleafModelAsValue() {
-		IEngineConfiguration engineConfiguration = beanRegistry.getBeanOfTypeFromModule( AcrossWebModule.NAME, TemplateEngine.class ).getConfiguration();
-		IModelFactory modelFactory = engineConfiguration.getModelFactory( TemplateMode.HTML );
-
-		IModel model = modelFactory.createModel();
-		model.add( modelFactory.createText( "model text" ) );
-
-		PlaceholderWebCmsComponentModel component = componentModelService.createComponentModel( "placeholder", PlaceholderWebCmsComponentModel.class );
-		component.setPlaceholderName( "my-placeholder" );
-
-		renderAndExpect(
-				component,
-				m -> placeholderContentModel.setPlaceholderContent( "my-placeholder", model ),
-				"model text"
 		);
 	}
 

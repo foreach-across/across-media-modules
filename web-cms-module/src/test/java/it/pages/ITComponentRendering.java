@@ -21,6 +21,7 @@ import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsCompone
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import it.AbstractSingleApplicationIT;
 import lombok.val;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,6 +38,15 @@ public class ITComponentRendering extends AbstractSingleApplicationIT
 
 	@Autowired
 	private WebCmsComponentModelService componentModelService;
+
+	private static Html html;
+
+	@Before
+	public void setUp() throws Exception {
+		if ( html == null ) {
+			html = html( "/render-components" );
+		}
+	}
 
 	@Test
 	public void verifyPageAndComponentsHaveBeenInstalled() {
@@ -67,16 +77,52 @@ public class ITComponentRendering extends AbstractSingleApplicationIT
 	}
 
 	@Test
-	public void renderComponents() {
-		Html html = html( "/render-components" );
+	public void ifComponentIsNotFoundTheRegularMarkupIsRendered() {
 		html.assertElementHasText( "Not found - default markup.", "#not-found-default-markup" );
+	}
+
+	@Test
+	public void markupIsAlwaysReplacedEvenIfNoComponentWhenAttributeIsPresent() {
 		html.assertElementIsEmpty( "#not-found-replaced" );
+	}
+
+	@Test
+	public void componentFoundInDefaultScope() {
 		html.assertElementHasText( "Page component: custom", "#found-in-page" );
+	}
+
+	@Test
+	public void parentScopesAreSearchedIfNoScopeAndNotExplicitlyDenied() {
 		html.assertElementHasText( "Global component: footer", "#found-in-global" );
+	}
+
+	@Test
+	public void componentFoundInLowestScopeTakesPrecedence() {
 		html.assertElementHasText( "Page component: content 2", "#shadowing-global" );
+	}
+
+	@Test
+	public void specifiedScopeIsAlwaysUsed() {
 		html.assertElementHasText( "Global component: content", "#using-global" );
+	}
+
+	@Test
+	public void notSearchingParentScopesIfExplicitlyDenied() {
 		html.assertElementHasText( "Not found in scope and not searching parents.", "#not-found-in-scope" );
+	}
+
+	@Test
+	public void notSearchParentScopesIfScopeSpecifiedAndNotExplicitlyEnabled() {
 		html.assertElementHasText( "Not found in scope specified and not searching parents.", "#not-found-in-scope-specified" );
+	}
+
+	@Test
+	public void searchingParentScopesIfScopeSpecifiedButExplicitlyEnabled() {
 		html.assertElementHasText( "Global component: footer", "#found-by-search" );
+	}
+
+	@Test
+	public void selfClosingTagIsSupported() {
+		html.assertElementHasText( "Page component: custom", "#self-closing-tag" );
 	}
 }

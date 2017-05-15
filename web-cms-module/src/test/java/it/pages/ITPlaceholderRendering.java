@@ -41,7 +41,7 @@ public class ITPlaceholderRendering extends AbstractSingleApplicationIT
 	@Autowired
 	private WebCmsComponentModelService componentModelService;
 
-	private Html html;
+	private static Html html;
 
 	@Before
 	public void setUp() throws Exception {
