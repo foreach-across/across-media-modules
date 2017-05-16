@@ -38,9 +38,6 @@ public class TestPlaceholderWebCmsComponentModelRendering extends AbstractWebCms
 	@Autowired
 	private WebCmsPlaceholderContentModel placeholderContentModel;
 
-	@Autowired
-	private AcrossContextBeanRegistry beanRegistry;
-
 	@Test
 	public void emptyPlaceholder() {
 		renderAndExpect( new PlaceholderWebCmsComponentModel(), "" );

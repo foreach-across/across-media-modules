@@ -18,7 +18,9 @@ package com.foreach.across.modules.webcms.domain.component.text;
 
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsComponentContentModelWriter;
 import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsComponentModelRenderer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,8 +28,11 @@ import org.springframework.stereotype.Component;
  * @since 0.0.1
  */
 @Component
+@RequiredArgsConstructor
 class TextWebCmsComponentModelRenderer implements WebCmsComponentModelRenderer<TextWebCmsComponentModel>
 {
+	private final WebCmsComponentContentModelWriter contentModelWriter;
+
 	@Override
 	public boolean supports( WebCmsComponentModel componentModel ) {
 		return TextWebCmsComponentModel.class.isInstance( componentModel );
@@ -37,10 +42,10 @@ class TextWebCmsComponentModelRenderer implements WebCmsComponentModelRenderer<T
 	public void writeComponent( TextWebCmsComponentModel component, ThymeleafModelBuilder model ) {
 		switch ( component.getMarkupType() ) {
 			case PLAIN_TEXT:
-				model.addText( component.getContent() );
+				contentModelWriter.writeText( component, component.getContent(), true, model );
 				break;
 			default:
-				model.addHtml( component.getContent() );
+				contentModelWriter.writeHtml( component, component.getContent(), true, model );
 				break;
 		}
 	}

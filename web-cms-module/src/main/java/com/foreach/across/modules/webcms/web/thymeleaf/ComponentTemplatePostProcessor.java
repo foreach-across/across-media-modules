@@ -16,7 +16,6 @@
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateQueue;
-import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
@@ -60,12 +59,14 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 	public static class TemplateHandler implements ITemplateHandler
 	{
 		private ITemplateHandler next;
-		private ITemplateContext context;
+		private IModelFactory modelFactory;
 
-		private boolean enabled = false;
+		private boolean componentInCreation = false;
 
 		private Output output;
 		private ArrayDeque<Output> tree = new ArrayDeque<>();
+
+		private int placeholderLevel = 0;
 
 		private static class Output
 		{
@@ -82,7 +83,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 
 		@Override
 		public void setContext( ITemplateContext context ) {
-			this.context = context;
+			modelFactory = context.getModelFactory();
 
 			ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
 			queue = appCtx.getBean( WebCmsComponentAutoCreateQueue.class );
@@ -102,7 +103,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void handleXMLDeclaration( IXMLDeclaration xmlDeclaration ) {
 			next.handleXMLDeclaration( xmlDeclaration );
 
-			if ( enabled ) {
+			if ( componentInCreation ) {
 				output.handler.handleXMLDeclaration( xmlDeclaration );
 			}
 		}
@@ -111,7 +112,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void handleDocType( IDocType docType ) {
 			next.handleDocType( docType );
 
-			if ( enabled ) {
+			if ( componentInCreation ) {
 				output.handler.handleDocType( docType );
 			}
 		}
@@ -120,7 +121,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void handleCDATASection( ICDATASection cdataSection ) {
 			next.handleCDATASection( cdataSection );
 
-			if ( enabled ) {
+			if ( componentInCreation ) {
 				output.handler.handleCDATASection( cdataSection );
 			}
 		}
@@ -129,7 +130,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void handleComment( IComment comment ) {
 			next.handleComment( comment );
 
-			if ( enabled ) {
+			if ( componentInCreation ) {
 				output.handler.handleComment( comment );
 			}
 		}
@@ -138,7 +139,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void handleText( IText text ) {
 			next.handleText( text );
 
-			if ( enabled ) {
+			if ( componentInCreation ) {
 				output.handler.handleText( text );
 			}
 		}
@@ -147,7 +148,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void handleStandaloneElement( IStandaloneElementTag standaloneElementTag ) {
 			next.handleStandaloneElement( standaloneElementTag );
 
-			if ( enabled ) {
+			if ( componentInCreation ) {
 				output.handler.handleStandaloneElement( standaloneElementTag );
 			}
 		}
@@ -156,7 +157,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void handleOpenElement( IOpenElementTag openElementTag ) {
 			next.handleOpenElement( openElementTag );
 
-			if ( enabled ) {
+			if ( componentInCreation ) {
 				output.handler.handleOpenElement( openElementTag );
 			}
 		}
@@ -165,7 +166,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void handleCloseElement( ICloseElementTag closeElementTag ) {
 			next.handleCloseElement( closeElementTag );
 
-			if ( enabled ) {
+			if ( componentInCreation ) {
 				output.handler.handleCloseElement( closeElementTag );
 			}
 		}
@@ -173,19 +174,43 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		@Override
 		public void handleProcessingInstruction( IProcessingInstruction processingInstruction ) {
 			if ( START_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
-				queue.outputStarted( processingInstruction.getContent() );
-				this.output = new Output();
-				tree.push( this.output );
+				if ( componentInCreation ) {
+					// todo: correct me
+					output.handler.handleText( modelFactory.createText( "@@wcm:component(" + processingInstruction.getContent() + ")@@" ) );
+				}
 
-				enabled = true;
+				queue.outputStarted( processingInstruction.getContent() );
+				output = new Output();
+				tree.push( output );
+
+				componentInCreation = true;
 			}
 			else if ( STOP_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
 				queue.outputFinished( processingInstruction.getContent(), tree.pop().buffer.toString() );
-				this.output = tree.peek();
-				enabled = this.output != null;
+				output = tree.peek();
+				componentInCreation = this.output != null;
+			}
+			else if ( PlaceholderTemplatePostProcessor.START_PLACEHOLDER.equals( processingInstruction.getTarget() ) && componentInCreation ) {
+				output = new Output();
+				tree.push( output );
+				componentInCreation = true;
+
+				next.handleProcessingInstruction( processingInstruction );
 			}
 			else if ( PlaceholderTemplatePostProcessor.STOP_PLACEHOLDER.equals( processingInstruction.getTarget() ) ) {
 				queue.placeholderRendered( processingInstruction.getContent() );
+
+				// remove placeholder
+				if ( componentInCreation ) {
+					tree.pop();
+					output = tree.peek();
+					componentInCreation = output != null;
+
+					// write placeholder marker
+					if ( componentInCreation ) {
+						output.handler.handleText( modelFactory.createText( "@@wcm:placeholder(" + processingInstruction.getContent() + ")@@" ) );
+					}
+				}
 
 				// forward to the PlaceholderTemplatePostProcessor
 				next.handleProcessingInstruction( processingInstruction );

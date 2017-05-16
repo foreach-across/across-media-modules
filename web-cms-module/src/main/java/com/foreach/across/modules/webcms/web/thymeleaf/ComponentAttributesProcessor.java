@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateQueue.CONTAINER_MEMBER_SCOPE;
 import static com.foreach.across.modules.webcms.web.thymeleaf.ComponentTemplatePostProcessor.START_INSTRUCTION;
 import static com.foreach.across.modules.webcms.web.thymeleaf.ComponentTemplatePostProcessor.STOP_INSTRUCTION;
 import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREFIX;
@@ -51,12 +52,10 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 {
 	private static final AtomicInteger COUNTER = new AtomicInteger();
 
-	private static final String SCOPE_CONTAINER_CREATION = "_container_creation_scope";
-
-	private static final String ATTR_COMPONENT = "component";
-	private static final String ATTR_SCOPE = "scope";
+	static final String ATTR_COMPONENT = "component";
+	static final String ATTR_AUTO_CREATE = "auto-create";
+	static final String ATTR_SCOPE = "scope";
 	private static final String ATTR_SEARCH_PARENTS = "search-parent-scopes";
-	private static final String ATTR_AUTO_CREATE = "auto-create";
 	private static final String ATTR_TYPE = "type";
 	private static final String ATTR_REPLACE = "always-replace";
 	private static final String ATTR_PARSE_PLACEHOLDERS = "parse-placeholders";
@@ -113,11 +112,13 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 					WebCmsComponentAutoCreateQueue queue = applicationContext.getBean( WebCmsComponentAutoCreateQueue.class );
 					val currentComponentInCreation = queue.getCurrentTask();
 
-					String creationScope = currentComponentInCreation != null
-							? currentComponentInCreation.getScopeName()
-							: determineCreationScope( elementTag, components, scopeName );
+					String creationScope = determineCreationScope( elementTag, components, scopeName );
 
-					if ( creationScope != null ) {
+					if ( creationScope == null && currentComponentInCreation != null ) {
+						creationScope = currentComponentInCreation.getScopeName();
+					}
+
+					if ( creationScope != null && !"_placeholder".equals( creationScope ) ) {
 						String componentType = elementTag.getAttributeValue( PREFIX, ATTR_TYPE );
 						String taskId = queue.schedule( attributeValue, creationScope, componentType );
 
@@ -200,6 +201,9 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 				creationScope = components.getDefaultScope();
 			}
 		}
+		else if ( CONTAINER_MEMBER_SCOPE.equals( scopeName )) {
+			creationScope = CONTAINER_MEMBER_SCOPE;
+		}
 
 		return creationScope;
 	}
@@ -266,12 +270,20 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 		for ( int i = 1; i < model.size(); i++ ) {
 			ITemplateEvent event = model.get( i );
 			if ( event instanceof IOpenElementTag || event instanceof IStandaloneElementTag ) {
-				IProcessableElementTag openElementTag = (IProcessableElementTag) event;
-				if ( openElementTag.hasAttribute( PREFIX, ATTR_COMPONENT ) && !openElementTag.hasAttribute( PREFIX, ATTR_SCOPE ) ) {
-					model.replace(
-							i,
-							modelFactory.setAttribute( openElementTag, PREFIX + ":" + ATTR_SCOPE, SCOPE_CONTAINER_CREATION, AttributeValueQuotes.DOUBLE )
-					);
+				IProcessableElementTag original = (IProcessableElementTag) event;
+				IProcessableElementTag openElementTag = original;
+				if ( openElementTag.hasAttribute( PREFIX, ATTR_COMPONENT ) ) {
+					if ( !openElementTag.hasAttribute( PREFIX, ATTR_SCOPE ) ) {
+						openElementTag = modelFactory.setAttribute(
+								openElementTag, PREFIX + ":" + ATTR_SCOPE, CONTAINER_MEMBER_SCOPE, AttributeValueQuotes.DOUBLE
+						);
+					}
+					if ( "_placeholder".equals( openElementTag.getAttributeValue( PREFIX, ATTR_AUTO_CREATE ) ) ) {
+						openElementTag = modelFactory.removeAttribute( openElementTag, PREFIX + ":" + ATTR_AUTO_CREATE );
+					}
+					if ( original != openElementTag ) {
+						model.replace( i, openElementTag );
+					}
 				}
 			}
 		}
@@ -281,7 +293,7 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	                                                     IProcessableElementTag elementTag,
 	                                                     WebCmsComponentModelHierarchy components,
 	                                                     String scopeName ) {
-		if ( SCOPE_CONTAINER_CREATION.equals( scopeName ) ) {
+		if ( CONTAINER_MEMBER_SCOPE.equals( scopeName ) ) {
 			return null;
 		}
 

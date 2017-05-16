@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
+import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateQueue;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AttributeName;
 import org.thymeleaf.model.*;
@@ -23,7 +24,7 @@ import org.thymeleaf.processor.element.AbstractAttributeModelProcessor;
 import org.thymeleaf.processor.element.IElementModelStructureHandler;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import static com.foreach.across.modules.webcms.web.thymeleaf.ComponentAttributesProcessor.MARKER_NEVER_REPLACE;
+import static com.foreach.across.modules.webcms.web.thymeleaf.ComponentAttributesProcessor.*;
 import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREFIX;
 
 /**
@@ -69,15 +70,34 @@ final class PlaceholderAttributeProcessor extends AbstractAttributeModelProcesso
 	}
 
 	private void enableDisabledComponentBlocks( IModel model, IModelFactory modelFactory ) {
-		// all components inside (or on) the placeholder should be rendered - even if the ComponentAttributeProcessor had put them hidden
+
 		for ( int i = 0; i < model.size(); i++ ) {
 			ITemplateEvent event = model.get( i );
 			if ( event instanceof IOpenElementTag || event instanceof IStandaloneElementTag ) {
-				IProcessableElementTag openElementTag = (IProcessableElementTag) event;
+				IProcessableElementTag original = (IProcessableElementTag) event;
+				IProcessableElementTag openElementTag = original;
+				// all components inside (or on) the placeholder should be rendered - even if the ComponentAttributeProcessor had put them hidden
 				if ( openElementTag.hasAttribute( MARKER_NEVER_REPLACE ) ) {
-					model.replace( i, modelFactory.removeAttribute( openElementTag, MARKER_NEVER_REPLACE ) );
+					openElementTag = modelFactory.removeAttribute( openElementTag, MARKER_NEVER_REPLACE );
+				}
+
+				if ( openElementTag.hasAttribute( PREFIX, ATTR_COMPONENT ) ) {
+					// if a wcm:component has container creation scope set, remove it
+					if ( WebCmsComponentAutoCreateQueue.CONTAINER_MEMBER_SCOPE.equals( openElementTag.getAttributeValue( PREFIX, ATTR_SCOPE ) ) ) {
+						openElementTag = modelFactory.removeAttribute( openElementTag, PREFIX + ":" + ATTR_SCOPE );
+					}
+					// if a wcm:component has no wcm:auto-create - ensure it is disabled (otherwise the container creation will trigger it)
+					if ( !openElementTag.hasAttribute( PREFIX, ATTR_AUTO_CREATE ) ) {
+						openElementTag = modelFactory.setAttribute( openElementTag, PREFIX + ":" + ATTR_AUTO_CREATE, "_placeholder",
+						                                            AttributeValueQuotes.DOUBLE );
+					}
+				}
+
+				if ( original != openElementTag ) {
+					model.replace( i, openElementTag );
 				}
 			}
 		}
+
 	}
 }

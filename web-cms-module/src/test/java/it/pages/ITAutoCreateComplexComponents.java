@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 public class ITAutoCreateComplexComponents extends AbstractSingleApplicationIT
 {
@@ -96,8 +96,8 @@ public class ITAutoCreateComplexComponents extends AbstractSingleApplicationIT
 		assertEquals( "title", title.getPlaceholderName() );
 
 		val body = container.getMember( "body", ContainerWebCmsComponentModel.class );
-		assertEquals( 3, body.size() );
 		assertNotNull( body );
+		assertEquals( 3, body.size() );
 		val subTitle = body.getMember( "subtitle", TextWebCmsComponentModel.class );
 		assertNotNull( subTitle );
 		assertEquals( TextWebCmsComponentModel.MarkupType.MARKUP, subTitle.getMarkupType() );
@@ -122,7 +122,36 @@ public class ITAutoCreateComplexComponents extends AbstractSingleApplicationIT
 
 	@Test
 	public void componentsInsidePlaceholdersInsideContainerShouldNotBeContainerMembers() {
-		// todo
+		html.assertElementHasHTML( "<div> Placeholder component 1: new component </div>Placeholder component 2: <div>Global component: footer</div>",
+		                           "#component-in-placeholders" );
+
+		val container = componentModelService.getComponentModelByName( "component-in-placeholders", page, ContainerWebCmsComponentModel.class );
+		assertNotNull( container );
+		assertEquals( 2, container.size() );
+
+		val header = container.getMember( "header", PlaceholderWebCmsComponentModel.class );
+		assertNotNull( header );
+		assertEquals( "header", header.getPlaceholderName() );
+
+		val body = container.getMember( "body", ContainerWebCmsComponentModel.class );
+		assertNotNull( body );
+		assertEquals( 1, body.size() );
+		val bodyText = body.getMember( "body-text", PlaceholderWebCmsComponentModel.class );
+		assertNotNull( bodyText );
+		assertEquals( "body-text", bodyText.getPlaceholderName() );
+
+		assertNull( componentModelService.getComponentModelByName( "not-created", page ) );
+		val headerText = componentModelService.getComponentModelByName( "header-text", page, TextWebCmsComponentModel.class );
+		assertNotNull( headerText );
+		assertEquals( "new component", headerText.getContent() );
+	}
+
+	@Test
+	public void placeholdersInsideMarkupResultInPlaceholderMarkers() {
+		html.assertElementHasHTML( "Default markup <span>one</span> with two content", "#markup-with-placeholders" );
+
+		val markup = componentModelService.getComponentModelByName( "markup-with-placeholders", page, TextWebCmsComponentModel.class );
+		assertEquals( "Default markup @@wcm:placeholder(one)@@ with @@wcm:placeholder(two)@@ content", markup.getContent() );
 	}
 
 	@Test
@@ -131,11 +160,11 @@ public class ITAutoCreateComplexComponents extends AbstractSingleApplicationIT
 		secondRender.assertElementHasHTML( "<div>single placeholder content</div>", "#container-single-placeholder" );
 		secondRender.assertElementHasHTML( "container titlecontainer sub titlebefore text placeholder<div>footer text placeholder</div>",
 		                                   "#nested-placeholders" );
+		secondRender.assertElementHasHTML( "<div> Placeholder component 1: new component </div>Placeholder component 2: <div>Global component: footer</div>",
+		                                   "#component-in-placeholders" );
+		secondRender.assertElementHasHTML( "Default markup <span>one</span> with two content", "#markup-with-placeholders" );
 	}
 
-	// container with container with placeholders and components inside placeholder
-
-	// placeholders inside markup result in placeholder markers instead
 	// container with content
 	// container but members that have explicit different scope should result in proxies
 	// container with member that has explicit scope specified (should not auto-create member but create a proxy)

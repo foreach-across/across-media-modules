@@ -239,6 +239,10 @@ refresh components:
 wcm:componentRefresh
 data-wcm-component-fresh
 
+content markers!
+
+@@wcm:placeholder(placeholderName)@@
+
 == Publication model
 
 WebCmsPublication

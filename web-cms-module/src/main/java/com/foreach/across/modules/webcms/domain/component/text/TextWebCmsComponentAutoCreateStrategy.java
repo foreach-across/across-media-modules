@@ -20,6 +20,7 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateService;
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateStrategy;
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateTask;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,6 @@ class TextWebCmsComponentAutoCreateStrategy implements WebCmsComponentAutoCreate
 	public void buildComponentModel( WebCmsComponentAutoCreateService autoCreateService,
 	                                 TextWebCmsComponentModel componentModel,
 	                                 WebCmsComponentAutoCreateTask task ) {
-		componentModel.setContent( task.getOutput() );
+		componentModel.setContent( StringUtils.trim( task.getOutput() ) );
 	}
 }

@@ -123,9 +123,13 @@ public class WebCmsComponentAutoCreateService
 		String requested = task.getComponentType();
 
 		if ( StringUtils.isEmpty( requested ) ) {
-			requested = task.hasChildren() ? defaultContainerComponentType : defaultComponentType;
+			requested = hasNonPlaceholderChildren( task ) ? defaultContainerComponentType : defaultComponentType;
 		}
 		return componentTypeRepository.findOneByTypeKey( requested );
+	}
+
+	private boolean hasNonPlaceholderChildren( WebCmsComponentAutoCreateTask task ) {
+		return task.getChildren().stream().anyMatch( t -> !"placeholder".equals( t.getComponentType() ) );
 	}
 
 	@Autowired

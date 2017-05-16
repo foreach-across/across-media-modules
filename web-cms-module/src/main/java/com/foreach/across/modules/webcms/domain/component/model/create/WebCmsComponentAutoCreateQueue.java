@@ -17,19 +17,12 @@
 package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.entity.util.EntityUtils;
-import com.foreach.across.modules.webcms.domain.WebCmsObject;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
 import com.foreach.across.modules.webcms.domain.component.model.OrderedWebComponentModelSet;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -38,6 +31,7 @@ import org.springframework.util.Assert;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Represents the request-bound queue for auto-creation of components.
@@ -53,18 +47,18 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WebCmsComponentAutoCreateQueue
 {
+	public static final String CONTAINER_MEMBER_SCOPE = "_containerMember";
+
 	private final Map<String, WebCmsComponentModel> componentsCreated = new HashMap<>();
 	private final Map<String, WebCmsComponentAutoCreateTask> tasksByKey = new HashMap<>();
 	private final ArrayDeque<WebCmsComponentAutoCreateTask> tasks = new ArrayDeque<>();
 	private final ArrayDeque<WebCmsComponentAutoCreateTask> outputQueue = new ArrayDeque<>();
 
-	private final WebCmsComponentRepository componentRepository;
-	private final WebCmsComponentTypeRepository componentTypeRepository;
 	private final WebCmsComponentModelHierarchy componentModelHierarchy;
 	private final WebCmsComponentAutoCreateService autoCreateService;
 
 	public String schedule( String componentName, String scope, String type ) {
-		String key = componentName + ":" + scope;
+		String key = CONTAINER_MEMBER_SCOPE.equals( scope ) ? UUID.randomUUID().toString() : componentName + ":" + scope;
 
 		WebCmsComponentAutoCreateTask creationTask = tasksByKey.computeIfAbsent( key, k -> new WebCmsComponentAutoCreateTask( componentName, scope, type ) );
 		tasks.add( creationTask );
@@ -88,21 +82,27 @@ public class WebCmsComponentAutoCreateQueue
 	}
 
 	public void outputFinished( String taskId, String output ) {
-		WebCmsComponentAutoCreateTask current = outputQueue.pop();
-		Assert.isTrue( taskId.equals( current.getTaskId() ) );
+		if ( !componentsCreated.containsKey( taskId ) ) {
+			WebCmsComponentAutoCreateTask current = outputQueue.pop();
+			Assert.isTrue( taskId.equals( current.getTaskId() ) );
 
-		current.setOutput( output );
+			current.setOutput( output );
 
-		WebCmsComponentAutoCreateTask next = outputQueue.peek();
+			System.err.println( "--- " + current.getComponentName() + "[" + current.getTaskId() + "] ---");
+			System.err.println( output );
+			System.err.println("----------------");
+			System.err.println();
+			WebCmsComponentAutoCreateTask next = outputQueue.peek();
 
-		if ( next != null ) {
-			next.addChild( current );
-		}
-		else {
-			OrderedWebComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( current.getScopeName() );
-			current.setOwner( componentModelSet.getOwner() );
+			if ( next != null && CONTAINER_MEMBER_SCOPE.equals( current.getScopeName() ) ) {
+				next.addChild( current );
+			}
+			else {
+				OrderedWebComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( current.getScopeName() );
+				current.setOwner( componentModelSet.getOwner() );
 
-			componentsCreated.put( current.getTaskId(), autoCreateService.createComponent( current ) );
+				componentsCreated.put( current.getTaskId(), autoCreateService.createComponent( current ) );
+			}
 		}
 	}
 
@@ -125,20 +125,5 @@ public class WebCmsComponentAutoCreateQueue
 	 */
 	public WebCmsComponentModel getComponentCreated( String taskId ) {
 		return componentsCreated.get( taskId );
-	}
-
-	private void saveComponent( WebCmsComponentAutoCreateTask creationTask, String output, WebCmsObject owner ) {
-		WebCmsComponent component = creationTask.getComponent();
-		component.setComponentType( determineComponentType( creationTask.getComponentType() ) );
-		component.setTitle( EntityUtils.generateDisplayName( component.getName().replace( '-', '_' ) ) );
-		component.setOwner( owner );
-		component.setBody( output );
-		componentRepository.save( component );
-
-		creationTask.getChildren().forEach( childTask -> saveComponent( childTask, childTask.getOutput(), component ) );
-	}
-
-	private WebCmsComponentType determineComponentType( String requestedComponentType ) {
-		return componentTypeRepository.findOneByTypeKey( StringUtils.isEmpty( requestedComponentType ) ? "rich-text" : requestedComponentType );
 	}
 }

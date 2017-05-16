@@ -15,9 +15,26 @@
         <th:block wcm:placeholder="before-text">before text placeholder</th:block>
         <th:block wcm:component="text" wcm:type="container"/>
     </th:block>
-    <div wcm:component="footer">
+    <div wcm:component="footer" wcm:type="container">
         <div wcm:placeholder="footer-text">footer text placeholder</div>
     </div>
+</div>
+
+<div id="component-in-placeholders" wcm:component="component-in-placeholders" wcm:type="container" wcm:auto-create wcm:parse-placeholders>
+    <div wcm:placeholder="header">
+        Placeholder component 1:
+        <th:block wcm:component="not-created" wcm:always-replace>non-created components that should have been replaced</th:block>
+        <th:block wcm:component="header-text" wcm:auto-create>new component</th:block>
+    </div>
+    <th:block wcm:component="body" wcm:type="container">
+        <th:block wcm:placeholder="body-text">Placeholder component 2:
+            <div wcm:component="footer"/>
+        </th:block>
+    </th:block>
+</div>
+
+<div id="markup-with-placeholders" wcm:component="markup-with-placeholders" wcm:auto-create wcm:parse-placeholders>
+    Default markup <span wcm:placeholder="one">one</span> with <th:block wcm:placeholder="two">two</th:block> content
 </div>
 
 </body>
