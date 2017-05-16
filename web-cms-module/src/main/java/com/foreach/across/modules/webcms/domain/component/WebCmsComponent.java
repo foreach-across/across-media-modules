@@ -19,10 +19,7 @@ package com.foreach.across.modules.webcms.domain.component;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectSuperClass;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.val;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -113,6 +110,17 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	 */
 	@Column(name = "metadata")
 	private String metadata;
+
+	/**
+	 * True if the body of the component contains {@link WebCmsContentMarker} strings.
+	 * You should usually not set this value manually.
+	 *
+	 * @see WebCmsComponentInterceptor
+	 */
+	@Getter
+	@Setter(AccessLevel.PROTECTED)
+	@Column(name = "body_contains_markers")
+	private boolean bodyWithContentMarkers;
 
 	public WebCmsComponent() {
 		super();

@@ -40,6 +40,7 @@ public class TextWebCmsComponentModelReader extends AbstractWebCmsComponentModel
 
 		TextWebCmsComponentModel model = new TextWebCmsComponentModel( component );
 		model.setContent( component.getBody() );
+		model.setParseContentMarkers( component.isBodyWithContentMarkers() );
 		model.setMarkupType( TextWebCmsComponentModel.MarkupType.forComponent( component ) );
 		model.setMultiLine( !"false".equalsIgnoreCase( attributes.get( Attributes.MULTI_LINE ) ) );
 		model.setProfile( attributes.get( Attributes.PROFILE ) );

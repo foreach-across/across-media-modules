@@ -70,6 +70,10 @@ public class WebCmsComponentAutoCreateQueue
 		return outputQueue.peek();
 	}
 
+	public WebCmsComponentAutoCreateTask getTask( String taskId ) {
+		return tasksByKey.values().stream().filter( t -> taskId.equals( t.getTaskId() ) ).findFirst().orElse( null );
+	}
+
 	public void outputStarted( String taskId ) {
 		WebCmsComponentAutoCreateTask current;
 
@@ -88,9 +92,9 @@ public class WebCmsComponentAutoCreateQueue
 
 			current.setOutput( output );
 
-			System.err.println( "--- " + current.getComponentName() + "[" + current.getTaskId() + "] ---");
+			System.err.println( "--- " + current.getComponentName() + "[" + current.getTaskId() + "] ---" );
 			System.err.println( output );
-			System.err.println("----------------");
+			System.err.println( "----------------" );
 			System.err.println();
 			WebCmsComponentAutoCreateTask next = outputQueue.peek();
 

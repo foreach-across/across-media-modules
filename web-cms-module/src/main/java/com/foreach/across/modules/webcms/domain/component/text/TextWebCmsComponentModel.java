@@ -122,6 +122,12 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 	 */
 	private MarkupType markupType = MarkupType.MARKUP;
 
+	/**
+	 * Should content markers in the content be replaced.
+	 * Note: when updating the content, this will always be reverted to true.
+	 */
+	private boolean parseContentMarkers;
+
 	public TextWebCmsComponentModel( WebCmsComponent component ) {
 		super( component );
 	}
@@ -133,6 +139,11 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 		return StringUtils.isEmpty( content );
 	}
 
+	public void setContent( String content ) {
+		this.content = content;
+		setParseContentMarkers( !isEmpty() );
+	}
+
 	@Override
 	public TextWebCmsComponentModel asComponentTemplate() {
 		TextWebCmsComponentModel template = new TextWebCmsComponentModel( getComponent().asTemplate() );
@@ -140,6 +151,7 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 		template.markupType = markupType;
 		template.multiLine = multiLine;
 		template.profile = profile;
+		template.parseContentMarkers = parseContentMarkers;
 
 		return template;
 	}

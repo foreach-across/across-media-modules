@@ -16,6 +16,7 @@
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateQueue;
+import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateTask;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
@@ -175,8 +176,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void handleProcessingInstruction( IProcessingInstruction processingInstruction ) {
 			if ( START_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
 				if ( componentInCreation ) {
-					// todo: correct me
-					output.handler.handleText( modelFactory.createText( "@@wcm:component(" + processingInstruction.getContent() + ")@@" ) );
+					output.handler.handleText( modelFactory.createText( buildComponentMarker( processingInstruction.getContent() ) ) );
 				}
 
 				queue.outputStarted( processingInstruction.getContent() );
@@ -218,6 +218,12 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 			else {
 				next.handleProcessingInstruction( processingInstruction );
 			}
+		}
+
+		private String buildComponentMarker( String taskId ) {
+			WebCmsComponentAutoCreateTask task = queue.getTask( taskId );
+
+			return "@@wcm:component(" + task.getComponentName() + "," + task.getScopeName() + ")@@";
 		}
 	}
 }

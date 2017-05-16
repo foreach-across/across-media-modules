@@ -42,10 +42,10 @@ class TextWebCmsComponentModelRenderer implements WebCmsComponentModelRenderer<T
 	public void writeComponent( TextWebCmsComponentModel component, ThymeleafModelBuilder model ) {
 		switch ( component.getMarkupType() ) {
 			case PLAIN_TEXT:
-				contentModelWriter.writeText( component, component.getContent(), true, model );
+				contentModelWriter.writeText( component, component.getContent(), component.isParseContentMarkers(), model );
 				break;
 			default:
-				contentModelWriter.writeHtml( component, component.getContent(), true, model );
+				contentModelWriter.writeHtml( component, component.getContent(), component.isParseContentMarkers(), model );
 				break;
 		}
 	}

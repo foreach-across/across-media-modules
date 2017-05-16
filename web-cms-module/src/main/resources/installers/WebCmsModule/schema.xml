@@ -611,7 +611,6 @@
 		<createIndex tableName="${table.component}" indexName="ix_wcm_comp_ownerid">
 			<column name="owner_object_id"/>
 		</createIndex>
-
 	</changeSet>
 
 	<!-- Asset - Component link -->
@@ -840,6 +839,30 @@
 		<createIndex tableName="${table.object_asset_link}" indexName="ix_wcm_object_asset_aidl">
 			<column name="asset_id"/>
 			<column name="link_type"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Extend component table: proxied_component_id, body_contains_markers -->
+	<changeSet id="201705161531" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.component}" columnName="proxied_component_id"/>
+			</not>
+		</preConditions>
+
+		<comment>Adds proxied component and body_contains_markers column</comment>
+
+		<addColumn tableName="${table.component}">
+			<column name="body_contains_markers" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+			<column name="proxied_component_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="true" referencedTableName="${table.component}" referencedColumnNames="id" foreignKeyName="fk_wcm_comp_comp"/>
+			</column>
+		</addColumn>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_component_pcid">
+			<column name="proxied_component_id"/>
 		</createIndex>
 	</changeSet>
 

@@ -33,10 +33,27 @@ class WebCmsComponentInterceptor extends EntityInterceptorAdapter<WebCmsComponen
 	private static final String TEMPLATE_COMPONENT = "componentTemplate";
 
 	private final WebCmsComponentModelService componentModelService;
+	private final WebCmsContentMarkerService contentMarkerService;
 
 	@Override
 	public boolean handles( Class<?> aClass ) {
 		return WebCmsComponent.class.isAssignableFrom( aClass );
+	}
+
+	@Override
+	public void beforeCreate( WebCmsComponent component ) {
+		updateBodyContainsMarkers( component );
+	}
+
+	@Override
+	public void beforeUpdate( WebCmsComponent component ) {
+		updateBodyContainsMarkers( component );
+	}
+
+	private void updateBodyContainsMarkers( WebCmsComponent component ) {
+		if ( contentMarkerService.containsMarkers( component.getBody() ) ) {
+			component.setBodyWithContentMarkers( true );
+		}
 	}
 
 	@Override

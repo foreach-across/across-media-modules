@@ -37,5 +37,9 @@
     Default markup <span wcm:placeholder="one">one</span> with <th:block wcm:placeholder="two">two</th:block> content
 </div>
 
+<div id="markup-with-components" wcm:component="markup-with-components" wcm:auto-create wcm:type="html">
+    Markup with <div wcm:component="footer">replaced by footer</div>
+</div>
+
 </body>
 </html>
