@@ -66,6 +66,62 @@ public class ITDefaultObjects
 
 		{
 			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "proxy" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:proxy",
+					"Proxy component",
+					"proxy",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "placeholder" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:placeholder",
+					"Placeholder",
+					"placeholder",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "container" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:container",
+					"Container",
+					"container",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "fixed-container" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:fixed-container",
+					"Fixed container",
+					"fixed-container",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
 			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "plain-text" );
 			attr.put( TextWebCmsComponentModel.Attributes.MULTI_LINE, "false" );
 

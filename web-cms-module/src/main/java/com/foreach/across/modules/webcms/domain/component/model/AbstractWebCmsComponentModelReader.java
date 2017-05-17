@@ -21,6 +21,7 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
  * Base class that builds the metadata for a {@link WebCmsComponentModel}.
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractWebCmsComponentModelReader<T extends WebCmsComponentModel> implements WebCmsComponentModelReader<T>
 {
 	private WebCmsDataObjectMapper dataObjectMapper;
+	private AutowireCapableBeanFactory beanFactory;
 
 	@Override
 	public final T readFromComponent( WebCmsComponent component ) {
@@ -56,7 +58,7 @@ public abstract class AbstractWebCmsComponentModelReader<T extends WebCmsCompone
 			try {
 				Class<?> metadataType = Class.forName( metadataClassName, true, Thread.currentThread().getContextClassLoader() );
 				if ( currentMetadata == null || !metadataType.isInstance( currentMetadata ) ) {
-					metadata = metadataType.newInstance();
+					metadata = beanFactory.createBean( metadataType );
 				}
 			}
 			catch ( Exception e ) {
@@ -87,5 +89,10 @@ public abstract class AbstractWebCmsComponentModelReader<T extends WebCmsCompone
 	@Autowired
 	void setDataObjectMapper( WebCmsDataObjectMapper dataObjectMapper ) {
 		this.dataObjectMapper = dataObjectMapper;
+	}
+
+	@Autowired
+	void setBeanFactory( AutowireCapableBeanFactory beanFactory ) {
+		this.beanFactory = beanFactory;
 	}
 }

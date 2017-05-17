@@ -27,4 +27,10 @@
         <th:block th:if="${metadata.title}">[[${metadata.title}]]</th:block>
     </h1>
 </div>
+
+<div th:fragment="customProxy(component)" th:remove="tag">
+    <h5>
+        <across:view element="${component.target}"/>
+    </h5>
+</div>
 </html>

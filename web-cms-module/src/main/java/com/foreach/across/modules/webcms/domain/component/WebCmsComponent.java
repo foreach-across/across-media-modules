@@ -27,6 +27,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 /**
@@ -87,9 +88,11 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 
 	/**
 	 * Name of the component - if set must be unique within the owner.
+	 * Component name can only contain alphanumeric characters, . (dot), - (dash) or _ (underscore).
 	 */
 	@Column(name = "name")
 	@NotBlank(groups = SharedComponentValidation.class)
+	@Pattern( regexp = "^[\\p{Alnum}-_.]+$")
 	@Length(max = 100)
 	private String name;
 
@@ -122,6 +125,13 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	@Column(name = "body_contains_markers")
 	private boolean bodyWithContentMarkers;
 
+	/**
+	 * If this component is a proxy, will contain the proxy target.
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "proxied_component_id")
+	private WebCmsComponent proxyTarget;
+
 	public WebCmsComponent() {
 		super();
 	}
@@ -134,7 +144,14 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	                        @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                        @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                        @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
-	                        WebCmsComponentType componentType, String ownerObjectId, String name, int sortIndex, String title, String body, String metadata ) {
+	                        WebCmsComponentType componentType,
+	                        String ownerObjectId,
+	                        String name,
+	                        int sortIndex,
+	                        String title,
+	                        String body,
+	                        String metadata,
+	                        WebCmsComponent proxyTarget ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 
 		this.componentType = componentType;
@@ -144,6 +161,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 		this.title = title;
 		this.body = body;
 		this.metadata = metadata;
+		this.proxyTarget = proxyTarget;
 	}
 
 	/**
@@ -162,6 +180,13 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 		return getOwnerObjectId() != null;
 	}
 
+	/**
+	 * @return true if this is in fact a proxy component
+	 */
+	public boolean isProxyComponent() {
+		return getProxyTarget() != null;
+	}
+
 	@Override
 	protected String getObjectCollectionId() {
 		return COLLECTION_ID;
@@ -178,6 +203,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 		template.body = body;
 		template.metadata = metadata;
 		template.sortIndex = sortIndex;
+		template.proxyTarget = proxyTarget;
 		return template;
 	}
 

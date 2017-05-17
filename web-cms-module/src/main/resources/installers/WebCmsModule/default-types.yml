@@ -1,6 +1,11 @@
 types:
   # Default component types
   component:
+    proxy:
+      name: Proxy component
+      description: A proxy for another component that will be rendered instead.
+      attributes:
+        type: proxy
     placeholder:
       name: Placeholder
       description: Represents a placeholder for content provided by code or templates.
@@ -11,6 +16,11 @@ types:
       description: Container of multiple ordered components.
       attributes:
         type: container
+    fixed-container:
+      name: Fixed container
+      description: Container of a fixed set of components.
+      attributes:
+        type: fixed-container
     text-field:
       name: Text field
       description: A single line of plain text.

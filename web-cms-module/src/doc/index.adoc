@@ -243,6 +243,17 @@ content markers!
 
 @@wcm:placeholder(placeholderName)@@
 
+using components in markup
+
+* if you dont specify a component type - the default component type will be created
+* if you dont specify a scope on a component - a default scope will be used:
+** outside a parent component the default scope will be asset, and parents will be searched if not specified
+** inside a parent component that is not a container: the default scope will be asset and parent scopes will be searched if not specified
+** inside a parent component that is a container: the default scope will be the container and parents will not be searched
+* if your component is a container
+** any placeholders in the body will be added as placeholder child components and the body markup will refer to those components
+** any scoped component will be added as a proxy component referring to the original scoped component and the body markup will refer to the proxy components
+
 == Publication model
 
 WebCmsPublication

@@ -55,12 +55,18 @@ public class TestWebCmsComponent
 		assertNull( component.getCreatedDate() );
 		assertNull( component.getLastModifiedBy() );
 		assertNull( component.getLastModifiedDate() );
+
+		assertFalse( component.isBodyWithContentMarkers() );
+		assertNull( component.getProxyTarget() );
+		assertFalse( component.isProxyComponent() );
 	}
 
 	@Test
 	public void asTemplate() {
 		Date timestamp = new Date();
 		WebCmsComponentType componentType = WebCmsComponentType.builder().name( "test" ).build();
+
+		WebCmsComponent target = WebCmsComponent.builder().build();
 
 		WebCmsComponent component = WebCmsComponent.builder()
 		                                           .id( 123L )
@@ -75,6 +81,7 @@ public class TestWebCmsComponent
 		                                           .createdBy( "john" )
 		                                           .createdDate( timestamp )
 		                                           .lastModifiedBy( "josh" )
+		                                           .proxyTarget( target )
 		                                           .build();
 
 		WebCmsComponent template = component.asTemplate();
@@ -92,6 +99,7 @@ public class TestWebCmsComponent
 		assertNull( template.getCreatedDate() );
 		assertNull( template.getLastModifiedBy() );
 		assertNull( template.getLastModifiedDate() );
+		assertSame( target, template.getProxyTarget() );
 	}
 
 	@Test
@@ -99,6 +107,7 @@ public class TestWebCmsComponent
 		Date timestamp = new Date();
 
 		WebCmsComponentType componentType = WebCmsComponentType.builder().name( "test" ).build();
+		WebCmsComponent target = WebCmsComponent.builder().build();
 
 		WebCmsComponent component = WebCmsComponent.builder()
 		                                           .newEntityId( 123L )
@@ -113,6 +122,7 @@ public class TestWebCmsComponent
 		                                           .createdBy( "john" )
 		                                           .createdDate( timestamp )
 		                                           .lastModifiedBy( "josh" )
+		                                           .proxyTarget( target )
 		                                           .build();
 
 		assertNull( component.getId() );
@@ -129,10 +139,13 @@ public class TestWebCmsComponent
 		assertEquals( timestamp, component.getCreatedDate() );
 		assertEquals( "josh", component.getLastModifiedBy() );
 		assertNull( component.getLastModifiedDate() );
+		assertTrue( component.isProxyComponent() );
+		assertSame( target, component.getProxyTarget() );
 
 		WebCmsComponent other = component.toBuilder()
 		                                 .id( 333L )
 		                                 .lastModifiedDate( timestamp )
+		                                 .proxyTarget( null )
 		                                 .build();
 		assertNotSame( component, other );
 
@@ -150,5 +163,7 @@ public class TestWebCmsComponent
 		assertEquals( timestamp, other.getCreatedDate() );
 		assertEquals( "josh", other.getLastModifiedBy() );
 		assertEquals( timestamp, other.getLastModifiedDate() );
+		assertFalse( other.isProxyComponent() );
+		assertNull( other.getProxyTarget() );
 	}
 }
