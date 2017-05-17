@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.model.OrderedWebComponentModelSet;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
@@ -57,13 +58,16 @@ public class WebCmsComponentAutoCreateQueue
 	private final WebCmsComponentModelHierarchy componentModelHierarchy;
 	private final WebCmsComponentAutoCreateService autoCreateService;
 
-	public String schedule( String componentName, String scope, String type ) {
+	public WebCmsComponentAutoCreateTask schedule( String componentName, String scope, String type ) {
 		String key = CONTAINER_MEMBER_SCOPE.equals( scope ) ? UUID.randomUUID().toString() : componentName + ":" + scope;
 
-		WebCmsComponentAutoCreateTask creationTask = tasksByKey.computeIfAbsent( key, k -> new WebCmsComponentAutoCreateTask( componentName, scope, type ) );
+		WebCmsComponentAutoCreateTask creationTask = tasksByKey.computeIfAbsent( key, k -> {
+			WebCmsComponentType componentType = autoCreateService.resolveComponentType( type );
+			return new WebCmsComponentAutoCreateTask( componentName, scope, componentType );
+		} );
 		tasks.add( creationTask );
 
-		return creationTask.getTaskId();
+		return creationTask;
 	}
 
 	public WebCmsComponentAutoCreateTask getCurrentTask() {
@@ -91,11 +95,12 @@ public class WebCmsComponentAutoCreateQueue
 			Assert.isTrue( taskId.equals( current.getTaskId() ) );
 
 			current.setOutput( output );
-
+/*
 			System.err.println( "--- " + current.getComponentName() + "[" + current.getTaskId() + "] ---" );
 			System.err.println( output );
 			System.err.println( "----------------" );
-			System.err.println();
+			System.err.println();*/
+
 			WebCmsComponentAutoCreateTask next = outputQueue.peek();
 
 			if ( next != null && CONTAINER_MEMBER_SCOPE.equals( current.getScopeName() ) ) {
@@ -105,7 +110,10 @@ public class WebCmsComponentAutoCreateQueue
 				OrderedWebComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( current.getScopeName() );
 				current.setOwner( componentModelSet.getOwner() );
 
-				componentsCreated.put( current.getTaskId(), autoCreateService.createComponent( current ) );
+				WebCmsComponentModel componentModel = autoCreateService.createComponent( current );
+				componentModelSet.addByNameOnly( componentModel );
+
+				componentsCreated.put( current.getTaskId(), componentModel );
 			}
 		}
 	}
@@ -120,7 +128,9 @@ public class WebCmsComponentAutoCreateQueue
 		val current = getCurrentTask();
 
 		if ( current != null ) {
-			current.addChild( new WebCmsComponentAutoCreateTask( placeholderName, null, PlaceholderWebCmsComponentModel.TYPE ) );
+			current.addChild(
+					new WebCmsComponentAutoCreateTask( placeholderName, null, autoCreateService.resolveComponentType( PlaceholderWebCmsComponentModel.TYPE ) )
+			);
 		}
 	}
 

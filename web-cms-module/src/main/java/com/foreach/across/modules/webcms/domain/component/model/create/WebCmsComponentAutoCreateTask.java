@@ -17,8 +17,9 @@
 package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayDeque;
@@ -39,35 +40,21 @@ import java.util.UUID;
  */
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class WebCmsComponentAutoCreateTask
 {
 	private final String taskId = UUID.randomUUID().toString();
 
-	@Deprecated
-	private final WebCmsComponent component;
 	private final String componentName;
 	private final String scopeName;
-	private final String componentType;
+	private final WebCmsComponentType componentType;
+
 	private final Deque<WebCmsComponentAutoCreateTask> children = new ArrayDeque<>();
 
 	private int sortIndex;
 	private WebCmsObject owner;
 
-	public WebCmsComponentAutoCreateTask( String componentName, String scopeName, String componentType ) {
-		this.scopeName = scopeName;
-		this.componentType = componentType;
-
-		this.componentName = componentName;
-
-		component = new WebCmsComponent();
-		component.setName( componentName );
-	}
-
 	private String output;
-
-	public String getObjectId() {
-		return component.getObjectId();
-	}
 
 	public void addChild( WebCmsComponentAutoCreateTask task ) {
 		task.sortIndex = children.size() + 1;

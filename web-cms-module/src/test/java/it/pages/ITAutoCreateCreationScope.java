@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITAutoCreateSimpleComponents extends AbstractSingleApplicationIT
+public class ITAutoCreateCreationScope extends AbstractSingleApplicationIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
@@ -47,23 +47,23 @@ public class ITAutoCreateSimpleComponents extends AbstractSingleApplicationIT
 	@Before
 	public void setUp() throws Exception {
 		if ( html == null ) {
-			page = pageService.findByCanonicalPath( "/auto-create-components" )
+			page = pageService.findByCanonicalPath( "/auto-create-creation-scope" )
 			                  .orElse( null );
 			verifyPageDoesButNoneOfTheComponentsExist( page );
-			html = html( "/auto-create-components" );
+			html = html( "/auto-create-creation-scope" );
 		}
 	}
 
 	public void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
 		assertNotNull( page );
 
-		assertEquals( "wcm:asset:page:auto-create-components", page.getObjectId() );
-		assertEquals( "Auto create components", page.getTitle() );
-		assertEquals( "th/test/pages/auto-create-components", page.getTemplate() );
+		assertEquals( "wcm:asset:page:auto-create-creation-scope", page.getObjectId() );
+		assertEquals( "Auto create creation scope", page.getTitle() );
+		assertEquals( "th/test/pages/auto-create/creation-scope", page.getTemplate() );
 		assertTrue( page.isCanonicalPathGenerated() );
 		assertFalse( page.isPathSegmentGenerated() );
-		assertEquals( "auto-create-components", page.getPathSegment() );
-		assertEquals( "/auto-create-components", page.getCanonicalPath() );
+		assertEquals( "auto-create-creation-scope", page.getPathSegment() );
+		assertEquals( "/auto-create-creation-scope", page.getCanonicalPath() );
 		assertNull( page.getParent() );
 
 		assertFalse( componentModelService.getComponentModelsForOwner( page ).hasOrderedComponents() );
@@ -71,19 +71,19 @@ public class ITAutoCreateSimpleComponents extends AbstractSingleApplicationIT
 
 	@Test
 	public void componentIsCreatedOnLowestLevelAndAsMarkupTypeByDefault() {
-		html.assertElementHasText( "Page markup: Auto create components", "#no-scope-or-type-specified" );
+		html.assertElementHasText( "Page markup: Auto create creation scope", "#no-scope-or-type-specified" );
 
 		val text = componentModelService.getComponentModelByName( "page-markup", page, TextWebCmsComponentModel.class );
 		assertNotNull( text );
 		assertEquals( "page-markup", text.getName() );
 		assertEquals( "Page markup", text.getTitle() );
-		assertEquals( "Page markup: Auto create components", text.getContent() );
+		assertEquals( "Page markup: Auto create creation scope", text.getContent() );
 		assertEquals( TextWebCmsComponentModel.MarkupType.MARKUP, text.getMarkupType() );
 	}
 
 	@Test
 	public void creationScopeIsTakenIntoAccount() {
-		html.assertElementHasText( "Global markup: Auto create components", "#creation-scope-specified" );
+		html.assertElementHasText( "Global markup: Auto create creation scope", "#creation-scope-specified" );
 
 		assertNull( componentModelService.getComponentModelByName( "global-markup", page ) );
 
@@ -91,13 +91,13 @@ public class ITAutoCreateSimpleComponents extends AbstractSingleApplicationIT
 		assertNotNull( text );
 		assertEquals( "global-markup", text.getName() );
 		assertEquals( "Global markup", text.getTitle() );
-		assertEquals( "Global markup: Auto create components", text.getContent() );
+		assertEquals( "Global markup: Auto create creation scope", text.getContent() );
 		assertEquals( TextWebCmsComponentModel.MarkupType.MARKUP, text.getMarkupType() );
 	}
 
 	@Test
 	public void componentScopeIsUsedAsCreationScope() {
-		html.assertElementHasText( "Global markup2: Auto create components", "#component-scope-specified" );
+		html.assertElementHasText( "Global markup2: Auto create creation scope", "#component-scope-specified" );
 
 		assertNull( componentModelService.getComponentModelByName( "global-markup2", page ) );
 
@@ -105,19 +105,19 @@ public class ITAutoCreateSimpleComponents extends AbstractSingleApplicationIT
 		assertNotNull( text );
 		assertEquals( "global-markup2", text.getName() );
 		assertEquals( "Global markup2", text.getTitle() );
-		assertEquals( "Global markup2: Auto create components", text.getContent() );
+		assertEquals( "Global markup2: Auto create creation scope", text.getContent() );
 		assertEquals( TextWebCmsComponentModel.MarkupType.MARKUP, text.getMarkupType() );
 	}
 
 	@Test
 	public void componentIsCreatedWithTypeSpecified() {
-		html.assertElementHasText( "Page rich-text: Auto create components", "#type-specified" );
+		html.assertElementHasText( "Page rich-text: Auto create creation scope", "#type-specified" );
 
 		val text = componentModelService.getComponentModelByName( "page-rich-text", page, TextWebCmsComponentModel.class );
 		assertNotNull( text );
 		assertEquals( "page-rich-text", text.getName() );
 		assertEquals( "Page rich text", text.getTitle() );
-		assertEquals( "Page rich-text: Auto create components", text.getContent() );
+		assertEquals( "Page rich-text: Auto create creation scope", text.getContent() );
 		assertEquals( TextWebCmsComponentModel.MarkupType.RICH_TEXT, text.getMarkupType() );
 	}
 
@@ -185,11 +185,11 @@ public class ITAutoCreateSimpleComponents extends AbstractSingleApplicationIT
 
 	@Test
 	public void secondRenderYieldsSameOutput() {
-		Html secondRender = html( "/auto-create-components" );
-		secondRender.assertElementHasText( "Page markup: Auto create components", "#no-scope-or-type-specified" );
-		secondRender.assertElementHasText( "Global markup: Auto create components", "#creation-scope-specified" );
-		secondRender.assertElementHasText( "Global markup2: Auto create components", "#component-scope-specified" );
-		secondRender.assertElementHasText( "Page rich-text: Auto create components", "#type-specified" );
+		Html secondRender = html( "/auto-create-creation-scope" );
+		secondRender.assertElementHasText( "Page markup: Auto create creation scope", "#no-scope-or-type-specified" );
+		secondRender.assertElementHasText( "Global markup: Auto create creation scope", "#creation-scope-specified" );
+		secondRender.assertElementHasText( "Global markup2: Auto create creation scope", "#component-scope-specified" );
+		secondRender.assertElementHasText( "Page rich-text: Auto create creation scope", "#type-specified" );
 		secondRender.assertElementHasHTML( "container titlecontainer body", "#default-container-type" );
 		secondRender.assertElementHasHTML( "container titlecontainer sub titlecontainer footer text", "#nested-containers" );
 	}

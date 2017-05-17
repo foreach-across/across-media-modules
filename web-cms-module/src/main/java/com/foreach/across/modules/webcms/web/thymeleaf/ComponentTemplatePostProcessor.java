@@ -42,6 +42,8 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 	static final String PLACEHOLDER_START = "render-to-placeholder-start";
 	static final String PLACEHOLDER_STOP = "render-to-placeholder-finish";
 
+	static final String COMPONENT_RENDER = "component-render";
+
 	@Override
 	public TemplateMode getTemplateMode() {
 		return TemplateMode.HTML;
@@ -174,11 +176,13 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 
 		@Override
 		public void handleProcessingInstruction( IProcessingInstruction processingInstruction ) {
-			if ( START_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
+			if ( COMPONENT_RENDER.equals( processingInstruction.getTarget() ) ) {
+				System.err.println( processingInstruction.getContent());
 				if ( componentInCreation ) {
-					output.handler.handleText( modelFactory.createText( buildComponentMarker( processingInstruction.getContent() ) ) );
+					output.handler.handleText( modelFactory.createText( processingInstruction.getContent() ) );
 				}
-
+			}
+			if ( START_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
 				queue.outputStarted( processingInstruction.getContent() );
 				output = new Output();
 				tree.push( output );

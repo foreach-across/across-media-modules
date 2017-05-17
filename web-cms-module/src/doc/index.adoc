@@ -243,7 +243,7 @@ content markers!
 
 @@wcm:placeholder(placeholderName)@@
 
-using components in markup
+Auto-creationg of components from markup
 
 * if you dont specify a component type - the default component type will be created
 * if you dont specify a scope on a component - a default scope will be used:
@@ -253,6 +253,12 @@ using components in markup
 * if your component is a container
 ** any placeholders in the body will be added as placeholder child components and the body markup will refer to those components
 ** any scoped component will be added as a proxy component referring to the original scoped component and the body markup will refer to the proxy components
+
+Special scopes:
+
+- default: always refers to the lowest level - first one to perform the lookup (usually asset)
+- global: always refers to the global scope, components that have no owner
+- container: only relevant on wcm:auto-create attribute - ensures the component is added as a container member
 
 == Publication model
 

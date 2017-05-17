@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Central API for automatic creation of {@link com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel}.
@@ -59,11 +60,19 @@ public class WebCmsComponentAutoCreateService
 	private String defaultComponentType = "html";
 
 	/**
-	 * The component type that should be used for all tasks with child tasks (container)
-	 * where there is no explicit component type specified.
+	 * Attempts to resolve a requested component type by its type key.
+	 * If none is specified, the default type will be returned.
+	 * <p/>
+	 * If a name is specified but no type can be found with that key, an {@link IllegalArgumentException} will be thrown.
+	 *
+	 * @param componentTypeName requested
+	 * @return component type
 	 */
-	@Setter
-	private String defaultContainerComponentType = "container";
+	public WebCmsComponentType resolveComponentType( String componentTypeName ) {
+		String nameToResolve = StringUtils.isEmpty( componentTypeName ) ? defaultComponentType : componentTypeName;
+		return Optional.ofNullable( componentTypeRepository.findOneByTypeKey( nameToResolve ) )
+		               .orElseThrow( () -> new IllegalArgumentException( "Unknown component type: " + componentTypeName ) );
+	}
 
 	/**
 	 * Create all components represented by a single task.
@@ -91,7 +100,7 @@ public class WebCmsComponentAutoCreateService
 	 */
 	@SuppressWarnings("unchecked")
 	public WebCmsComponentModel buildComponent( WebCmsComponentAutoCreateTask task ) {
-		WebCmsComponentType componentType = determineComponentType( task );
+		WebCmsComponentType componentType = task.getComponentType();
 
 		if ( componentType != null ) {
 			try {
@@ -117,19 +126,6 @@ public class WebCmsComponentAutoCreateService
 		}
 
 		return null;
-	}
-
-	private WebCmsComponentType determineComponentType( WebCmsComponentAutoCreateTask task ) {
-		String requested = task.getComponentType();
-
-		if ( StringUtils.isEmpty( requested ) ) {
-			requested = hasNonPlaceholderChildren( task ) ? defaultContainerComponentType : defaultComponentType;
-		}
-		return componentTypeRepository.findOneByTypeKey( requested );
-	}
-
-	private boolean hasNonPlaceholderChildren( WebCmsComponentAutoCreateTask task ) {
-		return task.getChildren().stream().anyMatch( t -> !"placeholder".equals( t.getComponentType() ) );
 	}
 
 	@Autowired

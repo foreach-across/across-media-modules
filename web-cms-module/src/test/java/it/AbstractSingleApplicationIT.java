@@ -65,11 +65,19 @@ public abstract class AbstractSingleApplicationIT
 		}
 	}
 
+	protected void assertEqualsIgnoreWhitespace( String expected, String actual ) {
+		assertEquals( unifyWhitespace( expected ), unifyWhitespace( actual ) );
+	}
+
+	private String unifyWhitespace( String value ) {
+		return value.replaceAll( "\\s+<", "<" ).replaceAll( ">\\s+", ">" ).replaceAll( "\\s{2,}", " " );
+	}
+
 	/**
 	 * Helper that wraps a Jsoup document.
 	 */
 	@RequiredArgsConstructor
-	protected final static class Html
+	protected final class Html
 	{
 		@Getter
 		private final Document document;
@@ -79,7 +87,7 @@ public abstract class AbstractSingleApplicationIT
 		}
 
 		public void assertElementHasHTML( String html, String selector ) {
-			assertEquals( html, document.select( selector ).html().replace( "\n ", "\n" ).replace( "\n", "" ) );
+			assertEqualsIgnoreWhitespace( html, document.select( selector ).html() );
 		}
 
 		public void assertElementIsEmpty( String selector ) {

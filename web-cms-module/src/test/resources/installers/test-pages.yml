@@ -83,20 +83,31 @@ assets:
     #
     # Page with a custom template for automatically creating simple components upon rendering.
     #
-    - objectId: "wcm:asset:page:auto-create-components"
-      title: Auto create components
-      template: th/test/pages/auto-create-components
+    - objectId: "wcm:asset:page:auto-create-creation-scope"
+      title: Auto create creation scope
+      template: th/test/pages/auto-create/creation-scope
       pathSegmentGenerated: false
-      pathSegment: auto-create-components
+      pathSegment: auto-create-creation-scope
       published: true
 
     #
-    # Page with a custom template for automatically creating complex components upon rendering.
+    # Page with a custom template for automatically creating complex markup components upon rendering.
     # Complex components are components with placeholders and referring other components from other scopes.
     #
-    - objectId: "wcm:asset:page:auto-create-complex-components"
-      title: Auto create complex components
-      template: th/test/pages/auto-create-complex-components
+    - objectId: "wcm:asset:page:auto-create-complex-markup-components"
+      title: Auto create complex markup components
+      template: th/test/pages/auto-create/complex-markup-components
       pathSegmentGenerated: false
-      pathSegment: auto-create-complex-components
+      pathSegment: auto-create-complex-markup-components
+      published: true
+
+    #
+    # Page with a custom template for automatically creating complex container components upon rendering.
+    # Complex components are components with placeholders and referring other components from other scopes.
+    #
+    - objectId: "wcm:asset:page:auto-create-complex-container-components"
+      title: Auto create complex container components
+      template: th/test/pages/auto-create/complex-container-components
+      pathSegmentGenerated: false
+      pathSegment: auto-create-complex-container-components
       published: true

@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITAutoCreateComplexComponents extends AbstractSingleApplicationIT
+public class ITAutoCreateComplexContainerComponents extends AbstractSingleApplicationIT
 {
 	@Autowired
 	private WebCmsPageService pageService;

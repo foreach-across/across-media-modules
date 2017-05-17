@@ -47,6 +47,8 @@ public class WebCmsComponentModelHierarchy
 	public static final String REQUEST_ATTRIBUTE = "webCmsComponents";
 
 	public static final String GLOBAL = "global";
+	public static final String DEFAULT = "default";
+	public static final String CONTAINER = "container";
 
 	private List<OrderedWebComponentModelSet> componentModelSets = new ArrayList<>();
 
@@ -209,10 +211,11 @@ public class WebCmsComponentModelHierarchy
 		WebCmsComponentModel component = null;
 
 		boolean scopeFound = false;
+		String actualScope = DEFAULT.equals( scopeName ) ? getDefaultScope() : scopeName;
 
 		for ( int i = componentModelSets.size() - 1; i >= 0 && component == null; i-- ) {
 			OrderedWebComponentModelSet modelSet = componentModelSets.get( i );
-			if ( scopeFound || scopeName.equals( modelSet.getScopeName() ) ) {
+			if ( scopeFound || actualScope.equals( modelSet.getScopeName() ) ) {
 				scopeFound = true;
 				component = modelSet.get( componentName );
 				if ( !searchParentScopes ) {

@@ -157,9 +157,14 @@ public class ITPlaceholderRendering extends AbstractSingleApplicationIT
 	}
 
 	@Test
+	public void autoCreatePlaceholderAttributesAreIgnoredWhenRendering() {
+		html.assertElementHasHTML( "Placeholders:<div>one</div><li>three</li>two", "#nested-placeholders-with-include" );
+	}
+
+	@Test
 	public void componentsInsidePlaceholdersShouldAlwaysBeRendered() {
 		html.assertElementHasHTML(
-				"Placeholders:<div>Global component: footer</div>threeGlobal component: content",
+				"Placeholders:<div> Global component: footer </div>threeGlobal component: content",
 				"#placeholder-that-contains-component"
 		);
 	}
