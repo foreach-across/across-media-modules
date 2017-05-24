@@ -17,9 +17,12 @@
 package com.foreach.across.modules.webcms.domain.component.container;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.model.OrderedWebComponentModelSet;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -36,19 +39,31 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 	public static final String TYPE_DYNAMIC = "container";
 	public static final String TYPE_FIXED = "fixed-container";
 
+	/**
+	 * If the {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponentType} has this attribute set to
+	 * {@code true} then markup on the container will be used for rendering if it is set.
+	 */
+	public static final String SUPPORTS_MARKUP_ATTRIBUTE = "supportsMarkup";
+
+	@Getter
+	@Setter
+	private String markup;
+
 	@Getter
 	private final List<WebCmsComponentModel> members = new ArrayList<>();
 
-	public ContainerWebCmsComponentModel() {
+	public ContainerWebCmsComponentModel( WebCmsComponentType containerType ) {
+		super( containerType );
+	}
+
+	public ContainerWebCmsComponentModel( WebCmsComponent component, OrderedWebComponentModelSet components ) {
+		this( component );
+		members.addAll( components.getOrdered() );
 	}
 
 	public ContainerWebCmsComponentModel( WebCmsComponent component ) {
 		super( component );
-	}
-
-	public ContainerWebCmsComponentModel( WebCmsComponent component, OrderedWebComponentModelSet components ) {
-		super( component );
-		members.addAll( components.getOrdered() );
+		this.markup = component.getBody();
 	}
 
 	/**
@@ -106,9 +121,28 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 		return TYPE_FIXED.equals( getComponentType().getAttribute( WebCmsComponentModel.TYPE_ATTRIBUTE ) );
 	}
 
+	/**
+	 * You can always set markup on the container but the value of {@link #isMarkupSupported()} will determine if it will be used for rendering or not.
+	 * This method simply indicates if markup has been set.
+	 *
+	 * @return true if markup is set on this container
+	 */
+	public boolean hasMarkup() {
+		return StringUtils.isNotEmpty( markup );
+	}
+
+	/**
+	 * @return true if the container supports markup for rendering - this is determined by the component type
+	 * @see #SUPPORTS_MARKUP_ATTRIBUTE
+	 */
+	public boolean isMarkupSupported() {
+		return StringUtils.equalsIgnoreCase( "true", getComponentType().getAttribute( SUPPORTS_MARKUP_ATTRIBUTE ) );
+	}
+
 	@Override
 	public ContainerWebCmsComponentModel asComponentTemplate() {
 		ContainerWebCmsComponentModel template = new ContainerWebCmsComponentModel( getComponent().asTemplate() );
+		template.markup = markup;
 		members.forEach( member -> template.addMember( member.asComponentTemplate() ) );
 		return template;
 	}

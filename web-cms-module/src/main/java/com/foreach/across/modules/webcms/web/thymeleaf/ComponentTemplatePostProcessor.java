@@ -15,8 +15,8 @@
  */
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateQueue;
-import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateTask;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
@@ -31,18 +31,22 @@ import java.io.StringWriter;
 import java.util.ArrayDeque;
 
 /**
+ * Responsible for catching component output during auto-creation of components.
+ *
  * @author Arne Vandamme
- * @since 2.0.0
+ * @see PlaceholderAttributeProcessor
+ * @see ComponentAttributesProcessor
+ * @see PlaceholderTemplatePostProcessor
+ * @since 0.0.2
  */
 final class ComponentTemplatePostProcessor implements IPostProcessor
 {
 	static final String START_INSTRUCTION = "auto-create-component-start";
 	static final String STOP_INSTRUCTION = "auto-create-component-finish";
 
-	static final String PLACEHOLDER_START = "render-to-placeholder-start";
-	static final String PLACEHOLDER_STOP = "render-to-placeholder-finish";
-
 	static final String COMPONENT_RENDER = "component-render";
+	static final String EXISTING_COMPONENT_PROXY = "component-proxy-by-componentId";
+	static final String CREATED_COMPONENT_PROXY = "component-proxy-by-taskId";
 
 	@Override
 	public TemplateMode getTemplateMode() {
@@ -68,8 +72,6 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 
 		private Output output;
 		private ArrayDeque<Output> tree = new ArrayDeque<>();
-
-		private int placeholderLevel = 0;
 
 		private static class Output
 		{
@@ -177,12 +179,20 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		@Override
 		public void handleProcessingInstruction( IProcessingInstruction processingInstruction ) {
 			if ( COMPONENT_RENDER.equals( processingInstruction.getTarget() ) ) {
-				System.err.println( processingInstruction.getContent());
 				if ( componentInCreation ) {
 					output.handler.handleText( modelFactory.createText( processingInstruction.getContent() ) );
 				}
 			}
-			if ( START_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
+			else if ( EXISTING_COMPONENT_PROXY.equals( processingInstruction.getTarget() ) ) {
+				queue.createProxy( processingInstruction.getContent() );
+			}
+			else if ( CREATED_COMPONENT_PROXY.equals( processingInstruction.getTarget() ) ) {
+				WebCmsComponentModel componentCreated = queue.getComponentCreated( processingInstruction.getContent() );
+				if ( componentCreated != null ) {
+					queue.createProxy( componentCreated.getObjectId() );
+				}
+			}
+			else if ( START_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
 				queue.outputStarted( processingInstruction.getContent() );
 				output = new Output();
 				tree.push( output );
@@ -222,12 +232,6 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 			else {
 				next.handleProcessingInstruction( processingInstruction );
 			}
-		}
-
-		private String buildComponentMarker( String taskId ) {
-			WebCmsComponentAutoCreateTask task = queue.getTask( taskId );
-
-			return "@@wcm:component(" + task.getComponentName() + "," + task.getScopeName() + ")@@";
 		}
 	}
 }

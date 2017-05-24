@@ -8,9 +8,9 @@
     <div wcm:placeholder="one">one</div>
 </div>
 
-<div id="not-found-default-markup" wcm:component="not-found" wcm:parse-placeholders><!--/*
-*/-->First: <strong wcm:placeholder="one">one</strong> and second: <em wcm:placeholder="two">two</em>.<!--/*
-*/--></div>
+<div id="not-found-default-markup" wcm:component="not-found" wcm:parse-placeholders>
+    First: <strong wcm:placeholder="one">one</strong> and second: <em wcm:placeholder="two">two</em>.
+</div>
 
 <div id="placeholders-not-parsed" wcm:component="with-placeholders">
     <div wcm:placeholder="one">one</div>

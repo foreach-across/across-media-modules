@@ -78,8 +78,13 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	@Setter
 	private Object metadata;
 
+	@Deprecated
 	protected WebCmsComponentModel() {
 		this.component = new WebCmsComponent();
+	}
+
+	protected WebCmsComponentModel( WebCmsComponentType componentType ) {
+		this( WebCmsComponent.builder().componentType( componentType ).build() );
 	}
 
 	/**

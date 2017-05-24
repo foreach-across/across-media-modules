@@ -62,6 +62,19 @@
     </div>
 </div>
 
+<div id="markup-with-component-in-placeholders" wcm:component="markup-with-component-in-placeholders" wcm:auto-create wcm:parse-placeholders>
+    <div wcm:placeholder="header">
+        Placeholder component 1:
+        <th:block wcm:component="not-created" wcm:always-replace>non-created components that should have been replaced</th:block>
+        <th:block wcm:component="header-text-in-placeholder" wcm:auto-create>new component</th:block>
+    </div>
+    <th:block wcm:component="body-in-placeholder" wcm:auto-create>
+        <th:block wcm:placeholder="body-text">Placeholder component 2:
+            <div wcm:component="footer"/>
+        </th:block>
+    </th:block>
+</div>
+
 <!--/*
 create with container members
     and container

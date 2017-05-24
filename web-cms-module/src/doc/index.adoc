@@ -234,6 +234,7 @@ use componentTemplate for container types
 fully custom type:
 extend WebCmsComponentModel, provide a reader and writer; provide the content and metadata admin renderer
 
+attributes: supportsMarkup
 
 refresh components:
 wcm:componentRefresh
@@ -243,7 +244,7 @@ content markers!
 
 @@wcm:placeholder(placeholderName)@@
 
-Auto-creationg of components from markup
+Auto-creation of components from markup
 
 * if you dont specify a component type - the default component type will be created
 * if you dont specify a scope on a component - a default scope will be used:

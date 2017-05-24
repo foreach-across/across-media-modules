@@ -92,7 +92,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	 */
 	@Column(name = "name")
 	@NotBlank(groups = SharedComponentValidation.class)
-	@Pattern( regexp = "^[\\p{Alnum}-_.]+$")
+	@Pattern(regexp = "^[\\p{Alnum}-_.]+$")
 	@Length(max = 100)
 	private String name;
 
@@ -128,7 +128,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	/**
 	 * If this component is a proxy, will contain the proxy target.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "proxied_component_id")
 	private WebCmsComponent proxyTarget;
 

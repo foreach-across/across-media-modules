@@ -40,6 +40,8 @@ import java.util.ArrayDeque;
  *
  * @author Arne Vandamme
  * @since 0.0.2
+ * @see PlaceholderAttributeProcessor
+ * @see ComponentTemplatePostProcessor
  */
 final class PlaceholderTemplatePostProcessor implements IPostProcessor
 {
@@ -159,10 +161,7 @@ final class PlaceholderTemplatePostProcessor implements IPostProcessor
 
 		@Override
 		public void handleProcessingInstruction( IProcessingInstruction processingInstruction ) {
-			if ( ComponentTemplatePostProcessor.COMPONENT_RENDER.equals( processingInstruction.getTarget() )) {
-				// suppress
-			}
-			else if ( START_PLACEHOLDER.equals( processingInstruction.getTarget() ) && parsing() ) {
+			if ( START_PLACEHOLDER.equals( processingInstruction.getTarget() ) && parsing() ) {
 				this.placeholderContent = new PlaceholderContent( processingInstruction.getContent() );
 				tree.push( this.placeholderContent );
 
@@ -193,11 +192,11 @@ final class PlaceholderTemplatePostProcessor implements IPostProcessor
 			}
 			else if ( STOP_IGNORE_NON_PLACEHOLDERS.equals( processingInstruction.getTarget() ) ) {
 				trashLevel = Math.max( trashLevel - 1, 0 );
-				if ( /*!buildingPlaceholderContent*/ trashLevel == 0 ) {
+				if ( trashLevel == 0 ) {
 					next = outputHandler;
 				}
 			}
-			else {
+			else if ( !ComponentTemplatePostProcessor.COMPONENT_RENDER.equals( processingInstruction.getTarget() ) ) {
 				next.handleProcessingInstruction( processingInstruction );
 			}
 		}

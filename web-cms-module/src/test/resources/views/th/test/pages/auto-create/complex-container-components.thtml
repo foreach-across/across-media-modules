@@ -10,7 +10,7 @@
 
 <div id="nested-placeholders" wcm:component="container-nested-placeholders" wcm:type="container" wcm:auto-create wcm:parse-placeholders>
     <div wcm:placeholder="title" th:remove="tag">container title</div>
-    <th:block wcm:component="body">
+    <th:block wcm:component="body" wcm:type="container">
         <th:block wcm:component="subtitle">container sub title</th:block>
         <th:block wcm:placeholder="before-text">before text placeholder</th:block>
         <th:block wcm:component="text" wcm:type="container"/>
@@ -33,12 +33,19 @@
     </th:block>
 </div>
 
-<div id="markup-with-placeholders" wcm:component="markup-with-placeholders" wcm:auto-create wcm:parse-placeholders>
-    Default markup <span wcm:placeholder="one">one</span> with <th:block wcm:placeholder="two">two</th:block> content
+
+<div id="proxy-component-in-container" wcm:component="proxy-component-in-container" wcm:type="container" wcm:auto-create>
+    Insert footer:
+    <div wcm:component="footer" wcm:scope="asset" wcm:search-parent-scopes>
+        replaced by footer
+    </div>
 </div>
 
-<div id="markup-with-components" wcm:component="markup-with-components" wcm:auto-create wcm:type="html">
-    Markup with <div wcm:component="footer">replaced by footer</div>
+<div id="auto-create-proxy-component-in-container" wcm:component="auto-create-proxy-component-in-container" wcm:type="container" wcm:auto-create>
+    Create footer
+    <div wcm:component="auto-create-proxy-footer" wcm:scope="asset" wcm:auto-create>auto-created on asset</div>
+    and on global
+    <div wcm:component="auto-create-proxy-global" wcm:auto-create="global">auto-created on global</div>
 </div>
 
 </body>

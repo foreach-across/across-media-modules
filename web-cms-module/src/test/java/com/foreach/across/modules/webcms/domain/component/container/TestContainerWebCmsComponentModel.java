@@ -31,12 +31,12 @@ import static org.junit.Assert.*;
  */
 public class TestContainerWebCmsComponentModel
 {
-	private ContainerWebCmsComponentModel model;
+	private WebCmsComponentType componentType = WebCmsComponentType.builder().build();
+	private ContainerWebCmsComponentModel model = new ContainerWebCmsComponentModel( componentType );
 
 	@Test
 	public void addComponentModels() {
-		model = new ContainerWebCmsComponentModel();
-		assertNull(  model.getMetadata() );
+		assertNull( model.getMetadata() );
 		assertFalse( model.hasMetadata() );
 		assertTrue( model.isEmpty() );
 
@@ -54,8 +54,28 @@ public class TestContainerWebCmsComponentModel
 	}
 
 	@Test
+	public void markupIsSupportedIfComponentTypeHasCorrectAttributeSetToTrue() {
+		assertFalse( model.isMarkupSupported() );
+
+		componentType.getAttributes().put( ContainerWebCmsComponentModel.SUPPORTS_MARKUP_ATTRIBUTE, "true" );
+		assertTrue( model.isMarkupSupported() );
+		componentType.getAttributes().put( ContainerWebCmsComponentModel.SUPPORTS_MARKUP_ATTRIBUTE, "false" );
+		assertFalse( model.isMarkupSupported() );
+	}
+
+	@Test
+	public void markupIsSetIfNotEmpty() {
+		assertFalse( model.hasMarkup() );
+		model.setMarkup( "" );
+		assertFalse( model.hasMarkup() );
+		model.setMarkup( "some markup" );
+		assertTrue( model.hasMarkup() );
+		model.setMarkup( null );
+		assertFalse( model.hasMarkup() );
+	}
+
+	@Test
 	public void asTemplateShouldAlsoCreateTemplatesOfMembers() {
-		WebCmsComponentType componentType = new WebCmsComponentType();
 		WebCmsComponent component = WebCmsComponent.builder()
 		                                           .id( 123L )
 		                                           .name( "component-name" )
@@ -71,6 +91,7 @@ public class TestContainerWebCmsComponentModel
 		ContainerWebCmsComponentModel body = new ContainerWebCmsComponentModel( WebCmsComponent.builder().id( 2L ).name( "body" ).build() );
 		assertFalse( body.isNew() );
 
+		model.setMarkup( "my component markup" );
 		model.addMember( title );
 		model.addMember( body );
 
@@ -82,6 +103,7 @@ public class TestContainerWebCmsComponentModel
 		assertNotEquals( component.getObjectId(), template.getObjectId() );
 		assertNotEquals( "123", template.getOwnerObjectId() );
 		assertTrue( template.isNew() );
+		assertEquals( "my component markup", template.getMarkup() );
 
 		assertEquals( 2, template.getMembers().size() );
 		assertTrue( template.getMember( "title" ).isNew() );

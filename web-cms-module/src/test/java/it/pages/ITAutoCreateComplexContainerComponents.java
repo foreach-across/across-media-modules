@@ -17,8 +17,10 @@
 package it.pages;
 
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.proxy.ProxyWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
@@ -48,23 +50,23 @@ public class ITAutoCreateComplexContainerComponents extends AbstractSingleApplic
 	@Before
 	public void setUp() throws Exception {
 		if ( html == null ) {
-			page = pageService.findByCanonicalPath( "/auto-create-complex-components" )
+			page = pageService.findByCanonicalPath( "/auto-create-complex-container-components" )
 			                  .orElse( null );
 			verifyPageDoesButNoneOfTheComponentsExist( page );
-			html = html( "/auto-create-complex-components" );
+			html = html( "/auto-create-complex-container-components" );
 		}
 	}
 
 	public void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
 		assertNotNull( page );
 
-		assertEquals( "wcm:asset:page:auto-create-complex-components", page.getObjectId() );
-		assertEquals( "Auto create complex components", page.getTitle() );
-		assertEquals( "th/test/pages/auto-create-complex-components", page.getTemplate() );
+		assertEquals( "wcm:asset:page:auto-create-complex-container-components", page.getObjectId() );
+		assertEquals( "Auto create complex container components", page.getTitle() );
+		assertEquals( "th/test/pages/auto-create/complex-container-components", page.getTemplate() );
 		assertTrue( page.isCanonicalPathGenerated() );
 		assertFalse( page.isPathSegmentGenerated() );
-		assertEquals( "auto-create-complex-components", page.getPathSegment() );
-		assertEquals( "/auto-create-complex-components", page.getCanonicalPath() );
+		assertEquals( "auto-create-complex-container-components", page.getPathSegment() );
+		assertEquals( "/auto-create-complex-container-components", page.getCanonicalPath() );
 		assertNull( page.getParent() );
 
 		assertFalse( componentModelService.getComponentModelsForOwner( page ).hasOrderedComponents() );
@@ -72,8 +74,6 @@ public class ITAutoCreateComplexContainerComponents extends AbstractSingleApplic
 
 	@Test
 	public void placeholderInsideContainerResultsInPlaceholderMember() {
-		html.assertElementHasHTML( "<div>single placeholder content</div>", "#container-single-placeholder" );
-
 		val container = componentModelService.getComponentModelByName( "container-single-placeholder", page, ContainerWebCmsComponentModel.class );
 		assertEquals( 1, container.size() );
 
@@ -81,12 +81,14 @@ public class ITAutoCreateComplexContainerComponents extends AbstractSingleApplic
 		assertNotNull( placeholder );
 		assertEquals( "One", placeholder.getTitle() );
 		assertEquals( "one", placeholder.getPlaceholderName() );
+
+		assertEqualsIgnoreWhitespace( "@@wcm:component(one,container,false)@@", container.getMarkup() );
+
+		html.assertElementHasHTML( "<div>single placeholder content</div>", "#container-single-placeholder" );
 	}
 
 	@Test
 	public void nestedPlaceholdersAllResultInMembersOnTheRightLevel() {
-		html.assertElementHasHTML( "container titlecontainer sub titlebefore text placeholder<div>footer text placeholder</div>", "#nested-placeholders" );
-
 		val container = componentModelService.getComponentModelByName( "container-nested-placeholders", page, ContainerWebCmsComponentModel.class );
 		assertNotNull( container );
 		assertEquals( 3, container.size() );
@@ -109,6 +111,11 @@ public class ITAutoCreateComplexContainerComponents extends AbstractSingleApplic
 		assertNotNull( textContainer );
 		assertTrue( textContainer.isEmpty() );
 
+		assertEqualsIgnoreWhitespace(
+				"@@wcm:component(subtitle,container,false)@@ @@wcm:component(before-text,container,false)@@ @@wcm:component(text,container,false)@@",
+				body.getMarkup()
+		);
+
 		val globalFooter = componentModelService.getComponentModelByName( "footer", null );
 		assertNotNull( globalFooter );
 		val footer = container.getMember( "footer", ContainerWebCmsComponentModel.class );
@@ -118,13 +125,17 @@ public class ITAutoCreateComplexContainerComponents extends AbstractSingleApplic
 		val footerText = footer.getMember( "footer-text", PlaceholderWebCmsComponentModel.class );
 		assertNotNull( footerText );
 		assertEquals( "footer-text", footerText.getPlaceholderName() );
+
+		assertEqualsIgnoreWhitespace(
+				"@@wcm:component(title,container,false)@@ @@wcm:component(body,container,false)@@ <div>@@wcm:component(footer,container,false)@@</div>",
+				container.getMarkup()
+		);
+
+		html.assertElementHasHTML( "container titlecontainer sub titlebefore text placeholder<div>footer text placeholder</div>", "#nested-placeholders" );
 	}
 
 	@Test
 	public void componentsInsidePlaceholdersInsideContainerShouldNotBeContainerMembers() {
-		html.assertElementHasHTML( "<div> Placeholder component 1: new component </div>Placeholder component 2: <div>Global component: footer</div>",
-		                           "#component-in-placeholders" );
-
 		val container = componentModelService.getComponentModelByName( "component-in-placeholders", page, ContainerWebCmsComponentModel.class );
 		assertNotNull( container );
 		assertEquals( 2, container.size() );
@@ -139,33 +150,72 @@ public class ITAutoCreateComplexContainerComponents extends AbstractSingleApplic
 		val bodyText = body.getMember( "body-text", PlaceholderWebCmsComponentModel.class );
 		assertNotNull( bodyText );
 		assertEquals( "body-text", bodyText.getPlaceholderName() );
+		assertEqualsIgnoreWhitespace( "@@wcm:component(body-text,container,false)@@", body.getMarkup() );
 
 		assertNull( componentModelService.getComponentModelByName( "not-created", page ) );
 		val headerText = componentModelService.getComponentModelByName( "header-text", page, TextWebCmsComponentModel.class );
 		assertNotNull( headerText );
 		assertEquals( "new component", headerText.getContent() );
+
+		assertEqualsIgnoreWhitespace( "@@wcm:component(header,container,false)@@ @@wcm:component(body,container,false)@@", container.getMarkup() );
+
+		html.assertElementHasHTML( "<div> Placeholder component 1: new component </div>Placeholder component 2: <div>Global component: footer</div>",
+		                           "#component-in-placeholders" );
 	}
 
 	@Test
-	public void placeholdersInsideMarkupResultInPlaceholderMarkers() {
-		html.assertElementHasHTML( "Default markup <span>one</span> with two content", "#markup-with-placeholders" );
+	public void scopedComponentResultsInProxyComponent() {
+		val container = componentModelService.getComponentModelByName( "proxy-component-in-container", page, ContainerWebCmsComponentModel.class );
+		assertEquals( 1, container.size() );
 
-		val markup = componentModelService.getComponentModelByName( "markup-with-placeholders", page, TextWebCmsComponentModel.class );
-		assertEquals( "Default markup @@wcm:placeholder(one)@@ with @@wcm:placeholder(two)@@ content", markup.getContent() );
+		val proxy = container.getMember( "footer", ProxyWebCmsComponentModel.class );
+		assertNotNull( proxy );
+		assertEquals( "footer", proxy.getName() );
+		assertEquals( "Footer", proxy.getTitle() );
+		WebCmsComponentModel footer = componentModelService.getComponentModelByName( "footer", null );
+		assertEquals( footer, proxy.getTarget() );
+
+		assertEqualsIgnoreWhitespace( "Insert footer: <div>@@wcm:component(footer,container,false)@@</div>", container.getMarkup() );
+
+		html.assertElementHasHTML( "Global component: footer", "#proxy-component-in-container" );
+	}
+
+	@Test
+	public void autoCreationOfScopedComponentsAlsoResultsInProxyComponent() {
+		val footer = componentModelService.getComponentModelByName( "auto-create-proxy-footer", page, TextWebCmsComponentModel.class );
+		assertNotNull( footer );
+		assertEqualsIgnoreWhitespace( "auto-created on asset", footer.getContent() );
+
+		val global = componentModelService.getComponentModelByName( "auto-create-proxy-global", null, TextWebCmsComponentModel.class );
+		assertNotNull( global );
+		assertEqualsIgnoreWhitespace( "auto-created on global", global.getContent() );
+
+		val container = componentModelService.getComponentModelByName( "auto-create-proxy-component-in-container", page, ContainerWebCmsComponentModel.class );
+		assertEquals( 2, container.size() );
+
+		val footerProxy = container.getMember( "auto-create-proxy-footer", ProxyWebCmsComponentModel.class );
+		assertNotNull( footerProxy );
+		assertEquals( footer, footerProxy.getTarget() );
+
+		val globalProxy = container.getMember( "auto-create-proxy-global", ProxyWebCmsComponentModel.class );
+		assertNotNull( globalProxy );
+		assertEquals( global, globalProxy.getTarget() );
+
+		assertEqualsIgnoreWhitespace( "Create footer <div>@@wcm:component(auto-create-proxy-footer,container,false)@@</div> " +
+				                              "and on global <div>@@wcm:component(auto-create-proxy-global,container,false)@@</div>", container.getMarkup() );
+
+		html.assertElementHasHTML( "auto-created on assetauto-created on global", "#auto-create-proxy-component-in-container" );
 	}
 
 	@Test
 	public void secondRenderYieldsSameOutput() {
-		Html secondRender = html( "/auto-create-complex-components" );
+		Html secondRender = html( "/auto-create-complex-container-components" );
 		secondRender.assertElementHasHTML( "<div>single placeholder content</div>", "#container-single-placeholder" );
 		secondRender.assertElementHasHTML( "container titlecontainer sub titlebefore text placeholder<div>footer text placeholder</div>",
 		                                   "#nested-placeholders" );
 		secondRender.assertElementHasHTML( "<div> Placeholder component 1: new component </div>Placeholder component 2: <div>Global component: footer</div>",
 		                                   "#component-in-placeholders" );
-		secondRender.assertElementHasHTML( "Default markup <span>one</span> with two content", "#markup-with-placeholders" );
+		secondRender.assertElementHasHTML( "Global component: footer", "#proxy-component-in-container" );
+		secondRender.assertElementHasHTML( "auto-created on assetauto-created on global", "#auto-create-proxy-component-in-container" );
 	}
-
-	// container with content
-	// container but members that have explicit different scope should result in proxies
-	// container with member that has explicit scope specified (should not auto-create member but create a proxy)
 }

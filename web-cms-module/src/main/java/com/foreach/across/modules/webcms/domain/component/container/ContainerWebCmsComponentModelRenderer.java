@@ -18,18 +18,25 @@ package com.foreach.across.modules.webcms.domain.component.container;
 
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsComponentContentModelWriter;
 import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsComponentModelRenderer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Renders a {@link ContainerWebCmsComponentModel} by simply rendering its member components in order.
+ * Renders a {@link ContainerWebCmsComponentModel}, if the container contains and supports markup
+ * the markup will be rendered using the {@link WebCmsComponentContentModelWriter} with marker support enabled.
+ * If no markup is present or markup is not supported, the component members will simply be rendered in order.
  *
  * @author Arne Vandamme
  * @since 0.0.2
  */
 @Component
+@RequiredArgsConstructor
 class ContainerWebCmsComponentModelRenderer implements WebCmsComponentModelRenderer<ContainerWebCmsComponentModel>
 {
+	private final WebCmsComponentContentModelWriter contentModelWriter;
+
 	@Override
 	public boolean supports( WebCmsComponentModel componentModel ) {
 		return ContainerWebCmsComponentModel.class.isInstance( componentModel );
@@ -37,6 +44,11 @@ class ContainerWebCmsComponentModelRenderer implements WebCmsComponentModelRende
 
 	@Override
 	public void writeComponent( ContainerWebCmsComponentModel component, ThymeleafModelBuilder model ) {
-		component.getMembers().forEach( model::addViewElement );
+		if ( component.isMarkupSupported() && component.hasMarkup() ) {
+			contentModelWriter.writeHtml( component, component.getMarkup(), true, model );
+		}
+		else {
+			component.getMembers().forEach( model::addViewElement );
+		}
 	}
 }

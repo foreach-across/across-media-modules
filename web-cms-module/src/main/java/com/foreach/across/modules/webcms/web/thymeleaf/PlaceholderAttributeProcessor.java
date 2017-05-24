@@ -60,7 +60,7 @@ final class PlaceholderAttributeProcessor extends AbstractAttributeModelProcesso
 
 				boolean shouldRenderToPlaceholder = !elementTag.hasAttribute( ATTR_PARENT_CREATE_INCLUDE );
 
-				removeProcessedAttributes( model, attributeName, elementTag, modelFactory );
+				removeProcessedAttributes( model, attributeName, modelFactory );
 
 				if ( shouldRenderToPlaceholder ) {
 					// only render to placeholder, if we are not to be included
@@ -71,7 +71,8 @@ final class PlaceholderAttributeProcessor extends AbstractAttributeModelProcesso
 		}
 	}
 
-	private void removeProcessedAttributes( IModel model, AttributeName attributeName, IProcessableElementTag elementTag, IModelFactory modelFactory ) {
+	private void removeProcessedAttributes( IModel model, AttributeName attributeName, IModelFactory modelFactory ) {
+		IProcessableElementTag elementTag = (IProcessableElementTag) model.get( 0 );
 		IProcessableElementTag newFirstEvent = modelFactory.removeAttribute( elementTag, attributeName );
 		newFirstEvent = modelFactory.removeAttribute( newFirstEvent, ATTR_PARENT_CREATE_INCLUDE );
 
@@ -81,7 +82,6 @@ final class PlaceholderAttributeProcessor extends AbstractAttributeModelProcesso
 	}
 
 	private void enableDisabledComponentBlocks( IModel model, IModelFactory modelFactory ) {
-
 		for ( int i = 0; i < model.size(); i++ ) {
 			ITemplateEvent event = model.get( i );
 			if ( event instanceof IOpenElementTag || event instanceof IStandaloneElementTag ) {
@@ -99,7 +99,7 @@ final class PlaceholderAttributeProcessor extends AbstractAttributeModelProcesso
 					}
 					// if a wcm:component has no wcm:auto-create - ensure it is disabled (otherwise the container creation will trigger it)
 					if ( !openElementTag.hasAttribute( ATTR_AUTO_CREATE ) ) {
-						openElementTag = modelFactory.setAttribute( openElementTag, ATTR_AUTO_CREATE, "_placeholder",
+						openElementTag = modelFactory.setAttribute( openElementTag, ATTR_AUTO_CREATE, SCOPE_PLACEHOLDER_CREATE,
 						                                            AttributeValueQuotes.DOUBLE );
 					}
 					openElementTag = modelFactory.setAttribute( openElementTag, ATTR_PLACEHOLDER_AS_PARENT, "true", AttributeValueQuotes.DOUBLE );

@@ -16,7 +16,6 @@
 
 package test.component.placeholder;
 
-import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;

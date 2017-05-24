@@ -155,6 +155,23 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractSingleApplicati
 	}
 
 	@Test
+	public void componentsInsidePlaceholdersAreAutoCreatedAndRendered() {
+		val headerText = componentModelService.getComponentModelByName( "header-text-in-placeholder", page, TextWebCmsComponentModel.class );
+		assertEqualsIgnoreWhitespace( "new component", headerText.getContent() );
+
+		val bodyInPlaceholder = componentModelService.getComponentModelByName( "body-in-placeholder", page, TextWebCmsComponentModel.class );
+		assertEqualsIgnoreWhitespace( "@@wcm:placeholder(body-text)@@", bodyInPlaceholder.getContent() );
+
+		val markup = componentModelService.getComponentModelByName( "markup-with-component-in-placeholders", page, TextWebCmsComponentModel.class );
+		assertEqualsIgnoreWhitespace( "@@wcm:placeholder(header)@@ @@wcm:component(body-in-placeholder,default,true)@@", markup.getContent() );
+
+		html.assertElementHasHTML(
+				"<div>Placeholder component 1: new component</div>Placeholder component 2:<div>Global component: footer</div>",
+				"#markup-with-component-in-placeholders"
+		);
+	}
+
+	@Test
 	public void secondRenderYieldsSameOutput() {
 		Html secondRender = html( "/auto-create-complex-markup-components" );
 		secondRender.assertElementHasHTML( "Default markup <span>one</span> with two content", "#markup-with-placeholders" );
@@ -174,6 +191,10 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractSingleApplicati
 		secondRender.assertElementHasHTML(
 				"Root markup: Component one: <div> Placeholder one: <div>  Component two: Placeholder two </div> </div>",
 				"#markup-with-nested-placeholders-and-components"
+		);
+		secondRender.assertElementHasHTML(
+				"<div>Placeholder component 1: new component</div>Placeholder component 2:<div>Global component: footer</div>",
+				"#markup-with-component-in-placeholders"
 		);
 	}
 }

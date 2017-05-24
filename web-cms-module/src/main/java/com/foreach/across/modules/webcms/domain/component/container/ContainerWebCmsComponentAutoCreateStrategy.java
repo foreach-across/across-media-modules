@@ -16,10 +16,13 @@
 
 package com.foreach.across.modules.webcms.domain.component.container;
 
+import com.foreach.across.modules.webcms.domain.component.WebCmsContentMarker;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateService;
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateStrategy;
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateTask;
+import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -43,6 +46,8 @@ class ContainerWebCmsComponentAutoCreateStrategy implements WebCmsComponentAutoC
 	public void buildComponentModel( WebCmsComponentAutoCreateService autoCreateService,
 	                                 ContainerWebCmsComponentModel componentModel,
 	                                 WebCmsComponentAutoCreateTask task ) {
+		String markup = StringUtils.trimToEmpty( task.getOutput() );
+
 		task.getChildren()
 		    .forEach( childTask -> {
 			    WebCmsComponentModel member = autoCreateService.buildComponent( childTask );
@@ -52,5 +57,25 @@ class ContainerWebCmsComponentAutoCreateStrategy implements WebCmsComponentAutoC
 				    componentModel.addMember( member );
 			    }
 		    } );
+
+		markup = replacePlaceholdersByComponents( componentModel, markup );
+
+		componentModel.setMarkup( markup );
+	}
+
+	private String replacePlaceholdersByComponents( ContainerWebCmsComponentModel componentModel, String originalMarkup ) {
+		String markup = originalMarkup;
+
+		for ( WebCmsComponentModel member : componentModel.getMembers() ) {
+			if ( member instanceof PlaceholderWebCmsComponentModel ) {
+				PlaceholderWebCmsComponentModel placeholderComponent = (PlaceholderWebCmsComponentModel) member;
+				WebCmsContentMarker contentMarker = new WebCmsContentMarker( "wcm:placeholder", placeholderComponent.getPlaceholderName() );
+				WebCmsContentMarker componentMarker = new WebCmsContentMarker( "wcm:component", member.getName() + ",container,false" );
+
+				markup = StringUtils.replace( markup, contentMarker.toString(), componentMarker.toString() );
+			}
+		}
+
+		return markup;
 	}
 }

@@ -17,12 +17,12 @@
 package test.component.container;
 
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
-import test.AbstractWebCmsComponentModelRenderingTest;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import test.AbstractWebCmsComponentModelRenderingTest;
 
 /**
  * @author Arne Vandamme
@@ -36,6 +36,7 @@ public class TestContainerWebCmsComponentModelRendering extends AbstractWebCmsCo
 	@Test
 	public void membersAreRenderedInOrder() {
 		ContainerWebCmsComponentModel container = componentModelService.createComponentModel( "container", ContainerWebCmsComponentModel.class );
+		container.setMarkup( "custom markup" );
 
 		TextWebCmsComponentModel text = componentModelService.createComponentModel( "html", TextWebCmsComponentModel.class );
 		text.setContent( "<strong>some html text</strong>" );
@@ -47,6 +48,33 @@ public class TestContainerWebCmsComponentModelRendering extends AbstractWebCmsCo
 		container.addMember( textTwo );
 
 		renderAndExpect( container, "<strong>some html text</strong>other" );
+	}
+
+	@Test
+	public void markupIsUsedIfContainerSupportsIt() {
+		ContainerWebCmsComponentModel container = componentModelService.createComponentModel( "container", ContainerWebCmsComponentModel.class );
+		container.getComponent()
+		         .setComponentType(
+				         container.getComponentType()
+				                  .toBuilder()
+				                  .attribute( ContainerWebCmsComponentModel.SUPPORTS_MARKUP_ATTRIBUTE, "true" )
+				                  .build()
+		         );
+
+		container.setMarkup( "1: @@wcm:component(two,container,false)@@, 2: @@wcm:component(one,container,false)@@" );
+
+		TextWebCmsComponentModel text = componentModelService.createComponentModel( "html", TextWebCmsComponentModel.class );
+		text.setName( "one" );
+		text.setContent( "<strong>some html text</strong>" );
+
+		TextWebCmsComponentModel textTwo = componentModelService.createComponentModel( "html", TextWebCmsComponentModel.class );
+		textTwo.setName( "two" );
+		textTwo.setContent( "other" );
+
+		container.addMember( text );
+		container.addMember( textTwo );
+
+		renderAndExpect( container, "1: other, 2: <strong>some html text</strong>" );
 	}
 
 	@Test

@@ -22,6 +22,7 @@ import com.foreach.across.modules.webcms.domain.component.model.OrderedWebCompon
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.proxy.ProxyWebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.annotation.Scope;
@@ -48,7 +49,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class WebCmsComponentAutoCreateQueue
 {
-	public static final String CONTAINER_MEMBER_SCOPE = "_containerMember";
+	public static final String CONTAINER_MEMBER_SCOPE = WebCmsComponentModelHierarchy.CONTAINER;
 
 	private final Map<String, WebCmsComponentModel> componentsCreated = new HashMap<>();
 	private final Map<String, WebCmsComponentAutoCreateTask> tasksByKey = new HashMap<>();
@@ -130,6 +131,23 @@ public class WebCmsComponentAutoCreateQueue
 		if ( current != null ) {
 			current.addChild(
 					new WebCmsComponentAutoCreateTask( placeholderName, null, autoCreateService.resolveComponentType( PlaceholderWebCmsComponentModel.TYPE ) )
+			);
+		}
+	}
+
+	/**
+	 * Proxy to the component with the specific object id should be created.
+	 *
+	 * @param objectId of the component to proxy
+	 */
+	public void createProxy( String objectId ) {
+		val current = getCurrentTask();
+
+		if ( current != null ) {
+			current.addChild(
+					new WebCmsComponentAutoCreateTask(
+							objectId, CONTAINER_MEMBER_SCOPE, autoCreateService.resolveComponentType( ProxyWebCmsComponentModel.TYPE )
+					)
 			);
 		}
 	}

@@ -41,8 +41,7 @@ public class ProxyWebCmsComponentModel extends WebCmsComponentModel
 		super();
 	}
 
-	public ProxyWebCmsComponentModel( WebCmsComponent component,
-	                                  WebCmsComponentModel target ) {
+	public ProxyWebCmsComponentModel( WebCmsComponent component, WebCmsComponentModel target ) {
 		super( component );
 		this.target = target;
 	}

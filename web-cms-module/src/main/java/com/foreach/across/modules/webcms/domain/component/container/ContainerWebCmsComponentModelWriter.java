@@ -45,6 +45,7 @@ public class ContainerWebCmsComponentModelWriter extends AbstractWebCmsComponent
 
 	@Override
 	protected void buildMainComponent( ContainerWebCmsComponentModel componentModel, WebCmsComponent component ) {
+		component.setBody( componentModel.getMarkup() );
 	}
 
 	@Override
