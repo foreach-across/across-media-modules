@@ -62,7 +62,9 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				                      .property( "sortIndex" ).order( 10 ).hidden( true ).and()
 				                      .property( "objectId" ).writable( false ).hidden( true ).and()
 				                      .property( "body" ).hidden( true ).and()
-				                      .property( "metadata" ).hidden( true )
+				                      .property( "metadata" ).hidden( true ).and()
+				                      .property( "bodyWithContentMarkers" ).hidden( true ).and()
+				                      .property( "proxyTarget" ).hidden( true )
 		        )
 		        .listView(
 				        lvb -> lvb.entityQueryFilter( true )

@@ -40,7 +40,7 @@ import java.util.Optional;
  * Usually triggered
  *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @Slf4j
 @RequiredArgsConstructor

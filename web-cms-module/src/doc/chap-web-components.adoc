@@ -1,15 +1,21 @@
 == Web components
 
-=== Object model
+What are web components?
+
+=== Domain model
 
 ==== WebCmsComponentType
+
+type
 
 .Attributes
 
 ==== WebCmsComponent
 
-
 `WebCmsComponent`
+
+persisted entity
+
 === WebCmsComponentModel
 `WebCmsComponentModelService` and `WebCmsComponentModel`
 `WebCmsComponentType`
@@ -17,52 +23,13 @@
 The persisted entity is implemented by `WebCmsComponent`, but usually you will want to work with the `WebCmsComponentModel`.
 The latter represents the entire strongly typed model ready for rendering, whereas the former only has the raw attributes.
 
-=== Base component types
+converted to a `WebCmsComponent` by a `WebCmsComponentModelWriter`
+converted from a `WebCmsComponent` by a `WebCmsComponentModelReader`
 
-==== WebCmsComponentModel implementations
-
-==== TextWebCmsComponentModel
-
-==== ContainerWebCmsComponentModel
-
-==== PlaceholderWebCmsComponentModel
-
-==== ProxyWebCmsComponentModel
-
-==== ImageWebCmsComponentModel
+include::chap-web-components-base-types.adoc[]
 
 === Activating component support
 Any `WebCmsObject` - this includes all assets and components themselves - can have web components linked to it.
-
-
-=== Defining your own component types
-
-==== Extending the base types
-
-YAML,
-metadata,
-custom template
-
-==== Custom component type
-
-Enabling components for WebCmsObject implementations: wire WebCmsObjectComponentViewsConfiguration: registerComponentsAssociation
-
-any component model can also define a custom template, which will be used for rendering instead of the default rendering
-if the component type defines a "template" attribute, it will be the default template that wil be used for the component
-
-
-type attributes: type, template, metadata
-customizing one of the base types: Create metadata class and register it in the EntityRegistry (or provide a WebCmsComponentModelMetadataAdminRenderer)
-use componentTemplate for container types
-
-fully custom type:
-extend WebCmsComponentModel, provide a reader and writer; provide the content and metadata admin renderer
-
-attributes: supportsMarkup
-
-refresh components:
-wcm:componentRefresh
-data-wcm-component-fresh
 
 === Rendering components
 
@@ -75,173 +42,53 @@ Title is also required - must not be unique however (?)
 
 === Placeholders
 
+include::chap-web-components-content-markers.adoc[]
 
-=== Component markup support
-==== Creating custom content markers
+include::chap-web-components-thymeleaf.adoc[]
 
-content markers!
+[[defining-component-types]]
+=== Defining component types
 
-@@wcm:placeholder(placeholderName)@@
+==== Extending the base types
 
-=== Thymeleaf integration
 
-WebCmsModule provides its own Thymeleaf dialect for working with components.
-It enables you to:
+YAML,
+metadata,
+custom template
 
-* replace template fragments by component output
-* auto-create components from templates based on the template content
-* define placeholder content
 
-The Thymeleaf dialect is a very powerful tool to convert your slice your static templates into user modifiable components.
+any component model can also define a custom template, which will be used for rendering instead of the default rendering
+if the component type defines a "template" attribute, it will be the default template that wil be used for the component
 
-==== HTML attributes
-Interacting with components is done by adding attributes to your template elements.
 
-[cols=2]
-|===
+type attributes: type, template, metadata
+customizing one of the base types: Create metadata class and register it in the EntityRegistry (or provide a WebCmsComponentModelMetadataAdminRenderer)
+use componentTemplate for container types
 
-| wcm:component
-| The body of the element will be replaced with the rendering of the component, if the component is found.
 
-| wcm:scope
-| Specify the name of the scope in which the component should be looked for - if omitted wil look in the default scope and all parent scopes.
-When specified, only that scope will be queried unless _search-parent-scopes_ is explicitly present.
+[[custom-component-type]]
+==== Custom component type
 
-| wcm:search-parent-scopes
-| Set explicitly to `false` if you only want the component to be looked up in the scope specified (or the default scope) but none of the parent scopes.
-Otherwise adding the attribute will ensure that parent scopes are always searched, even if an explicit _wcm:scope_ was specified.
 
-| wcm:always-replace
-| If present the body of the element will always be replaced even if the component is not found.
-The actual (optional) value of this attribute is irrelevant.
+`WebCmsComponentModelReader`
+`WebCmsComponentModelWriter`
+`WebCmsComponentModelRenderer`
 
-Default behaviour is to render the original template markup if a component is not found, use this attribute to force empty output instead.
+`WebCmsComponentModelContentAdminRenderer`
+`WebCmsComponentModelMetadataAdminRenderer`
+`WebCmsComponentModelMembersAdminRenderer`
 
-| wcm:auto-create
-| If present, the component will be auto-created with the element body as input parameters.
- Optionally the attribute value can be be the scope name in which the component should be created.
-If no value is present, the value of _wcm:scope_ will be used to determine the scope in which to create the component.
+`WebCmsComponentAutoCreateStrategy`
 
-| wcm:type
-| Type key of the `WebCmsComponentType` of the component.
-This will only be used for auto-creation of a component.
-If no type is specified, generic markup (*html*) will be assumed.
+Enabling components for WebCmsObject implementations: wire WebCmsObjectComponentViewsConfiguration: registerComponentsAssociation
 
-| wcm:parent-create-include
-| Relevant only during auto-creation of a possible parent component.
-If the parent component is being auto-created nested components would by default be inserted as content markers or added as `ProxyWebCmsComponentModel` members.
-By providing this attribute (the actual value is ignored) you indicate the output of the component should be inserted instead.
+fully custom type:
+extend WebCmsComponentModel, provide a reader and writer; provide the content and metadata admin renderer
 
-| wcm:parse-placeholders
-| If present on an element attributed with _wcm:component_, the body of the element will always be parsed and all sections marked _wcm:placeholder_ will be made available in the `WebCmsPlaceholderContentModel`.
+attributes: supportsMarkup
 
-| wcm:placeholder
-| Attribute to indicate that a section should be rendered to a placeholder.
- The name of the placeholder is the value of the attribute.
- Note that the element itself will also be part of the placeholder content, not just the body of the element.
+refresh components:
+wcm:componentRefresh
+data-wcm-component-fresh
 
-|===
-
-Auto-creation of components from markup
-
-* if you dont specify a component type - the default component type will be created
-* if you dont specify a scope on a component - a default scope will be used:
-** outside a parent component the default scope will be asset, and parents will be searched if not specified
-** inside a parent component that is not a container: the default scope will be asset and parent scopes will be searched if not specified
-** inside a parent component that is a container: the default scope will be the container and parents will not be searched
-* if your component is a container
-** any placeholders in the body will be added as placeholder child components and the body markup will refer to those components
-** any scoped component will be added as a proxy component referring to the original scoped component and the body markup will refer to the proxy components
-
-Special scopes:
-
-- default: always refers to the lowest level - first one to perform the lookup (usually asset)
-- global: always refers to the global scope, components that have no owner
-- container: only relevant on wcm:auto-create attribute - ensures the component is added as a container member
-
-==== Examples
-
-:!numbered:
-This section contains a number of real-life examples for working with components from Thymeleaf.
-
-==== Rendering a component
-You can specify a component to render by just setting the name of the component to as the value for _wcm:component_.
-
-.Simple rendering of component
-[source,html,indent=0]
-[subs="verbatim,quotes,attributes"]
-----
-<div wcm:component="my-component">This markup will only be rendered if that component does not exist.</div>
-----
-
-In the example above the entire component hierarchy for the request will be searched bottom-up for a component with that name.
-Only if that component does not exist will the original template be rendered.
-If the component is found, the content of the _div_ element will be replaced, but the _div_ element itself will remain.
-
-NOTE: You can still use the standard Thymeleaf dialect (eg. _th:block_ or _th:remove_) to manipulate the wrapping element.
-
-.Replace the component body if the component is not found
-[source,html,indent=0]
-[subs="verbatim,quotes,attributes"]
-----
-<div wcm:component="my-component" wcm:always-replace>This markup will never be rendered.</div>
-----
-
-By adding the _wcm:always-replace_ attribute you can ensure the the original template markup will be suppressed.
-Even if the component is not found, the body of the _div_ element will be empty.
-
-.Specifying a scope for the component
-In our original example all scopes will be traversed bottom-up to find the component.
-If you only want to look for the component in a specific scope, simply set the _wcm:scope_ attribute.
-
-[source,html,indent=0]
-[subs="verbatim,quotes,attributes"]
-----
-<div wcm:component="my-component" wcm:scope="global">Replaced by a globally shared component.</div>
-----
-
-When set, the component will be looked for only in that scope (unless you also set _wcm:search-parent-scopes_).
-In our example we look for a component 'my-component' in the set of shared components.
-
-==== Auto-create a markup component
-The presence of _wcm:auto-create_ will automatically create a component for you if it does not yet exist.
-
-[source,html,indent=0]
-[subs="verbatim,quotes,attributes"]
-----
-<div wcm:component="my-component" wcm:auto-create>This markup will only be rendered if that component does not exist.</div>
-----
-
-In our example we now create 'my-component' upon first rendering of the template.
-Because we did not specify an explicit component type, the default type will be used: a HTML `TextWebCmsComponentModel` will be created.
-The processed body of the _div_ element will be set as the content of our text component.
-
-As with the component type, because we did not specify an explicit scope, the component will be added to the default scope: usually the asset being rendered.
-
-.Specifying component type
-Adding a component type is done with the _wcm:type_ attribute.
-
-[source,html,indent=0]
-[subs="verbatim,quotes,attributes"]
-----
-<div wcm:component="my-component" wcm:auto-create wcm:type="rich-text">This markup will only be rendered if that component does not exist.</div>
-----
-
-We still create a `TextWebCmsComponentModel`, except it will now be of rich text type.
-The value of the _wcm:type_ attribute must be a known `WebCmsComponentType` type key.
-
-Specifying creation scope
-
-Combining scope and creation scope
-
-==== Using placeholders in a markup component
-
-==== Nesting components
-
-parent include
-
-==== Auto-create a simple container
-
-==== Building a container structure
-
-==== Using placeholders in containers
+:numbered:

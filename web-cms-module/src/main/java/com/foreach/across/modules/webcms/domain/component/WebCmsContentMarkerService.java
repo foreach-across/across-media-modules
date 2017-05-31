@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * API for checking and parsing markers from a text.
  * A marker is any fragment of the form @@fragment@@, all text between the @@ is considered the marker that should be replaced.
  * <p/>
- * Using markers can be very convenient but take into account that performance wise the use of custom templates of custom
+ * Using markers can be very convenient but take into account that performance wise the use of custom templates or custom
  * rendering for component types is most likely better.
  *
  * @author Arne Vandamme
@@ -42,6 +42,8 @@ public class WebCmsContentMarkerService
 	public static Pattern MARKER_PATTERN = Pattern.compile( "@@[^\\s]+?(\\(.*?\\))?@@" );
 
 	/**
+	 * Converts a string version of a marker into the {@link WebCmsContentMarker}.
+	 *
 	 * @param marker string
 	 * @return marker instance
 	 */

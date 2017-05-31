@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 (function ( $ ) {
-    EntityModule.registerInitializer( function ( node ) {
-        var container = node ? node : $( document );
-        if ( container.find( '[id="entity.articleType"] option' ).length == 1 ) {
-            container.find( '[id="entity.articleType"]' ).attr( 'readonly', 'readonly' );
-        }
-    } );
-
     $( document ).ready( function () {
         var loadArticleTypes = function ( publicationSelect ) {
             var selected = publicationSelect.val();
 
             $.get( window.url, $.param( {'_partial': '::articleType', 'entity.publication': selected} ) )
                     .done( function ( data ) {
-                        $( '[id="entity.articleType"]' ).replaceWith( data );
-                        EntityModule.initializeFormElements( $( '[id="entity.articleType"]' ).parent() );
+                        $( '[id="entity.articleType"]' ).selectpicker( 'destroy' ).replaceWith( data );
+
+                        var select =  $( '[id="entity.articleType"]' );
+                        if ( select.find( 'option' ).length == 1 ) {
+                            select.attr( 'disabled', 'disabled' );
+                        }
+                        EntityModule.initializeFormElements( select.parent() );
                     } );
         };
 

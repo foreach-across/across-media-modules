@@ -38,6 +38,7 @@ import java.util.function.BiFunction;
  */
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated
 public class OrderedWebComponentModelSet
 {
 	private final List<WebCmsComponentModel> orderedComponents = new ArrayList<>();

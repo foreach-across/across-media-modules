@@ -46,7 +46,7 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 	public interface Attributes
 	{
 		/**
-		 * Type of component: plain-text, rich-text or html are supported
+		 * Type of component: plain-text, rich-text or markup are supported
 		 */
 		String TYPE = TYPE_ATTRIBUTE;
 

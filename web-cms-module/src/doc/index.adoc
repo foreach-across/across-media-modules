@@ -63,16 +63,19 @@ All properties start with the *webCmsModule.* prefix.
 |pages.default-template
 |`String`
 |Default template to use if no custom template specified on a page entity.
+|`th/WebCmsModule/default-page-template`
 
 |pages.template-prefix
 |`String`
 |Prefix to be added to relative template names.
 This corresponds usually with the base directory where the (Thymeleaf) templates are located.
 If unspecified the default resources of any present `@AcrossApplication` will be used.
+|
 
 |webCmsModule.default-data.assets.enabled
 |
-|Disable default assets data.
+|Enable default assets to be added: this includes component and asset types as well as some sample assets.
+|`true`
 
 |===
 

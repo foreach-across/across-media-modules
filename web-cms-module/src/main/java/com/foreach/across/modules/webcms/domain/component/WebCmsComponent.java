@@ -92,7 +92,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	 */
 	@Column(name = "name")
 	@NotBlank(groups = SharedComponentValidation.class)
-	@Pattern(regexp = "^[\\p{Alnum}-_.]+$")
+	@Pattern(regexp = "^[\\p{Alnum}-_.]*$")
 	@Length(max = 100)
 	private String name;
 
