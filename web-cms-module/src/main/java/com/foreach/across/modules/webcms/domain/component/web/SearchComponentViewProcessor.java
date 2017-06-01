@@ -41,6 +41,7 @@ import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
@@ -62,6 +63,7 @@ import java.util.Map;
  * @author Arne Vandamme
  * @since 0.0.2
  */
+@ConditionalOnAdminUI
 @Component
 @RequiredArgsConstructor
 public final class SearchComponentViewProcessor extends EntityViewProcessorAdapter
