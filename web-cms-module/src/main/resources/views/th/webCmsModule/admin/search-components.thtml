@@ -1,0 +1,8 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" xmlns:wcm="http://across.foreach.be/wcm">
+<head>
+    <title>Search web cms components</title>
+</head>
+<body th:fragment="content">
+<th:block wcm:component="content" wcm:scope="asset" />
+</body>
+</html>

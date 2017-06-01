@@ -19,16 +19,14 @@ package com.foreach.across.modules.webcms.domain.component.config;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
-import com.foreach.across.modules.entity.views.processors.DefaultValidationViewProcessor;
-import com.foreach.across.modules.entity.views.processors.SaveEntityViewProcessor;
-import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
-import com.foreach.across.modules.entity.views.processors.SingleEntityPageStructureViewProcessor;
+import com.foreach.across.modules.entity.views.processors.*;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.ContainerMemberViewProcessor;
+import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.web.SingleWebCmsComponentFormProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +44,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 {
 	private final ContainerMemberViewProcessor containerMemberViewProcessor;
 	private final SingleWebCmsComponentFormProcessor formProcessor;
+	private final SearchComponentViewProcessor searchComponentViewProcessor;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
@@ -65,6 +64,10 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				                      .property( "metadata" ).hidden( true ).and()
 				                      .property( "bodyWithContentMarkers" ).hidden( true ).and()
 				                      .property( "proxyTarget" ).hidden( true )
+		        )
+		        .attribute(
+				        SearchComponentViewProcessor.COMPONENT_SEARCH_QUERY,
+				        "(title like '%{0}%' or name like '%{0}') and ownerObjectId is NULL"
 		        )
 		        .listView(
 				        lvb -> lvb.entityQueryFilter( true )
@@ -93,6 +96,16 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				                  .removeViewProcessor( SaveEntityViewProcessor.class.getName() )
 				                  .removeViewProcessor( DefaultValidationViewProcessor.class.getName() )
 				                  .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 12 ) ) )
-		        );
+		        )
+		        .listView(
+				        "search",
+				        lvb -> lvb.showProperties( "title", "name", "componentType", "lastModified" )
+				                  .sortableOn()
+				                  .showResultNumber( false )
+				                  .postProcess( ListFormViewProcessor.class, p -> p.setAddDefaultButtons( false ) )
+				                  .postProcess( SortableTableRenderingViewProcessor.class, p -> p.setIncludeDefaultActions( false ) )
+				                  .viewProcessor( searchComponentViewProcessor )
+		        )
+		;
 	}
 }

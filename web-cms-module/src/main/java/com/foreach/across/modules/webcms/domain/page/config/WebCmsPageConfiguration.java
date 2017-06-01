@@ -42,6 +42,7 @@ import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
+import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
@@ -84,6 +85,10 @@ class WebCmsPageConfiguration
 			        .association( ab -> ab.name( "webCmsRemoteEndpoint.urls" ).show() );
 
 			entities.withType( WebCmsPage.class )
+			        .attribute(
+					        SearchComponentViewProcessor.COMPONENT_SEARCH_QUERY,
+			                "title like '%{0}%'"
+			        )
 			        .properties(
 					        props -> props.property( "objectId" ).hidden( true ).and()
 					                      .property( CANONICAL_PATH )

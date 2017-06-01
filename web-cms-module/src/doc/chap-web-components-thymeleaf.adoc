@@ -7,7 +7,7 @@ It enables you to:
 * auto-create components from templates based on the template content
 * define placeholder content
 
-The Thymeleaf dialect is a very powerful tool to convert your slice your static templates into user modifiable components.
+The Thymeleaf dialect is a very powerful tool to convert your static templates into user modifiable components.
 
 ==== HTML attributes
 Interacting with components is done by adding attributes to your template elements.
@@ -70,9 +70,9 @@ Auto-creation of components from markup
 
 Special scopes:
 
-- default: always refers to the lowest level - first one to perform the lookup (usually asset)
+- default: always refers to the lowest level - first one to perform the lookup (usually asset) - you would not normally use this scope name as it is default is a scope name is omitted
 - global: always refers to the global scope, components that have no owner
-- container: only relevant on wcm:auto-create attribute - ensures the component is added as a container member
+- container: this is a reserved scope name that ensures the component is added as a container member - you would not normally use this scope name as it is the default if omitted inside a container component
 
 ==== Examples
 
@@ -367,8 +367,8 @@ If your template refers to a scoped component inside a container, a proxy will g
 </div>
 ----
 
-In this case member _footer_ would be `ProxyWebCmsComponentModel` that is linked to the global component with the name _footer_.
-If the global _footer_ component is not found however, no member would have been created either as a proxy always links to an existing component.
+In this case member _footer_ would be a `ProxyWebCmsComponentModel` that is linked to the global component with the name _footer_.
+If the global _footer_ component is not found however, no member would have been created either, as a proxy only links to an existing component.
 
 You can of course still auto-create the global component as well - just as if it were outside a container:
 
