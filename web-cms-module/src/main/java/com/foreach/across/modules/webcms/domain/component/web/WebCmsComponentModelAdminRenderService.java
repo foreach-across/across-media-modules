@@ -44,7 +44,7 @@ import java.util.*;
  * Central API for building the administration UI for editing components.
  *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @ConditionalOnAdminUI
 @Service

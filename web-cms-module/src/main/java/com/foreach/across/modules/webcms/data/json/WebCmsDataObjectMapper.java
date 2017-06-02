@@ -33,7 +33,7 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @Service
 @Slf4j

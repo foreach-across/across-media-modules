@@ -26,8 +26,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
+ * Ensures that any {@link WebCmsObject} is serialized as its unique object id.
+ *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @Component
 public final class WebCmsObjectSerializer extends JsonSerializer<WebCmsObject>

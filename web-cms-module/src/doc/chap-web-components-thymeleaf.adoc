@@ -118,6 +118,8 @@ If you only want to look for the component in a specific scope, simply set the _
 When set, the component will be looked for only in that scope (unless you also set _wcm:search-parent-scopes_).
 In our example we look for a component 'my-component' in the set of shared components.
 
+NOTE: A `WebCmsComponentModel` is also a `ViewElement` and can always be rendered using the *across:view* element from the AcrossWebDialect as well.
+
 ==== Auto-create a markup component
 The presence of _wcm:auto-create_ will automatically create a component for you if it does not yet exist.
 

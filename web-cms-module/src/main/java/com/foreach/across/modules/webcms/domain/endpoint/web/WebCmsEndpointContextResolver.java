@@ -32,7 +32,7 @@ public interface WebCmsEndpointContextResolver
 	/**
 	 * If a {@code WebCmsUrl} can be found on the given request, this will be put on the given context. This lookup is expensive may only be called once per request.
 	 * <p>
-	 * After resolving, {@ConfigurableWebCmsEndpointContext#setResolved(boolean) } is set to {@code true}.
+	 * After resolving, {@link ConfigurableWebCmsEndpointContext#setResolved(boolean) } is set to {@code true}.
 	 *
 	 * @see WebCmsEndpointService#getUrlForPath(java.lang.String)
 	 */

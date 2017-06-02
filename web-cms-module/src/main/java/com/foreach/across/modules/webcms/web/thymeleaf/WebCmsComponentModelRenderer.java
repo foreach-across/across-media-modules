@@ -29,7 +29,7 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
  *
  * @author Arne Vandamme
  * @see ThymeleafModelBuilder
- * @since 0.0.1
+ * @since 0.0.2
  */
 public interface WebCmsComponentModelRenderer<T extends WebCmsComponentModel>
 {

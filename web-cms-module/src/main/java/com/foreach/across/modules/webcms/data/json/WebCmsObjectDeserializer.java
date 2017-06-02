@@ -25,8 +25,11 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 
 /**
+ * Deserializes a {@link com.foreach.across.modules.webcms.domain.WebCmsObject} by using the {@link WebCmsDataConversionService} instead.
+ * This way it should be enough for most custom implementations to just provide a converter from object id ({@code String} to their implementation, and vice versa).
+ *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @RequiredArgsConstructor
 public final class WebCmsObjectDeserializer extends JsonDeserializer<Object>

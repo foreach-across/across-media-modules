@@ -30,65 +30,24 @@ include::chap-web-components-base-types.adoc[]
 
 === Activating component support
 Any `WebCmsObject` - this includes all assets and components themselves - can have web components linked to it.
+Enabling components for WebCmsObject implementations: wire WebCmsObjectComponentViewsConfiguration: registerComponentsAssociation
 
 === Rendering components
 
 === Creating shared web components
 Name must be globally unique and is required
-Title is also required - must not be unique however (?)
+Title is also required - must not be unique however.
 
 === Using components in your controllers
 `WebCmsComponentModelHierarchy`
 
 === Placeholders
+`WebCmsPlaceholderContentModel`
 
 include::chap-web-components-content-markers.adoc[]
 
 include::chap-web-components-thymeleaf.adoc[]
 
-[[defining-component-types]]
-=== Defining component types
-
-==== Extending the base types
-
-
-YAML,
-metadata,
-custom template
-
-
-any component model can also define a custom template, which will be used for rendering instead of the default rendering
-if the component type defines a "template" attribute, it will be the default template that wil be used for the component
-
-
-type attributes: type, template, metadata
-customizing one of the base types: Create metadata class and register it in the EntityRegistry (or provide a WebCmsComponentModelMetadataAdminRenderer)
-use componentTemplate for container types
-
-
-[[custom-component-type]]
-==== Custom component type
-
-
-`WebCmsComponentModelReader`
-`WebCmsComponentModelWriter`
-`WebCmsComponentModelRenderer`
-
-`WebCmsComponentModelContentAdminRenderer`
-`WebCmsComponentModelMetadataAdminRenderer`
-`WebCmsComponentModelMembersAdminRenderer`
-
-`WebCmsComponentAutoCreateStrategy`
-
-Enabling components for WebCmsObject implementations: wire WebCmsObjectComponentViewsConfiguration: registerComponentsAssociation
-
-fully custom type:
-extend WebCmsComponentModel, provide a reader and writer; provide the content and metadata admin renderer
-
-attributes: supportsMarkup
-
-refresh components:
-wcm:componentRefresh
-data-wcm-component-fresh
+include::chap-web-components-defining-component-types.adoc[]
 
 :numbered:

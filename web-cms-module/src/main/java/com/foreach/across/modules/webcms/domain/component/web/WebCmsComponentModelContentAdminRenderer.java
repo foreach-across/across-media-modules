@@ -21,7 +21,7 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 public interface WebCmsComponentModelContentAdminRenderer<T extends WebCmsComponentModel>
 {

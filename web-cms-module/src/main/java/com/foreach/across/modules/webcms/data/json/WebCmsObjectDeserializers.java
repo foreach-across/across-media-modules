@@ -35,6 +35,7 @@ class WebCmsObjectDeserializers extends SimpleDeserializers
 {
 	private final WebCmsDataConversionService dataConversionService;
 
+	@SuppressWarnings( "unchecked" )
 	@Override
 	public JsonDeserializer<?> findBeanDeserializer( JavaType type, DeserializationConfig config, BeanDescription beanDesc ) throws JsonMappingException {
 		JsonDeserializer found = super.findBeanDeserializer( type, config, beanDesc );

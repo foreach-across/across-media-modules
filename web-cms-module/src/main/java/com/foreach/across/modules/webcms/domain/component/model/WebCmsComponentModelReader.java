@@ -20,7 +20,7 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 public interface WebCmsComponentModelReader<T extends WebCmsComponentModel>
 {

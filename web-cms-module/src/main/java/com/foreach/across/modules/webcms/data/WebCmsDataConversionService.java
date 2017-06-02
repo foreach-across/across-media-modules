@@ -16,12 +16,10 @@
 
 package com.foreach.across.modules.webcms.data;
 
-import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -47,7 +45,7 @@ public class WebCmsDataConversionService extends DefaultConversionService
 	 * @param dto  to set te properties on
 	 * @return true if properties have been set (values were different)
 	 */
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	public boolean convertToPropertyValues( Map<String, Object> data, Object dto ) {
 		BeanWrapperImpl beanWrapper = new BeanWrapperImpl( dto );
 
