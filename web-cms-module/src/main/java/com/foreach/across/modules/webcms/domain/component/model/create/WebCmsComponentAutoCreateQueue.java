@@ -18,7 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
-import com.foreach.across.modules.webcms.domain.component.model.OrderedWebComponentModelSet;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelSet;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
@@ -96,11 +96,6 @@ public class WebCmsComponentAutoCreateQueue
 			Assert.isTrue( taskId.equals( current.getTaskId() ) );
 
 			current.setOutput( output );
-/*
-			System.err.println( "--- " + current.getComponentName() + "[" + current.getTaskId() + "] ---" );
-			System.err.println( output );
-			System.err.println( "----------------" );
-			System.err.println();*/
 
 			WebCmsComponentAutoCreateTask next = outputQueue.peek();
 
@@ -108,11 +103,11 @@ public class WebCmsComponentAutoCreateQueue
 				next.addChild( current );
 			}
 			else {
-				OrderedWebComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( current.getScopeName() );
+				WebCmsComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( current.getScopeName() );
 				current.setOwner( componentModelSet.getOwner() );
 
 				WebCmsComponentModel componentModel = autoCreateService.createComponent( current );
-				componentModelSet.addByNameOnly( componentModel );
+				componentModelSet.add( componentModel );
 
 				componentsCreated.put( current.getTaskId(), componentModel );
 			}

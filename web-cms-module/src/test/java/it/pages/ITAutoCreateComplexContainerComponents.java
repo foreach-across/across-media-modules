@@ -69,7 +69,7 @@ public class ITAutoCreateComplexContainerComponents extends AbstractSingleApplic
 		assertEquals( "/auto-create-complex-container-components", page.getCanonicalPath() );
 		assertNull( page.getParent() );
 
-		assertFalse( componentModelService.getComponentModelsForOwner( page ).hasOrderedComponents() );
+		assertTrue( componentModelService.getComponentModelsForOwner( page ).isEmpty() );
 	}
 
 	@Test

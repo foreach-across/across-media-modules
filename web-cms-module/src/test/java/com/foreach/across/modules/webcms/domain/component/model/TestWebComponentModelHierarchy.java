@@ -45,22 +45,27 @@ public class TestWebComponentModelHierarchy
 
 	private WebCmsComponentModelHierarchy components;
 
-	private OrderedWebComponentModelSet page, asset;
+	private WebCmsComponentModelSet page, asset;
 
 	@Before
 	public void setUp() throws Exception {
 		components = new WebCmsComponentModelHierarchy();
 
-		page = new OrderedWebComponentModelSet( "page" );
-		asset = new OrderedWebComponentModelSet( "asset" );
+		page = new WebCmsComponentModelSet();
+		asset = new WebCmsComponentModelSet();
+	}
+
+	@Test
+	public void getComponentsForUnknownScopeReturnsNull() {
+		assertNull( components.getComponentsForScope( "some-scope" ) );
 	}
 
 	@Test
 	public void addAndGetByScopeName() {
-		components.addComponents( page );
+		components.registerComponentsForScope( page, "page" );
 		assertSame( page, components.getComponentsForScope( "page" ) );
 
-		components.addComponents( asset );
+		components.registerComponentsForScope( asset, "asset" );
 		assertSame( asset, components.getComponentsForScope( "asset" ) );
 	}
 
@@ -69,41 +74,46 @@ public class TestWebComponentModelHierarchy
 		assertTrue( components.getScopeNames().isEmpty() );
 		assertNull( components.getDefaultScope() );
 
-		components.addComponents( page );
+		components.registerComponentsForScope( page, "page" );
 		assertEquals( Collections.singletonList( "page" ), components.getScopeNames() );
 		assertEquals( "page", components.getDefaultScope() );
 
-		components.addComponents( asset );
+		components.registerComponentsForScope( asset, "asset" );
+		assertEquals( Arrays.asList( "page", "asset" ), components.getScopeNames() );
+		assertEquals( "asset", components.getDefaultScope() );
+	}
+
+	@Test
+	public void replacingExistingScopeDoesNotChangeOrder() {
+		components.registerComponentsForScope( page, "page" );
+		components.registerComponentsForScope( asset, "asset" );
+
+		WebCmsComponentModelSet newComponents = new WebCmsComponentModelSet();
+		components.registerComponentsForScope( newComponents, "page" );
 		assertEquals( Arrays.asList( "page", "asset" ), components.getScopeNames() );
 		assertEquals( "asset", components.getDefaultScope() );
 	}
 
 	@Test
 	public void reorderScopes() {
-		OrderedWebComponentModelSet global = new OrderedWebComponentModelSet( "global" );
-		components.addComponents( global );
-		components.addComponents( asset );
-		components.addComponentsBefore( page, "asset" );
-		assertEquals( Arrays.asList( "global", "page", "asset" ), components.getScopeNames() );
-		assertEquals( "asset", components.getDefaultScope() );
-
-		components.setScopeOrder( "asset", "global", "page" );
-		assertEquals( Arrays.asList( "asset", "global", "page" ), components.getScopeNames() );
+		WebCmsComponentModelSet global = new WebCmsComponentModelSet();
+		components.registerComponentsForScope( global, "global" );
+		components.registerComponentsForScope( asset, "asset" );
+		components.registerComponentsForScope( page, "page" );
+		assertEquals( Arrays.asList( "global", "asset", "page" ), components.getScopeNames() );
 		assertEquals( "page", components.getDefaultScope() );
-	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void scopeNamesMustBeUnique() {
-		components.addComponents( page );
-		components.addComponents( page );
+		components.setScopeOrder( "page", "asset", "global" );
+		assertEquals( Arrays.asList( "page", "asset", "global" ), components.getScopeNames() );
+		assertEquals( "global", components.getDefaultScope() );
 	}
 
 	@Test
 	public void removeAndContainsScope() {
 		assertFalse( components.containsScope( "page" ) );
 
-		components.addComponents( page );
-		components.addComponents( asset );
+		components.registerComponentsForScope( page, "page" );
+		components.registerComponentsForScope( asset, "asset" );
 		assertTrue( components.containsScope( "page" ) );
 		assertTrue( components.containsScope( "asset" ) );
 
@@ -152,10 +162,10 @@ public class TestWebComponentModelHierarchy
 		Model anotherThree = new Model( "four" );
 		anotherThree.setName( "three" );
 
-		OrderedWebComponentModelSet global = new OrderedWebComponentModelSet( "global" );
-		components.addComponents( global );
-		components.addComponents( page );
-		components.addComponents( asset );
+		WebCmsComponentModelSet global = new WebCmsComponentModelSet();
+		components.registerComponentsForScope( global, "global" );
+		components.registerComponentsForScope( page, "page" );
+		components.registerComponentsForScope( asset, "asset" );
 
 		assertNull( components.get( "one" ) );
 

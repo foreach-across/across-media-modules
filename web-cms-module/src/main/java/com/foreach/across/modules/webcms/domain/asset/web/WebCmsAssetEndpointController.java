@@ -20,7 +20,7 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
-import com.foreach.across.modules.webcms.domain.component.model.OrderedWebComponentModelSet;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelSet;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,9 +43,8 @@ public class WebCmsAssetEndpointController
 	public void render( WebCmsUrl url, WebCmsAssetEndpoint endpoint, ModelMap model ) {
 		model.addAttribute( "asset", endpoint.getAsset() );
 
-		OrderedWebComponentModelSet componentModelSet = componentModelService.getComponentModelsForOwner( endpoint.getAsset() );
-		componentModelSet.setScopeName( "asset" );
-		componentModelHierarchy.addComponents( componentModelSet );
+		WebCmsComponentModelSet componentModelSet = componentModelService.buildComponentModelSetForOwner( endpoint.getAsset() );
+		componentModelHierarchy.registerComponentsForScope( componentModelSet, "asset" );
 
 		//model.addAttribute( "webCmsComponent", componentModelHierarchy );
 		/*model.addAttribute( "componentHierarchy", componentModelHierarchy );

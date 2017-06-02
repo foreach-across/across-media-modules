@@ -66,7 +66,7 @@ public class ITAutoCreateCreationScope extends AbstractSingleApplicationIT
 		assertEquals( "/auto-create-creation-scope", page.getCanonicalPath() );
 		assertNull( page.getParent() );
 
-		assertFalse( componentModelService.getComponentModelsForOwner( page ).hasOrderedComponents() );
+		assertTrue( componentModelService.getComponentModelsForOwner( page ).isEmpty() );
 	}
 
 	@Test

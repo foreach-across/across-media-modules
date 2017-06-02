@@ -18,7 +18,6 @@ package com.foreach.across.modules.webcms.domain.component.container;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
-import com.foreach.across.modules.webcms.domain.component.model.OrderedWebComponentModelSet;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -56,9 +56,9 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 		super( containerType );
 	}
 
-	public ContainerWebCmsComponentModel( WebCmsComponent component, OrderedWebComponentModelSet components ) {
+	public ContainerWebCmsComponentModel( WebCmsComponent component, Collection<WebCmsComponentModel> components ) {
 		this( component );
-		members.addAll( components.getOrdered() );
+		members.addAll( components );
 	}
 
 	public ContainerWebCmsComponentModel( WebCmsComponent component ) {

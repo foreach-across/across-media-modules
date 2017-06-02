@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import org.springframework.util.Assert;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Arne Vandamme
@@ -87,15 +89,25 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 	}
 
 	@Override
-	public OrderedWebComponentModelSet getComponentModelsForOwner( WebCmsObject object ) {
+	public WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object ) {
 		Assert.notNull( object );
 
-		OrderedWebComponentModelSet modelSet = new OrderedWebComponentModelSet();
+		WebCmsComponentModelSet modelSet = new WebCmsComponentModelSet();
 		modelSet.setOwner( object );
 		componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
+		                   .stream()
+		                   .filter( c -> !StringUtils.isEmpty( c.getName() ) )
 		                   .forEach( component -> modelSet.add( buildModelForComponent( component ) ) );
 
 		return modelSet;
+	}
+
+	@Override
+	public Collection<WebCmsComponentModel> getComponentModelsForOwner( WebCmsObject object ) {
+		return componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
+		                          .stream()
+		                          .map( this::buildModelForComponent )
+		                          .collect( Collectors.toList() );
 	}
 
 	@Override

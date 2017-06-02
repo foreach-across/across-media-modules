@@ -20,8 +20,6 @@ import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.function.BiFunction;
 
 import static org.junit.Assert.*;
@@ -29,17 +27,17 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
-public class TestOrderedWebComponentModelSet
+public class TestWebCmsComponentModelSet
 {
-	private OrderedWebComponentModelSet components;
+	private WebCmsComponentModelSet components;
 
 	private Model noName, one, two, three;
 
 	@Before
 	public void setUp() throws Exception {
-		components = new OrderedWebComponentModelSet();
+		components = new WebCmsComponentModelSet();
 
 		noName = new Model( null );
 		one = new Model( "one" );
@@ -50,34 +48,32 @@ public class TestOrderedWebComponentModelSet
 		assertEquals( "Test model class not equal - parent changed?", one, one );
 	}
 
-	@Test
-	public void defaultValues() {
-		assertNull( components.getScopeName() );
-		assertFalse( components.hasOrderedComponents() );
-		assertEquals( 0, components.getOrderedCount() );
-		assertEquals( Collections.emptyList(), components.getOrdered() );
+	@Test(expected = IllegalArgumentException.class)
+	public void nameIsRequiredOnComponentAdd() {
+		components.add( noName );
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void componentIsRequiredOnAdd() {
+		components.add( null );
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void nameIsRequiredOnPut() {
+		components.put( null, noName );
 	}
 
 	@Test
 	public void defaultAdd() {
-		components.add( noName );
-		assertEquals( 1, components.getOrderedCount() );
-		assertTrue( components.hasOrderedComponents() );
-		assertEquals( Collections.singletonList( noName ), components.getOrdered() );
-		assertNull( components.get( null ) );
-
 		components.add( one );
 		assertEquals( one, components.get( "one" ) );
 
 		components.add( two );
 		assertEquals( two, components.get( "two" ) );
-
-		assertEquals( 3, components.getOrderedCount() );
-		assertEquals( Arrays.asList( noName, one, two ), components.getOrdered() );
 	}
 
 	@Test
-	public void addMultipleByName() {
+	public void addWithSameNameReplacesPrevious() {
 		components.add( one );
 
 		Model otherOne = new Model( "one" );
@@ -85,64 +81,18 @@ public class TestOrderedWebComponentModelSet
 		components.add( otherOne );
 
 		assertEquals( otherOne, components.get( "one" ) );
-		assertEquals( Arrays.asList( one, otherOne ), components.getOrdered() );
 	}
 
 	@Test
-	public void addToOrderedOnly() {
-		components.addToOrderedOnly( one );
-		assertEquals( Collections.singletonList( one ), components.getOrdered() );
-		assertNull( components.get( "one" ) );
-	}
+	public void putByName() {
+		components.put( "one", noName );
+		components.put( "two", one );
 
-	@Test
-	public void addByNameOnly() {
-		components.addByNameOnly( one );
-		assertFalse( components.hasOrderedComponents() );
-		assertEquals( one, components.get( "one" ) );
-	}
+		assertEquals( noName, components.get( "one" ) );
+		assertEquals( one, components.get( "two" ) );
 
-	@Test
-	public void replace() {
-		assertNull( components.replace( "one", two ) );
+		components.put( "two", null );
 		assertNull( components.get( "two" ) );
-		assertFalse( components.hasOrderedComponents() );
-
-		components.add( one );
-		components.add( three );
-		assertEquals( one, components.replace( "one", two ) );
-
-		assertNull( components.get( "one" ) );
-		assertEquals( two, components.get( "two" ) );
-		assertEquals( Arrays.asList( two, three ), components.getOrdered() );
-	}
-
-	@Test
-	public void addAfter() {
-		assertFalse( components.addAfter( two, "one" ) );
-
-		components.add( one );
-		assertTrue( components.addAfter( two, "one" ) );
-		assertNull( components.get( "two" ) );
-
-		assertTrue( components.addAfter( three, one ) );
-		assertNull( components.get( "three" ) );
-
-		assertEquals( Arrays.asList( one, three, two ), components.getOrdered() );
-	}
-
-	@Test
-	public void addBefore() {
-		assertFalse( components.addBefore( two, "one" ) );
-
-		components.add( one );
-		assertTrue( components.addBefore( two, "one" ) );
-		assertNull( components.get( "two" ) );
-
-		assertTrue( components.addBefore( three, one ) );
-		assertNull( components.get( "three" ) );
-
-		assertEquals( Arrays.asList( two, three, one ), components.getOrdered() );
 	}
 
 	@Test
@@ -152,17 +102,11 @@ public class TestOrderedWebComponentModelSet
 
 		components.add( one );
 		components.add( two );
-		components.add( three );
-		components.addToOrderedOnly( three );
-		assertEquals( Arrays.asList( one, two, three, three ), components.getOrdered() );
 
 		assertEquals( one, components.remove( "one" ) );
 		assertNull( components.get( "one" ) );
-		assertEquals( Arrays.asList( two, three, three ), components.getOrdered() );
 
-		assertTrue( components.remove( three ) );
-		assertNull( components.get( "three" ) );
-		assertEquals( Collections.singletonList( two ), components.getOrdered() );
+		assertEquals( two, components.get( "two" ) );
 	}
 
 	@SuppressWarnings("unchecked")
@@ -210,6 +154,41 @@ public class TestOrderedWebComponentModelSet
 		assertNull( components.get( "two" ) );
 		assertNull( components.get( "two" ) );
 		verify( fetcher, times( 1 ) ).apply( owner, "two" );
+		verifyNoMoreInteractions( fetcher );
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void fetcherIsCalledAgainAfterClearOrRemove() {
+		BiFunction<WebCmsObject, String, WebCmsComponentModel> fetcher = mock( BiFunction.class );
+		components.setFetcherFunction( fetcher );
+
+		when( fetcher.apply( null, "someComponent" ) ).thenReturn( one );
+		assertEquals( one, components.get( "someComponent" ) );
+		verify( fetcher, times( 1 ) ).apply( null, "someComponent" );
+
+		components.remove( "someComponent" );
+		assertEquals( one, components.get( "someComponent" ) );
+		assertEquals( one, components.get( "someComponent" ) );
+		verify( fetcher, times( 2 ) ).apply( null, "someComponent" );
+
+		components.clear();
+		assertEquals( one, components.get( "someComponent" ) );
+		assertEquals( one, components.get( "someComponent" ) );
+		verify( fetcher, times( 3 ) ).apply( null, "someComponent" );
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void fetcherIsNotCalledOnExplicitValue() {
+		BiFunction<WebCmsObject, String, WebCmsComponentModel> fetcher = mock( BiFunction.class );
+		components.setFetcherFunction( fetcher );
+
+		components.put( "one", one );
+		components.put( "two", null );
+		assertEquals( one, components.get( "one" ) );
+		assertNull( components.get( "two" ) );
+
 		verifyNoMoreInteractions( fetcher );
 	}
 

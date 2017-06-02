@@ -20,6 +20,8 @@ import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 
+import java.util.Collection;
+
 /**
  * Core API for interacting with renderable/editable {@link WebCmsComponentModel}s.
  *
@@ -83,13 +85,21 @@ public interface WebCmsComponentModelService
 	<U extends WebCmsComponentModel> U getComponentModelByName( String componentName, WebCmsObject owner, Class<U> expectedType );
 
 	/**
-	 * Get all {@link WebCmsComponentModel}s owned by a the {@link WebCmsObject}.
-	 * The returned set will have all components according to their index order.
+	 * Return all components owned by the {@link WebCmsObject} according to their sort order.
+	 *
+	 * @param object owner
+	 * @return ordered collection of components
+	 */
+	Collection<WebCmsComponentModel> getComponentModelsForOwner( WebCmsObject object );
+
+	/**
+	 * Build a {@link WebCmsComponentModelSet} for all components owned by the {@link WebCmsObject}.
+	 * The returned set only contains components with a configured name.
 	 *
 	 * @param object owner
 	 * @return set of components
 	 */
-	OrderedWebComponentModelSet getComponentModelsForOwner( WebCmsObject object );
+	WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object );
 
 	/**
 	 * Build the {@link WebCmsComponentModel} for a particular {@link WebCmsComponent} entity.

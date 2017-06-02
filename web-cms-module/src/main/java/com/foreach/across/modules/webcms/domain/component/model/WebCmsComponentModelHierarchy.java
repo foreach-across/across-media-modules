@@ -17,6 +17,8 @@
 package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.core.annotations.Exposed;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -29,15 +31,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Represents an ordered hierarchy of {@link OrderedWebComponentModelSet}s that have a scope name.
+ * Represents an ordered hierarchy of {@link WebCmsComponentModelSet}s that have a scope name.
  * Components can be looked up by name in the hierarchy in which case (depending on the parameter)
  * all registered sets will be queried in reverse order until a result is returned.
  * <p/>
  * The hierarchy will always contain an initial scope name {@link #GLOBAL}.
- * The global scope component set is special in that it will fetch a component from the repository only when it is requested.
+ * The global scope component set will fetch a component from the repository only when it is requested.
  *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @Component
 @Exposed
@@ -50,14 +52,16 @@ public class WebCmsComponentModelHierarchy
 	public static final String DEFAULT = "default";
 	public static final String CONTAINER = "container";
 
-	private List<OrderedWebComponentModelSet> componentModelSets = new ArrayList<>();
+	private final List<ComponentsWithScope> scopedComponentSets = new ArrayList<>();
 
 	@Autowired
 	void buildGlobalComponentModelSet( WebCmsComponentModelService webCmsComponentModelService ) {
-		addComponents( new OrderedWebComponentModelSet(
-				null, GLOBAL,
-				( owner, componentName ) -> webCmsComponentModelService.getComponentModelByName( componentName, owner )
-		) );
+		registerComponentsForScope(
+				new WebCmsComponentModelSet(
+						null,
+						( owner, componentName ) -> webCmsComponentModelService.getComponentModelByName( componentName, owner )
+				), GLOBAL
+		);
 	}
 
 	@Autowired
@@ -67,63 +71,54 @@ public class WebCmsComponentModelHierarchy
 
 	/**
 	 * Add a set of components to the very end of the hierarchy.
-	 * The new set will be the very first one that will be looked in.
+	 * If a new scope name is specified, this scope will be registered as the first scope to look in.
+	 * If an existing scope name is specified, the components will be replaced but the query order of that scope will not change.
 	 *
 	 * @param componentModelSet to add
+	 * @param scopeName         for which to register components
 	 */
-	public void addComponents( OrderedWebComponentModelSet componentModelSet ) {
-		Assert.notNull( componentModelSet.getScopeName(), "A scope name is required to add a set to a hierarchy." );
-		Assert.isNull(
-				getComponentsForScope( componentModelSet.getScopeName() ),
-				"Scope names must be unique in a hierarchy - another set already has this scope."
-		);
-		componentModelSets.add( componentModelSet );
-	}
+	public void registerComponentsForScope( WebCmsComponentModelSet componentModelSet, String scopeName ) {
+		Assert.notNull( componentModelSet, "A valid component model set is required." );
+		Assert.notNull( scopeName, "A scope name is required to add a set to a hierarchy." );
 
-	/**
-	 * Add a set of components before an already registered scope.  The existing components will be used before the new set.
-	 * If the scope is not yet present, an exception will be thrown.
-	 *
-	 * @param componentModelSet to add
-	 * @param scopeNameAfter    name of the component scope that comes after
-	 */
-	public void addComponentsBefore( OrderedWebComponentModelSet componentModelSet, String scopeNameAfter ) {
-		OrderedWebComponentModelSet componentsForScope = getComponentsForScope( scopeNameAfter );
-		Assert.notNull( componentModelSet, "No components registered for scope " + scopeNameAfter );
-
-		componentModelSets.add( componentModelSets.indexOf( componentsForScope ), componentModelSet );
+		ComponentsWithScope current = getForScope( scopeName );
+		if ( current != null ) {
+			current.components = componentModelSet;
+		}
+		else {
+			scopedComponentSets.add( new ComponentsWithScope( scopeName, componentModelSet ) );
+		}
 	}
 
 	/**
 	 * @return true if the component set for that scope has been removed
 	 */
 	public boolean removeComponents( String scopeName ) {
-		return Optional.ofNullable( getComponentsForScope( scopeName ) )
-		               .map( this::removeComponents )
+		return Optional.ofNullable( getForScope( scopeName ) )
+		               .map( scopedComponentSets::remove )
 		               .orElse( false );
 	}
 
 	/**
 	 * @return true if component set has been removed
 	 */
-	public boolean removeComponents( OrderedWebComponentModelSet componentModelSet ) {
-		return componentModelSets.remove( componentModelSet );
+	public boolean removeComponents( WebCmsComponentModelSet componentModelSet ) {
+		return scopedComponentSets.stream()
+		                          .filter( componentsWithScope -> componentsWithScope.components.equals( componentModelSet ) )
+		                          .findFirst()
+		                          .map( scopedComponentSets::remove )
+		                          .orElse( false );
 	}
 
 	/**
 	 * @param scopeName name
 	 * @return components registered to that scope
 	 */
-	public OrderedWebComponentModelSet getComponentsForScope( String scopeName ) {
+	public WebCmsComponentModelSet getComponentsForScope( String scopeName ) {
 		Assert.notNull( scopeName );
 
-		for ( OrderedWebComponentModelSet modelSet : componentModelSets ) {
-			if ( scopeName.equals( modelSet.getScopeName() ) ) {
-				return modelSet;
-			}
-		}
-
-		return null;
+		ComponentsWithScope entry = getForScope( scopeName );
+		return entry != null ? entry.components : null;
 	}
 
 	/**
@@ -135,16 +130,16 @@ public class WebCmsComponentModelHierarchy
 	 * @param scopeNames in order
 	 */
 	public void setScopeOrder( String... scopeNames ) {
-		componentModelSets.sort( Comparator.comparingInt( modelSet -> ArrayUtils.indexOf( scopeNames, modelSet.getScopeName() ) ) );
+		scopedComponentSets.sort( Comparator.comparingInt( entry -> ArrayUtils.indexOf( scopeNames, entry.scopeName ) ) );
 	}
 
 	/**
 	 * @return all registered scope names in their order
 	 */
 	public Collection<String> getScopeNames() {
-		return componentModelSets.stream()
-		                         .map( OrderedWebComponentModelSet::getScopeName )
-		                         .collect( Collectors.toList() );
+		return scopedComponentSets.stream()
+		                          .map( ComponentsWithScope::getScopeName )
+		                          .collect( Collectors.toList() );
 	}
 
 	/**
@@ -153,7 +148,7 @@ public class WebCmsComponentModelHierarchy
 	 * @return scope name or {@code null} if the hierarchy is empty
 	 */
 	public String getDefaultScope() {
-		return componentModelSets.isEmpty() ? null : componentModelSets.get( componentModelSets.size() - 1 ).getScopeName();
+		return scopedComponentSets.isEmpty() ? null : scopedComponentSets.get( scopedComponentSets.size() - 1 ).scopeName;
 	}
 
 	/**
@@ -176,8 +171,8 @@ public class WebCmsComponentModelHierarchy
 	public WebCmsComponentModel get( String componentName, boolean searchParentScopes ) {
 		WebCmsComponentModel component = null;
 
-		for ( int i = componentModelSets.size() - 1; i >= 0 && component == null; i-- ) {
-			component = componentModelSets.get( i ).get( componentName );
+		for ( int i = scopedComponentSets.size() - 1; i >= 0 && component == null; i-- ) {
+			component = scopedComponentSets.get( i ).components.get( componentName );
 			if ( !searchParentScopes ) {
 				break;
 			}
@@ -213,11 +208,11 @@ public class WebCmsComponentModelHierarchy
 		boolean scopeFound = false;
 		String actualScope = DEFAULT.equals( scopeName ) ? getDefaultScope() : scopeName;
 
-		for ( int i = componentModelSets.size() - 1; i >= 0 && component == null; i-- ) {
-			OrderedWebComponentModelSet modelSet = componentModelSets.get( i );
-			if ( scopeFound || actualScope.equals( modelSet.getScopeName() ) ) {
+		for ( int i = scopedComponentSets.size() - 1; i >= 0 && component == null; i-- ) {
+			ComponentsWithScope componentsWithScope = scopedComponentSets.get( i );
+			if ( scopeFound || actualScope.equals( componentsWithScope.getScopeName() ) ) {
 				scopeFound = true;
-				component = modelSet.get( componentName );
+				component = componentsWithScope.components.get( componentName );
 				if ( !searchParentScopes ) {
 					break;
 				}
@@ -231,6 +226,23 @@ public class WebCmsComponentModelHierarchy
 	 * @return true if components scope is registered
 	 */
 	public boolean containsScope( String scopeName ) {
-		return getComponentsForScope( scopeName ) != null;
+		return getForScope( scopeName ) != null;
+	}
+
+	private ComponentsWithScope getForScope( String scopeName ) {
+		for ( ComponentsWithScope entry : scopedComponentSets ) {
+			if ( scopeName.equals( entry.scopeName ) ) {
+				return entry;
+			}
+		}
+		return null;
+	}
+
+	@AllArgsConstructor
+	private static class ComponentsWithScope
+	{
+		@Getter
+		private final String scopeName;
+		private WebCmsComponentModelSet components;
 	}
 }
