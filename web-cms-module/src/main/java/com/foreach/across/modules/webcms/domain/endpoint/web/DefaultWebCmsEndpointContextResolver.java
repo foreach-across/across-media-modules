@@ -19,7 +19,7 @@ package com.foreach.across.modules.webcms.domain.endpoint.web;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.domain.endpoint.services.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
 import lombok.RequiredArgsConstructor;

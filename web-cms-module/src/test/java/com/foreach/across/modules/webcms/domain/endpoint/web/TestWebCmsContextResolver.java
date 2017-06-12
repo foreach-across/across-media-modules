@@ -16,10 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint.web;
 
-import com.foreach.across.modules.webcms.domain.endpoint.services.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.endpoint.web.DefaultWebCmsEndpointContextResolver;
-import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.DefaultWebCmsEndpointContext;
 import org.junit.Before;

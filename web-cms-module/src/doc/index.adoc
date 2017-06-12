@@ -153,6 +153,10 @@ a generated path segment will be SEO friendly
 - its properties will still be inherited (eg path, layout, template) - in the default menu it will still insert a group section
 * disabled: this page and all its children will not be rendered
 
+default urls for assets
+- primary url
+- auto generated on save, updated as long as nog published or publication is in the future
+
 WebCmsMenu
 
 named menu, consisting of different items

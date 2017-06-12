@@ -17,12 +17,8 @@
 package com.foreach.across.modules.webcms.domain.page;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,8 +31,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WebCmsPageInterceptor extends EntityInterceptorAdapter<WebCmsPage>
 {
-	private final WebCmsAssetEndpointRepository endpointRepository;
-	private final WebCmsUrlRepository urlRepository;
+	private final WebCmsEndpointService endpointService;
 
 	@Override
 	public boolean handles( Class<?> entityClass ) {
@@ -45,43 +40,11 @@ public class WebCmsPageInterceptor extends EntityInterceptorAdapter<WebCmsPage>
 
 	@Override
 	public void afterCreate( WebCmsPage entity ) {
-		updatePrimaryUrl( entity );
+		endpointService.updateOrCreatePrimaryUrlForAsset( entity.getCanonicalPath(), entity );
 	}
 
 	@Override
 	public void afterUpdate( WebCmsPage entity ) {
-		updatePrimaryUrl( entity );
-	}
-
-	private void updatePrimaryUrl( WebCmsPage page ) {
-		if ( page.isPublished() ) {
-			WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( page );
-
-			WebCmsUrl newPrimaryUrl = new WebCmsUrl();
-			newPrimaryUrl.setPath( page.getCanonicalPath() );
-			newPrimaryUrl.setHttpStatus( HttpStatus.OK );
-			newPrimaryUrl.setPrimary( true );
-			newPrimaryUrl.setEndpoint( endpoint );
-
-			WebCmsUrl existing = endpoint.getUrlWithPath( newPrimaryUrl.getPath() ).orElse( null );
-
-			if ( existing != null && !existing.isPrimary() ) {
-				newPrimaryUrl = existing.toDto();
-				newPrimaryUrl.setPrimary( true );
-				newPrimaryUrl.setHttpStatus( HttpStatus.OK );
-			}
-
-			if ( existing == null || !existing.isPrimary() ) {
-				endpoint.getPrimaryUrl().ifPresent(
-						currentPrimaryUrl -> {
-							currentPrimaryUrl.setPrimary( false );
-							currentPrimaryUrl.setHttpStatus( HttpStatus.MOVED_PERMANENTLY );
-							urlRepository.save( currentPrimaryUrl );
-						}
-				);
-
-				urlRepository.save( newPrimaryUrl );
-			}
-		}
+		endpointService.updateOrCreatePrimaryUrlForAsset( entity.getCanonicalPath(), entity );
 	}
 }

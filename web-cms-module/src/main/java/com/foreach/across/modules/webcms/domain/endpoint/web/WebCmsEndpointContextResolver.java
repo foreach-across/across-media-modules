@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint.web;
 
-import com.foreach.across.modules.webcms.domain.endpoint.services.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
 
 import javax.servlet.http.HttpServletRequest;
