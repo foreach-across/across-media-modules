@@ -42,6 +42,7 @@ public class DefaultWebCmsEndpointContext implements ConfigurableWebCmsEndpointC
 	private WebCmsUrl url;
 	private WebCmsEndpoint endpoint;
 	private boolean resolved = false;
+	private boolean previewMode = false;
 
 	@Override
 	public <T extends WebCmsEndpoint> T getEndpoint( Class<T> endpointType ) {

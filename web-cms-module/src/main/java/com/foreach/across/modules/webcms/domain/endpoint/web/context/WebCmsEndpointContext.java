@@ -37,6 +37,11 @@ public interface WebCmsEndpointContext
 	boolean isAvailable();
 
 	/**
+	 * @return true if the context is rendered in preview mode - in this case {@link #isAvailable()} should also return true
+	 */
+	boolean isPreviewMode();
+
+	/**
 	 * @return true if the context is available and of the expected type
 	 */
 	<T extends WebCmsEndpoint> boolean isOfType( Class<T> endpointType );

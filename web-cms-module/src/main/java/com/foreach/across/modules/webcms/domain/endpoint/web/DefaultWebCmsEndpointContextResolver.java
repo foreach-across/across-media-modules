@@ -20,10 +20,11 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
+import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
@@ -56,11 +57,11 @@ public class DefaultWebCmsEndpointContextResolver implements WebCmsEndpointConte
 		context.setResolved( true );
 		LOG.trace( "Resolving path for {}", path );
 		endpointService.getUrlForPath( path )
-		               .ifPresent( url -> resolve( context, url ) );
+		               .ifPresent( url -> resolve( context, url, request ) );
 		LOG.debug( "Context after resolving {}", context );
 	}
 
-	private void resolve( ConfigurableWebCmsEndpointContext context, WebCmsUrl url ) {
+	private void resolve( ConfigurableWebCmsEndpointContext context, WebCmsUrl url, HttpServletRequest request ) {
 		WebCmsEndpoint endpoint = url.getEndpoint();
 		LOG.trace( "Found {} as endpoint", endpoint );
 
@@ -68,8 +69,13 @@ public class DefaultWebCmsEndpointContextResolver implements WebCmsEndpointConte
 			context.setUrl( url );
 			context.setEndpoint( endpoint );
 		}
+		else if ( isPreviewRequest( endpoint, request ) ) {
+			context.setPreviewMode( true );
+			context.setUrl( url );
+			context.setEndpoint( endpoint );
+		}
 		else {
-			LOG.trace( "Not using endpoint {} as the responsible validator vetoed.", endpoint );
+			LOG.trace( "Not using endpoint {} as the responsible validator vetoed and no valid preview mode.", endpoint );
 		}
 	}
 
@@ -82,6 +88,17 @@ public class DefaultWebCmsEndpointContextResolver implements WebCmsEndpointConte
 		}
 
 		return true;
+	}
+
+	private boolean isPreviewRequest( WebCmsEndpoint endpoint, HttpServletRequest request ) {
+		String securityCode = request.getParameter( "wcmPreview" );
+		boolean previewMode = !StringUtils.isEmpty( securityCode ) && endpointService.isPreviewAllowed( endpoint, securityCode );
+
+		if ( previewMode ) {
+			LOG.trace( "Activating preview mode for endpoint {} - security code {}", endpoint, securityCode );
+		}
+
+		return previewMode;
 	}
 
 	@Autowired

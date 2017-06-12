@@ -14,24 +14,8 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.endpoint.web.context;
-
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-
-/**
- * @author Sander Van Loock
- * @since 0.0.1
- */
-public interface ConfigurableWebCmsEndpointContext extends WebCmsEndpointContext
-{
-	void setUrl( WebCmsUrl url );
-
-	void setEndpoint( WebCmsEndpoint endpoint );
-
-	void setResolved( boolean resolved );
-
-	void setPreviewMode( boolean previewMode );
-
-	boolean isResolved();
-}
+(function ( $ ) {
+    $( document ).ready( function () {
+        $( "body" ).addClass( 'wcmPreview' ).prepend( '<div class="wcmPreview-label">Preview</div>' );
+    } );
+})( jQuery );

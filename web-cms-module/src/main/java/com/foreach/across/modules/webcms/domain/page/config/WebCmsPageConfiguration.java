@@ -43,6 +43,7 @@ import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUt
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
@@ -87,7 +88,7 @@ class WebCmsPageConfiguration
 			entities.withType( WebCmsPage.class )
 			        .attribute(
 					        SearchComponentViewProcessor.COMPONENT_SEARCH_QUERY,
-			                "title like '%{0}%'"
+					        "title like '%{0}%'"
 			        )
 			        .properties(
 					        props -> props.property( "objectId" ).hidden( true ).and()
@@ -147,6 +148,7 @@ class WebCmsPageConfiguration
 	private static class PageListViewProcessor extends EntityViewProcessorAdapter
 	{
 		private BootstrapUiFactory bootstrapUiFactory;
+		private WebCmsEndpointService endpointService;
 
 		@Override
 		protected void createViewElementBuilders( EntityViewRequest entityViewRequest, EntityView entityView, ViewElementBuilderMap builderMap ) {
@@ -155,16 +157,19 @@ class WebCmsPageConfiguration
 				          WebCmsPage page = EntityViewElementUtils.currentEntity( ctx, WebCmsPage.class );
 				          ContainerViewElementUtils
 						          .find( row, EntityListActionsProcessor.CELL_NAME, TableViewElement.Cell.class )
-						          .ifPresent( cell -> {
-							                      EntityMessages entityMessages = entityViewRequest.getEntityViewContext().getEntityMessages();
-							                      cell.addFirstChild(
-									                      bootstrapUiFactory.button()
-									                                        .link( page.getCanonicalPath() )
-									                                        .attribute( "target", "_blank" )
-									                                        .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
-									                                        .text( entityMessages.withNameSingular( "actions.open" ) )
-									                                        .build( ctx ) );
-						                      }
+						          .ifPresent( cell ->
+								                      endpointService
+										                      .buildPreviewUrl( page )
+										                      .ifPresent( previewUrl -> {
+											                      EntityMessages entityMessages = entityViewRequest.getEntityViewContext().getEntityMessages();
+											                      cell.addFirstChild(
+													                      bootstrapUiFactory.button()
+													                                        .link( previewUrl )
+													                                        .attribute( "target", "_blank" )
+													                                        .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
+													                                        .text( entityMessages.withNameSingular( "actions.open" ) )
+													                                        .build( ctx ) );
+										                      } )
 						          );
 			          } );
 		}
@@ -173,25 +178,34 @@ class WebCmsPageConfiguration
 		public void setBootstrapUiFactory( BootstrapUiFactory bootstrapUiFactory ) {
 			this.bootstrapUiFactory = bootstrapUiFactory;
 		}
+
+		@Autowired
+		public void setEndpointService( WebCmsEndpointService endpointService ) {
+			this.endpointService = endpointService;
+		}
 	}
 
 	private static class PageFormViewProcessor extends EntityViewProcessorAdapter
 	{
-		@SuppressWarnings( "unused" )
+		private WebCmsEndpointService endpointService;
+
+		@SuppressWarnings("unused")
 		@Event
 		void setPreviewLinkOnMenu( EntityPageStructureRenderedEvent<WebCmsPage> event ) {
 			if ( event.holdsEntity() ) {
-				WebCmsPage page = event.getEntity();
+				endpointService
+						.buildPreviewUrl( event.getEntity() )
+						.ifPresent( previewUrl -> {
+							LinkViewElement openLink = new LinkViewElement();
+							openLink.setAttribute( "target", "_blank" );
+							openLink.setUrl( previewUrl );
+							openLink.setTitle( event.getEntityViewContext().getEntityMessages().withNameSingular( "actions.open" ) );
+							openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
 
-				LinkViewElement openLink = new LinkViewElement();
-				openLink.setAttribute( "target", "_blank" );
-				openLink.setUrl( page.getCanonicalPath() );
-				openLink.setTitle( event.getEntityViewContext().getEntityMessages().withNameSingular( "actions.open" ) );
-				openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
-
-				PageContentStructure adminPage = event.getPageContentStructure();
-				adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
-				adminPage.addToPageTitleSubText( openLink );
+							PageContentStructure adminPage = event.getPageContentStructure();
+							adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
+							adminPage.addToPageTitleSubText( openLink );
+						} );
 			}
 		}
 
@@ -217,6 +231,11 @@ class WebCmsPageConfiguration
 								     Collections.singletonMap( "[id='entity." + to + "']", qualifiers )
 						     );
 					} );
+		}
+
+		@Autowired
+		public void setEndpointService( WebCmsEndpointService endpointService ) {
+			this.endpointService = endpointService;
 		}
 	}
 }

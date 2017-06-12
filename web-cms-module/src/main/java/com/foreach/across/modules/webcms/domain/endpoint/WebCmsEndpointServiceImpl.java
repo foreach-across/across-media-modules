@@ -23,8 +23,12 @@ import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.DigestUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Date;
 import java.util.Optional;
@@ -97,5 +101,27 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 		}
 
 		return Optional.empty();
+	}
+
+	@Override
+	public Optional<String> buildPreviewUrl( WebCmsAsset asset ) {
+		Assert.notNull( asset );
+
+		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( asset );
+
+		if ( endpoint != null ) {
+			return endpoint.getPrimaryUrl()
+			               .map( url ->
+					                     UriComponentsBuilder.fromUriString( url.getPath() )
+					                                         .queryParam( "wcmPreview", DigestUtils.md5DigestAsHex( endpoint.getId().toString().getBytes() ) )
+					                                         .toUriString()
+			               );
+		}
+
+		return Optional.empty();
+	}
+
+	public boolean isPreviewAllowed( WebCmsEndpoint endpoint, String securityCode ) {
+		return !StringUtils.isEmpty( securityCode ) && DigestUtils.md5DigestAsHex( endpoint.getId().toString().getBytes() ).equals( securityCode );
 	}
 }

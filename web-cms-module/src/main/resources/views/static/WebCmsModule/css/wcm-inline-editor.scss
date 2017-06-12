@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2017 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.endpoint.web.context;
+body {
+  &.wcmPreview {
+    margin-top: 33px;
+  }
+}
 
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-
-/**
- * @author Sander Van Loock
- * @since 0.0.1
- */
-public interface ConfigurableWebCmsEndpointContext extends WebCmsEndpointContext
-{
-	void setUrl( WebCmsUrl url );
-
-	void setEndpoint( WebCmsEndpoint endpoint );
-
-	void setResolved( boolean resolved );
-
-	void setPreviewMode( boolean previewMode );
-
-	boolean isResolved();
+.wcmPreview-label {
+  background-color: orange;
+  border-bottom: solid 1px darkorange;
+  padding: 7px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  text-transform: uppercase;
+  font-family: sans-serif;
 }

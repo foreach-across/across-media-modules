@@ -48,4 +48,22 @@ public interface WebCmsEndpointService
 	 * @return url if created or updated
 	 */
 	Optional<WebCmsUrl> updateOrCreatePrimaryUrlForAsset( String primaryUrl, WebCmsAsset asset );
+
+	/**
+	 * Builds a preview url for a particular {@link WebCmsAsset}.
+	 * The preview url is the primary url appended with a request parameter <strong>wcmPreview</strong>.
+	 *
+	 * @param asset to create the url for
+	 * @return url if a primary url was available
+	 */
+	Optional<String> buildPreviewUrl( WebCmsAsset asset );
+
+	/**
+	 * Check if a particular security code allows access to an endpoint.
+	 *
+	 * @param endpoint     to access
+	 * @param securityCode that was used
+	 * @return true if allowed
+	 */
+	boolean isPreviewAllowed( WebCmsEndpoint endpoint, String securityCode );
 }
