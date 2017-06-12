@@ -16,16 +16,24 @@
 
 package com.foreach.across.modules.webcms.domain.article.web;
 
+import com.foreach.across.core.annotations.Event;
+import com.foreach.across.modules.adminweb.ui.PageContentStructure;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
+import com.foreach.across.modules.bootstrapui.elements.LinkViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
+import com.foreach.across.modules.entity.views.processors.support.EntityPageStructureRenderedEvent;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +47,27 @@ import org.springframework.stereotype.Component;
 final class ArticleUpdateFormProcessor extends EntityViewProcessorAdapter
 {
 	private final BootstrapUiFactory bootstrapUiFactory;
+	private final WebCmsEndpointService endpointService;
+
+	@SuppressWarnings("unused")
+	@Event
+	void setPreviewLinkOnMenu( EntityPageStructureRenderedEvent<WebCmsArticle> event ) {
+		if ( event.holdsEntity() ) {
+			endpointService
+					.buildPreviewUrl( event.getEntity() )
+					.ifPresent( previewUrl -> {
+						LinkViewElement openLink = new LinkViewElement();
+						openLink.setAttribute( "target", "_blank" );
+						openLink.setUrl( previewUrl );
+						openLink.setTitle( event.getEntityViewContext().getEntityMessages().withNameSingular( "actions.open" ) );
+						openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
+
+						PageContentStructure adminPage = event.getPageContentStructure();
+						adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
+						adminPage.addToPageTitleSubText( openLink );
+					} );
+		}
+	}
 
 	@Override
 	protected void postRender( EntityViewRequest entityViewRequest,

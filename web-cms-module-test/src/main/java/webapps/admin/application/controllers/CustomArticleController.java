@@ -41,7 +41,7 @@ public class CustomArticleController
 	/**
 	 * Dispatch to the template configured on the publication article template page.
 	 */
-	@ClearTemplate
+	//@ClearTemplate
 	@GetMapping
 	public String template( WebCmsAssetEndpoint<WebCmsArticle> endpoint, WebCmsUrl url, WebCmsArticle article, Model model ) {
 		model.addAttribute( "asset", endpoint.getAsset() );
