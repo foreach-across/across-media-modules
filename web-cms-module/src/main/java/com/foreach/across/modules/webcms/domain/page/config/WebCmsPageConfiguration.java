@@ -16,8 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.page.config;
 
-import com.foreach.across.core.annotations.Event;
-import com.foreach.across.modules.adminweb.ui.PageContentStructure;
 import com.foreach.across.modules.bootstrapui.elements.*;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
@@ -30,21 +28,18 @@ import com.foreach.across.modules.entity.views.bootstrapui.processors.element.En
 import com.foreach.across.modules.entity.views.bootstrapui.util.SortableTableBuilder;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SortableTableRenderingViewProcessor;
-import com.foreach.across.modules.entity.views.processors.support.EntityPageStructureRenderedEvent;
 import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
-import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
-import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.web.MenuItemsViewElementBuilder;
+import com.foreach.across.modules.webcms.domain.page.web.PageFormViewProcessor;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
 import lombok.RequiredArgsConstructor;
@@ -52,19 +47,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @Configuration
 @RequiredArgsConstructor
-class WebCmsPageConfiguration
+public class WebCmsPageConfiguration
 {
-	private static final String CANONICAL_PATH = "canonicalPath";
+	public static final String CANONICAL_PATH = "canonicalPath";
 
 	@Autowired
 	void enableUrls( WebCmsAssetUrlConfiguration urlConfiguration ) {
@@ -73,8 +64,12 @@ class WebCmsPageConfiguration
 
 	@ConditionalOnAdminUI
 	@Configuration
+	@RequiredArgsConstructor
 	static class AdminUi implements EntityConfigurer
 	{
+		private final PageFormViewProcessor pageFormViewProcessor;
+		private final MenuItemsViewElementBuilder menuItemsViewElementBuilder;
+
 		@Autowired
 		void enableComponents( WebCmsObjectComponentViewsConfiguration componentViewsConfiguration ) {
 			componentViewsConfiguration.enable( WebCmsPage.class );
@@ -111,19 +106,31 @@ class WebCmsPageConfiguration
 									        EntityPropertySelector.of( "pathSegment", "pathSegmentGenerated",
 									                                   CANONICAL_PATH, "canonicalPathGenerated" )
 							        )
+							        .and()
+							        .property( "menu-items" )
+							        .displayName( "Auto-create menu items" )
+							        .writable( true )
+							        .readable( false )
+							        .hidden( true )
+							        .viewElementBuilder( ViewElementMode.CONTROL, menuItemsViewElementBuilder )
+							        .and()
+							        .property( "publish-settings" )
+							        .attribute(
+									        EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
+									        EntityPropertySelector.of( "published", "publicationDate", "menu-items" )
+							        )
 					        )
 					        .showProperties(
-							        "*", "~canonicalPath", "~canonicalPathGenerated", "~pathSegment",
-							        "~pathSegmentGenerated"
+							        "*", "~canonicalPath", "~canonicalPathGenerated", "~pathSegment", "~pathSegmentGenerated"
 					        )
-					        .viewProcessor( pageFormViewProcessor() )
+					        .viewProcessor( pageFormViewProcessor )
 			        )
 			        .association(
 					        ab -> ab.name( "webCmsPage.parent" )
 					                .listView( lvb -> lvb.showProperties( CANONICAL_PATH, "title" )
 					                                     .defaultSort( CANONICAL_PATH )
 					                                     .viewProcessor( pageListViewProcessor() ) )
-					                .createOrUpdateFormView( fvb -> fvb.viewProcessor( pageFormViewProcessor() ) )
+					                .createOrUpdateFormView( fvb -> fvb.viewProcessor( pageFormViewProcessor ) )
 			        )
 			        .association(
 					        ab -> ab.name( "webCmsMenuItem.linkedPage" )
@@ -136,12 +143,6 @@ class WebCmsPageConfiguration
 		@Bean
 		PageListViewProcessor pageListViewProcessor() {
 			return new PageListViewProcessor();
-		}
-
-		@ConditionalOnAdminUI
-		@Bean
-		PageFormViewProcessor pageFormViewProcessor() {
-			return new PageFormViewProcessor();
 		}
 	}
 
@@ -185,57 +186,4 @@ class WebCmsPageConfiguration
 		}
 	}
 
-	private static class PageFormViewProcessor extends EntityViewProcessorAdapter
-	{
-		private WebCmsEndpointService endpointService;
-
-		@SuppressWarnings("unused")
-		@Event
-		void setPreviewLinkOnMenu( EntityPageStructureRenderedEvent<WebCmsPage> event ) {
-			if ( event.holdsEntity() ) {
-				endpointService
-						.buildPreviewUrl( event.getEntity() )
-						.ifPresent( previewUrl -> {
-							LinkViewElement openLink = new LinkViewElement();
-							openLink.setAttribute( "target", "_blank" );
-							openLink.setUrl( previewUrl );
-							openLink.setTitle( event.getEntityViewContext().getEntityMessages().withNameSingular( "actions.open" ) );
-							openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
-
-							PageContentStructure adminPage = event.getPageContentStructure();
-							adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
-							adminPage.addToPageTitleSubText( openLink );
-						} );
-			}
-		}
-
-		@Override
-		protected void postRender( EntityViewRequest entityViewRequest,
-		                           EntityView entityView,
-		                           ContainerViewElement container,
-		                           ViewElementBuilderContext builderContext ) {
-			addDependency( container, "pathSegment", "pathSegmentGenerated" );
-			addDependency( container, CANONICAL_PATH, "canonicalPathGenerated" );
-		}
-
-		private void addDependency( ContainerViewElement elements, String from, String to ) {
-			ContainerViewElementUtils
-					.find( elements, "formGroup-" + from, FormGroupElement.class )
-					.ifPresent( group -> {
-						Map<String, Object> qualifiers = new HashMap<>();
-						qualifiers.put( "checked", false );
-
-						group.getControl( HtmlViewElement.class )
-						     .setAttribute(
-								     "data-dependson",
-								     Collections.singletonMap( "[id='entity." + to + "']", qualifiers )
-						     );
-					} );
-		}
-
-		@Autowired
-		public void setEndpointService( WebCmsEndpointService endpointService ) {
-			this.endpointService = endpointService;
-		}
-	}
 }

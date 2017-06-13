@@ -46,7 +46,7 @@ class WebCmsAssetConfiguration implements EntityConfigurer
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsAssetEndpoint.class )
-		        .attribute( "endpointValueBuilder",  assetEndpointViewElementBuilder )
+		        .attribute( "endpointValueBuilder", assetEndpointViewElementBuilder )
 		        .hide();
 
 		entities.assignableTo( WebCmsAsset.class )

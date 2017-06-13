@@ -18,7 +18,7 @@ package com.foreach.across.modules.webcms.domain.menu;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 import java.util.Collection;
 
@@ -27,7 +27,7 @@ import java.util.Collection;
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsMenuItemRepository extends IdBasedEntityJpaRepository<WebCmsMenuItem>
+public interface WebCmsMenuItemRepository extends IdBasedEntityJpaRepository<WebCmsMenuItem>, QueryDslPredicateExecutor<WebCmsMenuItem>
 {
 	Collection<WebCmsMenuItem> findAllByMenuName( String menuName );
 

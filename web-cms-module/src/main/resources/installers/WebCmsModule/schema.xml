@@ -866,4 +866,21 @@
 		</createIndex>
 	</changeSet>
 
+	<!-- Add generated column to menu item -->
+	<changeSet id="201706130907" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.menu_item}" columnName="is_generated"/>
+			</not>
+		</preConditions>
+
+		<comment>Adds is_generated column to menu item table</comment>
+
+		<addColumn tableName="${table.menu_item}">
+			<column name="is_generated" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

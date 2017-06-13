@@ -42,7 +42,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Setter
-public class WebCmsMenuItem extends SettableIdBasedEntity<WebCmsMenu>
+public class WebCmsMenuItem extends SettableIdBasedEntity<WebCmsMenuItem>
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_menu_item_id")
@@ -106,4 +106,11 @@ public class WebCmsMenuItem extends SettableIdBasedEntity<WebCmsMenu>
 	 */
 	@Column(name = "is_group")
 	private boolean group;
+
+	/**
+	 * Is the item automatically generated or not.
+	 * A generated item should usually not be updated using the UI and may be updated automatically if related entities get saved.
+	 */
+	@Column(name = "is_generated")
+	private boolean generated;
 }
