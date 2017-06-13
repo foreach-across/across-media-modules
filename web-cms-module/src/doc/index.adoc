@@ -203,3 +203,10 @@ types:
               sortIndex: 0
             body:
               sortIndex: 1
+
+== Performance
+
+caches: WebCmsUrlCache
+enable Hibernate 2nd level cache
+webCmsModule.urls.included-path-patterns
+webCmsModule.urls.excluded-path-patterns
