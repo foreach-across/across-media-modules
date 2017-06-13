@@ -1,9 +1,9 @@
 = WebCmsModule
 Arne Vandamme
-0.0.1-SNAPSHOT
+0.0.2-SNAPSHOT
 :toc: left
 :sectanchors:
-:module-version: 0.0.1-SNAPSHOT
+:module-version: 0.0.2-SNAPSHOT
 :module-name: WebCmsModule
 :module-artifact: web-cms-module
 :module-url: https://foreach.atlassian.net/wiki/display/AX/WebCmsModule
@@ -63,22 +63,25 @@ All properties start with the *webCmsModule.* prefix.
 |pages.default-template
 |`String`
 |Default template to use if no custom template specified on a page entity.
+|`th/WebCmsModule/default-page-template`
 
 |pages.template-prefix
 |`String`
 |Prefix to be added to relative template names.
 This corresponds usually with the base directory where the (Thymeleaf) templates are located.
 If unspecified the default resources of any present `@AcrossApplication` will be used.
+|
 
 |webCmsModule.default-data.assets.enabled
 |
-|Disable default assets data.
+|Enable default assets to be added: this includes component and asset types as well as some sample assets.
+|`true`
 
 |===
 
 == What's new in this version?
 :numbered!:
-=== 0.0.1-SNAPSHOT
+=== 0.0.2-SNAPSHOT
 Initial public release available on http://search.maven.org/[Maven central].
 
 :numbered:
@@ -150,6 +153,10 @@ a generated path segment will be SEO friendly
 - its properties will still be inherited (eg path, layout, template) - in the default menu it will still insert a group section
 * disabled: this page and all its children will not be rendered
 
+default urls for assets
+- primary url
+- auto generated on save, updated as long as nog published or publication is in the future
+
 WebCmsMenu
 
 named menu, consisting of different items
@@ -173,3 +180,39 @@ you can use yaml to create pages
 
 disable default data:
 webCmsModule.default-data.assets.enabled = false
+
+importing data using yaml (installer)
+
+include::chap-web-components.adoc[]
+
+
+== Publication model
+Enabling urls for WebCmsAsset implementations: wire WebCmsAssetUrlConfiguration
+
+WebCmsPublication
+A publication has a specific type.
+A publication has a set of possible article types that is a subset of the article types allowed on the publication type.
+
+WebCmsPublicationType
+Type of publication.
+A publication type determines the possible article types allowed.
+
+WebCmsArticle
+An article requires a specific article type.
+
+WebCmsArticleType
+
+modifying the default components:
+
+types:
+  article:
+    blog:
+      wcm:components:
+        bodyTemplate:
+          wcm:components:
+            main-image:
+              componentType: image
+              title: Image
+              sortIndex: 0
+            body:
+              sortIndex: 1

@@ -20,8 +20,8 @@ import com.foreach.across.modules.web.template.ClearTemplate;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import com.foreach.across.modules.webcms.web.asset.WebCmsAssetMapping;
-import com.foreach.across.modules.webcms.web.page.template.PageTemplateResolver;
+import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetMapping;
+import com.foreach.across.modules.webcms.domain.page.web.PageTemplateResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,7 +41,7 @@ public class CustomArticleController
 	/**
 	 * Dispatch to the template configured on the publication article template page.
 	 */
-	@ClearTemplate
+	//@ClearTemplate
 	@GetMapping
 	public String template( WebCmsAssetEndpoint<WebCmsArticle> endpoint, WebCmsUrl url, WebCmsArticle article, Model model ) {
 		model.addAttribute( "asset", endpoint.getAsset() );

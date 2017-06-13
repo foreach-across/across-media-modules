@@ -1,0 +1,113 @@
+# Imports the default test pages that should be resolved
+assets:
+  page:
+    #
+    # Page with a fully custom Thymeleaf template
+    #
+    - objectId: "wcm:asset:page:custom-page"
+      template: th/test/pages/custom-page
+      title: Custom page
+      pathSegmentGenerated: false
+      pathSegment: custom-page
+      published: true
+
+    #
+    # Page with default template but no content
+    #
+    - objectId: "wcm:asset:page:default-template-no-content"
+      title: Default template without content
+      pathSegmentGenerated: false
+      pathSegment: default-template-no-content
+      published: true
+
+    #
+    # Page rendering the default template - which renders the "content" component
+    #
+    - objectId: "wcm:asset:page:default-template-with-content"
+      title: Default template with content
+      pathSegmentGenerated: false
+      pathSegment: default-template-with-content
+      published: true
+      wcm:components:
+        content:
+          componentType: container
+          title: Page content
+          wcm:components:
+            - componentType: html
+              content: "Page component: content 1"
+
+    #
+    # Page with a custom template for rendering multiple components
+    #
+    - objectId: "wcm:asset:page:render-components"
+      title: Render components
+      template: th/test/pages/render-components
+      pathSegmentGenerated: false
+      pathSegment: render-components
+      published: true
+      wcm:components:
+        custom:
+          componentType: plain-text
+          content: "Page component: custom"
+        content:
+          componentType: plain-text
+          content: "Page component: content 2"
+
+    #
+    # Page with a custom template for rendering placeholder containing components
+    #
+    - objectId: "wcm:asset:page:render-placeholders"
+      title: Render placeholders
+      template: th/test/pages/render-placeholders
+      pathSegmentGenerated: false
+      pathSegment: render-placeholders
+      published: true
+      wcm:components:
+        with-placeholders:
+          componentType: container
+          wcm:components:
+            - componentType: plain-text
+              name: heading
+              content: "Placeholders:"
+              sortIndex: 0
+            - componentType: placeholder
+              name: one
+              sortIndex: 1
+            - componentType: placeholder
+              name: three
+              sortIndex: 2
+            - componentType: placeholder
+              name: two
+              sortIndex: 3
+
+    #
+    # Page with a custom template for automatically creating simple components upon rendering.
+    #
+    - objectId: "wcm:asset:page:auto-create-creation-scope"
+      title: Auto create creation scope
+      template: th/test/pages/auto-create/creation-scope
+      pathSegmentGenerated: false
+      pathSegment: auto-create-creation-scope
+      published: true
+
+    #
+    # Page with a custom template for automatically creating complex markup components upon rendering.
+    # Complex components are components with placeholders and referring other components from other scopes.
+    #
+    - objectId: "wcm:asset:page:auto-create-complex-markup-components"
+      title: Auto create complex markup components
+      template: th/test/pages/auto-create/complex-markup-components
+      pathSegmentGenerated: false
+      pathSegment: auto-create-complex-markup-components
+      published: true
+
+    #
+    # Page with a custom template for automatically creating complex container components upon rendering.
+    # Complex components are components with placeholders and referring other components from other scopes.
+    #
+    - objectId: "wcm:asset:page:auto-create-complex-container-components"
+      title: Auto create complex container components
+      template: th/test/pages/auto-create/complex-container-components
+      pathSegmentGenerated: false
+      pathSegment: auto-create-complex-container-components
+      published: true

@@ -1,0 +1,52 @@
+<html xmlns:wcm="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Auto create complex components</title>
+</head>
+<body>
+
+<div id="container-single-placeholder" wcm:component="container-single-placeholder" wcm:type="container" wcm:auto-create wcm:parse-placeholders>
+    <div wcm:placeholder="one">single placeholder content</div>
+</div>
+
+<div id="nested-placeholders" wcm:component="container-nested-placeholders" wcm:type="container" wcm:auto-create wcm:parse-placeholders>
+    <div wcm:placeholder="title" th:remove="tag">container title</div>
+    <th:block wcm:component="body" wcm:type="container">
+        <th:block wcm:component="subtitle">container sub title</th:block>
+        <th:block wcm:placeholder="before-text">before text placeholder</th:block>
+        <th:block wcm:component="text" wcm:type="container"/>
+    </th:block>
+    <div wcm:component="footer" wcm:type="container">
+        <div wcm:placeholder="footer-text">footer text placeholder</div>
+    </div>
+</div>
+
+<div id="component-in-placeholders" wcm:component="component-in-placeholders" wcm:type="container" wcm:auto-create wcm:parse-placeholders>
+    <div wcm:placeholder="header">
+        Placeholder component 1:
+        <th:block wcm:component="not-created" wcm:always-replace>non-created components that should have been replaced</th:block>
+        <th:block wcm:component="header-text" wcm:auto-create>new component</th:block>
+    </div>
+    <th:block wcm:component="body" wcm:type="container">
+        <th:block wcm:placeholder="body-text">Placeholder component 2:
+            <div wcm:component="footer"/>
+        </th:block>
+    </th:block>
+</div>
+
+
+<div id="proxy-component-in-container" wcm:component="proxy-component-in-container" wcm:type="container" wcm:auto-create>
+    Insert footer:
+    <div wcm:component="footer" wcm:scope="asset" wcm:search-parent-scopes>
+        replaced by footer
+    </div>
+</div>
+
+<div id="auto-create-proxy-component-in-container" wcm:component="auto-create-proxy-component-in-container" wcm:type="container" wcm:auto-create>
+    Create footer
+    <div wcm:component="auto-create-proxy-footer" wcm:scope="asset" wcm:auto-create>auto-created on asset</div>
+    and on global
+    <div wcm:component="auto-create-proxy-global" wcm:auto-create="global">auto-created on global</div>
+</div>
+
+</body>
+</html>

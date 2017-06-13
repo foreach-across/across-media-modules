@@ -1,0 +1,23 @@
+types:
+  component:
+    section:
+      name: Page section
+      description: Optionally allows configuring an image.
+      attributes:
+        type: fixed-container
+        template: "th/adminWebCms/fragments/components :: section"
+        metadata: "webapps.admin.application.ui.SectionComponentMetadata"
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          title: Template component that will be copied to any new instance.
+          wcm:components:
+            image:
+              componentType: image
+              title: Image
+              sortIndex: 0
+            body:
+              componentType: rich-text
+              title: Body
+              sortIndex: 1
+              body: "<h3>@@container.title@@</h3>"

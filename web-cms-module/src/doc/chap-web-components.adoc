@@ -1,0 +1,53 @@
+== Web components
+
+What are web components?
+
+=== Domain model
+
+==== WebCmsComponentType
+
+type
+
+.Attributes
+
+==== WebCmsComponent
+
+`WebCmsComponent`
+
+persisted entity
+
+=== WebCmsComponentModel
+`WebCmsComponentModelService` and `WebCmsComponentModel`
+`WebCmsComponentType`
+
+The persisted entity is implemented by `WebCmsComponent`, but usually you will want to work with the `WebCmsComponentModel`.
+The latter represents the entire strongly typed model ready for rendering, whereas the former only has the raw attributes.
+
+converted to a `WebCmsComponent` by a `WebCmsComponentModelWriter`
+converted from a `WebCmsComponent` by a `WebCmsComponentModelReader`
+
+include::chap-web-components-base-types.adoc[]
+
+=== Activating component support
+Any `WebCmsObject` - this includes all assets and components themselves - can have web components linked to it.
+Enabling components for WebCmsObject implementations: wire WebCmsObjectComponentViewsConfiguration: registerComponentsAssociation
+
+=== Rendering components
+
+=== Creating shared web components
+Name must be globally unique and is required
+Title is also required - must not be unique however.
+
+=== Using components in your controllers
+`WebCmsComponentModelHierarchy`
+
+=== Placeholders
+`WebCmsPlaceholderContentModel`
+
+include::chap-web-components-content-markers.adoc[]
+
+include::chap-web-components-thymeleaf.adoc[]
+
+include::chap-web-components-defining-component-types.adoc[]
+
+:numbered:

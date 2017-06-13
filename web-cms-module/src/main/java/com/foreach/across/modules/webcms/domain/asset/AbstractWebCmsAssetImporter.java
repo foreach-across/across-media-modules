@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.asset;
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsDataImporter;
+import com.foreach.across.modules.webcms.data.WebCmsPropertyDataImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 
 	private WebCmsAssetRepository assetRepository;
 	private WebCmsDataConversionService conversionService;
+	private WebCmsPropertyDataImportService propertyDataImportService;
 
 	private final String dataKey;
 	private final Class<T> assetType;
@@ -68,11 +70,15 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 		T dto = createDto( existing );
 
 		if ( dto != null ) {
-			LOG.trace( "{} WebCmsAsset {} with objectId {}", dto.isNew() ? "Creating" : "Updating" );
+			if ( propertyDataImportService.executeBeforeAssetSaved( item, item.getMapData(), dto ) ) {
+				LOG.trace( "WebCmsAsset {} with objectId {}: custom properties have been imported before asset saved", dataKey, dto.getObjectId() );
+			}
+
+			LOG.trace( "{} WebCmsAsset {} with objectId {}", dto.isNew() ? "Creating" : "Updating", dataKey, dto.getObjectId() );
 
 			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
 
-			if ( isModified ) {
+			if ( isModified || dto.isNew() ) {
 				T itemToSave = prepareForSaving( dto, item );
 
 				if ( itemToSave != null ) {
@@ -86,6 +92,10 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 			}
 			else {
 				LOG.trace( "Skipping WebCmsAsset {} import for objectId {} - nothing modified", dataKey, dto.getObjectId() );
+			}
+
+			if ( propertyDataImportService.executeAfterAssetSaved( item, item.getMapData(), dto ) ) {
+				LOG.trace( "WebCmsAsset {} with objectId {}: custom properties have been imported after asset saved", dataKey, dto.getObjectId() );
 			}
 		}
 		else {
@@ -141,5 +151,10 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 	@Autowired
 	void setConversionService( WebCmsDataConversionService conversionService ) {
 		this.conversionService = conversionService;
+	}
+
+	@Autowired
+	void setPropertyDataImportService( WebCmsPropertyDataImportService propertyDataImportService ) {
+		this.propertyDataImportService = propertyDataImportService;
 	}
 }

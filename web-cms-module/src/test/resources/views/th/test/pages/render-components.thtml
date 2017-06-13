@@ -1,0 +1,21 @@
+<html xmlns:wcm="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Default component rendering</title>
+</head>
+<body>
+
+<div id="not-found-default-markup" wcm:component="not-found">Not found - default markup.</div>
+<div id="not-found-replaced" wcm:component="not-found" wcm:always-replace>Not found but with replaced with empty markup.</div>
+<div id="found-in-page" wcm:component="custom">Replaced with content found in page.</div>
+<div id="found-in-global" wcm:component="footer">Replaced with content found in global.</div>
+<div id="shadowing-global" wcm:component="content">Found in both page and global but using page value.</div>
+<div id="using-global" wcm:component="content" wcm:scope="global">Using version from global instead of page.</div>
+<div id="not-found-in-scope" wcm:component="footer" wcm:search-parent-scopes="false">Not found in scope and not searching parents.</div>
+<div id="not-found-in-scope-specified" wcm:component="footer" wcm:scope="asset">Not found in scope specified and not searching parents.</div>
+<div id="found-by-search" wcm:component="footer" wcm:scope="asset" wcm:search-parent-scopes>Not found in scope specified but searching parents.</div>
+<div id="self-closing-tag">
+    <th:block wcm:component="custom"/>
+</div>
+
+</body>
+</html>

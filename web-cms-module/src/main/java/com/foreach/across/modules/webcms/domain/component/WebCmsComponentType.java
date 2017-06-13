@@ -17,12 +17,8 @@
 package com.foreach.across.modules.webcms.domain.component;
 
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.Column;
@@ -30,6 +26,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Represents a type of {@link WebCmsComponent}.
@@ -60,7 +57,6 @@ public class WebCmsComponentType extends WebCmsTypeSpecifier<WebCmsComponentType
 	 * Description of the component type.
 	 */
 	@Column(name = "description")
-	@NotBlank
 	@Length(max = 500)
 	private String description;
 
@@ -74,8 +70,9 @@ public class WebCmsComponentType extends WebCmsTypeSpecifier<WebCmsComponentType
 	                               @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
 	                               @Builder.ObtainVia(method = "getName") String name,
 	                               @Builder.ObtainVia(method = "getTypeKey") String typeKey,
+	                               @Singular @Builder.ObtainVia(method = "getAttributes") Map<String, String> attributes,
 	                               String description ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, name, typeKey );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, name, typeKey, attributes );
 
 		setDescription( description );
 	}

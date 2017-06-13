@@ -20,11 +20,13 @@ import com.foreach.across.modules.entity.validators.EntityValidatorSupport;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 /**
- * This class validates that only one {@code WebCmsUrl} from a {@code WebCmsEndpoint} has status code 2xx
+ * This class validates that only one {@code WebCmsUrl} from a {@code WebCmsEndpoint} is the primary URL,
+ * and that the primary URL is not in itself a redirect.
  *
  * @author Sander Van Loock
  * @since 0.0.1
@@ -41,8 +43,20 @@ public class WebCmsUrlValidator extends EntityValidatorSupport<WebCmsUrl>
 	}
 
 	@Override
-	protected void preValidation( WebCmsUrl entity, Errors errors ) {
+	protected void postValidation( WebCmsUrl entity, Errors errors, Object... validationHints ) {
+		if ( !errors.hasFieldErrors( "path" ) ) {
+			WebCmsUrl existing = urlRepository.findOneByPath( entity.getPath() );
+
+			if ( existing != null && !existing.equals( entity ) ) {
+				errors.rejectValue( "path", "alreadyExists" );
+			}
+		}
+
 		if ( !errors.hasErrors() && entity.isPrimary() ) {
+			if ( HttpStatus.Series.valueOf( entity.getHttpStatus() ) == HttpStatus.Series.REDIRECTION ) {
+				errors.rejectValue( "httpStatus", "primaryUrlCannotBeRedirect", new Object[0], "Primary URL may not have a redirection HttpStatus." );
+			}
+
 			urlRepository
 					.findAllByEndpoint( entity.getEndpoint() )
 					.stream()

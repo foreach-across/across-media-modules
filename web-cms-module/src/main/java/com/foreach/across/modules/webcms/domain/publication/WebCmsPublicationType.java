@@ -17,16 +17,14 @@
 package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * A type specifier for a {@link WebCmsPublication}.
@@ -64,8 +62,9 @@ public class WebCmsPublicationType extends WebCmsTypeSpecifier<WebCmsPublication
 	                                 @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                                 @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
 	                                 @Builder.ObtainVia(method = "getName") String name,
-	                                 @Builder.ObtainVia(method = "getTypeKey") String typeKey ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, name, typeKey );
+	                                 @Builder.ObtainVia(method = "getTypeKey") String typeKey,
+	                                 @Singular @Builder.ObtainVia(method = "getAttributes") Map<String, String> attributes ) {
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, name, typeKey, attributes );
 	}
 
 	@Override

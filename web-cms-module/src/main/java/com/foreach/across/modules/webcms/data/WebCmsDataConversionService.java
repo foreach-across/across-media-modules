@@ -16,10 +16,10 @@
 
 package com.foreach.across.modules.webcms.data;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@Slf4j
 @Service("webCmsDataConversionService")
 public class WebCmsDataConversionService extends DefaultConversionService
 {
@@ -42,26 +43,46 @@ public class WebCmsDataConversionService extends DefaultConversionService
 	 *
 	 * @param data map with the raw values
 	 * @param dto  to set te properties on
-	 * @return true if properties have been set
+	 * @return true if properties have been set (values were different)
 	 */
-	public boolean convertToPropertyValues( Map<String, Object> data, Persistable dto ) {
+	@SuppressWarnings("unchecked")
+	public boolean convertToPropertyValues( Map<String, Object> data, Object dto ) {
 		BeanWrapperImpl beanWrapper = new BeanWrapperImpl( dto );
 
 		AtomicBoolean modified = new AtomicBoolean( false );
 
 		data.forEach( ( propertyName, propertyValue ) -> {
-			TypeDescriptor typeDescriptor = beanWrapper.getPropertyTypeDescriptor( propertyName );
-
-			if ( typeDescriptor == null ) {
-				throw new IllegalArgumentException( "Unknown property: " + propertyName );
+			if ( propertyName.contains( ":" ) ) {
+				LOG.trace( "Skipping property {} - assuming separate importer wil be used", propertyName );
 			}
+			else {
+				TypeDescriptor typeDescriptor = beanWrapper.getPropertyTypeDescriptor( propertyName );
 
-			Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
-			Object currentValue = beanWrapper.getPropertyValue( propertyName );
+				if ( typeDescriptor == null ) {
+					throw new IllegalArgumentException( "Unknown property: " + propertyName );
+				}
 
-			if ( dto.isNew() || !Objects.equals( currentValue, valueToSet ) ) {
-				modified.set( true );
-				beanWrapper.setPropertyValue( propertyName, valueToSet );
+				if ( propertyValue instanceof Map && !typeDescriptor.isMap() ) {
+					Object target = beanWrapper.getPropertyValue( propertyName );
+
+					if ( target == null ) {
+						LOG.error( "Unable to convert property {} - target is null", propertyName );
+						throw new RuntimeException( "Unable to converted nested object - value is null for property " + propertyName );
+					}
+
+					if ( convertToPropertyValues( (Map<String, Object>) propertyValue, target ) ) {
+						modified.set( true );
+					}
+				}
+				else {
+					Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
+					Object currentValue = beanWrapper.getPropertyValue( propertyName );
+
+					if ( !Objects.equals( currentValue, valueToSet ) ) {
+						modified.set( true );
+						beanWrapper.setPropertyValue( propertyName, valueToSet );
+					}
+				}
 			}
 		} );
 

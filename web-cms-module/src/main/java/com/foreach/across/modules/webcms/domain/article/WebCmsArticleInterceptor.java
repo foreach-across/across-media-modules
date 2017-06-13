@@ -17,17 +17,14 @@
 package com.foreach.across.modules.webcms.domain.article;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 /**
+ * Add the article type components.
  * Generate primary url when article is being saved.
  *
  * @author Arne Vandamme
@@ -37,8 +34,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArticle>
 {
-	private final WebCmsAssetEndpointRepository endpointRepository;
-	private final WebCmsUrlRepository urlRepository;
+	private final WebCmsArticleComponentsStrategy articleComponentsStrategy;
+	private final WebCmsEndpointService endpointService;
 
 	@Override
 	public boolean handles( Class<?> entityClass ) {
@@ -47,44 +44,13 @@ public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArt
 
 	@Override
 	public void afterCreate( WebCmsArticle entity ) {
-		updatePrimaryUrl( entity );
+		articleComponentsStrategy.createDefaultComponents( entity );
+		endpointService.updateOrCreatePrimaryUrlForAsset( generateUrl( entity ), entity );
 	}
 
 	@Override
 	public void afterUpdate( WebCmsArticle entity ) {
-		updatePrimaryUrl( entity );
-	}
-
-	private void updatePrimaryUrl( WebCmsArticle article ) {
-		if ( article.isPublished() ) {
-			WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( article );
-
-			WebCmsUrl newPrimaryUrl = new WebCmsUrl();
-			newPrimaryUrl.setPath( generateUrl( article ) );
-			newPrimaryUrl.setHttpStatus( HttpStatus.OK );
-			newPrimaryUrl.setPrimary( true );
-			newPrimaryUrl.setEndpoint( endpoint );
-
-			WebCmsUrl existing = endpoint.getUrlWithPath( newPrimaryUrl.getPath() ).orElse( null );
-
-			if ( existing != null && !existing.isPrimary() ) {
-				newPrimaryUrl = existing.toDto();
-				newPrimaryUrl.setPrimary( true );
-				newPrimaryUrl.setHttpStatus( HttpStatus.OK );
-			}
-
-			if ( existing == null || !existing.isPrimary() ) {
-				endpoint.getPrimaryUrl().ifPresent(
-						currentPrimaryUrl -> {
-							currentPrimaryUrl.setPrimary( false );
-							currentPrimaryUrl.setHttpStatus( HttpStatus.MOVED_PERMANENTLY );
-							urlRepository.save( currentPrimaryUrl );
-						}
-				);
-
-				urlRepository.save( newPrimaryUrl );
-			}
-		}
+		endpointService.updateOrCreatePrimaryUrlForAsset( generateUrl( entity ), entity );
 	}
 
 	private String generateUrl( WebCmsArticle article ) {

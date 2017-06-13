@@ -87,7 +87,8 @@ public class WebCmsUrl extends SettableIdBasedEntity<WebCmsUrl>
 	private WebCmsEndpoint endpoint;
 
 	/**
-	 * A {@code WebCmsUrl} is called `primary` when its status code is in the HTTP series {@link org.springframework.http.HttpStatus.Series#SUCCESSFUL}
+	 * The primary {@code WebCmsUrl} will be used for all redirection targets and should have a
+	 * status code in the HTTP series {@link org.springframework.http.HttpStatus.Series#SUCCESSFUL}
 	 */
 	@NotNull
 	@Column(name = "is_primary")

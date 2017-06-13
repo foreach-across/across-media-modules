@@ -28,11 +28,11 @@ import java.util.Collection;
  * @since 0.0.1
  */
 @Order(2)
-@Installer(description = "Adds auditing columns to core tables", version = 4)
+@Installer(description = "Adds auditing columns to core tables", version = 5)
 public class WebCmsAuditableInstaller extends AuditableSchemaInstaller
 {
 	@Override
 	protected Collection<String> getTableNames() {
-		return Arrays.asList( "wcm_page_section", "wcm_asset", "wcm_type", "wcm_component", "wcm_asset_component_link" );
+		return Arrays.asList( "wcm_asset", "wcm_type", "wcm_component", "wcm_object_type_link", "wcm_object_asset_link" );
 	}
 }

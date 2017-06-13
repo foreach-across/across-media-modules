@@ -20,10 +20,37 @@ package com.foreach.across.modules.webcms.domain;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+
 public interface WebCmsObject
 {
 	/**
 	 * @return the globally unique id of this object in the entire repository
 	 */
 	String getObjectId();
+
+	/**
+	 * @return true if we're dealing with a new entity and the object id might not be set
+	 */
+	boolean isNew();
+
+	/**
+	 * Wraps an objectId as representing an existing {@link WebCmsObject}.
+	 *
+	 * @param objectId string
+	 * @return object instance
+	 */
+	static WebCmsObject forObjectId( String objectId ) {
+		return new WebCmsObject()
+		{
+			@Override
+			public String getObjectId() {
+				return objectId;
+			}
+
+			@Override
+			public boolean isNew() {
+				return false;
+			}
+		};
+	}
 }

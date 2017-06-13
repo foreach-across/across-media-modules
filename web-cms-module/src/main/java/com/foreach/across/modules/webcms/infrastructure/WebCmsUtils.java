@@ -16,11 +16,13 @@
 
 package com.foreach.across.modules.webcms.infrastructure;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.text.Normalizer;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -30,6 +32,21 @@ import java.util.UUID;
 public class WebCmsUtils
 {
 	private WebCmsUtils() {
+	}
+
+	/**
+	 * Is the given asset published on a particular date.
+	 * This means that the {@link WebCmsAsset#isPublished()} returns {@code true} and the {@link WebCmsAsset#getPublicationDate()}
+	 * is either {@code null} or before the date parameter.
+	 *
+	 * @param asset to check
+	 * @param date  to check for
+	 * @return true if asset is published
+	 */
+	public static boolean isPublishedOnDate( WebCmsAsset asset, Date date ) {
+		Assert.notNull( asset );
+		Assert.notNull( date );
+		return asset.isPublished() && ( asset.getPublicationDate() == null || asset.getPublicationDate().before( date ) );
 	}
 
 	/**

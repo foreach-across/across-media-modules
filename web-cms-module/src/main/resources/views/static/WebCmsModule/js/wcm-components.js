@@ -14,13 +14,48 @@
  * limitations under the License.
  */
 
-$( document ).on( 'ready', function ()
-{
+$( document ).on( 'ready', function () {
+    CKEDITOR.on( 'dialogDefinition', function ( ev ) {
+        var dialogName = ev.data.name;
+        var dialogDefinition = ev.data.definition;
 
-    $('textarea').each( function() {
+        if ( dialogName == 'image2' ) {
+            var infoTab = dialogDefinition.getContents( 'info' );
+
+            infoTab.add( {
+                             type: 'text',
+                             label: 'Image server key',
+                             id: 'imageServerKey'
+                         } );
+
+            dialogDefinition.addContents(
+                    {
+                        id: 'customTab',
+                        label: 'My tab',
+                        minWith: 1024,
+                        elements: [
+                            {
+                                id: 'iframe',
+                                type: 'html',
+                                html: '<iframe src="http://localhost:8080/cms"></iframe>'
+                            }
+                        ]
+                    }
+            );
+
+            console.log(dialogDefinition.onOk);
+
+            dialogDefinition.onOk = function(dialog) {
+               console.log('ok');
+               console.log(dialog);
+            };
+        }
+    } );
+
+    $( 'textarea' ).each( function () {
         CKEDITOR.disableAutoInline = true;
         // { extraPlugins: 'autogrow', autoGrow_minHeight : 300, autoGrow_onStartup: true }
-        CKEDITOR.inline( $(this).attr('id'), {});
-    })
+        CKEDITOR.inline( $( this ).attr( 'id' ), {} );
+    } )
 
 } );

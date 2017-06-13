@@ -57,6 +57,7 @@ public class TestWebCmsComponentType
 		assertNull( componentType.getLastModifiedDate() );
 
 		assertNull( componentType.getDescription() );
+		assertTrue( componentType.getAttributes().isEmpty() );
 	}
 
 	@Test
@@ -72,6 +73,7 @@ public class TestWebCmsComponentType
 		                                                       .createdBy( "john" )
 		                                                       .createdDate( timestamp )
 		                                                       .lastModifiedBy( "josh" )
+		                                                       .attribute( "profile", "test" )
 		                                                       .build();
 
 		assertNull( componentType.getId() );
@@ -83,6 +85,7 @@ public class TestWebCmsComponentType
 		assertEquals( "john", componentType.getCreatedBy() );
 		assertEquals( timestamp, componentType.getCreatedDate() );
 		assertEquals( "josh", componentType.getLastModifiedBy() );
+		assertEquals( "test", componentType.getAttributes().get( "profile" ) );
 		assertNull( componentType.getLastModifiedDate() );
 
 		WebCmsComponentType other = componentType.toBuilder()
@@ -100,6 +103,7 @@ public class TestWebCmsComponentType
 		assertEquals( "john", other.getCreatedBy() );
 		assertEquals( timestamp, other.getCreatedDate() );
 		assertEquals( "josh", other.getLastModifiedBy() );
+		assertEquals( "test", componentType.getAttributes().get( "profile" ) );
 		assertEquals( timestamp, other.getLastModifiedDate() );
 	}
 }

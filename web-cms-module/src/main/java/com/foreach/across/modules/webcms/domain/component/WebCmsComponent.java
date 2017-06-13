@@ -17,16 +17,17 @@
 package com.foreach.across.modules.webcms.domain.component;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectSuperClass;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 /**
@@ -74,7 +75,6 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	 * There is no actual referential integrity here, custom asset implementations must make sure they perform the required cleanup.
 	 */
 	@Column(name = "owner_object_id")
-	@NotNull
 	@Length(max = 100)
 	private String ownerObjectId;
 
@@ -82,8 +82,25 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	 * Optional descriptive title of the component.
 	 */
 	@Column(name = "title")
+	@NotBlank(groups = SharedComponentValidation.class)
 	@Length(max = 255)
 	private String title;
+
+	/**
+	 * Name of the component - if set must be unique within the owner.
+	 * Component name can only contain alphanumeric characters, . (dot), - (dash) or _ (underscore).
+	 */
+	@Column(name = "name")
+	@NotBlank(groups = SharedComponentValidation.class)
+	@Pattern(regexp = "^[\\p{Alnum}-_.]*$")
+	@Length(max = 100)
+	private String name;
+
+	/**
+	 * Sort index of the component within the owner.
+	 */
+	@Column(name = "sort_index")
+	private int sortIndex;
 
 	/**
 	 * Raw body of the component. How the body can be managed is determined by the component type.
@@ -97,6 +114,24 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	@Column(name = "metadata")
 	private String metadata;
 
+	/**
+	 * True if the body of the component contains {@link WebCmsContentMarker} strings.
+	 * You should usually not set this value manually.
+	 *
+	 * @see WebCmsComponentInterceptor
+	 */
+	@Getter
+	@Setter(AccessLevel.PROTECTED)
+	@Column(name = "body_contains_markers")
+	private boolean bodyWithContentMarkers;
+
+	/**
+	 * If this component is a proxy, will contain the proxy target.
+	 */
+	@ManyToOne
+	@JoinColumn(name = "proxied_component_id")
+	private WebCmsComponent proxyTarget;
+
 	public WebCmsComponent() {
 		super();
 	}
@@ -109,17 +144,81 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	                        @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                        @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                        @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
-	                        String ownerObjectId, String title, String body, String metadata ) {
+	                        WebCmsComponentType componentType,
+	                        String ownerObjectId,
+	                        String name,
+	                        int sortIndex,
+	                        String title,
+	                        String body,
+	                        String metadata,
+	                        WebCmsComponent proxyTarget ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 
+		this.componentType = componentType;
 		this.ownerObjectId = ownerObjectId;
+		this.name = name;
+		this.sortIndex = sortIndex;
 		this.title = title;
 		this.body = body;
 		this.metadata = metadata;
+		this.proxyTarget = proxyTarget;
+	}
+
+	/**
+	 * Set the owner of this component, will use {@link WebCmsObject#getObjectId()} to get the owner object id.
+	 *
+	 * @param owner or null to detach
+	 */
+	public void setOwner( WebCmsObject owner ) {
+		setOwnerObjectId( owner != null ? owner.getObjectId() : null );
+	}
+
+	/**
+	 * @return true if this component has an owner id set
+	 */
+	public boolean hasOwner() {
+		return getOwnerObjectId() != null;
+	}
+
+	/**
+	 * @return true if this is in fact a proxy component
+	 */
+	public boolean isProxyComponent() {
+		return getProxyTarget() != null;
 	}
 
 	@Override
 	protected String getObjectCollectionId() {
 		return COLLECTION_ID;
+	}
+
+	/**
+	 * @return a new WebCmsComponent with all properties of this one, but all ids and ownership reset
+	 */
+	public WebCmsComponent asTemplate() {
+		val template = new WebCmsComponent();
+		template.componentType = componentType;
+		template.title = title;
+		template.name = name;
+		template.body = body;
+		template.metadata = metadata;
+		template.sortIndex = sortIndex;
+		template.proxyTarget = proxyTarget;
+		return template;
+	}
+
+	@Override
+	public String toString() {
+		return "WebCmsComponent{" +
+				"objectId='" + getObjectId() + "'," +
+				"componentType=" + componentType +
+				'}';
+	}
+
+	/**
+	 * Marker interface for validation related to creating a globally shared component without a specific owner.
+	 */
+	public interface SharedComponentValidation
+	{
 	}
 }

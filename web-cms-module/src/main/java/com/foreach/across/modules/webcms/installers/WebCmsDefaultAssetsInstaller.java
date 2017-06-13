@@ -22,21 +22,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @ConditionalOnProperty(prefix = "webCmsModule.default-data.assets", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 2)
-@RequiredArgsConstructor
+@Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 14)
 public class WebCmsDefaultAssetsInstaller extends AbstractWebCmsDataInstaller
 {
-	@PostConstruct
-	public void registerResources() {
-		setResources(
-				"classpath:installers/WebCmsModule/default-types.yml",
-				"classpath:installers/WebCmsModule/default-assets.yml"
-		);
+	@Override
+	protected void registerResources( List<String> locations ) {
+		locations.add( "classpath:installers/WebCmsModule/default-types.yml" );
+		locations.add( "classpath:installers/WebCmsModule/default-assets.yml" );
 	}
 }

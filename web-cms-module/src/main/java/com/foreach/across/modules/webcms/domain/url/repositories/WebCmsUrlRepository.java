@@ -33,7 +33,7 @@ import java.util.List;
 @Exposed
 public interface WebCmsUrlRepository extends IdBasedEntityJpaRepository<WebCmsUrl>, QueryDslPredicateExecutor<WebCmsUrl>
 {
-	List<WebCmsUrl> findByPath( String path );
+	WebCmsUrl findOneByPath( String path );
 
 	List<WebCmsUrl> findAllByEndpoint( WebCmsEndpoint entity );
 

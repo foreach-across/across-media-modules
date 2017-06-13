@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.type;
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsDataImporter;
+import com.foreach.across.modules.webcms.data.WebCmsPropertyDataImportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,6 +37,7 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 	private final WebCmsTypeRegistry typeRegistry;
 	private final WebCmsTypeSpecifierRepository typeRepository;
 	private final WebCmsDataConversionService conversionService;
+	private final WebCmsPropertyDataImportService propertyDataImportService;
 
 	@Override
 	public boolean supports( WebCmsDataEntry data ) {
@@ -56,11 +58,15 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 		WebCmsTypeSpecifier dto = createDto( existing, implementationType );
 
 		if ( dto != null ) {
-			LOG.trace( "{} WebCmsTypeSpecifier {} with objectId {}", dto.isNew() ? "Creating" : "Updating" );
+			LOG.trace( "{} WebCmsTypeSpecifier {} with objectId {}", dto.isNew() ? "Creating" : "Updating", typeGroup, dto.getObjectId() );
+
+			if ( propertyDataImportService.executeBeforeAssetSaved( item, item.getMapData(), dto ) ) {
+				LOG.trace( "WebCmsTypeSpecifier {} with objectId {}: custom properties have been imported before asset saved", typeGroup, dto.getObjectId() );
+			}
 
 			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
 
-			if ( isModified ) {
+			if ( isModified || dto.isNew() ) {
 				WebCmsTypeSpecifier itemToSave = prepareForSaving( dto, item );
 
 				if ( itemToSave != null ) {
@@ -74,6 +80,10 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 			}
 			else {
 				LOG.trace( "Skipping WebCmsTypeSpecifier {} import for objectId {} - nothing modified", typeGroup, dto.getObjectId() );
+			}
+
+			if ( propertyDataImportService.executeAfterAssetSaved( item, item.getMapData(), dto ) ) {
+				LOG.trace( "WebCmsTypeSpecifier {} with objectId {}: custom properties have been imported after asset saved", typeGroup, dto.getObjectId() );
 			}
 		}
 		else {

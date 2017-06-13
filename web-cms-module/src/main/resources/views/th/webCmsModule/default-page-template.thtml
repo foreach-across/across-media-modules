@@ -1,13 +1,8 @@
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" xmlns:wcm="http://across.foreach.be/wcm">
 <head>
-	<title th:text="${asset.title}">Page title</title>
+    <title th:text="${asset.title}">Page title</title>
 </head>
 <body th:fragment="content">
-<h1>[[${asset.title}]]</h1>
-
-<div class="content-section" th:each="section : ${contentSections}" th:utext="${section.value.content}">
-	section content
-</div>
-
+<th:block wcm:component="content" wcm:scope="asset" />
 </body>
 </html>

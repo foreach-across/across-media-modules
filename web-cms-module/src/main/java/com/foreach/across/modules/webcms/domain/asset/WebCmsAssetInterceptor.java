@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
+import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.core.Ordered;
@@ -37,6 +38,7 @@ import java.util.Date;
 public class WebCmsAssetInterceptor extends EntityInterceptorAdapter<WebCmsAsset>
 {
 	private final WebCmsAssetEndpointRepository endpointRepository;
+	private final WebCmsAssetUrlConfiguration urlConfiguration;
 
 	@Override
 	public boolean handles( Class<?> entityClass ) {
@@ -61,17 +63,29 @@ public class WebCmsAssetInterceptor extends EntityInterceptorAdapter<WebCmsAsset
 
 	@Override
 	public void afterCreate( WebCmsAsset entity ) {
-		val endpoint = new WebCmsAssetEndpoint<WebCmsAsset>();
-		endpoint.setAsset( entity );
-		endpointRepository.save( endpoint );
+		if ( urlConfiguration.isEnabledForAsset( entity ) ) {
+			val endpoint = new WebCmsAssetEndpoint<WebCmsAsset>();
+			endpoint.setAsset( entity );
+			endpointRepository.save( endpoint );
+		}
 	}
 
 	@Override
 	public void afterUpdate( WebCmsAsset entity ) {
-		WebCmsAssetEndpoint<?> endpoint = endpointRepository.findOneByAsset( entity );
+		if ( urlConfiguration.isEnabledForAsset( entity ) ) {
+			WebCmsAssetEndpoint<?> endpoint = endpointRepository.findOneByAsset( entity );
 
-		if ( endpoint == null ) {
-			afterCreate( entity );
+			if ( endpoint == null ) {
+				afterCreate( entity );
+			}
+		}
+	}
+
+	@Override
+	public void beforeDelete( WebCmsAsset entity ) {
+		if ( urlConfiguration.isEnabledForAsset( entity ) ) {
+			WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( entity );
+			endpointRepository.delete( endpoint );
 		}
 	}
 }

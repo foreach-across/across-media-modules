@@ -16,12 +16,16 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
+import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
-import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
+import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,8 +45,19 @@ public class WebCmsAssetConverter implements ConverterFactory<String, WebCmsAsse
 		conversionService.addConverterFactory( this );
 	}
 
+	@Autowired
+	public void registerToMvcConversionService( @Qualifier(AcrossWebModule.CONVERSION_SERVICE_BEAN) ConverterRegistry mvcConversionService ) {
+		mvcConversionService.addConverterFactory( this );
+	}
+
 	@Override
 	public <T extends WebCmsAsset> Converter<String, T> getConverter( Class<T> targetType ) {
-		return ( id ) -> targetType.cast( assetRepository.findOneByObjectId( id ) );
+		return ( id ) -> {
+			if ( NumberUtils.isDigits( id ) ) {
+				return targetType.cast( assetRepository.findOne( Long.parseLong( id ) ) );
+			}
+
+			return StringUtils.isEmpty( id ) ? null : targetType.cast( assetRepository.findOneByObjectId( id ) );
+		};
 	}
 }

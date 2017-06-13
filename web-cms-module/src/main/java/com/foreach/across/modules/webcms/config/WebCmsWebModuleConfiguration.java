@@ -19,13 +19,15 @@ package com.foreach.across.modules.webcms.config;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetHandlerMethodArgumentResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointHandlerMethodArgumentResolver;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrlHandlerMethodArgumentResolver;
-import com.foreach.across.modules.webcms.web.endpoint.context.WebCmsEndpointContext;
+import com.foreach.across.modules.webcms.domain.endpoint.web.context.WebCmsEndpointContext;
+import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.thymeleaf.spring4.SpringTemplateEngine;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,9 +36,14 @@ import java.util.List;
  */
 @Configuration
 @RequiredArgsConstructor
-public class WebCmsWebModuleConfiguration extends WebMvcConfigurerAdapter
+class WebCmsWebModuleConfiguration extends WebMvcConfigurerAdapter
 {
 	private final WebCmsEndpointContext context;
+
+	@Autowired
+	void registerThymeleafDialect( SpringTemplateEngine templateEngine ) {
+		templateEngine.addDialect( new WebCmsDialect() );
+	}
 
 	@Override
 	public void addArgumentResolvers( List<HandlerMethodArgumentResolver> argumentResolvers ) {

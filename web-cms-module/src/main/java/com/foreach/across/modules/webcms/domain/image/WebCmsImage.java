@@ -16,6 +16,10 @@
 
 package com.foreach.across.modules.webcms.domain.image;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.foreach.across.modules.webcms.data.json.WebCmsObjectDeserializer;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,7 +64,7 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 	public static final String COLLECTION_ID = "wcm:asset:image";
 
 	/**
-	 * Title of the article. Used in previews, list views etc.
+	 * Name of the image.
 	 */
 	@NotBlank
 	@Column(name = "name")

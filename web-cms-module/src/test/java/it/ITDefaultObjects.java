@@ -23,17 +23,25 @@ import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
+import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.publication.*;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepository;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierRepository;
 import com.foreach.across.test.AcrossTestContext;
+import lombok.val;
 import org.junit.Test;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.foreach.across.modules.webcms.domain.article.QWebCmsArticleType.webCmsArticleType;
 import static com.foreach.across.modules.webcms.domain.component.QWebCmsComponentType.webCmsComponentType;
 import static com.foreach.across.modules.webcms.domain.publication.QWebCmsPublicationType.webCmsPublicationType;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -54,25 +62,130 @@ public class ITDefaultObjects
 
 	private void verifyComponentTypes( AcrossContextBeanRegistry beanRegistry ) {
 		WebCmsTypeSpecifierRepository typeSpecifierRepository = beanRegistry.getBeanOfType( WebCmsTypeSpecifierRepository.class );
-		WebCmsComponentTypeRepository publicationTypeRepository = beanRegistry.getBeanOfType( WebCmsComponentTypeRepository.class );
+		WebCmsComponentTypeRepository componentTypeRepository = beanRegistry.getBeanOfType( WebCmsComponentTypeRepository.class );
 
-		WebCmsComponentType textField = publicationTypeRepository.findOne( webCmsComponentType.objectId.eq( "wcm:type:component:text-field" ) );
-		assertNotNull( textField );
-		assertEquals( "wcm:type:component:text-field", textField.getObjectId() );
-		assertEquals( "component", textField.getObjectType() );
-		assertEquals( "Text field", textField.getName() );
-		assertEquals( "text-field", textField.getTypeKey() );
-		assertNotNull( textField.getDescription() );
-		assertEquals( textField, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "component", "text-field" ) );
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "proxy" );
 
-		WebCmsComponentType richText = publicationTypeRepository.findOne( webCmsComponentType.objectId.eq( "wcm:type:component:rich-text" ) );
-		assertNotNull( richText );
-		assertEquals( "wcm:type:component:rich-text", richText.getObjectId() );
-		assertEquals( "component", richText.getObjectType() );
-		assertEquals( "Rich text", richText.getName() );
-		assertEquals( "rich-text", richText.getTypeKey() );
-		assertNotNull( richText.getDescription() );
-		assertEquals( richText, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "component", "rich-text" ) );
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:proxy",
+					"Proxy component",
+					"proxy",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "placeholder" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:placeholder",
+					"Placeholder",
+					"placeholder",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "container" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:container",
+					"Container",
+					"container",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "fixed-container" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:fixed-container",
+					"Fixed container",
+					"fixed-container",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "plain-text" );
+			attr.put( TextWebCmsComponentModel.Attributes.MULTI_LINE, "false" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:text-field",
+					"Text field",
+					"text-field",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "rich-text" );
+			attr.put( TextWebCmsComponentModel.Attributes.PROFILE, "rich-text" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:rich-text",
+					"Rich text",
+					"rich-text",
+					attr
+			);
+		}
+
+		{
+			val attr = new HashMap<String, String>();
+			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "plain-text" );
+			attr.put( TextWebCmsComponentModel.Attributes.ROWS, "1" );
+
+			verifyComponentType(
+					componentTypeRepository,
+					typeSpecifierRepository,
+					"wcm:type:component:plain-text",
+					"Plain text",
+					"plain-text",
+					attr
+			);
+		}
+
+		verifyComponentType(
+				componentTypeRepository,
+				typeSpecifierRepository,
+				"wcm:type:component:html",
+				"HTML",
+				"html",
+				Collections.singletonMap( "type", "markup" )
+		);
+	}
+
+	private void verifyComponentType( WebCmsComponentTypeRepository componentTypeRepository, WebCmsTypeSpecifierRepository typeSpecifierRepository,
+	                                  String objectId, String name, String typeKey, Map<String, String> attributes ) {
+		WebCmsComponentType componentType = componentTypeRepository.findOne( webCmsComponentType.objectId.eq( objectId ) );
+		assertNotNull( componentType );
+		assertEquals( objectId, componentType.getObjectId() );
+		assertEquals( "component", componentType.getObjectType() );
+		assertEquals( name, componentType.getName() );
+		assertEquals( typeKey, componentType.getTypeKey() );
+		assertNotNull( componentType.getDescription() );
+		assertEquals( attributes, new HashMap<>( componentType.getAttributes() ) );
+		assertEquals( componentType, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "component", typeKey ) );
 	}
 
 	private void verifyArticleTypes( AcrossContextBeanRegistry beanRegistry ) {
@@ -85,6 +198,7 @@ public class ITDefaultObjects
 		assertEquals( "article", newsType.getObjectType() );
 		assertEquals( "News", newsType.getName() );
 		assertEquals( "news", newsType.getTypeKey() );
+		assertEquals( "blog", newsType.getAttribute( "parent" ) );
 		assertEquals( newsType, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "article", "news" ) );
 
 		WebCmsArticleType blogType = articleTypeRepository.findOne( webCmsArticleType.objectId.eq( "wcm:type:article:blog" ) );
@@ -93,12 +207,14 @@ public class ITDefaultObjects
 		assertEquals( "article", blogType.getObjectType() );
 		assertEquals( "Blog", blogType.getName() );
 		assertEquals( "blog", blogType.getTypeKey() );
+		assertNull( blogType.getAttribute( "parent" ) );
 		assertEquals( blogType, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "article", "blog" ) );
 	}
 
 	private void verifyPublicationTypes( AcrossContextBeanRegistry beanRegistry ) {
 		WebCmsTypeSpecifierRepository typeSpecifierRepository = beanRegistry.getBeanOfType( WebCmsTypeSpecifierRepository.class );
 		WebCmsPublicationTypeRepository publicationTypeRepository = beanRegistry.getBeanOfType( WebCmsPublicationTypeRepository.class );
+		WebCmsTypeSpecifierLinkRepository typeSpecifierLinkRepository = beanRegistry.getBeanOfType( WebCmsTypeSpecifierLinkRepository.class );
 
 		WebCmsPublicationType newsType = publicationTypeRepository.findOne( webCmsPublicationType.objectId.eq( "wcm:type:publication:news" ) );
 		assertNotNull( newsType );
@@ -108,6 +224,14 @@ public class ITDefaultObjects
 		assertEquals( "news", newsType.getTypeKey() );
 		assertEquals( newsType, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "publication", "news" ) );
 
+		assertEquals(
+				Collections.singletonList( typeSpecifierRepository.findOneByObjectTypeAndTypeKey( WebCmsArticleType.OBJECT_TYPE, "news" ) ),
+				typeSpecifierLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( newsType.getObjectId(), WebCmsArticleType.OBJECT_TYPE )
+				                           .stream()
+				                           .map( WebCmsTypeSpecifierLink::getTypeSpecifier )
+				                           .collect( Collectors.toList() )
+		);
+
 		WebCmsPublicationType blogType = publicationTypeRepository.findOne( webCmsPublicationType.objectId.eq( "wcm:type:publication:blog" ) );
 		assertNotNull( blogType );
 		assertEquals( "wcm:type:publication:blog", blogType.getObjectId() );
@@ -115,6 +239,14 @@ public class ITDefaultObjects
 		assertEquals( "Blog", blogType.getName() );
 		assertEquals( "blog", blogType.getTypeKey() );
 		assertEquals( blogType, typeSpecifierRepository.findOneByObjectTypeAndTypeKey( "publication", "blog" ) );
+
+		assertEquals(
+				Collections.singletonList( typeSpecifierRepository.findOneByObjectTypeAndTypeKey( WebCmsArticleType.OBJECT_TYPE, "blog" ) ),
+				typeSpecifierLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( blogType.getObjectId(), WebCmsArticleType.OBJECT_TYPE )
+				                           .stream()
+				                           .map( WebCmsTypeSpecifierLink::getTypeSpecifier )
+				                           .collect( Collectors.toList() )
+		);
 	}
 
 	private void verifyPublications( AcrossContextBeanRegistry beanRegistry ) {

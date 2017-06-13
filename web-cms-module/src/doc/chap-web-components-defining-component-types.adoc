@@ -1,0 +1,266 @@
+[[defining-component-types]]
+=== Defining component types
+You can easily define your own component types.
+Depending on your needs you can <<extending-base-types,extend one of the base types>> or create a <<custom-component-type,fully custom implementation>>.
+
+[[extending-base-types]]
+==== Extending the base types
+You can add a custom `WebCmsComponentType` by importing it via YAML or by adding it via the `WebCmsComponentTypeRepository`.
+Component types to import should be defined in the section *types - component* where the key of a component type definition is the`unique `WebCmsComponentType` `typeKey`.
+
+.Example YAML component type definition
+[source,yaml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+types:
+  component:
+    my-component:
+      name: Custom component
+      description: Custom HTML component with additional metadata.
+      attributes:
+        type: markup
+        metadata: "my.component.MyMetadata"
+----
+
+A `WebCmsComponentType` has a collection of attributes.
+This is a map of `String` key/value pairs.
+Adding attributes is a way to provide processing metadata without having to create custom `WebCmsComponentType` implementations.
+
+.Default attributes
+All base types support 3 default attributes that pack a lot of punch in creating custom component types:
+
+[options="header",cols="1,4"]
+|===
+
+| Attribute name
+| Description
+
+| _type_
+| Contains the base type for the component type.
+
+ Examples: _container_, _markup_ ...
+
+| _template_
+| Optional: identifier of the (Thymeleaf) template that should be used for rendering the resulting `WebCmsComponentModel` for a component of this type.
+
+Example: _th/mymodule/mytemplate :: fragment_
+
+| _metadata_
+| Optional: name of the class that should be used for the component metadata.
+
+Example: _my.module.components.MyComponentMetadata_
+
+|===
+
+.Custom template
+Any component type can have a _template_ attribute set that identifies the (Thymeleaf) template that should be used for rendering the component instances.
+If a template is specified it will always be used for rendering and any other `WebCmsComponentModelRenderer` for that component type will be skipped.
+
+You can customize rendering the default `WebCmsComponentModel` implementations just by specifying a custom template.
+
+NOTE: Property `renderTemplate` on `WebCmsComponentModel` allows you to set a custom template per-component instead of per component type.
+If a `renderTemplate` is set on the component itself, it will take precedence over the `WebCmsComponentType` template attribute.
+Setting `renderTemplate` is not enabled by default in the administration UI.
+
+.Metadata
+Any `WebCmsComponentModel` has a `metadata` property that refers to an object that has all custom metadata for a component.
+The type of metadata object is configured by setting the class name as the _metadata_ attribute on the `WebCmsComponentType`.
+The metadata instance will always be created as a prototype using the `BeanFactory` and as such supports autowiring other beans from the `ApplicationContext`.
+
+A metadata class must:
+
+* be serializable to and from JSON using Jackson `ObjectMapper`
+** Jackson annotations on the metadata class are supported if necessary to define (de-)serializer rules
+** special care should be taken not to serializer any beans that might have been wired
+* implement a valid `equals()` method in order to have change detection and better import/export performance
+
+If the administration UI is active, a form for metadata properties will automatically be generated using the EntityModule.
+This does require you to register the metadata type as an entity in the `EntityRegistry`.
+
+NOTE: Default (de-)serialization for `WebCmsObject` implementations is provided by the WebCmsModule by dispatching to the `WebCmsDataConversionService`.
+This means metadata properties can often refer to other web cms types without requiring custom configuration.
+
+See <<custom-component-type,creating a custom component type>> if you want to have a custom metadata class, change serialization or admin UI rendering.
+
+.Extending container types
+When defining a custom container type, you can link a *componentTemplate* component to the `WebCmsComponentType` definition.
+The component should be a container of which all members will be copied to a new component of your custom container type.
+
+All `TextWebCmsComponentModel` members of *componentTemplate* can have special markers in their content.
+These markers will be replaced when copying the template to a newly created container:
+
+* `@@container.name@@` will be replaced with the `name` of the newly created container
+* `@@container.title@@` will be replaced with the `title` of the newly created container
+
+
+===== Example: custom container component
+This is an example of a custom component that is a fixed container with 2 member components.
+A custom metadata class allows configuring the position of the members (left or right), the custom template uses the metadata to determine what the output should be.
+
+.Component definition
+[source,yaml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+types:
+  component:
+    left-right:
+      name: Left or Right
+      description: Renders 2 components in a specific layout.
+      attributes:
+        type: fixed-container
+        template: "th/mymodule/components :: left-right"
+        metadata: "mymodule.LeftRightMetadata"
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          wcm:components:
+            one:
+              componentType: rich-text
+              title: One
+              sortIndex: 1
+              body: "@@container.name@@"
+            two:
+              componentType: rich-text
+              title: Two
+              sortIndex: 2
+              body: "@@container.title@@"
+----
+
+When creating a new _left-right_ component the members of _componentTemplate_ will be cloned into the new container.
+The text components _one_ and _two_ will get their default content set with respectively the name and title of the new _left-right_ component.
+
+The _sortIndex_ will determine the order of the components in the administration UI.
+
+.Metadata class
+[source,java,indent=0]
+[subs="verbatim,attributes"]
+----
+@Data   // Use Lombok @Data to generate getters, setters and equals() method
+public class LeftRightMetadata
+{
+    enum Layout
+    {
+        LEFT_TO_RIGHT,
+        RIGHT_TO_LEFT
+    }
+
+    /**
+     * Determines the order of rendering one and two.
+     */
+    @NotNull
+    private Layout layout = Layout.LEFT_TO_RIGHT;
+}
+
+// Register the metadata class as an entity as to activate the administration UI
+@Configuration
+@ConditionalOnAdminUi
+class LeftRightConfiguration implements EntityConfigurer {
+    @Override
+    public void configure( EntitiesConfigurationBuilder entities ) {
+        entities.create().entityType( LeftRightMetadata.class, true );
+    }
+}
+----
+
+The metadata only has a single property `layout`.
+When the administration UI is active (presence of EntityModule and AdminWebModule) the layout value can be selected in the user interface.
+The default administration UI uses the the EntityModule to build the metadata form, so we register the `LeftRightMetadata` as an entity.
+
+NOTE: If you do not want to use the EntityModule to generate the metadata form, you can provide a custom `WebCmsComponentModelMetadataAdminRenderer`.
+See <<custom-component-type,create a custom component type>> for more information.
+
+.Thymeleaf template: th/mymodule/components
+[source,html,indent=0]
+[subs="verbatim,attributes"]
+----
+<th:block th:fragment="left-right(component)"
+          th:with="metadata=${component.metadata}">
+    <section th:if="${metadata.layout.name() eq 'LEFT_TO_RIGHT'}">
+        <div class="left"><across:view element="${component.getMember('one')}" /></div>
+        <div class="right"><across:view element="${component.getMember('two')}" /></div>
+    </section>
+    <section th:if="${metadata.layout.name() eq 'RIGHT_TO_LEFT'}">
+        <div class="left"><across:view element="${component.getMember('two')}" /></div>
+        <div class="right"><across:view element="${component.getMember('one')}" /></div>
+    </section>
+</th:block>
+----
+
+The Thymeleaf template inspects the metadata `layout` property and renders members _one_ and _two_ in a fixed location.
+As a `WebCmsComponentModel` is a `ViewElement` using an _across:view_ node takes care of rendering the member components.
+
+[[custom-component-type]]
+==== Custom component type
+Apart from extending one of the base types and using a custom template or metadata class, you can also pretty much customize any part of the component related infrastructure by providing specific interface implementations.
+This allows you to create a fully custom component type and read/write/render or manage it in whichever way you like.
+
+The following list of the component related interfaces and their role:
+
+[options="header",cols="1,4"]
+|===
+
+|Interface
+|Description
+
+|`WebCmsComponentModelReader`
+|Converts from a `WebCmsComponent` to the relevant `WebCmsComponentModel` implementation.
+If you want to have the default metadata support, consider extending `AbstractWebCmsComponentModelReader`.
+
+|`WebCmsComponentModelWriter`
+|Saves a `WebCmsComponentModel` to the backing repository.
+Provides the backing `WebCmsComponent`.
+Consider extending `AbstractWebCmsComponentModelWriter` if you want default metadata support.
+
+|`WebCmsComponentModelRenderer`
+|Renders a `WebCmsComponentModel` in a Thymeleaf template.
+
+|`WebCmsComponentModelContentAdminRenderer`
+|Provides a `ViewElementBuilder` for managing the content of a `WebCmsComponentModel` in the administration UI.
+
+|`WebCmsComponentModelMetadataAdminRenderer`
+|Provides a `ViewElementBuilder` for managing the metadata of a `WebCmsComponentModel` in the administration UI.
+
+|`WebCmsComponentModelMembersAdminRenderer`
+|Provides a `ViewElementBuilder` for managing child components (usually container members) of a `WebCmsComponentModel` in the administration UI.
+
+|`WebCmsComponentAutoCreateStrategy`
+|Builds a `WebCmsComponentModel` when it is being auto-created, for example during first render of a template.
+Gets the processed template markup as input parameters.
+
+|===
+
+All component related interfaces use the same processing approach:
+
+* all beans of that type are detected and ordered
+* a `supports()` method is used to check if the bean applies for a certain component
+* the first bean that applies will be used
+
+As the implementations are always queried in order, customizing an implementation is a matter of:
+
+* providing your implementation as a bean
+* implementing `supports()` to match for all component types you want
+* ensure your bean is ordered (use `@Order` or implement `Ordered`) before any other that might also apply for that component type
+
+.Client-side administration UI integration
+WebCmsModule provides a default administration UI built on AdminWebModule and EntityModule.
+You can customize the forms being rendered by providing custom `xAdminRenderer` implementations.
+
+The default administration UI uses a form of tabs to display the different sections (eg. content, members, metadata) of a component.
+
+.Detecting tab switching
+Sometimes tab switching needs to be detected in order to re-render the client-side interface.
+Any element that has data attribute *data-wcm-component-refresh* set will receive the _wcm:componentRefresh_ event whenever a component tab is being activate.
+
+[source,javascript,indent=0]
+[subs="verbatim,attributes"]
+----
+// Example refreshing the RTE when a component tab is being switched
+$( '[data-wcm-markup-type=markup]', node ).each( function () {
+    var cm = CodeMirror.fromTextArea( $( this )[0], {} );
+    $( this ).on( 'wcm:componentRefresh',
+                  function () {
+                      cm.refresh();
+                  } )
+            .attr( 'data-wcm-component-refresh', 'true' );  // ensure we receive the event
+} );
+----

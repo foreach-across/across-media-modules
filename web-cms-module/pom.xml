@@ -21,7 +21,7 @@
 	<parent>
 		<artifactId>web-cms-module-project</artifactId>
 		<groupId>com.foreach.across.modules</groupId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -90,6 +90,13 @@
 			<groupId>com.foreach.imageserver</groupId>
 			<artifactId>imageserver-client</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<!-- jsoup HTML parser library @ http://jsoup.org/ -->
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.10.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

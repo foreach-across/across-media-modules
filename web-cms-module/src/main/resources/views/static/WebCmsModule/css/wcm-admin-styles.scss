@@ -1,0 +1,202 @@
+/*
+ * Copyright 2017 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * Contains the general styles for WebCmsComponent and WebCmsAsset management.
+ */
+table tr.info td[data-tbl-field=publicationDate] {
+  font-weight: bold;
+}
+
+table tr.publication-offline td[data-tbl-field=publication] {
+  font-weight: bold;
+  text-decoration: line-through;
+}
+
+.modal {
+  z-index: 9999;
+}
+
+.modal .pcs {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+/**
+ * Component admin UI styling.
+ */
+.wcm-component-form-group {
+  > label {
+    margin-top: 5px;
+    height: 23px;
+  }
+}
+
+.wcm-component-tabs {
+  > li {
+    position: relative;
+    float: left;
+    display: block;
+    padding: 0;
+
+    &:only-child {
+      display: none;
+    }
+
+    a {
+      display: block;
+      padding: 5px 10px;
+      &:hover {
+        background-color: #eaeaea;
+        border-radius: 4px;
+        padding: 3px 8px;
+        margin: 2px;
+      }
+    }
+
+    &.has-error {
+      a {
+        color: #dd000c;
+      }
+    }
+
+    &.active {
+      a {
+        background-color: rgb(0, 44, 65);
+        border-radius: 4px;
+        padding: 2px 7px;
+        margin: 3px 3px;
+        color: white;
+      }
+    }
+  }
+}
+
+.wcm-component-tab-pane {
+  display: none;
+
+  &.active {
+    display: block;
+    border: solid 1px #eaeaea;
+    padding: 20px 15px 0 15px;
+
+    &.wcm-component-content-tab {
+      border: none;
+      padding: 0;
+    }
+  }
+
+  .wcm-component-tabs li.active a {
+    background-color: transparent;
+    color: #eaeaea;
+  }
+
+  .wcm-component-tab-pane.active {
+    border: dotted 1px #eaeaea;
+
+    &.wcm-component-content-tab {
+      border: none;
+      padding: 0;
+    }
+  }
+
+  &.wcm-sortable-component {
+    &.active {
+      border: none;
+      padding: 0;
+    }
+  }
+}
+
+.wcm-sortable-component-title {
+  display: none;
+}
+
+.wcm-sortable-component-handle {
+  display: none;
+  margin-right: 5px;
+  color: #eaeaea;
+}
+
+.wcm-sortable-component {
+  .wcm-sortable-component-title {
+    display: block;
+  }
+
+  .wcm-linked-component {
+    margin-bottom: 0;
+    padding: 5px 10px;
+    cursor: move;
+    border: 1px dotted #eaeaea;
+    border-left: 3px solid #eaeaea;
+    border-bottom: none;
+
+    &.ui-sortable-helper {
+      border-bottom: 1px dotted #eaeaea !important;
+    }
+
+    &:last-child {
+      border-bottom: 1px dotted #eaeaea;
+    }
+
+    &:hover {
+      color: #29ab29;
+      border-left: 3px solid #29ab29;
+      background-color: rgba(41, 171, 41, 0.05);
+      background-image: linear-gradient(to bottom, #f1fcf1 0%, #f5fdf5 100%);
+
+      .wcm-sortable-component-handle {
+        color: #29ab29;
+      }
+    }
+
+    > label {
+      height: auto;
+      cursor: move;
+
+    }
+
+    .wcm-sortable-component-handle {
+      display: inline-block;
+    }
+
+    .wcm-component-tab-pane {
+      display: none;
+    }
+
+    .wcm-component-tabs li {
+      padding: 5px;
+
+      a {
+        background-color: transparent;
+        padding: 0;
+        &:hover {
+          padding: 0;
+          margin: 0;
+        }
+      }
+
+    }
+  }
+}
+
+.wcm-component-owner-trail {
+  border-radius: 5px;
+  background-color: #f9f9f9;
+
+  a {
+    font-weight: bold;
+  }
+}
