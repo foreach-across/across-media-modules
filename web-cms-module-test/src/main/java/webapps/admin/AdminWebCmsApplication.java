@@ -19,6 +19,7 @@ package webapps.admin;
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
+import com.foreach.across.modules.ehcache.EhcacheModule;
 import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.user.UserModuleSettings;
@@ -48,7 +49,8 @@ import java.util.UUID;
 				WebCmsModule.NAME,
 				EntityModule.NAME,
 				AdminWebModule.NAME,
-				DebugWebModule.NAME
+				DebugWebModule.NAME,
+				EhcacheModule.NAME
 		}
 )
 @Import({ DataSourceAutoConfiguration.class, H2ConsoleAutoConfiguration.class })

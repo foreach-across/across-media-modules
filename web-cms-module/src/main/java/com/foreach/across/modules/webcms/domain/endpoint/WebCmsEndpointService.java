@@ -22,7 +22,9 @@ import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import java.util.Optional;
 
 /**
- * @author Sander Van Loock
+ * Central API for endpoint and URL related functions.
+ *
+ * @author Sander Van Loock, Arne Vandamme
  * @since 0.0.1
  */
 public interface WebCmsEndpointService
