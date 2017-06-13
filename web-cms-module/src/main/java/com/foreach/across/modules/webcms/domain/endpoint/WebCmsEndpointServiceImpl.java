@@ -20,12 +20,14 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
+import com.foreach.across.modules.webcms.domain.url.WebCmsUrlCache;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -38,17 +40,18 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Sander Van Loock
  * @since 0.0.1
  */
-@Component
+@Service
 @Slf4j
 @RequiredArgsConstructor
 public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 {
 	private final WebCmsAssetEndpointRepository endpointRepository;
 	private final WebCmsUrlRepository urlRepository;
+	private final WebCmsUrlCache urlCache;
 
 	@Override
 	public Optional<WebCmsUrl> getUrlForPath( String path ) {
-		return Optional.ofNullable( urlRepository.findOneByPath( path ) );
+		return urlCache.getUrlForPath( path );
 	}
 
 	@Override

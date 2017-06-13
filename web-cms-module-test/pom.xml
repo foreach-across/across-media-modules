@@ -85,6 +85,10 @@
 			<groupId>com.foreach.imageserver</groupId>
 			<artifactId>imageserver-client</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>ehcache-module</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

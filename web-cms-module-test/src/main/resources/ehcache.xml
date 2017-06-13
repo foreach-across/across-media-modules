@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright 2017 the original author or authors
   ~
@@ -28,10 +27,8 @@
 			maxElementsInMemory="1000"
 	/>
 
-	<cache name="pathToWebCmsUrlCache"
+	<cache name="WebCmsUrlCache"
 	       timeToLiveSeconds="259200"
-	       maxElementsInMemory="1000"
-	/>
-
+	       maxElementsInMemory="1000"/>
 
 </ehcache>
