@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.web.events.BuildMenuEvent;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItemRepository;
+import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

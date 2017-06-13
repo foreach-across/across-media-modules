@@ -16,13 +16,15 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint.web;
 
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.endpoint.config.WebCmsEndpointMappingConfiguration;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.DefaultWebCmsEndpointContext;
+import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -36,30 +38,48 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestWebCmsContextResolver
+public class TestWebCmsEndpointContextResolver
 {
-	private WebCmsEndpointContextResolver resolver;
+	@Mock
+	private WebCmsEndpointMappingConfiguration mappingConfiguration;
 
 	@Mock
 	private WebCmsEndpointService endpointService;
+
+	@InjectMocks
+	private DefaultWebCmsEndpointContextResolver resolver;
+
 	private WebCmsUrl url;
 	private WebCmsAssetEndpoint endpoint;
 
 	@Before
 	public void setUp() throws Exception {
 		endpoint = WebCmsAssetEndpoint.builder().build();
-		url = WebCmsUrl.builder()
-		               .endpoint( endpoint ).build();
-		resolver = new DefaultWebCmsEndpointContextResolver( endpointService );
+		url = WebCmsUrl.builder().endpoint( endpoint ).build();
+
+		when( mappingConfiguration.shouldMapToWebCmsUrl( anyString() ) ).thenReturn( true );
+	}
+
+	@Test
+	public void endpointShouldNotBeMappedIfRequestDoesNotMatch() {
+		when( mappingConfiguration.shouldMapToWebCmsUrl( anyString() )).thenReturn( false );
+
+		DefaultWebCmsEndpointContext context = new DefaultWebCmsEndpointContext();
+		HttpServletRequest request = new MockHttpServletRequest();
+
+		resolver.resolve( context, request );
+
+		assertTrue( context.isResolved() );
+		verifyNoMoreInteractions( endpointService );
 	}
 
 	@Test
 	public void afterResolvingContextShouldBeSetWithValidData() throws Exception {
-		when( endpointService.getUrlForPath( anyString() ) )
-				.thenReturn( Optional.of( url ) );
+		when( endpointService.getUrlForPath( anyString() ) ).thenReturn( Optional.of( url ) );
 
 		DefaultWebCmsEndpointContext context = new DefaultWebCmsEndpointContext();
 		HttpServletRequest request = new MockHttpServletRequest();
