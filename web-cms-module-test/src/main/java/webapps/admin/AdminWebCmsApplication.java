@@ -36,7 +36,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import java.io.File;
-import java.util.UUID;
 
 /**
  * Main application for a website with the administration UI active, allowing dynamic addition of pages.

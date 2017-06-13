@@ -10,6 +10,7 @@ Arne Vandamme
 :application-info-url: https://foreach.atlassian.net/wiki/display/AX/ApplicationInfoModule
 :spring-security-module-url: https://foreach.atlassian.net/wiki/display/AX/SpringSecurityModule
 :entity-module-url: https://foreach.atlassian.net/wiki/display/AX/EntityModule
+:ehcache-module-url: https://foreach.atlassian.net/wiki/display/AX/EhcacheModule
 
 [copyright,verbatim]
 --
@@ -135,6 +136,10 @@ URL targeting a specific endpoint and HTTP-status code.  A `WebCmsUrl` must be c
 //* endpoint: the endpoint target
 
 A `WebCmsUrl` or one of its subclasses can be used as method parameter.
+
+`WebCmsUrls` can be cached when you specify a `CacheManger` and a cache with name *pathToWebCmsUrlCache*.
+{ehcache-module-url}[EhcacheModule] should be used to provide a `CacheManager`.  The caching of `WebCmsUrl` is recommended
+because it is queries a lot when resolving a `WebCmsEndpointContext`.
 
 === WebCmsPage
 
