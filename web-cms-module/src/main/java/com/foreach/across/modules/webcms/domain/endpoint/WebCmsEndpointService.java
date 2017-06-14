@@ -52,6 +52,14 @@ public interface WebCmsEndpointService
 	Optional<WebCmsUrl> updateOrCreatePrimaryUrlForAsset( String primaryUrl, WebCmsAsset asset );
 
 	/**
+	 * Get the primary URL for a {@link WebCmsAsset}.
+	 *
+	 * @param asset to get the primary url for
+	 * @return url or none if no endpoint with a primary url
+	 */
+	Optional<WebCmsUrl> getPrimaryUrlForAsset( WebCmsAsset asset );
+
+	/**
 	 * Builds a preview url for a particular {@link WebCmsAsset}.
 	 * The preview url is the primary url appended with a request parameter <strong>wcmPreview</strong>.
 	 *

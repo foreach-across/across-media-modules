@@ -19,42 +19,35 @@ package com.foreach.across.modules.webcms.domain.menu.web;
 import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.web.events.BuildMenuEvent;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItemRepository;
-import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
+import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuCache;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
  * Hooks into any {@link com.foreach.across.modules.web.events.BuildMenuEvent} and adds the registered
  * {@link com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem}s to it.
+ * <p/>
+ * Uses the {@link com.foreach.across.modules.webcms.domain.menu.WebCmsMenuCache} for performance purposes.
  *
  * @author Arne Vandamme
+ * @see com.foreach.across.modules.webcms.domain.menu.WebCmsMenuCache
  * @since 0.0.1
  */
 @RequiredArgsConstructor
 @Component
 final class WebCmsMenuBuilder
 {
-	private final WebCmsMenuItemRepository menuItemRepository;
+	private final WebCmsMenuCache menuCache;
 
 	@Event
 	void registerWebCmsMenuItems( BuildMenuEvent buildMenuEvent ) {
 		PathBasedMenuBuilder builder = buildMenuEvent.builder();
 
-		menuItemRepository.findAllByMenuName( buildMenuEvent.getMenuName() )
-		                  .forEach( item -> {
-			                  if ( item.getLinkedPage() == null || item.getLinkedPage().isPublished() ) {
-				                  String url = item.getUrl();
-
-				                  if ( item.getLinkedPage() != null && StringUtils.isEmpty( url ) ) {
-					                  url = item.getLinkedPage().getCanonicalPath();
-				                  }
-
-				                  builder.item( item.getPath(), item.getTitle(), url )
-				                         .group( item.isGroup() )
-				                         .order( item.getSortIndex() );
-			                  }
-		                  } );
+		menuCache.getMenuItems( buildMenuEvent.getMenuName() )
+		         .forEach( item ->
+				                   builder.item( item.getPath(), item.getTitle(), item.getUrl() )
+				                          .group( item.isGroup() )
+				                          .order( item.getOrder() )
+		         );
 	}
 }
