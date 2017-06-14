@@ -65,11 +65,6 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 		urlConfiguration.enable( WebCmsArticle.class );
 	}
 
-	@Autowired
-	void enableMenuItems( WebCmsAssetMenuViewsConfiguration menuViewsConfiguration ) {
-		menuViewsConfiguration.enable( WebCmsArticle.class );
-	}
-
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		componentsFormProcessor.setComponentNames( "content" );
