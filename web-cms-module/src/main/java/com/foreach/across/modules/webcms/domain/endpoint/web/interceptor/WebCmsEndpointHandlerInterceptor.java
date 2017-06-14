@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 0.0.1
  */
 @RequiredArgsConstructor
-public class WebCmsEndpointInterceptor extends HandlerInterceptorAdapter
+public class WebCmsEndpointHandlerInterceptor extends HandlerInterceptorAdapter
 {
 	private final WebCmsEndpointContext context;
 

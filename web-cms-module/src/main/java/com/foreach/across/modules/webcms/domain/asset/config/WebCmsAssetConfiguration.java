@@ -20,6 +20,8 @@ import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.entity.registry.EntityConfiguration;
+import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
@@ -28,7 +30,12 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.web.builders.WebCmsAssetEndpointViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.asset.web.processors.WebCmsAssetListViewProcessor;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.Printer;
+import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Configures the default settings for asset types.
@@ -42,10 +49,12 @@ import org.springframework.context.annotation.Configuration;
 class WebCmsAssetConfiguration implements EntityConfigurer
 {
 	private final WebCmsAssetEndpointViewElementBuilder assetEndpointViewElementBuilder;
+	private final AssetEndpointLabelPrinter assetEndpointLabelPrinter;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsAssetEndpoint.class )
+		        .entityModel( model -> model.labelPrinter( assetEndpointLabelPrinter ) )
 		        .attribute( "endpointValueBuilder", assetEndpointViewElementBuilder )
 		        .hide();
 
@@ -66,5 +75,23 @@ class WebCmsAssetConfiguration implements EntityConfigurer
 		        )
 		        .updateFormView( fvb -> fvb.showProperties( ".", "~created" ) )
 		        .listView( lvb -> lvb.viewProcessor( new WebCmsAssetListViewProcessor() ) );
+	}
+
+	@ConditionalOnAdminUI
+	@Component
+	@RequiredArgsConstructor
+	private static class AssetEndpointLabelPrinter implements Printer<WebCmsAssetEndpoint>
+	{
+		private final EntityRegistry entityRegistry;
+
+		@Override
+		public String print( WebCmsAssetEndpoint endpoint, Locale locale ) {
+			val asset = endpoint.getAsset();
+
+			EntityConfiguration<WebCmsAsset> entityConfiguration = entityRegistry.getEntityConfiguration( asset );
+			String name = entityConfiguration.getEntityMessageCodeResolver().getNameSingular();
+
+			return name + ": " + entityConfiguration.getLabel( asset );
+		}
 	}
 }

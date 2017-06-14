@@ -25,6 +25,8 @@ import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
+import com.foreach.across.modules.entity.registry.EntityConfiguration;
+import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.entity.util.EntityUtils;
@@ -53,13 +55,11 @@ import com.foreach.across.modules.webcms.domain.redirect.web.WebCmsRemoteEndpoin
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.format.Printer;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Arne Vandamme
@@ -70,6 +70,7 @@ import java.util.List;
 @RequiredArgsConstructor
 class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 {
+	private final RemoteEndpointLabelPrinter remoteEndpointLabelPrinter;
 	private final UrlsControlViewElementBuilder urlsControlViewElementBuilder;
 	private final WebCmsRemoteEndpointViewElementBuilder remoteEndpointViewElementBuilder;
 
@@ -82,8 +83,8 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsRemoteEndpoint.class )
-		        .attribute( "endpointValueBuilder",  remoteEndpointViewElementBuilder )
-		        .label( "targetUrl" )
+		        .attribute( "endpointValueBuilder", remoteEndpointViewElementBuilder )
+		        .entityModel( model -> model.labelPrinter( remoteEndpointLabelPrinter ) )
 		        .properties(
 				        props -> props
 						        .property( "targetUrl" )
@@ -117,6 +118,22 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 	@ConditionalOnAdminUI
 	@Component
 	@RequiredArgsConstructor
+	private static class RemoteEndpointLabelPrinter implements Printer<WebCmsRemoteEndpoint>
+	{
+		private final EntityRegistry entityRegistry;
+
+		@Override
+		public String print( WebCmsRemoteEndpoint endpoint, Locale locale ) {
+			EntityConfiguration<WebCmsRemoteEndpoint> entityConfiguration = entityRegistry.getEntityConfiguration( WebCmsRemoteEndpoint.class );
+			String name = entityConfiguration.getEntityMessageCodeResolver().getNameSingular( locale );
+
+			return name + ": " + endpoint.getTargetUrl();
+		}
+	}
+
+	@ConditionalOnAdminUI
+	@Component
+	@RequiredArgsConstructor
 	private static class UrlsControlViewElementBuilder implements ViewElementBuilder<ContainerViewElement>
 	{
 		private final BootstrapUiFactory bootstrapUiFactory;
@@ -136,7 +153,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			tableBuilder.noSorting();
 			tableBuilder.tableName( "urls" );
 
-			List<WebCmsUrl> urls = new ArrayList<>( endpoint.getUrls());
+			List<WebCmsUrl> urls = new ArrayList<>( endpoint.getUrls() );
 			urls.sort( Comparator.comparing( WebCmsUrl::getPath ) );
 
 			tableBuilder.items( EntityUtils.asPage( urls ) );

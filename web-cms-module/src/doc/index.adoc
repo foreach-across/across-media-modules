@@ -152,7 +152,7 @@ WebCmsMenu item:
 * path: in the menu tree
 * title: of the item
 * url: fixed url - if a page is linked and url is empty the page url will be used
-* linkedPage: optional page this menu is linking to
+* endpoint: optional page this menu is linking to
 * sortIndex: index of the item
 * group: is the item group or not
 
@@ -206,7 +206,13 @@ types:
 
 == Performance
 
-caches: WebCmsUrlCache
+caches: WebCmsUrlCache, WebCmsMenuCache
 enable Hibernate 2nd level cache
 webCmsModule.urls.included-path-patterns
 webCmsModule.urls.excluded-path-patterns
+
+extending WebCmsAsset:
+- activate menu items UI
+- activate urls (+ UI)
+
+activate components for any object type

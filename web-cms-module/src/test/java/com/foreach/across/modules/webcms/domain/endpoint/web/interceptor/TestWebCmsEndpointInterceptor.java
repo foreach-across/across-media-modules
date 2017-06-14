@@ -50,7 +50,7 @@ public class TestWebCmsEndpointInterceptor
 	private Object handler;
 
 	@InjectMocks
-	private WebCmsEndpointInterceptor interceptor;
+	private WebCmsEndpointHandlerInterceptor interceptor;
 
 	@Test
 	public void preHandle() throws Exception {
@@ -58,7 +58,7 @@ public class TestWebCmsEndpointInterceptor
 		int expectedStatusCode = expectedStatus.value();
 		when( context.isAvailable() ).thenReturn( true );
 		when( context.getUrl() ).thenReturn( WebCmsUrl.builder().httpStatus( expectedStatus ).build() );
-		interceptor = new WebCmsEndpointInterceptor( context );
+		interceptor = new WebCmsEndpointHandlerInterceptor( context );
 
 		interceptor.preHandle( request, response, handler );
 

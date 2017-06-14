@@ -19,7 +19,8 @@ package com.foreach.across.modules.webcms.domain.menu;
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.webcms.WebCmsModuleCache;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.Cache;
@@ -46,7 +47,6 @@ public final class WebCmsMenuCache
 
 	private final CacheManager cacheManager;
 	private final WebCmsMenuItemRepository menuItemRepository;
-	private final WebCmsEndpointService endpointService;
 
 	private Cache cache = DEFAULT_CACHE;
 
@@ -63,7 +63,7 @@ public final class WebCmsMenuCache
 		if ( items == null ) {
 			items = menuItemRepository.findAllByMenuName( menuName )
 			                          .stream()
-			                          .filter( menuItem -> ( menuItem.getLinkedPage() == null || menuItem.getLinkedPage().isPublished() ) )
+			                          .filter( this::isMenuItemAvailable )
 			                          .map( menuItem -> {
 				                          Menu item = new Menu( menuItem.getPath(), menuItem.getTitle() );
 				                          item.setOrder( menuItem.getSortIndex() );
@@ -71,9 +71,8 @@ public final class WebCmsMenuCache
 
 				                          item.setUrl( menuItem.getUrl() );
 
-				                          if ( StringUtils.isEmpty( item.getUrl() ) && menuItem.getLinkedPage() != null ) {
-					                          endpointService.getPrimaryUrlForAsset( menuItem.getLinkedPage() )
-					                                         .ifPresent( url -> item.setUrl( url.getPath() ) );
+				                          if ( !item.hasUrl() && menuItem.hasEndpoint() ) {
+					                          menuItem.getEndpoint().getPrimaryUrl().ifPresent( url -> item.setUrl( url.getPath() ) );
 				                          }
 
 				                          return item;
@@ -84,6 +83,14 @@ public final class WebCmsMenuCache
 		}
 
 		return items;
+	}
+
+	private boolean isMenuItemAvailable( WebCmsMenuItem menuItem ) {
+		if ( menuItem.hasEndpoint() ) {
+			WebCmsEndpoint endpoint = menuItem.getEndpoint();
+			return !( endpoint instanceof WebCmsAssetEndpoint ) || ( (WebCmsAssetEndpoint) endpoint ).getAsset().isPublished();
+		}
+		return true;
 	}
 
 	public void remove( String menuName ) {

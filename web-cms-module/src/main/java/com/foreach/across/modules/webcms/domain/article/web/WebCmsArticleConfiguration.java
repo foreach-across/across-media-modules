@@ -31,6 +31,8 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentsFormProcessor;
+import com.foreach.across.modules.webcms.domain.menu.config.WebCmsAssetMenuViewsConfiguration;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepository;
@@ -61,6 +63,11 @@ public class WebCmsArticleConfiguration implements EntityConfigurer
 	@Autowired
 	void enableUrls( WebCmsAssetUrlConfiguration urlConfiguration ) {
 		urlConfiguration.enable( WebCmsArticle.class );
+	}
+
+	@Autowired
+	void enableMenuItems( WebCmsAssetMenuViewsConfiguration menuViewsConfiguration ) {
+		menuViewsConfiguration.enable( WebCmsArticle.class );
 	}
 
 	@Override

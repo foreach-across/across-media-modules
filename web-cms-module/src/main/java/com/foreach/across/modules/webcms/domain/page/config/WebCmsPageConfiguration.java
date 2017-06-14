@@ -20,7 +20,6 @@ import com.foreach.across.modules.bootstrapui.elements.*;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
-import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.ViewElementMode;
@@ -37,6 +36,7 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.menu.config.WebCmsAssetMenuViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.web.MenuItemsViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.page.web.PageFormViewProcessor;
@@ -73,6 +73,11 @@ public class WebCmsPageConfiguration
 		@Autowired
 		void enableComponents( WebCmsObjectComponentViewsConfiguration componentViewsConfiguration ) {
 			componentViewsConfiguration.enable( WebCmsPage.class );
+		}
+
+		@Autowired
+		void enableMenuItems( WebCmsAssetMenuViewsConfiguration menuViewsConfiguration ) {
+			menuViewsConfiguration.enable( WebCmsPage.class );
 		}
 
 		@Override
@@ -131,11 +136,6 @@ public class WebCmsPageConfiguration
 					                                     .defaultSort( CANONICAL_PATH )
 					                                     .viewProcessor( pageListViewProcessor() ) )
 					                .createOrUpdateFormView( fvb -> fvb.viewProcessor( pageFormViewProcessor ) )
-			        )
-			        .association(
-					        ab -> ab.name( "webCmsMenuItem.linkedPage" )
-					                .show()
-					                .associationType( EntityAssociation.Type.EMBEDDED )
 			        );
 		}
 
