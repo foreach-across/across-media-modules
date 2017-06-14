@@ -867,7 +867,7 @@
 	</changeSet>
 
 	<!-- Add generated column to menu item -->
-	<changeSet id="201706130907" author="arne">
+	<changeSet id="201706130907" author="arne" runInTransaction="true">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="${table.menu_item}" columnName="is_generated"/>
@@ -881,6 +881,35 @@
 				<constraints nullable="false"/>
 			</column>
 		</addColumn>
+	</changeSet>
+
+	<!-- Migrate to endpoint id on menu item -->
+	<changeSet id="201706141038" author="arne" runInTransaction="true">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.menu_item}" columnName="endpoint_id"/>
+			</not>
+		</preConditions>
+
+		<comment>Adds endpoint_id column to menu item table - removes page_id</comment>
+
+		<dropForeignKeyConstraint baseTableName="${table.menu_item}" constraintName="fk_wcm_mitem_page_id"/>
+		<dropIndex tableName="${table.menu_item}" indexName="ix_wcm_mitem_pid"/>
+		<dropColumn tableName="${table.menu_item}" columnName="page_id"/>
+
+		<addColumn tableName="${table.menu_item}">
+			<column name="endpoint_id" type="java.sql.Types.BIGINT"/>
+		</addColumn>
+
+		<addForeignKeyConstraint baseTableName="${table.menu_item}"
+		                         baseColumnNames="endpoint_id"
+		                         constraintName="fk_wcm_mitem_endpoint_id"
+		                         referencedTableName="${table.endpoint}"
+		                         referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.menu_item}" indexName="ix_wcm_mitem_eid">
+			<column name="endpoint_id"/>
+		</createIndex>
 	</changeSet>
 
 </databaseChangeLog>

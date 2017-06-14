@@ -59,13 +59,13 @@ public class TestWebCmsPageEndpointInterceptor
 	@Mock
 	private ModelAndView mav;
 
-	private WebCmsPageEndpointInterceptor interceptor;
+	private WebCmsPageEndpointHandlerInterceptor interceptor;
 	private String template = "test";
 	private String resolvedTemplate = "th/site/test";
 
 	@Before
 	public void setUp() throws Exception {
-		interceptor = new WebCmsPageEndpointInterceptor( context, templateResolver );
+		interceptor = new WebCmsPageEndpointHandlerInterceptor( context, templateResolver );
 
 		when( context.getEndpoint() ).thenReturn( WebCmsAssetEndpoint.builder()
 		                                                             .asset( WebCmsPage.builder()

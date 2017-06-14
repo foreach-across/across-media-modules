@@ -33,6 +33,8 @@ import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.menu.*;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
@@ -56,6 +58,7 @@ import java.util.*;
 public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 {
 	private final WebCmsEndpointService endpointService;
+	private final WebCmsAssetEndpointRepository assetEndpointRepository;
 	private final WebCmsMenuRepository menuRepository;
 	private final WebCmsMenuItemRepository menuItemRepository;
 
@@ -85,8 +88,12 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 		WebCmsPage page = entityViewRequest.getEntityViewContext().getEntity( WebCmsPage.class );
 
 		if ( page != null ) {
-			menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.linkedPage.eq( page ).and( QWebCmsMenuItem.webCmsMenuItem.generated.isTrue() ) )
-			                  .forEach( item -> advancedSettings.getAutoCreateMenu().add( item.getMenu() ) );
+			WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAsset( page );
+
+			if ( endpoint != null ) {
+				menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ).and( QWebCmsMenuItem.webCmsMenuItem.generated.isTrue() ) )
+				                  .forEach( item -> advancedSettings.getAutoCreateMenu().add( item.getMenu() ) );
+			}
 		}
 
 		command.addExtension( "advanced", advancedSettings );
@@ -98,28 +105,35 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 			val page = command.getEntity( WebCmsPage.class );
 			val advancedSettings = command.getExtension( "advanced", AdvancedSettings.class );
 
-			menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.linkedPage.eq( page ) )
-			                  .forEach( item -> {
-				                  if ( !advancedSettings.getAutoCreateMenu().contains( item.getMenu() ) ) {
-					                  WebCmsMenuItem remove = item.toDto();
-					                  remove.setGenerated( false );
-					                  menuItemRepository.save( remove );
-				                  }
-			                  } );
+			WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAsset( page );
 
-			advancedSettings.getAutoCreateMenu()
-			                .forEach( menu -> {
-				                WebCmsMenuItem existing = menuItemRepository.findOne(
-						                QWebCmsMenuItem.webCmsMenuItem.menu.eq( menu ).and( QWebCmsMenuItem.webCmsMenuItem.linkedPage.eq( page ) )
-				                );
+			if ( endpoint != null ) {
+				menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ) )
+				                  .forEach( item -> {
+					                  if ( !advancedSettings.getAutoCreateMenu().contains( item.getMenu() ) ) {
+						                  WebCmsMenuItem remove = item.toDto();
+						                  remove.setGenerated( false );
+						                  menuItemRepository.save( remove );
+					                  }
+				                  } );
 
-				                WebCmsMenuItem dto = existing != null ? existing.toDto() : WebCmsMenuItem.builder().menu( menu ).linkedPage( page ).build();
-				                dto.setTitle( page.getTitle() );
-				                dto.setPath( page.getCanonicalPath() );
-				                dto.setGenerated( true );
+				advancedSettings.getAutoCreateMenu()
+				                .forEach( menu -> {
+					                WebCmsMenuItem existing = menuItemRepository.findOne(
+							                QWebCmsMenuItem.webCmsMenuItem.menu.eq( menu ).and( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ) )
+					                );
 
-				                menuItemRepository.save( dto );
-			                } );
+					                WebCmsMenuItem dto = existing != null
+							                ? existing.toDto()
+							                : WebCmsMenuItem.builder().menu( menu ).endpoint( endpoint ).build();
+
+					                dto.setTitle( page.getTitle() );
+					                dto.setPath( page.getCanonicalPath() );
+					                dto.setGenerated( true );
+
+					                menuItemRepository.save( dto );
+				                } );
+			}
 		}
 	}
 

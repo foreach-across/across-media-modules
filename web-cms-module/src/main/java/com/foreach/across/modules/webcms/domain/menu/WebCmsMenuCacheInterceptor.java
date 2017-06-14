@@ -65,15 +65,7 @@ class WebCmsMenuCacheInterceptor extends EntityInterceptorAdapter<Object>
 	}
 
 	private void flushRelatedMenuItems( Object entity ) {
-		if ( entity instanceof WebCmsMenu ) {
-			menuCache.clear();
-		}
-		else if ( entity instanceof WebCmsMenuItem ) {
-			menuCache.remove( ( (WebCmsMenuItem) entity ).getMenu().getName() );
-		}
-		else {
-			// todo: only clear those menus that have an endpoint
-			menuCache.clear();
-		}
+		// aggressively clear all cached menus
+		menuCache.clear();
 	}
 }

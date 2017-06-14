@@ -20,10 +20,26 @@ import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
+import com.foreach.across.modules.entity.registry.EntityRegistry;
+import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
+import com.foreach.across.modules.entity.web.EntityViewModel;
+import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.ViewElement;
+import com.foreach.across.modules.web.ui.ViewElementBuilder;
+import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Arne Vandamme
@@ -31,12 +47,20 @@ import org.springframework.context.annotation.Configuration;
  */
 @ConditionalOnAdminUI
 @Configuration
+@RequiredArgsConstructor
 class WebCmsMenuConfiguration implements EntityConfigurer
 {
+	private final EndpointViewElementBuilder endpointViewElementBuilder;
+
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsMenuItem.class )
-		        .properties( props -> props.property( "url" ).attribute( TextboxFormElement.Type.class, TextboxFormElement.Type.TEXT ) )
+		        .properties(
+				        props -> props.property( "url" ).attribute( TextboxFormElement.Type.class, TextboxFormElement.Type.TEXT ).and()
+				                      .property( "endpoint" )
+				                      .viewElementBuilder( ViewElementMode.LIST_VALUE, endpointViewElementBuilder )
+				                      .viewElementBuilder( ViewElementMode.VALUE, endpointViewElementBuilder )
+		        )
 		        .hide();
 
 		entities.withType( WebCmsMenu.class )
@@ -44,10 +68,47 @@ class WebCmsMenuConfiguration implements EntityConfigurer
 				        ab -> ab.name( "webCmsMenuItem.menu" )
 				                .show()
 				                .associationType( EntityAssociation.Type.EMBEDDED )
-				                .listView( lvb -> lvb.showProperties( "path", "group", "title", "linkedPage", "sortIndex" ) )
+				                .listView( lvb -> lvb.showProperties( "path", "group", "title", "endpoint", "sortIndex" )
+				                                     .defaultSort( new Sort( "sortIndex", "path" ) ) )
 				                .createOrUpdateFormView(
 						                fvb -> fvb.showProperties( "group", "*", "~menu" )
 				                )
 		        );
+	}
+
+	@ConditionalOnAdminUI
+	@Component
+	@RequiredArgsConstructor
+	static class EndpointViewElementBuilder implements ViewElementBuilder<ViewElement>
+	{
+		private final EntityRegistry entityRegistry;
+
+		@Override
+		public ViewElement build( ViewElementBuilderContext viewElementBuilderContext ) {
+			val url = EntityViewElementUtils.currentEntity( viewElementBuilderContext, WebCmsMenuItem.class );
+			val endpoint = url.getEndpoint();
+
+			if ( endpoint != null ) {
+				Class<?> actualType = Hibernate.getClass( endpoint );
+				val endpointConfiguration = entityRegistry.getEntityConfiguration( actualType );
+
+				if ( endpointConfiguration != null && endpointConfiguration.hasAttribute( "endpointValueBuilder" ) ) {
+					val nestedBuilderContext = new DefaultViewElementBuilderContext( viewElementBuilderContext );
+					nestedBuilderContext.setAttribute( EntityViewModel.ENTITY, actualEntity( endpoint ) );
+
+					return endpointConfiguration.getAttribute( "endpointValueBuilder", ViewElementBuilder.class ).build( nestedBuilderContext );
+				}
+			}
+
+			return new ContainerViewElement();
+		}
+
+		private WebCmsEndpoint actualEntity( WebCmsEndpoint endpoint ) {
+			if ( endpoint instanceof HibernateProxy ) {
+				return (WebCmsEndpoint) ( (HibernateProxy) endpoint ).getHibernateLazyInitializer().getImplementation();
+			}
+
+			return endpoint;
+		}
 	}
 }
