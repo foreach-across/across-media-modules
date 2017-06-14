@@ -31,4 +31,8 @@
 	       timeToLiveSeconds="259200"
 	       maxElementsInMemory="1000"/>
 
+	<cache name="WebCmsMenuCache"
+	       timeToLiveSeconds="259200"
+	       maxElementsInMemory="1000"/>
+
 </ehcache>

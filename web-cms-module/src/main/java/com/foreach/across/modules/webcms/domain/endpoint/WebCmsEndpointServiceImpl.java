@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
@@ -101,6 +100,17 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 					return Optional.of( primaryUpdated.get() );
 				}
 			}
+		}
+
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<WebCmsUrl> getPrimaryUrlForAsset( WebCmsAsset asset ) {
+		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( asset );
+
+		if ( endpoint != null ) {
+			return endpoint.getPrimaryUrl();
 		}
 
 		return Optional.empty();

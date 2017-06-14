@@ -25,4 +25,6 @@ package com.foreach.across.modules.webcms;
 public interface WebCmsModuleCache
 {
 	String PATH_TO_URL_ID = "WebCmsUrlCache";
+
+	String MENU = "WebCmsMenuCache";
 }
