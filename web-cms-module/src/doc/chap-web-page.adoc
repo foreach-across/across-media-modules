@@ -1,0 +1,87 @@
+[[WebCmsPage-overview]]
+=== WebCmsPage
+Any generated path segments will be SEO friendly
+
+.General options
+|===
+|Field|Required|Type|Description
+|Title|Yes|String|Descriptive title of the page.
+|Parent|No|String|Optional parent page
+|Template|No|String|The thymeleaf template to use to render the page.
+|Page Type|No|Select|The <<WebCmsPageType-overview, page type>>. Autocreate only matters during creation, updating it on an existing page only adjusts the default template.
+|===
+
+.URL settings
+|===
+|Field|Required|Type|Description
+|Path Segment|Yes|String|Path (URL) of the page.
+|Canonical path|Yes|String|FQDN of the page.
+|===
+All of these settings can be automatically generated.
+
+.Publish settings
+|===
+|Field|Required|Type|Description
+|Published|Yes|Boolean|If the page is published (or not). Published pages are visible for regular users.
+|Publication Date|No|Date|The page is only visible if the access date of the file is greater than the publication date.
+|Auto-create new menu items|Yes|Boolean|If checked, creates a new menu item after creation.
+|===
+
+
+When creating or updating the page, the following updates are done with regards to the associated URLs:
+
+* If the page object is saved, and the publication is in the future or not yet published, update the primary url.
+* If the page object is saved and published but the publication date is in the past, no adjustments to the primary url will happen.
+
+
+[[WebCmsPageType-overview]]
+==== WebCmsPageType
+
+A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-overview, WebCmsPage>>.
+
+.Parameters
+|===
+|Parameter|Type|Description
+
+|name|string|The name of the page type. Displayed in the drop down list when creating a new page.
+|attributes|<<wcpt-attributes, attributes>>|The attributes affecting the behaviour when rendering/creating the page. Specified as key-value pairs.
+|wcm:components|The components that are automatically generated when creating a page that uses this page type.
+|===
+
+.Attributes[[wcpt-attributes]]
+|===
+|Attribute|Description
+
+|contentTemplate
+|The part of the thymeleaf page that contains the actual page content.
+
+|defaultTemplate
+|The thymeleaf page that is used if there has not been a page specified on the page itself.
+|===
+
+.Example page type
+[source,yaml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+types:
+  page:
+    tabbedpage:
+      name: Tabbed Page
+      attributes:
+        contentTemplate: page-content
+        template: tabbedpage
+      wcm:components:
+        page-content:
+          title: Page content
+          componentType: container
+          wcm:components:
+            code:
+              title: Code
+              componentType: html
+              sortIndex: 0
+            documentation:
+              title: Documentation
+              componentType: html
+              sortIndex: 1
+----
+

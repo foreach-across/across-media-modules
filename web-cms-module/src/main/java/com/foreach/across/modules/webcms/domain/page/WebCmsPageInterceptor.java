@@ -18,8 +18,12 @@ package com.foreach.across.modules.webcms.domain.page;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.type.WebCmsDefaultComponentsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Generate primary url when page is being saved.
@@ -32,6 +36,7 @@ import org.springframework.stereotype.Component;
 public class WebCmsPageInterceptor extends EntityInterceptorAdapter<WebCmsPage>
 {
 	private final WebCmsEndpointService endpointService;
+	private final WebCmsDefaultComponentsService webCmsTypeComponentsStrategy;
 
 	@Override
 	public boolean handles( Class<?> entityClass ) {
@@ -40,7 +45,14 @@ public class WebCmsPageInterceptor extends EntityInterceptorAdapter<WebCmsPage>
 
 	@Override
 	public void afterCreate( WebCmsPage entity ) {
+		createDefaultComponents( entity );
 		endpointService.updateOrCreatePrimaryUrlForAsset( entity.getCanonicalPath(), entity );
+	}
+
+	private void createDefaultComponents( WebCmsPage entity ) {
+		Map<String, String> markerValues = new HashMap<>();
+		markerValues.put( "@@title@@", entity.getTitle() );
+		webCmsTypeComponentsStrategy.createDefaultComponents( entity, entity.getPageType(), markerValues );
 	}
 
 	@Override

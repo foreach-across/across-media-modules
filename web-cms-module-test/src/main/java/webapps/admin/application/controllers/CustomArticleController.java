@@ -48,6 +48,6 @@ public class CustomArticleController
 		model.addAttribute( "article", article );
 		model.addAttribute( "page", article.getPublication().getArticleTemplatePage() );
 
-		return pageTemplateResolver.resolvePageTemplate( article.getPublication().getArticleTemplatePage().getTemplate() );
+		return pageTemplateResolver.resolvePageTemplate( article.getPublication().getArticleTemplatePage() );
 	}
 }

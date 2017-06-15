@@ -19,9 +19,13 @@ package com.foreach.across.modules.webcms.domain.article;
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.type.WebCmsDefaultComponentsService;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Add the article type components.
@@ -34,7 +38,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArticle>
 {
-	private final WebCmsArticleComponentsStrategy articleComponentsStrategy;
+	private final WebCmsDefaultComponentsService webCmsTypeComponentsStrategy;
 	private final WebCmsEndpointService endpointService;
 
 	@Override
@@ -44,8 +48,16 @@ public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArt
 
 	@Override
 	public void afterCreate( WebCmsArticle entity ) {
-		articleComponentsStrategy.createDefaultComponents( entity );
+		createDefaultComponents( entity );
 		endpointService.updateOrCreatePrimaryUrlForAsset( generateUrl( entity ), entity );
+	}
+
+	private void createDefaultComponents( WebCmsArticle entity ) {
+		Map<String, String> markerValues = new HashMap<>();
+		markerValues.put( "@@title@@", entity.getTitle() );
+		markerValues.put( "@@subTitle@@", entity.getSubTitle() );
+		markerValues.put( "@@description@@", entity.getDescription() );
+		webCmsTypeComponentsStrategy.createDefaultComponents( entity, entity.getArticleType(), markerValues );
 	}
 
 	@Override

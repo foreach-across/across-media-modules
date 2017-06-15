@@ -62,7 +62,7 @@ types:
           title: Article content
           componentType: container
           wcm:components:
-            body:
+            content:
               title: Body
               componentType: rich-text
               content: |
@@ -74,6 +74,7 @@ types:
       attributes:
         # Key of the parent type from which the attributes (and component) should be inherited
         parent: blog
+
 
   # Default publication types: blog and news
   publication:

@@ -43,6 +43,7 @@
 	<property name="table.image" value="wcm_image"/>
 	<property name="table.object_type_link" value="wcm_object_type_link"/>
 	<property name="table.object_asset_link" value="wcm_object_asset_link"/>
+	<property name="table.page_type" value="wcm_page_type"/>
 
 	<!-- Obsolete table names - these are both created/modified and removed in the changeset -->
 	<property name="table.asset_component_link" value="wcm_asset_component_link"/>
@@ -864,6 +865,42 @@
 		<createIndex tableName="${table.component}" indexName="ix_wcm_component_pcid">
 			<column name="proxied_component_id"/>
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="201706121101" author="rcl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.page_type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates page type table</comment>
+
+		<createTable tableName="${table.page_type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_pagtype"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.page_type}"
+		                         baseColumnNames="id"
+		                         constraintName="fk_wcm_pagtype_type"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="201706121102" author="rcl" runInTransaction="true">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.page}" columnName="page_type_id"/>
+			</not>
+		</preConditions>
+
+		<addColumn tableName="${table.page}">
+			<column name="page_type_id" type="java.sql.Types.BIGINT">
+				<constraints referencedTableName="${table.page_type}" referencedColumnNames="id" foreignKeyName="fk_wcm_pag_pag_type" nullable="true"/>
+			</column>
+		</addColumn>
 	</changeSet>
 
 	<!-- Add generated column to menu item -->

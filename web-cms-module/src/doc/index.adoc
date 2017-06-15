@@ -111,7 +111,7 @@ add a base location for the template files
 
 == Domain model
 
-
+include::chap-web-page.adoc[]
 
 === WebCmsEndpoint
 
@@ -136,26 +136,7 @@ URL targeting a specific endpoint and HTTP-status code.  A `WebCmsUrl` must be c
 
 A `WebCmsUrl` or one of its subclasses can be used as method parameter.
 
-=== WebCmsPage
 
-a generated path segment will be SEO friendly
-
-* path segment: path (url) of the page - used for default menu
-* path segment generated: true if the path segment is generated based on the title - a path segment is url friendly
-* title: descriptive title of the page
-* template: to render the page
-* canonicalPath: fq path of the page - usually corresponds with the main url
-* canonical path generated: true if the canonical path should be generated based on the parent hierarchy
-* inheritable canonical path: true (default) if the canonical path should be used by children
-* canonical url should match canonical path: if true the main url should equal the canonical path, if the path changes the main url will change
-* parent: optional parent page
-* hidden: if true the page itself cannot be requested (and might not have a url)
-- its properties will still be inherited (eg path, layout, template) - in the default menu it will still insert a group section
-* disabled: this page and all its children will not be rendered
-
-default urls for assets
-- primary url
-- auto generated on save, updated as long as nog published or publication is in the future
 
 WebCmsMenu
 

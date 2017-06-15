@@ -16,8 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain.page.web;
 
-import com.foreach.across.modules.webcms.domain.page.web.PageTemplateProperties;
-import com.foreach.across.modules.webcms.domain.page.web.PageTemplateResolver;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,12 +40,46 @@ public class TestPageTemplateResolver
 
 	@Test
 	public void defaultTemplateIsReturnedForBlank() {
-		assertEquals( PageTemplateProperties.DEFAULT_TEMPLATE, resolver.resolvePageTemplate( null ) );
+		assertEquals( PageTemplateProperties.DEFAULT_TEMPLATE, resolver.resolvePageTemplate( (String) null ) );
 		assertEquals( PageTemplateProperties.DEFAULT_TEMPLATE, resolver.resolvePageTemplate( "" ) );
 
 		properties.setDefaultTemplate( "default" );
-		assertEquals( "default", resolver.resolvePageTemplate( null ) );
+		assertEquals( "default", resolver.resolvePageTemplate( (String) null ) );
 		assertEquals( "default", resolver.resolvePageTemplate( "" ) );
+	}
+
+	@Test
+	public void defaultTemplateIsReturnedForBlankAndNoPageType() {
+		WebCmsPage page = WebCmsPage.builder().pageType( null ).build();
+
+		properties.setDefaultTemplate( "default" );
+		assertEquals( "default", resolver.resolvePageTemplate( page ) );
+	}
+
+	@Test
+	public void defaultTemplateForPageTypeReturnedIfNotMoreSpecific() {
+		WebCmsPage page = WebCmsPage.builder().pageType( WebCmsPageType.builder().attribute( "template", "xyz" ).build() ).build();
+
+		properties.setDefaultTemplate( "default" );
+		assertEquals( "xyz", resolver.resolvePageTemplate( page ) );
+	}
+
+	@Test
+	public void moreSpecificTemplateForPageTypeReturnedIfMoreSpecific() {
+		WebCmsPage page = WebCmsPage.builder().
+				template( "huphup" )
+		                            .pageType( WebCmsPageType.builder().attribute( "template", "xyz" ).build() ).build();
+
+		properties.setDefaultTemplate( "default" );
+		assertEquals( "huphup", resolver.resolvePageTemplate( page ) );
+	}
+
+	@Test
+	public void defaultReturnedIfNoDefaultTemplateSpecifiedOnWebCmsPageType() {
+		WebCmsPage page = WebCmsPage.builder().pageType( WebCmsPageType.builder().build() ).build();
+
+		properties.setDefaultTemplate( "default" );
+		assertEquals( "default", resolver.resolvePageTemplate( page ) );
 	}
 
 	@Test

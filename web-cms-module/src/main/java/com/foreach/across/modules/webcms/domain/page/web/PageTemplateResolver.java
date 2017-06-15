@@ -21,6 +21,7 @@ import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,19 @@ import org.springframework.stereotype.Component;
 public class PageTemplateResolver
 {
 	private final PageTemplateProperties properties;
+
+	public String resolvePageTemplate( WebCmsPage page ) {
+		if ( StringUtils.isBlank( page.getTemplate() ) ) {
+			if ( page.getPageType() != null && page.getPageType().getAttribute( "template" ) != null ) {
+				return resolvePageTemplate( page.getPageType().getAttribute( "template" ) );
+			}
+			else {
+				return properties.getDefaultTemplate();
+			}
+
+		}
+		return resolvePageTemplate( page.getTemplate() );
+	}
 
 	/**
 	 * Resolves the requested template.  Will apply the configuration properties from the registered

@@ -111,6 +111,10 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	@Length(max = 255)
 	private String template;
 
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "page_type_id")
+	private WebCmsPageType pageType;
+
 	@Builder(toBuilder = true)
 	protected WebCmsPage( @Builder.ObtainVia(method = "getId") Long id,
 	                      @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
@@ -127,7 +131,8 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	                      boolean pathSegmentGenerated,
 	                      String canonicalPath,
 	                      boolean canonicalPathGenerated,
-	                      String template ) {
+	                      String template,
+	                      WebCmsPageType pageType ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
 		this.title = title;
 		this.parent = parent;
@@ -136,6 +141,7 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 		this.canonicalPath = canonicalPath;
 		this.canonicalPathGenerated = canonicalPathGenerated;
 		this.template = template;
+		this.pageType = pageType;
 	}
 
 	@Override

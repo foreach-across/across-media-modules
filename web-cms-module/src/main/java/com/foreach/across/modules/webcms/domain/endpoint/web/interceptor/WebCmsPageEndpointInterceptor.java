@@ -19,8 +19,8 @@ package com.foreach.across.modules.webcms.domain.endpoint.web.interceptor;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.WebCmsEndpointContext;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.web.PageTemplateResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,8 +65,7 @@ public class WebCmsPageEndpointInterceptor extends HandlerInterceptorAdapter
 
 				// todo: generic template resolving for WebCmsAsset
 				if ( asset instanceof WebCmsPage ) {
-					String template = ( (WebCmsPage) asset ).getTemplate();
-					String resolvedTemplate = templateResolver.resolvePageTemplate( template );
+					String resolvedTemplate = templateResolver.resolvePageTemplate( (WebCmsPage) asset );
 					if ( modelAndView != null && modelAndView.getViewName() != null && modelAndView.isReference() &&
 							!modelAndView.getViewName().equals( resolvedTemplate ) ) {
 						LOG.trace( "Current model has an incorrect view {}, setting page template {} instead", modelAndView.getViewName(), resolvedTemplate );

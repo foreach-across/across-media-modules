@@ -112,12 +112,10 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 				                WebCmsMenuItem existing = menuItemRepository.findOne(
 						                QWebCmsMenuItem.webCmsMenuItem.menu.eq( menu ).and( QWebCmsMenuItem.webCmsMenuItem.linkedPage.eq( page ) )
 				                );
-
 				                WebCmsMenuItem dto = existing != null ? existing.toDto() : WebCmsMenuItem.builder().menu( menu ).linkedPage( page ).build();
 				                dto.setTitle( page.getTitle() );
 				                dto.setPath( page.getCanonicalPath() );
 				                dto.setGenerated( true );
-
 				                menuItemRepository.save( dto );
 			                } );
 		}

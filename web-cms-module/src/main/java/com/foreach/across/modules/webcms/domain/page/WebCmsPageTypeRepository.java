@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.article;
+package com.foreach.across.modules.webcms.domain.page;
 
-/**
- * Responsible for creating the default web components for a {@link WebCmsArticle};
- *
- * @author Arne Vandamme
- * @since 0.0.1
- */
-public interface WebCmsArticleComponentsStrategy
+import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
+
+@Exposed
+public interface WebCmsPageTypeRepository extends WebCmsObjectEntityRepository<WebCmsPageType>
 {
-	/**
-	 * Create the default components for a particular article.
-	 * How the default components are determined is implementation dependant.
-	 *
-	 * @param article to add the components to
-	 */
-	void createDefaultComponents( WebCmsArticle article );
+	WebCmsPageType findOneByTypeKey( String typeKey );
 }
