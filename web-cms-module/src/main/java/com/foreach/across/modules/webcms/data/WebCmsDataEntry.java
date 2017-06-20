@@ -23,13 +23,16 @@ import org.springframework.util.Assert;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
- * Represents a set of mapData to be imported or exported.
+ * Represents a set of data to be imported.
+ * Data should be either a {@link Map} or a {@link Collection} (usually of {@link Map} items).
+ * <p/>
  *
  * @author Arne Vandamme
  * @see WebCmsDataImportService
- * @see WebCmsDataExportService
+ * @see WebCmsDataImportAction
  * @since 0.0.1
  */
 @Data
@@ -41,9 +44,9 @@ public final class WebCmsDataEntry
 	private final String key;
 
 	/**
-	 * Optional parent key of the mapData entry.
+	 * Optional parent data entry.
 	 */
-	private final String parentKey;
+	private final WebCmsDataEntry parent;
 
 	/**
 	 * Data itself - should not be null.
@@ -66,11 +69,11 @@ public final class WebCmsDataEntry
 	}
 
 	@SuppressWarnings("unchecked")
-	public WebCmsDataEntry( String key, String parentKey, Object data ) {
+	public WebCmsDataEntry( String key, WebCmsDataEntry parent, Object data ) {
 		Assert.notNull( data );
 
 		this.key = key;
-		this.parentKey = parentKey;
+		this.parent = parent;
 
 		if ( data instanceof Map ) {
 			this.mapData = Collections.unmodifiableMap( (Map<String, Object>) data );
@@ -83,6 +86,15 @@ public final class WebCmsDataEntry
 		else {
 			throw new IllegalArgumentException( "Only Collection or Map data is supported." );
 		}
+
+		if ( parent != null ) {
+			importAction = parent.importAction;
+		}
+
+		if ( mapData != null && mapData.containsKey( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) {
+			importAction = Optional.ofNullable( WebCmsDataImportAction.fromAttributeValue( (String) mapData.get( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) )
+			                       .orElse( WebCmsDataImportAction.CREATE_OR_UPDATE );
+		}
 	}
 
 	/**
@@ -90,5 +102,21 @@ public final class WebCmsDataEntry
 	 */
 	public boolean isMapData() {
 		return mapData != null;
+	}
+
+	/**
+	 * @return true if the data entry has a parent data entry
+	 */
+	public boolean hasParent() {
+		return parent != null;
+	}
+
+	/**
+	 * Shortcut to retrieve the key of the optional parent data.
+	 *
+	 * @return parent key or {@code null} if no parent data
+	 */
+	public String getParentKey() {
+		return hasParent() ? parent.getKey() : null;
 	}
 }

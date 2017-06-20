@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * A custom property is marked by a prefix eg. prefix "wcm" for property "wcm:components".
  *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @Service
 public final class WebCmsPropertyDataImportService
@@ -38,16 +38,20 @@ public final class WebCmsPropertyDataImportService
 	private Collection<WebCmsPropertyDataImporter> propertyDataImporters = Collections.emptyList();
 
 	@SuppressWarnings("unchecked")
-	public boolean executeBeforeAssetSaved( WebCmsDataEntry assetData, Map<String, Object> propertiesData, Object asset ) {
-		return execute( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED, assetData, propertiesData, asset );
+	public boolean executeBeforeAssetSaved( WebCmsDataEntry assetData, Map<String, Object> propertiesData, Object asset, WebCmsDataAction action ) {
+		return execute( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED, assetData, propertiesData, asset, action );
 	}
 
-	public boolean executeAfterAssetSaved( WebCmsDataEntry assetData, Map<String, Object> propertiesData, Object asset ) {
-		return execute( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED, assetData, propertiesData, asset );
+	public boolean executeAfterAssetSaved( WebCmsDataEntry assetData, Map<String, Object> propertiesData, Object asset, WebCmsDataAction action ) {
+		return execute( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED, assetData, propertiesData, asset, action );
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean execute( WebCmsPropertyDataImporter.Phase phase, WebCmsDataEntry assetData, Map<String, Object> propertiesData, Object asset ) {
+	private boolean execute( WebCmsPropertyDataImporter.Phase phase,
+	                         WebCmsDataEntry assetData,
+	                         Map<String, Object> propertiesData,
+	                         Object asset,
+	                         WebCmsDataAction action ) {
 		return propertiesData
 				.keySet()
 				.stream()
@@ -57,13 +61,14 @@ public final class WebCmsPropertyDataImportService
 										.stream()
 										.filter(
 												importer -> importer.getPhase() == phase
-														&& importer.supports( assetData, propertyName, asset )
+														&& importer.supports( assetData, propertyName, asset, action )
 										)
 										.map(
 												importer -> importer.importData(
 														assetData,
 														new WebCmsDataEntry( propertyName, propertiesData.get( propertyName ) ),
-														asset
+														asset,
+														action
 												)
 										)
 

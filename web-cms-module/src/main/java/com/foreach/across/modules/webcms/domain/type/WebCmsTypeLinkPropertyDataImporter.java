@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.type;
 
+import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsPropertyDataImporter;
@@ -28,7 +29,7 @@ import org.springframework.stereotype.Component;
  * create links to the types specified.
  *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
 @Component
 @RequiredArgsConstructor
@@ -45,12 +46,12 @@ public class WebCmsTypeLinkPropertyDataImporter implements WebCmsPropertyDataImp
 	}
 
 	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset ) {
+	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
 		return PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsObject;
 	}
 
 	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, WebCmsObject asset ) {
+	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, WebCmsObject asset, WebCmsDataAction action ) {
 		propertyData.getCollectionData()
 		            .forEach( data -> {
 			            WebCmsDataEntry values = new WebCmsDataEntry( propertyData.getKey(), data );

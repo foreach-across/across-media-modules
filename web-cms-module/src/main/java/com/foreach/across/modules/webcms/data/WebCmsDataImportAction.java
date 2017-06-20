@@ -53,10 +53,21 @@ public enum WebCmsDataImportAction
 	DELETE( "delete" ),
 
 	/**
-	 * Replace the entities.  This is should wipe all values of the existing entities except
-	 * ID properties (like objectId).
+	 * Replace the entities if they exist.
+	 * If they do not exist no action will be performed.
+	 * <p/>
+	 * A replace wipes all values of the existing entities except ID properties, but the resulting instances
+	 * should be the same as if newly created.  Replace support is implementation dependant.
 	 */
-	REPLACE( "replace" );
+	REPLACE( "replace" ),
+
+	/**
+	 * Replace the entities if they exist, create them if they do not.
+	 * <p/>
+	 * A replace wipes all values of the existing entities except ID properties, but the resulting instances
+	 * should be the same as if newly created.  Replace support is implementation dependant.
+	 */
+	CREATE_OR_REPLACE( "create-replace" );
 
 	public static final String ATTRIBUTE_NAME = "wcm:action";
 
@@ -69,7 +80,7 @@ public enum WebCmsDataImportAction
 	 * @param attributeValue that represents the action
 	 * @return action or null if could not be mapped
 	 */
-	public WebCmsDataImportAction fromAttributeValue( String attributeValue ) {
+	public static WebCmsDataImportAction fromAttributeValue( String attributeValue ) {
 		return Stream.of( values() )
 		             .filter( v -> v.name().equalsIgnoreCase( attributeValue ) )
 		             .findFirst()

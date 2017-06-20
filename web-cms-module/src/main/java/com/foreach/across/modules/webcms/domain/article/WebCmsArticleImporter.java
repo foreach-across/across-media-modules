@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.article;
 
+import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.AbstractWebCmsAssetImporter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,15 @@ public final class WebCmsArticleImporter extends AbstractWebCmsAssetImporter<Web
 	}
 
 	@Override
-	protected WebCmsArticle createDto( WebCmsArticle itemToUpdate ) {
+	protected WebCmsArticle createDto( WebCmsDataEntry data, WebCmsArticle itemToUpdate, WebCmsDataAction action ) {
+		if ( action == WebCmsDataAction.REPLACE ) {
+			return WebCmsArticle.builder()
+			                    .id( itemToUpdate.getId() ).createdBy( itemToUpdate.getCreatedBy() ).createdDate( itemToUpdate.getCreatedDate() )
+			                    .build();
+		}
+
 		return itemToUpdate != null ? itemToUpdate.toDto() : new WebCmsArticle();
+
 	}
 
 	@Override
