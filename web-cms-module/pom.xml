@@ -38,6 +38,10 @@
 			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>across-hibernate-module</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
 		<!-- Optional -->
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>

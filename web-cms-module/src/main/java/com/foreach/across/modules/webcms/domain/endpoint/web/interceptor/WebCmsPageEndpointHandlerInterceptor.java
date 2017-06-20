@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class WebCmsPageEndpointInterceptor extends HandlerInterceptorAdapter
+public class WebCmsPageEndpointHandlerInterceptor extends HandlerInterceptorAdapter
 {
 	private final WebCmsEndpointContext context;
 	private final PageTemplateResolver templateResolver;

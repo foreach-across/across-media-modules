@@ -22,7 +22,9 @@ import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import java.util.Optional;
 
 /**
- * @author Sander Van Loock
+ * Central API for endpoint and URL related functions.
+ *
+ * @author Sander Van Loock, Arne Vandamme
  * @since 0.0.1
  */
 public interface WebCmsEndpointService
@@ -48,6 +50,14 @@ public interface WebCmsEndpointService
 	 * @return url if created or updated
 	 */
 	Optional<WebCmsUrl> updateOrCreatePrimaryUrlForAsset( String primaryUrl, WebCmsAsset asset );
+
+	/**
+	 * Get the primary URL for a {@link WebCmsAsset}.
+	 *
+	 * @param asset to get the primary url for
+	 * @return url or none if no endpoint with a primary url
+	 */
+	Optional<WebCmsUrl> getPrimaryUrlForAsset( WebCmsAsset asset );
 
 	/**
 	 * Builds a preview url for a particular {@link WebCmsAsset}.

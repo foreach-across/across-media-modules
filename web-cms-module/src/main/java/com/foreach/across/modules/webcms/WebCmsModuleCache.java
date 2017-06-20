@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.installers;
-
-import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
-import org.springframework.core.annotation.Order;
+package com.foreach.across.modules.webcms;
 
 /**
- * @author Arne Vandamme
- * @since 0.0.1
+ * Holds cache names.
+ *
+ * @author Sander Van Loock, Arne Vandamme
+ * @since 0.0.2
  */
-@Order(1)
-@Installer(description = "Installs the required database tables", version = 15)
-public class WebCmsSchemaInstaller extends AcrossLiquibaseInstaller
+public interface WebCmsModuleCache
 {
-	public WebCmsSchemaInstaller() {
-		super( "installers/WebCmsModule/schema.xml" );
-	}
+	String PATH_TO_URL_ID = "WebCmsUrlCache";
+
+	String MENU = "WebCmsMenuCache";
 }

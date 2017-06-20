@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.endpoint.config.WebCmsEndpointMappingConfiguration;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
@@ -48,17 +49,24 @@ public class DefaultWebCmsEndpointContextResolver implements WebCmsEndpointConte
 {
 	private final UrlPathHelper pathHelper = new UrlPathHelper();
 	private final WebCmsEndpointService endpointService;
+	private final WebCmsEndpointMappingConfiguration endpointMappingConfiguration;
 
 	private Collection<WebCmsEndpointAccessValidator<?>> endpointAccessValidators = Collections.emptyList();
 
 	@Override
 	public void resolve( ConfigurableWebCmsEndpointContext context, HttpServletRequest request ) {
-		String path = pathHelper.getPathWithinApplication( request );
 		context.setResolved( true );
-		LOG.trace( "Resolving path for {}", path );
-		endpointService.getUrlForPath( path )
-		               .ifPresent( url -> resolve( context, url, request ) );
-		LOG.debug( "Context after resolving {}", context );
+
+		String path = pathHelper.getPathWithinApplication( request );
+
+		if ( endpointMappingConfiguration.shouldMapToWebCmsUrl( path ) ) {
+			LOG.trace( "Resolving path for {}", path );
+			endpointService.getUrlForPath( path ).ifPresent( url -> resolve( context, url, request ) );
+			LOG.trace( "Context after resolving {}", context );
+		}
+		else {
+			LOG.trace( "Ignoring request path for WebCmsUrl mapping: {}", path );
+		}
 	}
 
 	private void resolve( ConfigurableWebCmsEndpointContext context, WebCmsUrl url, HttpServletRequest request ) {

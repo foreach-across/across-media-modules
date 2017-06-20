@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.menu;
 
 import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -89,11 +90,13 @@ public class WebCmsMenuItem extends SettableIdBasedEntity<WebCmsMenuItem>
 	private String url;
 
 	/**
-	 * Optional page this item links to.  If no explicit url is set on the item, the page url will be used instead.
+	 * Optional endpoint this item links to.
+	 * If no explicit url is set on the item, the primary url of the endpoint will be used instead.
+	 * If {@link #isGenerated()} returns {@code true} the menu item might automatically get updated if the endpoint gets updated.
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "page_id")
-	private WebCmsPage linkedPage;
+	@ManyToOne
+	@JoinColumn(name = "endpoint_id")
+	private WebCmsEndpoint endpoint;
 
 	/**
 	 * Order index of the menu item (under its parent).
@@ -113,4 +116,11 @@ public class WebCmsMenuItem extends SettableIdBasedEntity<WebCmsMenuItem>
 	 */
 	@Column(name = "is_generated")
 	private boolean generated;
+
+	/**
+	 * @return true if this item is linked to an endpoint
+	 */
+	public boolean hasEndpoint() {
+		return getEndpoint() != null;
+	}
 }

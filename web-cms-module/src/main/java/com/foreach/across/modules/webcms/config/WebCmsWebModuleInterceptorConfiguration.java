@@ -20,8 +20,8 @@ import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.WebCmsEndpointContext;
-import com.foreach.across.modules.webcms.domain.endpoint.web.interceptor.WebCmsEndpointInterceptor;
-import com.foreach.across.modules.webcms.domain.endpoint.web.interceptor.WebCmsPageEndpointInterceptor;
+import com.foreach.across.modules.webcms.domain.endpoint.web.interceptor.WebCmsEndpointHandlerInterceptor;
+import com.foreach.across.modules.webcms.domain.endpoint.web.interceptor.WebCmsPageEndpointHandlerInterceptor;
 import com.foreach.across.modules.webcms.domain.page.web.PageTemplateResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -45,13 +45,13 @@ public class WebCmsWebModuleInterceptorConfiguration extends PrefixingHandlerMap
 	}
 
 	@Bean
-	public WebCmsPageEndpointInterceptor webCmsPageEndpointInterceptor() {
-		return new WebCmsPageEndpointInterceptor( context, templateResolver );
+	public WebCmsPageEndpointHandlerInterceptor webCmsPageEndpointInterceptor() {
+		return new WebCmsPageEndpointHandlerInterceptor( context, templateResolver );
 	}
 
 	@Bean
-	public WebCmsEndpointInterceptor webCmsEndpointInterceptor() {
-		return new WebCmsEndpointInterceptor( context );
+	public WebCmsEndpointHandlerInterceptor webCmsEndpointInterceptor() {
+		return new WebCmsEndpointHandlerInterceptor( context );
 	}
 
 	@Override
