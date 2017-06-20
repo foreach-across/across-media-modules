@@ -32,13 +32,13 @@ public class FileManagerModuleSettings
 	/***
 	 * The location of default directory for temporary files.
 	 */
-	private String tempFolder = System.getProperty("java.io.tmpdir");
+	private String tempFolder = System.getProperty( "java.io.tmpdir" );
 
 	public String getLocalRepositoriesRoot() {
 		return localRepositoriesRoot;
 	}
 
-	public void setLocalRepositoriesRoot(String localRepositoriesRoot) {
+	public void setLocalRepositoriesRoot( String localRepositoriesRoot ) {
 		this.localRepositoriesRoot = localRepositoriesRoot;
 	}
 
@@ -46,7 +46,7 @@ public class FileManagerModuleSettings
 		return tempFolder;
 	}
 
-	public void setTempFolder(String tempFolder) {
+	public void setTempFolder( String tempFolder ) {
 		this.tempFolder = tempFolder;
 	}
 }
