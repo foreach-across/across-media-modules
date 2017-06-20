@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * Type specifier for a particular page.
+ *
  * @author Raf Ceuls
  * @since 0.0.2
  */
