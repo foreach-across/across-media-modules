@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.publication;
 
+import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.AbstractWebCmsAssetImporter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,15 @@ public final class WebCmsPublicationImporter extends AbstractWebCmsAssetImporter
 	}
 
 	@Override
-	protected WebCmsPublication createDto( WebCmsPublication itemToUpdate ) {
+	protected WebCmsPublication createDto( WebCmsDataEntry data, WebCmsPublication itemToUpdate, WebCmsDataAction action ) {
+		if ( action == WebCmsDataAction.REPLACE ) {
+			return WebCmsPublication.builder()
+			                        .id( itemToUpdate.getId() ).createdBy( itemToUpdate.getCreatedBy() ).createdDate( itemToUpdate.getCreatedDate() )
+			                        .build();
+		}
+
 		return itemToUpdate != null ? itemToUpdate.toDto() : new WebCmsPublication();
+
 	}
 
 	@Override

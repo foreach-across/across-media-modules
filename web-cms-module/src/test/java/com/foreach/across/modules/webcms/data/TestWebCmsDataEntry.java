@@ -18,11 +18,11 @@ package com.foreach.across.modules.webcms.data;
 
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -41,24 +41,71 @@ public class TestWebCmsDataEntry
 	}
 
 	@Test
-	public void dataWithoutParentKey() {
+	public void dataWithoutParent() {
 		Map<String, String> data = new HashMap<>();
 		data.put( "1", "2" );
 
 		WebCmsDataEntry entry = new WebCmsDataEntry( "mykey", data );
 		assertEquals( "mykey", entry.getKey() );
+		assertFalse( entry.hasParent() );
+		assertNull( entry.getParent() );
 		assertNull( entry.getParentKey() );
 		assertEquals( data, entry.getMapData() );
 	}
 
 	@Test
-	public void dataWithParentKey() {
+	public void dataWithParent() {
 		Map<String, String> data = new HashMap<>();
 		data.put( "1", "2" );
 
-		WebCmsDataEntry entry = new WebCmsDataEntry( "mykey", "parentKey", data );
+		WebCmsDataEntry entry = new WebCmsDataEntry( "mykey", new WebCmsDataEntry( "parentKey", Collections.emptyMap() ), data );
 		assertEquals( "mykey", entry.getKey() );
+		assertTrue( entry.hasParent() );
 		assertEquals( "parentKey", entry.getParentKey() );
 		assertEquals( data, entry.getMapData() );
+	}
+
+	@Test
+	public void defaultActionIsCreateUpdate() {
+		assertEquals( WebCmsDataImportAction.CREATE_OR_UPDATE, new WebCmsDataEntry( "data", Collections.emptyMap() ).getImportAction() );
+		assertEquals( WebCmsDataImportAction.CREATE_OR_UPDATE, new WebCmsDataEntry( "data", Collections.emptyList() ).getImportAction() );
+	}
+
+	@Test
+	public void actionSpecifiedInMapDataSetsTheEntryAction() {
+		assertEquals(
+				WebCmsDataImportAction.DELETE,
+				new WebCmsDataEntry( "data", Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) ).getImportAction()
+		);
+	}
+
+	@Test
+	public void parentActionIsUsedIfNotSpecifiedInMapData() {
+		WebCmsDataEntry parent = new WebCmsDataEntry( "parent", Collections.emptyList() );
+		parent.setImportAction( WebCmsDataImportAction.REPLACE );
+
+		assertEquals(
+				WebCmsDataImportAction.REPLACE,
+				new WebCmsDataEntry( "data", parent, Collections.emptyList() ).getImportAction()
+		);
+	}
+
+	@Test
+	public void actionSpecifiedWinsOverParentAction() {
+		WebCmsDataEntry parent = new WebCmsDataEntry( "parent", Collections.emptyList() );
+		parent.setImportAction( WebCmsDataImportAction.REPLACE );
+
+		assertEquals(
+				WebCmsDataImportAction.DELETE,
+				new WebCmsDataEntry( "data", parent, Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) ).getImportAction()
+		);
+	}
+
+	@Test
+	public void entryLevelActionCanBeModifiedAfterEntryCreation() {
+		WebCmsDataEntry data = new WebCmsDataEntry( "data", Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) );
+		data.setImportAction( WebCmsDataImportAction.CREATE );
+
+		assertEquals( WebCmsDataImportAction.CREATE, data.getImportAction() );
 	}
 }

@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.page;
 
+import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.AbstractWebCmsAssetImporter;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
@@ -36,8 +37,15 @@ public final class WebCmsPageImporter extends AbstractWebCmsAssetImporter<WebCms
 	}
 
 	@Override
-	protected WebCmsPage createDto( WebCmsPage itemToUpdate ) {
+	protected WebCmsPage createDto( WebCmsDataEntry data, WebCmsPage itemToUpdate, WebCmsDataAction action ) {
+		if ( action == WebCmsDataAction.REPLACE ) {
+			return WebCmsPage.builder()
+			                 .id( itemToUpdate.getId() ).createdBy( itemToUpdate.getCreatedBy() ).createdDate( itemToUpdate.getCreatedDate() )
+			                 .build();
+		}
+
 		return itemToUpdate != null ? itemToUpdate.toDto() : new WebCmsPage();
+
 	}
 
 	@Override

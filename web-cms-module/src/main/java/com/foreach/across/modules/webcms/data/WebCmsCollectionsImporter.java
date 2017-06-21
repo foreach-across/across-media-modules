@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 /**
  * Supports the default collections:
  * <ul>
- *     <li>assets</li>
- *     <li>types</li>
+ * <li>assets</li>
+ * <li>types</li>
  * </ul>
  *
  * @author Arne Vandamme
@@ -36,12 +36,12 @@ public final class WebCmsCollectionsImporter implements WebCmsDataImporter
 
 	@Override
 	public boolean supports( WebCmsDataEntry data ) {
-		return ( "assets".equals( data.getKey() ) || "types".equals( data.getKey() ) ) && data.getParentKey() == null;
+		return ( "assets".equals( data.getKey() ) || "types".equals( data.getKey() ) ) && !data.hasParent();
 	}
 
 	@Override
 	public void importData( WebCmsDataEntry data ) {
-		data.getMapData().forEach( ( key, properties ) -> dataImportService.importData( new WebCmsDataEntry( key, data.getKey(), properties ) ) );
+		data.getMapData().forEach( ( key, properties ) -> dataImportService.importData( new WebCmsDataEntry( key, data, properties ) ) );
 	}
 
 	@Autowired

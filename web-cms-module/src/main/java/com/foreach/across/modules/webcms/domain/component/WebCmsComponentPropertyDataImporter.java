@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component;
 
+import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsPropertyDataImporter;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
@@ -44,12 +45,12 @@ public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataIm
 	}
 
 	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset ) {
+	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
 		return PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsObject;
 	}
 
 	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, WebCmsObject asset ) {
+	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, WebCmsObject asset, WebCmsDataAction action ) {
 		WebCmsComponentImporter componentImporter = beanFactory.getBean( WebCmsComponentImporter.class );
 		componentImporter.setOwner( asset );
 

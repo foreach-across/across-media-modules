@@ -1,0 +1,11 @@
+entries support a wcm:action key
+within a single YAML entry the wcm:action from the parent might be used as default
+
+if no wcm:action is specified, the value is create-update
+
+possible actions:
+- create
+- update
+- create-update
+- delete
+- replace

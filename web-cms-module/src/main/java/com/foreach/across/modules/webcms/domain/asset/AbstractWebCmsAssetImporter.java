@@ -16,10 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
-import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
+import com.foreach.across.modules.webcms.data.AbstractWebCmsDataImporter;
+import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
-import com.foreach.across.modules.webcms.data.WebCmsDataImporter;
-import com.foreach.across.modules.webcms.data.WebCmsPropertyDataImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +31,11 @@ import org.springframework.util.Assert;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> implements WebCmsDataImporter
+public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends AbstractWebCmsDataImporter<T, T>
 {
 	protected final Logger LOG = LoggerFactory.getLogger( getClass() );
 
 	private WebCmsAssetRepository assetRepository;
-	private WebCmsDataConversionService conversionService;
-	private WebCmsPropertyDataImportService propertyDataImportService;
 
 	private final String dataKey;
 	private final Class<T> assetType;
@@ -56,54 +53,10 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 	}
 
 	@Override
-	public final void importData( WebCmsDataEntry data ) {
-		if ( data.isMapData() ) {
-			data.getMapData().forEach( ( key, properties ) -> importSingleAsset( new WebCmsDataEntry( key, data.getKey(), properties ) ) );
-		}
-		else {
-			data.getCollectionData().forEach( properties -> importSingleAsset( new WebCmsDataEntry( null, data.getKey(), properties ) ) );
-		}
-	}
+	protected final T retrieveExistingInstance( WebCmsDataEntry item ) {
+		String objectId = (String) item.getMapData().get( "objectId" );
+		String entryKey = item.getKey();
 
-	private void importSingleAsset( WebCmsDataEntry item ) {
-		T existing = retrieveExistingAsset( (String) item.getMapData().get( "objectId" ), item.getKey() );
-		T dto = createDto( existing );
-
-		if ( dto != null ) {
-			if ( propertyDataImportService.executeBeforeAssetSaved( item, item.getMapData(), dto ) ) {
-				LOG.trace( "WebCmsAsset {} with objectId {}: custom properties have been imported before asset saved", dataKey, dto.getObjectId() );
-			}
-
-			LOG.trace( "{} WebCmsAsset {} with objectId {}", dto.isNew() ? "Creating" : "Updating", dataKey, dto.getObjectId() );
-
-			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
-
-			if ( isModified || dto.isNew() ) {
-				T itemToSave = prepareForSaving( dto, item );
-
-				if ( itemToSave != null ) {
-					LOG.debug( "Saving WebCmsAsset {} with objectId {} (insert: {}) - {}",
-					           dataKey, itemToSave.getObjectId(), dto.isNew(), dto );
-					assetRepository.save( itemToSave );
-				}
-				else {
-					LOG.trace( "Skipping WebCmsAsset {} import for objectId {} - prepareForSaving returned null", dataKey, dto.getObjectId() );
-				}
-			}
-			else {
-				LOG.trace( "Skipping WebCmsAsset {} import for objectId {} - nothing modified", dataKey, dto.getObjectId() );
-			}
-
-			if ( propertyDataImportService.executeAfterAssetSaved( item, item.getMapData(), dto ) ) {
-				LOG.trace( "WebCmsAsset {} with objectId {}: custom properties have been imported after asset saved", dataKey, dto.getObjectId() );
-			}
-		}
-		else {
-			LOG.trace( "Skipping WebCmsAsset {} import for entry {} - no DTO was created", dataKey, item.getKey() );
-		}
-	}
-
-	private T retrieveExistingAsset( String objectId, String entryKey ) {
 		WebCmsAsset<?> existing = null;
 
 		if ( objectId != null ) {
@@ -111,6 +64,24 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 		}
 
 		return existing != null ? assetType.cast( existing ) : ( entryKey != null ? getExistingByEntryKey( entryKey ) : null );
+	}
+
+	@Override
+	protected void deleteInstance( T instance, WebCmsDataEntry data ) {
+		assetRepository.delete( instance );
+	}
+
+	@Override
+	protected void saveDto( T dto, WebCmsDataAction action, WebCmsDataEntry data ) {
+		T itemToSave = prepareForSaving( dto, data );
+
+		if ( itemToSave != null ) {
+			LOG.debug( "Saving WebCmsAsset {} with objectId {} (insert: {}) - {}", dataKey, itemToSave.getObjectId(), dto.isNew(), dto );
+			assetRepository.save( itemToSave );
+		}
+		else {
+			LOG.trace( "Skipping WebCmsAsset {} import for objectId {} - prepareForSaving returned null", dataKey, dto.getObjectId() );
+		}
 	}
 
 	/**
@@ -126,14 +97,6 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 	}
 
 	/**
-	 * Create a DTO of the item to update.  If no item is expected to update, return a template for a new item.
-	 *
-	 * @param itemToUpdate or null if a new item should be created
-	 * @return dto - not null
-	 */
-	protected abstract T createDto( T itemToUpdate );
-
-	/**
 	 * If no asset has been found by the unique asset key (or no asset key was defined), this method will be called with the entry key.
 	 *
 	 * @param entryKey for the asset
@@ -146,15 +109,5 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> impleme
 	@Autowired
 	void setAssetRepository( WebCmsAssetRepository assetRepository ) {
 		this.assetRepository = assetRepository;
-	}
-
-	@Autowired
-	void setConversionService( WebCmsDataConversionService conversionService ) {
-		this.conversionService = conversionService;
-	}
-
-	@Autowired
-	void setPropertyDataImportService( WebCmsPropertyDataImportService propertyDataImportService ) {
-		this.propertyDataImportService = propertyDataImportService;
 	}
 }

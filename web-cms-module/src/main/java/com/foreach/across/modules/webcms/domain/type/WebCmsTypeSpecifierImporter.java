@@ -16,13 +16,13 @@
 
 package com.foreach.across.modules.webcms.domain.type;
 
-import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
+import com.foreach.across.modules.webcms.data.AbstractWebCmsDataImporter;
+import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
-import com.foreach.across.modules.webcms.data.WebCmsDataImporter;
-import com.foreach.across.modules.webcms.data.WebCmsPropertyDataImportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,12 +32,10 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
+final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCmsTypeSpecifier<?>, WebCmsTypeSpecifier<?>>
 {
 	private final WebCmsTypeRegistry typeRegistry;
 	private final WebCmsTypeSpecifierRepository typeRepository;
-	private final WebCmsDataConversionService conversionService;
-	private final WebCmsPropertyDataImportService propertyDataImportService;
 
 	@Override
 	public boolean supports( WebCmsDataEntry data ) {
@@ -45,75 +43,11 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 	}
 
 	@Override
-	public final void importData( WebCmsDataEntry data ) {
-		data.getMapData().forEach( ( key, properties ) -> importSingleAsset( new WebCmsDataEntry( key, data.getKey(), properties ) ) );
-	}
+	protected WebCmsTypeSpecifier retrieveExistingInstance( WebCmsDataEntry data ) {
+		String typeGroup = StringUtils.defaultString( data.getParentKey(), (String) data.getMapData().get( "typeGroup" ) );
+		String typeKey = data.getKey();
+		String objectId = (String) data.getMapData().get( "objectId" );
 
-	private void importSingleAsset( WebCmsDataEntry item ) {
-		String typeGroup = item.getParentKey();
-		val implementationType = typeRegistry.retrieveTypeSpecifierClass( item.getParentKey() )
-		                                     .orElseThrow( () -> new IllegalArgumentException( "Unable to import type: " + item.getParentKey() ) );
-
-		WebCmsTypeSpecifier existing = retrieveExistingType( typeGroup, (String) item.getMapData().get( "objectId" ), item.getKey() );
-		WebCmsTypeSpecifier dto = createDto( existing, implementationType );
-
-		if ( dto != null ) {
-			LOG.trace( "{} WebCmsTypeSpecifier {} with objectId {}", dto.isNew() ? "Creating" : "Updating", typeGroup, dto.getObjectId() );
-
-			if ( propertyDataImportService.executeBeforeAssetSaved( item, item.getMapData(), dto ) ) {
-				LOG.trace( "WebCmsTypeSpecifier {} with objectId {}: custom properties have been imported before asset saved", typeGroup, dto.getObjectId() );
-			}
-
-			boolean isModified = conversionService.convertToPropertyValues( item.getMapData(), dto );
-
-			if ( isModified || dto.isNew() ) {
-				WebCmsTypeSpecifier itemToSave = prepareForSaving( dto, item );
-
-				if ( itemToSave != null ) {
-					LOG.debug( "Saving WebCmsTypeSpecifier {} with objectId {} (insert: {}) - {}",
-					           typeGroup, itemToSave.getObjectId(), dto.isNew(), dto );
-					typeRepository.save( itemToSave );
-				}
-				else {
-					LOG.trace( "Skipping WebCmsTypeSpecifier {} import for objectId {} - prepareForSaving returned null", typeGroup, dto.getObjectId() );
-				}
-			}
-			else {
-				LOG.trace( "Skipping WebCmsTypeSpecifier {} import for objectId {} - nothing modified", typeGroup, dto.getObjectId() );
-			}
-
-			if ( propertyDataImportService.executeAfterAssetSaved( item, item.getMapData(), dto ) ) {
-				LOG.trace( "WebCmsTypeSpecifier {} with objectId {}: custom properties have been imported after asset saved", typeGroup, dto.getObjectId() );
-			}
-		}
-		else {
-			LOG.trace( "Skipping WebCmsTypeSpecifier {} import for entry {} - no DTO was created", typeGroup, item.getKey() );
-		}
-	}
-
-	protected WebCmsTypeSpecifier prepareForSaving( WebCmsTypeSpecifier itemToBeSaved, WebCmsDataEntry data ) {
-		if ( itemToBeSaved.isNew() ) {
-			if ( itemToBeSaved.getTypeKey() == null ) {
-				itemToBeSaved.setTypeKey( data.getKey() );
-			}
-			if ( !data.getMapData().containsKey( "objectId" ) ) {
-				itemToBeSaved.setObjectId( itemToBeSaved.getTypeKey() );
-			}
-		}
-		return itemToBeSaved;
-	}
-
-	private WebCmsTypeSpecifier createDto( WebCmsTypeSpecifier<?> existing, Class<? extends WebCmsTypeSpecifier> implementationType ) {
-		if ( existing != null ) {
-			return existing.toDto();
-		}
-
-		val supplier = typeRegistry.retrieveSupplier( implementationType )
-		                           .orElseThrow( () -> new IllegalStateException( "No valid supplier was registered for: " + implementationType ) );
-		return supplier.get();
-	}
-
-	private WebCmsTypeSpecifier retrieveExistingType( String typeGroup, String objectId, String typeKey ) {
 		WebCmsTypeSpecifier existing = null;
 
 		if ( objectId != null ) {
@@ -121,5 +55,53 @@ final class WebCmsTypeSpecifierImporter implements WebCmsDataImporter
 		}
 
 		return existing != null ? existing : typeRepository.findOneByObjectTypeAndTypeKey( typeGroup, typeKey );
+	}
+
+	@Override
+	protected WebCmsTypeSpecifier createDto( WebCmsDataEntry data, WebCmsTypeSpecifier<?> existing, WebCmsDataAction action ) {
+		String typeGroup = StringUtils.defaultString( data.getParentKey(), (String) data.getMapData().get( "typeGroup" ) );
+		val implementationType = typeRegistry.retrieveTypeSpecifierClass( typeGroup )
+		                                     .orElseThrow( () -> new IllegalArgumentException( "Unable to import type: " + typeGroup ) );
+
+		if ( existing != null && action != WebCmsDataAction.REPLACE ) {
+			return existing.toDto();
+		}
+
+		val supplier = typeRegistry.retrieveSupplier( implementationType )
+		                           .orElseThrow( () -> new IllegalStateException( "No valid supplier was registered for: " + implementationType ) );
+
+		if ( existing != null ) {
+			// replace action
+			WebCmsTypeSpecifier<?> type = supplier.get();
+			type.setId( existing.getId() );
+			type.setCreatedBy( existing.getCreatedBy() );
+			type.setCreatedDate( existing.getCreatedDate() );
+
+			return type;
+		}
+
+		return supplier.get();
+	}
+
+	@Override
+	protected void deleteInstance( WebCmsTypeSpecifier instance, WebCmsDataEntry data ) {
+		typeRepository.delete( instance );
+	}
+
+	@Override
+	protected void saveDto( WebCmsTypeSpecifier dto, WebCmsDataAction action, WebCmsDataEntry data ) {
+		if ( dto.isNew() ) {
+			if ( dto.getTypeKey() == null ) {
+				dto.setTypeKey( data.getKey() );
+			}
+			if ( !data.getMapData().containsKey( "objectId" ) ) {
+				dto.setObjectId( dto.getTypeKey() );
+			}
+		}
+
+		LOG.debug( "Saving WebCmsTypeSpecifier {} with objectId {} (insert: {}) - {}",
+		           dto.getClass().getSimpleName(), dto.getObjectId(), dto.isNew(), dto );
+		typeRepository.save( dto );
+
 	}
 }

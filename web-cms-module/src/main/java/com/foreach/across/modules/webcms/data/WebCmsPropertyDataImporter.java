@@ -47,17 +47,20 @@ public interface WebCmsPropertyDataImporter<T>
 	 * @param parentData   entire data set of the asset being imported
 	 * @param propertyName property name to import
 	 * @param asset        asset being imported
+	 * @param action       that will be performed with the asset
 	 * @return true if this importer should be executed
 	 */
-	boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset );
+	boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action );
 
 	/**
 	 * Perform the actual import of the property data.
+	 * If this method returns {@code true} this means that data has been imported.
 	 *
 	 * @param parentData   entire data set of the asset being imported
 	 * @param propertyData specific property data set
 	 * @param asset        asset being imported
+	 * @param action       that will be performed with the asset
 	 * @return true if anything has been imported
 	 */
-	boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, T asset );
+	boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, T asset, WebCmsDataAction action );
 }
