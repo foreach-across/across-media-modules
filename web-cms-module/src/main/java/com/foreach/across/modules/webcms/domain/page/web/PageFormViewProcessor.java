@@ -162,11 +162,8 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 					Map<String, Object> qualifiers = new HashMap<>();
 					qualifiers.put( "checked", false );
 
-					group.getControl( HtmlViewElement.class )
-					     .setAttribute(
-							     "data-dependson",
-							     Collections.singletonMap( "[id='entity." + to + "']", qualifiers )
-					     );
+					HtmlViewElement element = group.getControl( HtmlViewElement.class );
+					element.setAttribute( "data-dependson", Collections.singletonMap( "[id='entity." + to + "']", qualifiers ) );
 				} );
 	}
 

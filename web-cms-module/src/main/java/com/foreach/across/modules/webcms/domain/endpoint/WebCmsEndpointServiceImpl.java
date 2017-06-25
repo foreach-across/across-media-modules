@@ -60,6 +60,12 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( asset );
 
 		if ( endpoint != null ) {
+
+			Optional<WebCmsUrl> currentUrl = endpoint.getPrimaryUrl();
+			if ( currentUrl.isPresent() && currentUrl.get().isPrimaryLocked() && currentUrl.get().isPrimary() ) {
+				return Optional.empty();
+			}
+
 			WebCmsUrl newPrimaryUrl = new WebCmsUrl();
 			newPrimaryUrl.setPath( primaryUrl );
 			newPrimaryUrl.setHttpStatus( HttpStatus.OK );
@@ -77,7 +83,7 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 			if ( existing == null || !existing.isPrimary() ) {
 				AtomicReference<WebCmsUrl> primaryUpdated = new AtomicReference<>();
 
-				endpoint.getPrimaryUrl().ifPresent(
+				currentUrl.ifPresent(
 						currentPrimaryUrl -> {
 							WebCmsUrl update = currentPrimaryUrl.toDto();
 							if ( canBeUpdated ) {

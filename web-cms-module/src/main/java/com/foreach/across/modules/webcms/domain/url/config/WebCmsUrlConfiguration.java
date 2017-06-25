@@ -82,6 +82,7 @@ class WebCmsUrlConfiguration implements EntityConfigurer
 						                  entityViewRequest.getPageContentStructure().setPageTitle( "URL path browser" );
 					                  }
 				                  } )
-		        );
+		        )
+		;
 	}
 }

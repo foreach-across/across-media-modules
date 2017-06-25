@@ -949,4 +949,12 @@
 		</createIndex>
 	</changeSet>
 
+	<changeSet id="201706210804" author="rcl">
+		<addColumn tableName="${table.url}">
+			<column name="is_primary_locked" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

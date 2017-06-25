@@ -27,6 +27,7 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
+import com.foreach.across.modules.webcms.domain.url.web.WebCmsAssetUrlFormProcessor;
 import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -85,8 +86,10 @@ public class WebCmsAssetUrlConfiguration
 	@Bean
 	EntityConfigurer webCmsAssetUrlAssociationConfigurer(
 			EntityFactory<WebCmsUrl> webCmsUrlEntityFactory,
-			AssociatedEntityQueryExecutor<WebCmsUrl> webCmsUrlExecutorForPage
+			AssociatedEntityQueryExecutor<WebCmsUrl> webCmsUrlExecutorForPage,
+			WebCmsAssetUrlFormProcessor processor
 	) {
+
 		return entities ->
 				entities.matching( config -> WebCmsAsset.class.isAssignableFrom( config.getEntityType() ) && assetTypes.contains( config.getEntityType() ) )
 				        .association( ab -> ab.name( "urls" )
@@ -95,8 +98,8 @@ public class WebCmsAssetUrlConfiguration
 				                              .associationType( EntityAssociation.Type.EMBEDDED )
 				                              .parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
 				                              .listView( fvb -> fvb.showProperties( ".", "~endpoint" ) )
-				                              .createFormView( fvb -> fvb.showProperties( ".", "~endpoint" ) )
-				                              .updateFormView( fvb -> fvb.showProperties( ".", "~endpoint" ) )
+				                              .createFormView( fvb -> fvb.showProperties( ".", "~endpoint" ).viewProcessor( processor ) )
+				                              .updateFormView( fvb -> fvb.showProperties( ".", "~endpoint" ).viewProcessor( processor ) )
 				                              .deleteFormView()
 				                              .attribute( EntityFactory.class, webCmsUrlEntityFactory )
 				                              .show()
@@ -104,6 +107,7 @@ public class WebCmsAssetUrlConfiguration
 				        .postProcessor(
 						        cfg -> {
 							        cfg.association( "urls" ).setAttribute( AssociatedEntityQueryExecutor.class, webCmsUrlExecutorForPage );
+
 						        }
 				        );
 	}

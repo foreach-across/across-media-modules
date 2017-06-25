@@ -37,8 +37,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
@@ -218,5 +217,15 @@ public class TestWebCmsEndpointServiceImpl
 		assertTrue( primaryUrl.isPrimary() );
 
 		assertEquals( primaryUrl, url.get() );
+	}
+
+	@Test
+	public void primaryUrlDoesntGetUpdatedWhenLocked() {
+		existingUrl.setPrimaryLocked( true );
+		Optional<WebCmsUrl> url = endpointService.updateOrCreatePrimaryUrlForAsset( "/my/page", page );
+		assertFalse( url.isPresent() );
+
+		verify( urlRepository, times( 0 ) ).save( any( WebCmsUrl.class ) );
+
 	}
 }

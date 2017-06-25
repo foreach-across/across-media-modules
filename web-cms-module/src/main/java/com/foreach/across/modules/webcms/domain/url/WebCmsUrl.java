@@ -93,4 +93,11 @@ public class WebCmsUrl extends SettableIdBasedEntity<WebCmsUrl>
 	@NotNull
 	@Column(name = "is_primary")
 	private boolean primary;
+
+	/**
+	 * This fields controls whether or not the primary url will be updated whenever updating the path segment.
+	 */
+	@NotNull
+	@Column(name = "is_primary_locked")
+	private boolean primaryLocked;
 }
