@@ -82,7 +82,7 @@ public enum WebCmsDataImportAction
 	 */
 	public static WebCmsDataImportAction fromAttributeValue( String attributeValue ) {
 		return Stream.of( values() )
-		             .filter( v -> v.name().equalsIgnoreCase( attributeValue ) )
+		             .filter( v -> v.attributeValue.equalsIgnoreCase( attributeValue ) )
 		             .findFirst()
 		             .orElse( null );
 	}

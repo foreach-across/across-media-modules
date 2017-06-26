@@ -1,0 +1,79 @@
+# Default page types
+
+# Some static pages
+assets:
+  page:
+    #
+    # Basic page creation reference data.
+    # - Tests ways of identifying a page
+    # - Impact of specifying path or canonicalPath
+    # - Publication settings
+    #
+    # See: ITPageReferenceData
+    - title: Always Created Page
+
+    - objectId: "wcm:asset:page:reference-simple"
+      title: Simple Page
+
+    - objectId: "wcm:asset:page:reference-simple-child"
+      title: Simple Child Page
+      parent: "wcm:asset:page:reference-simple"
+      published: true
+
+    - objectId: "wcm:asset:page:reference-fixed-path-segment"
+      title: Fixed Path Segment Page
+      parent: /simple-page
+      pathSegment: fixed
+      publicationDate: "2017-03-14"
+
+    - objectId: "wcm:asset:page:reference-fixed-canonical-path"
+      title: Fixed Canonical Path Page
+      parent: "wcm:asset:page:reference-simple"
+      canonicalPath: /fixed/canonical-path
+      published: true
+      publicationDate: "2016-05-11 16:30"
+
+    - title: Page to be deleted
+      canonicalPath: /extension/deleteme
+
+    - title: Page to be updated - title, canonicalPath and publication
+      canonicalPath: /extension/updateme1
+
+    - objectId: "wcm:asset:page:extension-updateme2"
+      canonicalPath: /extension/updateme2
+      title: Page to be updated - canonical path and title
+
+    #
+    # Pages with auto-created menu items attached.
+    #
+    # See: ITMenuReferenceData
+    - objectId: "wcm:asset:page:reference-faq"
+      title: Frequently Asked Questions
+      pathSegment: faq
+      wcm:menu-items:
+        - menu: sideNav
+        - menu: topNav
+          title: FAQ
+          path: /help/faq
+          sortIndex: 10
+
+    - objectId: "wcm:asset:page:reference-conditions"
+      title: General Conditions
+      wcm:menu-items:
+        sideNav:
+         group: true
+         url: /help/conditions
+         sortIndex: 4
+        topNav:
+         generated: false
+
+    #
+    # Pages that update components immediately after being created by the page type.
+    #
+    - objectId: "wcm:asset:page:reference-update-components"
+      title: Updated Components
+      #pageType: custom-template
+      wcm:components:
+        header:
+          componentType: html
+          content: Header content...

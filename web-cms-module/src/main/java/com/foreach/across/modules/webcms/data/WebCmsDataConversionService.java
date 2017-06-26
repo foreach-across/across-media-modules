@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.data;
 
+import com.foreach.across.core.convert.StringToDateConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.convert.TypeDescriptor;
@@ -36,6 +37,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service("webCmsDataConversionService")
 public class WebCmsDataConversionService extends DefaultConversionService
 {
+	public WebCmsDataConversionService( StringToDateConverter defaultDateConverter ) {
+		addConverter( defaultDateConverter );
+	}
+
 	/**
 	 * Convert raw data to property values on a DTO object.  Will convert the separate values
 	 * using the converters registered and will only modify the DTO for those properties where the current value
@@ -59,28 +64,29 @@ public class WebCmsDataConversionService extends DefaultConversionService
 				TypeDescriptor typeDescriptor = beanWrapper.getPropertyTypeDescriptor( propertyName );
 
 				if ( typeDescriptor == null ) {
-					throw new IllegalArgumentException( "Unknown property: " + propertyName );
-				}
-
-				if ( propertyValue instanceof Map && !typeDescriptor.isMap() ) {
-					Object target = beanWrapper.getPropertyValue( propertyName );
-
-					if ( target == null ) {
-						LOG.error( "Unable to convert property {} - target is null", propertyName );
-						throw new RuntimeException( "Unable to converted nested object - value is null for property " + propertyName );
-					}
-
-					if ( convertToPropertyValues( (Map<String, Object>) propertyValue, target ) ) {
-						modified.set( true );
-					}
+					LOG.warn( "Skipping unknown property: {}", propertyName );
 				}
 				else {
-					Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
-					Object currentValue = beanWrapper.getPropertyValue( propertyName );
+					if ( propertyValue instanceof Map && !typeDescriptor.isMap() ) {
+						Object target = beanWrapper.getPropertyValue( propertyName );
 
-					if ( !Objects.equals( currentValue, valueToSet ) ) {
-						modified.set( true );
-						beanWrapper.setPropertyValue( propertyName, valueToSet );
+						if ( target == null ) {
+							LOG.error( "Unable to convert property {} - target is null", propertyName );
+							throw new RuntimeException( "Unable to converted nested object - value is null for property " + propertyName );
+						}
+
+						if ( convertToPropertyValues( (Map<String, Object>) propertyValue, target ) ) {
+							modified.set( true );
+						}
+					}
+					else {
+						Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
+						Object currentValue = beanWrapper.getPropertyValue( propertyName );
+
+						if ( !Objects.equals( currentValue, valueToSet ) ) {
+							modified.set( true );
+							beanWrapper.setPropertyValue( propertyName, valueToSet );
+						}
 					}
 				}
 			}

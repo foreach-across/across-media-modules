@@ -18,13 +18,12 @@ package com.foreach.across.modules.webcms.domain.endpoint;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 
 /**
  * @author Sander Van Loock
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsEndpointRepository extends IdBasedEntityJpaRepository<WebCmsEndpoint>
+public interface WebCmsEndpointRepository extends IdBasedEntityJpaRepository<WebCmsEndpoint>, WebCmsEndpointRepositoryExtension
 {
 }

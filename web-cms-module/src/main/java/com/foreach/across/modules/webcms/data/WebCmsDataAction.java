@@ -33,3 +33,4 @@ public enum WebCmsDataAction
 	REPLACE,    /* Full replacement of an existing item */
 	DELETE
 }
+

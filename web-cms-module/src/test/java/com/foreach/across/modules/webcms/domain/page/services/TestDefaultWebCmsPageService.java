@@ -55,7 +55,7 @@ public class TestDefaultWebCmsPageService
 
 	@Test
 	public void findByCanonicalPath() {
-		when( pageRepository.findByCanonicalPath( "custom path" ) ).thenReturn( page );
+		when( pageRepository.findOneByCanonicalPath( "custom path" ) ).thenReturn( page );
 		assertEquals( Optional.of( page ), pageService.findByCanonicalPath( "custom path" ) );
 	}
 

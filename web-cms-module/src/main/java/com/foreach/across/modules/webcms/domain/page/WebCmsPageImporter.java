@@ -19,9 +19,12 @@ package com.foreach.across.modules.webcms.domain.page;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.AbstractWebCmsAssetImporter;
+import com.foreach.across.modules.webcms.domain.page.config.WebCmsPageConfiguration;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * @author Arne Vandamme
@@ -38,20 +41,56 @@ public final class WebCmsPageImporter extends AbstractWebCmsAssetImporter<WebCms
 
 	@Override
 	protected WebCmsPage createDto( WebCmsDataEntry data, WebCmsPage itemToUpdate, WebCmsDataAction action ) {
+		WebCmsPage dto;
+
 		if ( action == WebCmsDataAction.REPLACE ) {
-			return WebCmsPage.builder()
-			                 .id( itemToUpdate.getId() ).createdBy( itemToUpdate.getCreatedBy() ).createdDate( itemToUpdate.getCreatedDate() )
-			                 .build();
+			dto = createDefaultPageDto( data );
+			dto.setObjectId( itemToUpdate.getObjectId() );
+			dto.setId( itemToUpdate.getId() );
+			dto.setCreatedBy( itemToUpdate.getCreatedBy() );
+			dto.setCreatedDate( itemToUpdate.getCreatedDate() );
+		}
+		else if ( itemToUpdate != null ) {
+			dto = itemToUpdate.toDto();
+		}
+		else {
+			dto = createDefaultPageDto( data );
 		}
 
-		return itemToUpdate != null ? itemToUpdate.toDto() : new WebCmsPage();
+		Map<String, Object> properties = data.getMapData();
 
+		if ( properties.containsKey( WebCmsPageConfiguration.PATH_SEGMENT ) ) {
+			dto.setPathSegmentGenerated( false );
+		}
+		if ( properties.containsKey( WebCmsPageConfiguration.CANONICAL_PATH ) ) {
+			dto.setCanonicalPathGenerated( false );
+		}
+
+		return dto;
+	}
+
+	private WebCmsPage createDefaultPageDto( WebCmsDataEntry data ) {
+		WebCmsPage page = new WebCmsPage();
+
+		String canonicalPath = data.getKey();
+
+		if ( canonicalPath != null ) {
+			page.setCanonicalPath( canonicalPath );
+			page.setCanonicalPathGenerated( false );
+		}
+
+		return page;
 	}
 
 	@Override
 	protected WebCmsPage prepareForSaving( WebCmsPage itemToBeSaved, WebCmsDataEntry data ) {
 		pageService.prepareForSaving( itemToBeSaved );
 		return itemToBeSaved;
+	}
+
+	@Override
+	protected WebCmsPage getExistingByEntryKey( String entryKey ) {
+		return pageService.findByCanonicalPath( entryKey ).orElse( null );
 	}
 
 	@Autowired

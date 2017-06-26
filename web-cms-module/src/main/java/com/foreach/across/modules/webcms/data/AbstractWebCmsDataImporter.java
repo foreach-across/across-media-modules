@@ -60,7 +60,7 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	 * @param data to import
 	 */
 	final void importSingleEntry( WebCmsDataEntry data ) {
-		LOG.trace( "Importing data entry {}", data );
+		LOG.trace( "Importing data entry {} {}", data.getImportAction(), data );
 
 		T existing = retrieveExistingInstance( data );
 		WebCmsDataAction action = resolveAction( data.getImportAction(), existing, data );
@@ -182,12 +182,12 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	protected abstract void saveDto( U dto, WebCmsDataAction action, WebCmsDataEntry data );
 
 	@Autowired
-	void setConversionService( WebCmsDataConversionService conversionService ) {
+	public void setConversionService( WebCmsDataConversionService conversionService ) {
 		this.conversionService = conversionService;
 	}
 
 	@Autowired
-	void setPropertyDataImportService( WebCmsPropertyDataImportService propertyDataImportService ) {
+	public void setPropertyDataImportService( WebCmsPropertyDataImportService propertyDataImportService ) {
 		this.propertyDataImportService = propertyDataImportService;
 	}
 }

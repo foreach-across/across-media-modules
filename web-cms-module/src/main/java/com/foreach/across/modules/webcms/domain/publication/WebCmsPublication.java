@@ -95,17 +95,17 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 
 	@Builder(toBuilder = true)
 	protected WebCmsPublication( @Builder.ObtainVia(method = "getId") Long id,
-	                          @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
-	                          @Builder.ObtainVia(method = "getObjectId") String objectId,
-	                          @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
-	                          @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
-	                          @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
-	                          @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
-	                          @Builder.ObtainVia(method = "isPublished") boolean published,
-	                          @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
-	                          String name,
-	                          String publicationKey,
-	                          WebCmsPage articleTemplatePage ) {
+	                             @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
+	                             @Builder.ObtainVia(method = "getObjectId") String objectId,
+	                             @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
+	                             @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
+	                             @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
+	                             @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                             @Builder.ObtainVia(method = "isPublished") boolean published,
+	                             @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
+	                             String name,
+	                             String publicationKey,
+	                             WebCmsPage articleTemplatePage ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
 		this.name = name;
 		this.publicationKey = publicationKey;

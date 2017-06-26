@@ -27,5 +27,5 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 @Exposed
 public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>, QueryDslPredicateExecutor<WebCmsMenu>
 {
-	WebCmsMenu findByName( String name );
+	WebCmsMenu findOneByName( String name );
 }

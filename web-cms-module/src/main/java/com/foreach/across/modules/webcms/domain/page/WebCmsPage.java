@@ -111,7 +111,7 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	@Length(max = 255)
 	private String template;
 
-	@ManyToOne(optional = true)
+	@ManyToOne
 	@JoinColumn(name = "page_type_id")
 	private WebCmsPageType pageType;
 
@@ -152,6 +152,11 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	@Override
 	protected final String getObjectCollectionId() {
 		return COLLECTION_ID;
+	}
+
+	@Override
+	public final String getName() {
+		return getTitle();
 	}
 
 	@Override

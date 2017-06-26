@@ -14,30 +14,32 @@
  * limitations under the License.
  */
 
-package webapps.admin.application.installers;
+package modules.test.installers;
 
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import com.foreach.across.modules.webcms.installers.AbstractWebCmsDataInstaller;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 /**
+ * Imports a (realistic) set of reference data, only to be used for import verification.
+ *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
-@Installer(description = "Install some test data", phase = InstallerPhase.AfterModuleBootstrap, version = 11, runCondition = InstallerRunCondition.AlwaysRun)
-@RequiredArgsConstructor
-public class TestDataInstaller extends AbstractWebCmsDataInstaller
+@Installer(description = "Installs reference data", runCondition = InstallerRunCondition.AlwaysRun, phase = InstallerPhase.AfterModuleBootstrap)
+public class ReferenceDataInstaller extends AbstractWebCmsDataInstaller
 {
 	@Override
 	protected void registerResources( List<String> locations ) {
-		//	locations.add( "classpath:installers/test-data/components.yml" );
-		//	locations.add( "classpath:installers/test-data/articles.yml" );
-		locations.add( "classpath:installers/test-data/menu.yml" );
-		locations.add( "classpath:installers/test-data/pages.yml" );
+		// Apply base data import
+		locations.add( "classpath:installers/reference-data/base-menus.yml" );
+		locations.add( "classpath:installers/reference-data/base-pages.yml" );
 
+		// Apply extensions that modify previously imported base data
+		locations.add( "classpath:installers/reference-data/extension-menus.yml" );
+		locations.add( "classpath:installers/reference-data/extension-pages.yml" );
 	}
 }

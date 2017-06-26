@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.url;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointRepository;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,7 @@ class WebCmsUrlInterceptor extends EntityInterceptorAdapter<WebCmsUrl>
 {
 	private final WebCmsUrlRepository urlRepository;
 	private final WebCmsUrlCache urlCache;
+	private final WebCmsEndpointRepository endpointRepository;
 
 	@Override
 	public boolean handles( Class<?> entityClass ) {
@@ -61,5 +63,20 @@ class WebCmsUrlInterceptor extends EntityInterceptorAdapter<WebCmsUrl>
 	@Override
 	public void beforeDelete( WebCmsUrl entity ) {
 		urlCache.remove( entity.getPath() );
+	}
+
+	@Override
+	public void afterDelete( WebCmsUrl entity ) {
+		endpointRepository.refresh( entity.getEndpoint() );
+	}
+
+	@Override
+	public void afterCreate( WebCmsUrl entity ) {
+		endpointRepository.refresh( entity.getEndpoint() );
+	}
+
+	@Override
+	public void afterUpdate( WebCmsUrl entity ) {
+		endpointRepository.refresh( entity.getEndpoint() );
 	}
 }

@@ -38,7 +38,7 @@ class DefaultWebCmsPageService implements WebCmsPageService
 
 	@Override
 	public Optional<WebCmsPage> findByCanonicalPath( String canonicalPath ) {
-		return Optional.ofNullable( pageRepository.findByCanonicalPath( canonicalPath ) );
+		return Optional.ofNullable( pageRepository.findOneByCanonicalPath( canonicalPath ) );
 	}
 
 	@Override

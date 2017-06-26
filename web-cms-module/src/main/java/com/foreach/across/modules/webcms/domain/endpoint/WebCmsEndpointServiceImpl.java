@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -111,6 +112,7 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 		return Optional.empty();
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Optional<WebCmsUrl> getPrimaryUrlForAsset( WebCmsAsset asset ) {
 		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( asset );

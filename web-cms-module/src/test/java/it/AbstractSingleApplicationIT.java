@@ -27,6 +27,7 @@ import org.jsoup.nodes.Document;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -43,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration
+@TestPropertySource(properties = "acrossHibernate.createUnitOfWorkFactory=true")
 public abstract class AbstractSingleApplicationIT
 {
 	@Autowired

@@ -64,7 +64,7 @@ public class TestWebCmsPageValidator
 		InOrder sequence = inOrder( pageService, pageRepository, errors );
 		sequence.verify( pageService ).prepareForSaving( page );
 		sequence.verify( errors ).hasFieldErrors( "canonicalPath" );
-		sequence.verify( pageRepository, never() ).findByCanonicalPath( anyString() );
+		sequence.verify( pageRepository, never() ).findOneByCanonicalPath( anyString() );
 		verifyNoMoreInteractions( errors );
 	}
 
@@ -73,14 +73,14 @@ public class TestWebCmsPageValidator
 		WebCmsPage page = new WebCmsPage();
 		page.setCanonicalPath( "canonical path" );
 
-		when( pageRepository.findByCanonicalPath( "canonical path" ) ).thenReturn( null );
+		when( pageRepository.findOneByCanonicalPath( "canonical path" ) ).thenReturn( null );
 
 		validator.validate( page, errors );
 
 		InOrder sequence = inOrder( pageService, pageRepository, errors );
 		sequence.verify( pageService ).prepareForSaving( page );
 		sequence.verify( errors ).hasFieldErrors( "canonicalPath" );
-		sequence.verify( pageRepository ).findByCanonicalPath( "canonical path" );
+		sequence.verify( pageRepository ).findOneByCanonicalPath( "canonical path" );
 		verifyNoMoreInteractions( errors );
 	}
 
@@ -89,14 +89,14 @@ public class TestWebCmsPageValidator
 		WebCmsPage page = new WebCmsPage();
 		page.setCanonicalPath( "canonical path" );
 
-		when( pageRepository.findByCanonicalPath( "canonical path" ) ).thenReturn( page );
+		when( pageRepository.findOneByCanonicalPath( "canonical path" ) ).thenReturn( page );
 
 		validator.validate( page, errors );
 
 		InOrder sequence = inOrder( pageService, pageRepository, errors );
 		sequence.verify( pageService ).prepareForSaving( page );
 		sequence.verify( errors ).hasFieldErrors( "canonicalPath" );
-		sequence.verify( pageRepository ).findByCanonicalPath( "canonical path" );
+		sequence.verify( pageRepository ).findOneByCanonicalPath( "canonical path" );
 		verifyNoMoreInteractions( errors );
 	}
 
@@ -105,14 +105,14 @@ public class TestWebCmsPageValidator
 		WebCmsPage page = new WebCmsPage();
 		page.setCanonicalPath( "canonical path" );
 
-		when( pageRepository.findByCanonicalPath( "canonical path" ) ).thenReturn( mock( WebCmsPage.class ) );
+		when( pageRepository.findOneByCanonicalPath( "canonical path" ) ).thenReturn( mock( WebCmsPage.class ) );
 
 		validator.validate( page, errors );
 
 		InOrder sequence = inOrder( pageService, pageRepository, errors );
 		sequence.verify( pageService ).prepareForSaving( page );
 		sequence.verify( errors ).hasFieldErrors( "canonicalPath" );
-		sequence.verify( pageRepository ).findByCanonicalPath( "canonical path" );
+		sequence.verify( pageRepository ).findOneByCanonicalPath( "canonical path" );
 		sequence.verify( errors ).rejectValue( "canonicalPath", "alreadyExists" );
 		verifyNoMoreInteractions( errors );
 	}

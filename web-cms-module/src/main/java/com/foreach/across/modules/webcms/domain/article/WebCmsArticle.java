@@ -129,6 +129,11 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 	}
 
 	@Override
+	public final String getName() {
+		return getTitle();
+	}
+
+	@Override
 	public String toString() {
 		return "WebCmsArticle{" +
 				"objectId='" + getObjectId() + "\'," +

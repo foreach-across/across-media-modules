@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page.repositories;
-
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+package com.foreach.across.modules.webcms.data;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
-@Exposed
-public interface WebCmsPageRepository extends WebCmsObjectEntityRepository<WebCmsPage>
+public final class WebCmsDataImportException extends RuntimeException
 {
-	WebCmsPage findOneByCanonicalPath( String canonicalPath );
+	public WebCmsDataImportException( String message ) {
+		super( message );
+	}
+
+	public WebCmsDataImportException( Throwable cause ) {
+		super( cause );
+	}
+
+	public WebCmsDataImportException( String message, Throwable cause ) {
+		super( message, cause );
+	}
 }

@@ -1,0 +1,17 @@
+menus:
+  - name: sidenav
+    description: sidebar navigation
+    wcm:menu-items:
+      - title: test-1
+        group: true
+        url: /blabla
+        path: blabla
+      - title: test-2
+        group: true
+        url: /blabla2
+        path: blabla2
+        sortIndex: 1
+  - name: sidenav2
+    wcm:menu-items:
+      menu-item1:
+        title: jap

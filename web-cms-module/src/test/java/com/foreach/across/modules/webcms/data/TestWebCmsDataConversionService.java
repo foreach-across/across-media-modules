@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.data;
 
+import com.foreach.across.core.convert.StringToDateConverter;
 import lombok.Data;
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
  */
 public class TestWebCmsDataConversionService
 {
-	private WebCmsDataConversionService conversionService = new WebCmsDataConversionService();
+	private WebCmsDataConversionService conversionService = new WebCmsDataConversionService( new StringToDateConverter() );
 
 	@Test
 	public void simpleMap() {

@@ -16,9 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
-import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import lombok.Getter;
 import lombok.Setter;
@@ -82,14 +80,14 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	}
 
 	protected WebCmsAsset( Long id,
-	                    Long newEntityId,
-	                    String objectId,
-	                    String createdBy,
-	                    Date createdDate,
-	                    String lastModifiedBy,
-	                    Date lastModifiedDate,
-	                    boolean published,
-	                    Date publicationDate ) {
+	                       Long newEntityId,
+	                       String objectId,
+	                       String createdBy,
+	                       Date createdDate,
+	                       String lastModifiedBy,
+	                       Date lastModifiedDate,
+	                       boolean published,
+	                       Date publicationDate ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 		setPublished( published );
 		setPublicationDate( publicationDate );
@@ -104,6 +102,8 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	public void setId( Long id ) {
 		this.id = id;
 	}
+
+	public abstract String getName();
 
 	@Override
 	public String toString() {

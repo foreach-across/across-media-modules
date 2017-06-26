@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page.repositories;
+package com.foreach.across.modules.webcms.domain.endpoint;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
-@Exposed
-public interface WebCmsPageRepository extends WebCmsObjectEntityRepository<WebCmsPage>
+@SuppressWarnings("unused")
+class WebCmsEndpointRepositoryImpl implements WebCmsEndpointRepositoryExtension
 {
-	WebCmsPage findOneByCanonicalPath( String canonicalPath );
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	@Override
+	public void refresh( WebCmsEndpoint endpoint ) {
+		if ( entityManager.contains( endpoint ) ) {
+			entityManager.refresh( endpoint );
+		}
+	}
 }

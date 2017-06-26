@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page.repositories;
+package com.foreach.across.modules.webcms.domain.endpoint;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 
 /**
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.2
  */
-@Exposed
-public interface WebCmsPageRepository extends WebCmsObjectEntityRepository<WebCmsPage>
+public interface WebCmsEndpointRepositoryExtension
 {
-	WebCmsPage findOneByCanonicalPath( String canonicalPath );
+	/**
+	 * Force a refresh of the endpoint attached to the current session.
+	 * Call this method whenever a related url has been added.
+	 */
+	void refresh( WebCmsEndpoint endpoint );
 }

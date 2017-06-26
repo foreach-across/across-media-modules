@@ -20,10 +20,7 @@ import lombok.Data;
 import lombok.NonNull;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Represents a set of data to be imported.
@@ -75,8 +72,16 @@ public final class WebCmsDataEntry
 		this.key = key;
 		this.parent = parent;
 
+		if ( parent != null ) {
+			importAction = parent.importAction;
+		}
+
 		if ( data instanceof Map ) {
-			this.mapData = Collections.unmodifiableMap( (Map<String, Object>) data );
+			Map<String, Object> map = new HashMap<>( (Map<String, Object>) data );
+			importAction = Optional.ofNullable( WebCmsDataImportAction.fromAttributeValue( (String) map.remove( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) )
+			                       .orElse( importAction );
+
+			this.mapData = Collections.unmodifiableMap( map );
 			this.collectionData = null;
 		}
 		else if ( data instanceof Collection ) {
@@ -85,15 +90,6 @@ public final class WebCmsDataEntry
 		}
 		else {
 			throw new IllegalArgumentException( "Only Collection or Map data is supported." );
-		}
-
-		if ( parent != null ) {
-			importAction = parent.importAction;
-		}
-
-		if ( mapData != null && mapData.containsKey( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) {
-			importAction = Optional.ofNullable( WebCmsDataImportAction.fromAttributeValue( (String) mapData.get( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) )
-			                       .orElse( WebCmsDataImportAction.CREATE_OR_UPDATE );
 		}
 	}
 

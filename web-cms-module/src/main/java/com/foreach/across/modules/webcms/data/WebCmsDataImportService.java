@@ -17,7 +17,10 @@
 package com.foreach.across.modules.webcms.data;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
+import com.foreach.across.modules.hibernate.unitofwork.UnitOfWork;
+import com.foreach.across.modules.hibernate.unitofwork.UnitOfWorkFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +30,20 @@ import java.util.Map;
 
 /**
  * Core API for importing data represented as a map into known assets.
+ * <p/>
+ * It is strongly advised to set a {@link UnitOfWorkFactory} on the service for managing persistence sessions.
+ * If no {@link UnitOfWorkFactory} is configured, a global session might not be available in which case lazy loading will fail.
  *
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public final class WebCmsDataImportService
 {
+	private UnitOfWorkFactory unitOfWorkFactory;
+
 	private Collection<WebCmsDataImporter> importers = Collections.emptyList();
 
 	/**
@@ -54,6 +63,18 @@ public final class WebCmsDataImportService
 	 * @param data containing everything that should be imported
 	 */
 	public void importData( WebCmsDataEntry data ) {
+		if ( unitOfWorkFactory != null ) {
+			try (UnitOfWork ignore = unitOfWorkFactory.start()) {
+				performImport( data );
+			}
+		}
+		else {
+			LOG.warn( "No UnitOfWorkFactory has been configured - strongly advised to have a UnitOfWorkFactory bean for data importing outside a web request" );
+			performImport( data );
+		}
+	}
+
+	private void performImport( WebCmsDataEntry data ) {
 		importers.stream()
 		         .filter( i -> i.supports( data ) )
 		         .findFirst()
@@ -64,5 +85,10 @@ public final class WebCmsDataImportService
 	@Autowired
 	void setImporters( @RefreshableCollection(includeModuleInternals = true, incremental = true) Collection<WebCmsDataImporter> importers ) {
 		this.importers = importers;
+	}
+
+	@Autowired(required = false)
+	public void setUnitOfWorkFactory( UnitOfWorkFactory unitOfWorkFactory ) {
+		this.unitOfWorkFactory = unitOfWorkFactory;
 	}
 }

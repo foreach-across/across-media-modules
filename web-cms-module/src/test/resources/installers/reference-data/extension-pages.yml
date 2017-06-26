@@ -1,0 +1,37 @@
+#
+# Modifies, adds and deletes pages.
+# Page key represents the canonical path but is only used for creation and lookup by canonical path.
+# If an object id property is specified, that one will be used as the unique identifier instead,
+# and the value of the key will be ignored altogether.
+#
+assets:
+  page:
+    # Default action is update
+    wcm:action: update
+
+    # Page should be created with the canonical path
+    /extension/one:
+      wcm:action: create
+      title: Extension Page One
+
+    # Page should not be created as it is an update for a page that does not exist
+    /extension/two:
+      title: Extension Page Two (never created)
+
+    # Page should be deleted
+    /extension/deleteme:
+      wcm:action: delete
+
+    # Page should be updated with canonical path, title and publication settings
+    # Key should be used for looking up the page, but canonical path should then be changed to the attribute value.
+    /extension/updateme1:
+      canonicalPath: /extension/updated1
+      title: Extension Updated 1
+      published: true
+      publicationDate: "2015-11-15"
+
+    # Page should be updated with the new title.
+    # Specified object id should be used as the identifier and key should be ignored.
+    /extension/ignoreme2:
+      objectId: "wcm:asset:page:extension-updateme2"
+      title: Extension Updated 2

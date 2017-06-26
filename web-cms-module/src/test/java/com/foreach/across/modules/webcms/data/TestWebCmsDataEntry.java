@@ -80,6 +80,14 @@ public class TestWebCmsDataEntry
 	}
 
 	@Test
+	public void actionKeyShouldBeRemovedFromMapData() {
+		WebCmsDataEntry entry = new WebCmsDataEntry( "data", Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) );
+		assertEquals( WebCmsDataImportAction.DELETE, entry.getImportAction() );
+
+		assertEquals( Collections.emptyMap(), entry.getMapData() );
+	}
+
+	@Test
 	public void parentActionIsUsedIfNotSpecifiedInMapData() {
 		WebCmsDataEntry parent = new WebCmsDataEntry( "parent", Collections.emptyList() );
 		parent.setImportAction( WebCmsDataImportAction.REPLACE );

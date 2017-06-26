@@ -19,6 +19,9 @@ package com.foreach.across.modules.webcms.domain.asset;
 import com.foreach.across.modules.webcms.data.AbstractWebCmsDataImporter;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
+import com.foreach.across.modules.webcms.data.WebCmsDataImportException;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,10 +63,28 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends
 		WebCmsAsset<?> existing = null;
 
 		if ( objectId != null ) {
+			validateObjectId( objectId );
 			existing = assetRepository.findOneByObjectId( objectId );
 		}
 
 		return existing != null ? assetType.cast( existing ) : ( entryKey != null ? getExistingByEntryKey( entryKey ) : null );
+	}
+
+	/**
+	 * Should validate the object id for the asset type requested.
+	 * Will throw an exception if an object id is specified but it is not of valid form for the asset type.
+	 */
+	@SneakyThrows
+	protected void validateObjectId( String objectId ) {
+		T asset = assetType.newInstance();
+		asset.setObjectId( objectId );
+
+		if ( !StringUtils.equals( asset.getObjectId(), objectId ) ) {
+			LOG.error( "Invalid objectId specified: {} would be converted to {}, only fully qualified object ids are supported", objectId,
+			           asset.getObjectId() );
+			throw new WebCmsDataImportException(
+					"Invalid objectId: " + objectId + " - only fully qualified object ids are supported, value would be converted to " + asset.getObjectId() );
+		}
 	}
 
 	@Override
@@ -107,7 +128,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends
 	}
 
 	@Autowired
-	void setAssetRepository( WebCmsAssetRepository assetRepository ) {
+	public void setAssetRepository( WebCmsAssetRepository assetRepository ) {
 		this.assetRepository = assetRepository;
 	}
 }

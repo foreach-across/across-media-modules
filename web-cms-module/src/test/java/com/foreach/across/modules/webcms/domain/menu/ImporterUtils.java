@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page.repositories;
+package com.foreach.across.modules.webcms.domain.menu;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import org.yaml.snakeyaml.Yaml;
 
-/**
- * @author Arne Vandamme
- * @since 0.0.1
- */
-@Exposed
-public interface WebCmsPageRepository extends WebCmsObjectEntityRepository<WebCmsPage>
+import java.util.Map;
+
+public class ImporterUtils
 {
-	WebCmsPage findOneByCanonicalPath( String canonicalPath );
+	public static Map<String, Object> loadMappedDataFromString( String data ) {
+		Yaml yaml = new Yaml();
+		return (Map<String, Object>) yaml.load( data );
+	}
+
 }

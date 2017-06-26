@@ -1,11 +1,52 @@
-entries support a wcm:action key
-within a single YAML entry the wcm:action from the parent might be used as default
+== Importing data
 
-if no wcm:action is specified, the value is create-update
+One can import data by combining yml files with an installer.
 
-possible actions:
+=== WebCmsDataImportService
+Import data from `Map` structures directly from code.
+It is strongly advised to provide a `UnitOfWorkFactory` bean in your application.
+If one is present, a data import will execute as a single unit of work.
+
+NOTE: The default implementation requires either a `UnifOfWorkFactory` to be present or your import to run within a single transaction to enable lazy initialiation of all default entities.
+
+=== Creating the installer
+An installer for installing data in yml files should implement the `AbstractWebCmsDataInstaller`.
+
+=== Yaml structure
+The classes responsible for the imports will look at the following fields in the yml file:
+
+[cols="1, 3"]
+|===
+|wcm:action|Describes the <<importing-action, action>> that should be done on the item.
+|(fieldname)|When importing will set the property of the object being imported to the value specified in the yml file.
+If the field is not present in the file, the property will be set to the default value (if working with a new object)
+or the value will not be altered (if working with an existing object)
+|===
+
+[[importing-action]]
+=== Actions
+If the parent contains a wcm:action and the child doesn't, the child action is the same as the parent one.
+if no wcm:action is specified, the value is `create-update`.
+
 - create
 - update
 - create-update
 - delete
 - replace
+
+
+Importing page:
+Either objectId or canonicalPath is required to uniquely identify a page and to update it on subsequent imports.
+
+A page without either objectId or canonicalPath specified can be created, but be aware the a new page would always be created on every run of te import script.
+Only use this approach if you are sure the same YAML data will only be used once.
+
+Page key represents the canonical path but is only used for creation and lookup by canonical path.
+If an object id property is specified, that one will be used as the unique identifier instead, and the value of the key will be ignored altogether.
+
+Importing menu:
+Menu name is the unique key.
+Items collection: path is the unique key
+
+Importing menu items on assets: wcm:menu-items
+Menu name is the unique key (menu attribute).

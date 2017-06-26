@@ -55,6 +55,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class WebCmsPageConfiguration
 {
+	public static final String PATH_SEGMENT = "pathSegment";
 	public static final String CANONICAL_PATH = "canonicalPath";
 
 	@Autowired
