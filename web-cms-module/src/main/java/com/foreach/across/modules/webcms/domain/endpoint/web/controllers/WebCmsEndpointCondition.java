@@ -157,7 +157,7 @@ public class WebCmsEndpointCondition extends AbstractCustomRequestCondition<WebC
 	 *
 	 * @param other   The {@link WebCmsEndpointCondition} to compare with
 	 * @param request The current {@link HttpServletRequest}.  This is not considered for comparing
-	 * @return 1, 0 or 1 if the current {@link WebCmsEndpointCondition} is more specific, equally specific or less specific
+	 * @return -1, 0 or 1 if the current {@link WebCmsEndpointCondition} is more specific, equally specific or less specific
 	 * than the given condition
 	 */
 	@Override

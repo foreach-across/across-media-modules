@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.asset.web;
 
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
@@ -41,7 +40,7 @@ public class WebCmsAssetEndpointController
 	private final WebCmsComponentModelHierarchy componentModelHierarchy;
 	private final WebCmsComponentModelService componentModelService;
 
-	@WebCmsAssetMapping(value = WebCmsAsset.class, status = HttpStatus.OK)
+	@WebCmsAssetMapping
 	public void render( WebCmsUrl url, WebCmsAssetEndpoint endpoint, ModelMap model ) {
 		model.addAttribute( "asset", endpoint.getAsset() );
 
@@ -66,16 +65,18 @@ public class WebCmsAssetEndpointController
 	}
 
 
-	@WebCmsAssetMapping(value = WebCmsAsset.class, series = HttpStatus.Series.REDIRECTION)
+	@WebCmsAssetMapping(series = HttpStatus.Series.REDIRECTION)
 	public RedirectView redirect( WebCmsUrl url, WebCmsAssetEndpoint endpoint ) {
-		return endpoint.getPrimaryUrl().map( primary -> {
-			RedirectView result = new RedirectView( primary.getPath() );
-			result.setStatusCode( url.getHttpStatus() );
-			return result;
-		} ).orElseGet( () -> {
-			RedirectView result = new RedirectView( "/404" );
-			result.setStatusCode( HttpStatus.NOT_FOUND );
-			return result;
-		} );
+		return endpoint.getPrimaryUrl()
+		               .map( primary -> {
+			               RedirectView result = new RedirectView( primary.getPath() );
+			               result.setStatusCode( url.getHttpStatus() );
+			               return result;
+		               } )
+		               .orElseGet( () -> {
+			               RedirectView result = new RedirectView( "/404" );
+			               result.setStatusCode( HttpStatus.NOT_FOUND );
+			               return result;
+		               } );
 	}
 }

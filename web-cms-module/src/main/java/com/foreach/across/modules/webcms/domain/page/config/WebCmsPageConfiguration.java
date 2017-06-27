@@ -52,7 +52,6 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.0.1
  */
 @Configuration
-@RequiredArgsConstructor
 public class WebCmsPageConfiguration
 {
 	public static final String PATH_SEGMENT = "pathSegment";
@@ -66,7 +65,7 @@ public class WebCmsPageConfiguration
 	@ConditionalOnAdminUI
 	@Configuration
 	@RequiredArgsConstructor
-	static class AdminUi implements EntityConfigurer
+	static class PageAdminUi implements EntityConfigurer
 	{
 		private final PageFormViewProcessor pageFormViewProcessor;
 		private final MenuItemsViewElementBuilder menuItemsViewElementBuilder;

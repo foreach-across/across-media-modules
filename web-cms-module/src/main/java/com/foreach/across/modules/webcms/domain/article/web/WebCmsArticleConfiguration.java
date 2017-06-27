@@ -48,56 +48,60 @@ import java.util.List;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@ConditionalOnAdminUI
 @Configuration
-@RequiredArgsConstructor
-public class WebCmsArticleConfiguration implements EntityConfigurer
+public class WebCmsArticleConfiguration
 {
-	private final WebCmsComponentsFormProcessor componentsFormProcessor;
-	private final ArticleCreateFormProcessor createFormProcessor;
-	private final ArticleUpdateFormProcessor updateFormProcessor;
-	private final ArticleTypeForPublicationIterableBuilder articleTypeForPublicationIterableBuilder;
-
 	@Autowired
 	void enableUrls( WebCmsAssetUrlConfiguration urlConfiguration ) {
 		urlConfiguration.enable( WebCmsArticle.class );
 	}
 
-	@Override
-	public void configure( EntitiesConfigurationBuilder entities ) {
-		componentsFormProcessor.setComponentNames( "content" );
+	@ConditionalOnAdminUI
+	@Configuration
+	@RequiredArgsConstructor
+	static class ArticleAdminUi implements EntityConfigurer
+	{
+		private final WebCmsComponentsFormProcessor componentsFormProcessor;
+		private final ArticleCreateFormProcessor createFormProcessor;
+		private final ArticleUpdateFormProcessor updateFormProcessor;
+		private final ArticleTypeForPublicationIterableBuilder articleTypeForPublicationIterableBuilder;
 
-		entities.withType( WebCmsArticle.class )
-		        .properties( props -> props
-				        .property( "objectId" ).hidden( true ).and()
-				        .property( "body" ).hidden( true ).and()
-				        .property( "image" ).hidden( true ).and()
-				        .property( "title" ).viewElementType( ViewElementMode.CONTROL, TextareaFormElement.ELEMENT_TYPE ).and()
-				        .property( "subTitle" ).viewElementType( ViewElementMode.CONTROL, TextareaFormElement.ELEMENT_TYPE ).and()
-				        .property( "description" ).viewElementType( ViewElementMode.CONTROL, TextareaFormElement.ELEMENT_TYPE ).and()
-				        .property( "articleType" ).attribute( OptionIterableBuilder.class, articleTypeForPublicationIterableBuilder ).and()
-				        .property( "publication" ).attribute( EntityAttributes.OPTIONS_ENTITY_QUERY, "published = TRUE" )
-		        )
-		        .listView(
-				        lvb -> lvb.showProperties( "publication", "title", "publicationDate", "lastModified" )
-				                  .defaultSort( new Sort( Sort.Direction.DESC, "lastModifiedDate" ) )
-				                  .entityQueryPredicate( "publication.published = true" )
-				                  .viewProcessor( new WebCmsArticleListViewProcessor() )
-		        )
-		        .createFormView(
-				        fvb -> fvb.showProperties( ".", "~subTitle", "~publish-settings" )
-				                  .viewProcessor( createFormProcessor )
-		        )
-		        .updateFormView( fvb -> fvb
-				        .properties( props -> props
-						        .property( "publication" ).writable( false ).and()
-						        .property( "articleType" ).writable( false )
-				        )
-				        .showProperties( ".", "publication", "articleType" )
-				        .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 9, 3 ) ) )
-				        .viewProcessor( updateFormProcessor )
-				        .viewProcessor( componentsFormProcessor )
-		        );
+		@Override
+		public void configure( EntitiesConfigurationBuilder entities ) {
+			componentsFormProcessor.setComponentNames( "content" );
+
+			entities.withType( WebCmsArticle.class )
+			        .properties( props -> props
+					        .property( "objectId" ).hidden( true ).and()
+					        .property( "body" ).hidden( true ).and()
+					        .property( "image" ).hidden( true ).and()
+					        .property( "title" ).viewElementType( ViewElementMode.CONTROL, TextareaFormElement.ELEMENT_TYPE ).and()
+					        .property( "subTitle" ).viewElementType( ViewElementMode.CONTROL, TextareaFormElement.ELEMENT_TYPE ).and()
+					        .property( "description" ).viewElementType( ViewElementMode.CONTROL, TextareaFormElement.ELEMENT_TYPE ).and()
+					        .property( "articleType" ).attribute( OptionIterableBuilder.class, articleTypeForPublicationIterableBuilder ).and()
+					        .property( "publication" ).attribute( EntityAttributes.OPTIONS_ENTITY_QUERY, "published = TRUE" )
+			        )
+			        .listView(
+					        lvb -> lvb.showProperties( "publication", "title", "publicationDate", "lastModified" )
+					                  .defaultSort( new Sort( Sort.Direction.DESC, "lastModifiedDate" ) )
+					                  .entityQueryPredicate( "publication.published = true" )
+					                  .viewProcessor( new WebCmsArticleListViewProcessor() )
+			        )
+			        .createFormView(
+					        fvb -> fvb.showProperties( ".", "~subTitle", "~publish-settings" )
+					                  .viewProcessor( createFormProcessor )
+			        )
+			        .updateFormView( fvb -> fvb
+					        .properties( props -> props
+							        .property( "publication" ).writable( false ).and()
+							        .property( "articleType" ).writable( false )
+					        )
+					        .showProperties( ".", "publication", "articleType" )
+					        .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 9, 3 ) ) )
+					        .viewProcessor( updateFormProcessor )
+					        .viewProcessor( componentsFormProcessor )
+			        );
+		}
 	}
 
 	/**

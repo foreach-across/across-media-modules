@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.endpoint.web.controllers;
+package com.foreach.across.modules.webcms.domain.redirect.web;
 
+import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointMapping;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.springframework.stereotype.Controller;

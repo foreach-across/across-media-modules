@@ -1,0 +1,37 @@
+#
+# Contains the assets used by mapping test controllers.
+# NOTE: tests currently do not use URL status as urls can't be imported
+#
+# See ITWebCmsAssetMapping
+assets:
+  page:
+    #
+    # Pages used with @WebCmsAssetMapping() rules
+    #
+    - objectId: "wcm:asset:page:mappings-one"
+      title: "Mappings: Page One"
+      canonicalPath: /mappings/page/one
+      published: true
+    - objectId: "wcm:asset:page:mappings-two"
+      title: "Mappings: Page Two"
+      canonicalPath: /mappings/page/two
+      published: true
+    - objectId: "wcm:asset:page:mappings-three"
+      title: "Mappings: Page Three"
+      canonicalPath: /mappings/page/three
+      published: true
+
+  article:
+    #
+    # Articles used with @WebCmsAssetMapping() rules
+    #
+    - title: "Mappings: Article One"
+      objectId: "wcm:asset:article:mappings-article-one"
+      articleType: news
+      publication: "wcm:asset:publication:news"
+      published: true
+    - title: "Mappings: Article Two"
+      objectId: "wcm:asset:article:mappings-article-two"
+      articleType: news
+      publication: "wcm:asset:publication:news"
+      published: true
