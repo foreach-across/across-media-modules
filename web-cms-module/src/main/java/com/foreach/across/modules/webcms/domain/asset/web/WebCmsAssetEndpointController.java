@@ -20,7 +20,6 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelSet;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.web.WebCmsPageMapping;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +51,7 @@ public class WebCmsAssetEndpointController
 		model.addAttribute( "components", componentModelSet );*/
 	}
 
-	@WebCmsPageMapping(value = WebCmsPage.class, status = HttpStatus.OK, pageTypes = "wcm:types:page:default")
+	@WebCmsPageMapping(status = HttpStatus.OK, canonicalPath = "/auto-create-components")
 	public void renderPageDefault( WebCmsUrl url, WebCmsAssetEndpoint endpoint, ModelMap model ) {
 		model.addAttribute( "asset", endpoint.getAsset() );
 

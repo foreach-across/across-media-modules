@@ -21,6 +21,7 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsEndpointConditionCombination;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,6 @@ public class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPa
 	private final ConfigurableWebCmsEndpointContext context;
 	private final WebCmsEndpointContextResolver resolver;
 
-	private Class<?> assetType;
 	private String[] canonicalPath;
 	private String[] pageType;
 
@@ -61,12 +61,12 @@ public class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPa
 		WebCmsPageMapping endpointMapping = AnnotatedElementUtils.findMergedAnnotation( annotatedElement, WebCmsPageMapping.class );
 
 		canonicalPath = endpointMapping.canonicalPath();
-		pageType = endpointMapping.pageTypes();
+		pageType = endpointMapping.pageType();
 	}
 
 	@Override
 	protected Collection<?> getContent() {
-		return Lists.asList( assetType, canonicalPath, pageType );
+		return Lists.asList( canonicalPath, pageType );
 	}
 
 	@Override
@@ -119,9 +119,10 @@ public class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPa
 		if ( !context.isResolved() ) {
 			resolver.resolve( context, request );
 		}
-		if ( context.isOfType( WebCmsAssetEndpoint.class ) && assetType.isInstance( context.getEndpoint( WebCmsAssetEndpoint.class ).getAsset() ) ) {
+		if ( context.isOfType( WebCmsAssetEndpoint.class ) && WebCmsPage.class.isInstance( context.getEndpoint( WebCmsAssetEndpoint.class ).getAsset() ) ) {
 			WebCmsPageCondition result = new WebCmsPageCondition( context, resolver );
-			result.assetType = this.assetType;
+			result.canonicalPath = this.canonicalPath;
+			result.pageType = this.pageType;
 			LOG.trace( "Matching condition is {}", result );
 			return result;
 		}
@@ -130,8 +131,11 @@ public class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPa
 
 	@Override
 	public int compareTo( WebCmsPageCondition other, HttpServletRequest request ) {
-		if ( assetType != null && other.assetType != null && !assetType.equals( other.assetType ) ) {
-			return assetType.isAssignableFrom( other.assetType ) ? 1 : -1;
+		if ( pageType != null && other.pageType != null && pageType.length != other.pageType.length ) {
+			return pageType.length > other.pageType.length ? 1 : -1;
+		}
+		if ( canonicalPath != null && other.canonicalPath != null && canonicalPath.length != other.canonicalPath.length ) {
+			return canonicalPath.length > other.canonicalPath.length ? 1 : -1;
 		}
 		return 0;
 	}

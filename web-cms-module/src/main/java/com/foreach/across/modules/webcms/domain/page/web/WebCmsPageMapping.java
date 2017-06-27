@@ -17,36 +17,29 @@
 package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
-import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetMapping;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import org.springframework.http.HttpStatus;
 
 import java.lang.annotation.*;
 
 /**
- * Mapping for a {@link WebCmsAsset} endpoint.
+ * Mapping for a {@link WebCmsPage} endpoint.
  *
- * @author Arne Vandamme
- * @since 0.0.1
+ * @author Raf Ceuls
+ * @since 0.0.2
  */
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@WebCmsAssetMapping(value = WebCmsPage.class)
+//@WebCmsAssetMapping(value = WebCmsPage.class) I think this should be here, however the comparison doesn't work when it is.
 @CustomRequestMapping(WebCmsPageCondition.class)
 public @interface WebCmsPageMapping
 {
-	/**
-	 * Asset type.
-	 */
-	Class<?> value();
-
 	HttpStatus[] status() default {};/* default HttpStatus.OK*/
 
 	HttpStatus.Series[] series() default HttpStatus.Series.SUCCESSFUL;
 
-	String[] pageTypes() default {};
+	String[] pageType() default {};
 
 	String[] canonicalPath() default {};
 }
