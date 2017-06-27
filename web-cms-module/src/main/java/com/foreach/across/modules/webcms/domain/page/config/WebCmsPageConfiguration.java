@@ -101,6 +101,11 @@ public class WebCmsPageConfiguration
 					                  .entityQueryFilter( true )
 					                  .viewProcessor( pageListViewProcessor() )
 			        )
+			        .updateFormView( fvb -> fvb
+					        .properties( props -> props
+							        .property( "pageType" )
+							        .readable( true )
+							        .writable( false ) ) )
 			        .createOrUpdateFormView( fvb -> fvb
 					        .properties( props -> props
 							        .property( "url-settings" )

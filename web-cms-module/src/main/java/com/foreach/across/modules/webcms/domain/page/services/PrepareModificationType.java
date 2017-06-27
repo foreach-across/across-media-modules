@@ -29,5 +29,6 @@ import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 public enum PrepareModificationType implements ModificationType
 {
 	PATH_SEGMENT_GENERATED,
-	CANONICAL_PATH_GENERATED
+	CANONICAL_PATH_GENERATED,
+	PAGE_TYPE_ASSIGNED
 }

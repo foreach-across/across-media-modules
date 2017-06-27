@@ -58,6 +58,10 @@ public class WebCmsAssetListViewProcessor extends EntityViewProcessorAdapter
 			          else {
 				          row.setStyle( Style.INFO );
 			          }
+
+			          if ( asset.getAssetType() != null && !asset.getAssetType().isPublishable() ) {
+				          row.setStyle( Style.INFO );
+			          }
 		          } );
 	}
 

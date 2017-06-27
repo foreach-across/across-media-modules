@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.article;
 
-import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
+import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
 import lombok.*;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -39,7 +39,7 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WebCmsArticleType extends WebCmsTypeSpecifier<WebCmsArticleType>
+public class WebCmsArticleType extends WebCmsAssetType<WebCmsArticleType>
 {
 	/**
 	 * Object type name (discriminator value).

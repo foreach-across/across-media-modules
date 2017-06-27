@@ -23,4 +23,6 @@ import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
 public interface WebCmsPageTypeRepository extends WebCmsObjectEntityRepository<WebCmsPageType>
 {
 	WebCmsPageType findOneByTypeKey( String typeKey );
+
+	WebCmsPageType findOneByTypeKeyOrObjectId( String typeKey, String objectId );
 }

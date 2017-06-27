@@ -20,6 +20,7 @@ import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageTypeRepository;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
@@ -59,6 +60,9 @@ public class ITEndpointLogic
 	@Autowired
 	private WebCmsPageRepository pageRepository;
 
+	@Autowired
+	private WebCmsPageTypeRepository pageTypeRepository;
+
 	private WebCmsPage page;
 	private WebCmsAssetEndpoint endpoint;
 
@@ -69,6 +73,7 @@ public class ITEndpointLogic
 		                 .pathSegment( "about" )
 		                 .canonicalPath( "/a" )
 		                 .title( "About page" )
+		                 .pageType( pageTypeRepository.findOneByTypeKey( "default" ) )
 		                 .published( true )
 		                 .build();
 		pageRepository.save( page );

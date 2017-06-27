@@ -87,3 +87,13 @@ types:
       wcm:types:
         - typeSpecifier: wcm:type:article:news
           linkType: article
+
+  # Default page types
+  page:
+    default:
+      name: Default
+    template:
+      name: Template
+      attributes:
+        hasEndpoint: false
+        isPublishable: false

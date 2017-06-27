@@ -160,7 +160,8 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 			return endpoint.getPrimaryUrl()
 			               .map( url ->
 					                     UriComponentsBuilder.fromUriString( url.getPath() )
-					                                         .queryParam( "wcmPreview", DigestUtils.md5DigestAsHex( endpoint.getId().toString().getBytes() ) )
+					                                         .queryParam( "wcmPreview",
+					                                                      DigestUtils.md5DigestAsHex( endpoint.getId().toString().getBytes() ) )
 					                                         .toUriString()
 			               );
 		}

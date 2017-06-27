@@ -5,10 +5,12 @@ assets:
       title: Blog detail template
       canonicalPath: /blog/*
       canonicalPathGenerated: false
+      pageType: template
     - objectId: "wcm:asset:page:news-detail"
       title: News detail template
       canonicalPath: /news/*
       canonicalPathGenerated: false
+      pageType: template
 
   # Default publications: News and Blogs
   publication:

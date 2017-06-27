@@ -10,6 +10,7 @@ assets:
       pathSegmentGenerated: false
       pathSegment: custom-page
       published: true
+      pageType: default
 
     #
     # Page with default template but no content
@@ -19,6 +20,7 @@ assets:
       pathSegmentGenerated: false
       pathSegment: default-template-no-content
       published: true
+      pageType: default
 
     #
     # Page rendering the default template - which renders the "content" component
@@ -28,6 +30,7 @@ assets:
       pathSegmentGenerated: false
       pathSegment: default-template-with-content
       published: true
+      pageType: default
       wcm:components:
         content:
           componentType: container
@@ -45,6 +48,7 @@ assets:
       pathSegmentGenerated: false
       pathSegment: render-components
       published: true
+      pageType: default
       wcm:components:
         custom:
           componentType: plain-text
@@ -62,6 +66,7 @@ assets:
       pathSegmentGenerated: false
       pathSegment: render-placeholders
       published: true
+      pageType: default
       wcm:components:
         with-placeholders:
           componentType: container
@@ -89,6 +94,7 @@ assets:
       pathSegmentGenerated: false
       pathSegment: auto-create-creation-scope
       published: true
+      pageType: default
 
     #
     # Page with a custom template for automatically creating complex markup components upon rendering.
@@ -100,6 +106,7 @@ assets:
       pathSegmentGenerated: false
       pathSegment: auto-create-complex-markup-components
       published: true
+      pageType: default
 
     #
     # Page with a custom template for automatically creating complex container components upon rendering.
@@ -111,3 +118,4 @@ assets:
       pathSegmentGenerated: false
       pathSegment: auto-create-complex-container-components
       published: true
+      pageType: default

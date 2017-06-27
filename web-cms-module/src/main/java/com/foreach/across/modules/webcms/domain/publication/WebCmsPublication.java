@@ -121,4 +121,9 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	protected final String getObjectCollectionId() {
 		return COLLECTION_ID;
 	}
+
+	@Override
+	public WebCmsPublicationType getAssetType() {
+		return publicationType;
+	}
 }

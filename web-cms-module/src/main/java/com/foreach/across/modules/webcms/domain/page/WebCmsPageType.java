@@ -1,12 +1,13 @@
 package com.foreach.across.modules.webcms.domain.page;
 
-import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
+import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
 import lombok.*;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WebCmsPageType extends WebCmsTypeSpecifier<WebCmsPageType>
+public class WebCmsPageType extends WebCmsAssetType<WebCmsPageType>
 {
 	/**
 	 * Object type name (discriminator value).
@@ -58,5 +59,12 @@ public class WebCmsPageType extends WebCmsTypeSpecifier<WebCmsPageType>
 	protected final String getObjectCollectionId() {
 		return COLLECTION_ID;
 	}
-}
 
+	/**
+	 * @return a string with the template name. Default is null.
+	 */
+	@Transient
+	public String getTemplate() {
+		return getAttribute( "template", null );
+	}
+}

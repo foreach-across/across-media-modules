@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.component.WebCmsContentMarkerService;
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
@@ -30,6 +31,7 @@ import java.util.Map;
 
 /**
  * Default implementation of {@link WebCmsDefaultComponentsService}.
+ *
  * @author Raf Ceuls
  * @since 0.0.2
  */
@@ -49,14 +51,27 @@ final class DefaultComponentsService implements WebCmsDefaultComponentsService
 	 * Any marker values specified in it's respective parameter are used to update the components as they occur in any
 	 * {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponent} that is encountered.
 	 *
+	 * @param asset        The asset that will receive the generated data.
+	 * @param markerValues Any marker values, specified as a map of the format ('@@marker@@', 'replace value')
+	 */
+	@Override
+	public void createDefaultComponents( WebCmsAsset<?> asset,
+	                                     Map<String, String> markerValues ) {
+		this.createDefaultComponents( asset, asset.getAssetType(), markerValues );
+	}
+
+	/**
+	 * Accepts a single {@link WebCmsObject}. If no {@link WebCmsTypeSpecifier} is specified, nothing happens. Otherwise
+	 * retrieves the content template from said {@link WebCmsTypeSpecifier} and injects the values into the relevant parts of the {@link WebCmsObject}.
+	 * Any marker values specified in it's respective parameter are used to update the components as they occur in any
+	 * {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponent} that is encountered.
+	 *
 	 * @param asset         The asset that will receive the generated data.
-	 * @param typeSpecifier The type of the asset.
+	 * @param typeSpecifier The type of the asset
 	 * @param markerValues  Any marker values, specified as a map of the format ('@@marker@@', 'replace value')
 	 */
 	@Override
-	public void createDefaultComponents( WebCmsObject asset,
-	                                     WebCmsTypeSpecifier<?> typeSpecifier,
-	                                     Map<String, String> markerValues ) {
+	public void createDefaultComponents( WebCmsObject asset, WebCmsTypeSpecifier<?> typeSpecifier, Map<String, String> markerValues ) {
 		if ( typeSpecifier != null ) {
 			WebCmsComponentModel template = retrieveContentTemplate( typeSpecifier );
 

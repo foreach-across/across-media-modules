@@ -17,7 +17,10 @@
 package com.foreach.across.modules.webcms.domain.page.services;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageTypeRepository;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.page.web.PageTypeProperties;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import org.junit.Test;
@@ -48,6 +51,12 @@ public class TestDefaultWebCmsPageService
 	private PagePropertyGenerator pagePreparator;
 
 	@Mock
+	private PageTypeProperties pageTypeProperties;
+
+	@Mock
+	private WebCmsPageTypeRepository webCmsPageTypeRepository;
+
+	@Mock
 	private WebCmsPage page;
 
 	@InjectMocks
@@ -63,6 +72,9 @@ public class TestDefaultWebCmsPageService
 	public void prepareForSavingDispatchesToPreparator() {
 		Map<ModificationType, ModificationReport<PrepareModificationType,Object>> modifications = Collections.emptyMap();
 		when( pagePreparator.prepareForSaving( page ) ).thenReturn( modifications );
+		when( pageTypeProperties.getDefaultPageType() ).thenReturn( "xyz" );
+		when( webCmsPageTypeRepository.findOneByObjectId( "xyz" ) ).thenReturn( WebCmsPageType.builder().build() );
+
 		assertSame( modifications, pageService.prepareForSaving( page ) );
 	}
 }
