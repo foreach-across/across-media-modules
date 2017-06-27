@@ -17,24 +17,30 @@
 package com.foreach.across.modules.webcms.domain.page.services;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.web.PageTypeProperties;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static com.foreach.across.modules.webcms.domain.page.services.PrepareModificationType.CANONICAL_PATH_GENERATED;
-import static com.foreach.across.modules.webcms.domain.page.services.PrepareModificationType.PATH_SEGMENT_GENERATED;
+import static com.foreach.across.modules.webcms.domain.page.services.PrepareModificationType.*;
 import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@RunWith(MockitoJUnitRunner.class)
 public class TestPagePropertyGenerator
 {
+	@Mock
+	private PageTypeProperties properties;
 	private WebCmsPage page;
 
 	private Map<ModificationType, ModificationReport<PrepareModificationType, Object>> modifications;
@@ -134,15 +140,16 @@ public class TestPagePropertyGenerator
 		page.setTitle( "my title" );
 		prepare();
 
-		assertEquals( 2, modifications.size() );
+		assertEquals( 3, modifications.size() );
 		assertTrue( modifications.containsKey( PATH_SEGMENT_GENERATED ) );
 		assertTrue( modifications.containsKey( CANONICAL_PATH_GENERATED ) );
+		assertTrue( modifications.containsKey( PAGE_TYPE_ASSIGNED ) );
 
 		assertEquals( "my-title", page.getPathSegment() );
 		assertEquals( "/my-title", page.getCanonicalPath() );
 	}
 
 	private void prepare() {
-		modifications = new PagePropertyGenerator().prepareForSaving( page );
+		modifications = new PagePropertyGenerator( properties ).prepareForSaving( page );
 	}
 }

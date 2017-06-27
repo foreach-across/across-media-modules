@@ -17,10 +17,12 @@
 package com.foreach.across.modules.webcms.domain.page.services;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.web.PageTypeProperties;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationStatus;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -28,8 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.foreach.across.modules.webcms.domain.page.services.PrepareModificationType.CANONICAL_PATH_GENERATED;
-import static com.foreach.across.modules.webcms.domain.page.services.PrepareModificationType.PATH_SEGMENT_GENERATED;
+import static com.foreach.across.modules.webcms.domain.page.services.PrepareModificationType.*;
 
 /**
  * Takes care of preparing {@link WebCmsPage} instances.  Generates all properties that need generating
@@ -39,13 +40,26 @@ import static com.foreach.across.modules.webcms.domain.page.services.PrepareModi
  * @since 0.0.1
  */
 @Component
+@RequiredArgsConstructor
 class PagePropertyGenerator
 {
+	private final PageTypeProperties pageTypeProperties;
+
 	Map<ModificationType, ModificationReport<PrepareModificationType, Object>> prepareForSaving( WebCmsPage page ) {
 		val modifications = new HashMap<ModificationType, ModificationReport<PrepareModificationType, Object>>();
 		generatePathSegment( modifications, page );
 		generateCanonicalPath( modifications, page );
+		assignDefaultType( modifications, page );
 		return modifications;
+	}
+
+	private void assignDefaultType( HashMap<ModificationType, ModificationReport<PrepareModificationType, Object>> modifications, WebCmsPage page ) {
+		if ( page.getPageType() == null ) {
+			page.setPageType( pageTypeProperties.getDefaultType() );
+			modifications.put(
+					PAGE_TYPE_ASSIGNED,
+					new ModificationReport<>( PAGE_TYPE_ASSIGNED, ModificationStatus.SUCCESSFUL, null, page.getPageType() ) );
+		}
 	}
 
 	private void generatePathSegment( Map<ModificationType, ModificationReport<PrepareModificationType, Object>> modifications, WebCmsPage page ) {

@@ -6,6 +6,7 @@ assets:
       pathSegmentGenerated: false
       pathSegment: render-components
       published: true
+      pageType: "wcm:type:default"
       wcm:components:
         page-title:
           componentType: plain-text

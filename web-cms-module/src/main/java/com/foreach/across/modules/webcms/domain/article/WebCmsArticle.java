@@ -140,4 +140,9 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 				"title='" + title + '\'' +
 				'}';
 	}
+
+	@Override
+	public WebCmsArticleType getAssetType() {
+		return getArticleType();
+	}
 }

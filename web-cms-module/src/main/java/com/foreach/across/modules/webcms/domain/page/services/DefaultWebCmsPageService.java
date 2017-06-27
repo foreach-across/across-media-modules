@@ -20,7 +20,8 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -31,10 +32,12 @@ import java.util.Optional;
  * @since 0.0.1
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 class DefaultWebCmsPageService implements WebCmsPageService
 {
-	private PagePropertyGenerator pagePropertyGenerator;
-	private WebCmsPageRepository pageRepository;
+	private final PagePropertyGenerator pagePropertyGenerator;
+	private final WebCmsPageRepository pageRepository;
 
 	@Override
 	public Optional<WebCmsPage> findByCanonicalPath( String canonicalPath ) {
@@ -43,16 +46,8 @@ class DefaultWebCmsPageService implements WebCmsPageService
 
 	@Override
 	public Map<ModificationType, ModificationReport<PrepareModificationType, Object>> prepareForSaving( WebCmsPage page ) {
+
 		return pagePropertyGenerator.prepareForSaving( page );
 	}
 
-	@Autowired
-	public void setPageRepository( WebCmsPageRepository pageRepository ) {
-		this.pageRepository = pageRepository;
-	}
-
-	@Autowired
-	public void setPagePropertyGenerator( PagePropertyGenerator pagePropertyGenerator ) {
-		this.pagePropertyGenerator = pagePropertyGenerator;
-	}
 }

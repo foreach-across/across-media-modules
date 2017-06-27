@@ -55,6 +55,8 @@ webCmsModule:
   urls:
     included-path-patterns: "/**"
     excluded-path-patterns: "/test/one,/test/two"
+  pages:
+    default-page-type: default
 
 acrossHibernate:
   create-unit-of-work-factory: true

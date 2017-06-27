@@ -113,6 +113,7 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 
 	@ManyToOne
 	@JoinColumn(name = "page_type_id")
+	@NotNull
 	private WebCmsPageType pageType;
 
 	@Builder(toBuilder = true)
@@ -165,6 +166,11 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 				getObjectId() + "'," +
 				"canonicalPath='" + canonicalPath + '\'' +
 				'}';
+	}
+
+	@Override
+	public WebCmsPageType getAssetType() {
+		return pageType;
 	}
 
 	@SuppressWarnings("all")

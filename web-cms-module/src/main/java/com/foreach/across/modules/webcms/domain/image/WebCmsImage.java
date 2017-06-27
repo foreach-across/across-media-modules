@@ -16,11 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain.image;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.foreach.across.modules.webcms.data.json.WebCmsObjectDeserializer;
-import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -111,6 +108,11 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 				"objectId='" + getObjectId() + "\'," +
 				"externalId='" + name + '\'' +
 				'}';
+	}
+
+	@Override
+	public WebCmsAssetType getAssetType() {
+		return null;
 	}
 
 	@Override

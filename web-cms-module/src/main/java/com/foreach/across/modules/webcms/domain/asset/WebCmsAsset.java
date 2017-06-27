@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
+import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -111,4 +112,7 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 				"objectId='" + getObjectId() + '\'' +
 				'}';
 	}
+
+	@Transient
+	public abstract WebCmsAssetType getAssetType();
 }

@@ -20,6 +20,8 @@ import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SortNatural;
@@ -53,6 +55,7 @@ import static com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSu
 @Setter
 public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> extends WebCmsObjectInheritanceSuperClass<T>
 {
+
 	@Id
 	@GeneratedValue(generator = "seq_wcm_type_id")
 	@GenericGenerator(
@@ -126,10 +129,18 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 		return getAttributes().getOrDefault( attributeKey, defaultValue );
 	}
 
+	protected final boolean getBooleanAttribute( String attributeKey, boolean defaultValue ) {
+		String action = getAttributes().get( attributeKey );
+		if ( StringUtils.isEmpty( action ) ) {
+			return defaultValue;
+		}
+		return BooleanUtils.toBoolean( action );
+	}
+
 	/**
 	 * @return true if the attribute key is present (value can be null)
 	 */
-	public final boolean hasAttribute( String attributeKey ) {
+	public boolean hasAttribute( String attributeKey ) {
 		return getAttributes().containsKey( attributeKey );
 	}
 

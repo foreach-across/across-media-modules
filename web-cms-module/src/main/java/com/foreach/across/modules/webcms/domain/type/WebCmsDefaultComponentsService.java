@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 
 import java.util.Map;
 
@@ -32,8 +33,9 @@ public interface WebCmsDefaultComponentsService
 	 * Creates the default components for an object.
 	 *
 	 * @param asset The asset that will receive the generated data.
-	 * @param typeSpecifier The type of the asset.
 	 * @param markerValues Any marker values, specified as a map of the format ('@@marker@@', 'replace value')
 	 */
+	void createDefaultComponents( WebCmsAsset<?> asset, Map<String, String> markerValues );
+
 	void createDefaultComponents( WebCmsObject asset, WebCmsTypeSpecifier<?> typeSpecifier, Map<String, String> markerValues );
 }

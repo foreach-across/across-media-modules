@@ -48,13 +48,6 @@ public class TestPageTemplateResolver
 		assertEquals( "default", resolver.resolvePageTemplate( "" ) );
 	}
 
-	@Test
-	public void defaultTemplateIsReturnedForBlankAndNoPageType() {
-		WebCmsPage page = WebCmsPage.builder().pageType( null ).build();
-
-		properties.setDefaultTemplate( "default" );
-		assertEquals( "default", resolver.resolvePageTemplate( page ) );
-	}
 
 	@Test
 	public void defaultTemplateForPageTypeReturnedIfNotMoreSpecific() {

@@ -52,7 +52,7 @@ public class WebCmsPageInterceptor extends EntityInterceptorAdapter<WebCmsPage>
 	private void createDefaultComponents( WebCmsPage entity ) {
 		Map<String, String> markerValues = new HashMap<>();
 		markerValues.put( "@@title@@", entity.getTitle() );
-		webCmsTypeComponentsStrategy.createDefaultComponents( entity, entity.getPageType(), markerValues );
+		webCmsTypeComponentsStrategy.createDefaultComponents( entity, markerValues );
 	}
 
 	@Override

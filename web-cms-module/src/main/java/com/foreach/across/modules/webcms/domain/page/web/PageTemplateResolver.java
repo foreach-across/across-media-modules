@@ -45,8 +45,8 @@ public class PageTemplateResolver
 
 	public String resolvePageTemplate( WebCmsPage page ) {
 		if ( StringUtils.isBlank( page.getTemplate() ) ) {
-			if ( page.getPageType() != null && page.getPageType().getAttribute( "template" ) != null ) {
-				return resolvePageTemplate( page.getPageType().getAttribute( "template" ) );
+			if ( page.getPageType().getTemplate() != null ) {
+				return resolvePageTemplate( page.getPageType().getTemplate() );
 			}
 			else {
 				return properties.getDefaultTemplate();

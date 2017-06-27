@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.core.annotations.Event;
+import com.foreach.across.modules.adminweb.menu.EntityAdminMenuEvent;
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
@@ -27,6 +28,7 @@ import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewPr
 import com.foreach.across.modules.entity.views.processors.support.EntityPageStructureRenderedEvent;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
+import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
@@ -61,6 +63,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;
 	private final WebCmsMenuRepository menuRepository;
 	private final WebCmsMenuItemRepository menuItemRepository;
+	private final PageTypeProperties pageTypeProperties;
 
 	@SuppressWarnings("unused")
 	@Event
@@ -82,11 +85,24 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 		}
 	}
 
+	@Event
+	void handleMenuCreationEvent( EntityAdminMenuEvent<WebCmsPage> event ) {
+		if ( event.getEntity() != null ) {
+			boolean hasEndpoint = event.getEntity().getPageType().hasEndpoint();
+			if ( !hasEndpoint ) {
+				PathBasedMenuBuilder builder = event.builder();
+				event.builder().item( "urls" ).disable()
+				     .and().item( "webCmsMenuItems" ).disable();
+			}
+		}
+
+	}
+
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
 		AdvancedSettings advancedSettings = new AdvancedSettings();
 		WebCmsPage page = entityViewRequest.getEntityViewContext().getEntity( WebCmsPage.class );
-
+		WebCmsPage pageFromCommand = command.getEntity( WebCmsPage.class );
 		if ( page != null ) {
 			WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAsset( page );
 
@@ -94,8 +110,12 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 				menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ).and( QWebCmsMenuItem.webCmsMenuItem.generated.isTrue() ) )
 				                  .forEach( item -> advancedSettings.getAutoCreateMenu().add( item.getMenu() ) );
 			}
+
 		}
 
+		if ( pageFromCommand != null && pageFromCommand.getPageType() == null ) {
+			pageFromCommand.setPageType( pageTypeProperties.getDefaultType() );
+		}
 		command.addExtension( "advanced", advancedSettings );
 	}
 
@@ -142,6 +162,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 	                           EntityView entityView,
 	                           ContainerViewElement container,
 	                           ViewElementBuilderContext builderContext ) {
+
 		addDependency( container, "pathSegment", "pathSegmentGenerated" );
 		addDependency( container, WebCmsPageConfiguration.CANONICAL_PATH, "canonicalPathGenerated" );
 
@@ -153,6 +174,12 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 				                         ContainerViewElementUtils.remove( container, "formGroup-menu-items" );
 			                         }
 		                         } );
+
+		WebCmsPage page = entityViewRequest.getEntityViewContext().getEntity( WebCmsPage.class );
+		if ( page != null && page.getPageType() != null && !page.getPageType().isPublishable() ) {
+			ContainerViewElementUtils.remove( container, "publish-settings" );
+		}
+
 	}
 
 	private void addDependency( ContainerViewElement elements, String from, String to ) {

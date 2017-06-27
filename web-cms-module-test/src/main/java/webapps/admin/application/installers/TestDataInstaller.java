@@ -34,10 +34,9 @@ public class TestDataInstaller extends AbstractWebCmsDataInstaller
 {
 	@Override
 	protected void registerResources( List<String> locations ) {
-		//	locations.add( "classpath:installers/test-data/components.yml" );
-		//	locations.add( "classpath:installers/test-data/articles.yml" );
+		//locations.add( "classpath:installers/test-data/components.yml" );
+		//locations.add( "classpath:installers/test-data/articles.yml" );
 		//locations.add( "classpath:installers/test-data/menu.yml" );
 		//locations.add( "classpath:installers/test-data/pages.yml" );
-
 	}
 }

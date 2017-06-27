@@ -57,7 +57,7 @@ public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArt
 		markerValues.put( "@@title@@", entity.getTitle() );
 		markerValues.put( "@@subTitle@@", entity.getSubTitle() );
 		markerValues.put( "@@description@@", entity.getDescription() );
-		webCmsTypeComponentsStrategy.createDefaultComponents( entity, entity.getArticleType(), markerValues );
+		webCmsTypeComponentsStrategy.createDefaultComponents( entity, markerValues );
 	}
 
 	@Override
