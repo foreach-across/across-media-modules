@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.page.services;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
+import com.foreach.across.modules.webcms.infrastructure.ModificationStatus;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.val;
@@ -40,14 +41,14 @@ import static com.foreach.across.modules.webcms.domain.page.services.PrepareModi
 @Component
 class PagePropertyGenerator
 {
-	Map<ModificationType, ModificationReport> prepareForSaving( WebCmsPage page ) {
-		val modifications = new HashMap<ModificationType, ModificationReport>();
+	Map<ModificationType, ModificationReport<PrepareModificationType, Object>> prepareForSaving( WebCmsPage page ) {
+		val modifications = new HashMap<ModificationType, ModificationReport<PrepareModificationType, Object>>();
 		generatePathSegment( modifications, page );
 		generateCanonicalPath( modifications, page );
 		return modifications;
 	}
 
-	private void generatePathSegment( Map<ModificationType, ModificationReport> modifications, WebCmsPage page ) {
+	private void generatePathSegment( Map<ModificationType, ModificationReport<PrepareModificationType, Object>> modifications, WebCmsPage page ) {
 		if ( page.isPathSegmentGenerated() ) {
 			String oldSegment = page.getPathSegment();
 			String newSegment = WebCmsUtils.generateUrlPathSegment( StringUtils.defaultString( page.getTitle() ) );
@@ -55,13 +56,13 @@ class PagePropertyGenerator
 				page.setPathSegment( newSegment );
 				modifications.put(
 						PATH_SEGMENT_GENERATED,
-						new ModificationReport<>( PATH_SEGMENT_GENERATED, oldSegment, newSegment )
+						new ModificationReport<>( PATH_SEGMENT_GENERATED, ModificationStatus.SUCCESSFUL, oldSegment, newSegment )
 				);
 			}
 		}
 	}
 
-	private void generateCanonicalPath( Map<ModificationType, ModificationReport> modifications, WebCmsPage page ) {
+	private void generateCanonicalPath( Map<ModificationType, ModificationReport<PrepareModificationType, Object>> modifications, WebCmsPage page ) {
 		if ( page.isCanonicalPathGenerated() ) {
 			String oldCanonicalPath = page.getCanonicalPath();
 			String newCanonicalPath = WebCmsUtils.generateCanonicalPath( page );
@@ -69,7 +70,7 @@ class PagePropertyGenerator
 				page.setCanonicalPath( newCanonicalPath );
 				modifications.put(
 						CANONICAL_PATH_GENERATED,
-						new ModificationReport<>( CANONICAL_PATH_GENERATED, oldCanonicalPath, newCanonicalPath )
+						new ModificationReport<>( CANONICAL_PATH_GENERATED, ModificationStatus.SUCCESSFUL, oldCanonicalPath, newCanonicalPath )
 				);
 			}
 		}

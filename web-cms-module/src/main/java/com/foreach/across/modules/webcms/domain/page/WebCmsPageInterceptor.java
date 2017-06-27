@@ -46,7 +46,7 @@ public class WebCmsPageInterceptor extends EntityInterceptorAdapter<WebCmsPage>
 	@Override
 	public void afterCreate( WebCmsPage entity ) {
 		createDefaultComponents( entity );
-		endpointService.updateOrCreatePrimaryUrlForAsset( entity.getCanonicalPath(), entity );
+		endpointService.updateOrCreatePrimaryUrlForAsset( entity.getCanonicalPath(), entity, true );
 	}
 
 	private void createDefaultComponents( WebCmsPage entity ) {
@@ -57,6 +57,6 @@ public class WebCmsPageInterceptor extends EntityInterceptorAdapter<WebCmsPage>
 
 	@Override
 	public void afterUpdate( WebCmsPage entity ) {
-		endpointService.updateOrCreatePrimaryUrlForAsset( entity.getCanonicalPath(), entity );
+		endpointService.updateOrCreatePrimaryUrlForAsset( entity.getCanonicalPath(), entity, true );
 	}
 }

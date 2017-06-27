@@ -50,5 +50,5 @@ public interface WebCmsPageService
 	 * @param page to update
 	 * @return map of possible modifications that have been performed
 	 */
-	Map<ModificationType, ModificationReport> prepareForSaving( WebCmsPage page );
+	Map<ModificationType, ModificationReport<PrepareModificationType, Object>> prepareForSaving( WebCmsPage page );
 }

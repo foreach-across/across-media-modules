@@ -37,7 +37,7 @@ public class TestPagePropertyGenerator
 {
 	private WebCmsPage page;
 
-	private Map<ModificationType, ModificationReport> modifications;
+	private Map<ModificationType, ModificationReport<PrepareModificationType, Object>> modifications;
 
 	@Before
 	public void setUp() {
@@ -145,5 +145,4 @@ public class TestPagePropertyGenerator
 	private void prepare() {
 		modifications = new PagePropertyGenerator().prepareForSaving( page );
 	}
-
 }

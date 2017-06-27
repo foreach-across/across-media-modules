@@ -42,7 +42,7 @@ class DefaultWebCmsPageService implements WebCmsPageService
 	}
 
 	@Override
-	public Map<ModificationType, ModificationReport> prepareForSaving( WebCmsPage page ) {
+	public Map<ModificationType, ModificationReport<PrepareModificationType, Object>> prepareForSaving( WebCmsPage page ) {
 		return pagePropertyGenerator.prepareForSaving( page );
 	}
 

@@ -49,7 +49,7 @@ public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArt
 	@Override
 	public void afterCreate( WebCmsArticle entity ) {
 		createDefaultComponents( entity );
-		endpointService.updateOrCreatePrimaryUrlForAsset( generateUrl( entity ), entity );
+		endpointService.updateOrCreatePrimaryUrlForAsset( generateUrl( entity ), entity, true );
 	}
 
 	private void createDefaultComponents( WebCmsArticle entity ) {
@@ -62,7 +62,7 @@ public class WebCmsArticleInterceptor extends EntityInterceptorAdapter<WebCmsArt
 
 	@Override
 	public void afterUpdate( WebCmsArticle entity ) {
-		endpointService.updateOrCreatePrimaryUrlForAsset( generateUrl( entity ), entity );
+		endpointService.updateOrCreatePrimaryUrlForAsset( generateUrl( entity ), entity, true );
 	}
 
 	private String generateUrl( WebCmsArticle article ) {

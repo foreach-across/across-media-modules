@@ -61,7 +61,7 @@ public class TestDefaultWebCmsPageService
 
 	@Test
 	public void prepareForSavingDispatchesToPreparator() {
-		Map<ModificationType, ModificationReport> modifications = Collections.emptyMap();
+		Map<ModificationType, ModificationReport<PrepareModificationType,Object>> modifications = Collections.emptyMap();
 		when( pagePreparator.prepareForSaving( page ) ).thenReturn( modifications );
 		assertSame( modifications, pageService.prepareForSaving( page ) );
 	}

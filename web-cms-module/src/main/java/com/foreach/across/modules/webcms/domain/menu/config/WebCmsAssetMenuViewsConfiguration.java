@@ -144,7 +144,7 @@ public class WebCmsAssetMenuViewsConfiguration
 	}
 
 	@Bean
-	EntityConfigurer webCmsComponentsAssociationConfigurer() {
+	EntityConfigurer webCmsMenuItemsAssociationConfigurer() {
 		return entities -> registerMenuItemsAssociation(
 				entities.matching(
 						config -> WebCmsAsset.class.isAssignableFrom( config.getEntityType() ) && assetTypes.contains( config.getEntityType() )

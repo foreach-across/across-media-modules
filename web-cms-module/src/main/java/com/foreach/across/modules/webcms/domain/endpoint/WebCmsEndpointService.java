@@ -17,7 +17,9 @@
 package com.foreach.across.modules.webcms.domain.endpoint;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.endpoint.support.EndpointModificationType;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
+import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 
 import java.util.Optional;
 
@@ -43,13 +45,21 @@ public interface WebCmsEndpointService
 	 * as a redirect to the new primary url.
 	 * <p/>
 	 * Note that if there is no single {@link com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint}
-	 * for the asset, this method will do nothing.
+	 * for the asset, this method will do nothing.  The {@link ModificationReport} returned should contain the
+	 * status information on which action was performed.  A {@link com.foreach.across.modules.webcms.infrastructure.ModificationStatus#FAILED}
+	 * means another endpoint already has that url.
+	 * <p/>
+	 * The third parameter indicates if a {@link com.foreach.across.modules.webcms.domain.endpoint.support.PrimaryUrlForAssetFailedEvent} should
+	 * be published in case of a conflict with another endpoint.  This allows another bean to take action and changing the modification report.
 	 *
-	 * @param primaryUrl for the asset
-	 * @param asset      to update
-	 * @return url if created or updated
+	 * @param primaryUrl            for the asset
+	 * @param asset                 to update
+	 * @param publishEventOnFailure true if an even
+	 * @return modification report, optionally containing the old and new primary url
 	 */
-	Optional<WebCmsUrl> updateOrCreatePrimaryUrlForAsset( String primaryUrl, WebCmsAsset asset );
+	ModificationReport<EndpointModificationType, WebCmsUrl> updateOrCreatePrimaryUrlForAsset( String primaryUrl,
+	                                                                                          WebCmsAsset asset,
+	                                                                                          boolean publishEventOnFailure );
 
 	/**
 	 * Get the primary URL for a {@link WebCmsAsset}.

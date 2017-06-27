@@ -16,18 +16,29 @@
 
 package com.foreach.across.modules.webcms.infrastructure;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
+ * @see ModificationType
+ * @see ModificationStatus
  */
-@Getter
-@AllArgsConstructor
-public class ModificationReport<T>
+@Value
+@RequiredArgsConstructor
+public class ModificationReport<T extends ModificationType, U>
 {
-	private ModificationType modificationType;
-	private T oldValue;
-	private T newValue;
+	private final T modificationType;
+	private final ModificationStatus modificationStatus;
+	private final U oldValue;
+	private final U newValue;
+
+	public boolean hasOldValue() {
+		return oldValue != null;
+	}
+
+	public boolean hasNewValue() {
+		return newValue != null;
+	}
 }

@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.infrastructure;
+package com.foreach.across.modules.webcms.domain.endpoint.support;
+
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
+import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 
 /**
- * Indicates the type of modification.
+ * Possible modifications on a {@link WebCmsEndpoint}.
  *
  * @author Arne Vandamme
- * @since 0.0.1
- * @see ModificationReport
+ * @since 0.0.2
  */
-public interface ModificationType
+public enum EndpointModificationType implements ModificationType
 {
+	PRIMARY_URL_UPDATED
 }

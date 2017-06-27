@@ -22,15 +22,21 @@ import com.foreach.across.modules.entity.query.AssociatedEntityQueryExecutor;
 import com.foreach.across.modules.entity.query.EntityQuery;
 import com.foreach.across.modules.entity.registry.EntityAssociation;
 import com.foreach.across.modules.entity.registry.EntityFactory;
+import com.foreach.across.modules.entity.views.processors.DefaultValidationViewProcessor;
+import com.foreach.across.modules.entity.views.processors.PropertyRenderingViewProcessor;
+import com.foreach.across.modules.entity.views.processors.SaveEntityViewProcessor;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
+import com.foreach.across.modules.webcms.domain.url.web.WebCmsAssetPrimaryUrlFailedFormProcessor;
+import com.foreach.across.modules.webcms.domain.url.web.WebCmsAssetPrimaryUrlFailureDetectionProcessor;
 import com.foreach.across.modules.webcms.domain.url.web.WebCmsAssetUrlFormProcessor;
 import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.ClassUtils;
@@ -87,7 +93,9 @@ public class WebCmsAssetUrlConfiguration
 	EntityConfigurer webCmsAssetUrlAssociationConfigurer(
 			EntityFactory<WebCmsUrl> webCmsUrlEntityFactory,
 			AssociatedEntityQueryExecutor<WebCmsUrl> webCmsUrlExecutorForPage,
-			WebCmsAssetUrlFormProcessor processor
+			WebCmsAssetUrlFormProcessor urlFormProcessor,
+			WebCmsAssetPrimaryUrlFailureDetectionProcessor primaryUrlFailureDetectionProcessor,
+			WebCmsAssetPrimaryUrlFailedFormProcessor primaryUrlFormProcessor
 	) {
 
 		return entities ->
@@ -98,11 +106,31 @@ public class WebCmsAssetUrlConfiguration
 				                              .associationType( EntityAssociation.Type.EMBEDDED )
 				                              .parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
 				                              .listView( fvb -> fvb.showProperties( ".", "~endpoint" ) )
-				                              .createFormView( fvb -> fvb.showProperties( ".", "~endpoint" ).viewProcessor( processor ) )
-				                              .updateFormView( fvb -> fvb.showProperties( ".", "~endpoint" ).viewProcessor( processor ) )
+				                              .createFormView( fvb -> fvb.showProperties( ".", "~endpoint" ).viewProcessor( urlFormProcessor ) )
+				                              .updateFormView( fvb -> fvb.showProperties( ".", "~endpoint" ).viewProcessor( urlFormProcessor ) )
 				                              .deleteFormView()
 				                              .attribute( EntityFactory.class, webCmsUrlEntityFactory )
 				                              .show()
+				        )
+				        .createOrUpdateFormView(
+						        fvb -> fvb.viewProcessor(
+								        WebCmsAssetPrimaryUrlFailureDetectionProcessor.class.getName(),
+								        primaryUrlFailureDetectionProcessor,
+								        Ordered.LOWEST_PRECEDENCE
+						        )
+				        )
+				        .formView(
+						        "primaryUrlFailed",
+						        fvb -> fvb
+								        .postProcess(
+										        ( factory, registry ) -> {
+											        registry.remove( PropertyRenderingViewProcessor.class.getName() );
+											        registry.remove( SaveEntityViewProcessor.class.getName() );
+											        registry.remove( DefaultValidationViewProcessor.class.getName() );
+										        }
+								        )
+								        .viewProcessor( primaryUrlFormProcessor )
+								        .messagePrefix( "forms.primaryUrlFailed" )
 				        )
 				        .postProcessor(
 						        cfg -> {
@@ -154,3 +182,4 @@ public class WebCmsAssetUrlConfiguration
 		};
 	}
 }
+

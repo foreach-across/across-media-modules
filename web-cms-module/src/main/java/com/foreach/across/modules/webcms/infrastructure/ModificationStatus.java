@@ -17,12 +17,26 @@
 package com.foreach.across.modules.webcms.infrastructure;
 
 /**
- * Indicates the type of modification.
+ * Status outcome of an attempted modification request.
  *
  * @author Arne Vandamme
- * @since 0.0.1
  * @see ModificationReport
+ * @since 0.0.2
  */
-public interface ModificationType
+public enum ModificationStatus
 {
+	/**
+	 * Modification was successful, usually both new and old value will be entered.
+	 */
+	SUCCESSFUL,
+
+	/**
+	 * Modification was skipped, old value will usually hold the current value.
+	 */
+	SKIPPED,
+
+	/**
+	 * Modification failed, old value will usually hold the current value and new value the update that failed.
+	 */
+	FAILED
 }

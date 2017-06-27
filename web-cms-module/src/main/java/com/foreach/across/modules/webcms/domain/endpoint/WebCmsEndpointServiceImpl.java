@@ -16,12 +16,16 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint;
 
+import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.endpoint.support.EndpointModificationType;
+import com.foreach.across.modules.webcms.domain.endpoint.support.PrimaryUrlForAssetFailedEvent;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrlCache;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
+import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +40,9 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.foreach.across.modules.webcms.domain.endpoint.support.EndpointModificationType.PRIMARY_URL_UPDATED;
+import static com.foreach.across.modules.webcms.infrastructure.ModificationStatus.*;
+
 /**
  * @author Sander Van Loock
  * @since 0.0.1
@@ -48,23 +55,27 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 	private final WebCmsAssetEndpointRepository endpointRepository;
 	private final WebCmsUrlRepository urlRepository;
 	private final WebCmsUrlCache urlCache;
+	private final AcrossEventPublisher eventPublisher;
 
 	@Override
 	public Optional<WebCmsUrl> getUrlForPath( String path ) {
 		return urlCache.getUrlForPath( path );
 	}
 
+	@Transactional
 	@Override
-	public Optional<WebCmsUrl> updateOrCreatePrimaryUrlForAsset( String primaryUrl, WebCmsAsset asset ) {
+	public ModificationReport<EndpointModificationType, WebCmsUrl> updateOrCreatePrimaryUrlForAsset( String primaryUrl,
+	                                                                                                 WebCmsAsset asset,
+	                                                                                                 boolean publishEventOnFailure ) {
 		boolean canBeUpdated = asset.getPublicationDate() == null || ( new Date() ).before( asset.getPublicationDate() );
 
 		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( asset );
 
 		if ( endpoint != null ) {
-
 			Optional<WebCmsUrl> currentUrl = endpoint.getPrimaryUrl();
+
 			if ( currentUrl.isPresent() && currentUrl.get().isPrimaryLocked() && currentUrl.get().isPrimary() ) {
-				return Optional.empty();
+				return new ModificationReport<>( PRIMARY_URL_UPDATED, SKIPPED, currentUrl.get(), null );
 			}
 
 			WebCmsUrl newPrimaryUrl = new WebCmsUrl();
@@ -73,7 +84,22 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 			newPrimaryUrl.setPrimary( true );
 			newPrimaryUrl.setEndpoint( endpoint );
 
-			WebCmsUrl existing = endpoint.getUrlWithPath( newPrimaryUrl.getPath() ).orElse( null );
+			WebCmsUrl existing = urlRepository.findOneByPath( primaryUrl );
+
+			if ( existing != null && !endpoint.equals( existing.getEndpoint() ) ) {
+				ModificationReport<EndpointModificationType, WebCmsUrl> modificationReport =
+						new ModificationReport<>( PRIMARY_URL_UPDATED, FAILED, currentUrl.orElse( null ), newPrimaryUrl );
+				LOG.warn( "Unable to update primary URL for {} - another asset already uses path {}", asset, existing.getPath() );
+
+				if ( publishEventOnFailure ) {
+					// Allow event handlers to take action
+					PrimaryUrlForAssetFailedEvent event = new PrimaryUrlForAssetFailedEvent( asset, endpoint, modificationReport );
+					eventPublisher.publish( event );
+					modificationReport = event.getModificationReport();
+				}
+
+				return modificationReport;
+			}
 
 			if ( existing != null && !existing.isPrimary() ) {
 				newPrimaryUrl = existing.toDto();
@@ -101,15 +127,15 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 
 				if ( primaryUpdated.get() == null ) {
 					urlRepository.save( newPrimaryUrl );
-					return Optional.of( newPrimaryUrl );
+					return new ModificationReport<>( PRIMARY_URL_UPDATED, SUCCESSFUL, currentUrl.orElse( null ), newPrimaryUrl );
 				}
 				else {
-					return Optional.of( primaryUpdated.get() );
+					return new ModificationReport<>( PRIMARY_URL_UPDATED, SUCCESSFUL, currentUrl.orElse( null ), primaryUpdated.get() );
 				}
 			}
 		}
 
-		return Optional.empty();
+		return new ModificationReport<>( PRIMARY_URL_UPDATED, SKIPPED, null, null );
 	}
 
 	@Transactional(readOnly = true)
