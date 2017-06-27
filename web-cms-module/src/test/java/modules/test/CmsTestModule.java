@@ -18,7 +18,12 @@ package modules.test;
 
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.webcms.WebCmsModule;
+import modules.test.controllers.DefaultAssetMappingController;
+
+import java.util.Set;
 
 /**
  * @author Arne Vandamme
@@ -35,5 +40,10 @@ public class CmsTestModule extends AcrossModule
 	@Override
 	public String getResourcesKey() {
 		return "test";
+	}
+
+	@Override
+	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+		contextConfigurers.add( new ComponentScanConfigurer( DefaultAssetMappingController.class ) );
 	}
 }

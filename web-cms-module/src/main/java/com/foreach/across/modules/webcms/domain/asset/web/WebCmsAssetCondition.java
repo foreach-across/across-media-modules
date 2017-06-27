@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.asset.web;
 
 import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestCondition;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
@@ -25,12 +26,15 @@ import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.Invalid
 import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointMapping;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 /**
  * A condition to use for retrieving the correct {@link WebCmsEndpoint}.  This condition takes all properties of
@@ -45,8 +49,8 @@ public class WebCmsAssetCondition extends AbstractCustomRequestCondition<WebCmsA
 {
 	private final ConfigurableWebCmsEndpointContext context;
 	private final WebCmsEndpointContextResolver resolver;
-
 	private Class<?> assetType;
+	protected String[] objectId = {};
 
 	/**
 	 * Set the values for this condition based on the attributes of the annotated element.
@@ -58,11 +62,12 @@ public class WebCmsAssetCondition extends AbstractCustomRequestCondition<WebCmsA
 		WebCmsAssetMapping endpointMapping = AnnotatedElementUtils.findMergedAnnotation( annotatedElement, WebCmsAssetMapping.class );
 
 		assetType = endpointMapping.value();
+		objectId = endpointMapping.objectId();
 	}
 
 	@Override
 	protected Collection<?> getContent() {
-		return Collections.singleton( assetType );
+		return Arrays.asList( assetType, objectId );
 	}
 
 	@Override
@@ -84,7 +89,36 @@ public class WebCmsAssetCondition extends AbstractCustomRequestCondition<WebCmsA
 		else {
 			result.assetType = this.assetType;
 		}
+
+		result.objectId = combineObjectIds( other );
+
 		return result;
+	}
+
+	private String[] combineObjectIds( WebCmsAssetCondition other ) {
+		if ( this.objectId.length == 0 && other.objectId.length == 0 ) {
+			return new String[0];
+		}
+
+		if ( this.objectId.length == 0 ) {
+			return other.objectId;
+		}
+
+		if ( other.objectId.length == 0 ) {
+			return this.objectId;
+		}
+
+		List<String> combined = new ArrayList<String>();
+
+		// check that "other" is more specific (being a subset) or equal to "this"
+		for ( String otherObjectId : other.objectId ) {
+			if ( !ArrayUtils.contains( this.objectId, otherObjectId ) ) {
+				throw new InvalidWebCmsEndpointConditionCombination(
+						String.format( "Current objectid collection does not contain [%s]", otherObjectId ) );
+			}
+			combined.add( otherObjectId );
+		}
+		return combined.toArray( new String[combined.size()] );
 	}
 
 	@Override
@@ -92,20 +126,45 @@ public class WebCmsAssetCondition extends AbstractCustomRequestCondition<WebCmsA
 		if ( !context.isResolved() ) {
 			resolver.resolve( context, request );
 		}
-		if ( context.isOfType( WebCmsAssetEndpoint.class ) && assetType.isInstance( context.getEndpoint( WebCmsAssetEndpoint.class ).getAsset() ) ) {
-			WebCmsAssetCondition result = new WebCmsAssetCondition( context, resolver );
+
+		if ( !context.isOfType( WebCmsAssetEndpoint.class ) ) {
+			return null;
+		}
+
+		WebCmsAsset asset = context.getEndpoint( WebCmsAssetEndpoint.class ).getAsset();
+		WebCmsAssetCondition result = new WebCmsAssetCondition( context, resolver );
+
+		if ( assetType.isInstance( asset ) ) {
 			result.assetType = this.assetType;
-			LOG.trace( "Matching condition is {}", result );
-			return result;
+
+			if ( this.objectId.length == 0 ) {
+				return result;
+			}
+
+			if ( ArrayUtils.contains( this.objectId, asset.getObjectId() ) ) {
+				result.objectId = this.objectId;
+				LOG.trace( "Matching condition is [{}] with objectId [{}]", result.assetType, result.objectId );
+				return result;
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public int compareTo( WebCmsAssetCondition other, HttpServletRequest request ) {
-		if ( assetType != null && other.assetType != null && !assetType.equals( other.assetType ) ) {
+		if ( objectId.length > 0 && other.objectId.length == 0 ) {
+			return -1;
+		}
+		else if ( objectId.length == 0 && other.objectId.length > 0 ) {
+			return 1;
+		}
+		else if ( objectId.length > 0 || other.objectId.length > 0 ) {
+			return Integer.compare( objectId.length, other.objectId.length );
+		}
+		else if ( assetType != null && other.assetType != null && !assetType.equals( other.assetType ) ) {
 			return assetType.isAssignableFrom( other.assetType ) ? 1 : -1;
 		}
+
 		return 0;
 	}
 }

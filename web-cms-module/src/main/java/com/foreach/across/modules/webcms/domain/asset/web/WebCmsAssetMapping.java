@@ -40,9 +40,22 @@ public @interface WebCmsAssetMapping
 	/**
 	 * Asset type.
 	 */
-	Class<?> value();
+	Class<? extends WebCmsAsset> value() default WebCmsAsset.class;
 
-	HttpStatus[] status() default {};/* default HttpStatus.OK*/
+	/**
+	 * Globally unique asset object ids.  Mapping will only apply for this list of assets.
+	 */
+	String[] objectId() default {};
 
+	/**
+	 * Mapping will only apply if the {@link com.foreach.across.modules.webcms.domain.url.WebCmsUrl} that it
+	 * matched on has this status configured.
+	 */
+	HttpStatus[] status() default {};
+
+	/**
+	 * Mapping will only apply if the {@link com.foreach.across.modules.webcms.domain.url.WebCmsUrl} that it
+	 * matched on has a status in this series configured.
+	 */
 	HttpStatus.Series[] series() default HttpStatus.Series.SUCCESSFUL;
 }

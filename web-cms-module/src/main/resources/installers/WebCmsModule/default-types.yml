@@ -75,7 +75,6 @@ types:
         # Key of the parent type from which the attributes (and component) should be inherited
         parent: blog
 
-
   # Default publication types: blog and news
   publication:
     blog:
