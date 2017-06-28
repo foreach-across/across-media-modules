@@ -51,7 +51,7 @@ public class WebCmsAssetEndpointController
 		model.addAttribute( "components", componentModelSet );*/
 	}
 
-	@WebCmsPageMapping(status = HttpStatus.OK, canonicalPath = "/auto-create-components")
+	@WebCmsPageMapping(status = HttpStatus.OK, pageType = "default")
 	public void renderPageDefault( WebCmsUrl url, WebCmsAssetEndpoint endpoint, ModelMap model ) {
 		model.addAttribute( "asset", endpoint.getAsset() );
 

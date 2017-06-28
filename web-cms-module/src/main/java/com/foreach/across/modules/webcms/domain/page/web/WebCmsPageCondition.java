@@ -130,14 +130,13 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 			if ( this.canonicalPath.length != 0 && ArrayUtils.contains( this.canonicalPath, page.getCanonicalPath() ) ) {
 				result.canonicalPath = this.canonicalPath;
 			}
-			if ( this.pageType.length != 0 && ArrayUtils.contains( this.pageType, page.getPageType() ) ) {
+			if ( this.pageType.length != 0 && page.getPageType() != null && ArrayUtils.contains( this.pageType, page.getPageType().getTypeKey() ) ) {
 				result.pageType = this.pageType;
 			}
 
 			if ( result.canonicalPath == null && result.pageType == null ) {
 				return null;
 			}
-
 
 			LOG.trace( "Matching condition is {}", result );
 			return result;
