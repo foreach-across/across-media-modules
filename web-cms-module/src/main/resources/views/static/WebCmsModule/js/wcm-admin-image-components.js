@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 (function ( $ ) {
-    var adminPrefix = '/cms';
+    var adminPrefix = AdminWebModule.rootPath;
 
     EntityModule.registerInitializer( function ( node ) {
         $( '[data-wcm-component-base-type=image]', node ).each( function () {
