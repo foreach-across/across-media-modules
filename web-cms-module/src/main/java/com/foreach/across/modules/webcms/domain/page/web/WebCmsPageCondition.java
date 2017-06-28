@@ -49,8 +49,9 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 	private final ConfigurableWebCmsEndpointContext context;
 	private final WebCmsEndpointContextResolver resolver;
 
-	private String[] canonicalPath;
-	private String[] pageType;
+	private String[] canonicalPath = {};
+	private String[] pageType = {};
+	private String[] objectId = {};
 
 	/**
 	 * Set the values for this condition based on the attributes of the annotated element.
@@ -130,11 +131,17 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 			if ( this.canonicalPath.length != 0 && ArrayUtils.contains( this.canonicalPath, page.getCanonicalPath() ) ) {
 				result.canonicalPath = this.canonicalPath;
 			}
+			else if ( this.canonicalPath.length != 0 ) {
+				return null;
+			}
 			if ( this.pageType.length != 0 && page.getPageType() != null && ArrayUtils.contains( this.pageType, page.getPageType().getTypeKey() ) ) {
 				result.pageType = this.pageType;
 			}
+			else if ( this.pageType.length != 0 ) {
+				return null;
+			}
 
-			if ( result.canonicalPath == null && result.pageType == null ) {
+			if ( result.canonicalPath.length == 0 && result.pageType.length == 0 ) {
 				return null;
 			}
 
@@ -146,26 +153,29 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 
 	@Override
 	public int compareTo( WebCmsPageCondition other, HttpServletRequest request ) {
-		if ( pageType.length > 0 && other.pageType.length == 0 ) {
-			return -1;
-		}
-		else if ( pageType.length == 0 && other.pageType.length > 0 ) {
-			return 1;
-		}
-		else if ( pageType.length > 0 || other.pageType.length > 0 ) {
-			return Integer.compare( pageType.length, other.pageType.length );
+		int val = compareArrays( objectId, other.objectId );
+
+		if ( val == 0 ) {
+			val = compareArrays( canonicalPath, other.canonicalPath );
 		}
 
-		if ( canonicalPath.length > 0 && other.canonicalPath.length == 0 ) {
-			return -1;
-		}
-		else if ( canonicalPath.length == 0 && other.canonicalPath.length > 0 ) {
-			return 1;
-		}
-		else if ( canonicalPath.length > 0 || other.canonicalPath.length > 0 ) {
-			return Integer.compare( canonicalPath.length, other.canonicalPath.length );
+		if ( val == 0 ) {
+			val = compareArrays( pageType, other.pageType );
 		}
 
+		return val;
+	}
+
+	private int compareArrays( String[] self, String[] other ) {
+		if ( self.length > 0 && other.length == 0 ) {
+			return -1;
+		}
+		else if ( self.length == 0 && other.length > 0 ) {
+			return 1;
+		}
+		else if ( self.length > 0 || other.length > 0 ) {
+			return Integer.compare( self.length, other.length );
+		}
 		return 0;
 	}
 }
