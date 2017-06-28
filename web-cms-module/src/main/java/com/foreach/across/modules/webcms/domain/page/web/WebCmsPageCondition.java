@@ -16,11 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.page.web;
 
-import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.AbstractAssetCondition;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
+import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.AbstractAssetCondition;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
@@ -137,6 +137,4 @@ final class WebCmsPageCondition extends AbstractAssetCondition<WebCmsPageConditi
 
 		return val;
 	}
-
-
 }

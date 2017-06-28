@@ -20,7 +20,6 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelSet;
-import com.foreach.across.modules.webcms.domain.page.web.WebCmsPageMapping;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -50,19 +49,6 @@ public class WebCmsAssetEndpointController
 		/*model.addAttribute( "componentHierarchy", componentModelHierarchy );
 		model.addAttribute( "components", componentModelSet );*/
 	}
-
-	@WebCmsPageMapping(status = HttpStatus.OK, pageType = "default")
-	public void renderPageDefault( WebCmsUrl url, WebCmsAssetEndpoint endpoint, ModelMap model ) {
-		model.addAttribute( "asset", endpoint.getAsset() );
-
-		WebCmsComponentModelSet componentModelSet = componentModelService.buildComponentModelSetForOwner( endpoint.getAsset() );
-		componentModelHierarchy.registerComponentsForScope( componentModelSet, "asset" );
-
-		//model.addAttribute( "webCmsComponent", componentModelHierarchy );
-		/*model.addAttribute( "componentHierarchy", componentModelHierarchy );
-		model.addAttribute( "components", componentModelSet );*/
-	}
-
 
 	@WebCmsAssetMapping(series = HttpStatus.Series.REDIRECTION)
 	public RedirectView redirect( WebCmsUrl url, WebCmsAssetEndpoint endpoint ) {

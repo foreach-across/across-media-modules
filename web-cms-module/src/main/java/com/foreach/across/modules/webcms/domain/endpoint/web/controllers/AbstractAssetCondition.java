@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.endpoint.web.controllers;
 
 import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestCondition;
-import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsEndpointConditionCombination;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
@@ -71,5 +70,4 @@ public abstract class AbstractAssetCondition<T extends AbstractCustomRequestCond
 		}
 		return combined.toArray( new String[combined.size()] );
 	}
-
 }
