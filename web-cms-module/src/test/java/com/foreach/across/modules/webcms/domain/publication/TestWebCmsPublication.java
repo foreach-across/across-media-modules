@@ -44,6 +44,7 @@ public class TestWebCmsPublication
 		assertNotNull( publication.getObjectId() );
 		assertTrue( publication.getObjectId().startsWith( "wcm:asset:publication:" ) );
 		assertNull( publication.getPublicationKey() );
+		assertNull( publication.getPublicationType() );
 		assertNull( publication.getName() );
 		assertNull( publication.getCreatedBy() );
 		assertNull( publication.getCreatedDate() );
@@ -55,10 +56,13 @@ public class TestWebCmsPublication
 	public void builderSemantics() {
 		Date timestamp = new Date();
 
+		WebCmsPublicationType publicationType = WebCmsPublicationType.builder().id( 1L ).build();
+
 		WebCmsPublication publication = WebCmsPublication.builder()
 		                                                 .newEntityId( 123L )
 		                                                 .objectId( "my-asset" )
 		                                                 .publicationKey( "publication-key" )
+		                                                 .publicationType( publicationType )
 		                                                 .name( "my-publication" )
 		                                                 .createdBy( "john" )
 		                                                 .createdDate( timestamp )
@@ -68,6 +72,7 @@ public class TestWebCmsPublication
 		assertNull( publication.getId() );
 		assertEquals( Long.valueOf( 123L ), publication.getNewEntityId() );
 		assertEquals( "wcm:asset:publication:my-asset", publication.getObjectId() );
+		assertSame( publicationType, publication.getPublicationType() );
 		assertEquals( "publication-key", publication.getPublicationKey() );
 		assertEquals( "my-publication", publication.getName() );
 		assertEquals( "john", publication.getCreatedBy() );
@@ -85,6 +90,7 @@ public class TestWebCmsPublication
 		assertEquals( Long.valueOf( 333L ), other.getId() );
 		assertEquals( "wcm:asset:publication:my-asset", other.getObjectId() );
 		assertEquals( "publication-key", publication.getPublicationKey() );
+		assertSame( publicationType, publication.getPublicationType() );
 		assertEquals( "my-publication", publication.getName() );
 		assertEquals( "john", other.getCreatedBy() );
 		assertEquals( timestamp, other.getCreatedDate() );

@@ -1,0 +1,31 @@
+#
+# Defines custom types used by different tests.
+#
+types:
+  #
+  # Custom article types: small article, big article
+  #
+  article:
+    small-article:
+      name: Small Article
+    big-article:
+      name: Big Article
+
+  #
+  # Custom publication types: fun facts, boring facts
+  #
+  publication:
+    fun-facts:
+      name: Fun Facts
+      wcm:types:
+        - typeSpecifier: "wcm:type:article:small-article"
+          linkType: article
+        - typeSpecifier: "wcm:type:article:big-article"
+          linkType: article
+    boring-facts:
+      name: Boring Facts
+      wcm:types:
+        - typeSpecifier: "wcm:type:article:small-article"
+          linkType: article
+        - typeSpecifier: "wcm:type:article:big-article"
+          linkType: article

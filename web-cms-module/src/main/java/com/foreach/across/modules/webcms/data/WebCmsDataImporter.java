@@ -18,7 +18,7 @@ package com.foreach.across.modules.webcms.data;
 
 /**
  * API for a single importer component that supports a particular {@link WebCmsDataEntry}.
- * The central access point is the {@link WebCmsDataImportService} that will iterate through all
+ * The central access point is the {@link WebCmsDataImportServiceImpl} that will iterate through all
  * {@link WebCmsDataImporter} beans and use {@link #supports(WebCmsDataEntry)} to determine if
  * it should be used for handling that data type.
  * <p/>
@@ -26,7 +26,7 @@ package com.foreach.across.modules.webcms.data;
  * sub-type data and calls different sub-methods depending on the {@link WebCmsDataImportAction}.
  *
  * @author Arne Vandamme
- * @see WebCmsDataImportService
+ * @see WebCmsDataImportServiceImpl
  * @see AbstractWebCmsDataImporter
  * @since 0.0.1
  */

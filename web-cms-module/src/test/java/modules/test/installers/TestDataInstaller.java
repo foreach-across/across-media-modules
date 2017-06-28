@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import com.foreach.across.modules.webcms.installers.AbstractWebCmsDataInstaller;
+import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@Order(2)
 @Installer(description = "Installs test data", runCondition = InstallerRunCondition.AlwaysRun, phase = InstallerPhase.AfterModuleBootstrap)
 public class TestDataInstaller extends AbstractWebCmsDataInstaller
 {

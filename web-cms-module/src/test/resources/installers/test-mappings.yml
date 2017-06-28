@@ -43,10 +43,39 @@ assets:
     - title: "Mappings: Article One"
       objectId: "wcm:asset:article:mappings-article-one"
       articleType: news
-      publication: "wcm:asset:publication:news"
+      publication: news
       published: true
     - title: "Mappings: Article Two"
       objectId: "wcm:asset:article:mappings-article-two"
       articleType: news
-      publication: "wcm:asset:publication:news"
+      publication: news
+      published: true
+
+    #
+    # Articles used with @WebCmsArticleMapping() rules
+    #
+    - title: "Fact One: Small Music"
+      objectId: "wcm:asset:article:facts-one"
+      articleType: small-article
+      publication: music
+      published: true
+    - title: "Fact Two: Small Movies"
+      objectId: "wcm:asset:article:facts-two"
+      articleType: small-article
+      publication: movies
+      published: true
+    - title: "Fact Three: Big Music"
+      objectId: "wcm:asset:article:facts-three"
+      articleType: big-article
+      publication: music
+      published: true
+    - title: "Fact Four: Big Movies"
+      objectId: "wcm:asset:article:facts-four"
+      articleType: big-article
+      publication: movies
+      published: true
+    - title: "Fact Five: Small Movies"
+      objectId: "wcm:asset:article:facts-five"
+      articleType: small-article
+      publication: movies
       published: true

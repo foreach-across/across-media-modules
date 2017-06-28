@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.installers.InstallerPhase;
 import com.foreach.across.core.installers.InstallerRunCondition;
 import com.foreach.across.modules.webcms.installers.AbstractWebCmsDataInstaller;
+import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
@@ -29,12 +30,15 @@ import java.util.List;
  * @author Arne Vandamme
  * @since 0.0.2
  */
+@Order(1)
 @Installer(description = "Installs reference data", runCondition = InstallerRunCondition.AlwaysRun, phase = InstallerPhase.AfterModuleBootstrap)
 public class ReferenceDataInstaller extends AbstractWebCmsDataInstaller
 {
 	@Override
 	protected void registerResources( List<String> locations ) {
 		// Apply base data import
+		locations.add( "classpath:installers/reference-data/base-types.yml" );
+		locations.add( "classpath:installers/reference-data/base-publications.yml" );
 		locations.add( "classpath:installers/reference-data/base-menus.yml" );
 		locations.add( "classpath:installers/reference-data/base-pages.yml" );
 

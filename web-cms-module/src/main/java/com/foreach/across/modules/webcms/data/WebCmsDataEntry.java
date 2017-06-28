@@ -28,7 +28,7 @@ import java.util.*;
  * <p/>
  *
  * @author Arne Vandamme
- * @see WebCmsDataImportService
+ * @see WebCmsDataImportServiceImpl
  * @see WebCmsDataImportAction
  * @since 0.0.1
  */

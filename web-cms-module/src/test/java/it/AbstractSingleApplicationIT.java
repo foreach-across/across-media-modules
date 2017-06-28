@@ -20,6 +20,7 @@ import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.val;
 import modules.test.CmsTestModule;
 import org.jsoup.Jsoup;
@@ -71,8 +72,29 @@ public abstract class AbstractSingleApplicationIT
 		assertEquals( unifyWhitespace( expected ), unifyWhitespace( actual ) );
 	}
 
+	@SneakyThrows
+	protected void getAndExpect( String path, String content ) {
+		assertEquals(
+				content,
+				mockMvc.perform( get( path ) )
+				       .andExpect( status().isOk() )
+				       .andReturn()
+				       .getResponse()
+				       .getContentAsString()
+		);
+	}
+
 	private String unifyWhitespace( String value ) {
 		return value.replaceAll( "\\s+<", "<" ).replaceAll( ">\\s+", ">" ).replaceAll( "\\s{2,}", " " );
+	}
+
+	@AcrossTestConfiguration
+	protected static class Config
+	{
+		@Bean
+		CmsTestModule cmsTestModule() {
+			return new CmsTestModule();
+		}
 	}
 
 	/**
@@ -95,15 +117,6 @@ public abstract class AbstractSingleApplicationIT
 		public void assertElementIsEmpty( String selector ) {
 			val element = document.select( selector ).get( 0 );
 			assertEquals( "", element.html().trim() );
-		}
-	}
-
-	@AcrossTestConfiguration
-	protected static class Config
-	{
-		@Bean
-		CmsTestModule cmsTestModule() {
-			return new CmsTestModule();
 		}
 	}
 }
