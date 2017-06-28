@@ -17,12 +17,7 @@
 package it.mappings;
 
 import it.AbstractSingleApplicationIT;
-import lombok.SneakyThrows;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Raf Ceuls
@@ -44,17 +39,5 @@ public class ITWebCmsPageMapping extends AbstractSingleApplicationIT
 	public void methodLevelCanonicalPathMapping() {
 		getAndExpect( "/mappings/page/six", "methodPageTypeMapping: Mappings: Page Six" );
 		getAndExpect( "/mappings/page/five", "methodCanonicalPathAndTypeMapping: Mappings: Page Five" );
-	}
-
-	@SneakyThrows
-	protected void getAndExpect( String path, String content ) {
-		assertEquals(
-				content,
-				mockMvc.perform( get( path ) )
-				       .andExpect( status().isOk() )
-				       .andReturn()
-				       .getResponse()
-				       .getContentAsString()
-		);
 	}
 }
