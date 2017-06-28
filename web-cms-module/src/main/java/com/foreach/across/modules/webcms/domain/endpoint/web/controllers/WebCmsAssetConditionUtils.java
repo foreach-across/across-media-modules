@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint.web.controllers;
 
-import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestCondition;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
@@ -27,10 +26,16 @@ import java.util.List;
  * @author Raf Ceuls
  * @since 0.0.2
  */
-public abstract class AbstractAssetCondition<T extends AbstractCustomRequestCondition<T>> extends AbstractCustomRequestCondition<T>
+public class WebCmsAssetConditionUtils
 {
-
-	protected int compareArrays( String[] self, String[] other ) {
+	/**
+	 * Compares the length of two arrays.
+	 *
+	 * @param self
+	 * @param other
+	 * @return
+	 */
+	public static int compareArrays( String[] self, String[] other ) {
 		if ( self.length > 0 && other.length == 0 ) {
 			return -1;
 		}
@@ -43,7 +48,14 @@ public abstract class AbstractAssetCondition<T extends AbstractCustomRequestCond
 		return 0;
 	}
 
-	protected String[] combineArrays( String[] wide, String[] narrow ) {
+	/**
+	 * Combines two arrays. If smaller doesn't equal to or doesn't contain a subset of items in wide an exception is thrown.
+	 *
+	 * @param wide
+	 * @param narrow
+	 * @return
+	 */
+	public static String[] combineArrays( String[] wide, String[] narrow ) {
 		if ( wide.length == 0 && narrow.length == 0 ) {
 			return new String[0];
 		}

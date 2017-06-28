@@ -16,11 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.page.web;
 
+import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestCondition;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
-import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.AbstractAssetCondition;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collection;
 
+import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsAssetConditionUtils.combineArrays;
+import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsAssetConditionUtils.compareArrays;
 import static org.apache.commons.lang3.ArrayUtils.contains;
 
 /**
@@ -42,7 +44,7 @@ import static org.apache.commons.lang3.ArrayUtils.contains;
  */
 @RequiredArgsConstructor
 @Slf4j
-final class WebCmsPageCondition extends AbstractAssetCondition<WebCmsPageCondition>
+final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPageCondition>
 {
 	private final ConfigurableWebCmsEndpointContext context;
 	private final WebCmsEndpointContextResolver resolver;

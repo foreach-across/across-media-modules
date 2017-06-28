@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.page.web;
 import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetMapping;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import org.springframework.http.HttpStatus;
 
 import java.lang.annotation.*;
@@ -36,13 +37,31 @@ import java.lang.annotation.*;
 @CustomRequestMapping(WebCmsPageCondition.class)
 public @interface WebCmsPageMapping
 {
-	HttpStatus[] status() default {};/* default HttpStatus.OK*/
-
+	/**
+	 * Mapping will only apply if the {@link com.foreach.across.modules.webcms.domain.url.WebCmsUrl} that it
+	 * matched on has a status in this series configured.
+	 */
 	HttpStatus.Series[] series() default HttpStatus.Series.SUCCESSFUL;
 
+	/**
+	 * Mapping will only apply if the {@link com.foreach.across.modules.webcms.domain.url.WebCmsUrl} that it
+	 * matched on has this status configured.
+	 */
+	HttpStatus[] status() default {};
+
+	/**
+	 * Page types this mapping applies for.
+	 * An article type can be specified either by its {@link WebCmsPageType#getObjectId()} or {@link WebCmsPageType#getTypeKey()}.
+	 */
 	String[] pageType() default {};
 
+	/**
+	 * Canonical paths this mapping applies for.
+	 */
 	String[] canonicalPath() default {};
 
+	/**
+	 * Globally unique asset object ids.  Mapping will only apply for this list of assets.
+	 */
 	String[] objectId() default {};
 }
