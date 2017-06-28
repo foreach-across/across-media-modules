@@ -20,6 +20,21 @@ assets:
       title: "Mappings: Page Three"
       canonicalPath: /mappings/page/three
       published: true
+    - objectId: "wcm:asset:page:mappings-four"
+      title: "Mappings: Page Four"
+      canonicalPath: /mappings/page/four
+      published: true
+      pageType: template
+    - objectId: "wcm:asset:page:mappings-five"
+      title: "Mappings: Page Five"
+      canonicalPath: /mappings/page/five
+      published: true
+      pageType: default
+    - objectId: "wcm:asset:page:mappings-six"
+      title: "Mappings: Page Six"
+      canonicalPath: /mappings/page/six
+      published: true
+      pageType: template
 
   article:
     #

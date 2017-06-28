@@ -22,21 +22,19 @@ import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
-import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsEndpointConditionCombination;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
+import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsAssetConditionUtils.combineArrays;
+import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsAssetConditionUtils.compareArrays;
 import static org.apache.commons.lang3.ArrayUtils.contains;
 
 /**
@@ -52,12 +50,10 @@ class WebCmsArticleCondition extends AbstractCustomRequestCondition<WebCmsArticl
 {
 	private final ConfigurableWebCmsEndpointContext context;
 	private final WebCmsEndpointContextResolver resolver;
-
-	private String[] objectIds = {};
-
 	String[] articleTypes = {};
 	String[] publicationTypes = {};
 	String[] publications = {};
+	private String[] objectIds = {};
 
 	/**
 	 * Set the values for this condition based on the attributes of the annotated element.
@@ -94,34 +90,6 @@ class WebCmsArticleCondition extends AbstractCustomRequestCondition<WebCmsArticl
 		result.objectIds = combineArrays( objectIds, other.objectIds );
 
 		return result;
-	}
-
-	private String[] combineArrays( String[] wide, String[] narrow ) {
-		if ( wide.length == 0 && narrow.length == 0 ) {
-			return new String[0];
-		}
-
-		if ( wide.length == 0 ) {
-			return narrow;
-		}
-
-		if ( narrow.length == 0 ) {
-			return wide;
-		}
-
-		List<String> combined = new ArrayList<String>( narrow.length );
-
-		// check that "narrow" is more specific (being a subset) or equal to "wide"
-		for ( String otherMember : narrow ) {
-			if ( !ArrayUtils.contains( wide, otherMember ) ) {
-				throw new InvalidWebCmsEndpointConditionCombination(
-						String.format( "Unable to combine endpoints: method level must be same or narrower than controller: %s is not a subset of %s",
-						               Arrays.toString( narrow ), Arrays.toString( wide ) )
-				);
-			}
-			combined.add( otherMember );
-		}
-		return combined.toArray( new String[combined.size()] );
 	}
 
 	@Override
@@ -199,16 +167,4 @@ class WebCmsArticleCondition extends AbstractCustomRequestCondition<WebCmsArticl
 		return val;
 	}
 
-	private int compareArrays( String[] self, String[] other ) {
-		if ( self.length > 0 && other.length == 0 ) {
-			return -1;
-		}
-		else if ( self.length == 0 && other.length > 0 ) {
-			return 1;
-		}
-		else if ( self.length > 0 || other.length > 0 ) {
-			return Integer.compare( self.length, other.length );
-		}
-		return 0;
-	}
 }
