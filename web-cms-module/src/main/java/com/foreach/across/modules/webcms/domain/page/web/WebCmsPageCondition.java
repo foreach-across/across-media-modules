@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestCondition;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
@@ -43,7 +44,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPageCondition>
+final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPageCondition>
 {
 	private final ConfigurableWebCmsEndpointContext context;
 	private final WebCmsEndpointContextResolver resolver;
@@ -119,10 +120,25 @@ public class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPa
 		if ( !context.isResolved() ) {
 			resolver.resolve( context, request );
 		}
-		if ( context.isOfType( WebCmsAssetEndpoint.class ) && WebCmsPage.class.isInstance( context.getEndpoint( WebCmsAssetEndpoint.class ).getAsset() ) ) {
+
+		WebCmsAsset rawAsset = context.getEndpoint( WebCmsAssetEndpoint.class ).getAsset();
+		if ( context.isOfType( WebCmsAssetEndpoint.class ) && WebCmsPage.class.isInstance( rawAsset ) ) {
+			WebCmsPage page = (WebCmsPage) rawAsset;
+
 			WebCmsPageCondition result = new WebCmsPageCondition( context, resolver );
-			result.canonicalPath = this.canonicalPath;
-			result.pageType = this.pageType;
+
+			if ( this.canonicalPath.length != 0 && ArrayUtils.contains( this.canonicalPath, page.getCanonicalPath() ) ) {
+				result.canonicalPath = this.canonicalPath;
+			}
+			if ( this.pageType.length != 0 && ArrayUtils.contains( this.pageType, page.getPageType() ) ) {
+				result.pageType = this.pageType;
+			}
+
+			if ( result.canonicalPath == null && result.pageType == null ) {
+				return null;
+			}
+
+
 			LOG.trace( "Matching condition is {}", result );
 			return result;
 		}
@@ -131,12 +147,26 @@ public class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPa
 
 	@Override
 	public int compareTo( WebCmsPageCondition other, HttpServletRequest request ) {
-		if ( pageType != null && other.pageType != null && pageType.length != other.pageType.length ) {
-			return pageType.length > other.pageType.length ? 1 : -1;
+		if ( pageType.length > 0 && other.pageType.length == 0 ) {
+			return -1;
 		}
-		if ( canonicalPath != null && other.canonicalPath != null && canonicalPath.length != other.canonicalPath.length ) {
-			return canonicalPath.length > other.canonicalPath.length ? 1 : -1;
+		else if ( pageType.length == 0 && other.pageType.length > 0 ) {
+			return 1;
 		}
+		else if ( pageType.length > 0 || other.pageType.length > 0 ) {
+			return Integer.compare( pageType.length, other.pageType.length );
+		}
+
+		if ( canonicalPath.length > 0 && other.canonicalPath.length == 0 ) {
+			return -1;
+		}
+		else if ( canonicalPath.length == 0 && other.canonicalPath.length > 0 ) {
+			return 1;
+		}
+		else if ( canonicalPath.length > 0 || other.canonicalPath.length > 0 ) {
+			return Integer.compare( canonicalPath.length, other.canonicalPath.length );
+		}
+
 		return 0;
 	}
 }

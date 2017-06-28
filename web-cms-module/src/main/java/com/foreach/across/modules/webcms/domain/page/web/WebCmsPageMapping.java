@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
+import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetMapping;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import org.springframework.http.HttpStatus;
 
@@ -31,7 +32,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-//@WebCmsAssetMapping(value = WebCmsPage.class) I think this should be here, however the comparison doesn't work when it is.
+@WebCmsAssetMapping(value = WebCmsPage.class) //I think this should be here, however the comparison doesn't work when it is.
 @CustomRequestMapping(WebCmsPageCondition.class)
 public @interface WebCmsPageMapping
 {
@@ -42,4 +43,6 @@ public @interface WebCmsPageMapping
 	String[] pageType() default {};
 
 	String[] canonicalPath() default {};
+
+	String[] objectId() default {};
 }
