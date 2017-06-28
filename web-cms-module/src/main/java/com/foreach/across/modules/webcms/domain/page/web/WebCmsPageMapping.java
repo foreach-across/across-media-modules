@@ -51,7 +51,7 @@ public @interface WebCmsPageMapping
 
 	/**
 	 * Page types this mapping applies for.
-	 * An article type can be specified either by its {@link WebCmsPageType#getObjectId()} or {@link WebCmsPageType#getTypeKey()}.
+	 * An page type can be specified either by its {@link WebCmsPageType#getObjectId()} or {@link WebCmsPageType#getTypeKey()}.
 	 */
 	String[] pageType() default {};
 
