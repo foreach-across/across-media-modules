@@ -105,10 +105,12 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	                             @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
 	                             String name,
 	                             String publicationKey,
+	                             WebCmsPublicationType publicationType,
 	                             WebCmsPage articleTemplatePage ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
 		this.name = name;
 		this.publicationKey = publicationKey;
+		this.publicationType = publicationType;
 		this.articleTemplatePage = articleTemplatePage;
 	}
 

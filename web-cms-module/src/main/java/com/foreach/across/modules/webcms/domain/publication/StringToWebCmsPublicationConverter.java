@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.page;
+package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
-import com.foreach.across.modules.webcms.data.WebCmsDataImportServiceImpl;
-import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 /**
- * Converter that supports either object id or canonical path for looking up a {@link WebCmsPage}.
- *
  * @author Arne Vandamme
- * @see WebCmsDataImportServiceImpl
  * @since 0.0.2
  */
 @Component
 @RequiredArgsConstructor
-public final class StringToWebCmsPageConverter implements Converter<String, WebCmsPage>
+public final class StringToWebCmsPublicationConverter implements Converter<String, WebCmsPublication>
 {
-	private final WebCmsPageRepository pageRepository;
+	private final WebCmsPublicationRepository pageRepository;
 
 	@Autowired
 	void register( WebCmsDataConversionService conversionService ) {
@@ -43,11 +38,8 @@ public final class StringToWebCmsPageConverter implements Converter<String, WebC
 	}
 
 	@Override
-	public WebCmsPage convert( String source ) {
-		if ( source.startsWith( "/" ) ) {
-			return pageRepository.findOneByCanonicalPath( source );
-		}
-
-		return pageRepository.findOneByObjectId( source );
+	public WebCmsPublication convert( String source ) {
+		return pageRepository.findOneByPublicationKeyOrObjectId( source, source );
 	}
 }
+

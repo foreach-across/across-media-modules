@@ -1,0 +1,214 @@
+/*
+ * Copyright 2017 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.foreach.across.modules.webcms.domain.article.web;
+
+import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestCondition;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
+import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
+import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsEndpointConditionCombination;
+import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
+import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.core.annotation.AnnotatedElementUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static org.apache.commons.lang3.ArrayUtils.contains;
+
+/**
+ * A condition for matching a {@link com.foreach.across.modules.webcms.domain.article.WebCmsArticle} being requested.
+ *
+ * @author Arne Vandamme
+ * @see WebCmsArticleMapping
+ * @since 0.0.2
+ */
+@RequiredArgsConstructor
+@Slf4j
+class WebCmsArticleCondition extends AbstractCustomRequestCondition<WebCmsArticleCondition>
+{
+	private final ConfigurableWebCmsEndpointContext context;
+	private final WebCmsEndpointContextResolver resolver;
+
+	private String[] objectIds = {};
+
+	String[] articleTypes = {};
+	String[] publicationTypes = {};
+	String[] publications = {};
+
+	/**
+	 * Set the values for this condition based on the attributes of the annotated element.
+	 *
+	 * @param annotatedElement this condition is attached to
+	 */
+	@Override
+	public void setAnnotatedElement( AnnotatedElement annotatedElement ) {
+		WebCmsArticleMapping articleMapping = AnnotatedElementUtils.findMergedAnnotation( annotatedElement, WebCmsArticleMapping.class );
+
+		articleTypes = articleMapping.articleType();
+		publicationTypes = articleMapping.publicationType();
+		publications = articleMapping.publication();
+		// take objectIds into account for ordering - but leave actual matching check to the WebCmsAssetEndpointCondition
+		objectIds = articleMapping.objectId();
+	}
+
+	@Override
+	protected Collection<?> getContent() {
+		return Arrays.asList( articleTypes, publicationTypes, publications );
+	}
+
+	@Override
+	protected String getToStringInfix() {
+		return " && ";
+	}
+
+	@Override
+	public WebCmsArticleCondition combine( WebCmsArticleCondition other ) {
+		WebCmsArticleCondition result = new WebCmsArticleCondition( this.context, this.resolver );
+		result.articleTypes = combineArrays( articleTypes, other.articleTypes );
+		result.publicationTypes = combineArrays( publicationTypes, other.publicationTypes );
+		result.publications = combineArrays( publications, other.publications );
+		result.objectIds = combineArrays( objectIds, other.objectIds );
+
+		return result;
+	}
+
+	private String[] combineArrays( String[] wide, String[] narrow ) {
+		if ( wide.length == 0 && narrow.length == 0 ) {
+			return new String[0];
+		}
+
+		if ( wide.length == 0 ) {
+			return narrow;
+		}
+
+		if ( narrow.length == 0 ) {
+			return wide;
+		}
+
+		List<String> combined = new ArrayList<String>( narrow.length );
+
+		// check that "narrow" is more specific (being a subset) or equal to "wide"
+		for ( String otherMember : narrow ) {
+			if ( !ArrayUtils.contains( wide, otherMember ) ) {
+				throw new InvalidWebCmsEndpointConditionCombination(
+						String.format( "Unable to combine endpoints: method level must be same or narrower than controller: %s is not a subset of %s",
+						               Arrays.toString( narrow ), Arrays.toString( wide ) )
+				);
+			}
+			combined.add( otherMember );
+		}
+		return combined.toArray( new String[combined.size()] );
+	}
+
+	@Override
+	public WebCmsArticleCondition getMatchingCondition( HttpServletRequest request ) {
+		if ( !context.isResolved() ) {
+			resolver.resolve( context, request );
+		}
+
+		WebCmsArticle article = retrieveArticle();
+
+		if ( article != null ) {
+			if ( !isValidArticleType( article ) || !isValidPublicationType( article ) || !isValidPublication( article ) ) {
+				return null;
+			}
+
+			LOG.trace( "Matching WebCmsArticleCondition: {}", this );
+			return this;
+		}
+
+		return null;
+	}
+
+	private boolean isValidPublication( WebCmsArticle article ) {
+		if ( publications.length > 0 ) {
+			WebCmsPublication publication = article.getPublication();
+			return publication != null
+					&& ( contains( publications, publication.getPublicationKey() ) || contains( publications, publication.getObjectId() ) );
+		}
+		return true;
+	}
+
+	private boolean isValidPublicationType( WebCmsArticle article ) {
+		if ( publicationTypes.length > 0 ) {
+			WebCmsPublication publication = article.getPublication();
+			WebCmsPublicationType publicationType = publication != null ? publication.getPublicationType() : null;
+			return publicationType != null
+					&& ( contains( publicationTypes, publicationType.getTypeKey() ) || contains( publicationTypes, publicationType.getObjectId() ) );
+		}
+		return true;
+	}
+
+	private boolean isValidArticleType( WebCmsArticle article ) {
+		if ( articleTypes.length > 0 ) {
+			WebCmsArticleType articleType = article.getArticleType();
+			return articleType != null
+					&& ( contains( articleTypes, articleType.getTypeKey() ) || contains( articleTypes, articleType.getObjectId() ) );
+		}
+		return true;
+	}
+
+	private WebCmsArticle retrieveArticle() {
+		if ( context.isOfType( WebCmsAssetEndpoint.class ) ) {
+			WebCmsAssetEndpoint endpoint = context.getEndpoint( WebCmsAssetEndpoint.class );
+			return endpoint.getAsset() instanceof WebCmsArticle ? (WebCmsArticle) endpoint.getAsset() : null;
+		}
+		return null;
+	}
+
+	@Override
+	public int compareTo( WebCmsArticleCondition other, HttpServletRequest request ) {
+		int val = compareArrays( objectIds, other.objectIds );
+
+		if ( val == 0 ) {
+			val = compareArrays( publications, other.publications );
+		}
+
+		if ( val == 0 ) {
+			val = compareArrays( publicationTypes, other.publicationTypes );
+		}
+
+		if ( val == 0 ) {
+			val = compareArrays( articleTypes, other.articleTypes );
+		}
+
+		return val;
+	}
+
+	private int compareArrays( String[] self, String[] other ) {
+		if ( self.length > 0 && other.length == 0 ) {
+			return -1;
+		}
+		else if ( self.length == 0 && other.length > 0 ) {
+			return 1;
+		}
+		else if ( self.length > 0 || other.length > 0 ) {
+			return Integer.compare( self.length, other.length );
+		}
+		return 0;
+	}
+}

@@ -50,16 +50,4 @@ public class ITWebCmsAssetMapping extends AbstractSingleApplicationIT
 	public void methodLevelObjectIdMapping() {
 		getAndExpect( "/mappings/page/three", "methodObjectIdMapping: Mappings: Page Three" );
 	}
-
-	@SneakyThrows
-	private void getAndExpect( String path, String content ) {
-		assertEquals(
-				content,
-				mockMvc.perform( get( path ) )
-				       .andExpect( status().isOk() )
-				       .andReturn()
-				       .getResponse()
-				       .getContentAsString()
-		);
-	}
 }

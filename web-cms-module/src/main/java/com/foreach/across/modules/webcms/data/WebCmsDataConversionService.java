@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Specific {@link org.springframework.core.convert.ConversionService} used by the {@link WebCmsDataImportService}.
+ * Specific {@link org.springframework.core.convert.ConversionService} used by the {@link WebCmsDataImportServiceImpl}.
  *
  * @author Arne Vandamme
  * @since 0.0.1
