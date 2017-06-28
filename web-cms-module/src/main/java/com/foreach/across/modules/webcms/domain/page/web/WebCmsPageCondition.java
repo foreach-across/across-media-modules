@@ -26,7 +26,6 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +33,8 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.apache.commons.lang3.ArrayUtils.contains;
 
 /**
  * A condition to use for retrieving the correct {@link com.foreach.across.modules.webcms.domain.page.WebCmsPage}.  This condition takes all properties of
@@ -64,6 +65,7 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 
 		canonicalPath = endpointMapping.canonicalPath();
 		pageType = endpointMapping.pageType();
+		objectId = endpointMapping.objectId();
 	}
 
 	@Override
@@ -86,34 +88,9 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 
 		result.canonicalPath = combineStringArrays( this.canonicalPath, other.canonicalPath );
 		result.pageType = combineStringArrays( this.pageType, other.pageType );
+		result.objectId = combineStringArrays( this.objectId, other.objectId );
 
 		return result;
-	}
-
-	private String[] combineStringArrays( String[] fromThis, String[] fromOther ) {
-		if ( fromThis.length == 0 && fromOther.length == 0 ) {
-			return new String[0];
-		}
-
-		if ( fromThis.length == 0 ) {
-			return fromOther;
-		}
-
-		if ( fromOther.length == 0 ) {
-			return fromThis;
-		}
-
-		List<String> combined = new ArrayList<String>();
-
-		// check that "other" is more specific (being a subset) or equal to "this"
-		for ( String otherIdentifier : fromOther ) {
-			if ( !ArrayUtils.contains( fromThis, otherIdentifier ) ) {
-				throw new InvalidWebCmsEndpointConditionCombination(
-						String.format( "Current collection does not contain [%s]", otherIdentifier ) );
-			}
-			combined.add( otherIdentifier );
-		}
-		return combined.toArray( new String[combined.size()] );
 	}
 
 	@Override
@@ -125,30 +102,28 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 		WebCmsAsset rawAsset = context.getEndpoint( WebCmsAssetEndpoint.class ).getAsset();
 		if ( context.isOfType( WebCmsAssetEndpoint.class ) && WebCmsPage.class.isInstance( rawAsset ) ) {
 			WebCmsPage page = (WebCmsPage) rawAsset;
-
-			WebCmsPageCondition result = new WebCmsPageCondition( context, resolver );
-
-			if ( this.canonicalPath.length != 0 && ArrayUtils.contains( this.canonicalPath, page.getCanonicalPath() ) ) {
-				result.canonicalPath = this.canonicalPath;
-			}
-			else if ( this.canonicalPath.length != 0 ) {
+			if ( !isValidCanonicalPath( page ) || !isValidPageType( page ) ) {
 				return null;
 			}
-			if ( this.pageType.length != 0 && page.getPageType() != null && ArrayUtils.contains( this.pageType, page.getPageType().getTypeKey() ) ) {
-				result.pageType = this.pageType;
-			}
-			else if ( this.pageType.length != 0 ) {
-				return null;
-			}
-
-			if ( result.canonicalPath.length == 0 && result.pageType.length == 0 ) {
-				return null;
-			}
-
-			LOG.trace( "Matching condition is {}", result );
-			return result;
+			LOG.trace( "Matching condition is {}", this );
+			return this;
 		}
 		return null;
+	}
+
+	private boolean isValidPageType( WebCmsPage page ) {
+		if ( pageType.length > 0 && page.getPageType() != null ) {
+			return contains( pageType, page.getPageType().getTypeKey() ) ||
+					contains( pageType, page.getPageType().getObjectId() );
+		}
+		return true;
+	}
+
+	private boolean isValidCanonicalPath( WebCmsPage page ) {
+		if ( canonicalPath.length > 0 ) {
+			return contains( this.canonicalPath, page.getCanonicalPath() );
+		}
+		return true;
 	}
 
 	@Override
@@ -177,5 +152,31 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 			return Integer.compare( self.length, other.length );
 		}
 		return 0;
+	}
+
+	private String[] combineStringArrays( String[] fromThis, String[] fromOther ) {
+		if ( fromThis.length == 0 && fromOther.length == 0 ) {
+			return new String[0];
+		}
+
+		if ( fromThis.length == 0 ) {
+			return fromOther;
+		}
+
+		if ( fromOther.length == 0 ) {
+			return fromThis;
+		}
+
+		List<String> combined = new ArrayList<String>();
+
+		// check that "other" is more specific (being a subset) or equal to "this"
+		for ( String otherIdentifier : fromOther ) {
+			if ( !contains( fromThis, otherIdentifier ) ) {
+				throw new InvalidWebCmsEndpointConditionCombination(
+						String.format( "Current collection does not contain [%s]", otherIdentifier ) );
+			}
+			combined.add( otherIdentifier );
+		}
+		return combined.toArray( new String[combined.size()] );
 	}
 }

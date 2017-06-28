@@ -49,4 +49,10 @@ public class PageTypeMappingController
 		return "methodCanonicalPathAndTypeMapping: " + page.getName();
 	}
 
+	@WebCmsPageMapping(objectId = "wcm:asset:page:mappings-four")
+	public String objectIdPageTypeMapping( WebCmsPage page ) {
+		{
+			return "objectIdPageTypeMapping: " + page.getName();
+		}
+	}
 }

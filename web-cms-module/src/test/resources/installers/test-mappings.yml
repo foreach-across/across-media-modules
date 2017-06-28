@@ -30,6 +30,11 @@ assets:
       canonicalPath: /mappings/page/five
       published: true
       pageType: default
+    - objectId: "wcm:asset:page:mappings-six"
+      title: "Mappings: Page Six"
+      canonicalPath: /mappings/page/six
+      published: true
+      pageType: template
 
   article:
     #

@@ -32,15 +32,17 @@ public class ITWebCmsPageMapping extends AbstractSingleApplicationIT
 {
 	@Test
 	public void methodLevelPageTypeMapping() {
-		//page four has template 'template'
-		getAndExpect( "/mappings/page/four", "methodPageTypeMapping: Mappings: Page Four" );
+		//page six has template 'template'
+		getAndExpect( "/mappings/page/six", "methodPageTypeMapping: Mappings: Page Six" );
 		//page three has template 'default'
 		getAndExpect( "/mappings/page/three", "methodObjectIdMapping: Mappings: Page Three" );
+		//page four has template 'template' but also has a controller method with the objectId defined.
+		getAndExpect( "/mappings/page/four", "objectIdPageTypeMapping: Mappings: Page Four" );
 	}
 
 	@Test
 	public void methodLevelCanonicalPathMapping() {
-		getAndExpect( "/mappings/page/four", "methodPageTypeMapping: Mappings: Page Four" );
+		getAndExpect( "/mappings/page/six", "methodPageTypeMapping: Mappings: Page Six" );
 		getAndExpect( "/mappings/page/five", "methodCanonicalPathAndTypeMapping: Mappings: Page Five" );
 	}
 
