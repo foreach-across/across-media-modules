@@ -47,7 +47,7 @@ public class ITWebCmsPageMapping extends AbstractSingleApplicationIT
 	}
 
 	@SneakyThrows
-	private void getAndExpect( String path, String content ) {
+	protected void getAndExpect( String path, String content ) {
 		assertEquals(
 				content,
 				mockMvc.perform( get( path ) )

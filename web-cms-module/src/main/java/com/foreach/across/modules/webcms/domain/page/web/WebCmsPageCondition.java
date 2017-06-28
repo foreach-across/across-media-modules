@@ -16,12 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.page.web;
 
-import com.foreach.across.modules.web.mvc.condition.AbstractCustomRequestCondition;
+import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.AbstractAssetCondition;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
-import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsEndpointConditionCombination;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +29,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static org.apache.commons.lang3.ArrayUtils.contains;
 
@@ -45,7 +42,7 @@ import static org.apache.commons.lang3.ArrayUtils.contains;
  */
 @RequiredArgsConstructor
 @Slf4j
-final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPageCondition>
+final class WebCmsPageCondition extends AbstractAssetCondition<WebCmsPageCondition>
 {
 	private final ConfigurableWebCmsEndpointContext context;
 	private final WebCmsEndpointContextResolver resolver;
@@ -86,9 +83,9 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 
 		WebCmsPageCondition result = new WebCmsPageCondition( this.context, this.resolver );
 
-		result.canonicalPath = combineStringArrays( this.canonicalPath, other.canonicalPath );
-		result.pageType = combineStringArrays( this.pageType, other.pageType );
-		result.objectId = combineStringArrays( this.objectId, other.objectId );
+		result.canonicalPath = combineArrays( this.canonicalPath, other.canonicalPath );
+		result.pageType = combineArrays( this.pageType, other.pageType );
+		result.objectId = combineArrays( this.objectId, other.objectId );
 
 		return result;
 	}
@@ -141,42 +138,5 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 		return val;
 	}
 
-	private int compareArrays( String[] self, String[] other ) {
-		if ( self.length > 0 && other.length == 0 ) {
-			return -1;
-		}
-		else if ( self.length == 0 && other.length > 0 ) {
-			return 1;
-		}
-		else if ( self.length > 0 || other.length > 0 ) {
-			return Integer.compare( self.length, other.length );
-		}
-		return 0;
-	}
 
-	private String[] combineStringArrays( String[] fromThis, String[] fromOther ) {
-		if ( fromThis.length == 0 && fromOther.length == 0 ) {
-			return new String[0];
-		}
-
-		if ( fromThis.length == 0 ) {
-			return fromOther;
-		}
-
-		if ( fromOther.length == 0 ) {
-			return fromThis;
-		}
-
-		List<String> combined = new ArrayList<String>();
-
-		// check that "other" is more specific (being a subset) or equal to "this"
-		for ( String otherIdentifier : fromOther ) {
-			if ( !contains( fromThis, otherIdentifier ) ) {
-				throw new InvalidWebCmsEndpointConditionCombination(
-						String.format( "Current collection does not contain [%s]", otherIdentifier ) );
-			}
-			combined.add( otherIdentifier );
-		}
-		return combined.toArray( new String[combined.size()] );
-	}
 }
