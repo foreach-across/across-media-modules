@@ -119,6 +119,7 @@
 					<sourceDocumentName>index.adoc</sourceDocumentName>
 					<outputDirectory>${project.reporting.outputDirectory}/${project.version}/reference</outputDirectory>
 					<backend>html</backend>
+					<sourceHighlighter>coderay</sourceHighlighter>
 				</configuration>
 				<executions>
 					<execution>

@@ -11,7 +11,6 @@ Arne Vandamme
 :spring-security-module-url: https://foreach.atlassian.net/wiki/display/AX/SpringSecurityModule
 :entity-module-url: https://foreach.atlassian.net/wiki/display/AX/EntityModule
 :ehcache-module-url: https://foreach.atlassian.net/wiki/display/AX/EhcacheModule
-
 [copyright,verbatim]
 --
 Copyright (C) 2014-2017 +
