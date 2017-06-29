@@ -56,6 +56,8 @@ public class WebCmsPageConfiguration
 {
 	public static final String PATH_SEGMENT = "pathSegment";
 	public static final String CANONICAL_PATH = "canonicalPath";
+	private static final String PAGE_TYPE = "pageType";
+	private static final String PUBLISH_SETTINGS = "publish-settings";
 
 	@Autowired
 	void enableUrls( WebCmsAssetUrlConfiguration urlConfiguration ) {
@@ -96,22 +98,23 @@ public class WebCmsPageConfiguration
 					                      .attribute( TextboxFormElement.Type.class, TextboxFormElement.Type.TEXT )
 			        )
 			        .listView(
-					        lvb -> lvb.showProperties( CANONICAL_PATH, "title", "parent" )
+					        lvb -> lvb.showProperties( CANONICAL_PATH, PAGE_TYPE, "title", "parent" )
 					                  .defaultSort( CANONICAL_PATH )
 					                  .entityQueryFilter( true )
 					                  .viewProcessor( pageListViewProcessor() )
 			        )
 			        .updateFormView( fvb -> fvb
 					        .properties( props -> props
-							        .property( "pageType" ).readable( true ).writable( false )
-							        .and().property( "publish-settings" )
+							        .property( PAGE_TYPE ).readable( true ).writable( false ).order( 0 )
+							        .and().property( PUBLISH_SETTINGS )
 							        .attribute(
 									        EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
 									        EntityPropertySelector.of( "published", "publicationDate", "menu-items" )
 							        )
 					        ) )
 			        .createFormView( fvb -> fvb
-					        .properties( props -> props.property( "publish-settings" ).hidden( true ) ) )
+					        .properties( props -> props.property( PUBLISH_SETTINGS )
+					                                   .and().property( PAGE_TYPE ).order( 0 ) ) )
 			        .createOrUpdateFormView( fvb -> fvb
 					        .properties( props -> props
 							        .property( "url-settings" )
@@ -191,5 +194,4 @@ public class WebCmsPageConfiguration
 			this.endpointService = endpointService;
 		}
 	}
-
 }
