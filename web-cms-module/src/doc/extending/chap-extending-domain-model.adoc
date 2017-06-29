@@ -1,0 +1,8 @@
+== Extending WebCmsModule
+
+
+extending WebCmsAsset:
+- activate menu items UI
+- activate urls (+ UI)
+
+activate components for any object type

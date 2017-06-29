@@ -1,5 +1,6 @@
 [[WebCmsPage-overview]]
-=== WebCmsPage
+==== Page model
+===== WebCmsPage
 Any generated path segments will be SEO friendly
 
 .General options
@@ -35,7 +36,7 @@ When creating or updating the page, the following updates are done with regards 
 
 
 [[WebCmsPageType-overview]]
-==== WebCmsPageType
+===== WebCmsPageType
 
 A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-overview, WebCmsPage>>.
 

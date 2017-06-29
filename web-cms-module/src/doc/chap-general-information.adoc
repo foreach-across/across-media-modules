@@ -1,0 +1,53 @@
+== General information
+
+=== Artifact
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>{module-artifact}</artifactId>
+			<version>{module-version}</version>
+		</dependency>
+	</dependencies>
+----
+
+=== Module dependencies
+
+{module-name} only has a required dependency on AcrossWebModule.
+
+.Module dependencies
+|===
+|Module |Type |Description
+
+|{entity-module-url}[EntityModule]
+|optional
+|In combination with `AdminWebModule` this enables the management forms in the administration UI.
+|===
+
+=== Module settings
+
+All properties start with the *webCmsModule.* prefix.
+
+|===
+|Property |Type |Description |Default
+
+|pages.default-template
+|`String`
+|Default template to use if no custom template specified on a page entity.
+|`th/WebCmsModule/default-page-template`
+
+|pages.template-prefix
+|`String`
+|Prefix to be added to relative template names.
+This corresponds usually with the base directory where the (Thymeleaf) templates are located.
+If unspecified the default resources of any present `@AcrossApplication` will be used.
+|
+
+|default-data.assets.enabled
+|
+|Enable default assets to be added: this includes component and asset types as well as some sample assets.
+|`true`
+
+|===

@@ -1,0 +1,5 @@
+
+=== Default data
+
+disable default data:
+webCmsModule.default-data.assets.enabled = false

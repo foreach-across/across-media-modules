@@ -1,0 +1,31 @@
+==== Publication model
+
+Enabling urls for WebCmsAsset implementations: wire WebCmsAssetUrlConfiguration
+
+WebCmsPublication
+A publication has a specific type.
+A publication has a set of possible article types that is a subset of the article types allowed on the publication type.
+
+WebCmsPublicationType
+Type of publication.
+A publication type determines the possible article types allowed.
+
+WebCmsArticle
+An article requires a specific article type.
+
+WebCmsArticleType
+
+modifying the default components:
+
+types:
+  article:
+    blog:
+      wcm:components:
+        bodyTemplate:
+          wcm:components:
+            main-image:
+              componentType: image
+              title: Image
+              sortIndex: 0
+            body:
+              sortIndex: 1

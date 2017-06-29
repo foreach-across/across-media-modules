@@ -26,64 +26,11 @@ Most important part is that it allows managing web pages using an administration
 Module website: {module-url}
 
 :numbered:
-== General information
+// General information
+include::chap-general-information.adoc[]
 
-=== Artifact
-[source,xml,indent=0]
-[subs="verbatim,quotes,attributes"]
-----
-	<dependencies>
-		<dependency>
-			<groupId>com.foreach.across.modules</groupId>
-			<artifactId>{module-artifact}</artifactId>
-			<version>{module-version}</version>
-		</dependency>
-	</dependencies>
-----
-
-=== Module dependencies
-
-{module-name} only has a required dependency on AcrossWebModule.
-
-.Module dependencies
-|===
-|Module |Type |Description
-
-|{entity-module-url}[EntityModule]
-|optional
-|In combination with `AdminWebModule` this enables the management forms in the administration UI.
-|===
-
-=== Module settings
-
-All properties start with the *webCmsModule.* prefix.
-
-|===
-|Property |Type |Description |Default
-
-|pages.default-template
-|`String`
-|Default template to use if no custom template specified on a page entity.
-|`th/WebCmsModule/default-page-template`
-
-|pages.template-prefix
-|`String`
-|Prefix to be added to relative template names.
-This corresponds usually with the base directory where the (Thymeleaf) templates are located.
-If unspecified the default resources of any present `@AcrossApplication` will be used.
-|
-
-|default-data.assets.enabled
-|
-|Enable default assets to be added: this includes component and asset types as well as some sample assets.
-|`true`
-
-|===
-
-== What's new in this version?
-:numbered!:
-=== 0.0.2-SNAPSHOT
-Initial public release available on http://search.maven.org/[Maven central].
+// What's new section
+include::chap-whats-new.adoc[]
 
 :numbered:
 == How {module-name} works
@@ -110,109 +57,17 @@ a default webcmspagetemplate will be used if none is specified
 specify a default template yourself
 add a base location for the template files
 
-== Domain model
+// Domain model - bulk of domain documentation
+include::chap-domain-model.adoc[]
 
-include::chap-web-page.adoc[]
+// General data import information
+include::importing/chap-importing-data.adoc[]
 
-=== WebCmsEndpoint
+// Performance tuning related configuration
+include::chap-performance-tuning.adoc[]
 
-An endpoint can be anything that can be accessed by a collection or URLs.  The endpoint should contain all the data needed to display itself when accessing.
+// Extending the domain model: creating your own assets, types, configuring admin UI etc
+include::extending/chap-extending-domain-model.adoc[]
 
-This module provides two endpoints, one for pages and one for redirects.  The first - `WebCmsPageEndpoint` - will reference the page and the urls for that page.
-The latter - `WebCmsRemoteEndpoint` - has a collection of urls which should be redirected and contains the target url which url should be targeted.
-
-A `WebCmsEndpoint` or one of its subclasses can be used as method parameter.
-
-=== WebCmsUrl
-
-URL targeting a specific endpoint and HTTP-status code.  A `WebCmsUrl` must be coupled with an `WebCmsEndpoint`.
-
-//* path: url path
-//* status code: http status code, will determine what will happen when the url is requested
-//** 200 will serve the content
-//** 3xx will perform a redirect to the canonical url
-//** other status codes will serve the content but with the custom status code (eg custom 404 page)
-//* is canonical: only one url for an endpoint can be the canonical url
-//* endpoint: the endpoint target
-
-A `WebCmsUrl` or one of its subclasses can be used as method parameter.
-
-`WebCmsUrls` can be cached when you specify a `CacheManger` and a cache with name *pathToWebCmsUrlCache*.
-{ehcache-module-url}[EhcacheModule] should be used to provide a `CacheManager`.  The caching of `WebCmsUrl` is recommended
-because it is queries a lot when resolving a `WebCmsEndpointContext`.
-
-=== WebCmsPage
-
-
-WebCmsMenu
-
-named menu, consisting of different items
-
-WebCmsMenu item:
-* path: in the menu tree
-* title: of the item
-* url: fixed url - if a page is linked and url is empty the page url will be used
-* endpoint: optional page this menu is linking to
-* sortIndex: index of the item
-* group: is the item group or not
-
-when a BuildMenuEvent is published for a menu with that name, all items will be added
-
-Generating a sitemap
-
-=== Programmatically creating pages
-you can use yaml to create pages
-
-=== Default data
-
-disable default data:
-webCmsModule.default-data.assets.enabled = false
-
-importing data using yaml (installer)
-
-include::chap-web-components.adoc[]
-
-
-== Publication model
-Enabling urls for WebCmsAsset implementations: wire WebCmsAssetUrlConfiguration
-
-WebCmsPublication
-A publication has a specific type.
-A publication has a set of possible article types that is a subset of the article types allowed on the publication type.
-
-WebCmsPublicationType
-Type of publication.
-A publication type determines the possible article types allowed.
-
-WebCmsArticle
-An article requires a specific article type.
-
-WebCmsArticleType
-
-modifying the default components:
-
-types:
-  article:
-    blog:
-      wcm:components:
-        bodyTemplate:
-          wcm:components:
-            main-image:
-              componentType: image
-              title: Image
-              sortIndex: 0
-            body:
-              sortIndex: 1
-
-== Performance
-
-caches: WebCmsUrlCache, WebCmsMenuCache
-enable Hibernate 2nd level cache
-webCmsModule.urls.included-path-patterns
-webCmsModule.urls.excluded-path-patterns
-
-extending WebCmsAsset:
-- activate menu items UI
-- activate urls (+ UI)
-
-activate components for any object type
+// Appendices
+include::appendices/chap-appendices.adoc[]

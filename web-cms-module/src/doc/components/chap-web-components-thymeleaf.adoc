@@ -423,6 +423,8 @@ Title: @@wcm:component(title,container,false)@@
 Footer: @@wcm:component(footer,container,false)@@
 ----
 
+:numbered:
+
 [[thymeleaf-rendering]]
 ==== Custom rendering of component
 Web components in Thymeleaf are rendered using a `WebCmsComponentModelRenderer` implementation.

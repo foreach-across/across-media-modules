@@ -1,0 +1,14 @@
+=== Menu building
+WebCmsMenu
+
+named menu, consisting of different items
+
+WebCmsMenu item:
+* path: in the menu tree
+* title: of the item
+* url: fixed url - if a page is linked and url is empty the page url will be used
+* endpoint: optional page this menu is linking to
+* sortIndex: index of the item
+* group: is the item group or not
+
+when a BuildMenuEvent is published for a menu with that name, all items will be added

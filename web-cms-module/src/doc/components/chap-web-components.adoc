@@ -1,8 +1,6 @@
-== Web components
+=== Web components
 
 What are web components?
-
-=== Domain model
 
 ==== WebCmsComponentType
 
@@ -16,7 +14,7 @@ type
 
 persisted entity
 
-=== WebCmsComponentModel
+==== WebCmsComponentModel
 `WebCmsComponentModelService` and `WebCmsComponentModel`
 `WebCmsComponentType`
 
@@ -28,20 +26,20 @@ converted from a `WebCmsComponent` by a `WebCmsComponentModelReader`
 
 include::chap-web-components-base-types.adoc[]
 
-=== Activating component support
+==== Activating component support
 Any `WebCmsObject` - this includes all assets and components themselves - can have web components linked to it.
 Enabling components for WebCmsObject implementations: wire WebCmsObjectComponentViewsConfiguration: registerComponentsAssociation
 
-=== Rendering components
+==== Rendering components
 
-=== Creating shared web components
+==== Creating shared web components
 Name must be globally unique and is required
 Title is also required - must not be unique however.
 
-=== Using components in your controllers
+==== Using components in your controllers
 `WebCmsComponentModelHierarchy`
 
-=== Placeholders
+==== Placeholders
 `WebCmsPlaceholderContentModel`
 
 include::chap-web-components-content-markers.adoc[]
