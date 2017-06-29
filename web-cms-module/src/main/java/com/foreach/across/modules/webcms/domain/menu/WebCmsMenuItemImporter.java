@@ -63,20 +63,27 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 			if ( action == WebCmsDataAction.REPLACE ) {
 				WebCmsMenuItem menuItem = createNewMenuItemDto( menuDataSet, parent );
 				menuItem.setId( existing.getId() );
+				attachAsset( menuDataSet, menuItem );
 				return menuItem;
 			}
-
+			attachAsset( menuDataSet, existing );
 			return existing.toDto();
 		}
 		else {
-			return createNewMenuItemDto( menuDataSet, parent );
+			WebCmsMenuItem dto = createNewMenuItemDto( menuDataSet, parent );
+			attachAsset( menuDataSet, dto );
+			return dto;
 		}
 	}
 
 	private WebCmsMenuItem createNewMenuItemDto( WebCmsDataEntry data, WebCmsMenu parent ) {
 		String key = data.getMapData().containsKey( "path" ) ? (String) data.getMapData().get( "path" ) : data.getKey();
+		return WebCmsMenuItem.builder().menu( parent ).path( key ).build();
+	}
+
+	private void attachAsset( WebCmsDataEntry data, WebCmsMenuItem dto ) {
 		String assetKey = (String) data.getMapData().getOrDefault( "asset", "" );
-		WebCmsMenuItem dto = WebCmsMenuItem.builder().menu( parent ).path( key ).build();
+
 		if ( StringUtils.isNotBlank( assetKey ) ) {
 			WebCmsAsset asset =
 					assetKey.startsWith( "/" ) ? webCmsPageRepository.findOneByCanonicalPath( assetKey ) : webCmsAssetRepository.findOneByObjectId( assetKey );
@@ -88,7 +95,6 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 				}
 			}
 		}
-		return dto;
 	}
 
 	@Override
