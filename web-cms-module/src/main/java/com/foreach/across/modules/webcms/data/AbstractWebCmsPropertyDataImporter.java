@@ -40,16 +40,16 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, T asset, WebCmsDataAction action ) {
 		if ( propertyData.isMapData() ) {
 			propertyData.getMapData().forEach(
-					( key, properties ) -> importMenuItem(
+					( key, properties ) -> importSingleEntry(
 							new WebCmsDataEntry( key, propertyData, properties == null ? new HashMap<>() : properties ), asset ) );
 		}
 		else {
-			propertyData.getCollectionData().forEach( properties -> importMenuItem( new WebCmsDataEntry( null, propertyData, properties ), asset ) );
+			propertyData.getCollectionData().forEach( properties -> importSingleEntry( new WebCmsDataEntry( null, propertyData, properties ), asset ) );
 		}
 		return true;
 	}
 
-	private void importMenuItem( WebCmsDataEntry menuDataSet, T parent ) {
+	private void importSingleEntry( WebCmsDataEntry menuDataSet, T parent ) {
 		LOG.trace( "Importing data entry {}", menuDataSet );
 
 		U existing = getExisting( menuDataSet, parent );

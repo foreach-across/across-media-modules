@@ -19,8 +19,14 @@ package com.foreach.across.modules.webcms.domain.menu;
 import com.foreach.across.modules.webcms.data.AbstractWebCmsPropertyDataImporter;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetRepository;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
+import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,6 +43,9 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 	static final String PROPERTY_NAME = "items";
 
 	private final WebCmsMenuItemRepository webCmsMenuItemRepository;
+	private final WebCmsAssetRepository webCmsAssetRepository;
+	private final WebCmsAssetEndpointRepository webCmsAssetEndpointRepository;
+	private final WebCmsPageRepository webCmsPageRepository;
 
 	@Override
 	public Phase getPhase() {
@@ -66,7 +75,20 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 
 	private WebCmsMenuItem createNewMenuItemDto( WebCmsDataEntry data, WebCmsMenu parent ) {
 		String key = data.getMapData().containsKey( "path" ) ? (String) data.getMapData().get( "path" ) : data.getKey();
-		return WebCmsMenuItem.builder().menu( parent ).path( key ).build();
+		String assetKey = (String) data.getMapData().getOrDefault( "asset", "" );
+		WebCmsMenuItem dto = WebCmsMenuItem.builder().menu( parent ).path( key ).build();
+		if ( StringUtils.isNotBlank( assetKey ) ) {
+			WebCmsAsset asset =
+					assetKey.startsWith( "/" ) ? webCmsPageRepository.findOneByCanonicalPath( assetKey ) : webCmsAssetRepository.findOneByObjectId( assetKey );
+
+			if ( asset != null ) {
+				WebCmsEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAsset( asset );
+				if ( endpoint != null ) {
+					dto.setEndpoint( endpoint );
+				}
+			}
+		}
+		return dto;
 	}
 
 	@Override
@@ -79,7 +101,6 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 		webCmsMenuItemRepository.delete( dto );
 	}
 
-	@Override
 	protected WebCmsMenuItem getExisting( WebCmsDataEntry dataKey, WebCmsMenu parent ) {
 		String key = dataKey.getMapData().containsKey( "path" ) ? (String) dataKey.getMapData().get( "path" ) : dataKey.getKey();
 		return webCmsMenuItemRepository.findByMenuNameAndPath( parent.getName(), key );

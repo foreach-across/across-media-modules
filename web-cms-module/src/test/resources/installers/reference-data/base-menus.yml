@@ -1,3 +1,8 @@
+assets:
+  page:
+    - objectId: "wcm:asset:page:reference-for-menu"
+      title: Used in menu
+      canonicalPath: /extension/referenceForMenu
 #
 # Import default menu structures
 #
@@ -11,6 +16,7 @@ menus:
         title: Home
         url: /home
         sortIndex: 1
+        asset: /extension/referenceForMenu
       /categories:
         title: Categories
         group: true
@@ -19,6 +25,7 @@ menus:
         title: News
         url: /category/news
         sortIndex: 1
+        asset: "wcm:asset:page:reference-for-menu"
       /categories/gossip:
         title: Gossip
         url: /category/gossip

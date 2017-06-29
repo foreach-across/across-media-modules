@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -121,6 +122,17 @@ public class ITMenuReferenceData extends AbstractSingleApplicationIT
 
 		assertMenuItem( "/general-conditions", "General Conditions", "/help/conditions", true, 4, true, map.get( "sideNav" ) );
 		assertMenuItem( "/general-conditions", "General Conditions", null, false, 0, false, map.get( "topNav" ) );
+	}
+
+	@Test
+	public void assetShouldHaveBeenLinkedWhenRequested() {
+		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-for-menu" );
+		assertNotNull( page );
+
+		List<WebCmsMenuItem> items = new ArrayList<>( menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAsset( page ) ) );
+		assertEquals( 2, items.size() );
+		assertTrue( items.stream().anyMatch( x -> Objects.equals( x.getUrl(), "/home" ) ) );
+		assertTrue( items.stream().anyMatch( x -> Objects.equals( x.getUrl(), "/category/news" ) ) );
 	}
 
 	private void assertMenuItem( String path, String title, String url, boolean group, int sortIndex, Map<String, WebCmsMenuItem> itemsByPath ) {
