@@ -103,9 +103,15 @@ public class WebCmsPageConfiguration
 			        )
 			        .updateFormView( fvb -> fvb
 					        .properties( props -> props
-							        .property( "pageType" )
-							        .readable( true )
-							        .writable( false ) ) )
+							        .property( "pageType" ).readable( true ).writable( false )
+							        .and().property( "publish-settings" )
+							        .attribute(
+									        EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
+									        EntityPropertySelector.of( "published", "publicationDate", "menu-items" )
+							        )
+					        ) )
+			        .createFormView( fvb -> fvb
+					        .properties( props -> props.property( "publish-settings" ).hidden( true ) ) )
 			        .createOrUpdateFormView( fvb -> fvb
 					        .properties( props -> props
 							        .property( "url-settings" )
@@ -123,12 +129,7 @@ public class WebCmsPageConfiguration
 							        .readable( false )
 							        .hidden( true )
 							        .viewElementBuilder( ViewElementMode.CONTROL, menuItemsViewElementBuilder )
-							        .and()
-							        .property( "publish-settings" )
-							        .attribute(
-									        EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
-									        EntityPropertySelector.of( "published", "publicationDate", "menu-items" )
-							        )
+
 					        )
 					        .showProperties(
 							        "*", "~canonicalPath", "~canonicalPathGenerated", "~pathSegment", "~pathSegmentGenerated"
