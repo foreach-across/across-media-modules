@@ -52,6 +52,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.0.1
  */
 @Configuration
+@RequiredArgsConstructor
 public class WebCmsPageConfiguration
 {
 	public static final String PATH_SEGMENT = "pathSegment";
@@ -144,8 +145,9 @@ public class WebCmsPageConfiguration
 					                .listView( lvb -> lvb.showProperties( CANONICAL_PATH, "title" )
 					                                     .defaultSort( CANONICAL_PATH )
 					                                     .viewProcessor( pageListViewProcessor() ) )
-					                .createOrUpdateFormView( fvb -> fvb.viewProcessor( pageFormViewProcessor ) )
-			        );
+					                .createOrUpdateFormView( fvb -> fvb.viewProcessor( pageFormViewProcessor ) ) );
+			;
+
 		}
 
 		@ConditionalOnAdminUI
@@ -193,5 +195,6 @@ public class WebCmsPageConfiguration
 		public void setEndpointService( WebCmsEndpointService endpointService ) {
 			this.endpointService = endpointService;
 		}
+
 	}
 }
