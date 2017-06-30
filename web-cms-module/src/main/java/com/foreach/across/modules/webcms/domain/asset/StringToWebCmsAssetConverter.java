@@ -18,7 +18,6 @@ package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataImportServiceImpl;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 /**
- * In which we assume that if the lookup string starts with a '/' we look up a page, otherwise we look up a (generic) asset
+ * In which we assume that if the lookup string starts with a '/' we look up a page, otherwise we look up a (generic) asset.
  *
  * @author Raf Ceuls
  * @see WebCmsDataImportServiceImpl
@@ -45,7 +44,7 @@ public final class StringToWebCmsAssetConverter implements Converter<String, Web
 	}
 
 	@Override
-	public WebCmsPage convert( String source ) {
+	public WebCmsAsset convert( String source ) {
 		if ( source.startsWith( "/" ) ) {
 			return pageRepository.findOneByCanonicalPath( source );
 		}
