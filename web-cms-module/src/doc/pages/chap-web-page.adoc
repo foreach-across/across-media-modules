@@ -1,14 +1,14 @@
+=== Page model
 [[WebCmsPage-overview]]
-==== Page model
-===== WebCmsPage
-A `WebCmsPage` represents a single page in the cms. It has an association with a `WebCmsPageType` which contains sensible defaults.
+==== Overview
+A `WebCmsPage` represents a single page in the cms.
 
 ==== Properties
 .Properties of a menu
 [options="header", cols="2,1,1,3,1"]
 |================
 |Name|Type|Mandatory|Description|Default Value
-|Page Type|Page Type|Yes|Defines the page type of a page. Can be set during create but not altered afterwards.|Default
+|Page Type|Page Type|Yes|Defines the page type of a page. Can be set during page creation but can not be changed afterwards.|Default
 |Title|String|Yes|The title of the page.|None
 |Parent|Select|No|Parentpage of the page.|None
 |Template|String|No|The thymeleaf template of the page. The filename of the page without the extension.|None
@@ -22,6 +22,7 @@ A `WebCmsPage` represents a single page in the cms. It has an association with a
 There are two configurable subsections, one for URL settings and one for publication settings
 
 .URL settings
+[options="header", cols="2,1,1,3,1"]
 |===
 |Field|Required|Type|Description|Default Value
 |Path Segment|Yes|String|Path (URL) of the page.|None
@@ -29,6 +30,7 @@ There are two configurable subsections, one for URL settings and one for publica
 |===
 
 .Publish settings
+[options="header", cols="2,1,1,3,1"]
 |===
 |Field|Required|Type|Description|Default Value
 |Published|Yes|Boolean|If the page is published (or not). Published pages are visible for regular users.|None
@@ -41,51 +43,9 @@ When creating or updating the page, the following updates are done with regards 
 * If the page object is saved, and the publication is in the future or not yet published, update the primary url.
 * If the page object is saved and published but the publication date is in the past, no adjustments to the primary url will happen.
 
+This, however, can be overriden by behaviour defined in <<WebCmsMenu-overview,  `WebCMSMenu`>>.
 
-[[WebCmsPageType-overview]]
-===== WebCmsPageType
-
-A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-overview, WebCmsPage>>. The default page type is controlled via the `webCmsModule.pages.default-page-type` parameter.
-
-.Parameters
-|===
-|Field|Required|Type|Description|Default Value
-|Name|Yes|String|The name of the page type. Displayed in the drop down list when creating a new page.|None
-|Attributes|No|<<WebCmsPageType-attributes, Attributes>>|The attributes affecting the behaviour when rendering/creating the page. Specified as key-value pairs.|None
-|wcm:components|No|Components|The components that are automatically generated when creating a page that uses this page type.|None
-|===
-
-.Attributes[[WebCmsPageType-attributes]]
-|===
-|Attribute|Description
-|contentTemplate|The identifier of the selector in the thymeleaf page that contains the actual page content.
-|defaultTemplate|The thymeleaf page that is used if there has not been a page specified on the page itself.
-|hasEndpoint|Whether or not an endpoint is defined for a page. If you disable this, the menu and URL functionality will be disabled on the front end.
-|isPublishable|Whether or not the page can be published.
-|===
-
-
-===== Importing a page type
-In the standard setup one can only manipulate the available page types via the import functionality. The default types are described further down. One can extrapolate any other needed page type from them
-
-.Default page types
-[source,yaml,indent=0]
-----
-types:
-  page:
-    default: //<1>
-      name: Default
-    template:
-      name: Template
-      attributes: //<2>
-        hasEndpoint: false
-        isPublishable: false
-----
-<1> The default page type. Notice that nothing
-<2> <<WebCmsPageType-attributes, Attributes>> are defined as simple key-value pairs.
-
-
-===== Importing a page
+==== Importing a page
 One can import a page by using the import infrastructure provided by the import functionality of WebCMS.
 
 .Example page
@@ -139,3 +99,48 @@ page:
 |publicationDate|Publication Date|
 |wcm:menu-items|For menu manipulation
 |================
+
+[[WebCmsPageType-overview]]
+=== WebCmsPageType
+A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-overview, WebCmsPage>>. The default page type is controlled via the `webCmsModule.pages.default-page-type` parameter.
+
+==== Properties
+.Parameters
+[options="header", cols="2,1,1,3,1"]
+|===
+|Field|Required|Type|Description|Default Value
+|Name|Yes|String|The name of the page type. Displayed in the drop down list when creating a new page.|None
+|Attributes|No|<<WebCmsPageType-attributes, Attributes>>|The attributes affecting the behaviour when rendering/creating the page. Specified as key-value pairs.|None
+|wcm:components|No|Components|The components that are automatically generated when creating a page that uses this page type.|None
+|===
+
+.Attributes[[WebCmsPageType-attributes]]
+[options="header", cols="2,1,1,3,1"]
+|===
+|Attribute|Description
+|contentTemplate|The identifier of the selector in the thymeleaf page that contains the actual page content.
+|defaultTemplate|The thymeleaf page that is used if there has not been a page specified on the page itself.
+|hasEndpoint|Whether or not an endpoint is defined for a page. If you disable this, the menu and URL functionality will be disabled on the front end.
+|isPublishable|Whether or not the page can be published.
+|===
+
+
+==== Importing a page type
+In the standard setup one can only manipulate the available page types via the import functionality. The default types are described further down. One can extrapolate any other needed page type from them
+
+.Default page types
+[source,yaml,indent=0]
+----
+types:
+  page:
+    default: //<1>
+      name: Default
+    template:
+      name: Template
+      attributes: //<2>
+        hasEndpoint: false
+        isPublishable: false
+----
+<1> The default page type. Notice that nothing
+<2> <<WebCmsPageType-attributes, Attributes>> are defined as simple key-value pairs.
+

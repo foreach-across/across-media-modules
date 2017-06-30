@@ -1,4 +1,5 @@
 === Menu
+[[WebCmsMenu-overview]]
 ==== Overview
 A `WebCmsMenu` is a construct that can be used to render content resembling a menu. A single menu can have zero or
 more `WebCmsMenuItem` s. A `WebCmsMenuItem` represents a link from a path in the menu to an endpoint.
@@ -26,7 +27,7 @@ the menu item. This can used in the Thymeleaf template to render the items in a 
 |Update automatically|Boolean|Yes|If checked and the linked endpoint gets updated, any updates will be reflected in this menu item.|None
 |================
 
-===== Importing a menu item
+==== Importing a menu item
 One can import a menu and its associated items by using the import infrastructure provided by the import functionality of WebCMS.
 [source,yaml]
 ----
@@ -57,7 +58,7 @@ menus: // <1>
 <5> If you want to set the endpoint of the item, you can use the `asset` keyword. It can use
 both the objectId (for all `WebCmsAsset` s) and the canonical path (only for `WebCmsPage` s)
 
-====== Supported properties
+===== Supported properties
 
 .Menu properties that can be imported
 [options="header", cols="1,1,2"]
