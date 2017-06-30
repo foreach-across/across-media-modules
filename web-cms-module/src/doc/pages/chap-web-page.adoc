@@ -45,17 +45,17 @@ When creating or updating the page, the following updates are done with regards 
 [[WebCmsPageType-overview]]
 ===== WebCmsPageType
 
-A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-overview, WebCmsPage>>.
+A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-overview, WebCmsPage>>. The default page type is controlled via the `webCmsModule.pages.default-page-type` parameter.
 
 .Parameters
 |===
 |Field|Required|Type|Description|Default Value
 |Name|Yes|String|The name of the page type. Displayed in the drop down list when creating a new page.|None
-|Attributes|No|<<wcpt-attributes, Attributes>>|The attributes affecting the behaviour when rendering/creating the page. Specified as key-value pairs.|None
+|Attributes|No|<<WebCmsPageType-attributes, Attributes>>|The attributes affecting the behaviour when rendering/creating the page. Specified as key-value pairs.|None
 |wcm:components|No|Components|The components that are automatically generated when creating a page that uses this page type.|None
 |===
 
-.Attributes[[wcpt-attributes]]
+.Attributes[[WebCmsPageType-attributes]]
 |===
 |Attribute|Description
 |contentTemplate|The identifier of the selector in the thymeleaf page that contains the actual page content.
@@ -65,15 +65,34 @@ A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-
 |===
 
 
+===== Importing a page type
+In the standard setup one can only manipulate the available page types via the import functionality. The default types are described further down. One can extrapolate any other needed page type from them
+
+.Default page types
+[source,yaml,indent=0]
+----
+types:
+  page:
+    default: //<1>
+      name: Default
+    template:
+      name: Template
+      attributes: //<2>
+        hasEndpoint: false
+        isPublishable: false
+----
+<1> The default page type. Notice that nothing
+<2> <<WebCmsPageType-attributes, Attributes>> are defined as simple key-value pairs.
+
+
 ===== Importing a page
 One can import a page by using the import infrastructure provided by the import functionality of WebCMS.
 
-.Example page type
+.Example page
 [source,yaml,indent=0]
-[subs="verbatim,quotes,attributes"]
 ----
 page:
-  - title: Always Created Page // <1>
+  - title: Always Created Page //<1>
 
   - objectId: "wcm:asset:page:reference-simple"
     title: Simple Page
@@ -118,5 +137,5 @@ page:
 |objectId|-|
 |isPublished|Published|
 |publicationDate|Publication Date|
-|
+|wcm:menu-items|For menu manipulation
 |================

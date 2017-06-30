@@ -120,6 +120,9 @@
 					<outputDirectory>${project.reporting.outputDirectory}/${project.version}/reference</outputDirectory>
 					<backend>html</backend>
 					<sourceHighlighter>coderay</sourceHighlighter>
+					<attributes>
+						<icons>font</icons>
+					</attributes>
 				</configuration>
 				<executions>
 					<execution>
