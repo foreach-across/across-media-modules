@@ -87,7 +87,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 
 	@Event
 	void handleMenuCreationEvent( EntityAdminMenuEvent<WebCmsPage> event ) {
-		if ( event.getEntity() != null ) {
+		if ( event.getEntity() != null && event.getEntity().getPageType() != null ) {
 			boolean hasEndpoint = event.getEntity().getPageType().hasEndpoint();
 			if ( !hasEndpoint ) {
 				PathBasedMenuBuilder builder = event.builder();

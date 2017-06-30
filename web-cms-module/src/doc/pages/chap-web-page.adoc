@@ -1,7 +1,7 @@
 [[WebCmsPage-overview]]
 ==== Page model
 ===== WebCmsPage
-A `WebCmsPage` represents a single page in the cms.
+A `WebCmsPage` represents a single page in the cms. It has an association with a `WebCmsPageType` which contains sensible defaults.
 
 ==== Properties
 .Properties of a menu
@@ -19,22 +19,22 @@ A `WebCmsPage` represents a single page in the cms.
 |Auto create menu items|String|No|A description of the menu.|None
 |================
 
+There are two configurable subsections, one for URL settings and one for publication settings
+
 .URL settings
 |===
-|Field|Required|Type|Description
-|Path Segment|Yes|String|Path (URL) of the page.
-|Canonical path|Yes|String|FQDN of the page.
+|Field|Required|Type|Description|Default Value
+|Path Segment|Yes|String|Path (URL) of the page.|None
+|Canonical path|Yes|String|FQDN of the page.|None
 |===
-All of these settings can be automatically generated.
 
 .Publish settings
 |===
-|Field|Required|Type|Description
-|Published|Yes|Boolean|If the page is published (or not). Published pages are visible for regular users.
-|Publication Date|No|Date|The page is only visible if the access date of the file is greater than the publication date.
-|Auto-create new menu items|Yes|Boolean|If checked, creates a new menu item after creation.
+|Field|Required|Type|Description|Default Value
+|Published|Yes|Boolean|If the page is published (or not). Published pages are visible for regular users.|None
+|Publication Date|No|Date|The page is only visible if the access date of the file is greater than the publication date.|None
+|Auto-create new menu items|Yes|Boolean|If checked, creates a new menu item after creation.|False
 |===
-
 
 When creating or updating the page, the following updates are done with regards to the associated URLs:
 
@@ -49,47 +49,74 @@ A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-
 
 .Parameters
 |===
-|Parameter|Type|Description
-
-|name|string|The name of the page type. Displayed in the drop down list when creating a new page.
-|attributes|<<wcpt-attributes, attributes>>|The attributes affecting the behaviour when rendering/creating the page. Specified as key-value pairs.
-|wcm:components|The components that are automatically generated when creating a page that uses this page type.
+|Field|Required|Type|Description|Default Value
+|Name|Yes|String|The name of the page type. Displayed in the drop down list when creating a new page.|None
+|Attributes|No|<<wcpt-attributes, Attributes>>|The attributes affecting the behaviour when rendering/creating the page. Specified as key-value pairs.|None
+|wcm:components|No|Components|The components that are automatically generated when creating a page that uses this page type.|None
 |===
 
 .Attributes[[wcpt-attributes]]
 |===
 |Attribute|Description
-
-|contentTemplate
-|The part of the thymeleaf page that contains the actual page content.
-
-|defaultTemplate
-|The thymeleaf page that is used if there has not been a page specified on the page itself.
+|contentTemplate|The identifier of the selector in the thymeleaf page that contains the actual page content.
+|defaultTemplate|The thymeleaf page that is used if there has not been a page specified on the page itself.
+|hasEndpoint|Whether or not an endpoint is defined for a page. If you disable this, the menu and URL functionality will be disabled on the front end.
+|isPublishable|Whether or not the page can be published.
 |===
+
+
+===== Importing a page
+One can import a page by using the import infrastructure provided by the import functionality of WebCMS.
 
 .Example page type
 [source,yaml,indent=0]
 [subs="verbatim,quotes,attributes"]
 ----
-types:
-  page:
-    tabbedpage:
-      name: Tabbed Page
-      attributes:
-        contentTemplate: page-content
-        template: tabbedpage
-      wcm:components:
-        page-content:
-          title: Page content
-          componentType: container
-          wcm:components:
-            code:
-              title: Code
-              componentType: html
-              sortIndex: 0
-            documentation:
-              title: Documentation
-              componentType: html
-              sortIndex: 1
-----
+page:
+  - title: Always Created Page // <1>
 
+  - objectId: "wcm:asset:page:reference-simple"
+    title: Simple Page
+
+  - objectId: "wcm:asset:page:reference-simple-child"
+    title: Simple Child Page
+    parent: "wcm:asset:page:reference-simple" // <2>
+    published: true
+
+  - objectId: "wcm:asset:page:reference-fixed-path-segment"
+    title: Fixed Path Segment Page
+    parent: /simple-page // <2>
+    pathSegment: fixed
+    publicationDate: "2017-03-14"
+
+  - objectId: "wcm:asset:page:reference-faq"
+    title: Frequently Asked Questions
+    pathSegment: faq
+    wcm:menu-items: // <3>
+      - menu: sideNav
+      - menu: topNav
+        title: FAQ
+        path: /help/faq
+        sortIndex: 10
+----
+<1> Sensible defaults are used. Only title is mandatory.
+<2> One can refer to both the object id and the canonical path.
+<3> You can use this notation to manipulate the associated menu items.
+
+.Page properties that can be imported
+[options="header", cols="1,1,2"]
+|================
+|Property|On UI|Details
+|title|Title|
+|parent|Parent|Should be the canonical path or the objectId
+|pathSegment|Path segment|
+|pathSegmentGenerated|Generate path segment based on title|
+|canonicalPath|Canonical Path|
+|canonicalPathGenerated|Generate canonical path based on title|
+|template|Template|
+|pageType|Page type|
+|objectId|-|
+|isPublished|Published|
+|publicationDate|Publication Date|
+|
+|================
