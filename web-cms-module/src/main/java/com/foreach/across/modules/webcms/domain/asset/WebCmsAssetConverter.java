@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
+import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Component;
 public class WebCmsAssetConverter implements ConverterFactory<String, WebCmsAsset>
 {
 	private final WebCmsAssetRepository assetRepository;
+	private final WebCmsPageRepository pageRepository;
 
 	@Autowired
 	public void registerToConversionService( WebCmsDataConversionService conversionService ) {
@@ -55,6 +57,9 @@ public class WebCmsAssetConverter implements ConverterFactory<String, WebCmsAsse
 		return ( id ) -> {
 			if ( NumberUtils.isDigits( id ) ) {
 				return targetType.cast( assetRepository.findOne( Long.parseLong( id ) ) );
+			}
+			if ( id.startsWith( "/" ) ) {
+				return targetType.cast( pageRepository.findOneByCanonicalPath( id ) );
 			}
 
 			return StringUtils.isEmpty( id ) ? null : targetType.cast( assetRepository.findOneByObjectId( id ) );

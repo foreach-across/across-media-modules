@@ -77,3 +77,9 @@ assets:
         header:
           componentType: html
           content: Header content...
+    - objectId: "wcm:asset:page:contact"
+      title: My Fancy Contact Page
+      canonicalPath: /my/contact
+    - objectId: "wcm:asset:page:other-contact"
+      title: My Other Fancy Contact Page
+      canonicalPath: /my/other/contact
