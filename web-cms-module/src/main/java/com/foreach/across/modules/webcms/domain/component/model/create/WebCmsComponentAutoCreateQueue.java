@@ -18,12 +18,13 @@ package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelSet;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelSet;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.proxy.ProxyWebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -43,6 +44,7 @@ import java.util.UUID;
  * @see WebCmsComponentAutoCreateService
  * @since 0.0.2
  */
+@Slf4j
 @Component
 @Exposed
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -104,12 +106,18 @@ public class WebCmsComponentAutoCreateQueue
 			}
 			else {
 				WebCmsComponentModelSet componentModelSet = componentModelHierarchy.getComponentsForScope( current.getScopeName() );
-				current.setOwner( componentModelSet.getOwner() );
 
-				WebCmsComponentModel componentModel = autoCreateService.createComponent( current );
-				componentModelSet.add( componentModel );
+				if ( componentModelSet != null ) {
+					current.setOwner( componentModelSet.getOwner() );
 
-				componentsCreated.put( current.getTaskId(), componentModel );
+					WebCmsComponentModel componentModel = autoCreateService.createComponent( current );
+					componentModelSet.add( componentModel );
+
+					componentsCreated.put( current.getTaskId(), componentModel );
+				}
+				else {
+					LOG.error( "Unable to auto-create component model - scope {} is not registered!", current.getScopeName() );
+				}
 			}
 		}
 	}

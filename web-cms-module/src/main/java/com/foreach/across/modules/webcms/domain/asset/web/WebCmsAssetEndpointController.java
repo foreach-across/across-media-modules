@@ -16,40 +16,45 @@
 
 package com.foreach.across.modules.webcms.domain.asset.web;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelSet;
+import com.foreach.across.modules.webcms.domain.endpoint.web.IgnoreEndpointModel;
+import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointModelLoader;
+import com.foreach.across.modules.webcms.domain.endpoint.web.interceptor.WebCmsEndpointHandlerInterceptor;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
+ * Contains default handler methods for dealing with {@link WebCmsAssetEndpoint}.
+ *
  * @author Sander Van Loock
  * @since 0.0.1
  */
 @Controller
-@RequiredArgsConstructor
-public class WebCmsAssetEndpointController
+@Slf4j
+class WebCmsAssetEndpointController
 {
-	private final WebCmsComponentModelHierarchy componentModelHierarchy;
-	private final WebCmsComponentModelService componentModelService;
-
+	/**
+	 * Default handler method for any asset endpoint.
+	 * Does not actually do anything except ensuring that a handler method is found for the asset.
+	 * The available default model has been determined by {@link WebCmsEndpointModelLoader} beans.
+	 * <p/>
+	 * If no {@link WebCmsEndpointHandlerInterceptor#DEFAULT_TEMPLATE_ATTRIBUTE} is configured,
+	 * a default view name will be generated based on {@link WebCmsAsset#getObjectType()}.
+	 */
 	@WebCmsAssetMapping
-	public void render( WebCmsUrl url, WebCmsAssetEndpoint endpoint, ModelMap model ) {
-		model.addAttribute( "asset", endpoint.getAsset() );
-
-		WebCmsComponentModelSet componentModelSet = componentModelService.buildComponentModelSetForOwner( endpoint.getAsset() );
-		componentModelHierarchy.registerComponentsForScope( componentModelSet, "asset" );
-
-		//model.addAttribute( "webCmsComponent", componentModelHierarchy );
-		/*model.addAttribute( "componentHierarchy", componentModelHierarchy );
-		model.addAttribute( "components", componentModelSet );*/
+	public String renderAsset( HttpServletRequest request, WebCmsAsset asset ) {
+		LOG.trace( "Using default asset rendering handler method for {}", asset );
+		String defaultViewName = (String) request.getAttribute( WebCmsEndpointHandlerInterceptor.DEFAULT_TEMPLATE_ATTRIBUTE );
+		return defaultViewName != null ? defaultViewName : "asset/" + asset.getObjectType();
 	}
 
+	@IgnoreEndpointModel
 	@WebCmsAssetMapping(series = HttpStatus.Series.REDIRECTION)
 	public RedirectView redirect( WebCmsUrl url, WebCmsAssetEndpoint endpoint ) {
 		return endpoint.getPrimaryUrl()

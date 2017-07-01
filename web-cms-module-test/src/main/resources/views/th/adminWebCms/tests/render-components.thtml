@@ -43,15 +43,15 @@
     </tr>
     <tr>
         <td>block-three - global block content</td>
-        <td class="six" wcm:component="block-three" wcm:scope="asset">existing global block</td>
+        <td class="six" wcm:component="block-three" wcm:scope="page">existing global block</td>
     </tr>
     <tr>
         <td>block not found in asset scope</td>
-        <td class="seven" wcm:component="block-three" wcm:scope="asset" wcm:search-parent-scopes="false">block not found in asset scope</td>
+        <td class="seven" wcm:component="block-three" wcm:scope="page" wcm:search-parent-scopes="false">block not found in asset scope</td>
     </tr>
     <tr>
         <td>&nbsp;</td>
-        <td class="eight" wcm:component="block-three" wcm:scope="asset" wcm:search-parent-scopes="false" wcm:always-replace>block not found - all markup removed</td>
+        <td class="eight" wcm:component="block-three" wcm:scope="page" wcm:search-parent-scopes="false" wcm:always-replace>block not found - all markup removed</td>
     </tr>
 </table>
 

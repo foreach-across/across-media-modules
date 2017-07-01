@@ -36,14 +36,14 @@
 
 <div id="proxy-component-in-container" wcm:component="proxy-component-in-container" wcm:type="container" wcm:auto-create>
     Insert footer:
-    <div wcm:component="footer" wcm:scope="asset" wcm:search-parent-scopes>
+    <div wcm:component="footer" wcm:scope="page" wcm:search-parent-scopes>
         replaced by footer
     </div>
 </div>
 
 <div id="auto-create-proxy-component-in-container" wcm:component="auto-create-proxy-component-in-container" wcm:type="container" wcm:auto-create>
     Create footer
-    <div wcm:component="auto-create-proxy-footer" wcm:scope="asset" wcm:auto-create>auto-created on asset</div>
+    <div wcm:component="auto-create-proxy-footer" wcm:scope="page" wcm:auto-create>auto-created on asset</div>
     and on global
     <div wcm:component="auto-create-proxy-global" wcm:auto-create="global">auto-created on global</div>
 </div>
