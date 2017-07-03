@@ -9,9 +9,30 @@ The latter - `WebCmsRemoteEndpoint` - has a collection of urls which should be r
 
 A `WebCmsEndpoint` or one of its subclasses can be used as method parameter.
 
+[[WebCmsUrl-overview]]
 ==== WebCmsUrl
 
 URL targeting a specific endpoint and HTTP-status code.  A `WebCmsUrl` must be coupled with an `WebCmsEndpoint`.
+
+[[WebCmsUrl-pages]]
+.Properties of an URL (for pages)
+[options="header", cols="2,1,1,3,1"]
+|================
+|Name|Type|Mandatory|Description|Default Value
+|Path|String|Yes|The relative path of the URL|None
+|Http Status|Http Status|The status that will be thrown. See the next table for more information.|None
+|Is Primary URL|Boolean|Is this the primary URL? Must be unique per page|None
+|================
+
+.HTTP Status
+[options="header", cols="1,1,2"]
+|================
+|Status|Corresponds With|Result
+|Moved Permanently|301|Redirects to the primary URL
+|Moved Temporarily|302|Redirects to the primary URL
+|Not Found|404|Redirects to the 404 page.
+|OK|200|Done
+|================
 
 //* path: url path
 //* status code: http status code, will determine what will happen when the url is requested
