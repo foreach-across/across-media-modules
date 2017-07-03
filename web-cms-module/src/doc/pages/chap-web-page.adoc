@@ -42,10 +42,13 @@ When creating or updating the page, the following updates are done with regards 
 * If the page object is saved, and the publication is in the future or not yet published, update the primary url.
 * If the page object is saved and published but the publication date is in the past, no adjustments to the primary url will happen.
 
-This, however, can be overriden by behaviour defined in <<WebCmsMenu-overview,  `WebCMSMenu`>>.
+This, however, can be overridden by behaviour defined in <<WebCmsMenu-overview,  `WebCMSMenu`>>.
 
 ===== Web Components
 A `WebCMSPage` can contain different `WebCMSComponent` s. Those form the building blocks of the pages. For further information, please check the <<WebCmsComponents-overview, chapter>> on components.
+
+===== URLs
+A `WebCMSPage` can be referred to by different URLs. Please see the respective <<WebCmsUrl-pages, chapter>> for more information.
 
 ==== Importing a page
 One can import a page by using the import infrastructure provided by the import functionality of WebCMS.
@@ -117,7 +120,7 @@ A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-
 |===
 
 .Attributes[[WebCmsPageType-attributes]]
-[options="header", cols="2,1,1,3,1"]
+[options="header", cols="1,2"]
 |===
 |Attribute|Description
 |contentTemplate|The identifier of the selector in the thymeleaf page that contains the actual page content.
