@@ -8,15 +8,12 @@ A `WebCmsPage` represents a single page in the cms.
 [options="header", cols="2,1,1,3,1"]
 |================
 |Name|Type|Mandatory|Description|Default Value
-|Page Type|Page Type|Yes|Defines the page type of a page. Can be set during page creation but can not be changed afterwards.|Default
+|Page Type|<<WebCmsPageType-overview, Page Type>>|Yes|Defines the page type of a page. Can be set during page creation but can not be changed afterwards.|Default
 |Title|String|Yes|The title of the page.|None
-|Parent|Select|No|Parentpage of the page.|None
-|Template|String|No|The thymeleaf template of the page. The filename of the page without the extension.|None
-|Path Segment|String|No|A description of the menu.|None
-|Canonical Path|String|No|A description of the menu.|None
-|Published|String|No|A description of the menu.|None
-|Publication Date|String|No|A description of the menu.|None
-|Auto create menu items|String|No|A description of the menu.|None
+|Parent|Select|No|Parent page of the page.|None
+|Template|String|No|The thymeleaf template of the page. The filename of the page without the extension. If none is defined the one from the page type is used.|None
+|Path Segment|String|No|The path segment of the page.|None
+|Auto create menu items|Checklist of <<WebCmsMenu-overview, menu> names.|No|If checked, a menu item is generated for the checked menu.|None
 |================
 
 There are two configurable subsections, one for URL settings and one for publication settings
@@ -24,18 +21,20 @@ There are two configurable subsections, one for URL settings and one for publica
 .URL settings
 [options="header", cols="2,1,1,3,1"]
 |===
-|Field|Required|Type|Description|Default Value
-|Path Segment|Yes|String|Path (URL) of the page.|None
-|Canonical path|Yes|String|FQDN of the page.|None
+|Field|Type|Mandatory|Description|Default Value
+|Path Segment|String|Yes|Path (URL) of the page. Important in context with its parent.|None
+|Canonical path|String|Yes|FQDN of the page. Must be unique.|None
 |===
+
+Both of these can be generated manually or automatically, depending on the title and parent of the page.
 
 .Publish settings
 [options="header", cols="2,1,1,3,1"]
 |===
-|Field|Required|Type|Description|Default Value
-|Published|Yes|Boolean|If the page is published (or not). Published pages are visible for regular users.|None
-|Publication Date|No|Date|The page is only visible if the access date of the file is greater than the publication date.|None
-|Auto-create new menu items|Yes|Boolean|If checked, creates a new menu item after creation.|False
+|Field|Type|Mandatory|Description|Default Value
+|Published|Boolean|Yes|If the page is published (or not). Published pages are visible for regular users.|None
+|Publication Date|Date|No|The page is only visible if the access date of the file is greater than the publication date.|None
+|Auto-create new menu items|Boolean|Yes|If checked, creates a new menu item after creation.|False
 |===
 
 When creating or updating the page, the following updates are done with regards to the associated URLs:
@@ -44,6 +43,9 @@ When creating or updating the page, the following updates are done with regards 
 * If the page object is saved and published but the publication date is in the past, no adjustments to the primary url will happen.
 
 This, however, can be overriden by behaviour defined in <<WebCmsMenu-overview,  `WebCMSMenu`>>.
+
+===== Web Components
+A `WebCMSPage` can contain different `WebCMSComponent` s. Those form the building blocks of the pages. For further information, please check the <<WebCmsComponents-overview, chapter>> on components.
 
 ==== Importing a page
 One can import a page by using the import infrastructure provided by the import functionality of WebCMS.
@@ -102,7 +104,7 @@ page:
 
 [[WebCmsPageType-overview]]
 === WebCmsPageType
-A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-overview, WebCmsPage>>. The default page type is controlled via the `webCmsModule.pages.default-page-type` parameter.
+A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-overview, WebCmsPage>>. The default page type is controlled via the `webCmsModule.pages.default-page-type` parameter in the configuration.
 
 ==== Properties
 .Parameters
@@ -133,14 +135,14 @@ In the standard setup one can only manipulate the available page types via the i
 ----
 types:
   page:
-    default: //<1>
+    default: // <1>
       name: Default
     template:
       name: Template
-      attributes: //<2>
+      attributes: // <2>
         hasEndpoint: false
         isPublishable: false
 ----
-<1> The default page type. Notice that nothing
+<1> The default page type. Notice that there are no attributes, so the default <<WebCmsPageType-attributes, attributes>> specified are in effect for this type.
 <2> <<WebCmsPageType-attributes, Attributes>> are defined as simple key-value pairs.
 
