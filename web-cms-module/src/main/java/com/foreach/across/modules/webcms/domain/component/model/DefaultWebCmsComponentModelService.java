@@ -89,15 +89,21 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 	}
 
 	@Override
-	public WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object ) {
+	public WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object, boolean eager ) {
 		Assert.notNull( object );
 
 		WebCmsComponentModelSet modelSet = new WebCmsComponentModelSet();
 		modelSet.setOwner( object );
-		componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
-		                   .stream()
-		                   .filter( c -> !StringUtils.isEmpty( c.getName() ) )
-		                   .forEach( component -> modelSet.add( buildModelForComponent( component ) ) );
+
+		if ( eager ) {
+			componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
+			                   .stream()
+			                   .filter( c -> !StringUtils.isEmpty( c.getName() ) )
+			                   .forEach( component -> modelSet.add( buildModelForComponent( component ) ) );
+		}
+		else {
+			modelSet.setFetcherFunction( ( owner, componentName ) -> this.getComponentModelByName( componentName, owner ) );
+		}
 
 		return modelSet;
 	}

@@ -32,7 +32,7 @@ import java.lang.annotation.*;
 @CustomRequestMapping(WebCmsEndpointCondition.class)
 public @interface WebCmsEndpointMapping
 {
-	Class<? extends WebCmsEndpoint> value() default WebCmsEndpoint.class; //TODO array van classes
+	Class<? extends WebCmsEndpoint> value() default WebCmsEndpoint.class;
 
 	HttpStatus[] status() default {};
 

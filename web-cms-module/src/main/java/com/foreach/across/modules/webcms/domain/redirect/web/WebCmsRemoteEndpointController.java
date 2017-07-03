@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.redirect.web;
 
+import com.foreach.across.modules.webcms.domain.endpoint.web.IgnoreEndpointModel;
 import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointMapping;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class WebCmsRemoteEndpointController
 {
+	@IgnoreEndpointModel
 	@WebCmsEndpointMapping(WebCmsRemoteEndpoint.class)
 	public RedirectView redirectToRemote( WebCmsUrl url, WebCmsRemoteEndpoint endpoint ) {
 		RedirectView redirectView = new RedirectView( endpoint.getTargetUrl() );

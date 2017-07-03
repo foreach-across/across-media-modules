@@ -18,6 +18,7 @@ package webapps.admin.application.controllers;
 
 import com.foreach.across.modules.web.template.ClearTemplate;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
+import com.foreach.across.modules.webcms.domain.article.web.WebCmsArticleMapping;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetMapping;
@@ -33,21 +34,13 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 @RequiredArgsConstructor
-@WebCmsAssetMapping(WebCmsArticle.class)
 public class CustomArticleController
 {
-	private final PageTemplateResolver pageTemplateResolver;
-
 	/**
 	 * Dispatch to the template configured on the publication article template page.
 	 */
-	//@ClearTemplate
-	@GetMapping
-	public String template( WebCmsAssetEndpoint<WebCmsArticle> endpoint, WebCmsUrl url, WebCmsArticle article, Model model ) {
-		model.addAttribute( "asset", endpoint.getAsset() );
-		model.addAttribute( "article", article );
-		model.addAttribute( "page", article.getPublication().getArticleTemplatePage() );
-
-		return pageTemplateResolver.resolvePageTemplate( article.getPublication().getArticleTemplatePage() );
+	@WebCmsArticleMapping(publicationType = "news")
+	public void extendNewsArticle( WebCmsArticle article, Model model ) {
+		model.addAttribute( "footer", "Custom footer" );
 	}
 }

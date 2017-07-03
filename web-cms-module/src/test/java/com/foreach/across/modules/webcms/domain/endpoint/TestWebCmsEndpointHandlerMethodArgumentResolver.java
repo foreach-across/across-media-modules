@@ -74,7 +74,6 @@ public class TestWebCmsEndpointHandlerMethodArgumentResolver
 		assertNotNull( actual );
 		assertTrue( WebCmsEndpoint.class.isAssignableFrom( actual.getClass() ) );
 		assertEquals( endpoint, actual );
-
 	}
 
 	@Test

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 0.0.1
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TestWebCmsEndpointInterceptor
+public class TestWebCmsEndpointHandlerInterceptor
 {
 	@Mock
 	private WebCmsEndpointContext context;
@@ -63,6 +63,5 @@ public class TestWebCmsEndpointInterceptor
 		interceptor.preHandle( request, response, handler );
 
 		verify( response, times( 1 ) ).setStatus( expectedStatusCode );
-		verifyNoMoreInteractions( request, handler );
 	}
 }

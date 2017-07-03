@@ -21,23 +21,47 @@ import com.foreach.across.modules.bootstrapui.resource.JQueryWebResources;
 import com.foreach.across.modules.web.events.BuildTemplateWebResourcesEvent;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.webcms.WebCmsModule;
+import com.foreach.across.modules.webcms.domain.endpoint.web.IgnoreEndpointModel;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.WebCmsEndpointContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointControllerAdvice.LOAD_ENDPOINT_MODEL_ATTRIBUTE;
+
 /**
- * This interceptor is responsible for putting the status code of the resolved {@link WebCmsEndpointContext} on the {@link HttpServletResponse}.
- * Also registers
+ * Interceptor for basic {@link com.foreach.across.modules.webcms.domain.url.WebCmsUrl} and
+ * {@link com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint} handling.
+ * <p/>
+ * <ul>
+ * <li>sets the status code of the {@link com.foreach.across.modules.webcms.domain.url.WebCmsUrl} on the {@link HttpServletResponse}</li>
+ * <li>sets the <strong>X-WCM-Preview</strong> header when previewing an endpoint</li>
+ * <li>will apply the default template as view if one is set as request attribute ({@link #DEFAULT_TEMPLATE_ATTRIBUTE} and the handler method
+ * has a void return type</li>
+ * </ul>
+ * <p/>
+ * This interceptor also listens to the {@link BuildTemplateWebResourcesEvent} and will register preview related web resources when in preview mode.
  *
- * @author Sander Van Loock
+ * @author Sander Van Loock, Arne Vandamme
+ * @see com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointControllerAdvice
+ * @see com.foreach.across.modules.webcms.domain.endpoint.web.IgnoreEndpointModel
  * @since 0.0.1
  */
+@Slf4j
 @RequiredArgsConstructor
 public class WebCmsEndpointHandlerInterceptor extends HandlerInterceptorAdapter
 {
+	/**
+	 * Attribute value should be the view that will be resolved if a handler method has a void return type.
+	 */
+	public static final String DEFAULT_TEMPLATE_ATTRIBUTE = WebCmsEndpointHandlerInterceptor.class.getName() + ".DEFAULT_TEMPLATE";
+
 	private final WebCmsEndpointContext context;
 
 	@Override
@@ -48,9 +72,42 @@ public class WebCmsEndpointHandlerInterceptor extends HandlerInterceptorAdapter
 			if ( context.isPreviewMode() ) {
 				response.setHeader( "X-WCM-Preview", "true" );
 			}
+
+			if ( !shouldEndpointModelBeIgnored( handler ) ) {
+				request.setAttribute( LOAD_ENDPOINT_MODEL_ATTRIBUTE, true );
+			}
 		}
 
 		return true;
+	}
+
+	private boolean shouldEndpointModelBeIgnored( Object handler ) {
+		if ( handler instanceof HandlerMethod ) {
+			HandlerMethod handlerMethod = (HandlerMethod) handler;
+			IgnoreEndpointModel ignoreAnnotation = handlerMethod.getMethodAnnotation( IgnoreEndpointModel.class );
+
+			if ( ignoreAnnotation == null ) {
+				Class<?> controllerClass = handlerMethod.getBeanType();
+				ignoreAnnotation = AnnotationUtils.findAnnotation( controllerClass, IgnoreEndpointModel.class );
+			}
+
+			return ignoreAnnotation != null;
+		}
+
+		return true;
+	}
+
+	@Override
+	public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
+		if ( handler instanceof HandlerMethod ) {
+			HandlerMethod handlerMethod = (HandlerMethod) handler;
+			String defaultTemplate = (String) request.getAttribute( DEFAULT_TEMPLATE_ATTRIBUTE );
+
+			if ( handlerMethod.getReturnType().getMethod().getReturnType().equals( void.class ) && defaultTemplate != null ) {
+				LOG.trace( "Applying default template {} as viewName since handler method had a void return type", defaultTemplate );
+				modelAndView.setViewName( defaultTemplate );
+			}
+		}
 	}
 
 	@Event

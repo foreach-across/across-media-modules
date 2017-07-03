@@ -11,8 +11,8 @@
 <div id="shadowing-global" wcm:component="content">Found in both page and global but using page value.</div>
 <div id="using-global" wcm:component="content" wcm:scope="global">Using version from global instead of page.</div>
 <div id="not-found-in-scope" wcm:component="footer" wcm:search-parent-scopes="false">Not found in scope and not searching parents.</div>
-<div id="not-found-in-scope-specified" wcm:component="footer" wcm:scope="asset">Not found in scope specified and not searching parents.</div>
-<div id="found-by-search" wcm:component="footer" wcm:scope="asset" wcm:search-parent-scopes>Not found in scope specified but searching parents.</div>
+<div id="not-found-in-scope-specified" wcm:component="footer" wcm:scope="page">Not found in scope specified and not searching parents.</div>
+<div id="found-by-search" wcm:component="footer" wcm:scope="page" wcm:search-parent-scopes>Not found in scope specified but searching parents.</div>
 <div id="self-closing-tag">
     <th:block wcm:component="custom"/>
 </div>

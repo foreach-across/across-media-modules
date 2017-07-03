@@ -4,7 +4,18 @@
 </head>
 <body>
 
-    [[${article.title}]]
+<sub>Nieuws artikel</sub>
+<header wcm:component="page-header" wcm:scope="page" wcm:search-parent-scopes>
+
+</header>
+<section wcm:component="content" wcm:scope="article">
+</section>
+<hr size="1"/>
+<footer>
+    Page: [[${page.title}]]<br/>
+    Publication: [[${publication.name}]]<br/>
+    Custom footer text: [[${footer}]]
+</footer>
 
 </body>
 </html>

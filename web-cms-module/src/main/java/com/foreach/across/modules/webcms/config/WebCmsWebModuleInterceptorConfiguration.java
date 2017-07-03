@@ -21,8 +21,6 @@ import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConf
 import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.WebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.endpoint.web.interceptor.WebCmsEndpointHandlerInterceptor;
-import com.foreach.across.modules.webcms.domain.endpoint.web.interceptor.WebCmsPageEndpointHandlerInterceptor;
-import com.foreach.across.modules.webcms.domain.page.web.PageTemplateResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,17 +34,10 @@ import org.springframework.context.annotation.Configuration;
 public class WebCmsWebModuleInterceptorConfiguration extends PrefixingHandlerMappingConfigurerAdapter
 {
 	private final WebCmsEndpointContext context;
-	private final PageTemplateResolver templateResolver;
 
 	@Override
 	public void addInterceptors( InterceptorRegistry interceptorRegistry ) {
 		interceptorRegistry.addInterceptor( webCmsEndpointInterceptor() );
-		interceptorRegistry.addInterceptor( webCmsPageEndpointInterceptor() );
-	}
-
-	@Bean
-	public WebCmsPageEndpointHandlerInterceptor webCmsPageEndpointInterceptor() {
-		return new WebCmsPageEndpointHandlerInterceptor( context, templateResolver );
 	}
 
 	@Bean

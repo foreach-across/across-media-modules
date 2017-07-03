@@ -26,7 +26,7 @@ import java.util.List;
  * @author Raf Ceuls
  * @since 0.0.2
  */
-public class WebCmsAssetConditionUtils
+public class WebCmsEndpointConditionUtils
 {
 	/**
 	 * Compares the length of two arrays.

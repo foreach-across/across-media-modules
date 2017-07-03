@@ -97,9 +97,11 @@ public interface WebCmsComponentModelService
 	 * The returned set only contains components with a configured name.
 	 *
 	 * @param object owner
+	 * @param eager  {@code true} if component models should all be fetched eagerly,
+	 *               if {@code false} the set will only fetch the component when it is being requested
 	 * @return set of components
 	 */
-	WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object );
+	WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object, boolean eager );
 
 	/**
 	 * Build the {@link WebCmsComponentModel} for a particular {@link WebCmsComponent} entity.
