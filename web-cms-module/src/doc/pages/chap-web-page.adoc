@@ -111,7 +111,7 @@ A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-
 
 ==== Properties
 .Parameters
-[options="header", cols="2,1,1,3,1"]
+[options="header", cols="1,1,1,4,1"]
 |===
 |Field|Required|Type|Description|Default Value
 |Name|Yes|String|The name of the page type. Displayed in the drop down list when creating a new page.|None
@@ -120,7 +120,7 @@ A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-
 |===
 
 .Attributes[[WebCmsPageType-attributes]]
-[options="header", cols="1,2"]
+[options="header", cols="1,4"]
 |===
 |Attribute|Description
 |contentTemplate|The identifier of the selector in the thymeleaf page that contains the actual page content.
