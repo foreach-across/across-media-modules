@@ -1,0 +1,28 @@
+/*!
+ * Copyright 2017 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * Contains the styles specific to text component management in the admin UI.
+ */
+body .CodeMirror {
+  height: auto;
+  border: solid 1px #eaeaea;
+  font-size: 13px; }
+
+.cke_editable_inline {
+  padding: 5px 10px;
+  border: solid 1px #e9e9e9; }
+
+/*# sourceMappingURL=wcm-admin-text-component-styles.css.map */

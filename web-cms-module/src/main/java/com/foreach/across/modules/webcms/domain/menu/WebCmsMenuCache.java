@@ -62,11 +62,11 @@ public final class WebCmsMenuCache
 		if ( items == null ) {
 			items = menuItemRepository.findAllByMenuName( menuName )
 			                          .stream()
-			                          .filter( this::isMenuItemAvailable )
 			                          .map( menuItem -> {
 				                          Menu item = new Menu( menuItem.getPath(), menuItem.getTitle() );
 				                          item.setOrder( menuItem.getSortIndex() );
 				                          item.setGroup( menuItem.isGroup() );
+				                          item.setDisabled( !isMenuItemAvailable( menuItem ) );
 
 				                          item.setUrl( menuItem.getUrl() );
 

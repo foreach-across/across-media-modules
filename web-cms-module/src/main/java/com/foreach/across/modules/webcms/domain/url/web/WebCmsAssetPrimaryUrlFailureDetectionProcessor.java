@@ -50,7 +50,7 @@ public final class WebCmsAssetPrimaryUrlFailureDetectionProcessor extends Entity
 {
 	@Event
 	void detectPrimaryUrlUpdateFailure( PrimaryUrlForAssetFailedEvent event ) {
-		RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
 		if ( requestAttributes != null ) {
 			// we can receive events triggered by other threads
