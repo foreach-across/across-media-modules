@@ -22,7 +22,7 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import java.util.Map;
 
 /**
- * Core API for creating default data as defined in the type of the object. (@see {@link DefaultComponentsService})
+ * Core API for creating default data as defined in the type of the object. (@see {@link WebCmsDefaultComponentsServiceImpl})
  *
  * @author Raf Ceuls
  * @since 0.0.2
@@ -32,10 +32,21 @@ public interface WebCmsDefaultComponentsService
 	/**
 	 * Creates the default components for an object.
 	 *
-	 * @param asset The asset that will receive the generated data.
+	 * @param asset        The asset that will receive the generated data.
 	 * @param markerValues Any marker values, specified as a map of the format ('@@marker@@', 'replace value')
+	 * @see #createDefaultComponents(WebCmsObject, WebCmsTypeSpecifier, Map)
 	 */
 	void createDefaultComponents( WebCmsAsset<?> asset, Map<String, String> markerValues );
 
+	/**
+	 * Accepts a single {@link WebCmsObject}. If no {@link WebCmsTypeSpecifier} is specified, nothing happens. Otherwise
+	 * retrieves the content template from said {@link WebCmsTypeSpecifier} and injects the values into the relevant parts of the {@link WebCmsObject}.
+	 * Any marker values specified in it's respective parameter are used to update the components as they occur in any
+	 * {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponent} that is encountered.
+	 *
+	 * @param asset         The asset that will receive the generated data.
+	 * @param typeSpecifier The type of the asset
+	 * @param markerValues  Any marker values, specified as a map of the format ('@@marker@@', 'replace value')
+	 */
 	void createDefaultComponents( WebCmsObject asset, WebCmsTypeSpecifier<?> typeSpecifier, Map<String, String> markerValues );
 }

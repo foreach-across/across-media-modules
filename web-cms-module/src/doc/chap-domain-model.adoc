@@ -2,6 +2,9 @@
 
 === Asset model
 
+TODO: info on asset implementation, asset & asset type
+asset type has attributes which can be used for configuration & behaviour
+
 // Page model
 include::pages/chap-web-page.adoc[]
 
