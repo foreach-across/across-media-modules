@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.foreach.across.modules.webcms.data.WebCmsDataAction.DELETE;
 import static com.foreach.across.modules.webcms.data.WebCmsDataActionResolver.resolveAction;
@@ -64,7 +65,7 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 				U dto = createDto( menuDataSet, existing, action, parent );
 
 				if ( dto != null ) {
-					boolean dataValuesApplied = applyDataValues( menuDataSet, dto );
+					boolean dataValuesApplied = applyDataValues( menuDataSet.getMapData(), dto );
 					if ( existing == null || dataValuesApplied ) {
 						save( dto );
 					}
@@ -88,8 +89,19 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 
 	protected abstract U getExisting( WebCmsDataEntry dataKey, T parent );
 
-	private boolean applyDataValues( WebCmsDataEntry menuDataSet, U dto ) {
-		return conversionService.convertToPropertyValues( menuDataSet.getMapData(), dto );
+	/**
+	 * Apply the data values to the dto object.  The default implementation assumes that the values
+	 * map with actual dto class properties.
+	 * <p/>
+	 * If this method returns {@code false} no values have been applied to the DTO and actual updating
+	 * might get skipped.
+	 *
+	 * @param values to apply (key/value pairs)
+	 * @param dto    to set the values on
+	 * @return true if the DTO has been modified
+	 */
+	protected boolean applyDataValues( Map<String, Object> values, U dto ) {
+		return conversionService.convertToPropertyValues( values, dto );
 	}
 
 	@Autowired

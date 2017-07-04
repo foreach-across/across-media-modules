@@ -23,11 +23,14 @@ import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates one (or many) @{@link WebCmsMenuItem}s from a import data.
@@ -62,17 +65,20 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 			if ( action == WebCmsDataAction.REPLACE ) {
 				WebCmsMenuItem menuItem = createNewMenuItemDto( menuDataSet, parent );
 				menuItem.setId( existing.getId() );
-				attachAsset( menuDataSet, menuItem );
 				return menuItem;
 			}
-			attachAsset( menuDataSet, existing );
 			return existing.toDto();
 		}
 		else {
-			WebCmsMenuItem dto = createNewMenuItemDto( menuDataSet, parent );
-			attachAsset( menuDataSet, dto );
-			return dto;
+			return createNewMenuItemDto( menuDataSet, parent );
 		}
+	}
+
+	@Override
+	protected boolean applyDataValues( Map<String, Object> values, WebCmsMenuItem dto ) {
+		Map<String, Object> filtered = new HashMap<>( values );
+		attachAsset( filtered, dto );
+		return super.applyDataValues( filtered, dto );
 	}
 
 	private WebCmsMenuItem createNewMenuItemDto( WebCmsDataEntry data, WebCmsMenu parent ) {
@@ -80,31 +86,30 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 		return WebCmsMenuItem.builder().menu( parent ).path( key ).build();
 	}
 
-	private void attachAsset( WebCmsDataEntry data, WebCmsMenuItem dto ) {
-		String assetKey = (String) data.getMapData().getOrDefault( "asset", "" );
-		if ( StringUtils.isNotBlank( assetKey ) ) {
+	private void attachAsset( Map<String, Object> data, WebCmsMenuItem dto ) {
+		String assetKey = (String) data.getOrDefault( "asset", "" );
+		if ( StringUtils.isNotEmpty( assetKey ) ) {
 			WebCmsAsset asset = webCmsDataConversionService.convert( assetKey, WebCmsAsset.class );
 
 			if ( asset != null ) {
 				WebCmsEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAsset( asset );
+
 				if ( endpoint != null ) {
-					boolean generated = !data.getMapData().containsKey( "title" ) && !data.getMapData().containsKey( "path" );
-					dto.setGenerated( generated );
-					dto.setEndpoint( endpoint );
+					WebCmsUrl primaryUrl = endpoint.getPrimaryUrl().orElse( null );
 
-					if ( asset instanceof WebCmsPage ) {
-
-						WebCmsPage asPage = (WebCmsPage) asset;
-						if ( StringUtils.isEmpty( dto.getPath() ) ) {
-							dto.setPath( asPage.getCanonicalPath() );
+					if ( primaryUrl != null ) {
+						boolean generated = !data.containsKey( "title" ) && !data.containsKey( "path" );
+						dto.setEndpoint( endpoint );
+						dto.setGenerated( generated );
+						if ( dto.isNew() && StringUtils.isEmpty( dto.getPath() ) ) {
+							dto.setPath( primaryUrl.getPath() );
 						}
-						if ( StringUtils.isEmpty( dto.getTitle() ) ) {
-							dto.setTitle( asPage.getTitle() );
-						}
+						dto.setTitle( asset.getName() );
 					}
 				}
 			}
 		}
+		data.remove( "asset" );
 	}
 
 	@Override
