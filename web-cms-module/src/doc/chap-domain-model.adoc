@@ -19,5 +19,3 @@ include::urls/chap-endpoint-url.adoc[]
 // Menu
 include::menu/chap-menu.adoc[]
 
-// Components
-include::components/chap-web-components.adoc[]

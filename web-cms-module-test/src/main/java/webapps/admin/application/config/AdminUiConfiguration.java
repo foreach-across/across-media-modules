@@ -35,9 +35,9 @@ class AdminUiConfiguration implements EntityConfigurer
 {
 	@Autowired
 	void enableComponents( WebCmsObjectComponentViewsConfiguration componentViewsConfiguration ) {
-		componentViewsConfiguration.enable( WebCmsPublicationType.class );
-		componentViewsConfiguration.enable( WebCmsComponentType.class );
-		componentViewsConfiguration.enable( WebCmsArticle.class );
+		//componentViewsConfiguration.enable( WebCmsPublicationType.class );
+		//componentViewsConfiguration.enable( WebCmsComponentType.class );
+		//componentViewsConfiguration.enable( WebCmsArticle.class );
 	}
 
 	@Override

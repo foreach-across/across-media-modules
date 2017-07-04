@@ -1,7 +1,7 @@
 [[WebCmsComponents-overview]]
-=== Web components
+== Web components
 
-What are web components?
+=== What are web components?
 
 ==== WebCmsComponentType
 
@@ -27,11 +27,11 @@ converted from a `WebCmsComponent` by a `WebCmsComponentModelReader`
 
 include::chap-web-components-base-types.adoc[]
 
-==== Activating component support
+=== Activating component support
 Any `WebCmsObject` - this includes all assets and components themselves - can have web components linked to it.
 Enabling components for WebCmsObject implementations: wire WebCmsObjectComponentViewsConfiguration: registerComponentsAssociation
 
-==== Rendering components
+=== Rendering components
 
 ==== Creating shared web components
 Name must be globally unique and is required

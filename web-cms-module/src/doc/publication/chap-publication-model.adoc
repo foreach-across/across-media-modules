@@ -1,4 +1,4 @@
-==== Publication model
+=== Publication model
 
 WebCmsModule contains a default publication model for articles.
 An article can typically be pretty much any type of content, but usually it is something like a piece of news or a blog article.
@@ -24,9 +24,9 @@ Out of the box, WebCmsModule configures the following data:
  ** *news* with article type *news* and template page */news/**
  ** *blogs* with article type *blog* and template page */blog/**
 
-===== Domain implementation
+==== Domain implementation
 
-====== Asset implementation
+===== Asset implementation
 
 .WebCmsArticle
 Represents a single article.
@@ -70,7 +70,7 @@ Represents the specific type of a publication.
 `WebCmsPublicationType` is an implementation of `WebCmsTypeSpecifier`.
 The publication type defines the different article types that are allowed in a publication of that type.
 
-====== Services and repositories
+===== Services and repositories
 The following repositories are available for managing the publication related domain model:
 
 * `WebCmsPublicationTypeRepository`
@@ -80,7 +80,7 @@ The following repositories are available for managing the publication related do
 
 NOTE: If you want to change the strategy for default components, see the `WebCmsDefaultComponentsService`.
 
-===== Administrative UI
+==== Administrative UI
 The default configuration allows managing publications and articles from the administration UI.
 Both article type and publication type are assumed to be installed using code.
 

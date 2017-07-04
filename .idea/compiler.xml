@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -14,7 +15,6 @@
       <module name="web-cms-module" target="1.8" />
       <module name="web-cms-module-project" target="1.8" />
       <module name="web-cms-module-test" target="1.8" />
-      <module name="web-cms-module-test-web" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

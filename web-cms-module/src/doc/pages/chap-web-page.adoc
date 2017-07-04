@@ -106,10 +106,10 @@ page:
 |================
 
 [[WebCmsPageType-overview]]
-=== WebCmsPageType
+==== WebCmsPageType
 A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-overview, WebCmsPage>>. The default page type is controlled via the `webCmsModule.pages.default-page-type` parameter in the configuration.
 
-==== Properties
+===== Properties
 .Parameters
 [options="header", cols="1,1,1,4,1"]
 |===
@@ -129,8 +129,7 @@ A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-
 |isPublishable|Whether or not the page can be published.
 |===
 
-
-==== Importing a page type
+===== Importing a page type
 In the standard setup one can only manipulate the available page types via the import functionality. The default types are described further down. One can extrapolate any other needed page type from them
 
 .Default page types
