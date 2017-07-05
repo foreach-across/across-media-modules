@@ -30,6 +30,7 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
+import com.foreach.across.modules.webcms.domain.asset.web.processors.WebCmsAssetListViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentsFormProcessor;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
@@ -70,6 +71,13 @@ public class WebCmsArticleConfiguration
 		public void configure( EntitiesConfigurationBuilder entities ) {
 			componentsFormProcessor.setComponentNames( "content" );
 
+			entities.withType( WebCmsArticleType.class )
+			        .association(
+					        ab -> ab.name( "webCmsArticle.articleType" )
+					                .listView( lvb -> lvb.showProperties( "publication", "title", "publicationDate", "lastModified" )
+					                                     .viewProcessor( new WebCmsAssetListViewProcessor() ) )
+			        );
+
 			entities.withType( WebCmsArticle.class )
 			        .properties( props -> props
 					        .property( "objectId" ).hidden( true ).and()
@@ -82,7 +90,7 @@ public class WebCmsArticleConfiguration
 					        .property( "publication" ).attribute( EntityAttributes.OPTIONS_ENTITY_QUERY, "published = TRUE" )
 			        )
 			        .listView(
-					        lvb -> lvb.showProperties( "publication", "title", "publicationDate", "lastModified" )
+					        lvb -> lvb.showProperties( "publication", "title", "articleType", "publicationDate", "lastModified" )
 					                  .defaultSort( new Sort( Sort.Direction.DESC, "lastModifiedDate" ) )
 					                  .entityQueryPredicate( "publication.published = true" )
 					                  .viewProcessor( new WebCmsArticleListViewProcessor() )

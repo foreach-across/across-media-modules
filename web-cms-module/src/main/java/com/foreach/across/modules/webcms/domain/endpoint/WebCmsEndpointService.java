@@ -50,7 +50,7 @@ public interface WebCmsEndpointService
 	 * means another endpoint already has that url.
 	 * <p/>
 	 * The third parameter indicates if a {@link com.foreach.across.modules.webcms.domain.endpoint.support.PrimaryUrlForAssetFailedEvent} should
-	 * be published in case of a conflict with another endpoint.  This allows another bean to take action and changing the modification report.
+	 * be published in case of a conflict with another endpoint.  This allows another bean to take action and change the modification report.
 	 *
 	 * @param primaryUrl            for the asset
 	 * @param asset                 to update

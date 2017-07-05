@@ -49,7 +49,15 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.create().entityType( PlaceholderWebCmsComponentModel.Metadata.class, true );
-		entities.withType( WebCmsComponentType.class ).hide();
+		entities.withType( WebCmsComponentType.class )
+		        .properties(
+				        props -> props.property( "name" ).order( 0 ).and()
+				                      .property( "typeKey" ).order( 1 ).and()
+				                      .property( "description" ).order( 2 )
+		        )
+		        .hide()
+		        .updateFormView( fvb -> fvb.showProperties( "objectId", "name", "typeKey", "description", "created", "lastModified" ) );
+		//.listView( lvb -> lvb.showProperties( "name", "typeKey", "description", "lastModified" ) );
 
 		// Configure the globally shared components
 		entities.withType( WebCmsComponent.class )
@@ -106,6 +114,6 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				                  .postProcess( SortableTableRenderingViewProcessor.class, p -> p.setIncludeDefaultActions( false ) )
 				                  .viewProcessor( searchComponentViewProcessor )
 		        )
-		;
+		        .association( ab -> ab.name( "webCmsComponent.proxyTarget" ).hide() );
 	}
 }
