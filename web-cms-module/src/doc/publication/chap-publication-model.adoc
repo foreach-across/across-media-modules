@@ -1,3 +1,4 @@
+[[PublicationModel-overview]]
 === Publication model
 
 WebCmsModule contains a default publication model for articles.

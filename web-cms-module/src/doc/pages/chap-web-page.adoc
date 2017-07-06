@@ -1,19 +1,21 @@
 === Page model
 [[WebCmsPage-overview]]
 ==== Overview
-A `WebCmsPage` represents a single page in the cms.
+A `WebCmsPage` is a component that represents a single page in the application. It differs from an <<PublicationModel-overview, article>> in that the page is stand-alone,
+i.e. you have more control regarding the layout and the components of the page. One can use this, for example, to create _about_ or _faq_ pages. It is related to the publication model
+ in that an article is contained in a page: the data is contained in the article component, but how the article is rendered is handled by the page.
 
 ==== Properties
-.Properties of a menu
+.Properties of a page
 [options="header", cols="2,1,1,3,1"]
 |================
 |Name|Type|Mandatory|Description|Default Value
 |Page Type|<<WebCmsPageType-overview, Page Type>>|Yes|Defines the page type of a page. Can be set during page creation but can not be changed afterwards.|Default
 |Title|String|Yes|The title of the page.|None
-|Parent|Select|No|Parent page of the page.|None
+|Parent|Select|No|Parent page of the page. Affects any generated URLs and (if auto-generated) the canonical path.|None
 |Template|String|No|The thymeleaf template of the page. The filename of the page without the extension. If none is defined the one from the page type is used.|None
 |Path Segment|String|No|The path segment of the page.|None
-|Auto create menu items|Checklist of <<WebCmsMenu-overview, menu> names.|No|If checked, a menu item is generated for the checked menu.|None
+|Auto create menu items|Checklist of <<WebCmsMenu-overview, menu> names.|No|If checked, a menu item is generated for the checked menu(s).|None
 |================
 
 There are two configurable subsections, one for URL settings and one for publication settings
@@ -22,17 +24,17 @@ There are two configurable subsections, one for URL settings and one for publica
 [options="header", cols="2,1,1,3,1"]
 |===
 |Field|Type|Mandatory|Description|Default Value
-|Path Segment|String|Yes|Path (URL) of the page. Important in context with its parent.|None
-|Canonical path|String|Yes|FQDN of the page. Must be unique.|None
+|Path Segment|String|Yes|Path (URL) of the page.|None
+|Canonical path|String|Yes|FQDN of the page. Must be unique within the application.|None
 |===
 
-Both of these can be generated manually or automatically, depending on the title and parent of the page.
+Both of these can be generated manually or automatically, depending on the title and parent (and grandparent, and ...) of the page.
 
 .Publish settings
 [options="header", cols="2,1,1,3,1"]
 |===
 |Field|Type|Mandatory|Description|Default Value
-|Published|Boolean|Yes|If the page is published (or not). Published pages are visible for regular users.|None
+|Published|Boolean|Yes|If the page is published (or not). Published pages are visible for regular, non-logged in users.|None
 |Publication Date|Date|No|The page is only visible if the access date of the file is greater than the publication date.|None
 |Auto-create new menu items|Boolean|Yes|If checked, creates a new menu item after creation.|False
 |===
@@ -45,7 +47,7 @@ When creating or updating the page, the following updates are done with regards 
 This, however, can be overridden by behaviour defined in <<WebCmsMenu-overview,  `WebCMSMenu`>>.
 
 ===== Web Components
-A `WebCMSPage` can contain different `WebCMSComponent` s. Those form the building blocks of the pages. For further information, please check the <<WebCmsComponents-overview, chapter>> on components.
+A `WebCMSPage` can contain different `WebCMSComponent` assets. Those form the building blocks of the pages. For further information, please check the <<WebCmsComponents-overview, chapter>> on components.
 
 ===== URLs
 A `WebCMSPage` can be referred to by different URLs. Please see the respective <<WebCmsUrl-pages, chapter>> for more information.
