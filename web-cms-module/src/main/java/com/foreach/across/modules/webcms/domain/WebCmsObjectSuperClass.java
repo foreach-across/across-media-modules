@@ -92,7 +92,7 @@ public abstract class WebCmsObjectSuperClass<T extends WebCmsObjectSuperClass<T>
 	 * @param objectId to use
 	 */
 	public final void setObjectId( String objectId ) {
-		this.objectId = WebCmsUtils.prefixObjectIdForCollection( objectId, getObjectCollectionId() );
+		this.objectId = StringUtils.isEmpty( objectId ) ? null : WebCmsUtils.prefixObjectIdForCollection( objectId, getObjectCollectionId() );
 	}
 
 	/**
