@@ -73,6 +73,7 @@ the menu item. This can used in the Thymeleaf template to render the items in a 
 |Update automatically|Boolean|Yes|If checked and the linked endpoint gets updated, any updates will be reflected in this menu item.|None
 |================
 
+[[WebCmsMenu-import]]
 ==== Importing a menu item
 One can import a menu and its associated items by using the import infrastructure provided by the import functionality of WebCMS.
 [source,yaml]
@@ -98,7 +99,7 @@ menus: // <1>
       asset: "wcm:asset:page:reference-for-menu" <5>
 ----
 <1> The root element `menus` indicates that the next item is going to be one (or many) menus.
-<2> The key of the yaml item is re-used as the name of the menu.
+<2> The key of the yaml item is re-used as the name of the menu. Should be unique.
 <3> Starts the collection of the menu items.
 <4> The key of the yaml item is re-used as the path of the menu item.
 <5> If you want to set the endpoint of the item, you can use the `asset` keyword. It can use

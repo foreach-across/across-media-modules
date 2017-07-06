@@ -52,6 +52,7 @@ A `WebCMSPage` can contain different `WebCMSComponent` assets. Those form the bu
 ===== URLs
 A `WebCMSPage` can be referred to by different URLs. Please see the respective <<WebCmsUrl-pages, chapter>> for more information.
 
+[[WebCmsPage-import]]
 ==== Importing a page
 One can import a page by using the import infrastructure provided by the import functionality of WebCMS.
 
@@ -84,10 +85,66 @@ page:
         title: FAQ
         path: /help/faq
         sortIndex: 10
+
 ----
 <1> Sensible defaults are used. Only title is mandatory.
 <2> One can refer to both the object id and the canonical path.
 <3> You can use this notation to manipulate the associated menu items.
+
+Another, more concrete example. This page contains multiple nested containers that themselves have child components.
+
+.Tabbed
+[source,yaml,indent=0]
+----
+tabbed-page:
+  name: Tabbed page
+  attributes:
+    template: th/cfr/tabbed-page
+  wcm:components:
+    content:
+      componentType: container
+      sortIndex: 1
+      wcm:components:
+        code:
+          title: Code
+          componentType: container
+          wcm:components:
+            introduction:
+              title: introduction
+              componentType: html
+              sortIndex: 1 <2>
+              content: | <1>
+                <section>introduction</section>
+            requirements:
+              title: requirements
+              componentType: html
+              sortIndex: 2
+              content: | <1>
+                <section>requirements</section>
+            browser-support:
+              title: browser support
+              componentType: html
+              sortIndex: 3
+              content: | <1>
+                <section>browser support</section>
+            further-reading:
+              title: further reading
+              componentType: html
+              sortIndex: 4
+              content: | <1>
+                <section>further reading</section>
+        documentation:
+          title: Documentation
+          componentType: html
+          sortIndex: 2
+        used-in:
+          title: Used in
+          componentType: html
+          sortIndex: 3
+----
+<1> Pre-filled content. When a page is created using this template, this data will be filled in (but can be changed by the user).
+<2> Make sure you manually set the sort order, as an logical sort-order is otherwise not guaranteed.
+
 
 .Page properties that can be imported
 [options="header", cols="1,1,2"]

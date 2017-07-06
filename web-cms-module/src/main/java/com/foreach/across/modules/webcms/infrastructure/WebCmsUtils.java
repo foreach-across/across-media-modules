@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.webcms.infrastructure;
 
+import com.foreach.across.modules.webcms.data.WebCmsDataAction;
+import com.foreach.across.modules.webcms.data.WebCmsDataImportAction;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,8 @@ import org.springframework.util.Assert;
 import java.text.Normalizer;
 import java.util.Date;
 import java.util.UUID;
+
+import static com.foreach.across.modules.webcms.data.WebCmsDataAction.*;
 
 /**
  * @author Arne Vandamme
@@ -133,5 +137,25 @@ public class WebCmsUtils
 		}
 
 		return StringUtils.removeEnd( baseUrl, "/" ) + "/" + path;
+	}
+
+	public static WebCmsDataAction convertImportActionToDataAction( Object existing, WebCmsDataImportAction requested ) {
+		if ( existing != null ) {
+			if ( requested == WebCmsDataImportAction.DELETE ) {
+				return DELETE;
+			}
+			if ( requested == WebCmsDataImportAction.CREATE_OR_UPDATE || requested == WebCmsDataImportAction.UPDATE ) {
+				return UPDATE;
+			}
+			if ( requested == WebCmsDataImportAction.CREATE_OR_REPLACE || requested == WebCmsDataImportAction.REPLACE ) {
+				return REPLACE;
+			}
+		}
+		else if ( requested == WebCmsDataImportAction.CREATE
+				|| requested == WebCmsDataImportAction.CREATE_OR_UPDATE
+				|| requested == WebCmsDataImportAction.CREATE_OR_REPLACE ) {
+			return CREATE;
+		}
+		return null;
 	}
 }
