@@ -33,11 +33,13 @@ import com.foreach.across.modules.entity.views.support.EntityMessages;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.asset.web.processors.WebCmsAssetListViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.menu.config.WebCmsAssetMenuViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import com.foreach.across.modules.webcms.domain.page.web.MenuItemsViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.page.web.PageFormViewProcessor;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
@@ -87,6 +89,13 @@ public class WebCmsPageConfiguration
 		public void configure( EntitiesConfigurationBuilder entities ) {
 			entities.withType( WebCmsRemoteEndpoint.class )
 			        .association( ab -> ab.name( "webCmsRemoteEndpoint.urls" ).show() );
+
+			entities.withType( WebCmsPageType.class )
+			        .association(
+					        ab -> ab.name( "webCmsPage.pageType" )
+					                .listView( lvb -> lvb.showProperties( "canonicalPath", "title", "parent" )
+					                                     .viewProcessor( new WebCmsAssetListViewProcessor() ) )
+			        );
 
 			entities.withType( WebCmsPage.class )
 			        .attribute(

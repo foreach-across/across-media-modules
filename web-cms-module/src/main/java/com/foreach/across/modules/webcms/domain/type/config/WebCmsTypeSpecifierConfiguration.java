@@ -22,6 +22,7 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * @author Arne Vandamme
@@ -37,9 +38,10 @@ class WebCmsTypeSpecifierConfiguration implements EntityConfigurer
 		        .hide()
 		        .properties(
 				        props -> props.property( "attributes" ).hidden( true ).and()
-				                      .property( "objectId" ).order( 0 ).writable( false )
+				                      .property( "objectId" ).order( Ordered.HIGHEST_PRECEDENCE ).writable( false )
 		        )
-		        .updateFormView( fvb -> fvb.showProperties( "objectId", "." ) );
+		        .updateFormView( fvb -> fvb.showProperties( "objectId", "name", "typeKey", "created", "lastModified" ) )
+		        .listView( lvb -> lvb.showProperties( "~objectId", "." ) );
 
 		entities.assignableTo( WebCmsTypeSpecifierLink.class ).hide();
 	}
