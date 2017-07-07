@@ -17,7 +17,7 @@ The following component types are added with the default data:
 | proxy
 | A proxy for another component that will be rendered instead.
 | proxy
-| `ProxyWebCmsComponentModel
+| `ProxyWebCmsComponentModel`
 
 | placeholder
 | Represents a placeholder for content provided by code or templates.
@@ -25,12 +25,12 @@ The following component types are added with the default data:
 | `PlaceholderWebCmsComponentModel`
 
 | container
-| Container of multiple ordered components.
+| Container of multiple ordered components. The user can add or remove child components to the container.
 | container
 | `ContainerWebCmsComponentModel`
 
 | fixed-container
-| Container of a fixed set of components.
+| Container of a fixed set of components. The user can not add or remove child components to the container.
 | fixed-container
 | `ContainerWebCmsComponentModel`
 
