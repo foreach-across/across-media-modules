@@ -59,25 +59,65 @@ By providing this attribute (the actual value is ignored) you indicate the outpu
 
 Auto-creation of components from markup
 
-* if you dont specify a component type - the default component type will be created
-* if you dont specify a scope on a component - a default scope will be used:
-** outside a parent component the default scope will be asset, and parents will be searched if not specified
-** inside a parent component that is not a container: the default scope will be asset and parent scopes will be searched if not specified
-** inside a parent component that is a container: the default scope will be the container and parents will not be searched
-* if your component is a container
+* if you don't specify a component type - the default component type will be created
+* if you don't specify a scope on a component - a default scope will be used:
+** outside a parent component the default scope will be _asset_, and parents will be searched if not specified within the _asset_ scope.
+** inside a parent component that is not a container: the default scope will be _asset_ and parent scopes will be searched if not specified
+** inside a parent component that is a container: the default scope will be the _container_ and parents will *not* be searched
+* if your component is a container:
 ** any placeholders in the body will be added as placeholder child components and the body markup will refer to those components
 ** any scoped component will be added as a proxy component referring to the original scoped component and the body markup will refer to the proxy components
 
 Special scopes:
 
-- default: always refers to the lowest level - first one to perform the lookup (usually asset) - you would not normally use this scope name as it is default is a scope name is omitted
-- global: always refers to the global scope, components that have no owner
-- container: this is a reserved scope name that ensures the component is added as a container member - you would not normally use this scope name as it is the default if omitted inside a container component
+- *default*: always refers to the lowest level - first one to perform the lookup (usually asset) - you would not normally use this scope name as it is default is a scope name is omitted
+- *global*: always refers to the global scope, components that have no owner
+- *container*: this is a reserved scope name that ensures the component is added as a container member - you would not normally use this scope name as it is the default if omitted inside a container component
 
 ==== Examples
 
 :!numbered:
 This section contains a number of real-life examples for working with components from Thymeleaf.
+
+- Only look in the scope of the page asset. If not present, don't do anything.
+[code, html]
+----
+<th:block wcm:component="page-header" wcm:scope="page" wcm:search-parent-scopes="false">
+    <div class="l-page__title">Our title</div>
+    <p>
+        Our text
+    </p>
+</th>
+----
+
+- Start by looking in the scope of the page asset, don't look in the parent components even if you don't find them in the page scope. If the component is not found,
+render the code that is written down in the thymeleaf template.
+
+[code, html]
+----
+<th:block wcm:component="page-header" wcm:scope="page">
+    <div class="l-page__title">Our title</div>
+    <p>
+        Our text
+    </p>
+</th>
+----
+
+- Start by looking if the component exists in the page asset, but look in the parent scope(s) if you don't find the component in the page scope. If the component
+ is nowhere to be found, the content in the thymeleaf template itself is rendered.
+
+[code, html]
+----
+<th:block wcm:component="page-header" wcm:scope="global">
+    <div class="l-page__title">Our title</div>
+    <p>
+        Our text
+    </p>
+</th>
+----
+
+- Look in the global scope for the component, skipping over any and all more granular scopes. If the component is nowhere to be
+ found, the content in the thymeleaf template itself is rendered.
 
 ==== Rendering a component
 You can specify a component to render by just setting the name of the component as the value of the _wcm:component_ attribute.

@@ -2,16 +2,17 @@
 [[WebCmsMenu-overview]]
 ==== Overview
 A `WebCmsMenu` is a construct that can be used to render content resembling a menu. A single menu can have zero or
-more `WebCmsMenuItem` assets. A `WebCmsMenuItem` represents a link from a path in the menu to an endpoint.
+more `WebCmsMenuItem` assets. A `WebCmsMenuItem` represents a link from a path in the menu to an endpoint. Like everything in WebCms you need to manually
+define where and how you want to display the menu; there is no automatic display provided nor is there a default menu.
 
 [[WebCmsMenu-programatically]]
 ==== Programatically accessing the menu
-You can access the menu on your thymeleaf template if you follow the following steps.
+You can access the menu on your Thymeleaf template if you follow the following steps.
 
 - In the class where you configure your template, override the `buildMenus` method. In our example, we're adding the _topNav_ menu to the page.
 
 .DefaultPageTemplate.java
-[source,java,indent=0]
+[source,java]
 ----
 @Component
 public class DefaultPageTemplate extends LayoutTemplateProcessorAdapterBean
@@ -70,7 +71,7 @@ public class DefaultPageTemplate extends LayoutTemplateProcessorAdapterBean
 |Sort Index|Integer|Yes|The position of the item in the menu.|0
 |Render as submenu|Boolean|Yes|If checked, an extra property called `group` is set on
 the menu item. This can used in the Thymeleaf template to render the items in a distinct way.|False
-|Update automatically|Boolean|Yes|If checked and the linked endpoint gets updated, any updates will be reflected in this menu item.|None
+|Update automatically|Boolean|Yes|If checked and the linked endpoint gets updated, any updates will be reflected in this menu item.|False
 |================
 
 [[WebCmsMenu-import]]
