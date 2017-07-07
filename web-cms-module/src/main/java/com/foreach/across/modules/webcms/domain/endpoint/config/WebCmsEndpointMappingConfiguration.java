@@ -53,7 +53,7 @@ public class WebCmsEndpointMappingConfiguration
 
 	/**
 	 * Paths to always be excluded from WebCmsUrl mapping.
-	 * If empty, all included paths will be considered.
+	 * If empty, only included paths will be considered.
 	 */
 	@NonNull
 	private Collection<String> excludedPathPatterns = Collections.emptyList();

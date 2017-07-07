@@ -7,8 +7,9 @@ Arne Vandamme, Raf Ceuls
 :module-name: WebCmsModule
 :module-artifact: web-cms-module
 :module-url: https://foreach.atlassian.net/wiki/display/AX/WebCmsModule
-:application-info-url: https://foreach.atlassian.net/wiki/display/AX/ApplicationInfoModule
-:spring-security-module-url: https://foreach.atlassian.net/wiki/display/AX/SpringSecurityModule
+:hibernate-jpa-module-url: https://foreach.atlassian.net/wiki/display/AX/AcrossHibernateModule
+:hibernate-jpa-unit-of-work-factory: https://across.foreach.be/docs/across-standard-modules/AcrossHibernateModule/2.0.0.RELEASE/reference/#unitofworkfactory
+:admin-web-module-url: https://foreach.atlassian.net/wiki/display/AX/AdminWebModule
 :entity-module-url: https://foreach.atlassian.net/wiki/display/AX/EntityModule
 :ehcache-module-url: https://foreach.atlassian.net/wiki/display/AX/EhcacheModule
 :icons: font
@@ -21,8 +22,17 @@ Copies of this document may be made for your own use and for distribution to oth
 
 [abstract]
 == About
-The {module-name} provides infrastructure for basic web CMS features.
-Most important part is that it allows managing web pages using an administration UI.
+{module-name} aims to provide some core Web CMS features for your Across application out-of-the-box.
+Building a simple website is very easy and requires very little development.
+
+Features provided by WebCmsModule include:
+
+* an extensible <<domain-model,domain model>> with common asset types like <<WebCmsPage-overview,web pages>>, <<PublicationModel-overview,articles>> and <<Redirects-overview,redirects>>
+* a way to manage the <<endpoint-url,URLs to these assets>>
+* a <<WebCmsComponents-overview,powerful component model>> for building templates and managing dynamic content
+* an easy way to <<importing-data,import data using YAML files>>
+
+A fully functional administration UI is available using AdminWebModule and EntityModule.
 
 Module website: {module-url}
 
@@ -34,29 +44,6 @@ include::chap-general-information.adoc[]
 include::chap-whats-new.adoc[]
 
 :numbered:
-== How {module-name} works
-
-annotate controller method with `WebCmsEndpointMapping`
-Specify type of endpoint and Http status code(s) to listen to
-body of method describes how to show endpoint
-
-default `WebCmsPageEndpoint` puts page on model and uses default Thymeleaf template
-default `WebCmsRemoteEndpoint` does redirect to target url
-
-=== Create your own endpoint
-Create an entity that extends `WebCmsEndpoint` which contains all properties needed to display the endpoint
-Create a corresponding repository
-Reference the endpoint and/or HTTP status code(s) in annotation of controller method
-Handle your properties according how you want to display your endpoint.  If needed, provide a default Thymeleaf template.
-
-
-WARNING: in case of problems, make sure that the request mapping is last
-
-in case of a page, a default page will be rendered
-a default webcmspagetemplate will be used if none is specified
-
-specify a default template yourself
-add a base location for the template files
 
 // Domain model - bulk of domain documentation
 include::chap-domain-model.adoc[]

@@ -1,3 +1,4 @@
+[[domain-model]]
 == Domain model
 
 === Asset model
@@ -15,6 +16,8 @@ include::publication/chap-publication-model.adoc[]
 
 // Endpoints & urls
 include::urls/chap-endpoint-url.adoc[]
+
+include::chap-redirects.adoc[]
 
 // Menu
 include::menu/chap-menu.adoc[]

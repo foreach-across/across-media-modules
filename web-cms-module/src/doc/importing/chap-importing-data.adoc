@@ -1,3 +1,4 @@
+[[importing-data]]
 == Importing data
 
 One can import data by combining yml files with an installer.

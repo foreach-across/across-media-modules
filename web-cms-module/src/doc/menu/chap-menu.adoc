@@ -76,7 +76,7 @@ the menu item. This can used in the Thymeleaf template to render the items in a 
 
 [[WebCmsMenu-import]]
 ==== Importing a menu item
-One can import a menu and its associated items by using the import infrastructure provided by the import functionality of WebCMS.
+One can import a menu and its associated items by using the import infrastructure provided by the import functionality of WebCms.
 [source,yaml]
 ----
 menus: // <1>

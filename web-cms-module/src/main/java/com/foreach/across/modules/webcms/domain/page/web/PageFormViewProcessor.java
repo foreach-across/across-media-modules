@@ -61,7 +61,6 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 {
 	private final WebCmsEndpointService endpointService;
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;
-	private final WebCmsMenuRepository menuRepository;
 	private final WebCmsMenuItemRepository menuItemRepository;
 	private final PageTypeProperties pageTypeProperties;
 
@@ -116,6 +115,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 		if ( pageFromCommand != null && pageFromCommand.getPageType() == null ) {
 			pageFromCommand.setPageType( pageTypeProperties.getDefaultType() );
 		}
+
 		command.addExtension( "advanced", advancedSettings );
 	}
 

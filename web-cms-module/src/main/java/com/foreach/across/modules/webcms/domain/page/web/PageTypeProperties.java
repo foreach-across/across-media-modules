@@ -40,18 +40,25 @@ public class PageTypeProperties
 {
 	private static final String DEFAULT_PAGE_TYPE_TYPE_KEY = "default";
 	private final WebCmsPageTypeRepository webCmsPageTypeRepository;
-	private String defaultPageType;
+
+	/**
+	 * Type key or object id of the default page type that should assigned to a new page.
+	 */
+	private String defaultPageType = DEFAULT_PAGE_TYPE_TYPE_KEY;
 
 	public WebCmsPageType getDefaultType() {
 		String keyOrObjectId = getDefaultPageType();
+
 		if ( StringUtils.isBlank( keyOrObjectId ) ) {
-			LOG.warn( String.format( "Default page type is blank, assuming [%s]", PageTypeProperties.DEFAULT_PAGE_TYPE_TYPE_KEY ) );
+			LOG.warn( "No default page type configured - assuming {}", PageTypeProperties.DEFAULT_PAGE_TYPE_TYPE_KEY );
 			keyOrObjectId = PageTypeProperties.DEFAULT_PAGE_TYPE_TYPE_KEY;
 		}
+
 		WebCmsPageType defaultPageType = webCmsPageTypeRepository.findOneByTypeKeyOrObjectId( keyOrObjectId, keyOrObjectId );
 		if ( defaultPageType == null ) {
-			LOG.error( String.format( "Could not resolve default pagetype with objectId [%s]", keyOrObjectId ) );
+			LOG.error( "Could not resolve default page type with typeKey or objectId {}", keyOrObjectId );
 		}
+
 		return defaultPageType;
 	}
 }

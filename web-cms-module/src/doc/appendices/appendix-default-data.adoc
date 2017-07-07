@@ -1,5 +1,154 @@
 
 === Default data
+WebCmsModule installs some default assets and types when starting for the first time.
+You usually want to extend or customize the default data installed.
 
-disable default data:
-webCmsModule.default-data.assets.enabled = false
+If you want to start from an entirely blank sheet, you can disable the default data by setting the `webCmsModule.default-data.assets.enabled` property to `false`.
+
+This section lists the default data being imported.
+
+==== Default types
+.classpath:installers/WebCmsModule/default-types.yml
+[source,yaml,indent=0]
+----
+types:
+  # Default component types
+  component:
+    proxy:
+      name: Proxy component
+      description: A proxy for another component that will be rendered instead.
+      attributes:
+        type: proxy
+    placeholder:
+      name: Placeholder
+      description: Represents a placeholder for content provided by code or templates.
+      attributes:
+        type: placeholder
+    container:
+      name: Container
+      description: Container of multiple ordered components.
+      attributes:
+        type: container
+    fixed-container:
+      name: Fixed container
+      description: Container of a fixed set of components.
+      attributes:
+        type: fixed-container
+    text-field:
+      name: Text field
+      description: A single line of plain text.
+      attributes:
+        type: plain-text
+        multiLine: false
+    plain-text:
+      name: Plain text
+      description: Plain text component.
+      attributes:
+        type: plain-text
+        rows: 1
+    rich-text:
+      name: Rich text
+      description: Rich text component - supporting HTML markup and default assets if enabled by other modules.
+      attributes:
+        type: rich-text
+        profile: rich-text
+    html:
+      name: HTML
+      description: A snippet of HTML.
+      attributes:
+        type: markup
+    image:
+      name: Image
+      description: Image asset or external image link.
+      attributes:
+        type: image
+
+  # Default article types: blog and news
+  article:
+    blog:
+      name: Blog
+      attributes:
+        contentTemplate: content
+      wcm:components:
+        # Default component name that contains the content components for this article type
+        content:
+          title: Article content
+          componentType: container
+          wcm:components:
+            content:
+              title: Body
+              componentType: rich-text
+              content: |
+                <h1>@@title@@</h1>
+                <p></p>
+              sortIndex: 0
+    news:
+      name: News
+      attributes:
+        # Key of the parent type from which the attributes (and component) should be inherited
+        parent: blog
+
+  # Default publication types: blog and news
+  publication:
+    blog:
+      name: Blog
+      wcm:types:
+        - typeSpecifier: wcm:type:article:blog
+          linkType: article
+    news:
+      name: News
+      wcm:types:
+        - typeSpecifier: wcm:type:article:news
+          linkType: article
+
+  # Default page types
+  page:
+    default:
+      name: Default
+    template:
+      name: Template
+      attributes:
+        hasEndpoint: false
+        isPublishable: false
+----
+
+==== Default assets
+.classpath:installers/WebCmsModule/default-assets.yml
+[source,yaml,indent=0]
+----
+assets:
+  # Article template pages for publications
+  page:
+    - objectId: "wcm:asset:page:blog-detail"
+      title: Blog detail template
+      canonicalPath: /blog/*
+      canonicalPathGenerated: false
+      pageType: template
+    - objectId: "wcm:asset:page:news-detail"
+      title: News detail template
+      canonicalPath: /news/*
+      canonicalPathGenerated: false
+      pageType: template
+
+  # Default publications: News and Blogs
+  publication:
+    blogs:
+      name: Blogs
+      publicationType: blog
+      published: true
+      articleTemplatePage: "wcm:asset:page:blog-detail"
+    news:
+      name: News
+      publicationType: news
+      published: true
+      articleTemplatePage: "wcm:asset:page:news-detail"
+
+  # Custom shared component
+  component:
+    sample-shared-component:
+      title: Sample global shared component
+      componentType: rich-text
+      content: |
+        <h1>Sample component</h1>
+        <p>This is a sample component - defined on the global scope.</p>
+----

@@ -52,5 +52,5 @@ public class PageTemplateProperties
 	/**
 	 * Suffix to be removed if present.
 	 */
-	private String templateSuffixToRemove = ".thtml";
+	private String templateSuffixToRemove = ".html";
 }

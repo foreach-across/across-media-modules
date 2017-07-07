@@ -44,17 +44,41 @@ When creating or updating the page, the following updates are done with regards 
 * If the page object is saved, and the publication is in the future or not yet published, update the primary url.
 * If the page object is saved and published but the publication date is in the past, no adjustments to the primary url will happen.
 
-This, however, can be overridden by behaviour defined in <<WebCmsMenu-overview,  `WebCMSMenu`>>.
+This, however, can be overridden by behaviour defined in <<WebCmsMenu-overview,  `WebCmsMenu`>>.
+
+.Page template
+A page can optionally specify a template that should be used for rendering.
+If the template is left empty, the `template` attribute of the `WebCmsPageType` will be used as template for rendering instead.
+If the `WebCmsPageType` does not specify a template either, the value of module setting `webCmsModule.pages.default-template` will be used.
+
+A page template will usually be resolved by the configured Spring MVC `ViewResolver` beans.
+By default page templates are expected to be Thymeleaf template files.
+
+At startup of the application, WebCmsModule will attempt to determine the default template path of the current application.
+Any relative template will then be automatically prefixed with the default template path.
+Only templates with a specified prefix (eg. _th/_) are considered absolute and will be left untouched.
+
+The default file extension _.html_ does not need to be specified when setting the template value.
+
+Example: +
+`MyApplication` would resolve the default template path as `th/my/`.
+
+* template `my-template` would be resolved as `th/my/template`
+* template `th/other-module/my-template` would be resolved as `th/other-module/my-template`
+
+NOTE:
+You can manually specify the default template prefix using property `webCmsModule.pages.template-prefix`.
+See the <<module-settings,module settings>> for all options you can configure if you want to change the default template resolving behaviour.
 
 ===== Web Components
-A `WebCMSPage` can contain different `WebCMSComponent` assets. Those form the building blocks of the pages. For further information, please check the <<WebCmsComponents-overview, chapter>> on components.
+A `WebCmsPage` can contain different `WebCmsComponent` assets. Those form the building blocks of the pages. For further information, please check the <<WebCmsComponents-overview, chapter>> on components.
 
 ===== URLs
-A `WebCMSPage` can be referred to by different URLs. Please see the respective <<WebCmsUrl-pages, chapter>> for more information.
+A `WebCmsPage` can be referred to by different URLs. Please see the respective <<WebCmsUrl-pages, chapter>> for more information.
 
 [[WebCmsPage-import]]
 ==== Importing a page
-One can import a page by using the import infrastructure provided by the import functionality of WebCMS.
+One can import a page by using the import infrastructure provided by the import functionality of WebCmsModule.
 
 ===== Examples
 .Example page

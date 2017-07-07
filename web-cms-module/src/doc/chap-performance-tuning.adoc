@@ -1,7 +1,11 @@
 [[performance-tuning]]
 == Performance tuning
 
-caches: WebCmsUrlCache, WebCmsMenuCache
-enable Hibernate 2nd level cache
+=== URL resolving
 webCmsModule.urls.included-path-patterns
 webCmsModule.urls.excluded-path-patterns
+
+=== Caching
+caches: WebCmsUrlCache, WebCmsMenuCache
+enable Hibernate 2nd level cache
+
