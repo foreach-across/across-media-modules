@@ -29,6 +29,8 @@ import java.util.List;
 @Exposed
 public interface WebCmsTypeSpecifierLinkRepository extends IdBasedEntityJpaRepository<WebCmsTypeSpecifierLink>, QueryDslPredicateExecutor<WebCmsTypeSpecifierLink>
 {
+	List<WebCmsTypeSpecifierLink> findAllByOwnerObjectId( String ownerObjectId );
+
 	List<WebCmsTypeSpecifierLink> findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( String ownerObjectId, String linkType );
 
 	WebCmsTypeSpecifierLink findOneByOwnerObjectIdAndLinkTypeAndTypeSpecifier( String ownerObjectId, String linkType, WebCmsTypeSpecifier typeSpecifier );

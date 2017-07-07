@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.component;
+package com.foreach.across.modules.webcms.domain;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
-import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Component;
 class WebCmsObjectDeleteInterceptor extends EntityInterceptorAdapter<WebCmsObject>
 {
 	private final WebCmsComponentRepository componentRepository;
+	private final WebCmsTypeSpecifierLinkRepository linkRepository;
 
 	@Override
 	public boolean handles( Class<?> entityClass ) {
@@ -48,6 +50,11 @@ class WebCmsObjectDeleteInterceptor extends EntityInterceptorAdapter<WebCmsObjec
 	 */
 	@Override
 	public void afterDelete( WebCmsObject entity ) {
+		deleteOwnedComponents( entity );
+		deleteTypeSpecifierLinks( entity );
+	}
+
+	private void deleteOwnedComponents( WebCmsObject entity ) {
 		componentRepository
 				.findAllByOwnerObjectIdOrderBySortIndexAsc( entity.getObjectId() )
 				.forEach( component -> {
@@ -56,5 +63,10 @@ class WebCmsObjectDeleteInterceptor extends EntityInterceptorAdapter<WebCmsObjec
 					LOG.trace( "Deleting component {} because owner {} has been deleted", component, entity );
 					componentRepository.delete( component );
 				} );
+	}
+
+	private void deleteTypeSpecifierLinks( WebCmsObject entity ) {
+		linkRepository.findAllByOwnerObjectId( entity.getObjectId() )
+		              .forEach( linkRepository::delete );
 	}
 }

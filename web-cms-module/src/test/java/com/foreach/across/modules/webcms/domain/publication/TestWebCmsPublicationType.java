@@ -47,8 +47,7 @@ public class TestWebCmsPublicationType
 		assertNull( publicationType.getId() );
 		assertNull( publicationType.getNewEntityId() );
 		assertTrue( publicationType.isNew() );
-		assertNotNull( publicationType.getObjectId() );
-		assertTrue( publicationType.getObjectId().startsWith( "wcm:type:publication:" ) );
+		assertNull( publicationType.getObjectId() );
 		assertNull( publicationType.getTypeKey() );
 		assertNull( publicationType.getName() );
 		assertNull( publicationType.getCreatedBy() );
@@ -64,7 +63,6 @@ public class TestWebCmsPublicationType
 
 		WebCmsPublicationType publicationType = WebCmsPublicationType.builder()
 		                                                             .newEntityId( 123L )
-		                                                             .objectId( "my-type" )
 		                                                             .typeKey( "publicationType-key" )
 		                                                             .name( "my-publicationType" )
 		                                                             .createdBy( "john" )
@@ -75,7 +73,7 @@ public class TestWebCmsPublicationType
 
 		assertNull( publicationType.getId() );
 		assertEquals( Long.valueOf( 123L ), publicationType.getNewEntityId() );
-		assertEquals( "wcm:type:publication:my-type", publicationType.getObjectId() );
+		assertEquals( "wcm:type:publication:publicationType-key", publicationType.getObjectId() );
 		assertEquals( "publicationType-key", publicationType.getTypeKey() );
 		assertEquals( "my-publicationType", publicationType.getName() );
 		assertEquals( "john", publicationType.getCreatedBy() );
@@ -86,6 +84,7 @@ public class TestWebCmsPublicationType
 
 		WebCmsPublicationType other = publicationType.toBuilder()
 		                                             .id( 333L )
+		                                             .objectId( "my-type" )
 		                                             .lastModifiedDate( timestamp )
 		                                             .build();
 		assertNotSame( publicationType, other );

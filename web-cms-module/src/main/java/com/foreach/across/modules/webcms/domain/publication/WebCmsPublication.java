@@ -20,14 +20,15 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 import static com.foreach.across.modules.webcms.domain.publication.WebCmsPublication.OBJECT_TYPE;
@@ -44,7 +45,6 @@ import static com.foreach.across.modules.webcms.domain.publication.WebCmsPublica
 @Table(name = "wcm_publication")
 @Getter
 @Setter
-@NoArgsConstructor
 public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 {
 	/**
@@ -72,6 +72,7 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	@NotBlank
 	@Length(max = 255)
 	@Column(name = "publication_key", unique = true)
+	@Pattern(regexp = "[^\\s]*")
 	private String publicationKey;
 
 	/**
@@ -93,6 +94,11 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 
 	//private WebCmsTagCollection tagCollection;
 
+	public WebCmsPublication() {
+		super();
+		setObjectId( null );
+	}
+
 	@Builder(toBuilder = true)
 	protected WebCmsPublication( @Builder.ObtainVia(method = "getId") Long id,
 	                             @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
@@ -107,11 +113,21 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	                             String publicationKey,
 	                             WebCmsPublicationType publicationType,
 	                             WebCmsPage articleTemplatePage ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
+		super( id, newEntityId, null, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
 		this.name = name;
 		this.publicationKey = publicationKey;
 		this.publicationType = publicationType;
 		this.articleTemplatePage = articleTemplatePage;
+
+		setObjectId( objectId );
+		setPublicationKey( publicationKey );
+	}
+
+	public void setPublicationKey( String publicationKey ) {
+		this.publicationKey = publicationKey;
+		if ( getObjectId() == null && StringUtils.isNotEmpty( publicationKey ) ) {
+			setObjectId( publicationKey );
+		}
 	}
 
 	@Override
