@@ -1,0 +1,6 @@
+=== Asset model
+
+TODO: info on asset implementation, asset & asset type
+asset type has attributes which can be used for configuration & behaviour
+
+These links are mapped using the `WebCmsTypeSpecifierLink` and `WebCmsTypeSpecifierLinkRepository`.

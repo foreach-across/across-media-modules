@@ -1,7 +1,7 @@
 [[WebCmsComponents-overview]]
 == Web components
 
-=== Overview
+=== Web component model
 Web CMS Components are the building block of the pages that are displayed for the end user. Support is provided for a user friendly way of manipulating the content of those components via the back end.
 
 ==== WebCmsComponentType
@@ -54,3 +54,8 @@ include::chap-web-components-thymeleaf.adoc[]
 include::chap-web-components-defining-component-types.adoc[]
 
 :numbered:
+
+[[WebCmsComponent-import]]
+=== Importing components
+
+dsfdsd

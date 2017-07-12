@@ -15,7 +15,7 @@ i.e. you have more control regarding the layout and the components of the page. 
 |Parent|Select|No|Parent page of the page. Affects any generated URLs and (if auto-generated) the canonical path.|None
 |Template|String|No|The thymeleaf template of the page. The filename of the page without the extension. If none is defined the one from the page type is used.|None
 |Path Segment|String|No|The path segment of the page.|None
-|Auto create menu items|Checklist of <<WebCmsMenu-overview, menu> names.|No|If checked, a menu item is generated for the checked menu(s).|None
+|Auto create menu items|Checklist of <<WebCmsMenu-overview, menu>> names.|No|If checked, a menu item is generated for the checked menu(s).|None
 |================
 
 There are two configurable subsections, one for URL settings and one for publication settings
@@ -231,3 +231,48 @@ tabbed-page:
 ----
 <1> Pre-filled content. When a page is created using this template, this data will be filled in (but can be changed by the user).
 <2> You need to manually set the sort order, or otherwise the default value (i.e. 0) will be filled in.
+
+[[page-web-model]]
+==== Web infrastructure
+Any `WebCmsPage` will automatically create a `WebCmsAssetEndpoint` with generated URL values.
+
+.Default page controller model
+When requesting a page endpoint a default model will be rendered:
+
+* the template rendered will be determined by the `template` property or by the `WebCmsPageType` if no `template` is set on the page itself
+* the components attached to the page will be available as *page* scope
+* the following model attributes will be registered:
+** _page_: `WebCmsPage` being rendered
+** _asset_: `WebCmsPage` being rendered (alias for _page_)
+
+The default page model is loaded by the `WebCmsPageModelLoader` bean.
+
+.Custom page mapping
+You can create your own page handler by using `@WebCmsPageMapping` annotation.
+The `@WebCmsPageMapping` annotation can be combined with other `@RequestMapping` annotations to create a specific match.
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@WebCmsPageMapping(canonicalPath = "/my/page") // <1>
+public void extendSpecificPageModel( WebCmsPage page, Model model ) {
+    model.addAttribute( "extraData", ... );
+}
+
+@GetMapping // <2>
+@WebCmsPageMapping(pageType = "static") // <2>
+@IgnoreEndpointModel // <3>
+public String renderStaticPage( WebCmsPage page, Model model ) {
+    model.addAttribute( "page", page );
+    return "th/my-app/static-page";
+}
+----
+
+<1> Handler method that will be used for the single page with the unique canonicalPath _/my/page_.
+ The default page model will still be loaded, this handler only adds a model attribute.
+ This handler method could optionally return a view, but since it does not, the view being rendered is still determined by the default model.
+
+<2> Handler method for a page of type _static_, provided the page is requested using the HTTP _GET_ method.
+
+<3> The `@IgnoreEndpointModel` annotation suppresses the default page model from being loaded.
+ The handler method should fully initialize the model required as well as return the view that should be rendered.

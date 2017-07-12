@@ -1,7 +1,7 @@
 === Content markers
 
 WebCmsModule provides content marker infrastructure to work with special marker snippets inside textual content.
-Upon rendering these markers would then be processed and the resulting output would be rendered instead.
+Upon rendering, these markers would be processed and the resulting output would be rendered instead.
 
 .Example text with content markers
 [source,text,indent=0]

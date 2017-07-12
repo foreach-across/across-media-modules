@@ -126,7 +126,7 @@ public String renderBreakingNews( WebCmsArticle article, Model model ) {
 }
 ----
 
-<1> Handler method that will be used for any article in a publication of type _news_, provided there is not more specific handler (see next).
+<1> Handler method that will be used for any article in a publication of type _news_, provided there is not a more specific handler (see next).
  The default article model will still be loaded, this handler only adds a model attribute.
  This handler method could optionally return a view, but since it does not, the view being rendered is still determined by the default model.
 
@@ -135,6 +135,7 @@ public String renderBreakingNews( WebCmsArticle article, Model model ) {
 <3> The `@IgnoreEndpointModel` annotation suppresses the default article model from being loaded.
  The handler method should fully initialize the model required as well as return the view that should be rendered.
 
+[[WebCmsArticle-import]]
 ==== Importing data
 Most domain data of the publication model can be imported using YAML.
 See _<<configuring-publication-model>>_ for a full example.

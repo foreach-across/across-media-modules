@@ -1,4 +1,4 @@
-
+[[appendix-default-data]]
 === Default data
 WebCmsModule installs some default assets and types when starting for the first time.
 You usually want to extend or customize the default data installed.

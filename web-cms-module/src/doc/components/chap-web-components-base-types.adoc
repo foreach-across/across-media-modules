@@ -156,4 +156,4 @@ Base type: _proxy_
 An `ImageWebCmsComponentModel` holds a reference to a `WebCmsImage` asset.
 Default rendering of an `ImageWebCmsComponentModel` is not very useful and developers should provide their own rendering by eiter updating the `WebCmsComponentType` with a custom _template_ or by providing the rendering infrastructure (see <<thymeleaf-rendering,Thymeleaf rendering>>).
 
-NOTE: The availability of the `WebCmsImage` asset and component infrastructure depends on the presence of other bean (eg an `ImageServerClient` bean).
+NOTE: The availability of the `WebCmsImage` asset and component infrastructure depends on the presence of other beans (eg an `ImageServerClient` bean).

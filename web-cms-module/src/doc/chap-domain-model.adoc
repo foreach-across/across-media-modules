@@ -1,10 +1,8 @@
 [[domain-model]]
 == Domain model
 
-=== Asset model
-
-TODO: info on asset implementation, asset & asset type
-asset type has attributes which can be used for configuration & behaviour
+// Asset model - general explanation
+include::chap-asset-model.adoc[]
 
 // Page model
 include::pages/chap-web-page.adoc[]

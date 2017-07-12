@@ -47,7 +47,7 @@ All properties start with the *webCmsModule.* prefix.
 
 |urls.included-path-patterns
 |`String[]`
-|Paths to be included for WebCmsUrl mapping.
+|Paths to be included for `WebCmsUrl` mapping.
 If empty, all non-excluded paths will be considered.
 
 Specify as ANT matcher patterns, eg _/path/**_.
@@ -55,7 +55,7 @@ Specify as ANT matcher patterns, eg _/path/**_.
 
 |urls.excluded-path-patterns
 |`String[]`
-| Paths to always be excluded from WebCmsUrl mapping.
+| Paths to always be excluded from `WebCmsUrl` mapping.
 If empty, only included paths will be considered.
 
 Specify as ANT matcher patterns, eg _/path/**_.
