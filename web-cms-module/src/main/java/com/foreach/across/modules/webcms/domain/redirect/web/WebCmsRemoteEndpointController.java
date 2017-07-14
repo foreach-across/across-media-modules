@@ -20,6 +20,7 @@ import com.foreach.across.modules.webcms.domain.endpoint.web.IgnoreEndpointModel
 import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointMapping;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -31,7 +32,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class WebCmsRemoteEndpointController
 {
 	@IgnoreEndpointModel
-	@WebCmsEndpointMapping(WebCmsRemoteEndpoint.class)
+	@WebCmsEndpointMapping(value = WebCmsRemoteEndpoint.class, status = HttpStatus.I_AM_A_TEAPOT)
 	public RedirectView redirectToRemote( WebCmsUrl url, WebCmsRemoteEndpoint endpoint ) {
 		RedirectView redirectView = new RedirectView( endpoint.getTargetUrl() );
 		redirectView.setStatusCode( url.getHttpStatus() );

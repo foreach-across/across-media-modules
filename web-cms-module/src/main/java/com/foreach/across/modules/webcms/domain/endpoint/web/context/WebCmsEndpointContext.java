@@ -20,19 +20,32 @@ import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 
 /**
+ * Represents the resolved {@link WebCmsEndpoint} for the current request.
+ *
  * @author Sander Van Loock
  * @since 0.0.1
  */
 public interface WebCmsEndpointContext
 {
+	/**
+	 * @return url that was used for resolving the endpoint
+	 */
 	WebCmsUrl getUrl();
 
+	/**
+	 * @return resolved endpoint
+	 */
 	WebCmsEndpoint getEndpoint();
 
+	/**
+	 * @param endpointType to coerce to
+	 * @param <T>          endpoint type
+	 * @return resolved endpoint as type
+	 */
 	<T extends WebCmsEndpoint> T getEndpoint( Class<T> endpointType );
 
 	/**
-	 * Returns true if and only if this context is resolved and a url can be found.
+	 * Returns true if and only if this context is resolved and an endpoint was found.
 	 */
 	boolean isAvailable();
 
