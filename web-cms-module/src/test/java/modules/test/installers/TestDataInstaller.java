@@ -37,5 +37,6 @@ public class TestDataInstaller extends AbstractWebCmsDataInstaller
 		locations.add( "classpath:installers/test-components.yml" );
 		locations.add( "classpath:installers/test-pages.yml" );
 		locations.add( "classpath:installers/test-mappings.yml" );
+		locations.add( "classpath:installers/test-articles.yml" );
 	}
 }

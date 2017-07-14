@@ -267,7 +267,7 @@ assets:
  article: // <1>
     - title: "IT Manager EMEA @ Foreach" // <2>
       objectId: "wcm:asset:article:job-it-manager-emea" // <3>
-      publication: jobs // <4>
+      publication: it-jobs // <4>
       articleType: job // <4>
       description: Supposed to be online until August 2017  // <2>
       published: true // <5>
@@ -287,8 +287,8 @@ assets:
 Note that these are different than the content components, which could have the same name (eg. description).
 <3> We manually provide a unique `objectId` to our article.
 This is the only identifier for an article and is required if we ever want to update the article through data imports.
-<4> We create an article in our Jobs publication, and give it the job article type.
-Note that even we were to specify a different article type, the article would still be imported.
+<4> We create an article in our IT Jobs publication, and give it the job article type.
+Note that even if we were to specify a different article type, the article would still be imported.
 There is no hard validation during imports that only article types allowed for a publication can be imported.
 <5> We publish the article upon creation.
 This makes the article available online using a URL generated based on the article title and the article template page.
