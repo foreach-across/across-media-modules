@@ -36,6 +36,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -52,6 +53,8 @@ import static com.foreach.across.modules.webcms.infrastructure.ModificationStatu
 @RequiredArgsConstructor
 public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 {
+	private static final Charset UTF8 = Charset.forName( "UTF-8" );
+
 	private final WebCmsAssetEndpointRepository endpointRepository;
 	private final WebCmsUrlRepository urlRepository;
 	private final WebCmsUrlCache urlCache;
@@ -158,11 +161,14 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 
 		if ( endpoint != null ) {
 			return endpoint.getPrimaryUrl()
-			               .map( url ->
-					                     UriComponentsBuilder.fromUriString( url.getPath() )
-					                                         .queryParam( "wcmPreview",
-					                                                      DigestUtils.md5DigestAsHex( endpoint.getId().toString().getBytes() ) )
-					                                         .toUriString()
+			               .map( url -> {
+
+				                     return UriComponentsBuilder.fromUriString( url.getPath() )
+				                                                .queryParam( "wcmPreview",
+				                                                             DigestUtils.md5DigestAsHex(
+						                                                             endpoint.getId().toString().getBytes( UTF8 ) ) )
+				                                                .toUriString();
+			                     }
 			               );
 		}
 
@@ -170,6 +176,6 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 	}
 
 	public boolean isPreviewAllowed( WebCmsEndpoint endpoint, String securityCode ) {
-		return !StringUtils.isEmpty( securityCode ) && DigestUtils.md5DigestAsHex( endpoint.getId().toString().getBytes() ).equals( securityCode );
+		return !StringUtils.isEmpty( securityCode ) && DigestUtils.md5DigestAsHex( endpoint.getId().toString().getBytes( UTF8 ) ).equals( securityCode );
 	}
 }

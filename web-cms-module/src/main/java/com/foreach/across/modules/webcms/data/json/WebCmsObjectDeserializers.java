@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 class WebCmsObjectDeserializers extends SimpleDeserializers
 {
-	private final WebCmsDataConversionService dataConversionService;
+	private final transient WebCmsDataConversionService dataConversionService;
 
 	@SuppressWarnings( "unchecked" )
 	@Override
