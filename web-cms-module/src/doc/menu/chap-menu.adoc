@@ -1,0 +1,133 @@
+=== Menu
+[[WebCmsMenu-overview]]
+==== Overview
+A `WebCmsMenu` is a construct that can be used to render content resembling a menu. A single menu can have zero or
+more `WebCmsMenuItem` assets. A `WebCmsMenuItem` represents a link from a path in the menu to an endpoint. Like everything in WebCms you need to manually
+define where and how you want to display the menu; there is no automatic display provided nor is there a default menu.
+
+[[WebCmsMenu-programatically]]
+==== Programmatically accessing the menu
+You can access the menu on your Thymeleaf template if you follow the following steps.
+
+- In the class where you configure your template, override the `buildMenus` method. In our example, we're adding the _topNav_ menu to the page.
+
+.DefaultPageTemplate.java
+[source,java]
+----
+@Component
+public class DefaultPageTemplate extends LayoutTemplateProcessorAdapterBean
+{
+  public DefaultPageTemplate() {
+   super( "default", "th/adminWebCms/layout/main" );
+  }
+
+  @Override
+  protected void buildMenus( MenuFactory menuFactory ) {
+   menuFactory.buildMenu( "sideNav" );
+  }
+
+  @Autowired
+  public void registerAsDefaultTemplate( WebTemplateRegistry webTemplateRegistry ) {
+   webTemplateRegistry.setDefaultTemplateName( "default" );
+  }
+}
+----
+
+- Adjust your thymeleaf page. In our example we iterate over the (menu) items of the sideNav menu (and its children) to display a menu.
+
+.layout.html
+[source,html]
+----
+<ul class="cd-accordion-menu animated">
+  <li th:if="${menuGroup.hasItems() and !menuGroup.isDisabled()}" class="has-children" th:each="menuGroup : ${sideNav.items}">
+     <input type="checkbox" th:if="${menuGroup.hasItems()}" th:name="${menuGroup.title}" th:id="${menuGroup.title}" th:attr="checked=${menuGroup.selected} ? 'checked'">
+     <label th:for="${menuGroup.title}" th:text="${menuGroup.title}">Getting started</label>
+     <ul>
+        <li th:each="menuItem : ${menuGroup.items}">
+           <a th:href="${menuItem.url}" th:classappend="${menuItem.selected}? 'active'"
+              th:text="${menuItem.title}">About</a></li>
+     </ul>
+  </li>
+</ul>
+----
+
+==== Properties
+.Properties of a menu
+[options="header", cols="2,1,1,3,1"]
+|================
+|Name|Type|Mandatory|Description|Default Value
+|Name|String|Yes|The (unique) name of the menu. Used in the thymeleaf templates to refer to the menu.|None
+|Description|String|No|A description of the menu.|None
+|================
+
+.Properties of a menu item
+[options="header", cols="2,1,1,3,1"]
+|================
+|Name|Type|Mandatory|Description|Default Value
+|Path|String|Yes|The path in the menu tree|None
+|Title|String|Yes|The title of the menu item|None
+|Url|String|No|The url the menu item points to. Supersedes any defined `endpoint`. If this is not filled in, the primary `endpoint` of the associated asset is used.|None
+|Endpoint|String|No|The endpoint this menu item points to.|None
+|Sort Index|Integer|Yes|The position of the item in the menu.|0
+|Render as submenu|Boolean|Yes|If checked, an extra property called `group` is set on
+the menu item. This can used in the Thymeleaf template to render the items in a distinct way.|False
+|Update automatically|Boolean|Yes|If checked and the linked endpoint gets updated, any updates will be reflected in this menu item.|False
+|================
+
+[[WebCmsMenu-import]]
+==== Importing a menu item
+One can import a menu and its associated items by using the import infrastructure provided by the import functionality of WebCms.
+[source,yaml]
+----
+menus: // <1>
+  topNav: // <2>
+   description: Top navigation
+   items: // <3>
+     # Register fixed controller paths
+     /home: // <4>
+      title: Home
+      url: /home
+      sortIndex: 1
+      asset: /extension/referenceForMenu <5>
+     /categories:
+      title: Categories
+      group: true
+      sortIndex: 2
+     /categories/news:
+      title: News
+      url: /category/news
+      sortIndex: 1
+      asset: "wcm:asset:page:reference-for-menu" <5>
+----
+<1> The root element `menus` indicates that the next item is going to be one (or many) menus.
+<2> The key of the YAML item is re-used as the name of the menu.
+Should be unique.
+<3> Starts the collection of the menu items.
+<4> The key of the YAML item is re-used as the path of the menu item.
+<5> If you want to set the endpoint of the item, you can use the `asset` keyword.
+It can use both the objectId (for all `WebCmsAsset` assets) and the canonical path (only for `WebCmsPage` assets).
+
+===== Supported properties
+
+This is an overview of the items that can be filled via a YAML import.
+
+.Menu properties that can be imported
+[options="header", cols="1,1,2"]
+|================
+|Property|On UI|Details
+|name|Name|The key of the YAML entry is used if name is not specified.
+|description|Description|
+|================
+
+.Menu Item properties that can be imported
+[options="header", cols="1,1,2"]
+|================
+|Property|On UI|Details
+|path|Path|The key is used if not defined.
+|title|Title|
+|asset|Endpoint|Can be an objectId (for every asset type or a canonical path (only for pages)
+|url|Url|
+|sortIndex|SortIndex|
+|group|Render as submenu|
+|generated|Update automatically|
+|================

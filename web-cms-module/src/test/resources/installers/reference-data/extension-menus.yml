@@ -11,6 +11,8 @@ menus:
         title: Categories - updated
       - path: /categories/deleteme
         wcm:action: delete
+      - asset: "wcm:asset:page:contact"
+      - asset: /my/other/contact
 
   # Add item to sideNav
   - name: sideNav
@@ -20,12 +22,14 @@ menus:
         title: Custom SideNav Item
         url: /custom-sidenav-item
         sortIndex: 1
-      #/contact:
-      #  title: Contact
-      #  asset: "wcm:assets:page:contact-page"
-      #  generated: false
-      #  sortIndex: 2
-
+      /contact:
+        title: Contact
+        asset: "wcm:asset:page:contact"
+        sortIndex: 2
+      /contact2:
+        title: Contact2
+        asset: /my/other/contact
+        sortIndex: 3
   # Remove the dummy menu
   - name: deleteMeNav
     wcm:action: delete

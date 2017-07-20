@@ -41,8 +41,7 @@ public class TestWebCmsPublication
 		assertNull( publication.getId() );
 		assertNull( publication.getNewEntityId() );
 		assertTrue( publication.isNew() );
-		assertNotNull( publication.getObjectId() );
-		assertTrue( publication.getObjectId().startsWith( "wcm:asset:publication:" ) );
+		assertNull( publication.getObjectId() );
 		assertNull( publication.getPublicationKey() );
 		assertNull( publication.getPublicationType() );
 		assertNull( publication.getName() );
@@ -60,7 +59,6 @@ public class TestWebCmsPublication
 
 		WebCmsPublication publication = WebCmsPublication.builder()
 		                                                 .newEntityId( 123L )
-		                                                 .objectId( "my-asset" )
 		                                                 .publicationKey( "publication-key" )
 		                                                 .publicationType( publicationType )
 		                                                 .name( "my-publication" )
@@ -71,7 +69,7 @@ public class TestWebCmsPublication
 
 		assertNull( publication.getId() );
 		assertEquals( Long.valueOf( 123L ), publication.getNewEntityId() );
-		assertEquals( "wcm:asset:publication:my-asset", publication.getObjectId() );
+		assertEquals( "wcm:asset:publication:publication-key", publication.getObjectId() );
 		assertSame( publicationType, publication.getPublicationType() );
 		assertEquals( "publication-key", publication.getPublicationKey() );
 		assertEquals( "my-publication", publication.getName() );
@@ -81,6 +79,7 @@ public class TestWebCmsPublication
 		assertNull( publication.getLastModifiedDate() );
 
 		WebCmsPublication other = publication.toBuilder()
+		                                     .objectId( "my-asset" )
 		                                     .id( 333L )
 		                                     .lastModifiedDate( timestamp )
 		                                     .build();

@@ -1,0 +1,71 @@
+/*!
+ * Copyright 2017 the original author or authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * Contains the styles specific to image component management in the admin UI.
+ */
+.image-selector .modal-footer {
+  border-top: none;
+  padding: 0 15px 15px 15px;
+  text-align: left; }
+
+.pcs.webCmsImage .pcs-nav {
+  font-size: 90%;
+  margin-bottom: 10px; }
+
+.image-thumbnail-container {
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  height: 164px;
+  width: 196px;
+  padding: 4px;
+  /* Internet Explorer 10 */
+  display: -ms-flexbox;
+  -ms-flex-pack: center;
+  -ms-flex-align: center;
+  /* Firefox */
+  display: -moz-box;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  /* Safari, Opera, and Chrome */
+  display: -webkit-box;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+  /* W3C */
+  display: box;
+  box-pack: center;
+  box-align: center; }
+
+.image-selected-container .image-thumbnail-container {
+  margin-bottom: 0; }
+
+.image-thumbnail-container.selected {
+  background-color: #279cd3; }
+
+.image-thumbnail-container img {
+  border: solid 1px black;
+  max-width: 188px; }
+
+.image-thumbnail-actions {
+  display: inline-block; }
+
+.image-thumbnail-actions .btn {
+  clear: both;
+  display: block;
+  padding: 0; }
+
+/*# sourceMappingURL=wcm-admin-image-component-styles.css.map */

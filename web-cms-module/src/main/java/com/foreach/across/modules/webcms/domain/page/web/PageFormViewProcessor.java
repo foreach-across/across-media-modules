@@ -61,7 +61,6 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 {
 	private final WebCmsEndpointService endpointService;
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;
-	private final WebCmsMenuRepository menuRepository;
 	private final WebCmsMenuItemRepository menuItemRepository;
 	private final PageTypeProperties pageTypeProperties;
 
@@ -87,7 +86,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 
 	@Event
 	void handleMenuCreationEvent( EntityAdminMenuEvent<WebCmsPage> event ) {
-		if ( event.getEntity() != null ) {
+		if ( event.getEntity() != null && event.getEntity().getPageType() != null ) {
 			boolean hasEndpoint = event.getEntity().getPageType().hasEndpoint();
 			if ( !hasEndpoint ) {
 				PathBasedMenuBuilder builder = event.builder();
@@ -116,6 +115,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 		if ( pageFromCommand != null && pageFromCommand.getPageType() == null ) {
 			pageFromCommand.setPageType( pageTypeProperties.getDefaultType() );
 		}
+
 		command.addExtension( "advanced", advancedSettings );
 	}
 

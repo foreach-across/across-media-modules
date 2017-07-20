@@ -1,0 +1,22 @@
+[[domain-model]]
+== Domain model
+
+// Asset model - general explanation
+include::chap-asset-model.adoc[]
+
+// Page model
+include::pages/chap-web-page.adoc[]
+
+// Publication model
+include::publication/chap-publication-model.adoc[]
+
+// Images TODO
+
+// Endpoints & urls
+include::urls/chap-endpoint-url.adoc[]
+
+include::chap-redirects.adoc[]
+
+// Menu
+include::menu/chap-menu.adoc[]
+

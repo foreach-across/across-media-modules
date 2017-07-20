@@ -17,15 +17,21 @@
     $( document ).ready( function () {
         var loadArticleTypes = function ( publicationSelect ) {
             var selected = publicationSelect.val();
+            var selectedArticleType = $( '[id="entity.articleType"]' ).val();
 
             $.get( window.url, $.param( {'_partial': '::articleType', 'entity.publication': selected} ) )
                     .done( function ( data ) {
                         $( '[id="entity.articleType"]' ).selectpicker( 'destroy' ).replaceWith( data );
 
-                        var select =  $( '[id="entity.articleType"]' );
+                        var select = $( '[id="entity.articleType"]' );
                         if ( select.find( 'option' ).length == 1 ) {
                             select.attr( 'disabled', 'disabled' );
                         }
+
+                        if ( selectedArticleType != '' && selectedArticleType != null ) {
+                            select.find( 'option[value="' + selectedArticleType + '"]' ).attr( "selected", "selected" );
+                        }
+
                         EntityModule.initializeFormElements( select.parent() );
                     } );
         };
@@ -36,6 +42,7 @@
                 } )
                 .each( function () {
                     if ( $( this ).find( 'option' ).length ) {
+
                         loadArticleTypes( $( this ) );
                     }
                 } )

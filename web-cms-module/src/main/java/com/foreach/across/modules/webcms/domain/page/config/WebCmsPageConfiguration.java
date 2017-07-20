@@ -33,11 +33,13 @@ import com.foreach.across.modules.entity.views.support.EntityMessages;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.asset.web.processors.WebCmsAssetListViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.menu.config.WebCmsAssetMenuViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import com.foreach.across.modules.webcms.domain.page.web.MenuItemsViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.page.web.PageFormViewProcessor;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
@@ -52,10 +54,13 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.0.1
  */
 @Configuration
+@RequiredArgsConstructor
 public class WebCmsPageConfiguration
 {
 	public static final String PATH_SEGMENT = "pathSegment";
 	public static final String CANONICAL_PATH = "canonicalPath";
+	private static final String PAGE_TYPE = "pageType";
+	private static final String PUBLISH_SETTINGS = "publish-settings";
 
 	@Autowired
 	void enableUrls( WebCmsAssetUrlConfiguration urlConfiguration ) {
@@ -85,6 +90,13 @@ public class WebCmsPageConfiguration
 			entities.withType( WebCmsRemoteEndpoint.class )
 			        .association( ab -> ab.name( "webCmsRemoteEndpoint.urls" ).show() );
 
+			entities.withType( WebCmsPageType.class )
+			        .association(
+					        ab -> ab.name( "webCmsPage.pageType" )
+					                .listView( lvb -> lvb.showProperties( "canonicalPath", "title", "parent" )
+					                                     .viewProcessor( new WebCmsAssetListViewProcessor() ) )
+			        );
+
 			entities.withType( WebCmsPage.class )
 			        .attribute(
 					        SearchComponentViewProcessor.COMPONENT_SEARCH_QUERY,
@@ -96,16 +108,23 @@ public class WebCmsPageConfiguration
 					                      .attribute( TextboxFormElement.Type.class, TextboxFormElement.Type.TEXT )
 			        )
 			        .listView(
-					        lvb -> lvb.showProperties( CANONICAL_PATH, "title", "parent" )
+					        lvb -> lvb.showProperties( CANONICAL_PATH, PAGE_TYPE, "title", "parent" )
 					                  .defaultSort( CANONICAL_PATH )
 					                  .entityQueryFilter( true )
 					                  .viewProcessor( pageListViewProcessor() )
 			        )
 			        .updateFormView( fvb -> fvb
 					        .properties( props -> props
-							        .property( "pageType" )
-							        .readable( true )
-							        .writable( false ) ) )
+							        .property( PAGE_TYPE ).readable( true ).writable( false ).order( 0 )
+							        .and().property( PUBLISH_SETTINGS )
+							        .attribute(
+									        EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
+									        EntityPropertySelector.of( "published", "publicationDate", "menu-items" )
+							        )
+					        ) )
+			        .createFormView( fvb -> fvb
+					        .properties( props -> props.property( PUBLISH_SETTINGS )
+					                                   .and().property( PAGE_TYPE ).order( 0 ) ) )
 			        .createOrUpdateFormView( fvb -> fvb
 					        .properties( props -> props
 							        .property( "url-settings" )
@@ -123,12 +142,7 @@ public class WebCmsPageConfiguration
 							        .readable( false )
 							        .hidden( true )
 							        .viewElementBuilder( ViewElementMode.CONTROL, menuItemsViewElementBuilder )
-							        .and()
-							        .property( "publish-settings" )
-							        .attribute(
-									        EntityAttributes.FIELDSET_PROPERTY_SELECTOR,
-									        EntityPropertySelector.of( "published", "publicationDate", "menu-items" )
-							        )
+
 					        )
 					        .showProperties(
 							        "*", "~canonicalPath", "~canonicalPathGenerated", "~pathSegment", "~pathSegmentGenerated"
@@ -140,8 +154,9 @@ public class WebCmsPageConfiguration
 					                .listView( lvb -> lvb.showProperties( CANONICAL_PATH, "title" )
 					                                     .defaultSort( CANONICAL_PATH )
 					                                     .viewProcessor( pageListViewProcessor() ) )
-					                .createOrUpdateFormView( fvb -> fvb.viewProcessor( pageFormViewProcessor ) )
-			        );
+					                .createOrUpdateFormView( fvb -> fvb.viewProcessor( pageFormViewProcessor ) ) );
+			;
+
 		}
 
 		@ConditionalOnAdminUI
@@ -189,6 +204,6 @@ public class WebCmsPageConfiguration
 		public void setEndpointService( WebCmsEndpointService endpointService ) {
 			this.endpointService = endpointService;
 		}
-	}
 
+	}
 }

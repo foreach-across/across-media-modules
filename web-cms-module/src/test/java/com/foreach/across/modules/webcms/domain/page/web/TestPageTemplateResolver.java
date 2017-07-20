@@ -106,15 +106,15 @@ public class TestPageTemplateResolver
 
 	@Test
 	public void suffixIsAlwaysStripped() {
-		assertEquals( "mytemplate", resolver.resolvePageTemplate( "mytemplate.thtml" ) );
+		assertEquals( "mytemplate", resolver.resolvePageTemplate( "mytemplate.html" ) );
 
 		properties.setTemplatePrefix( "th/pages/" );
-		assertEquals( "th/pages/mytemplate", resolver.resolvePageTemplate( "mytemplate.thtml" ) );
+		assertEquals( "th/pages/mytemplate", resolver.resolvePageTemplate( "mytemplate.html" ) );
 		assertEquals( "th/pages/mytemplate.jsp", resolver.resolvePageTemplate( "mytemplate.jsp" ) );
-		assertEquals( "th/mytemplate", resolver.resolvePageTemplate( "th/mytemplate.thtml" ) );
+		assertEquals( "th/mytemplate", resolver.resolvePageTemplate( "th/mytemplate.html" ) );
 
 		properties.setTemplateSuffixToRemove( ".jsp" );
-		assertEquals( "th/pages/mytemplate.thtml", resolver.resolvePageTemplate( "mytemplate.thtml" ) );
+		assertEquals( "th/pages/mytemplate.html", resolver.resolvePageTemplate( "mytemplate.html" ) );
 		assertEquals( "th/pages/mytemplate", resolver.resolvePageTemplate( "mytemplate.jsp" ) );
 	}
 }

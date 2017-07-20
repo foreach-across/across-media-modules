@@ -1,0 +1,10 @@
+[[Redirects-overview]]
+=== Redirects
+Redirects offer you a way to specify one or more request paths that should be redirected to another path or an external url.
+A redirect has a destination URL and one ore more paths that should redirect to the destination.
+A specific HTTP status code can be configured for every path.
+
+In the domain model, a redirect is implemented as `WebCmsRemoteEndpoint`.
+The different paths are the `WebCmsUrl` members of the endpoint (property `urls`).
+
+

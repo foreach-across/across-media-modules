@@ -18,9 +18,7 @@ package com.foreach.across.modules.webcms.data;
 
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -38,6 +36,20 @@ public class TestWebCmsDataEntry
 	@Test(expected = IllegalArgumentException.class)
 	public void dataMustBeMapOrCollection() {
 		new WebCmsDataEntry( "publicationKey", "some data" );
+	}
+
+	@Test
+	public void mapDataShouldBeKeptAsLinkedHashMap() {
+		Map<String, String> data = new LinkedHashMap<>();
+		data.put( "publication", "one" );
+		data.put( "article", "two" );
+
+		WebCmsDataEntry entry = new WebCmsDataEntry( "mykey", data );
+		List<String> keysInOrder = new ArrayList<>( 2 );
+		entry.getMapData()
+		     .forEach( ( key, value ) -> keysInOrder.add( key ) );
+
+		assertEquals( Arrays.asList( "publication", "article" ), keysInOrder );
 	}
 
 	@Test

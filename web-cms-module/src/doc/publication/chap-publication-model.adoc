@@ -1,0 +1,297 @@
+[[PublicationModel-overview]]
+=== Publication model
+
+WebCmsModule contains a default publication model for articles.
+An article can typically be pretty much any type of content, but usually it is something like a piece of news or a blog article.
+
+* An article is of a specific article type and belongs to a single publication
+* A publication is of a specific publication type
+* The publication type determines the different article types any publication of that publication type can have
+
+.Example model
+* Publication type _blog_ would represent a collection of blog articles
+** Article types _blog_ and _status-update_ would be linked to the publication type
+* Publication _John's blog_ would be a single instance of the _blog_ publication type
+* _Leaving on holiday today!_ would be an article of type _status-update_ in _John's blog_
+
+.Default model
+Out of the box, WebCmsModule configures the following data:
+
+ * publication types: *news*, *blogs*
+ * article types: *news*, *blog*
+ * template pages: */blog/****, ***/news/**
+
+ * publications:
+ ** *news* with article type *news* and template page */news/**
+ ** *blogs* with article type *blog* and template page */blog/**
+
+==== Domain implementation
+
+===== Asset implementation
+
+.WebCmsArticle
+Represents a single article.
+`WebCmsArticle` is an implementation of a publishable `WebCmsAsset`.
+
+The properties `title`, `subTitle` and `description` are metadata properties of an article.
+The bulk of the article content is represented as a collection of components and can be configured on application level.
+
+Properties `articleType` and `publication` refer to the `WebCmsArticleType` and `WebCmsPublication` of the article respectively.
+
+See _<<configuring-publication-model>>_ for an example component configuration.
+
+An article is considered an asset with an endpoint URL.
+When saving an article, a URL will always be created combining the title of the article with the canonical path of the publication template page.
+
+.WebCmsArticleType
+Represents the specific type of an article.
+`WebCmsArticleType` is an implementation of `WebCmsTypeSpecifier`.
+The article type is used to determine the components that should be added to an article of that type.
+
+The default components are the members of a container linked to the article type and will be cloned to every article created.
+The name of the default component container is *content*, but the name can be configured by setting the *contentTemplate* attribute on the `WebCmsArticleType`.
+
+An article is always linked to a single article type.
+
+See _<<configuring-publication-model>>_ for a full example.
+
+.WebCmsPublication
+Represents a named collection of articles.
+`WebCmsPublication` is an implementation of a publishable `WebCmsAsset`.
+Property `publicationType` refers to the `WebCmsPublicationType` of the publication.
+
+Property `articleTemplatePage` links to a `WebCmsPage` that represents the template layout of the article.
+When saving an article, the `canonicalPath` of the template page will be used as pattern (usually prefix) for the article URL.
+The template page model will also be loaded automatically when rendering an article, see _<<article-web-model>>_ for more information.
+
+An article is always linked to a single publication.
+
+.WebCmsPublicationType
+Represents the specific type of a publication.
+`WebCmsPublicationType` is an implementation of `WebCmsTypeSpecifier`.
+The publication type defines the different article types that are allowed in a publication of that type.
+
+===== Services and repositories
+The following repositories are available for managing the publication related domain model:
+
+* `WebCmsPublicationTypeRepository`
+* `WebCmsPublicationRepository`
+* `WebCmsArticleTypeRepository`
+* `WebCmsArticleRepository`
+
+NOTE: If you want to change the strategy for default components, see the `WebCmsDefaultComponentsService`.
+
+==== Administrative UI
+The default configuration allows managing publications and articles from the administration UI.
+Both article type and publication type are assumed to be installed using code.
+
+Enabling/disabling managing of article type or publication type can be done by modifying the EntityModule configuration of `WebCmsArticleType` and `WebCmsPublicationType`.
+
+[[article-web-model]]
+==== Web infrastructure
+Any `WebCmsArticle` will automatically create a `WebCmsAssetEndpoint` with generated URL values.
+
+.Default article controller model
+When requesting an article endpoint a default model will be rendered:
+
+* the template rendered will be determined by the `WebCmsPage` that is the article template of the `WebCmsPublication` the article belongs to
+* the components attached to the template page will be available as *page* scope
+* the components attached to the article will be available as *article* scope, *article* is also the default scope
+* the following model attributes will be registered:
+** _article_: `WebCmsArticle` being rendered
+** _asset_: `WebCmsArticle` being rendered (alias for _article_)
+** _publication_: `WebCmsPublication` the article belongs to
+** _page_: `WebCmsPage` that is the template page for that publication
+
+The default article model is loaded by the `WebCmsArticleModelLoader` bean.
+
+.Custom article mapping
+You can create your own article handler by using `@WebCmsArticleMapping` annotation.
+The `@WebCmsArticleMapping` annotation can be combined with other `@RequestMapping` annotations to create a specific match.
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@WebCmsArticleMapping(publicationType = "news") // <1>
+public void extendNewsArticleModel( WebCmsArticle article, Model model ) {
+    model.addAttribute( "extraData", ... );
+}
+
+@GetMapping // <2>
+@WebCmsArticleMapping(publicationType = "news", articleType = "breaking-news") // <2>
+@IgnoreEndpointModel // <3>
+public String renderBreakingNews( WebCmsArticle article, Model model ) {
+    model.addAttribute( "article", article );
+    return "th/my-app/breaking-news";
+}
+----
+
+<1> Handler method that will be used for any article in a publication of type _news_, provided there is not a more specific handler (see next).
+ The default article model will still be loaded, this handler only adds a model attribute.
+ This handler method could optionally return a view, but since it does not, the view being rendered is still determined by the default model.
+
+<2> Handler method for an article of type _breaking-news_ inside a _news_ publication, provided the article is requested using the HTTP _GET_ method.
+
+<3> The `@IgnoreEndpointModel` annotation suppresses the default article model from being loaded.
+ The handler method should fully initialize the model required as well as return the view that should be rendered.
+
+[[WebCmsArticle-import]]
+==== Importing data
+Most domain data of the publication model can be imported using YAML.
+See _<<configuring-publication-model>>_ for a full example.
+
+[[configuring-publication-model]]
+==== Configuring your own publication model
+This chapter describes a full example of defining a custom publication model.
+
+We create an article type *Job* which represents a particular job offering.
+A publication type *Jobs* can only contain *Job* articles.
+And our publications *IT Jobs* and *Marketing Jobs* are example collections of different job offerings.
+
+All required configuration is shown using the YAML data structures:
+
+.Defining the article type
+We create a Job article type that specifies the different content fields any Job article should have.
+
+[source,yaml]
+----
+types:
+  article: // <1>
+    job: // <2>
+      name: Job // <3>
+      wcm:components: // <4>
+        content:
+          title: Job fields
+          componentType: container
+          wcm:components:  // <5>
+            company:
+              title: Company
+              componentType: text-field
+              sortIndex: 0
+            description:
+              title: Job description
+              componentType: rich-text
+              content: <h1>@@title@@</h1>  // <6>
+              sortIndex: 1
+            salary:
+              title: Salary package
+              componentType: rich-text
+              sortIndex: 2
+----
+
+<1> YAML data path _types/article_ specifies the block defines a `WebCmsArticleType`
+<2> The type key of this `WebCmsArticleType` is *job*, and should be unique within article types.
+In a list YAML structure, this value would be specified using the `typeKey` attribute instead.
+For a `WebCmsTypeSpecifier` the type key also determines the unique object id that will be generated, in this case this would be *wcm:type:article:job*.
+<3> Descriptive name of the article type.
+<4> Represents the components directly linked to the `WebCmsArticleType`.
+In this case the component with name *content* and title *Job fields*.
+The *content* component represents the content template for a new article of that type.
+This means that when a new article is created, the *content* component will be cloned and attached directly to the new article.
+<5> Represents the collection of components that make up the members of the *content* component.
+These are the actual content fields of a job article.
+These fields will be directly editable in the administration UI and the `sortIndex` determines both rendering and editing order.
+<6> Special markers _@@title@@_, _@@subTitle@@_ and_@@description@@_ can be used to represent article properties.
+When creating a new article these markers will be replaced by the actual property value of the newly created article.
+
+.Defining the publication type
+We create a Jobs publication type that can only hold articles with our Job article type.
+
+[source,yaml]
+----
+types:
+  publication: // <1>
+    jobs: // <2>
+      name: Jobs
+      wcm:types: // <3>
+        - linkType: article // <4>
+          typeSpecifier: wcm:type:article:job  // <5>
+----
+
+<1> YAML data path _types/publication_ specifies the block defines a `WebCmsPublicationType`
+<2> The type key of this `WebCmsPublicationType`, unique within publication types.
+In a list YAML structure, this value would be specified using the `typeKey` attribute instead.
+<3> The _wcm:types_ attribute defines a list of other `WebCmsTypeSpecifier` instances linked to the current entity being imported.
+<4> We create an _article_ link type.
+The link type can be any string value, but in case of a `WebCmsPublicationType` the article link type is used to refer to the `WebCmsArticleType` instances that are allowed in a publication of that `WebCmsPublicationType`.
+<5> The unique object id of the `WebCmsArticleType` that is attached to this publication type.
+Because a `WebCmsTypeSpecifierLink` can hold a reference to any `WebCmsTypeSpecifier`, we must use the globally unique object id.
+
+.Creating the publications
+We create two publications with our Jobs types.
+Both publications use the same article template page for rendering the article
+[source,yaml]
+----
+assets:
+  page: // <1>
+    - objectId: "wcm:asset:page:jobs-detail" // <2>
+      canonicalPath: /jobs/*
+      title: Job detail page
+      pageType: template // <3>
+
+  publication: // <4>
+    it-jobs: // <5>
+      name: IT Jobs
+      publicationType: jobs // <6>
+      published: true <7>
+      articleTemplatePage: /jobs/* // <8>
+    marketing-jobs:
+      name: Marketing Jobs
+      publicationType: jobs
+      published: true
+      articleTemplatePage: "wcm:asset:page:jobs-detail" // <8>
+----
+
+<1> YAML data path _assets/page_ specifies the block defines a `WebCmsPage`.
+In this case we create the article template page that we'll refer to.
+<2> Though not strictly required we manually define a unique object id for the page.
+If omitted, the `canonicalPath` would serve as a unique identifier for referring to our page.
+<3> Because our page serves as a template but it is not accessible by itself, we define it as a _template_ page type.
+A template page will not get an endpoint or url created.
+<4> YAML data path _assets/publication_ specifies the block defines a `WebCmsPublication`.
+In this case we create our _IT Jobs_ and _Marketing Jobs_ publications.
+<5> The publication key of this `WebCmsPublication`, unique within publications.
+In a list YAML structure, this value would be specified using the `publicationKey` attribute instead.
+We can use the `publicationKey` to refer to our publication in both code (eg. `@WebCmsArticleMapping`) and other YAML structures.
+<6> We refer to our newly created _jobs_ publication type by using the publication `typeKey` value.
+<7> We set our publication as published.
+This ensures that all individually published articles of the publication will be actually available.
+If a publication is not published (offline), none of its articles will be published.
+<8> We link our publications to the template page we defined previously.
+We can use either the `objectId` or the `canonicalPath` to refer to the `WebCmsPage`.
+
+.Adding a sample job to our IT Jobs publication
+[source,yaml]
+----
+assets:
+ article: // <1>
+    - title: "IT Manager EMEA @ Foreach" // <2>
+      objectId: "wcm:asset:article:job-it-manager-emea" // <3>
+      publication: it-jobs // <4>
+      articleType: job // <4>
+      description: Supposed to be online until August 2017  // <2>
+      published: true // <5>
+      wcm:components: // <6>
+        content:
+          wcm:components:
+            company:
+              content: Foreach
+            description:
+              content: A really cool job at a really great company.
+            salary:
+              content: Remuneration package discussable.
+----
+
+<1> YAML data path _assets/article_ specifies the block defines a `WebCmsArticle`.
+<2> We set some direct properties of the `WebCmsArticle`: `title` and `description`.
+Note that these are different than the content components, which could have the same name (eg. description).
+<3> We manually provide a unique `objectId` to our article.
+This is the only identifier for an article and is required if we ever want to update the article through data imports.
+<4> We create an article in our IT Jobs publication, and give it the job article type.
+Note that even if we were to specify a different article type, the article would still be imported.
+There is no hard validation during imports that only article types allowed for a publication can be imported.
+<5> We publish the article upon creation.
+This makes the article available online using a URL generated based on the article title and the article template page.
+In our example, the generated url for the article would be _/jobs/it-manager-emea-foreach_
+<6> We update the different content fields.
+As each field is a member of the linked *content* component, this is the same as updating individual components.

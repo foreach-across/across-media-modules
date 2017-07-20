@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.data;
 
-import static com.foreach.across.modules.webcms.data.WebCmsDataAction.*;
+import static com.foreach.across.modules.webcms.infrastructure.WebCmsUtils.convertImportActionToDataAction;
 
 public class WebCmsDataActionResolver {
 	/**
@@ -30,23 +30,7 @@ public class WebCmsDataActionResolver {
 	 */
 	public static WebCmsDataAction resolveAction( Object existing, WebCmsDataEntry data ) {
 		WebCmsDataImportAction requested = data.getImportAction();
-		if ( existing != null ) {
-			if ( requested == WebCmsDataImportAction.DELETE ) {
-				return DELETE;
-			}
-			if ( requested == WebCmsDataImportAction.CREATE_OR_UPDATE || requested == WebCmsDataImportAction.UPDATE ) {
-				return UPDATE;
-			}
-			if ( requested == WebCmsDataImportAction.CREATE_OR_REPLACE || requested == WebCmsDataImportAction.REPLACE ) {
-				return REPLACE;
-			}
-		}
-		else if ( requested == WebCmsDataImportAction.CREATE
-				|| requested == WebCmsDataImportAction.CREATE_OR_UPDATE
-				|| requested == WebCmsDataImportAction.CREATE_OR_REPLACE ) {
-			return CREATE;
-		}
-
-		return null;
+		return convertImportActionToDataAction( existing, requested );
 	}
+
 }

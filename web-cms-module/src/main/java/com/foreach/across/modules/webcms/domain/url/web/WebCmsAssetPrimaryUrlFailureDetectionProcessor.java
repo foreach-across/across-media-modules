@@ -33,7 +33,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Checks if primary URL update failed for the asset being updated.
- * Since failure is triggered by an event, it is possible we receive updates from other request.
+ * Since failure is triggered by an event, it is possible we receive updates from other requests.
  * To trace back the original call, we register the asset instance on the request attributes and
  * we only register an event if it is for exactly the same asset instance reference.
  * <p/>
@@ -50,7 +50,7 @@ public final class WebCmsAssetPrimaryUrlFailureDetectionProcessor extends Entity
 {
 	@Event
 	void detectPrimaryUrlUpdateFailure( PrimaryUrlForAssetFailedEvent event ) {
-		RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
 		if ( requestAttributes != null ) {
 			// we can receive events triggered by other threads

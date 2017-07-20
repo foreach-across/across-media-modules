@@ -136,7 +136,7 @@ public class TestWebCmsMenuCache
 	}
 
 	@Test
-	public void unpublishedPageIsExcluded() {
+	public void unpublishedPageIsDisabled() {
 		WebCmsPage linkedPage = WebCmsPage.builder().canonicalPath( "canonicalPath" ).published( false ).build();
 		WebCmsAssetEndpoint endpoint = WebCmsAssetEndpoint.builder().asset( linkedPage ).build();
 		WebCmsUrl primaryUrl = WebCmsUrl.builder().primary( true ).path( "/primary" ).build();
@@ -146,7 +146,15 @@ public class TestWebCmsMenuCache
 
 		when( itemRepository.findAllByMenuName( "myMenu" ) ).thenReturn( Collections.singletonList( item ) );
 
-		assertEquals( Collections.emptyList(), menuCache.getMenuItems( "myMenu" ) );
+		Menu expected = new Menu( "/test", "item title" );
+		expected.setOrder( 0 );
+		expected.setUrl( "/primary" );
+		expected.setGroup( false );
+		expected.setDisabled( true );
+
+		List<Menu> actual = new ArrayList<>( menuCache.getMenuItems( "myMenu" ) );
+		assertEquals( 1, actual.size() );
+		assertMenu( expected, actual.get( 0 ) );
 	}
 
 	@Test
@@ -176,6 +184,7 @@ public class TestWebCmsMenuCache
 		assertEquals( expected.getTitle(), actual.getTitle() );
 		assertEquals( expected.getUrl(), actual.getUrl() );
 		assertEquals( expected.getOrder(), actual.getOrder() );
+		assertEquals( expected.isDisabled(), actual.isDisabled() );
 	}
 }
 

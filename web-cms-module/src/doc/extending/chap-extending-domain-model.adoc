@@ -1,0 +1,43 @@
+== Extending WebCmsModule
+
+customize configuration
+types & attributes -> importer
+use mappings on these types
+
+write custom data importers, register converters
+
+extending WebCmsAsset:
+- activate menu items UI
+- activate urls (+ UI)
+
+implement custom webcmsobject
+
+activate components for any object type
+type linking
+
+
+
+annotate controller method with `WebCmsEndpointMapping`
+Specify type of endpoint and Http status code(s) to listen to
+body of method describes how to show endpoint
+
+default `WebCmsPageEndpoint` puts page on model and uses default Thymeleaf template
+default `WebCmsRemoteEndpoint` does redirect to target url
+
+=== Create your own endpoint
+Create an entity that extends `WebCmsEndpoint` which contains all properties needed to display the endpoint
+Create a corresponding repository
+Reference the endpoint and/or HTTP status code(s) in annotation of controller method
+Handle your properties according how you want to display your endpoint.  If needed, provide a default Thymeleaf template.
+
+
+WARNING: in case of problems, make sure that the request mapping is last
+
+in case of a page, a default page will be rendered
+a default webcmspagetemplate will be used if none is specified
+
+specify a default template yourself
+add a base location for the template files
+
+
+writing your own importers

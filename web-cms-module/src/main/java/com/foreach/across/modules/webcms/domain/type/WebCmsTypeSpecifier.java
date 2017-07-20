@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
+import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.BooleanUtils;
@@ -30,6 +31,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.Map;
 import java.util.SortedMap;
@@ -55,7 +57,6 @@ import static com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSu
 @Setter
 public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> extends WebCmsObjectInheritanceSuperClass<T>
 {
-
 	@Id
 	@GeneratedValue(generator = "seq_wcm_type_id")
 	@GenericGenerator(
@@ -82,8 +83,8 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	@Column(name = "type_key")
 	@NotBlank
 	@Length(max = 255)
+	@Pattern(regexp = "[^\\s]*")
 	private String typeKey;
-
 	/**
 	 * Attributes of the type specifier, simple key values usually used for rendering.
 	 */
@@ -97,6 +98,7 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 
 	public WebCmsTypeSpecifier() {
 		super();
+		setObjectId( null );
 	}
 
 	protected WebCmsTypeSpecifier( Long id,
@@ -109,10 +111,19 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	                               String name,
 	                               String typeKey,
 	                               Map<String, String> attributes ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		super( id, newEntityId, null, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
 		this.name = name;
-		this.typeKey = typeKey;
 		this.attributes = new TreeMap<>( attributes );
+
+		setObjectId( objectId );
+		setTypeKey( typeKey );
+	}
+
+	public void setTypeKey( String typeKey ) {
+		this.typeKey = typeKey;
+		if ( getObjectId() == null && StringUtils.isNotEmpty( typeKey ) ) {
+			setObjectId( typeKey );
+		}
 	}
 
 	/**

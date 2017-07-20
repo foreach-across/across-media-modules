@@ -46,12 +46,9 @@ import java.util.Objects;
 public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsComponentModel, WebCmsComponentModel>
 {
 	protected final Logger LOG = LoggerFactory.getLogger( getClass() );
-
+	private final String dataKey = "component";
 	private WebCmsComponentRepository componentRepository;
 	private WebCmsComponentModelService componentModelService;
-
-	private final String dataKey = "component";
-
 	private WebCmsObject owner;
 
 	@Override
@@ -97,6 +94,7 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 		componentRepository.delete( instance.getComponent() );
 	}
 
+	@SuppressWarnings("findbugs:RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 	@Override
 	protected void saveDto( WebCmsComponentModel dto, WebCmsDataAction action, WebCmsDataEntry data ) {
 		WebCmsComponentModel itemToSave = prepareForSaving( dto, data );

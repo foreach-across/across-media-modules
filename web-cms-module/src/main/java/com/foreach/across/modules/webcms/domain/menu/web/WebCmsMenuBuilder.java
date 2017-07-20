@@ -48,6 +48,7 @@ final class WebCmsMenuBuilder
 				                   builder.item( item.getPath(), item.getTitle(), item.getUrl() )
 				                          .group( item.isGroup() )
 				                          .order( item.getOrder() )
+				                          .disable( item.isDisabled() )
 		         );
 	}
 }

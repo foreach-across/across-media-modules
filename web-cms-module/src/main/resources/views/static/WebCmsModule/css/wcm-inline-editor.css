@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2017 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+body.wcmPreview {
+  margin-top: 33px; }
 
-package com.foreach.across.modules.webcms.domain.image;
+.wcmPreview-label {
+  background-color: orange;
+  border-bottom: solid 1px darkorange;
+  padding: 7px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  text-transform: uppercase;
+  font-family: sans-serif; }
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-
-/**
- * @author Arne Vandamme
- * @since 0.0.1
- */
-public class WebCmsImageComponent
-{
-	private WebCmsComponent rawComponent;
-
-
-	private WebCmsImage image;
-}
+/*# sourceMappingURL=wcm-inline-editor.css.map */

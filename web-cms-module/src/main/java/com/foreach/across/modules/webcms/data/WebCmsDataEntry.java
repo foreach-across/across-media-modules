@@ -77,7 +77,7 @@ public final class WebCmsDataEntry
 		}
 
 		if ( data instanceof Map ) {
-			Map<String, Object> map = new HashMap<>( (Map<String, Object>) data );
+			Map<String, Object> map = new LinkedHashMap<>( (Map<String, Object>) data );
 			importAction = Optional.ofNullable( WebCmsDataImportAction.fromAttributeValue( (String) map.remove( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) )
 			                       .orElse( importAction );
 

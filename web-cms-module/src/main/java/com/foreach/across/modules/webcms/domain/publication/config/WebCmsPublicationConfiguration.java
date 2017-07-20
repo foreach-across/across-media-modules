@@ -21,6 +21,7 @@ import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
+import com.foreach.across.modules.webcms.domain.asset.web.processors.WebCmsAssetListViewProcessor;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
@@ -57,7 +58,12 @@ class WebCmsPublicationConfiguration implements EntityConfigurer
 				                      .writable( true )
 				                      .readable( false )
 		        )
-		        .createOrUpdateFormView( fvb -> fvb.viewProcessor( publicationTypeFormProcessor ) );
+		        .createOrUpdateFormView( fvb -> fvb.showProperties( ".", "articleTypes" ).viewProcessor( publicationTypeFormProcessor ) )
+		        .association(
+				        ab -> ab.name( "webCmsPublication.publicationType" )
+				                .listView( lvb -> lvb.showProperties( "name", "publicationKey", "articleTemplatePage", "lastModified" )
+				                                     .viewProcessor( new WebCmsAssetListViewProcessor() ) )
+		        );
 
 		entities.withType( WebCmsPublication.class )
 		        .properties(
@@ -65,6 +71,13 @@ class WebCmsPublicationConfiguration implements EntityConfigurer
 						        .property( "objectId" ).order( 0 ).writable( false ).and()
 						        .property( "publish-settings" ).hidden( true ).and()
 						        .property( "published" ).hidden( false )
+		        )
+		        .updateFormView( fvb -> fvb.showProperties( "objectId", "*", "created", "lastModified" ) )
+		        .listView( lvb -> lvb.showProperties( "name", "publicationKey", "publicationType", "articleTemplatePage", "lastModified" ) )
+		        .association(
+				        ab -> ab.name( "webCmsArticle.publication" )
+				                .listView( lvb -> lvb.showProperties( "title", "articleType", "publicationDate", "lastModified" )
+				                                     .viewProcessor( new WebCmsAssetListViewProcessor() ) )
 		        );
 	}
 }

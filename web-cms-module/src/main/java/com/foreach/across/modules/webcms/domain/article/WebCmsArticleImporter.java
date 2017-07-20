@@ -27,7 +27,8 @@ import org.springframework.stereotype.Component;
  * @since 0.0.1
  */
 @Component
-public final class WebCmsArticleImporter extends AbstractWebCmsAssetImporter<WebCmsArticle>
+public final class
+WebCmsArticleImporter extends AbstractWebCmsAssetImporter<WebCmsArticle>
 {
 	private WebCmsArticleRepository articleRepository;
 

@@ -37,9 +37,9 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
-final class DefaultComponentsService implements WebCmsDefaultComponentsService
+final class WebCmsDefaultComponentsServiceImpl implements WebCmsDefaultComponentsService
 {
-	private final String DEFAULT_CONTENT_COMPONENT = "content";
+	private static final String DEFAULT_CONTENT_COMPONENT = "content";
 
 	private final WebCmsComponentModelService componentModelService;
 	private final WebCmsTypeSpecifierRepository typeSpecifierRepository;

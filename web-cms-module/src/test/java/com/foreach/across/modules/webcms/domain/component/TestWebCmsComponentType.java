@@ -47,8 +47,7 @@ public class TestWebCmsComponentType
 		assertNull( componentType.getId() );
 		assertNull( componentType.getNewEntityId() );
 		assertTrue( componentType.isNew() );
-		assertNotNull( componentType.getObjectId() );
-		assertTrue( componentType.getObjectId().startsWith( "wcm:type:component:" ) );
+		assertNull( componentType.getObjectId() );
 		assertNull( componentType.getTypeKey() );
 		assertNull( componentType.getName() );
 		assertNull( componentType.getCreatedBy() );
@@ -66,7 +65,6 @@ public class TestWebCmsComponentType
 
 		WebCmsComponentType componentType = WebCmsComponentType.builder()
 		                                                       .newEntityId( 123L )
-		                                                       .objectId( "my-type" )
 		                                                       .typeKey( "componentType-key" )
 		                                                       .name( "my-componentType" )
 		                                                       .description( "my-description" )
@@ -78,7 +76,7 @@ public class TestWebCmsComponentType
 
 		assertNull( componentType.getId() );
 		assertEquals( Long.valueOf( 123L ), componentType.getNewEntityId() );
-		assertEquals( "wcm:type:component:my-type", componentType.getObjectId() );
+		assertEquals( "wcm:type:component:componentType-key", componentType.getObjectId() );
 		assertEquals( "componentType-key", componentType.getTypeKey() );
 		assertEquals( "my-componentType", componentType.getName() );
 		assertEquals( "my-description", componentType.getDescription() );
@@ -90,6 +88,7 @@ public class TestWebCmsComponentType
 
 		WebCmsComponentType other = componentType.toBuilder()
 		                                         .id( 333L )
+		                                         .objectId( "my-type" )
 		                                         .lastModifiedDate( timestamp )
 		                                         .build();
 		assertNotSame( componentType, other );

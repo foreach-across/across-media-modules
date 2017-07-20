@@ -27,9 +27,7 @@ import it.AbstractSingleApplicationIT;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -121,6 +119,29 @@ public class ITMenuReferenceData extends AbstractSingleApplicationIT
 
 		assertMenuItem( "/general-conditions", "General Conditions", "/help/conditions", true, 4, true, map.get( "sideNav" ) );
 		assertMenuItem( "/general-conditions", "General Conditions", null, false, 0, false, map.get( "topNav" ) );
+	}
+
+	@Test
+	public void assetShouldHaveBeenLinkedWhenRequested() {
+		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:contact" );
+		assertNotNull( page );
+
+		List<WebCmsMenuItem> items = new ArrayList<>( menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAsset( page ) ) );
+		Map<String, WebCmsMenuItem> map = items.stream().collect( Collectors.toMap( menuItem -> menuItem.getMenu().getName(), Function.identity() ) );
+
+		assertEquals( 2, items.size() );
+		assertMenuItem( "/contact", "Contact", null, false, 2, false, map.get( "sideNav" ) );
+
+		assertMenuItem( "/my/contact", "My Fancy Contact Page", null, false, 0, true, map.get( "topNav" ) );
+
+		WebCmsPage page2 = pageRepository.findOneByObjectId( "wcm:asset:page:other-contact" );
+		assertNotNull( page );
+
+		List<WebCmsMenuItem> items2 = new ArrayList<>( menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAsset( page2 ) ) );
+		Map<String, WebCmsMenuItem> map2 = items2.stream().collect( Collectors.toMap( menuItem -> menuItem.getMenu().getName(), Function.identity() ) );
+		assertMenuItem( "/my/other/contact", "My Other Fancy Contact Page", null, false, 0, true, map2.get( "topNav" ) );
+		assertMenuItem( "/contact2", "Contact2", null, false, 3, false, map2.get( "sideNav" ) );
+
 	}
 
 	private void assertMenuItem( String path, String title, String url, boolean group, int sortIndex, Map<String, WebCmsMenuItem> itemsByPath ) {

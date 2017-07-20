@@ -43,12 +43,12 @@ class WebCmsPageValidator extends EntityValidatorSupport<WebCmsPage>
 	}
 
 	@Override
-	protected void preValidation( WebCmsPage page, Errors errors ) {
+	protected void preValidation( WebCmsPage page, Errors errors, Object... validationHints ) {
 		pageService.prepareForSaving( page );
 	}
 
 	@Override
-	protected void postValidation( WebCmsPage page, Errors errors ) {
+	protected void postValidation( WebCmsPage page, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "canonicalPath" ) ) {
 			WebCmsPage other = pageRepository.findOneByCanonicalPath( page.getCanonicalPath() );
 			if ( other != null && !other.equals( page ) ) {

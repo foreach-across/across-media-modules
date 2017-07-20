@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 import static com.foreach.across.modules.webcms.data.WebCmsDataAction.*;
+import static com.foreach.across.modules.webcms.infrastructure.WebCmsUtils.convertImportActionToDataAction;
 
 /**
  * Abstract base class for a {@link WebCmsDataImporter} that needs to support both map and
@@ -63,7 +64,7 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 		LOG.trace( "Importing data entry {} {}", data.getImportAction(), data );
 
 		T existing = retrieveExistingInstance( data );
-		WebCmsDataAction action = resolveAction( data.getImportAction(), existing, data );
+		WebCmsDataAction action = resolveAction( data.getImportAction(), existing );
 		LOG.trace( "Resolved import action {} to {}, existing item: {}", data.getImportAction(), action, existing != null );
 
 		if ( action != null ) {
@@ -115,28 +116,10 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	 *
 	 * @param requested import action
 	 * @param existing  item or {@code null} if none
-	 * @param data      set of data being passed
 	 * @return action to perform or {@code null} if none
 	 */
-	protected WebCmsDataAction resolveAction( WebCmsDataImportAction requested, T existing, WebCmsDataEntry data ) {
-		if ( existing != null ) {
-			if ( requested == WebCmsDataImportAction.DELETE ) {
-				return DELETE;
-			}
-			if ( requested == WebCmsDataImportAction.CREATE_OR_UPDATE || requested == WebCmsDataImportAction.UPDATE ) {
-				return UPDATE;
-			}
-			if ( requested == WebCmsDataImportAction.CREATE_OR_REPLACE || requested == WebCmsDataImportAction.REPLACE ) {
-				return REPLACE;
-			}
-		}
-		else if ( requested == WebCmsDataImportAction.CREATE
-				|| requested == WebCmsDataImportAction.CREATE_OR_UPDATE
-				|| requested == WebCmsDataImportAction.CREATE_OR_REPLACE ) {
-			return CREATE;
-		}
-
-		return null;
+	protected WebCmsDataAction resolveAction( WebCmsDataImportAction requested, T existing ) {
+		return convertImportActionToDataAction( existing, requested );
 	}
 
 	/**

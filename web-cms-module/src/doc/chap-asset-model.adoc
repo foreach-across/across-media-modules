@@ -1,0 +1,35 @@
+=== Asset model
+WebCmsModule provides a basic model for mapping assets and types.
+Example assets provided by default are `WebCmsArticle` and `WebCmsPage`.
+Related types would be `WebCmsArticleType` and `WebCmsPageType`.
+
+==== WebCmsObject
+Both types and assets are implementations of `WebCmsObject`.
+A `WebCmsObject` can be any object, as long as it has a unique `objectId`.
+The `objectId` is a `String` value, can be manually assigned but should never change once set.
+It should also be unique within a single data store.
+
+The unique `objectId` is used for importing/exporting and synchronizing data.
+
+==== WebCmsAsset
+The base class for an asset is `WebCmsAsset`.
+Default implementations are `WebCmsPage`, `WebCmsArticle` and `WebCmsPublication`.
+
+By default an asset has a concept of being published or not.
+
+The repository for working with the abstract `WebCmsAsset` is `WebCmsAssetRepository`.
+
+==== WebCmsTypeSpecifier
+The base class for a type is `WebCmsTypeSpecifier`.
+A type is a specification attribute for another `WebCmsObject` like `WebCmsAsset` or `WebCmsComponent`.
+
+Types are simpler objects that have a unique `typeKey` and descriptive `name`.
+The `typeKey` must always be unique within all instances of that type.
+The `typeKey` is used heavily throughout code or imports for an easy - readable way of identifying a specific type.
+
+Apart from the `typeKey`, a `WebCmsTypeSpecifier` has a collection of `attributes`.
+These are simple key/value pairs of strings that can be used for configuration and behaviour.
+
+===== Linking types
+A generic `WebCmsTypeSpecifierLink` object is available to link a `WebCmsTypeSpecifier` to any `WebCmsObject` with a specific `linkType` demarcation.
+These links are mapped using the `WebCmsTypeSpecifierLink` and `WebCmsTypeSpecifierLinkRepository`.
