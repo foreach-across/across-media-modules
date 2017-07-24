@@ -54,21 +54,23 @@ types:
   article:
     blog:
       name: Blog
-      attributes:
-        contentTemplate: content
       wcm:components:
         # Default component name that contains the content components for this article type
-        content:
-          title: Article content
+        contentTemplate:
+          title: Article components
           componentType: container
           wcm:components:
             content:
-              title: Body
-              componentType: rich-text
-              content: |
-                <h1>@@title@@</h1>
-                <p></p>
-              sortIndex: 0
+              title: Article content
+              componentType: container
+              wcm:components:
+                body:
+                  title: Body
+                  componentType: rich-text
+                  content: |
+                    <h1>@@title@@</h1>
+                    <p></p>
+                  sortIndex: 0
     news:
       name: News
       attributes:

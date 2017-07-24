@@ -20,27 +20,42 @@ import com.foreach.across.modules.webcms.data.WebCmsDataImportService;
 import com.foreach.across.modules.webcms.domain.article.QWebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleRepository;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticleTypeRepository;
+import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
+import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.yaml.snakeyaml.Yaml;
 
+import java.util.Collection;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITArticleImporting extends AbstractCmsApplicationIT
+public class ITArticleImportAndCreation extends AbstractCmsApplicationIT
 {
 	@Autowired
 	private WebCmsArticleRepository articleRepository;
 
 	@Autowired
 	private WebCmsDataImportService dataImportService;
+
+	@Autowired
+	private WebCmsComponentModelService componentModelService;
+
+	@Autowired
+	private WebCmsArticleTypeRepository articleTypeRepository;
+
+	@Autowired
+	private WebCmsPublicationRepository publicationRepository;
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -63,5 +78,36 @@ public class ITArticleImporting extends AbstractCmsApplicationIT
 		                                                                                 .and( query.title.eq( "Test article 2" ) ) );
 		assertNotNull( other );
 		assertNotEquals( article, other );
+
+		assertDefaultBodyComponent( article );
+		assertDefaultBodyComponent( other );
+	}
+
+	@Test
+	public void creatingArticleSetsComponentsAttachedToTheArticleType() throws Exception {
+		WebCmsArticle blog = WebCmsArticle.builder()
+		                                  .articleType( articleTypeRepository.findOneByTypeKey( "blog" ) )
+		                                  .publication( publicationRepository.findOneByPublicationKey( "blogs" ) )
+		                                  .title( "Blog article" )
+		                                  .build();
+		articleRepository.save( blog );
+
+		assertDefaultBodyComponent( blog );
+	}
+
+	private void assertDefaultBodyComponent( WebCmsArticle article ) {
+		Collection<WebCmsComponentModel> models = componentModelService.getComponentModelsForOwner( article );
+		assertEquals( 1, models.size() );
+
+		WebCmsComponentModel content = models.iterator().next();
+		assertEquals( "content", content.getName() );
+		assertEquals( "Article content", content.getTitle() );
+		assertTrue( content instanceof ContainerWebCmsComponentModel );
+
+		ContainerWebCmsComponentModel container = (ContainerWebCmsComponentModel) content;
+		assertEquals( 1, container.size() );
+		TextWebCmsComponentModel body = container.getMember( "body", TextWebCmsComponentModel.class );
+		assertNotNull( body );
+		assertTrue( body.getContent().contains( "<h1>" + article.getTitle() + "</h1>" ) );
 	}
 }

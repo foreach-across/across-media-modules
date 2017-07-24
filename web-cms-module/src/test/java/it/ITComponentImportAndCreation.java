@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITComponentImporting extends AbstractCmsApplicationIT
+public class ITComponentImportAndCreation extends AbstractCmsApplicationIT
 {
 	private final String componentName = UUID.randomUUID().toString();
 
@@ -63,6 +63,57 @@ public class ITComponentImporting extends AbstractCmsApplicationIT
 		importComponent( "container" );
 		ContainerWebCmsComponentModel container = componentModelService.getComponentModelByName( componentName, null, ContainerWebCmsComponentModel.class );
 		assertEquals( componentModel.getComponent(), container.getComponent() );
+	}
+
+	@Test
+	public void updatingWithoutChangingComponentTypeKeepsProperties() {
+		importComponent( "plain-text" );
+
+		TextWebCmsComponentModel componentModel = componentModelService.getComponentModelByName( componentName, null, TextWebCmsComponentModel.class );
+		assertNotNull( componentModel );
+		assertEquals( TextWebCmsComponentModel.MarkupType.PLAIN_TEXT, componentModel.getMarkupType() );
+		componentModel.setContent( "test content" );
+		assertEquals( 0, componentModel.getSortIndex() );
+		componentModelService.save( componentModel );
+
+		Map<String, Object> componentDef = new LinkedHashMap<>();
+		componentDef.put( "name", componentName );
+		componentDef.put( "componentType", "plain-text" );
+		componentDef.put( "sortIndex", 33 );
+
+		dataImportService.importData(
+				Collections.singletonMap( "assets", Collections.singletonMap( "component", Collections.singletonList( componentDef ) ) )
+		);
+
+		TextWebCmsComponentModel updated = componentModelService.getComponentModelByName( componentName, null, TextWebCmsComponentModel.class );
+		assertNotNull( updated );
+		assertEquals( componentModel, updated );
+		assertEquals( TextWebCmsComponentModel.MarkupType.PLAIN_TEXT, updated.getMarkupType() );
+		assertEquals( "test content", updated.getContent() );
+		assertEquals( 33, updated.getSortIndex() );
+	}
+
+	@Test
+	public void updatingContainerKeepsOnlyAddedMembers() {
+		ContainerWebCmsComponentModel container = componentModelService.createComponentModel( ContainerWebCmsComponentModel.TYPE_DYNAMIC,
+		                                                                                      ContainerWebCmsComponentModel.class );
+		container.setName( UUID.randomUUID().toString() );
+
+		TextWebCmsComponentModel text = componentModelService.createComponentModel( "plain-text", TextWebCmsComponentModel.class );
+		text.setContent( "Some text" );
+		container.addMember( text );
+
+		componentModelService.save( container );
+
+		ContainerWebCmsComponentModel fetched = componentModelService.getComponentModel( container.getObjectId(), ContainerWebCmsComponentModel.class );
+		assertEquals( container, fetched );
+		assertEquals( 1, fetched.size() );
+
+		fetched.getMembers().clear();
+		componentModelService.save( fetched );
+
+		fetched = componentModelService.getComponentModel( container.getObjectId(), ContainerWebCmsComponentModel.class );
+		assertTrue( fetched.isEmpty() );
 	}
 
 	private void importComponent( String componentType ) {

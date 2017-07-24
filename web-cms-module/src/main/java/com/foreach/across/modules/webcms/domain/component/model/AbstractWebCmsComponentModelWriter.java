@@ -23,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ * Base class with override-able methods for component model persistence.
+ * Assumes the component model does not allow member components by default.
+ *
  * @author Arne Vandamme
  * @see WebCmsComponentModelWriter
  * @since 0.0.2
@@ -53,6 +56,19 @@ public abstract class AbstractWebCmsComponentModelWriter<T extends WebCmsCompone
 	}
 
 	protected void beforeUpdate( T componentModel ) {
+		removeOwnedComponents( componentModel );
+	}
+
+	/**
+	 * Will remove all owned components if this component does not support any members.
+	 *
+	 * @param componentModel to update
+	 */
+	private void removeOwnedComponents( T componentModel ) {
+		if ( !componentModel.isNew() ) {
+			componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( componentModel.getObjectId() )
+			                   .forEach( componentRepository::delete );
+		}
 	}
 
 	protected abstract void buildMainComponent( T componentModel, WebCmsComponent component );

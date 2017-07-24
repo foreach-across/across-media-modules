@@ -153,7 +153,8 @@ A WebCmsPageType is used for assigning a certain type of page to a <<WebCmsPage-
 [options="header", cols="1,4"]
 |===
 |Attribute|Description
-|contentTemplate|The identifier of the selector in the thymeleaf page that contains the actual page content.
+|contentTemplate|The name of the container component whose components should be cloned to every page of that type.
+If omitted, a component called *contentTemplate* will be searched for.
 |defaultTemplate|The thymeleaf page that is used if there has not been a page specified on the page itself.
 |hasEndpoint|Whether or not an endpoint is defined for a page. If you disable this, the menu and URL functionality will be disabled on the front end.
 |isPublishable|Whether or not the page can be published.

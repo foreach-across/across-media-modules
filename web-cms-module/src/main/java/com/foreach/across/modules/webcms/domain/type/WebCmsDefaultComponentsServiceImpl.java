@@ -24,9 +24,11 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,11 +37,12 @@ import java.util.Map;
  * @author Raf Ceuls
  * @since 0.0.2
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 final class WebCmsDefaultComponentsServiceImpl implements WebCmsDefaultComponentsService
 {
-	private static final String DEFAULT_CONTENT_COMPONENT = "content";
+	private static final String DEFAULT_CONTENT_TEMPLATE_COMPONENT = "contentTemplate";
 
 	private final WebCmsComponentModelService componentModelService;
 	private final WebCmsTypeSpecifierRepository typeSpecifierRepository;
@@ -76,32 +79,46 @@ final class WebCmsDefaultComponentsServiceImpl implements WebCmsDefaultComponent
 			WebCmsComponentModel template = retrieveContentTemplate( typeSpecifier );
 
 			if ( template != null ) {
-				template = template.asComponentTemplate();
-				template.setOwner( asset );
-				replaceAttributesInTextComponents( asset, template, markerValues );
-				componentModelService.save( template );
+				if ( template instanceof ContainerWebCmsComponentModel ) {
+					LOG.trace( "Copying members of contentTemplate {} to {}", template, asset );
+					ContainerWebCmsComponentModel container = (ContainerWebCmsComponentModel) template;
+					List<WebCmsComponentModel> members = container.getMembers();
+					members.forEach( m -> {
+						WebCmsComponentModel clone = m.asComponentTemplate();
+						clone.setOwner( asset );
+						replaceAttributesInTextComponents( clone, markerValues );
+						componentModelService.save( clone );
+					} );
+				}
+				else {
+					LOG.warn( "A contentTemplate was found but was not of type ContainerWebCmsComponentModel. " +
+							          "Only container models are supported as the members of the container will be copied to the asset." +
+							          "Ignoring the content template." );
+				}
 			}
 		}
 	}
 
-	private void replaceAttributesInTextComponents( WebCmsObject asset,
-	                                                WebCmsComponentModel componentModel,
-	                                                Map<String, String> markerValues ) {
+	private void replaceAttributesInTextComponents( WebCmsComponentModel componentModel, Map<String, String> markerValues ) {
 		if ( componentModel instanceof TextWebCmsComponentModel ) {
 			TextWebCmsComponentModel text = (TextWebCmsComponentModel) componentModel;
 			text.setContent( contentMarkerService.replaceMarkers( text.getContent(), markerValues ) );
 		}
 		else if ( componentModel instanceof ContainerWebCmsComponentModel ) {
-			( (ContainerWebCmsComponentModel) componentModel ).getMembers().forEach( m -> replaceAttributesInTextComponents( asset, m, markerValues ) );
+			ContainerWebCmsComponentModel container = (ContainerWebCmsComponentModel) componentModel;
+			if ( container.hasMarkup() ) {
+				container.setMarkup( contentMarkerService.replaceMarkers( container.getMarkup(), markerValues ) );
+			}
+			container.getMembers().forEach( m -> replaceAttributesInTextComponents( m, markerValues ) );
 		}
 	}
 
 	private WebCmsComponentModel retrieveContentTemplate( WebCmsTypeSpecifier<?> cmsTypeSpecifier ) {
-		String contentTemplateName = StringUtils.defaultString( cmsTypeSpecifier.getAttribute( "contentTemplate" ), DEFAULT_CONTENT_COMPONENT );
+		String contentTemplateName = StringUtils.defaultString( cmsTypeSpecifier.getAttribute( "contentTemplate" ), DEFAULT_CONTENT_TEMPLATE_COMPONENT );
 		WebCmsComponentModel model = componentModelService.getComponentModelByName( contentTemplateName, cmsTypeSpecifier );
 
 		if ( model == null && cmsTypeSpecifier.hasAttribute( "parent" ) ) {
-			WebCmsTypeSpecifier<?> parentCmsType = typeSpecifierRepository.findOneByObjectTypeAndTypeKey( cmsTypeSpecifier.getTypeKey(),
+			WebCmsTypeSpecifier<?> parentCmsType = typeSpecifierRepository.findOneByObjectTypeAndTypeKey( cmsTypeSpecifier.getObjectType(),
 			                                                                                              cmsTypeSpecifier.getAttribute( "parent" ) );
 			if ( parentCmsType != null ) {
 				return retrieveContentTemplate( parentCmsType );

@@ -49,7 +49,9 @@ Represents the specific type of an article.
 The article type is used to determine the components that should be added to an article of that type.
 
 The default components are the members of a container linked to the article type and will be cloned to every article created.
-The name of the default component container is *content*, but the name can be configured by setting the *contentTemplate* attribute on the `WebCmsArticleType`.
+The name of the default component container is *contentTemplate*, but the name can be configured by setting the *contentTemplate* attribute on the `WebCmsArticleType`.
+An article type can also use the component container from another article type.
+The article type to reuse the component container from can be configured by setting the *parent* attribute to the `typeKey` of the other article type.
 
 An article is always linked to a single article type.
 
