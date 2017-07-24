@@ -139,7 +139,7 @@ public class TestAbstractWebCmsDataImporter
 	public void saveIsAlwaysTriggeredForNewInstance() {
 		data.setImportAction( WebCmsDataImportAction.CREATE );
 
-		when( importer.createDto( data, null, CREATE ) ).thenReturn( "create" );
+		when( importer.createDto( data, null, CREATE, data.getMapData() ) ).thenReturn( "create" );
 		when( conversionService.convertToPropertyValues( values, "create" ) ).thenReturn( false );
 
 		importer.importSingleEntry( data );
@@ -154,7 +154,7 @@ public class TestAbstractWebCmsDataImporter
 		data.setImportAction( WebCmsDataImportAction.UPDATE );
 
 		when( importer.retrieveExistingInstance( data ) ).thenReturn( "one" );
-		when( importer.createDto( data, "one", UPDATE ) ).thenReturn( "updated" );
+		when( importer.createDto( data, "one", UPDATE, data.getMapData()) ).thenReturn( "updated" );
 		when( conversionService.convertToPropertyValues( values, "updated" ) ).thenReturn( false );
 
 		importer.importSingleEntry( data );
@@ -169,7 +169,7 @@ public class TestAbstractWebCmsDataImporter
 		data.setImportAction( WebCmsDataImportAction.UPDATE );
 
 		when( importer.retrieveExistingInstance( data ) ).thenReturn( "one" );
-		when( importer.createDto( data, "one", UPDATE ) ).thenReturn( "updated" );
+		when( importer.createDto( data, "one", UPDATE, data.getMapData() ) ).thenReturn( "updated" );
 		when( conversionService.convertToPropertyValues( values, "updated" ) ).thenReturn( false );
 		when( before.importData( any(), any(), any(), any() ) ).thenReturn( true );
 
@@ -183,7 +183,7 @@ public class TestAbstractWebCmsDataImporter
 	private void expectCreationIfNotExists( WebCmsDataImportAction importAction ) {
 		data.setImportAction( importAction );
 
-		when( importer.createDto( data, null, CREATE ) ).thenReturn( "create" );
+		when( importer.createDto( data, null, CREATE, data.getMapData() ) ).thenReturn( "create" );
 		importer.importSingleEntry( data );
 
 		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "create", CREATE );
@@ -196,7 +196,7 @@ public class TestAbstractWebCmsDataImporter
 		data.setImportAction( importAction );
 
 		when( importer.retrieveExistingInstance( data ) ).thenReturn( "one" );
-		when( importer.createDto( data, "one", action ) ).thenReturn( "updated" );
+		when( importer.createDto( data, "one", action, data.getMapData() ) ).thenReturn( "updated" );
 
 		importer.importSingleEntry( data );
 

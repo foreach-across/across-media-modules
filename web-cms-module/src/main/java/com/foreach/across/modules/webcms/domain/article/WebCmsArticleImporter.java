@@ -22,6 +22,8 @@ import com.foreach.across.modules.webcms.domain.asset.AbstractWebCmsAssetImporte
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * @author Arne Vandamme
  * @since 0.0.1
@@ -37,7 +39,7 @@ WebCmsArticleImporter extends AbstractWebCmsAssetImporter<WebCmsArticle>
 	}
 
 	@Override
-	protected WebCmsArticle createDto( WebCmsDataEntry data, WebCmsArticle itemToUpdate, WebCmsDataAction action ) {
+	protected WebCmsArticle createDto( WebCmsDataEntry data, WebCmsArticle itemToUpdate, WebCmsDataAction action, Map<String, Object> dataValues ) {
 		if ( action == WebCmsDataAction.REPLACE ) {
 			return WebCmsArticle.builder()
 			                    .id( itemToUpdate.getId() ).createdBy( itemToUpdate.getCreatedBy() ).createdDate( itemToUpdate.getCreatedDate() )

@@ -46,7 +46,7 @@ public final class WebCmsDataEntry
 	private final WebCmsDataEntry parent;
 
 	/**
-	 * Data itself - should not be null.
+	 * Data itself.
 	 */
 	private final Map<String, Object> mapData;
 
@@ -54,6 +54,11 @@ public final class WebCmsDataEntry
 	 * Data itself as a collection of objects.
 	 */
 	private final Collection<Object> collectionData;
+
+	/**
+	 * Data itself if neither collection nor map.
+	 */
+	private final Object singleValue;
 
 	/**
 	 * Action that should be performed with this data.
@@ -83,13 +88,17 @@ public final class WebCmsDataEntry
 
 			this.mapData = Collections.unmodifiableMap( map );
 			this.collectionData = null;
+			this.singleValue = null;
 		}
 		else if ( data instanceof Collection ) {
 			this.collectionData = (Collection) data;
 			this.mapData = null;
+			this.singleValue = null;
 		}
 		else {
-			throw new IllegalArgumentException( "Only Collection or Map data is supported." );
+			this.singleValue = data;
+			this.mapData = null;
+			this.collectionData = null;
 		}
 	}
 
@@ -98,6 +107,25 @@ public final class WebCmsDataEntry
 	 */
 	public boolean isMapData() {
 		return mapData != null;
+	}
+
+	/**
+	 * @return true if data is of type collection
+	 */
+	public boolean isCollectionData() {
+		return collectionData != null;
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <V, U extends V> U getSingleValue( Class<V> expectedType ) {
+		return (U) expectedType.cast( getSingleValue() );
+	}
+
+	/**
+	 * @return true if data is a single (usually primitive) value
+	 */
+	public boolean isSingleValue() {
+		return singleValue != null;
 	}
 
 	/**

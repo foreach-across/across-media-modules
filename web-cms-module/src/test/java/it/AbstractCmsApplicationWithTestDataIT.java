@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration
 @TestPropertySource(properties = "acrossHibernate.createUnitOfWorkFactory=true")
-public abstract class AbstractSingleApplicationIT
+public abstract class AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	protected MockMvc mockMvc;

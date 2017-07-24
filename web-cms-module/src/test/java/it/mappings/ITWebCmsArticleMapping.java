@@ -16,14 +16,14 @@
 
 package it.mappings;
 
-import it.AbstractSingleApplicationIT;
+import it.AbstractCmsApplicationWithTestDataIT;
 import org.junit.Test;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITWebCmsArticleMapping extends AbstractSingleApplicationIT
+public class ITWebCmsArticleMapping extends AbstractCmsApplicationWithTestDataIT
 {
 	@Test
 	public void publicationTypeMapping() {

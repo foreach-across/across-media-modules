@@ -16,20 +16,13 @@
 
 package it;
 
-import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
-import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.data.WebCmsDataImportService;
 import com.foreach.across.modules.webcms.domain.article.QWebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleRepository;
-import com.foreach.across.test.AcrossTestConfiguration;
-import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.Map;
@@ -41,10 +34,7 @@ import static org.junit.Assert.assertNotNull;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@AcrossWebAppConfiguration
-@TestPropertySource(properties = "acrossHibernate.createUnitOfWorkFactory=true")
-public class ITArticleImporting
+public class ITArticleImporting extends AbstractCmsApplicationIT
 {
 	@Autowired
 	private WebCmsArticleRepository articleRepository;
@@ -55,11 +45,12 @@ public class ITArticleImporting
 	@Autowired
 	private ApplicationContext applicationContext;
 
-	@SuppressWarnings( "all" )
+	@SuppressWarnings("all")
 	@Test
-	public void testArticleImporting() throws Exception {
+	public void publicationAndArticleImportingInSingleDataSetIsAllowed() throws Exception {
 		Yaml yaml = new Yaml();
-		Map<String, Object> data = (Map<String, Object>) yaml.load( applicationContext.getResource( "classpath:installers/test-articles.yml" ).getInputStream() );
+		Map<String, Object> data = (Map<String, Object>) yaml.load(
+				applicationContext.getResource( "classpath:installers/test-articles.yml" ).getInputStream() );
 		dataImportService.importData( data );
 
 		QWebCmsArticle query = QWebCmsArticle.webCmsArticle;
@@ -72,10 +63,5 @@ public class ITArticleImporting
 		                                                                                 .and( query.title.eq( "Test article 2" ) ) );
 		assertNotNull( other );
 		assertNotEquals( article, other );
-	}
-
-	@AcrossTestConfiguration(modules = { WebCmsModule.NAME, AcrossHibernateJpaModule.NAME })
-	protected static class Config
-	{
 	}
 }

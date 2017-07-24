@@ -20,7 +20,7 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import it.AbstractSingleApplicationIT;
+import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITPageReferenceData extends AbstractSingleApplicationIT
+public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageRepository pageRepository;

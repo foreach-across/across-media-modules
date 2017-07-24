@@ -20,9 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.foreach.across.modules.webcms.data.WebCmsDataAction.*;
+import static com.foreach.across.modules.webcms.data.WebCmsDataAction.DELETE;
 import static com.foreach.across.modules.webcms.infrastructure.WebCmsUtils.convertImportActionToDataAction;
 
 /**
@@ -72,11 +73,12 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 				deleteInstance( existing, data );
 			}
 			else {
-				U dto = createDto( data, existing, action );
+				Map<String, Object> dataValues = new LinkedHashMap<>( data.getMapData() );
+				U dto = createDto( data, existing, action, dataValues );
 
 				if ( dto != null ) {
-					boolean dataValuesApplied = applyDataValues( data.getMapData(), dto );
-					boolean customPropertyDataApplied = propertyDataImportService.executeBeforeAssetSaved( data, data.getMapData(), dto, action );
+					boolean dataValuesApplied = applyDataValues( dataValues, dto );
+					boolean customPropertyDataApplied = propertyDataImportService.executeBeforeAssetSaved( data, dataValues, dto, action );
 
 					if ( existing == null || dataValuesApplied || customPropertyDataApplied ) {
 						saveDto( dto, action, data );
@@ -140,12 +142,13 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	 * <p/>
 	 * If the DTO is null, the import will be skipped but properties will still be called.
 	 *
-	 * @param data     entry
-	 * @param existing instance or {@code null} if a new instance should be created
-	 * @param action   purpose for which the DTO should be created (create, delete or replace)
+	 * @param data       entry
+	 * @param existing   instance or {@code null} if a new instance should be created
+	 * @param action     purpose for which the DTO should be created (create, delete or replace)
+	 * @param dataValues modifiable collection of the data values that will be applied afterwards
 	 * @return DTO
 	 */
-	protected abstract U createDto( WebCmsDataEntry data, T existing, WebCmsDataAction action );
+	protected abstract U createDto( WebCmsDataEntry data, T existing, WebCmsDataAction action, Map<String, Object> dataValues );
 
 	/**
 	 * Perform the delete action on existing instance.
@@ -163,6 +166,16 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	 * @param data   entry that is being imported
 	 */
 	protected abstract void saveDto( U dto, WebCmsDataAction action, WebCmsDataEntry data );
+
+	/**
+	 * Add force update property to a data values map.  This will cause the item to be updated,
+	 * even if nothing else has changed.  Mainly used in a REPLACE use case.
+	 *
+	 * @param dataValues map
+	 */
+	protected final void addForceUpdateProperty( Map<String, Object> dataValues ) {
+		dataValues.put( WebCmsForceUpdatePropertyImporter.FORCE_UPDATE, true );
+	}
 
 	@Autowired
 	public void setConversionService( WebCmsDataConversionService conversionService ) {

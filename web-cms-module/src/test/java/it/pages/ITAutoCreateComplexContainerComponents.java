@@ -24,7 +24,7 @@ import com.foreach.across.modules.webcms.domain.component.proxy.ProxyWebCmsCompo
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
-import it.AbstractSingleApplicationIT;
+import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITAutoCreateComplexContainerComponents extends AbstractSingleApplicationIT
+public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;

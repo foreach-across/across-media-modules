@@ -19,7 +19,7 @@ package it.pages;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
-import it.AbstractSingleApplicationIT;
+import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITComponentRendering extends AbstractSingleApplicationIT
+public class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;

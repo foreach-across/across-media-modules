@@ -25,6 +25,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * @author Arne Vandamme
  * @since 0.0.1
@@ -58,7 +60,7 @@ final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCm
 	}
 
 	@Override
-	protected WebCmsTypeSpecifier createDto( WebCmsDataEntry data, WebCmsTypeSpecifier<?> existing, WebCmsDataAction action ) {
+	protected WebCmsTypeSpecifier createDto( WebCmsDataEntry data, WebCmsTypeSpecifier<?> existing, WebCmsDataAction action, Map<String, Object> dataValues ) {
 		String typeGroup = StringUtils.defaultString( data.getParentKey(), (String) data.getMapData().get( "typeGroup" ) );
 		val implementationType = typeRegistry.retrieveTypeSpecifierClass( typeGroup )
 		                                     .orElseThrow( () -> new IllegalArgumentException( "Unable to import type: " + typeGroup ) );

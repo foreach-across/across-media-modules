@@ -20,7 +20,7 @@ import com.foreach.across.modules.webcms.domain.component.container.ContainerWeb
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
-import it.AbstractSingleApplicationIT;
+import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITSimplePages extends AbstractSingleApplicationIT
+public class ITSimplePages extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;

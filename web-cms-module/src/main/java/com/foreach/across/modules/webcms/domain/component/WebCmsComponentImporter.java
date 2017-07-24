@@ -24,8 +24,6 @@ import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -45,8 +43,8 @@ import java.util.Objects;
 @Scope("prototype")
 public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsComponentModel, WebCmsComponentModel>
 {
-	protected final Logger LOG = LoggerFactory.getLogger( getClass() );
 	private final String dataKey = "component";
+
 	private WebCmsComponentRepository componentRepository;
 	private WebCmsComponentModelService componentModelService;
 	private WebCmsObject owner;
@@ -59,7 +57,7 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 	@Override
 	protected WebCmsComponentModel retrieveExistingInstance( WebCmsDataEntry data ) {
 		String objectId = (String) data.getMapData().get( "objectId" );
-		String entryKey = data.getKey();
+		String entryKey = StringUtils.defaultString( data.getKey(), (String) data.getMapData().get( "name" ) );
 
 		WebCmsComponentModel existing = null;
 
@@ -75,14 +73,37 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 	}
 
 	@Override
-	protected WebCmsComponentModel createDto( WebCmsDataEntry data, WebCmsComponentModel itemToUpdate, WebCmsDataAction action ) {
+	protected WebCmsComponentModel createDto( WebCmsDataEntry data,
+	                                          WebCmsComponentModel itemToUpdate,
+	                                          WebCmsDataAction action,
+	                                          Map<String, Object> dataValues ) {
 		if ( itemToUpdate == null ) {
 			WebCmsComponentModel componentModel = componentModelService.createComponentModel(
-					Objects.toString( data.getMapData().get( "componentType" ) ),
-					WebCmsComponentModel.class );
+					Objects.toString( dataValues.get( "componentType" ) ),
+					WebCmsComponentModel.class
+			);
 			componentModel.setName( data.getKey() );
 			componentModel.setOwnerObjectId( getOwnerObjectId() );
 			return componentModel;
+		}
+
+		String requestedComponentType = (String) dataValues.get( "componentType" );
+
+		if ( ( requestedComponentType != null && !requestedComponentType.equals( itemToUpdate.getComponentType().getTypeKey() ) )
+				|| WebCmsDataAction.REPLACE.equals( action ) ) {
+			LOG.trace( "Changing component type: from {} to {} - resetting object", itemToUpdate.getComponentType().getTypeKey(), requestedComponentType );
+			WebCmsComponentModel dto = componentModelService.createComponentModel( requestedComponentType, WebCmsComponentModel.class );
+			WebCmsComponent newComponent = dto.getComponent();
+			WebCmsComponent existing = itemToUpdate.getComponent();
+			newComponent.setId( existing.getId() );
+			newComponent.setOwnerObjectId( existing.getOwnerObjectId() );
+			newComponent.setTitle( existing.getTitle() );
+			newComponent.setName( existing.getName() );
+			newComponent.setSortIndex( existing.getSortIndex() );
+			newComponent.setCreatedBy( existing.getCreatedBy() );
+			newComponent.setCreatedDate( existing.getCreatedDate() );
+			addForceUpdateProperty( dataValues );
+			return dto;
 		}
 
 		return itemToUpdate;
@@ -132,7 +153,7 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 		Map<String, Object> mapData = new HashMap<>( values );
 		mapData.remove( "componentType" );
 
-		return super.applyDataValues( values, dto );
+		return super.applyDataValues( mapData, dto );
 	}
 
 	private String getOwnerObjectId() {

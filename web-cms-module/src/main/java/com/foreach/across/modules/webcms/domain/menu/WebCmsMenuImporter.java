@@ -51,7 +51,7 @@ public class WebCmsMenuImporter extends AbstractWebCmsDataImporter<WebCmsMenu, W
 	}
 
 	@Override
-	protected WebCmsMenu createDto( WebCmsDataEntry data, WebCmsMenu existing, WebCmsDataAction action ) {
+	protected WebCmsMenu createDto( WebCmsDataEntry data, WebCmsMenu existing, WebCmsDataAction action, Map<String, Object> dataValues ) {
 		if ( existing == null ) {
 			return createNewMenuDto( data );
 		}

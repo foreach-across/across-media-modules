@@ -33,9 +33,13 @@ public class TestWebCmsDataEntry
 		new WebCmsDataEntry( "publicationKey", null );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void dataMustBeMapOrCollection() {
-		new WebCmsDataEntry( "publicationKey", "some data" );
+	@Test
+	public void singleValueData() {
+		WebCmsDataEntry entry = new WebCmsDataEntry( "publicationKey", "some data" );
+		assertTrue( entry.isSingleValue() );
+		assertEquals( "some data", entry.getSingleValue() );
+		assertFalse( entry.isMapData() );
+		assertFalse( entry.isCollectionData() );
 	}
 
 	@Test

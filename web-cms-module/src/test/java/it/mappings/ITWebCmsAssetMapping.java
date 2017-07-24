@@ -16,19 +16,17 @@
 
 package it.mappings;
 
-import it.AbstractSingleApplicationIT;
-import lombok.SneakyThrows;
+import it.AbstractCmsApplicationWithTestDataIT;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITWebCmsAssetMapping extends AbstractSingleApplicationIT
+public class ITWebCmsAssetMapping extends AbstractCmsApplicationWithTestDataIT
 {
 	@Test
 	public void defaultPageMapping() {

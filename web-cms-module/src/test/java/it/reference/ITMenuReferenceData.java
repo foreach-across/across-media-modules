@@ -23,7 +23,7 @@ import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItemRepository;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuRepository;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
-import it.AbstractSingleApplicationIT;
+import it.AbstractCmsApplicationWithTestDataIT;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITMenuReferenceData extends AbstractSingleApplicationIT
+public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsMenuRepository menuRepository;

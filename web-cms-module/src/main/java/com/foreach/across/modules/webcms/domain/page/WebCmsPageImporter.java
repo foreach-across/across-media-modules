@@ -40,7 +40,7 @@ public final class WebCmsPageImporter extends AbstractWebCmsAssetImporter<WebCms
 	}
 
 	@Override
-	protected WebCmsPage createDto( WebCmsDataEntry data, WebCmsPage itemToUpdate, WebCmsDataAction action ) {
+	protected WebCmsPage createDto( WebCmsDataEntry data, WebCmsPage itemToUpdate, WebCmsDataAction action, Map<String, Object> dataValues ) {
 		WebCmsPage dto;
 
 		if ( action == WebCmsDataAction.REPLACE ) {

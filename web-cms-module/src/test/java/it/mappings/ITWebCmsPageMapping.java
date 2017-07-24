@@ -16,14 +16,14 @@
 
 package it.mappings;
 
-import it.AbstractSingleApplicationIT;
+import it.AbstractCmsApplicationWithTestDataIT;
 import org.junit.Test;
 
 /**
  * @author Raf Ceuls
  * @since 0.0.2
  */
-public class ITWebCmsPageMapping extends AbstractSingleApplicationIT
+public class ITWebCmsPageMapping extends AbstractCmsApplicationWithTestDataIT
 {
 	@Test
 	public void methodLevelPageTypeMapping() {
