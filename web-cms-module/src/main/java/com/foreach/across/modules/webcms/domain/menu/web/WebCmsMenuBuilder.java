@@ -44,11 +44,13 @@ final class WebCmsMenuBuilder
 		PathBasedMenuBuilder builder = buildMenuEvent.builder();
 
 		menuCache.getMenuItems( buildMenuEvent.getMenuName() )
-		         .forEach( item ->
-				                   builder.item( item.getPath(), item.getTitle(), item.getUrl() )
-				                          .group( item.isGroup() )
-				                          .order( item.getOrder() )
-				                          .disable( item.isDisabled() )
+		         .forEach( item -> {
+			                   PathBasedMenuBuilder.PathBasedMenuItemBuilder itemBuilder = builder.item( item.getPath(), item.getTitle(), item.getUrl() )
+			                                                                                      .group( item.isGroup() )
+			                                                                                      .order( item.getOrder() )
+			                                                                                      .disable( item.isDisabled() );
+			                   item.getAttributes().forEach( itemBuilder::attribute );
+		                   }
 		         );
 	}
 }

@@ -42,6 +42,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public final class WebCmsMenuCache
 {
+	public static final String ENDPOINT_ID = "endpointId";
+	public static final String ASSET_OBJECT_ID = "assetObjectId";
+
 	private static final Cache DEFAULT_CACHE = new NoOpCache( WebCmsModuleCache.MENU );
 
 	private final CacheManager cacheManager;
@@ -70,8 +73,17 @@ public final class WebCmsMenuCache
 
 				                          item.setUrl( menuItem.getUrl() );
 
-				                          if ( !item.hasUrl() && menuItem.hasEndpoint() ) {
-					                          menuItem.getEndpoint().getPrimaryUrl().ifPresent( url -> item.setUrl( url.getPath() ) );
+				                          WebCmsEndpoint endpoint = menuItem.getEndpoint();
+
+				                          if ( !item.hasUrl() && endpoint != null ) {
+					                          endpoint.getPrimaryUrl().ifPresent( url -> item.setUrl( url.getPath() ) );
+				                          }
+
+				                          if ( endpoint != null ) {
+					                          item.setAttribute( ENDPOINT_ID, menuItem.getEndpoint().getId() );
+					                          if ( endpoint instanceof WebCmsAssetEndpoint ) {
+						                          item.setAttribute( ASSET_OBJECT_ID, ( (WebCmsAssetEndpoint) endpoint ).getAsset().getObjectId() );
+					                          }
 				                          }
 
 				                          return item;
