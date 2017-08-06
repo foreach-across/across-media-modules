@@ -35,13 +35,16 @@ public class TextWebCmsComponentAdminResources extends SimpleWebResourcePackage
 	public TextWebCmsComponentAdminResources( WebResourcePackageManager adminWebResourcePackageManager ) {
 		adminWebResourcePackageManager.register( NAME, this );
 
-		setDependencies( WebCmsComponentAdminResources.NAME );
+		setDependencies( ImageWebCmsComponentAdminResources.NAME );
 
 		setWebResources(
 				new WebResource( WebResource.CSS, NAME, "/static/WebCmsModule/css/wcm-admin-text-component-styles.css", WebResource.VIEWS ),
 
 				// ckeditor
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "ckeditor", "https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js", WebResource.EXTERNAL ),
+				//new WebResource( WebResource.JAVASCRIPT_PAGE_END, "ckeditor", "https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js", WebResource.EXTERNAL ),
+
+				// TinyMCE
+				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "tinymce", "https://cloud.tinymce.com/stable/tinymce.min.js", WebResource.EXTERNAL ),
 
 				// codemirror
 				new WebResource( WebResource.CSS, "codemirror-css", "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css",

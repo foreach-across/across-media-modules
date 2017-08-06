@@ -16,9 +16,36 @@
 (function ( $ ) {
     EntityModule.registerInitializer( function ( node ) {
         $( '[data-wcm-markup-type=rich-text]', node ).each( function () {
-            CKEDITOR.disableAutoInline = true;
-            // { extraPlugins: 'autogrow', autoGrow_minHeight : 300, autoGrow_onStartup: true }
-            CKEDITOR.inline( $( this ).attr( 'id' ), {} );
+            /*
+             CKEDITOR.disableAutoInline = true;
+             // { extraPlugins: 'autogrow', autoGrow_minHeight : 300, autoGrow_onStartup: true }
+             CKEDITOR.inline( $( this ).attr( 'id' ), {} );
+             */
+            var id = '[id="' + $( this ).attr( 'id' ) + '"]';
+            tinymce.init( {
+                              selector: id,
+                              plugins: 'autoresize image contextmenu table hr pagebreak code codesample noneditable advlist',
+                              autoresize_bottom_margin: 0,
+                              statusbar: false,
+                              branding: false,
+                              menubar: false,
+                              toolbar2: 'codesample',
+                image_caption: true,
+                              /* content_css: [
+                               AcrossWebModule.staticPath + '/adminweb/css/admin-web-bootstrap.css'
+                               ],*/
+                              file_picker_callback: function ( callback, value, meta ) {
+                                  // Provide image and alt text for the image dialog
+                                  if ( meta.filetype === 'image' ) {
+                                      WebCmsModule.imageSelector( {
+                                                                      outputBox: {width: 800, height: 800},
+                                                                      callback: function ( image ) {
+                                                                          callback( image.url, {'data-wcm-object-id': image.imageId} );
+                                                                      }
+                                                                  } );
+                                  }
+                              }
+                          } );
         } );
 
         $( '[data-wcm-markup-type=markup]', node ).each( function () {

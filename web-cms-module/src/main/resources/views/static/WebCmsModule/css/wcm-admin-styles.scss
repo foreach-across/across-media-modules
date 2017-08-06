@@ -26,7 +26,11 @@ table tr.publication-offline td[data-tbl-field=publication] {
 }
 
 .modal {
-  z-index: 9999;
+  z-index: 200000;
+}
+
+.modal-backdrop {
+  z-index: 199999;
 }
 
 .modal .pcs {
