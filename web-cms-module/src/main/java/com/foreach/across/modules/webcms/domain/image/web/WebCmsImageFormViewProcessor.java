@@ -46,10 +46,6 @@ public class WebCmsImageFormViewProcessor extends ImageFormViewProcessor<WebCmsI
 	@Autowired
 	private BootstrapUiComponentFactory bootstrapUiComponentFactory;
 
-	public WebCmsImageFormViewProcessor( BeanFactory beanFactory ) {
-		super( beanFactory );
-	}
-
 	@Override
 	protected void postRender( EntityViewRequest entityViewRequest,
 	                           EntityView entityView,
@@ -75,11 +71,5 @@ public class WebCmsImageFormViewProcessor extends ImageFormViewProcessor<WebCmsI
 		}
 
 		super.postRender( entityViewRequest, entityView, container, builderContext );
-	}
-
-	@Override
-	protected void processImageHolder( WebCmsImage image, String externalId ) {
-		image.setExternalId( externalId );
-		image.setPublished( true );
 	}
 }

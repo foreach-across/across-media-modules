@@ -25,18 +25,17 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
-import com.foreach.across.modules.webcms.domain.image.ImageOwner;
-import com.foreach.imageserver.client.ImageServerClient;
-import com.foreach.imageserver.dto.ImageTypeDto;
+import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
+import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * This builder builds a {@link ViewElement} for image upload for the current entity which is an {@link ImageOwner}.
+ * This builder builds a {@link ViewElement} for image upload for the current entity which is an {@link WebCmsImage}.
  * The generated element will be a row with two columns.  The first has a preview of the image, the second an upload button to upload or replace the image.
  */
+@Deprecated
 @Component
 @AcrossDepends(required = BootstrapUiModule.NAME)
 @RequiredArgsConstructor
@@ -44,29 +43,28 @@ import org.springframework.stereotype.Component;
 public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewElement>
 {
 	private final BootstrapUiFactory bootstrapUiFactory;
-	private final BeanFactory beanFactory;
+	private final WebCmsImageConnector imageConnector;
 
 	@Override
 	public ViewElement build( ViewElementBuilderContext viewElementBuilderContext ) {
-		ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
-		ImageOwner imageOwner = EntityViewElementUtils.currentEntity( viewElementBuilderContext, ImageOwner.class );
+		WebCmsImage image = EntityViewElementUtils.currentEntity( viewElementBuilderContext, WebCmsImage.class );
 
-		ViewElement thumbnailPreview = imageOwner.getImageServerKey()
-		                                         .map( imageServerKey -> {
-			                                         String imageUrl = imageServerClient.imageUrl( imageServerKey, "default", 200, 200, ImageTypeDto.PNG );
-			                                         LOG.trace( "Rendering thumbnail of url {}", imageUrl );
-			                                         return bootstrapUiFactory.node( "img" )
-			                                                                  .attribute( "src", imageUrl )
-			                                                                  .build( viewElementBuilderContext );
-		                                         } )
-		                                         .orElseGet( () -> {
-			                                         LOG.trace( "No image yet for {}", imageOwner );
-			                                         return bootstrapUiFactory.node( "div" )
-			                                                                  .add( bootstrapUiFactory.text( "Upload image.." ) )
-			                                                                  .build( viewElementBuilderContext );
-		                                         } );
+		ViewElement thumbnailPreview = image.getImageServerKey()
+		                                    .map( imageServerKey -> {
+			                                    String imageUrl = imageConnector.buildImageUrl( image, 200, 200 );
+			                                    LOG.trace( "Rendering thumbnail of url {}", imageUrl );
+			                                    return bootstrapUiFactory.node( "img" )
+			                                                             .attribute( "src", imageUrl )
+			                                                             .build( viewElementBuilderContext );
+		                                    } )
+		                                    .orElseGet( () -> {
+			                                    LOG.trace( "No image yet for {}", image );
+			                                    return bootstrapUiFactory.node( "div" )
+			                                                             .add( bootstrapUiFactory.text( "Upload image.." ) )
+			                                                             .build( viewElementBuilderContext );
+		                                    } );
 
-		LOG.trace( "Rendering image upload for owner {}", imageOwner );
+		LOG.trace( "Rendering image upload for owner {}", image );
 		NodeViewElement fileUpload = new NodeViewElement( "input" );
 		fileUpload.setAttribute( "type", "file" );
 		fileUpload.addCssClass( "form-control" );

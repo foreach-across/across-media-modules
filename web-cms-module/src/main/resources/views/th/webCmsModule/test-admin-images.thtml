@@ -7,7 +7,7 @@
 <div class="image-thumbnail-list">
     <div th:each="image : ${items.content}" class="image-thumbnail-container">
         <a th:href="${entityViewContext.linkBuilder.update(image)}" th:data-wcm-image-id="${image.objectId}">
-            <img th:src="@{${imageUrl.apply(image.externalId)}}" border="1"/>
+            <img th:src="@{${imageUrlBuilder.apply(image)}}" />
         </a>
     </div>
 </div>

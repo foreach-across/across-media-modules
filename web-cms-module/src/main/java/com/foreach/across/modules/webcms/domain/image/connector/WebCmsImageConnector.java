@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.image;
+package com.foreach.across.modules.webcms.domain.image.connector;
 
-import java.util.Optional;
+import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 
 /**
- * Interface for entities that are linked with an image via image server
- *
- * @author: Sander Van Loock
- * @since: 0.0.1
+ * @author Arne Vandamme
+ * @since 0.0.2
  */
-@Deprecated
-public interface ImageOwner
+public interface WebCmsImageConnector
 {
-	/**
-	 * This method returns the key used to retrieve the image in image server.
-	 */
-	Optional<String> getImageServerKey();
+	int ORIGINAL_WIDTH = 0;
+	int ORIGINAL_HEIGHT = 0;
+
+	boolean saveImageData( WebCmsImage image, byte[] data );
+
+	String buildImageUrl( WebCmsImage image, int boxWidth, int boxHeight );
 }

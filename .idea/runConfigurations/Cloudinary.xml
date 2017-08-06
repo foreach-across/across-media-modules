@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="AdminWebCmsApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+  <configuration default="false" name="Cloudinary" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="webapps.admin.AdminWebCmsApplication" />
-    <option name="ACTIVE_PROFILES" value="dev" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="webapps.admin.WebCmsTestApplication" />
+    <option name="ACTIVE_PROFILES" value="cloudinary" />
     <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <module name="web-cms-module-test" />

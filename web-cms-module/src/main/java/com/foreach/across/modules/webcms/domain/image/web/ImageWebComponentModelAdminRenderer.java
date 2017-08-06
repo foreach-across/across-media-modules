@@ -26,13 +26,9 @@ import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
 import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.modules.webcms.web.ImageWebCmsComponentAdminResources;
-import com.foreach.imageserver.client.ImageServerClient;
-import com.foreach.imageserver.dto.DimensionsDto;
-import com.foreach.imageserver.dto.ImageTypeDto;
-import com.foreach.imageserver.dto.ImageVariantDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,7 +40,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<ImageWebCmsComponentModel>
 {
-	private final BeanFactory beanFactory;
+	private final WebCmsImageConnector imageConnector;
 	private final BootstrapUiFactory bootstrapUiFactory;
 
 	@Override
@@ -54,14 +50,8 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 
 	@Override
 	public ViewElementBuilder createContentViewElementBuilder( ImageWebCmsComponentModel componentModel, String controlNamePrefix ) {
-		ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
-
-		ImageVariantDto variant = new ImageVariantDto();
-		variant.setBoundaries( new DimensionsDto( 188, 154 ) );
-		variant.setImageType( ImageTypeDto.PNG );
-
-		String thumbnailUrl = componentModel.hasImageServerKey()
-				? imageServerClient.imageUrl( componentModel.getImageServerKey(), "default", 0, 0, variant )
+		String thumbnailUrl = componentModel.hasImage()
+				? imageConnector.buildImageUrl( componentModel.getImage(), 188, 154 )
 				: null;
 
 		return bootstrapUiFactory

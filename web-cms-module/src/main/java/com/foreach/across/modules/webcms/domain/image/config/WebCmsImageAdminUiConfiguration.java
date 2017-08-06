@@ -31,21 +31,18 @@ import com.foreach.across.modules.entity.web.EntityLinkBuilder;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import com.foreach.across.modules.web.menu.RequestMenuSelector;
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
-import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.asset.web.builders.ImageUploadViewElementBuilder;
+import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
+import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.modules.webcms.domain.image.web.WebCmsImageFormViewProcessor;
-import com.foreach.imageserver.client.ImageServerClient;
-import com.foreach.imageserver.dto.DimensionsDto;
-import com.foreach.imageserver.dto.ImageTypeDto;
-import com.foreach.imageserver.dto.ImageVariantDto;
+import com.foreach.across.modules.webcms.web.ImageWebCmsComponentAdminResources;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -60,7 +57,7 @@ import java.util.function.Function;
 @ConditionalOnAdminUI
 @Configuration
 @RequiredArgsConstructor
-class WebCmsImageConfiguration implements EntityConfigurer
+class WebCmsImageAdminUiConfiguration implements EntityConfigurer
 {
 	private final WebCmsImageFormViewProcessor imageFormViewProcessor;
 	private final ImageUploadViewElementBuilder thumbnailViewElementBuilder;
@@ -78,10 +75,7 @@ class WebCmsImageConfiguration implements EntityConfigurer
 				                      .hidden( true )
 				                      .writable( true )
 				                      .readable( false )
-				                      .viewElementBuilder(
-						                      ViewElementMode.CONTROL,
-						                      thumbnailViewElementBuilder
-				                      )
+				                      .viewElementBuilder( ViewElementMode.CONTROL, thumbnailViewElementBuilder )
 		        )
 		        .createOrUpdateFormView(
 				        fvb -> fvb.showProperties( ".", "image-upload" )
@@ -90,12 +84,13 @@ class WebCmsImageConfiguration implements EntityConfigurer
 					                  processors.addProcessor( imageFormViewProcessor, 0 );
 				                  } )
 		        )
-		        .listView( lvb -> lvb.viewProcessor( listViewProcessor )
-		                             .entityQueryFilter( true )
-		                             .defaultSort( new Sort( Sort.Direction.DESC, "publicationDate" ) )
-		                             .postProcess( ListFormViewProcessor.class, listFormViewProcessor -> listFormViewProcessor.setAddDefaultButtons( false ) ) )
-
-		;
+		        .listView(
+				        lvb -> lvb.viewProcessor( listViewProcessor )
+				                  .entityQueryFilter( true )
+				                  .defaultSort( new Sort( Sort.Direction.DESC, "publicationDate" ) )
+				                  .postProcess( ListFormViewProcessor.class,
+				                                listFormViewProcessor -> listFormViewProcessor.setAddDefaultButtons( false ) )
+		        );
 	}
 
 	@ConditionalOnAdminUI
@@ -103,8 +98,13 @@ class WebCmsImageConfiguration implements EntityConfigurer
 	@RequiredArgsConstructor
 	private static class ListViewProcessor extends EntityViewProcessorAdapter
 	{
-		private final BeanFactory beanFactory;
+		private final WebCmsImageConnector imageConnector;
 		private final BootstrapUiComponentFactory bootstrapUiComponentFactory;
+
+		@Override
+		protected void registerWebResources( EntityViewRequest entityViewRequest, EntityView entityView, WebResourceRegistry webResourceRegistry ) {
+			webResourceRegistry.addPackage( ImageWebCmsComponentAdminResources.NAME );
+		}
 
 		@Override
 		protected void render( EntityViewRequest entityViewRequest,
@@ -132,14 +132,8 @@ class WebCmsImageConfiguration implements EntityConfigurer
 		                           EntityView entityView,
 		                           ContainerViewElement container,
 		                           ViewElementBuilderContext builderContext ) {
-			val imageServerClient = beanFactory.getBean( ImageServerClient.class );
-
-			ImageVariantDto variant = new ImageVariantDto();
-			variant.setBoundaries( new DimensionsDto( 188, 154 ) );
-			variant.setImageType( ImageTypeDto.PNG );
-
-			Function<String, String> urlGenerator = ( imageId ) -> imageServerClient.imageUrl( imageId, "default", 0, 0, variant );
-			entityView.addAttribute( "imageUrl", urlGenerator );
+			Function<WebCmsImage, String> urlGenerator = ( image ) -> imageConnector.buildImageUrl( image, 188, 154 );
+			entityView.addAttribute( "imageUrlBuilder", urlGenerator );
 
 			ContainerViewElementUtils.find( container, "itemsTable-table", TableViewElement.class )
 			                         .ifPresent( table -> table.setCustomTemplate( "th/webCmsModule/test-admin-images :: content" ) );

@@ -4,3 +4,4 @@ target
 .idea/excludeFromValidation
 *.iml
 db
+local-data

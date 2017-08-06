@@ -25,21 +25,21 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.domain.image.ImageOwner;
-import com.foreach.imageserver.client.ImageServerClient;
+import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
+import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 /**
  * This processor handles the file upload of the form. First, it adds an image extension.  Second, the entity form type is set to multipart/form-data
- * and lastly,  the fileupload is handled by {@link ImageServerClient}
+ * and lastly,  the fileupload is handled by {@link WebCmsImageConnector}.
  *
  * @author: Sander Van Loock
  * @since: 0.0.1
@@ -47,11 +47,7 @@ import java.util.UUID;
 @Slf4j
 public abstract class ImageFormViewProcessor<T extends ImageOwner> extends EntityViewProcessorAdapter
 {
-	protected final BeanFactory beanFactory;
-
-	public ImageFormViewProcessor( BeanFactory beanFactory ) {
-		this.beanFactory = beanFactory;
-	}
+	private WebCmsImageConnector imageConnector;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
@@ -73,15 +69,12 @@ public abstract class ImageFormViewProcessor<T extends ImageOwner> extends Entit
 		if ( entityViewRequest.getHttpMethod().equals( HttpMethod.POST ) && bindingResult != null && !bindingResult.hasErrors() ) {
 
 			ImageHolder imageHolder = command.getExtension( "image", ImageHolder.class );
-			T imageOwner = (T) command.getEntity();
+			WebCmsImage image = command.getEntity( WebCmsImage.class );
 
 			if ( !imageHolder.getImageData().isEmpty() ) {
-				String externalId = UUID.randomUUID().toString();
-
-				ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
-				processImageHolder( imageOwner, externalId );
 				try {
-					imageServerClient.loadImage( externalId, imageHolder.getImageData().getBytes() );
+					imageConnector.saveImageData( image, imageHolder.getImageData().getBytes() );
+					image.setPublished( true );
 				}
 				catch ( Exception e ) {
 					LOG.error( "Unable to upload file", e );
@@ -92,7 +85,10 @@ public abstract class ImageFormViewProcessor<T extends ImageOwner> extends Entit
 
 	}
 
-	protected abstract void processImageHolder( T imageOwner, String externalId );
+	@Autowired
+	public final void setImageConnector( WebCmsImageConnector imageConnector ) {
+		this.imageConnector = imageConnector;
+	}
 
 	@Data
 	static class ImageHolder
