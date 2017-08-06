@@ -115,6 +115,7 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 		return null;
 	}
 
+	@Deprecated
 	@Override
 	public Optional<String> getImageServerKey() {
 		return Optional.ofNullable( externalId );

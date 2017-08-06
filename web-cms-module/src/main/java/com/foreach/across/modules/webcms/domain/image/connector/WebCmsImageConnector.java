@@ -30,4 +30,6 @@ public interface WebCmsImageConnector
 	boolean saveImageData( WebCmsImage image, byte[] data );
 
 	String buildImageUrl( WebCmsImage image, int boxWidth, int boxHeight );
+
+	boolean deleteImageData( WebCmsImage image );
 }

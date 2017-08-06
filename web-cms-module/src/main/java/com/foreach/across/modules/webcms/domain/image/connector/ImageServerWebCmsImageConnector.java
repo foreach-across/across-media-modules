@@ -39,6 +39,9 @@ public class ImageServerWebCmsImageConnector implements WebCmsImageConnector
 	@Setter
 	private String context = "default";
 
+	@Setter
+	private boolean performDeletes = true;
+
 	@Override
 	public boolean saveImageData( WebCmsImage image, byte[] data ) {
 		if ( image.isNew() ) {
@@ -58,5 +61,14 @@ public class ImageServerWebCmsImageConnector implements WebCmsImageConnector
 		variant.setImageType( ImageTypeDto.PNG );
 
 		return imageServerClient.imageUrl( image.getExternalId(), context, 0, 0, variant );
+	}
+
+	@Override
+	public boolean deleteImageData( WebCmsImage image ) {
+		if ( performDeletes ) {
+			return imageServerClient.deleteImage( image.getExternalId() );
+		}
+
+		return false;
 	}
 }

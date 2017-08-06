@@ -19,12 +19,10 @@ package com.foreach.across.modules.webcms.domain.asset.web.builders;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
-import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +47,23 @@ public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewEle
 	public ViewElement build( ViewElementBuilderContext viewElementBuilderContext ) {
 		WebCmsImage image = EntityViewElementUtils.currentEntity( viewElementBuilderContext, WebCmsImage.class );
 
+		if ( image.isNew() ) {
+			// Only allow uploads for a new image
+			return bootstrapUiFactory.file()
+			                         .controlName( "extensions[image].imageData" )
+			                         .build( viewElementBuilderContext );
+		}
+
+		String imageUrl = imageConnector.buildImageUrl( image, 800, 600 );
+		return bootstrapUiFactory.div()
+		                         .css( "image-preview-container" )
+		                         .add(
+				                         bootstrapUiFactory.node( "img" )
+				                                           .attribute( "src", imageUrl )
+		                         )
+		                         .build( viewElementBuilderContext );
+
+		/*
 		ViewElement thumbnailPreview = image.getImageServerKey()
 		                                    .map( imageServerKey -> {
 			                                    String imageUrl = imageConnector.buildImageUrl( image, 200, 200 );
@@ -76,5 +91,6 @@ public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewEle
 				                         bootstrapUiFactory.column( Grid.Device.MD.width( 6 ) ).add( fileUpload )
 		                         )
 		                         .build();
+		*/
 	}
 }

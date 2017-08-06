@@ -23,9 +23,37 @@
   text-align: left;
 }
 
-.pcs.webCmsImage .pcs-nav {
-  font-size: 90%;
-  margin-bottom: 10px;
+.pcs.wcm-image {
+  .pcs-nav {
+    margin-bottom: 10px;
+
+    .nav-pills {
+      font-size: 90%;
+      background-color: #f4f4f4;
+    }
+  }
+
+  &.wcm-image-upload {
+    .nav-tabs {
+      height: 10px;
+      li {
+        display: none;
+      }
+    }
+  }
+}
+
+.modal-content {
+  .pcs.wcm-image {
+    .pcs-nav {
+      .nav-pills {
+        background-color: white;
+      }
+      .nav-tabs {
+        display: none;
+      }
+    }
+  }
 }
 
 .image-thumbnail-container {
@@ -70,6 +98,16 @@
   border: solid 1px #636363;
   max-width: 188px;
   max-height: 154px;
+}
+
+.image-preview-container {
+  text-align: center;
+
+  img {
+    border: solid 1px #636363;
+    max-width: 100%;
+    max-height: 600px;
+  }
 }
 
 .image-thumbnail-actions {

@@ -21,6 +21,7 @@ import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +36,9 @@ import java.util.Map;
 public class CloudinaryWebCmsImageConnector implements WebCmsImageConnector
 {
 	private final Cloudinary cloudinary;
+
+	@Setter
+	private boolean performDeletes = true;
 
 	@SneakyThrows
 	@Override
@@ -61,5 +65,20 @@ public class CloudinaryWebCmsImageConnector implements WebCmsImageConnector
 		                 .format( "jpg" )
 		                 .transformation( t.crop( "limit" ) )
 		                 .generate( image.getExternalId() );
+	}
+
+	@Override
+	public boolean deleteImageData( WebCmsImage image ) {
+		if ( performDeletes ) {
+			try {
+				cloudinary.uploader().destroy( image.getExternalId(), ObjectUtils.asMap( "invalidate", true ) );
+				return true;
+			}
+			catch ( Exception e ) {
+				LOG.error( "Failed to delete image file on Cloudinary", e );
+			}
+		}
+
+		return false;
 	}
 }

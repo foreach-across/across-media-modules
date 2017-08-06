@@ -63,12 +63,27 @@
                         }
                 );
 
+                var selectImageCandidate = function ( link ) {
+                    dialog.find( '.image-thumbnail-container' ).removeClass( 'selected' );
+
+                    imageObjectId = link.attr( 'data-wcm-image-id' );
+                    link.parent().addClass( 'selected' );
+                    dialog.find( '.modal-footer [data-bb-handler="confirm"]' ).removeClass( 'disabled' );
+                };
+
                 var ajaxify = function ( node, baseUrl ) {
+                    EntityModule.initializeFormElements( node );
+
                     dialog.find( '.modal-footer' ).hide();
                     dialog.find( '.modal-footer [data-bb-handler="confirm"]' ).addClass( 'disabled' );
 
-                    if ( $( 'a[data-wcm-image-id]' ).length ) {
+                    var images = $( 'a[data-wcm-image-id]' );
+                    if ( images.length ) {
                         dialog.find( '.modal-footer' ).show();
+
+                        if ( images.length === 1 ) {
+                            selectImageCandidate( images );
+                        }
                     }
 
                     $( 'a', node ).on( 'click', function ( e ) {
@@ -76,12 +91,7 @@
                         e.preventDefault();
 
                         if ( link.attr( 'data-wcm-image-id' ) ) {
-                            dialog.find( '.image-thumbnail-container' ).removeClass( 'selected' );
-
-                            imageObjectId = link.attr( 'data-wcm-image-id' );
-                            link.parent().addClass( 'selected' );
-                            dialog.find( '.modal-footer [data-bb-handler="confirm"]' ).removeClass( 'disabled' );
-
+                            selectImageCandidate( link );
                         }
                         else {
                             get( link.attr( 'href' ) );
@@ -94,6 +104,8 @@
                         var useFormData = ("" + $( this ).attr( 'enctype' )).toLowerCase().indexOf( 'form-data' ) > 0;
 
                         var formConfig = {};
+
+                        $( this ).append( '<input type="hidden" name="imageSelector" value="true" />' );
 
                         if ( useFormData ) {
                             var data = new FormData( $( this )[0] );
@@ -135,6 +147,15 @@
 
                 get( adminPrefix + '/entities/webCmsImage' );
             } )
+        } );
+
+        $( '#wcm-image-upload-form', node ).each( function () {
+            var form = $( this );
+            form.find( 'input[name="extensions[image].imageData"]' )
+                    .on( 'change', function () {
+                        form.find( 'input[name="entity.name"]' ).val( $( this )[0].files[0].name );
+                    } )
+            ;
         } );
     } );
 })( jQuery );

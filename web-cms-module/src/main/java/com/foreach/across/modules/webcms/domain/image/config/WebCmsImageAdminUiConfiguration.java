@@ -16,39 +16,18 @@
 
 package com.foreach.across.modules.webcms.domain.image.config;
 
-import com.foreach.across.modules.adminweb.ui.PageContentStructure;
-import com.foreach.across.modules.bootstrapui.components.BootstrapUiComponentFactory;
-import com.foreach.across.modules.bootstrapui.elements.TableViewElement;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
-import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.ViewElementMode;
-import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.ListFormViewProcessor;
-import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
-import com.foreach.across.modules.entity.views.request.EntityViewRequest;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
-import com.foreach.across.modules.web.menu.Menu;
-import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
-import com.foreach.across.modules.web.menu.RequestMenuSelector;
-import com.foreach.across.modules.web.resource.WebResourceRegistry;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
-import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
-import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.web.builders.ImageUploadViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
-import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.modules.webcms.domain.image.web.WebCmsImageFormViewProcessor;
-import com.foreach.across.modules.webcms.web.ImageWebCmsComponentAdminResources;
+import com.foreach.across.modules.webcms.domain.image.web.WebCmsImageListViewProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.function.Function;
 
 /**
  * @author Arne Vandamme
@@ -59,9 +38,9 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 class WebCmsImageAdminUiConfiguration implements EntityConfigurer
 {
-	private final WebCmsImageFormViewProcessor imageFormViewProcessor;
 	private final ImageUploadViewElementBuilder thumbnailViewElementBuilder;
-	private final ListViewProcessor listViewProcessor;
+	private final WebCmsImageFormViewProcessor imageFormViewProcessor;
+	private final WebCmsImageListViewProcessor listViewProcessor;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
@@ -70,19 +49,19 @@ class WebCmsImageAdminUiConfiguration implements EntityConfigurer
 				        props -> props.property( "publish-settings" ).hidden( true ).and()
 				                      .property( "objectId" ).hidden( true ).and()
 				                      .property( "externalId" ).writable( false ).and()
-				                      .property( "image-upload" )
-				                      .displayName( "Image file" )
+				                      .property( "image-asset" )
+				                      .displayName( "Image" )
 				                      .hidden( true )
 				                      .writable( true )
 				                      .readable( false )
 				                      .viewElementBuilder( ViewElementMode.CONTROL, thumbnailViewElementBuilder )
 		        )
 		        .createOrUpdateFormView(
-				        fvb -> fvb.showProperties( ".", "image-upload" )
-				                  .postProcess( ( factory, processors ) -> {
-					                  // ensure image uploading happens before saving the image record
-					                  processors.addProcessor( imageFormViewProcessor, 0 );
-				                  } )
+				        fvb -> fvb.showProperties( ".", "image-asset" )
+				                  .viewProcessor( imageFormViewProcessor )
+		        )
+		        .updateFormView(
+				        fvb -> fvb.showProperties( ".", "externalId", "image-asset" )
 		        )
 		        .listView(
 				        lvb -> lvb.viewProcessor( listViewProcessor )
@@ -91,52 +70,5 @@ class WebCmsImageAdminUiConfiguration implements EntityConfigurer
 				                  .postProcess( ListFormViewProcessor.class,
 				                                listFormViewProcessor -> listFormViewProcessor.setAddDefaultButtons( false ) )
 		        );
-	}
-
-	@ConditionalOnAdminUI
-	@Component
-	@RequiredArgsConstructor
-	private static class ListViewProcessor extends EntityViewProcessorAdapter
-	{
-		private final WebCmsImageConnector imageConnector;
-		private final BootstrapUiComponentFactory bootstrapUiComponentFactory;
-
-		@Override
-		protected void registerWebResources( EntityViewRequest entityViewRequest, EntityView entityView, WebResourceRegistry webResourceRegistry ) {
-			webResourceRegistry.addPackage( ImageWebCmsComponentAdminResources.NAME );
-		}
-
-		@Override
-		protected void render( EntityViewRequest entityViewRequest,
-		                       EntityView entityView,
-		                       ContainerViewElementBuilderSupport<?, ?> containerBuilder,
-		                       ViewElementBuilderMap builderMap,
-		                       ViewElementBuilderContext builderContext ) {
-			PageContentStructure page = entityViewRequest.getPageContentStructure();
-			EntityLinkBuilder linkBuilder = entityViewRequest.getEntityViewContext().getLinkBuilder();
-
-			page.addCssClass( "webCmsImage" );
-
-			Menu menu = new PathBasedMenuBuilder()
-					.item( "/details", "Search images", linkBuilder.overview() ).order( 1 ).and()
-					.item( "/associations", "Upload new image", linkBuilder.create() ).order( 2 ).and()
-					.build();
-			menu.sort();
-			menu.select( new RequestMenuSelector( entityViewRequest.getWebRequest().getNativeRequest( HttpServletRequest.class ) ) );
-
-			page.addToNav( bootstrapUiComponentFactory.nav( menu ).pills().build() );
-		}
-
-		@Override
-		protected void postRender( EntityViewRequest entityViewRequest,
-		                           EntityView entityView,
-		                           ContainerViewElement container,
-		                           ViewElementBuilderContext builderContext ) {
-			Function<WebCmsImage, String> urlGenerator = ( image ) -> imageConnector.buildImageUrl( image, 188, 154 );
-			entityView.addAttribute( "imageUrlBuilder", urlGenerator );
-
-			ContainerViewElementUtils.find( container, "itemsTable-table", TableViewElement.class )
-			                         .ifPresent( table -> table.setCustomTemplate( "th/webCmsModule/test-admin-images :: content" ) );
-		}
 	}
 }

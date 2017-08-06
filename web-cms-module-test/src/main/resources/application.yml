@@ -45,7 +45,7 @@ spring:
 webCmsModule:
   urls:
     included-path-patterns: "/**"
-    excluded-path-patterns: "/test/one,/test/two"
+    excluded-path-patterns: /resources/**
   pages:
     default-page-type: default
 
