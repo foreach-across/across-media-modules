@@ -27,3 +27,19 @@ body .CodeMirror {
   padding: 5px 10px;
   border: solid 1px rgb(233, 233, 233);
 }
+
+.mce-edit-area, .mce-panel {
+  border-color: #eaeaea !important;
+}
+.wcm-mce-toolbar-hidden {
+  .mce-edit-area {
+    border: 0;
+  }
+}
+
+.is-sticky {
+  .mce-toolbar-grp {
+    border: solid 1px #888888 !important;
+    margin-left: -1px;
+  }
+}
