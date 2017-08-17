@@ -26,7 +26,7 @@
                               selector: id,
                               plugins: 'autoresize image contextmenu table hr pagebreak code codesample noneditable lists advlist link paste textcolor charmap anchor',
                               toolbar1: 'undo redo | insert | styleselect | bold italic forecolor backcolor ' +
-                              '| outdent indent | bullist numlist | link image codesample | pastetext',
+                              '| outdent indent | bullist numlist table | link image codesample | pastetext',
                               insert_button_items: 'image link inserttable | pagebreak hr anchor charmap',
                               autoresize_bottom_margin: 0,
                               statusbar: false,

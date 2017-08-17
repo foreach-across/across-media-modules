@@ -24,7 +24,7 @@ WebCmsModule.imageSelector = (function ( $ ) {
 
         var dialog = bootbox.dialog(
                 {
-                    message: '<p><i class="fa fa-spin fa-spinner"></i> Loading...</p>',
+                    message: '<p><i class="fa fa-spin fa-spinner"></i>Loading...</p>',
                     size: 'large',
                     className: 'image-selector',
                     onEscape: true,
