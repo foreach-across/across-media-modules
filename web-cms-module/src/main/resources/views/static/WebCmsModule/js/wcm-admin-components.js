@@ -46,6 +46,13 @@
 
                     selectTab( firstLink );
 
+                    window.onbeforeunload = function ( e ) {
+                        var form = $( '#btn-cancel' ).closest( 'form' );
+                        if ( form.data( 'changed' ) === true ) {
+                            return "You have unsaved changes, are you sure you want to navigate away from this page?"
+                        }
+                    };
+
                     component.find( '> .wcm-sortable-component' )
                             .sortable( {
                                            items: '.wcm-component-form-group',

@@ -84,6 +84,9 @@
 
         $( '[data-wcm-markup-type=markup]', node ).each( function () {
             var cm = CodeMirror.fromTextArea( $( this )[0], {lineNumbers: true, mode: 'htmlmixed', viewportMargin: Infinity} );
+            cm.on( "change", function ( cm ) {
+                $( cm.getTextArea().closest( 'form' ) ).data( 'changed', true );
+            } );
             $( this ).on( 'wcm:componentRefresh',
                           function () {
                               cm.refresh();
