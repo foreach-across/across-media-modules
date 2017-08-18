@@ -38,12 +38,6 @@
                                 .trigger( 'wcm:componentRefresh' );
                     };
 
-                    var shouldNavigateAway = function ( link ) {
-                        var form = link.closest( 'form' );
-
-                        return !form.data( 'changed' ) || confirm( 'You have unsaved changes, are you sure you want to navigate away from this page?' );
-                    };
-
                     selectTab( firstLink );
 
                     window.onbeforeunload = function ( e ) {
@@ -84,9 +78,6 @@
 
                                 if ( tab ) {
                                     selectTab( $( this ).closest( 'li' ).hasClass( 'active' ) ? firstLink : $( this ) );
-                                    e.preventDefault();
-                                }
-                                else if ( !shouldNavigateAway( $( this ) ) ) {
                                     e.preventDefault();
                                 }
                             } );

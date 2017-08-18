@@ -78,9 +78,21 @@
                                       $( this.contentAreaContainer.parentElement ).toggleClass( 'wcm-mce-toolbar-hidden', true ).find(
                                               "div.mce-toolbar-grp" ).hide().unstick();
                                   } );
+                                  theEditor.on( "change", function ( cm ) {
+                                      $( this.contentAreaContainer.parentElement ).closest( 'form' ).data( 'changed', true );
+                                  } );
                               }
                           } );
         } );
+
+        tinymce.init( {
+                          selector: 'textarea',
+                          init_instance_callback: function ( editor ) {
+                              editor.on( 'Change', function ( e ) {
+                                  console.log( 'Editor contents was changed.' );
+                              } );
+                          }
+                      } );
 
         $( '[data-wcm-markup-type=markup]', node ).each( function () {
             var cm = CodeMirror.fromTextArea( $( this )[0], {lineNumbers: true, mode: 'htmlmixed', viewportMargin: Infinity} );
