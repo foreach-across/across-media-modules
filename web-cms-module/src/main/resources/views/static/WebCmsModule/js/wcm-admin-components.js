@@ -15,6 +15,19 @@
  */
 (function ( $ ) {
     EntityModule.registerInitializer( function ( node ) {
+        window.onbeforeunload = function ( e ) {
+            var form = $( "#btn-save" ).closest( "form" );
+            if ( form.data( 'changed' ) === true ) {
+                return "You have unsaved changes, are you sure you want to navigate away from this page?"
+            }
+        };
+
+        $( '#btn-save' ).closest( 'form' ).submit( function () {
+            $( '#btn-save' ).closest( 'form' ).data( 'changed', false );
+            return true;
+        } );
+
+
         $( '[data-wcm-component-id]' ).each(
                 function () {
                     var component = $( this );
@@ -39,18 +52,6 @@
                     };
 
                     selectTab( firstLink );
-
-                    window.onbeforeunload = function ( e ) {
-                        var form = $( '#btn-save' ).closest( 'form' );
-                        if ( form.data( 'changed' ) === true ) {
-                            return "You have unsaved changes, are you sure you want to navigate away from this page?"
-                        }
-                    };
-
-                    $( '#btn-save' ).closest( 'form' ).submit( function () {
-                        $( '#btn-save' ).closest( 'form' ).data( 'changed', false );
-                        return true;
-                    } );
 
                     component.find( '> .wcm-sortable-component' )
                             .sortable( {
