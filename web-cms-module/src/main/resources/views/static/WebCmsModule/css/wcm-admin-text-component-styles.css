@@ -30,6 +30,8 @@ body .CodeMirror {
 
 .wcm-mce-toolbar-hidden .mce-edit-area {
   border: 0; }
+.wcm-mce-toolbar-hidden .sticky-wrapper, .wcm-mce-toolbar-hidden .mce-toolbar-grp {
+  display: none; }
 
 .is-sticky .mce-toolbar-grp {
   border: solid 1px #888888 !important;

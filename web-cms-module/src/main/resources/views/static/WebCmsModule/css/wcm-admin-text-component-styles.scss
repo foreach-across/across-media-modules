@@ -35,6 +35,10 @@ body .CodeMirror {
   .mce-edit-area {
     border: 0;
   }
+
+  .sticky-wrapper, .mce-toolbar-grp {
+    display: none;
+  }
 }
 
 .is-sticky {
