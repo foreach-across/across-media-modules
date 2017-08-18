@@ -85,9 +85,6 @@
                                     selectTab( $( this ).closest( 'li' ).hasClass( 'active' ) ? firstLink : $( this ) );
                                     e.preventDefault();
                                 }
-                                else if ( !shouldNavigateAway( $( this ) ) ) {
-                                    e.preventDefault();
-                                }
                             } );
                 }
         );
