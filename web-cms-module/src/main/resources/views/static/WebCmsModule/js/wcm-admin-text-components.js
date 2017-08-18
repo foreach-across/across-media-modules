@@ -67,32 +67,27 @@
                                   theEditor.on( 'focus', function () {
                                       $( this.contentAreaContainer.parentElement )
                                               .toggleClass( 'wcm-mce-toolbar-hidden', false )
-                                              .find( "div.mce-toolbar-grp" ).show().sticky( {topSpacing: 60} );
+                                              .find( "div.mce-toolbar-grp" ).unstick().sticky( {topSpacing: 60} );
                                   } );
-                                  theEditor.on( 'blur', function () {
+                                  theEditor.on( 'blur', function (e) {
                                       theEditor.selection.collapse();
-                                      $( this.contentAreaContainer.parentElement ).toggleClass( 'wcm-mce-toolbar-hidden', true ).find(
-                                              "div.mce-toolbar-grp" ).hide().unstick();
+                                      var parent = $( this.contentAreaContainer.parentElement );
+                                      setTimeout( function () {
+                                          parent.toggleClass( 'wcm-mce-toolbar-hidden', true );
+                                      }, 250 );
                                   } );
                                   theEditor.on( "init", function () {
-                                      $( this.contentAreaContainer.parentElement ).toggleClass( 'wcm-mce-toolbar-hidden', true ).find(
-                                              "div.mce-toolbar-grp" ).hide().unstick();
+                                      $( this.contentAreaContainer.parentElement )
+                                              .toggleClass( 'wcm-mce-toolbar-hidden', true )
+                                              .find( "div.mce-toolbar-grp" ).unstick();
                                   } );
+
                                   theEditor.on( "change", function ( cm ) {
                                       $( this.contentAreaContainer.parentElement ).closest( 'form' ).data( 'changed', true );
                                   } );
                               }
                           } );
         } );
-
-        tinymce.init( {
-                          selector: 'textarea',
-                          init_instance_callback: function ( editor ) {
-                              editor.on( 'Change', function ( e ) {
-                                  console.log( 'Editor contents was changed.' );
-                              } );
-                          }
-                      } );
 
         $( '[data-wcm-markup-type=markup]', node ).each( function () {
             var cm = CodeMirror.fromTextArea( $( this )[0], {lineNumbers: true, mode: 'htmlmixed', viewportMargin: Infinity} );
