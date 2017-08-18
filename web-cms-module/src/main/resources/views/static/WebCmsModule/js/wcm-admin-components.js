@@ -41,11 +41,16 @@
                     selectTab( firstLink );
 
                     window.onbeforeunload = function ( e ) {
-                        var form = $( '#btn-cancel' ).closest( 'form' );
+                        var form = $( '#btn-save' ).closest( 'form' );
                         if ( form.data( 'changed' ) === true ) {
                             return "You have unsaved changes, are you sure you want to navigate away from this page?"
                         }
                     };
+
+                    $( '#btn-save' ).closest( 'form' ).submit( function () {
+                        $( '#btn-save' ).closest( 'form' ).data( 'changed', false );
+                        return true;
+                    } );
 
                     component.find( '> .wcm-sortable-component' )
                             .sortable( {
@@ -80,8 +85,12 @@
                                     selectTab( $( this ).closest( 'li' ).hasClass( 'active' ) ? firstLink : $( this ) );
                                     e.preventDefault();
                                 }
+                                else if ( !shouldNavigateAway( $( this ) ) ) {
+                                    e.preventDefault();
+                                }
                             } );
                 }
         );
+
     } );
 })( jQuery );
