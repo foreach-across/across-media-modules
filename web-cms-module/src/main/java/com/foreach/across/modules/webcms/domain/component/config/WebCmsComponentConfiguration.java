@@ -24,6 +24,7 @@ import com.foreach.across.modules.entity.views.support.EntityMessages;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.ContainerMemberViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
@@ -45,6 +46,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 	private final ContainerMemberViewProcessor containerMemberViewProcessor;
 	private final SingleWebCmsComponentFormProcessor formProcessor;
 	private final SearchComponentViewProcessor searchComponentViewProcessor;
+	private final WebCmsComponentModelService componentModelService;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
@@ -61,6 +63,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 
 		// Configure the globally shared components
 		entities.withType( WebCmsComponent.class )
+		        .entityModel( modelBuilder -> modelBuilder.saveMethod( componentModelService::save ) )
 		        .properties(
 				        props -> props.property( "componentType" ).order( 0 ).and()
 				                      .property( "title" ).order( 1 ).and()

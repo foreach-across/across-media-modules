@@ -3,6 +3,26 @@
 #
 types:
   #
+  # Custom component types
+  #
+  component:
+    teaser:
+      name: Teaser
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          wcm:components:
+            title:
+              componentType: text-field
+              content: Teaser title
+              sortIndex: 1
+            body:
+              componentType: rich-text
+              sortIndex: 2
+
+  #
   # Custom article types: small article, big article
   #
   article:

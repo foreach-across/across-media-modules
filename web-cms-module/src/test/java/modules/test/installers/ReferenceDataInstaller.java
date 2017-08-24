@@ -41,6 +41,7 @@ public class ReferenceDataInstaller extends AbstractWebCmsDataInstaller
 		locations.add( "classpath:installers/reference-data/base-publications.yml" );
 		locations.add( "classpath:installers/reference-data/base-menus.yml" );
 		locations.add( "classpath:installers/reference-data/base-pages.yml" );
+		locations.add( "classpath:installers/reference-data/base-components.yml" );
 
 		// Apply extensions that modify previously imported base data
 		locations.add( "classpath:installers/reference-data/extension-menus.yml" );

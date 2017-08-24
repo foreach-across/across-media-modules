@@ -121,6 +121,15 @@ public interface WebCmsComponentModelService
 	<U extends WebCmsComponentModel> U buildModelForComponent( WebCmsComponent component, Class<U> expectedType );
 
 	/**
+	 * Save a {@link WebCmsComponent} to the repository. If the component is a new component, this will build the
+	 * component model before saving, ensuring support for component templates.
+	 *
+	 * @param component to save
+	 * @return component
+	 */
+	WebCmsComponent save( WebCmsComponent component );
+
+	/**
 	 * Save a {@link WebCmsComponentModel} to the repository.
 	 * The return value is the main {@link WebCmsComponent} that this model represents.
 	 *
