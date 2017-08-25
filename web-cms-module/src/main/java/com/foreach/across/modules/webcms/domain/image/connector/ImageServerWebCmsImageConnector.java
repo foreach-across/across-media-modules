@@ -28,6 +28,8 @@ import lombok.Setter;
 import java.util.UUID;
 
 /**
+ * Implements the {@link WebCmsImageConnector} using an ImageServer client.
+ *
  * @author Arne Vandamme
  * @since 0.0.2
  */

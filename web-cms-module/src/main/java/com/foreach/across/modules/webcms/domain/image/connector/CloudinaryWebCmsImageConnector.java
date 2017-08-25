@@ -28,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 
 /**
+ * Implements the {@link WebCmsImageConnector} using the Cloudinary API.
+ *
  * @author Arne Vandamme
  * @since 0.0.2
  */
