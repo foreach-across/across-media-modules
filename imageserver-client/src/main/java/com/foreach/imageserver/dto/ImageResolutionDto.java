@@ -91,6 +91,13 @@ public class ImageResolutionDto
 		this.allowedOutputTypes = allowedOutputTypes;
 	}
 
+	/**
+	 * @return dimensions of the resolution
+	 */
+	public DimensionsDto getDimensions() {
+		return new DimensionsDto( width, height );
+	}
+
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {

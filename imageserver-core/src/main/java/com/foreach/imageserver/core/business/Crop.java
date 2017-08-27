@@ -54,6 +54,10 @@ public class Crop
 		return height <= 0 || width <= 0;
 	}
 
+	public Dimensions getDimensions() {
+		return new Dimensions( width, height );
+	}
+
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {

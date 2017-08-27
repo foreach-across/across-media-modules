@@ -8,10 +8,10 @@ import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,11 +22,14 @@ import static org.mockito.Mockito.when;
 /**
  * @author Arne Vandamme
  */
+@RunWith(MockitoJUnitRunner.class)
 public class CropGeneratorTest
 {
 	private int resolutionIdCounter;
 
 	private CropGeneratorImpl cropGenerator;
+
+	private ImageResolutionServiceImpl imageResolutionService;
 
 	private Image image;
 	private ImageContext context;
@@ -43,12 +46,15 @@ public class CropGeneratorTest
 
 	@Before
 	public void before() {
-		MockitoAnnotations.initMocks( this );
-
+		imageResolutionService = new ImageResolutionServiceImpl();
 		cropGenerator = new CropGeneratorImpl();
 		cropGenerator.setCropGeneratorUtil( new CropGeneratorUtilImpl() );
 		cropGenerator.setImageModificationManager( imageModificationManager );
 		cropGenerator.setImageProfileManager( imageProfileManager );
+		cropGenerator.setImageResolutionManager( imageResolutionManager );
+		cropGenerator.setImageResolutionService( imageResolutionService );
+
+		imageResolutionService.setImageResolutionManager( imageResolutionManager );
 
 		image = new Image();
 		image.setId( 1 );
@@ -108,7 +114,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void useRegisteredModificationFromHigherResolutionWithSameAspectRatio() {
 		// register a crop for 2000x2000 and 500x500
 		List<ImageModification> registeredModifications = Arrays.asList(
@@ -131,7 +136,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void inCaseOfSameDistanceTheHigherResolutionShouldBeUsed() {
 		List<ImageModification> registeredModifications = Arrays.asList(
 				createModification( 500, 500, 3500, 1500, 500, 500 ),
@@ -148,7 +152,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void inCaseOfOnlyLowerResolutionCropAvailableThatOneShouldBeUsed() {
 		List<ImageModification> registeredModifications = Arrays.asList(
 				createModification( 800, 800, 3500, 1500, 500, 500 ),
@@ -168,7 +171,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void inCaseOfOriginalAspectRatioOtherCropsAreIgnored() {
 		List<ImageModification> registeredModifications = Arrays.asList(
 				createModification( 800, 800, 3500, 1500, 500, 500 ),
@@ -184,7 +186,6 @@ public class CropGeneratorTest
 	}
 
 	@Test
-	@Ignore
 	public void inCaseOfBigDistanceDifferenceTheClosestResolutionShouldBeUsed() {
 		List<ImageModification> registeredModifications = Arrays.asList(
 				createModification( 800, 800, 3500, 1500, 500, 500 ),
@@ -193,8 +194,8 @@ public class CropGeneratorTest
 		);
 
 		when( imageModificationManager.getAllModifications( 1 ) ).thenReturn( registeredModifications );
-
-		// 1000x1000 request should use the 2000x2000 crop
+		// TODO: I would prefer to always use the highest available best matching crop.
+		// 1000x1000 request should use the 800x800 crop
 		requestModification( 1000, 1000 );
 		assertResolution( 1000, 1000 );
 		assertCrop( 1, 2, 3, 4 );

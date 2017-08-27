@@ -23,11 +23,23 @@ public class TestImageServerConversionUtils
 	}
 
 	@Test
-	public void normalizeOnAspectRatioWillModifyBasedOnLargestDimension() {
+	public void normalizeOnAspectRatioWillExtendBasedOnLargestDimension() {
 		assertEquals( new DimensionsDto( 800, 600 ),
 		              normalize( new DimensionsDto( 800, 200 ), new AspectRatio( 4, 3 ) ) );
+		assertEquals( new DimensionsDto( 800, 600 ),
+		              normalize( new DimensionsDto( 200, 600 ), new AspectRatio( 4, 3 ) ) );
 		assertEquals( new DimensionsDto( 600, 800 ),
 		              normalize( new DimensionsDto( 200, 800 ), new AspectRatio( 3, 4 ) ) );
+
+		assertEquals( new DimensionsDto( 1000, 1000 ),
+		              normalize( new DimensionsDto( 0, 1000 ), new AspectRatio( 1, 1 ) ) );
+		assertEquals( new DimensionsDto( 1000, 1000 ),
+		              normalize( new DimensionsDto( 1000, 0 ), new AspectRatio( 1, 1 ) ) );
+
+		assertEquals( new DimensionsDto( 800, 600 ),
+		              normalize( new DimensionsDto( 600, 600 ), new AspectRatio( 4, 3 ) ) );
+		assertEquals( new DimensionsDto( 600, 800 ),
+		              normalize( new DimensionsDto( 600, 600 ), new AspectRatio( 3, 4 ) ) );
 	}
 
 	@Test
@@ -37,6 +49,16 @@ public class TestImageServerConversionUtils
 		assertFalse( fitsIn( new DimensionsDto( 1600, 1200 ), new DimensionsDto( 1024, 768 ) ) );
 		assertFalse( fitsIn( new DimensionsDto( 1024, 1201 ), new DimensionsDto( 1600, 1200 ) ) );
 		assertFalse( fitsIn( new DimensionsDto( 1601, 768 ), new DimensionsDto( 1600, 1200 ) ) );
+	}
+
+	@Test
+	public void cropIsWhithinBox() {
+		assertTrue( isWithinBox( new CropDto( 0, 0, 100, 100 ), new DimensionsDto( 100, 100 ) ) );
+		assertTrue( isWithinBox( new CropDto( 50, 10, 100, 100 ), new DimensionsDto( 1000, 1000 ) ) );
+		assertFalse( isWithinBox( new CropDto( 0, 0, 100, 100 ), new DimensionsDto( 90, 100 ) ) );
+		assertFalse( isWithinBox( new CropDto( -50, 10, 100, 100 ), new DimensionsDto( 1000, 1000 ) ) );
+		assertFalse( isWithinBox( new CropDto( 50, -10, 100, 100 ), new DimensionsDto( 1000, 1000 ) ) );
+		assertFalse( isWithinBox( new CropDto( -50, -10, 100, 100 ), new DimensionsDto( 1000, 1000 ) ) );
 	}
 
 	@Test
@@ -111,6 +133,64 @@ public class TestImageServerConversionUtils
 
 		comparison( da1, da2, false );
 		assertEquals( true, calculateAspectRatio( da1 ).equals( calculateAspectRatio( da2 ) ) );
+	}
+
+	@Test
+	public void distanceBetweenEqualsIsZero() {
+		DimensionsDto one = new DimensionsDto( 800, 600 );
+		DimensionsDto two = new DimensionsDto( 800, 600 );
+
+		assertEquals( 0, calculateDistance( one, two ) );
+		assertEquals( 0, calculateDistance( two, one ) );
+	}
+
+	@Test
+	public void distanceIsPositiveIfDimensionIsLarger() {
+		DimensionsDto one = new DimensionsDto( 800, 600 );
+
+		assertEquals( ( 1600 * 1200 - 800 * 600 ), calculateDistance( one, new DimensionsDto( 1600, 1200 ) ) );
+		assertEquals( ( 900 * 700 - 800 * 600 ), calculateDistance( one, new DimensionsDto( 900, 700 ) ) );
+		assertEquals( Math.abs( 200 * 600 - 800 * 600 ), calculateDistance( new DimensionsDto( 200, 600 ), one ) );
+	}
+
+	@Test
+	public void distanceIsNegativeIfDimensionIsSmaller() {
+		DimensionsDto one = new DimensionsDto( 800, 600 );
+
+		assertEquals( -( 1600 * 1200 - 800 * 600 ), calculateDistance( new DimensionsDto( 1600, 1200 ), one ) );
+		assertEquals( -( 900 * 700 - 800 * 600 ), calculateDistance( new DimensionsDto( 900, 700 ), one ) );
+
+		assertEquals( -1, calculateDistance( new DimensionsDto( 600, 800 ), one ) );
+		assertEquals( -1, calculateDistance( one, new DimensionsDto( 600, 800 ) ) );
+
+		assertEquals( -Math.abs( 200 * 600 - 800 * 600 ), calculateDistance( one, new DimensionsDto( 200, 600 ) ) );
+	}
+
+	@Test
+	public void extendCropCanReturnNegativeCoordinates() {
+		AspectRatio aspectRatio = new AspectRatio( 1, 1 );
+
+		assertEquals( new CropDto( 0, -25, 100, 100 ), extendCrop( new CropDto( 0, 0, 100, 50 ), aspectRatio ) );
+		assertEquals( new CropDto( -25, 0, 100, 100 ), extendCrop( new CropDto( 0, 0, 50, 100 ), aspectRatio ) );
+		assertEquals( new CropDto( 50, 100, 600, 600 ), extendCrop( new CropDto( 200, 100, 300, 600 ), aspectRatio ) );
+		assertEquals( new CropDto( 50, -100, 600, 600 ), extendCrop( new CropDto( 50, 100, 600, 200 ), aspectRatio ) );
+	}
+
+	@Test
+	public void shrinkCropTests() {
+		AspectRatio aspectRatio = new AspectRatio( 1, 1 );
+
+		assertEquals( new CropDto( 100, 0, 600, 600 ), shrinkCrop( new CropDto( 0, 0, 800, 600 ), aspectRatio ) );
+		assertEquals( new CropDto( 50, 150, 600, 600 ), shrinkCrop( new CropDto( 50, 50, 600, 800 ), aspectRatio ) );
+	}
+
+	@Test
+	public void moveCropsToFit() {
+		DimensionsDto boxDto = new DimensionsDto( 800, 800 );
+
+		assertEquals( new CropDto( 0, 0, 800, 600 ), moveToFit( new CropDto( -50, 0, 800, 600 ), boxDto ) );
+		assertEquals( new CropDto( 0, 0, 640, 480 ), moveToFit( new CropDto( 0, -25, 640, 480 ), boxDto ) );
+		assertEquals( new CropDto( 0, 200, 800, 600 ), moveToFit( new CropDto( 300, 500, 800, 600 ), boxDto ) );
 	}
 
 	private void comparison( DimensionsDto left, DimensionsDto right, boolean expected ) {
