@@ -117,9 +117,10 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	@Override
 	public boolean move( FileDescriptor source, FileDescriptor target ) {
 		FileRepository sourceRep = requireRepository( source.getRepositoryId() );
-		if (source.getRepositoryId().equals( target.getRepositoryId() )) {
+		if ( source.getRepositoryId().equals( target.getRepositoryId() ) ) {
 			return sourceRep.move( source, target );
-		} else {
+		}
+		else {
 			FileRepository targetRep = requireRepository( target.getRepositoryId() );
 			FileDescriptor temp = save( targetRep.getRepositoryId(), sourceRep.getInputStream( source ) );
 			return move( temp, target ) && delete( source );

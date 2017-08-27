@@ -84,7 +84,7 @@ public interface FileRepository
 	 * Get an OutputStream that can be used to update the contents of the file.
 	 * No matter the repository implementation, writes to the OutputStream should
 	 * replace the existing contents.
-	 *
+	 * <p>
 	 * Depending on the implementation, this can happen on close(), flush() or instantaneously.
 	 *
 	 * @param descriptor FileDescriptor instance.
@@ -97,7 +97,7 @@ public interface FileRepository
 	 * Reading the stream *should not be done more than once* to ensure compatibility
 	 * across FileRepository implementations.  Once a stream has been consumed, a new
 	 * InputStream should be requested of the repository.
-	 *
+	 * <p>
 	 * If the file does not exist null will be returned.
 	 *
 	 * @param descriptor FileDescriptor instance.

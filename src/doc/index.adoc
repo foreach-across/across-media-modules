@@ -1,9 +1,9 @@
 = FileManagerModule
-Arne Vandamme
-1.1.0.RELEASE
+Arne Vandamme, Sander Van Loock
+1.2.0.RELEASE
 :toc: left
 :sectanchors:
-:module-version: 1.1.0.RELEASE
+:module-version: 1.2.0.RELEASE
 :module-name: FileManagerModule
 :module-artifact: file-manager-module
 :module-url: https://foreach.atlassian.net/wiki/display/AX/FileManagerModule
@@ -63,6 +63,10 @@ Module website: {module-url}
 
 == What's new in this version?
 :numbered!:
+=== 1.2.0.RELEASE
+
+* Added support for <<s3-repository,Amazon S3 file repositories>>
+
 === 1.1.0.RELEASE
 
 * Switched the settings to `@ConfigurationProperties`
@@ -131,3 +135,70 @@ Simple implementation that stores all files a single root directory.
 If the `pathGenerator` property is set, the `PathGenerator` instance will be used to generate a sub-directory structure to store the files in.
   The `DateFormatPathGenerator` is a default implementation that uses the current date for creating sub-directories.
   Using a `PathGenerator` can help distribute the physical files, avoiding OS performance problems when there are too many files in a single directory.
+
+[[s3-repository]]
+=== AwsS3FileRepository
+Implementation that stores all files to Amazon S3.  To use this `FileRepository`, add the following Maven dependency to include the Amazon SDK for S3.
+
+[source,xml,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+	<dependencies>
+		<dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+        </dependency>
+	</dependencies>
+----
+
+
+To construct a new `AwsS3FileRepository` add following method:
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Autowired
+public void registerS3Repository( FileRepositoryRegistry registry, FileManager fileManager ) {
+ registry.registerRepository(new AwsS3FileRepository(bucketName,amazonAccessKey,amazonAccessSecret,fileManager))
+}
+----
+
+The Amazon access keys and secret can be found at https://console.aws.amazon.com/iam. Make sure the corresponding user has permissions to access S3 buckets.
+
+If you want to get a `File` reference using `AwsS3FileRepository#getAsFile`,  a local copy of the file wil be kept.
+The provided `fileManager` is used to create temporary files.
+
+==== AwsS3FileRepository customization
+To configure another region within AWS where your S3 bucket is located, you can provide this `amazonRegion` in the constuctor.
+By default the `amazonRegion` is `eu-central-1`. Make sure the bucketName refers to a bucket in the given Amazon region.
+
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Autowired
+public void registerS3Repository( FileRepositoryRegistry registry, FileManager fileManager ) {
+ registry.registerRepository(new AwsS3FileRepository(bucketName,amazonAccessKey,amazonAccessSecret,fileManager,amazonRegion))
+}
+----
+
+If you want other paths to be generated within your S3 bucket, you can pass a `PathGenerator` instance:
+[source,java,indent=0]
+[subs="verbatim,quotes,attributes"]
+----
+@Autowired
+public void registerS3Repository( FileRepositoryRegistry registry, FileManager fileManager ) {
+ registry.registerRepository(new AwsS3FileRepository(bucketName,amazonAccessKey,amazonAccessSecret,fileManager,amazonRegion,pathGenerator))
+}
+----
+By default, no additional paths will be generated and all files will be placed directly in the S3 bucket.
+Because S3 buckets do not know the concept of "sub-directories" and only keys within buckets,  using a `pathGenerator` is not recommended.
+However, it can be useful if you want to switch between other implementations of `FileRepository` later on.
+
+
+
+
+
+
+
+
+
+
