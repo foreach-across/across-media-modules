@@ -1,8 +1,10 @@
 package com.foreach.imageserver.core.controllers;
 
+import com.foreach.imageserver.client.ImageRequestHashBuilder;
 import com.foreach.imageserver.core.annotations.ImageServerController;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageResolution;
+import com.foreach.imageserver.core.config.WebConfiguration;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.ViewImageResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
@@ -20,6 +22,7 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -62,18 +65,21 @@ public class ImageStreamingController
 	@Autowired
 	private ImageService imageService;
 
-	private String accessToken;
+	@Autowired(required = false)
+	@Qualifier(WebConfiguration.IMAGE_REQUEST_HASH_BUILDER)
+	private ImageRequestHashBuilder hashBuilder;
+
+	private final String accessToken;
+	private final boolean strictMode;
+
 	private boolean provideStackTrace = false;
 	private int maxCacheAgeInSeconds = 30;
 
 	private String akamaiCacheMaxAge = "";
 
-	public ImageStreamingController( String accessToken ) {
+	public ImageStreamingController( String accessToken, boolean strictMode ) {
 		this.accessToken = accessToken;
-	}
-
-	public void setAccessToken( String accessToken ) {
-		this.accessToken = accessToken;
+		this.strictMode = strictMode;
 	}
 
 	public void setProvideStackTrace( boolean provideStackTrace ) {
@@ -146,12 +152,13 @@ public class ImageStreamingController
 	}
 
 	@RequestMapping(value = VIEW_PATH, method = RequestMethod.GET)
-	public void view( @RequestParam(value = "iid", required = true) String externalId,
-	                  @RequestParam(value = "context", required = true) String contextCode,
+	public void view( @RequestParam(value = "iid") String externalId,
+	                  @RequestParam(value = "context") String contextCode,
 	                  ImageAspectRatioDto aspectRatioDto,
 	                  ImageResolutionDto imageResolutionDto,
 	                  ImageVariantDto imageVariantDto,
 	                  String size,
+	                  @RequestParam(value = "hash", required = false) String securityHash,
 	                  HttpServletResponse response ) {
 		// TODO Make sure we only rely on objects that can be long-term cached for retrieving the image.
 
@@ -163,6 +170,18 @@ public class ImageStreamingController
 
 			viewImageRequest.setImageResolutionDto( determineImageResolution( externalId, imageResolutionDto, size ) );
 			viewImageRequest.setImageAspectRatioDto( aspectRatioDto );
+
+			if ( !strictMode && securityHash != null && hashBuilder != null ) {
+				viewImageRequest.setSecurityCheckCallback( () -> {
+					String[] sizes = StringUtils.isBlank( size ) ? new String[0]
+							: StringUtils.split( size, RESOLUTION_SEPARATOR );
+					return securityHash.equals(
+							hashBuilder.calculateHash(
+									contextCode, aspectRatioDto.getRatio(), imageResolutionDto, imageVariantDto, sizes
+							)
+					);
+				} );
+			}
 
 			ViewImageResponse viewImageResponse = imageRestService.viewImage( viewImageRequest );
 
@@ -203,10 +222,6 @@ public class ImageStreamingController
 				error( response, HttpStatus.INTERNAL_SERVER_ERROR, "Error encountered while retrieving variant." );
 			}
 		}
-	}
-
-	private void render() {
-
 	}
 
 	private ImageResolutionDto determineImageResolution( String externalId,

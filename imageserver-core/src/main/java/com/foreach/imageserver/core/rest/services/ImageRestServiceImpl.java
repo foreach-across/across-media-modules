@@ -6,7 +6,10 @@ import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.request.RegisterModificationRequest;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.*;
-import com.foreach.imageserver.core.services.*;
+import com.foreach.imageserver.core.services.CropGeneratorUtil;
+import com.foreach.imageserver.core.services.DtoUtil;
+import com.foreach.imageserver.core.services.ImageContextService;
+import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.*;
@@ -72,7 +75,7 @@ public class ImageRestServiceImpl implements ImageRestService
 	}
 
 	private Image getImage( ViewImageRequest request ) {
-		if( StringUtils.isNotBlank( request.getExternalId() ) ) {
+		if ( StringUtils.isNotBlank( request.getExternalId() ) ) {
 			return imageService.getByExternalId( request.getExternalId() );
 		}
 
@@ -172,14 +175,15 @@ public class ImageRestServiceImpl implements ImageRestService
 		}
 
 		if ( request.getImageAspectRatioDto() != null && request.getImageAspectRatioDto().getRatio() != null ) {
-			return viewImageForRatio( response, image, context, request.getImageAspectRatioDto(),
+			return viewImageForRatio( request, response, image, context, request.getImageAspectRatioDto(),
 			                          request.getImageResolutionDto().getWidth(), request.getImageVariantDto() );
 		}
-		return viewImageForResolution( response, image, context, request.getImageResolutionDto(),
+		return viewImageForResolution( request, response, image, context, request.getImageResolutionDto(),
 		                               request.getImageVariantDto() );
 	}
 
-	private ViewImageResponse viewImageForRatio( ViewImageResponse response,
+	private ViewImageResponse viewImageForRatio( ViewImageRequest request,
+	                                             ViewImageResponse response,
 	                                             Image image,
 	                                             ImageContext context,
 	                                             ImageAspectRatioDto imageAspectRatioDto,
@@ -187,17 +191,26 @@ public class ImageRestServiceImpl implements ImageRestService
 		ImageResolution imageResolution =
 				contextService.getImageResolution( context.getId(), DtoUtil.toBusiness( imageAspectRatioDto ),
 				                                   width );
-		if ( imageResolution == null ) {
+		if ( imageResolution == null && !request.isValidCustomRequest() ) {
 			LOG.warn( "Resolution does not exist for ratio {} in context {}", imageAspectRatioDto.getRatio(),
 			          context.getCode() );
 			response.setResolutionDoesNotExist( true );
 			return response;
 		}
+		else if ( imageResolution == null ) {
+			// Build custom image resolution matching the width
+			int height = DtoUtil.toBusiness( imageAspectRatioDto ).calculateHeightForWidth( width );
+			imageResolution = new ImageResolution();
+			imageResolution.setWidth( width );
+			imageResolution.setHeight( height );
+			imageResolution.setAllowedOutputTypes( EnumSet.allOf( ImageType.class ) );
+		}
 
-		return viewImageForResolution( response, image, context, imageResolution, imageVariantDto );
+		return viewImageForResolution( request, response, image, context, imageResolution, imageVariantDto );
 	}
 
-	private ViewImageResponse viewImageForResolution( ViewImageResponse response,
+	private ViewImageResponse viewImageForResolution( ViewImageRequest request,
+	                                                  ViewImageResponse response,
 	                                                  Image image,
 	                                                  ImageContext context,
 	                                                  ImageResolutionDto imageResolutionDto,
@@ -206,23 +219,31 @@ public class ImageRestServiceImpl implements ImageRestService
 				context.getId(), imageResolutionDto.getWidth(), imageResolutionDto.getHeight()
 		);
 
-		if ( imageResolution == null ) {
+		if ( imageResolution == null && !request.isValidCustomRequest() ) {
 			LOG.warn( "Resolution {}x{} does not exist for context {}", imageResolutionDto.getWidth(),
 			          imageResolutionDto.getHeight(), context.getCode() );
 			response.setResolutionDoesNotExist( true );
 			return response;
 		}
-		return viewImageForResolution( response, image, context, imageResolution, imageVariantDto );
+		else if ( imageResolution == null ) {
+			// Build custom image resolution matching the width
+			imageResolution = DtoUtil.toBusiness( imageResolutionDto );
+			imageResolution.setAllowedOutputTypes( EnumSet.allOf( ImageType.class ) );
+		}
+
+		return viewImageForResolution( request, response, image, context, imageResolution, imageVariantDto );
 	}
 
-	private ViewImageResponse viewImageForResolution( ViewImageResponse response,
+	private ViewImageResponse viewImageForResolution( ViewImageRequest request,
+	                                                  ViewImageResponse response,
 	                                                  Image image,
 	                                                  ImageContext context,
 	                                                  ImageResolution imageResolution,
 	                                                  ImageVariantDto imageVariantDto ) {
 		// when available, the bounding box dimensions should be those of an existing resolution
 		DimensionsDto boundaries = imageVariantDto.getBoundaries();
-		if ( boundaries != null && !boundingResolutionExists( boundaries, context ) ) {
+		if ( boundaries != null && !boundingResolutionExists( boundaries,
+		                                                      context ) && !request.isValidCustomRequest() ) {
 			LOG.warn( "Bounding box resolution {}x{} does not exist for context {}",
 			          imageResolution.getWidth(),
 			          imageResolution.getHeight(), context.getCode() );
@@ -232,7 +253,7 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		ImageVariant variant = imageVariant( image, imageVariantDto );
 
-		if ( !imageResolution.isAllowedOutputType( variant.getOutputType() ) ) {
+		if ( !imageResolution.isAllowedOutputType( variant.getOutputType() ) && !request.isValidCustomRequest() ) {
 			LOG.warn( "Output type {} is not allowed for resolution {}", variant.getOutputType(),
 			          imageResolution );
 

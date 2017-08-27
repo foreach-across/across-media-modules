@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.foreach.imageserver</groupId>
 		<artifactId>imageserver-platform</artifactId>
-		<version>3.5.RELEASE</version>
+		<version>4.0.0.RELEASE</version>
 	</parent>
 
 	<artifactId>imageserver-client</artifactId>
 	<name>ImageServer Client Module</name>
-	<version>3.5.RELEASE</version>
+	<version>4.0.0.RELEASE</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -41,6 +41,11 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<!-- Register MappingJackson2HttpMessageConverter for MockRestServiceServer -->
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

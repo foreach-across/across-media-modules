@@ -1,7 +1,9 @@
 package com.foreach.imageserver.core.config;
 
+import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
+import com.foreach.imageserver.client.ImageRequestHashBuilder;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.annotations.ImageServerController;
 import com.foreach.imageserver.core.controllers.*;
@@ -9,6 +11,7 @@ import org.springframework.aop.support.annotation.AnnotationClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 
 /**
@@ -17,8 +20,13 @@ import org.springframework.core.env.Environment;
 @Configuration
 public class WebConfiguration
 {
+	public static final String IMAGE_REQUEST_HASH_BUILDER = "serverImageRequestHashBuilder";
+
 	@Autowired
 	private Environment environment;
+
+	@Autowired
+	private ImageServerCoreModuleSettings settings;
 
 	/**
 	 * Separate handlerMapping that allows its own interceptor collection (for reasons of performance).
@@ -54,7 +62,8 @@ public class WebConfiguration
 
 	@Bean
 	public ImageStreamingController imageStreamingController() {
-		ImageStreamingController imageStreamingController = new ImageStreamingController( accessToken() );
+		ImageStreamingController imageStreamingController =
+				new ImageStreamingController( accessToken(), settings.isStrictMode() );
 		imageStreamingController.setMaxCacheAgeInSeconds(
 				environment.getProperty( ImageServerCoreModuleSettings.MAX_BROWSER_CACHE_SECONDS, Integer.class, 60 ) );
 
@@ -65,6 +74,16 @@ public class WebConfiguration
 				environment.getProperty( ImageServerCoreModuleSettings.PROVIDE_STACKTRACE, Boolean.class, false ) );
 
 		return imageStreamingController;
+	}
+
+	@Bean(name = IMAGE_REQUEST_HASH_BUILDER)
+	@Primary
+	@AcrossCondition({ "!${" + ImageServerCoreModuleSettings.STRICT_MODE + ":false}",
+	                   "'${" + ImageServerCoreModuleSettings.MD5_HASH_TOKEN + ":}'.length() > 0" })
+	public ImageRequestHashBuilder serverImageRequestHashBuilder() {
+		return ImageRequestHashBuilder.md5(
+				environment.getRequiredProperty( ImageServerCoreModuleSettings.MD5_HASH_TOKEN )
+		);
 	}
 
 	private String accessToken() {

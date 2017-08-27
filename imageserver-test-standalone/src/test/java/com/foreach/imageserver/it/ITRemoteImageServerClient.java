@@ -5,6 +5,7 @@ import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,8 @@ public class ITRemoteImageServerClient
 
 	@Before
 	public void createClient() {
-		String url = "http://localhost:" + System.getProperty( "local.tomcat.port", "8078" ) + "/resources/images";
+		String url = "http://localhost:" + StringUtils.defaultIfEmpty( System.getProperty( "local.tomcat.port" ),
+		                                                               "8078" ) + "/resources/images";
 		String accessToken = "standalone-access-token";
 
 		imageServerClient = new RemoteImageServerClient( url, accessToken );
@@ -215,6 +217,16 @@ public class ITRemoteImageServerClient
 		assertTrue( hasResolution( resolutions, 640, 480, false ) );
 		assertTrue( hasResolution( resolutions, 800, 600, true ) );
 		assertTrue( hasResolution( resolutions, 1024, 768, true ) );
+
+		assertTrue( consumeImage( externalId, "website", 640, 480 ) );
+		assertTrue( consumeImage( externalId, "tablet", 800, 600 ) );
+		assertTrue( consumeImage( externalId, "website", 1024, 768 ) );
+	}
+
+	private boolean consumeImage( String imageId, String context, int width, int height ) throws IOException {
+		InputStream is = imageServerClient.imageStream( imageId, context, width, height, ImageTypeDto.JPEG );
+		byte[] data = IOUtils.toByteArray( is );
+		return data.length > 0;
 	}
 
 	@Test

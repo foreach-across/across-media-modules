@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageProfileManager;
+import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.services.exceptions.ImageCouldNotBeRetrievedException;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.logging.LogHelper;
@@ -50,14 +51,40 @@ import java.util.Set;
 @Service
 public class CropGeneratorImpl implements CropGenerator
 {
-	@Autowired
 	private ImageModificationManager imageModificationManager;
 
-	@Autowired
 	private CropGeneratorUtil cropGeneratorUtil;
 
-	@Autowired
 	private ImageProfileManager imageProfileManager;
+
+	private ImageResolutionManager imageResolutionManager;
+
+	private ImageResolutionService imageResolutionService;
+
+	@Autowired
+	public void setImageModificationManager( ImageModificationManager imageModificationManager ) {
+		this.imageModificationManager = imageModificationManager;
+	}
+
+	@Autowired
+	public void setCropGeneratorUtil( CropGeneratorUtil cropGeneratorUtil ) {
+		this.cropGeneratorUtil = cropGeneratorUtil;
+	}
+
+	@Autowired
+	public void setImageProfileManager( ImageProfileManager imageProfileManager ) {
+		this.imageProfileManager = imageProfileManager;
+	}
+
+	@Autowired
+	public void setImageResolutionManager( ImageResolutionManager imageResolutionManager ) {
+		this.imageResolutionManager = imageResolutionManager;
+	}
+
+	@Autowired
+	public void setImageResolutionService( ImageResolutionService imageResolutionService ) {
+		this.imageResolutionService = imageResolutionService;
+	}
 
 	@Override
 	public ImageModificationDto buildModificationDto( Image image,
@@ -88,7 +115,7 @@ public class CropGeneratorImpl implements CropGenerator
 			}
 			else {
 				modificationDto = new ImageModificationDto( imageResolution.getWidth(), imageResolution.getHeight() );
-				modificationDto.setCrop( DtoUtil.toDto( obtainCrop( image, context, imageResolution ) ) );
+				modificationDto.setCrop( DtoUtil.toDto( findBestMatchingCrop( image, context, imageResolution ) ) );
 			}
 		}
 
@@ -97,10 +124,10 @@ public class CropGeneratorImpl implements CropGenerator
 		return modificationDto;
 	}
 
-	private Crop obtainCrop( Image image, ImageContext context, ImageResolution requestedResolution ) {
+	private Crop findBestMatchingCrop( Image image, ImageContext context, ImageResolution requestedResolution ) {
 		if ( image == null || context == null || requestedResolution == null ) {
 			LOG.warn(
-					"Null parameters not allowed - CropGeneratorImpl#obtainCrop: image={}, context={}, requestedResolution={}",
+					"Null parameters not allowed - CropGeneratorImpl#findBestMatchingCrop: image={}, context={}, requestedResolution={}",
 					LogHelper.flatten( image, context, requestedResolution ) );
 		}
 
@@ -125,7 +152,7 @@ public class CropGeneratorImpl implements CropGenerator
 		List<ImageModification> modifications = imageModificationManager.getAllModifications( image.getId() );
 		result = generateCrop( image, context, requestedResolution, modifications );
 		    /*}
-	    }*/
+		}*/
 
 		if ( result == null ) {
 			throw new ImageCouldNotBeRetrievedException( "No crop could be determined for this image." );
@@ -163,16 +190,16 @@ public class CropGeneratorImpl implements CropGenerator
 			return new Crop( 0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight() );
 		}
 
-		Crops crops = obtainCrops( image, context, modifications );
+		Crops crops = obtainCrops( image, context, modifications, targetDimensions );
 
 		Set<CropCandidate> sameContextCandidates =
 				calculateCropCandidates( image, targetDimensions, crops.getSameContext() );
 		Set<CropCandidate> differentContextCandidates =
 				calculateCropCandidates( image, targetDimensions, crops.getDifferentContext() );
 
-		CropCandidate chosenCandidate = findBestNonCuttingCrop( sameContextCandidates );
+		CropCandidate chosenCandidate = findBestNonCuttingCrop( sameContextCandidates, targetDimensions, modifications );
 		if ( chosenCandidate == null ) {
-			chosenCandidate = findBestNonCuttingCrop( differentContextCandidates );
+			chosenCandidate = findBestNonCuttingCrop( differentContextCandidates, targetDimensions, modifications );
 		}
 		if ( chosenCandidate == null ) {
 			Set<CropCandidate> allCandidates =
@@ -185,7 +212,12 @@ public class CropGeneratorImpl implements CropGenerator
 		return chosenCandidate.getCrop();
 	}
 
-	private CropCandidate findBestNonCuttingCrop( Set<CropCandidate> candidates ) {
+	private CropCandidate findBestNonCuttingCrop( Set<CropCandidate> candidates, Dimensions dimension, List<ImageModification> modifications ) {
+
+		CropCandidate cropCandidate = findBestMatchUsingResolution( dimension, modifications );
+		if ( cropCandidate != null ) return cropCandidate;
+
+
 		Iterator<CropCandidate> candidateIterator = candidates.iterator();
 
 		CropCandidate firstNonCuttingCrop = findFirstNonCuttingCrop( candidateIterator );
@@ -215,6 +247,12 @@ public class CropGeneratorImpl implements CropGenerator
 		}
 
 		return bestFitSoFar;
+	}
+
+	private CropCandidate findBestMatchUsingResolution( Dimensions dimensions, List<ImageModification> modifications ) {
+		Crop crop = imageResolutionService.findBestMatchingCropBasedOnResolution( dimensions, modifications );
+
+		return crop != null ? new CropCandidate( crop, 0, 0, 0 ) : null;
 	}
 
 	private CropCandidate findBestCuttingCrop( Set<CropCandidate> candidates ) {
@@ -400,8 +438,8 @@ public class CropGeneratorImpl implements CropGenerator
 		return new CropCandidate( newCrop, extensionMeasure, cutOffMeasure, scaleFactor );
 	}
 
-	private Crops obtainCrops( Image image, ImageContext context, List<ImageModification> modifications ) {
-		if ( image == null || context == null || modifications == null ) {
+	private Crops obtainCrops( Image image, ImageContext context, List<ImageModification> modifications, Dimensions targetDimensions ) {
+		if ( image == null || context == null || modifications == null || targetDimensions == null ) {
 			LOG.warn(
 					"Null parameters not allowed - CropGeneratorImpl#obtainCrops: image={}, context={}, modifications={}",
 					LogHelper.flatten( image, context, modifications ) );
@@ -423,8 +461,14 @@ public class CropGeneratorImpl implements CropGenerator
 		 * Always consider the entire image. This also means we always have at least one crop. In the worst case
 		 * scenario (i.e. when not a single crop is defined) we'll scale the entire image and do some cutting to get
 		 * the required ratio.
+		 * If the aspect ratio of the original image is the same as the aspect ratio of the desired image, we count
+		 * the original image in the same context.
 		 */
-		differentContext.add( new Crop( 0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight() ) );
+		if ( targetDimensions.fetchAspectRatio().equals( image.getDimensions().fetchAspectRatio() )) {
+			sameContext.add( new Crop( 0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight() ) );
+		} else {
+			differentContext.add( new Crop( 0, 0, image.getDimensions().getWidth(), image.getDimensions().getHeight() ) );
+		}
 
 		return new Crops( sameContext, differentContext );
 	}

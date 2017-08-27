@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNull;
 
 public class CropGeneratorUtilTest
 {
-
 	private CropGeneratorUtil cropGeneratorUtil = new CropGeneratorUtilImpl();
 
 	@Test
@@ -33,6 +32,53 @@ public class CropGeneratorUtilTest
 		cropGeneratorUtil.normalizeModificationDto( original, mod );
 
 		assertEquals( new CropDto( 0, 0, 800, 600 ), mod.getCrop() );
+	}
+
+	@Test
+	public void normalizeWithoutCropReturnsTheLargestCropPossibleFromCenter() {
+		Image original = new Image();
+		original.setDimensions( new Dimensions( 4000, 2000 ) );
+
+		ImageModificationDto mod = new ImageModificationDto();
+		mod.setResolution( new ImageResolutionDto( 50, 100 ) );
+
+		cropGeneratorUtil.normalizeModificationDto( original, mod );
+		assertEquals( new ImageResolutionDto( 50, 100 ), mod.getResolution() );
+		assertEquals( new CropDto( 1500, 0, 1000, 2000 ), mod.getCrop() );
+
+		mod = new ImageModificationDto();
+		mod.setResolution( new ImageResolutionDto( 400, 100 ) );
+
+		cropGeneratorUtil.normalizeModificationDto( original, mod );
+		assertEquals( new ImageResolutionDto( 400, 100 ), mod.getResolution() );
+		assertEquals( new CropDto( 0, 500, 4000, 1000 ), mod.getCrop() );
+
+		mod = new ImageModificationDto();
+		mod.setResolution( new ImageResolutionDto( 400, 400 ) );
+
+		cropGeneratorUtil.normalizeModificationDto( original, mod );
+		assertEquals( new ImageResolutionDto( 400, 400 ), mod.getResolution() );
+		assertEquals( new CropDto( 1000, 0, 2000, 2000 ), mod.getCrop() );
+	}
+
+	@Test
+	public void sameAspectRatioIsSimplyAScale() {
+		Image original = new Image();
+		original.setDimensions( new Dimensions( 4000, 2000 ) );
+
+		ImageModificationDto mod = new ImageModificationDto();
+		mod.setResolution( new ImageResolutionDto( 800, 400 ) );
+
+		cropGeneratorUtil.normalizeModificationDto( original, mod );
+		assertEquals( new ImageResolutionDto( 800, 400 ), mod.getResolution() );
+		assertEquals( new CropDto( 0, 0, 4000, 2000 ), mod.getCrop() );
+
+		mod = new ImageModificationDto();
+		mod.setResolution( new ImageResolutionDto( 8000, 4000 ) );
+
+		cropGeneratorUtil.normalizeModificationDto( original, mod );
+		assertEquals( new ImageResolutionDto( 8000, 4000 ), mod.getResolution() );
+		assertEquals( new CropDto( 0, 0, 4000, 2000 ), mod.getCrop() );
 	}
 
 	@Test
@@ -64,10 +110,14 @@ public class CropGeneratorUtilTest
 
 	@Test
 	public void noIntersection() {
-		assertNull( cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 2001, 1000, 500, 500 ) ) );
-		assertNull( cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 499, 1000, 500, 500 ) ) );
-		assertNull( cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 1000, 499, 500, 500 ) ) );
-		assertNull( cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 1000, 2001, 500, 500 ) ) );
+		assertNull(
+				cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 2001, 1000, 500, 500 ) ) );
+		assertNull(
+				cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 499, 1000, 500, 500 ) ) );
+		assertNull(
+				cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 1000, 499, 500, 500 ) ) );
+		assertNull(
+				cropGeneratorUtil.intersect( new Crop( 1000, 1000, 1000, 1000 ), new Crop( 1000, 2001, 500, 500 ) ) );
 	}
 
 	@Test

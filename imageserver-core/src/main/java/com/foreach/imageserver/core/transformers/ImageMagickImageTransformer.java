@@ -114,7 +114,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 		}
 
 		StreamImageSource imageSource = action.getImageSource();
-		try( InputStream stream = imageSource.getImageStream() ) {
+		try (InputStream stream = imageSource.getImageStream()) {
 
 			Info info = new Info( "-", stream, false );
 			return new Dimensions( info.getImageWidth(), info.getImageHeight() );
@@ -134,7 +134,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 
 		ImageType imageType = null;
 		Dimensions dimensions = null;
-		try( InputStream stream = action.getImageStream() ) {
+		try (InputStream stream = action.getImageStream()) {
 			Info info = new Info( "-", stream, false );
 			imageType = toImageType( info );
 			dimensions = new Dimensions( info.getImageWidth(), info.getImageHeight() );
@@ -180,19 +180,21 @@ public class ImageMagickImageTransformer implements ImageTransformer
 
 		// only apply bounding box when available, and when the outputted image is larger than the bounding box
 		Dimensions boundaries = action.getBoundaries();
-		if (boundaries != null && (boundaries.getWidth() > 0 || boundaries.getHeight() > 0)){
+		if ( boundaries != null && ( boundaries.getWidth() > 0 || boundaries.getHeight() > 0 ) ) {
 			Dimensions output = action.getOutputDimensions();
-			if (boundaries.getHeight() < output.getHeight() || boundaries.getWidth() < output.getWidth()){
-				int height = boundaries.getHeight() > 0 && boundaries.getHeight() < output.getHeight() ? boundaries.getHeight() : output.getHeight();
-				int width = boundaries.getWidth() > 0 && boundaries.getWidth() < output.getWidth() ? boundaries.getWidth() : output.getWidth();
+			if ( boundaries.getHeight() < output.getHeight() || boundaries.getWidth() < output.getWidth() ) {
+				int height =
+						boundaries.getHeight() > 0 && boundaries.getHeight() < output.getHeight() ? boundaries.getHeight() : output.getHeight();
+				int width =
+						boundaries.getWidth() > 0 && boundaries.getWidth() < output.getWidth() ? boundaries.getWidth() : output.getWidth();
 				op.resize( width, height );
 			}
 		}
 
 		op.addImage( action.getOutputType().getExtension() + ":-" );
 
-		try( InputStream imageStream = action.getSourceImageSource().getImageStream() ) {
-			try ( ByteArrayOutputStream os = new ByteArrayOutputStream() ) {
+		try (InputStream imageStream = action.getSourceImageSource().getImageStream()) {
+			try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 				cmd.setInputProvider( new Pipe( imageStream, null ) );
 				cmd.setOutputConsumer( new Pipe( null, os ) );
 

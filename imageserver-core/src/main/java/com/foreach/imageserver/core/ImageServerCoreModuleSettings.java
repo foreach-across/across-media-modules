@@ -6,6 +6,7 @@ import com.foreach.across.core.AcrossModuleSettingsRegistry;
 /**
  * @author Arne Vandamme
  */
+
 public class ImageServerCoreModuleSettings extends AcrossModuleSettings
 {
 	/**
@@ -20,11 +21,30 @@ public class ImageServerCoreModuleSettings extends AcrossModuleSettings
 	public static final String IMAGE_SERVER_URL = "imageServerCore.imageServerUrl";
 
 	/**
+	 * Should ImageServer be operating in strict mode.  If so any
+	 * {@link com.foreach.imageserver.client.ImageRequestHashBuilder} will be ignored and only requests for registered
+	 * resolutions will be accepted.  This matches the behaviour of ImageServer pre-4.x.x.  Enabling strict mode can
+	 * have a slight performance gain.
+	 * <p/>
+	 * Type: boolean, default: false
+	 */
+	public static final String STRICT_MODE = "imageServerCore.strictMode";
+
+	/**
 	 * Access token required for secured services.
 	 * <p/>
 	 * Type: string
 	 */
 	public static final String ACCESS_TOKEN = "imageServerCore.accessToken";
+
+	/**
+	 * Token to use for a default {@link com.foreach.imageserver.client.Md5ImageRequestHashBuilder}.
+	 * Will only be used if ImageServer is not in strict mode.
+	 * <p/>
+	 * Be aware that changing the hash token or security hash mechanism can render all existing image urls
+	 * for non-registered resolutions invalid.
+	 */
+	public static final String MD5_HASH_TOKEN = "imageServerCore.md5HashToken";
 
 	/**
 	 * Should a {@link com.foreach.imageserver.core.client.LocalImageServerClient} instance be created
@@ -107,5 +127,9 @@ public class ImageServerCoreModuleSettings extends AcrossModuleSettings
 	@Override
 	protected void registerSettings( AcrossModuleSettingsRegistry registry ) {
 
+	}
+
+	public boolean isStrictMode() {
+		return getProperty( STRICT_MODE, Boolean.class, false );
 	}
 }

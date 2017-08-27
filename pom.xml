@@ -8,38 +8,50 @@
 		<across.version>1.1.1.RELEASE</across.version>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
-		<!-- Sonar -->
-		<sonar.host.url>http://sonar.projects.foreach.be/</sonar.host.url>
-		<sonar.login>buildserver</sonar.login>
-		<sonar.password>buildserver</sonar.password>
 		<sonar.exclusions>deploy/**,target/generated-sources/**</sonar.exclusions>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.jacoco.reportPath>${project.basedir}/../build/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.language>java</sonar.language>
-		<sonar.jdbc.url>jdbc:jtds:sqlserver://fe-proddb02.fe.dom;databaseName=Sonar;SelectMethod=Cursor</sonar.jdbc.url>
-		<sonar.jdbc.driverClassName>net.sourceforge.jtds.jdbc.Driver</sonar.jdbc.driverClassName>
-		<sonar.jdbc.username>jirauser</sonar.jdbc.username>
-		<sonar.jdbc.password>jirauser</sonar.jdbc.password>
 	</properties>
 
 	<repositories>
 		<repository>
 			<id>foreach-nexus</id>
 			<name>Foreach repository</name>
-			<url>http://repository.foreach.be/nexus/content/groups/public</url>
+			<url>https://repository.foreach.be/nexus/repository/public/</url>
 		</repository>
 		<repository>
 			<id>foreach-custom-externals</id>
 			<name>Foreach Custom repository</name>
-			<url>http://repository.foreach.be/nexus/content/repositories/foreach-custom-externals</url>
+			<url>https://repository.foreach.be/nexus/repository/foreach-custom-externals/</url>
 		</repository>
 	</repositories>
 
 	<groupId>com.foreach.imageserver</groupId>
 	<artifactId>imageserver-platform</artifactId>
 	<name>ImageServer Platform</name>
-	<version>3.5.RELEASE</version>
+	<version>4.0.0.RELEASE</version>
 	<packaging>pom</packaging>
+
+	<description>
+		ImageServer application modules.
+	</description>
+	<url>https://repository.foreach.be/projects/image-server/</url>
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Arne Vandamme</name>
+			<email>arne at foreach.be</email>
+			<organization>Foreach</organization>
+			<organizationUrl>http://www.foreach.be</organizationUrl>
+		</developer>
+	</developers>
 
 	<modules>
 		<module>imageserver-client</module>
@@ -152,27 +164,170 @@
 				<version>2.5.1</version>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco-maven-plugin.version}</version>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<configuration>
+					<failOnError>false</failOnError>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>aggregate</id>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
+							<destDir>${project.version}/javadoc</destDir>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>1.5.0</version>
+				<inherited>false</inherited>
+				<configuration>
+					<sourceDirectory>docs</sourceDirectory>
+					<sourceDocumentName>index.adoc</sourceDocumentName>
+					<doctype>book</doctype>
+					<outputDirectory>${project.build.directory}/site/${project.version}/reference</outputDirectory>
+					<backend>html</backend>
+					<attributes>
+						<stylesheet>across.css</stylesheet>
+					</attributes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>output-html</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Build-Time>${maven.build.timestamp}</Build-Time>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.3</version>
+				<inherited>false</inherited>
+				<configuration>
+					<finalName>${project.artifactId}</finalName>
+					<descriptors>
+						<descriptor>docs/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<!-- this is used for inheritance merges -->
+						<phase>package</phase>
+						<!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-	<distributionManagement>
-		<repository>
-			<id>foreach-nexus</id>
-			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>foreach-nexus</id>
-			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
 	<scm>
-		<connection>scm:git:http://stash.foreach.be/scm/fe/across-imageserver-modules.git</connection>
-		<developerConnection>scm:git:http://stash.foreach.be/scm/fe/across-imageserver-modules.git</developerConnection>
+		<connection>scm:git:https://bitbucket.foreach.be/scm/fe/across-imageserver-modules.git</connection>
+		<developerConnection>scm:git:https://bitbucket.foreach.be/scm/fe/across-imageserver-modules.git</developerConnection>
 		<tag>HEAD</tag>
+		<url>https://repository.foreach.be/projects/image-server/</url>
 	</scm>
+
+	<profiles>
+		<profile>
+			<id>sonatype</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>sonatype</id>
+					<name>Sonatype snapshots</name>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+				</snapshotRepository>
+				<repository>
+					<id>sonatype</id>
+					<name>Sonatype release staging</name>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>foreach</id>
+			<distributionManagement>
+				<repository>
+					<id>foreach-nexus</id>
+					<name>Foreach nexus</name>
+					<url>http://repository.foreach.be/nexus/repository/releases/</url>
+				</repository>
+				<snapshotRepository>
+					<id>foreach-nexus</id>
+					<name>Foreach nexus</name>
+					<url>http://repository.foreach.be/nexus/repository/snapshots/</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 </project>

@@ -1,5 +1,7 @@
 package com.foreach.imageserver.dto;
 
+import java.util.Objects;
+
 public class ImageVariantDto
 {
 	private ImageTypeDto imageType;
@@ -36,5 +38,23 @@ public class ImageVariantDto
 
 	public void setBoundaries( DimensionsDto boundaries ) {
 		this.boundaries = boundaries;
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( !( o instanceof ImageVariantDto ) ) {
+			return false;
+		}
+		ImageVariantDto that = (ImageVariantDto) o;
+		return imageType == that.imageType &&
+				Objects.equals( boundaries, that.boundaries );
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( imageType, boundaries );
 	}
 }

@@ -2,6 +2,8 @@ package com.foreach.imageserver.math;
 
 import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.DimensionsDto;
+import com.foreach.imageserver.dto.ImageResolutionDto;
+import org.springframework.util.Assert;
 
 /**
  * Utility methods to calculate/translate DTO instances.
@@ -13,8 +15,100 @@ public class ImageServerConversionUtils
 	private ImageServerConversionUtils() {
 	}
 
+	public static AspectRatio calculateAspectRatio( ImageResolutionDto resolutionDto ) {
+		return calculateAspectRatio( resolutionDto.getDimensions() );
+	}
+
 	public static AspectRatio calculateAspectRatio( DimensionsDto dimensions ) {
 		return new AspectRatio( dimensions.getWidth(), dimensions.getHeight() );
+	}
+
+	/**
+	 * This will extend an existing crop to match a given aspect ratio.
+	 * The center point of the crop will be kept, so extending will happen equally on all sides involved.
+	 * This can return a crop with negative x and y coordinates.
+	 * Use {@link #moveToFit(CropDto, DimensionsDto)} if you also want the crop to be moved about to fit it
+	 * in the visible coordinates box.
+	 * <p/>
+	 * Crop parameters like source and box will be kept.
+	 *
+	 * @param original    crop coordinates
+	 * @param aspectRatio the crop should match
+	 * @return modified crop
+	 * @see #moveToFit(CropDto, DimensionsDto)
+	 */
+	public static CropDto extendCrop( CropDto original, AspectRatio aspectRatio ) {
+		CropDto cropDto = new CropDto( original );
+		DimensionsDto cropDimensions = cropDto.getDimensions();
+		cropDimensions = normalize( cropDimensions, aspectRatio );
+
+		cropDto.setX( cropDto.getX() - ( cropDimensions.getWidth() - cropDto.getWidth() ) / 2 );
+		cropDto.setY( cropDto.getY() - ( cropDimensions.getHeight() - cropDto.getHeight() ) / 2 );
+		cropDto.setWidth( cropDimensions.getWidth() );
+		cropDto.setHeight( cropDimensions.getHeight() );
+
+		return cropDto;
+	}
+
+	/**
+	 * This will shrink an existing crop to match a given aspect ratio.
+	 * The center point of the crop will be kept.  Assuming that the original crop had valid coordinates,
+	 * this will result in a valid crop.
+	 * <p/>
+	 * Crop parameters like source and box will be kept.
+	 *
+	 * @param original    crop coordinates
+	 * @param aspectRatio the crop should match
+	 * @return modified crop
+	 */
+	public static CropDto shrinkCrop( CropDto original, AspectRatio aspectRatio ) {
+		CropDto cropDto = new CropDto( original );
+		DimensionsDto originalDimensions = cropDto.getDimensions();
+		DimensionsDto cropDimensions = normalize( originalDimensions, aspectRatio );
+		cropDimensions = scaleToFitIn( cropDimensions, originalDimensions );
+
+		cropDto.setX( cropDto.getX() + ( cropDto.getWidth() - cropDimensions.getWidth() ) / 2 );
+		cropDto.setY( cropDto.getY() + ( cropDto.getHeight() - cropDimensions.getHeight() ) / 2 );
+		cropDto.setWidth( cropDimensions.getWidth() );
+		cropDto.setHeight( cropDimensions.getHeight() );
+
+		return cropDto;
+	}
+
+	/**
+	 * Will shift a crop to fit entirely inside the box.  Usually used after {@link #extendCrop(CropDto, AspectRatio)}
+	 * to verify that the resulting extension does not surpass the box boundaries.  This counters the center point
+	 * based extending of a crop.
+	 * <p/>
+	 * This function will throw an exception if it is not possible to fit the crop inside the box.
+	 *
+	 * @param original crop coordinates
+	 * @param box      the crop should fit in
+	 * @return modified crop
+	 * @throws IllegalArgumentException if the crop dimensions are impossible to fit in the box
+	 */
+	public static CropDto moveToFit( CropDto original, DimensionsDto box ) {
+		CropDto cropDto = new CropDto( original );
+
+		if ( !fitsIn( cropDto.getDimensions(), box ) ) {
+			throw new IllegalArgumentException(
+					"Crop dimensions are larger than the box dimensions - impossible to fit" );
+		}
+
+		if ( cropDto.getX() < 0 ) {
+			cropDto.setX( 0 );
+		}
+		if ( cropDto.getY() < 0 ) {
+			cropDto.setY( 0 );
+		}
+		if ( cropDto.getX() + cropDto.getWidth() > box.getWidth() ) {
+			cropDto.setX( box.getWidth() - cropDto.getWidth() );
+		}
+		if ( cropDto.getY() + cropDto.getHeight() > box.getHeight() ) {
+			cropDto.setY( box.getHeight() - cropDto.getHeight() );
+		}
+
+		return cropDto;
 	}
 
 	/**
@@ -46,7 +140,8 @@ public class ImageServerConversionUtils
 
 	/**
 	 * Will verify and modify the dimensions so that they match the aspect ratio.
-	 * The largest dimension according to aspect ratio is kept.
+	 * The resulting dimensions will never be smaller than the original one and always
+	 * one of the original dimensions will be kept.
 	 *
 	 * @param original    dimensions
 	 * @param aspectRatio to use when normalizing the dimensions
@@ -56,11 +151,13 @@ public class ImageServerConversionUtils
 		DimensionsDto normalized = new DimensionsDto( original.getWidth(), original.getHeight() );
 
 		if ( !calculateAspectRatio( normalized ).equals( aspectRatio ) ) {
-			if ( aspectRatio.getNumerator() > aspectRatio.getDenominator() ) {
+			int newWidth = aspectRatio.calculateWidthForHeight( normalized.getHeight() );
+
+			if ( newWidth < normalized.getWidth() ) {
 				normalized.setHeight( aspectRatio.calculateHeightForWidth( normalized.getWidth() ) );
 			}
 			else {
-				normalized.setWidth( aspectRatio.calculateWidthForHeight( normalized.getHeight() ) );
+				normalized.setWidth( newWidth );
 			}
 		}
 
@@ -76,7 +173,7 @@ public class ImageServerConversionUtils
 	 * @return normalized crop
 	 */
 	public static CropDto normalize( CropDto original, DimensionsDto box ) {
-		if ( original.getSource() == null || original.getSource().equals( new DimensionsDto() )) {
+		if ( original.getSource() == null || original.getSource().equals( new DimensionsDto() ) ) {
 			throw new IllegalArgumentException( "Normalizing a crop requires a valid source to be set." );
 		}
 
@@ -186,5 +283,59 @@ public class ImageServerConversionUtils
 	 */
 	public static boolean fitsIn( DimensionsDto original, DimensionsDto boundaries ) {
 		return original.getWidth() <= boundaries.getWidth() && original.getHeight() <= boundaries.getHeight();
+	}
+
+	/**
+	 * Checks if a crop is entirely positioned within a box.  The crop dimensions should be smaller or equal
+	 * to the box dimensions, and the left top coordinates should not be negative.
+	 *
+	 * @param crop to check
+	 * @param box  that should contain the crop
+	 * @return true if crop fits
+	 */
+	public static boolean isWithinBox( CropDto crop, DimensionsDto box ) {
+		return crop.getX() >= 0 && crop.getY() >= 0
+				&& fitsIn( crop.getDimensions(), box )
+				&& ( crop.getX() + crop.getWidth() ) <= box.getWidth()
+				&& ( crop.getY() + crop.getHeight() ) <= box.getHeight();
+	}
+
+	public static int calculateDistance( ImageResolutionDto from, ImageResolutionDto to ) {
+		return calculateDistance( from.getDimensions(), to.getDimensions() );
+	}
+
+	/**
+	 * Calculates the distance between two dimensions.  If the dimensions are exactly the same, the distance is 0.
+	 * If the first dimensions fits entirely in the second, the distance will be positive.  The larger the second
+	 * dimension, the greater the distance number.  If the first dimension is larger than the second dimension, the
+	 * distance number will be negative.  Distances closer to 0 indicate how much smaller the scond dimension is.
+	 * <p/>
+	 * A dimension is considered smaller as soon as a single side is smaller.  Calculating the distance is
+	 * impossible if any of the arguments have an unknown dimension.
+	 * <p/>
+	 * The actual distance number is the delta between the two surfaces.  If the surface is the same (but dimensions
+	 * are reversed), then the distance will be -1.
+	 *
+	 * @param from dimension
+	 * @param to   dimension
+	 * @return distance number
+	 */
+	public static int calculateDistance( DimensionsDto from, DimensionsDto to ) {
+		Assert.notNull( from );
+		Assert.notNull( to );
+		Assert.isTrue( from.getWidth() > 0 && from.getHeight() > 0 && to.getWidth() > 0 && to.getHeight() > 0 );
+
+		if ( from.equals( to ) ) {
+			return 0;
+		}
+
+		if ( fitsIn( from, to ) ) {
+			return Math.abs( ( to.getWidth() * to.getHeight() ) - ( from.getWidth() * from.getHeight() ) );
+		}
+
+		int distance = -Math.abs( ( to.getWidth() * to.getHeight() ) - ( from.getWidth() * from.getHeight() ) );
+
+		return distance == 0 ? -1 : distance;
+
 	}
 }
