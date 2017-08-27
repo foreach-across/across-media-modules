@@ -1,9 +1,9 @@
 = FileManagerModule
 Arne Vandamme, Sander Van Loock
-1.1.0.RELEASE
+1.2.0.RELEASE
 :toc: left
 :sectanchors:
-:module-version: 1.1.0.RELEASE
+:module-version: 1.2.0.RELEASE
 :module-name: FileManagerModule
 :module-artifact: file-manager-module
 :module-url: https://foreach.atlassian.net/wiki/display/AX/FileManagerModule
@@ -63,6 +63,10 @@ Module website: {module-url}
 
 == What's new in this version?
 :numbered!:
+=== 1.2.0.RELEASE
+
+* Added support for <<s3-repository,Amazon S3 file repositories>>
+
 === 1.1.0.RELEASE
 
 * Switched the settings to `@ConfigurationProperties`
@@ -132,6 +136,7 @@ If the `pathGenerator` property is set, the `PathGenerator` instance will be use
   The `DateFormatPathGenerator` is a default implementation that uses the current date for creating sub-directories.
   Using a `PathGenerator` can help distribute the physical files, avoiding OS performance problems when there are too many files in a single directory.
 
+[[s3-repository]]
 === AwsS3FileRepository
 Implementation that stores all files to Amazon S3.  To use this `FileRepository`, add the following Maven dependency to include the Amazon SDK for S3.
 
