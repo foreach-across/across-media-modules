@@ -36,9 +36,11 @@ public class ImageServerPermissionsInstaller
 		permissionService.definePermission( "imageserver view images",
 		                                    "The user can view images and access the imageserver administrative interface.",
 		                                    "imageserver" );
-		permissionService.definePermission( "imageserver upload images", "The user can upload images.", "imageserver" );
+		permissionService.definePermission( "imageserver upload images", "The user can upload images.",
+		                                    "imageserver" );
 		permissionService.definePermission( "imageserver manage resolutions",
-		                                    "The user can modify and create image resolutions.", "imageserver" );
+		                                    "The user can modify and create image resolutions.",
+		                                    "imageserver" );
 
 		PermissionGroup permissionGroup = permissionService.getPermissionGroup( "imageserver" );
 		permissionGroup.setTitle( "Module: ImageServer administration" );
@@ -53,8 +55,9 @@ public class ImageServerPermissionsInstaller
 		Role role = roleService.getRole( "ROLE_ADMIN" );
 
 		if ( role != null ) {
-			role.addPermission( "imageserver view images", "imageserver upload images",
-			                    "imageserver manage resolutions" );
+			role.addPermission( permissionService.getPermission( "imageserver view images" ),
+			                    permissionService.getPermission( "imageserver upload images" ),
+			                    permissionService.getPermission( "imageserver manage resolutions" ) );
 			roleService.save( role );
 		}
 		else {
