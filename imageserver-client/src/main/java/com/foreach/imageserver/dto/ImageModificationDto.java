@@ -1,7 +1,6 @@
 package com.foreach.imageserver.dto;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public class ImageModificationDto
 {
@@ -41,8 +40,8 @@ public class ImageModificationDto
 	 *
 	 * @return id of the resolution or {@code null} if none
 	 */
-	public Optional<Long> getBaseResolutionId() {
-		return Optional.ofNullable( baseResolutionId );
+	public Long getBaseResolutionId() {
+		return baseResolutionId;
 	}
 
 	public void setBaseResolutionId( Long baseResolutionId ) {

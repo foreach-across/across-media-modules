@@ -5,6 +5,7 @@ import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,8 @@ public class ITRemoteImageServerClient
 
 	@Before
 	public void createClient() {
-		String url = "http://localhost:" + System.getProperty( "local.tomcat.port", "8078" ) + "/resources/images";
+		String url = "http://localhost:" + StringUtils.defaultIfEmpty( System.getProperty( "local.tomcat.port" ),
+		                                                               "8078" ) + "/resources/images";
 		String accessToken = "standalone-access-token";
 
 		imageServerClient = new RemoteImageServerClient( url, accessToken );

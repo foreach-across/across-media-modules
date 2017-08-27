@@ -3,8 +3,6 @@ package com.foreach.imageserver.dto;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Optional;
-
 import static org.junit.Assert.*;
 
 /**
@@ -22,14 +20,14 @@ public class TestImageModificationDto
 	@Test
 	public void defaultModificationNotRegistered() {
 		assertFalse( dto.isRegistered() );
-		assertEquals( Optional.empty(), dto.getBaseResolutionId() );
+		assertNull( dto.getBaseResolutionId() );
 	}
 
 	@Test
 	public void registeredFalseIfBaseResolutionIdSetButNotMatchingOutputResolution() {
 		dto.setBaseResolutionId( 3L );
 		assertFalse( dto.isRegistered() );
-		assertEquals( Optional.of( 3L ), dto.getBaseResolutionId() );
+		assertEquals( Long.valueOf( 3L ), dto.getBaseResolutionId() );
 
 		ImageResolutionDto res = new ImageResolutionDto();
 		res.setId( 4 );
@@ -42,7 +40,7 @@ public class TestImageModificationDto
 		ImageResolutionDto res = new ImageResolutionDto();
 		res.setId( 4 );
 		dto.setResolution( res );
-		assertFalse( dto.isRegistered());
+		assertFalse( dto.isRegistered() );
 	}
 
 	@Test
