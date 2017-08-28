@@ -182,15 +182,15 @@ public class WebCmsComponentModelHierarchy
 	}
 
 	/**
-	 * Get the component by name by traversing the hierarchy bottom up, starting with the specific scope.
-	 * Any scope below this one will be ignored.
+	 * Get the component by name from the specific scope.
+	 * Will not search any other (parent) scopes.
 	 *
 	 * @param componentName name of the component
 	 * @param scopeName     name of the scope to start with
 	 * @return component or null if not found
 	 */
 	public WebCmsComponentModel getFromScope( String componentName, String scopeName ) {
-		return getFromScope( componentName, scopeName, true );
+		return getFromScope( componentName, scopeName, false );
 	}
 
 	/**

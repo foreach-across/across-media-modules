@@ -20,5 +20,8 @@
 </head>
 <body>
 again the [[${page.title}]]
+<div>
+	<img th:src="${#wcm.imageUrl(#wcm.component('image'))}"/>
+</div>
 </body>
 </html>

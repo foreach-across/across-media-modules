@@ -29,8 +29,7 @@ import java.util.Map;
  * @since 0.0.1
  */
 @Component
-public final class
-WebCmsArticleImporter extends AbstractWebCmsAssetImporter<WebCmsArticle>
+public final class WebCmsArticleImporter extends AbstractWebCmsAssetImporter<WebCmsArticle>
 {
 	private WebCmsArticleRepository articleRepository;
 
@@ -47,7 +46,6 @@ WebCmsArticleImporter extends AbstractWebCmsAssetImporter<WebCmsArticle>
 		}
 
 		return itemToUpdate != null ? itemToUpdate.toDto() : new WebCmsArticle();
-
 	}
 
 	@Override
