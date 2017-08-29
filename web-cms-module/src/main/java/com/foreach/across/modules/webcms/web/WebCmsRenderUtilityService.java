@@ -16,13 +16,16 @@
 
 package com.foreach.across.modules.webcms.web;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.proxy.ProxyWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
+import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,7 @@ public class WebCmsRenderUtilityService
 {
 	private final WebCmsImageConnector imageConnector;
 	private final WebCmsComponentModelHierarchy componentModelHierarchy;
+	private final WebCmsEndpointService endpointService;
 
 	/**
 	 * Build a url to the original image file of the image configured on a {@link WebCmsImage}.
@@ -158,5 +162,17 @@ public class WebCmsRenderUtilityService
 			return ( (ContainerWebCmsComponentModel) target ).getMembers();
 		}
 		return Collections.emptyList();
+	}
+
+	/**
+	 * Retrieve the primary URL for a specific asset.
+	 *
+	 * @param asset to get the primary URL for
+	 * @return url or {@code null}
+	 */
+	public String url( WebCmsAsset asset ) {
+		return endpointService.getPrimaryUrlForAsset( asset )
+		                      .map( WebCmsUrl::getPath )
+		                      .orElse( null );
 	}
 }

@@ -34,3 +34,7 @@ assets:
       title: Sample image of a deer
       componentType: image
       image: "classpath:installers/test-data/deer.jpg"
+    sample-image-from-url:
+      title: Sample image fetched from URL
+      componentType: image
+      image: "http://images.freeimages.com/images/large-previews/afa/black-jaguar-1402097.jpg"

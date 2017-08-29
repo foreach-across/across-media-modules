@@ -54,6 +54,12 @@ import java.util.Collections;
 @Import({ DataSourceAutoConfiguration.class, H2ConsoleAutoConfiguration.class })
 public class WebCmsTestApplication
 {
+	public static void main( String[] args ) {
+		SpringApplication springApplication = new SpringApplication( WebCmsTestApplication.class );
+		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.location", "${user.home}/dev-configs/wcm-test-application.yml" ) );
+		springApplication.run( args );
+	}
+
 	@Bean
 	public UserModule userModule() {
 		UserModule userModule = new UserModule();
@@ -71,11 +77,5 @@ public class WebCmsTestApplication
 	@Profile("local-imageserver")
 	public ImageServerAdminWebModule imageServerAdminModule() {
 		return new ImageServerAdminWebModule();
-	}
-
-	public static void main( String[] args ) {
-		SpringApplication springApplication = new SpringApplication( WebCmsTestApplication.class );
-		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.location", "${user.home}/dev-configs/wcm-test-application.yml" ) );
-		springApplication.run( args );
 	}
 }
