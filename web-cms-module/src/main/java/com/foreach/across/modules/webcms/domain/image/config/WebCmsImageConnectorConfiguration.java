@@ -21,6 +21,7 @@ import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
+import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.modules.webcms.domain.image.connector.CloudinaryWebCmsImageConnector;
 import com.foreach.across.modules.webcms.domain.image.connector.ImageServerWebCmsImageConnector;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
@@ -122,7 +123,17 @@ class WebCmsImageConnectorConfiguration
 
 		@Event
 		@OrderInModule(1)
+		void autoConfigureImageServerConnector( AcrossModuleBootstrappedEvent moduleBootstrappedEvent ) {
+			autoConfigureImageServerConnector( false );
+		}
+
+		@Event
+		@OrderInModule(1)
 		void autoConfigureImageServerConnector( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
+			autoConfigureImageServerConnector( true );
+		}
+
+		private void autoConfigureImageServerConnector( boolean last ) {
 			if ( !beanFactory.containsBean( BEAN_NAME ) ) {
 				try {
 					ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
@@ -134,7 +145,9 @@ class WebCmsImageConnectorConfiguration
 					LOG.error( "More than one ImageServerClient bean found and none marked primary - unable to auto-create ImageServerWebCmsImageConnector." );
 				}
 				catch ( NoSuchBeanDefinitionException nsbe ) {
-					LOG.trace( "No ImageServerClient bean found - skipping auto-creation of ImageServerWebCmsImageConnector." );
+					if ( last ) {
+						LOG.trace( "No ImageServerClient bean found - skipping auto-creation of ImageServerWebCmsImageConnector." );
+					}
 				}
 			}
 		}
@@ -165,11 +178,23 @@ class WebCmsImageConnectorConfiguration
 		}
 
 		@Event
-		@OrderInModule(2)
-		void autoConfigureImageServerConnector( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
+		@OrderInModule(1)
+		void autoConfigureCloudinaryConnector( AcrossModuleBootstrappedEvent moduleBootstrappedEvent ) {
+			autoConfigureCloudinaryConnector( false );
+		}
+
+		@Event
+		@OrderInModule(1)
+		void autoConfigureCloudinaryConnector( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
+			autoConfigureCloudinaryConnector( true );
+		}
+
+		private void autoConfigureCloudinaryConnector( boolean last ) {
 			if ( !beanFactory.containsBean( BEAN_NAME ) ) {
 				try {
 					Cloudinary cloudinary = beanFactory.getBean( Cloudinary.class );
+					beanFactory.destroyBean( BEAN_NAME );
+
 					beanFactory.registerSingleton( BEAN_NAME, new CloudinaryWebCmsImageConnector( cloudinary ) );
 
 					LOG.trace( "Auto-created an CloudinaryWebCmsImageConnector using an existing Cloudinary bean." );
@@ -178,7 +203,9 @@ class WebCmsImageConnectorConfiguration
 					LOG.error( "More than one Cloudinary bean found and none marked primary - unable to auto-create CloudinaryWebCmsImageConnector." );
 				}
 				catch ( NoSuchBeanDefinitionException nsbe ) {
-					LOG.trace( "No Cloudinary bean found - skipping auto-creation of CloudinaryWebCmsImageConnector." );
+					if ( last ) {
+						LOG.trace( "No Cloudinary bean found - skipping auto-creation of CloudinaryWebCmsImageConnector." );
+					}
 				}
 			}
 		}

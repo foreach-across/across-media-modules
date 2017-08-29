@@ -28,7 +28,7 @@ import java.util.List;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Installer(description = "Install some test data", phase = InstallerPhase.AfterModuleBootstrap, version = 11, runCondition = InstallerRunCondition.AlwaysRun)
+@Installer(description = "Install some test data", phase = InstallerPhase.AfterContextBootstrap, version = 11, runCondition = InstallerRunCondition.AlwaysRun)
 @RequiredArgsConstructor
 public class TestDataInstaller extends AbstractWebCmsDataInstaller
 {

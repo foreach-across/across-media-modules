@@ -80,6 +80,18 @@ public class WebCmsUtils
 	}
 
 	/**
+	 * Checks if an object id is for a given collection.
+	 *
+	 * @param objectId     to check
+	 * @param collectionId the object id should have
+	 * @return true if object id is for the collection
+	 */
+	public static boolean isObjectIdForCollection( String objectId, String collectionId ) {
+		Assert.notNull( collectionId );
+		return StringUtils.startsWith( objectId, collectionId + ":" );
+	}
+
+	/**
 	 * Convert text into a valid path segment for url.
 	 * This will make an seo friendly path.
 	 *

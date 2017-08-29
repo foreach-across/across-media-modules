@@ -109,7 +109,7 @@ public class TestImageServerImageConnector
 	public void specificallyCreatedImageConnectorIsUsedIfPresent() {
 		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME )
 		                                  .modules( new EmptyAcrossModule( "ConnectorModule", CustomImageConnectorConfiguration.class ) )
-		                                  .register( ImageServerClientConfiguration.class )
+		                                  .modules( new EmptyAcrossModule( "ImageServerModule", ImageServerClientConfiguration.class ) )
 		                                  .build()) {
 			List<WebCmsImageConnector> connectors = ctx.getBeansOfType( WebCmsImageConnector.class, true );
 			assertEquals( 2, connectors.size() );

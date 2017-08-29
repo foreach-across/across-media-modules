@@ -18,6 +18,7 @@ package test.images;
 
 import com.cloudinary.Cloudinary;
 import com.foreach.across.core.EmptyAcrossModule;
+import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.image.connector.CloudinaryWebCmsImageConnector;
@@ -98,7 +99,7 @@ public class TestCloudinaryImageConnector
 	public void specificallyCreatedImageConnectorIsUsedIfPresent() {
 		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME )
 		                                  .modules( new EmptyAcrossModule( "ConnectorModule", CustomImageConnectorConfiguration.class ) )
-		                                  .register( CloudinaryConfiguration.class )
+		                                  .modules( new EmptyAcrossModule( "CloudinaryModule", CloudinaryConfiguration.class ) )
 		                                  .build()) {
 			List<WebCmsImageConnector> connectors = ctx.getBeansOfType( WebCmsImageConnector.class, true );
 			assertEquals( 2, connectors.size() );
@@ -118,6 +119,7 @@ public class TestCloudinaryImageConnector
 	static class CloudinaryConfiguration
 	{
 		@Bean
+		@Exposed
 		public Cloudinary cloudinary() {
 			return mock( Cloudinary.class );
 		}
