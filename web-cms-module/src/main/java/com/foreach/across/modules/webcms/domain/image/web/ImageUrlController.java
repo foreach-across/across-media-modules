@@ -18,13 +18,8 @@ package com.foreach.across.modules.webcms.domain.image.web;
 
 import com.foreach.across.modules.adminweb.annotations.AdminWebController;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
-import com.foreach.across.modules.webcms.domain.image.WebCmsImageRepository;
-import com.foreach.imageserver.client.ImageServerClient;
-import com.foreach.imageserver.dto.DimensionsDto;
-import com.foreach.imageserver.dto.ImageTypeDto;
-import com.foreach.imageserver.dto.ImageVariantDto;
+import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -38,17 +33,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 class ImageUrlController
 {
-	private final BeanFactory beanFactory;
-	private final WebCmsImageRepository imageRepository;
+	private final WebCmsImageConnector imageConnector;
 
 	@GetMapping("/utils/buildImageUrl")
-	public String buildImageUrl( @RequestParam("width") int width, @RequestParam("height") int height, @RequestParam("imageId") WebCmsImage image ) {
-		ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
-
-		ImageVariantDto variant = new ImageVariantDto();
-		variant.setBoundaries( new DimensionsDto( width, height ) );
-		variant.setImageType( ImageTypeDto.PNG );
-
-		return imageServerClient.imageUrl( image.getExternalId(), "default", 0, 0, variant );
+	public String buildImageUrl( @RequestParam("width") int boxWidth, @RequestParam("height") int boxHeight, @RequestParam("imageId") WebCmsImage image ) {
+		return imageConnector.buildImageUrl( image, boxWidth, boxHeight );
 	}
 }

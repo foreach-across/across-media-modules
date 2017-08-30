@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package it;
+package it.components;
 
 import com.foreach.across.modules.webcms.data.WebCmsDataImportService;
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import it.AbstractCmsApplicationWithTestDataIT;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -34,7 +37,8 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITComponentImportAndCreation extends AbstractCmsApplicationIT
+@DirtiesContext
+public class ITComponentImportAndCreation extends AbstractCmsApplicationWithTestDataIT
 {
 	private final String componentName = UUID.randomUUID().toString();
 
@@ -126,4 +130,29 @@ public class ITComponentImportAndCreation extends AbstractCmsApplicationIT
 		);
 	}
 
+	@Test
+	public void creatingComponentOfTypeCreatesTheDifferentMembers() {
+		ContainerWebCmsComponentModel container = componentModelService.createComponentModel( "teaser", ContainerWebCmsComponentModel.class );
+		assertNotNull( container );
+		assertEquals( "Teaser title", container.getMember( "title", TextWebCmsComponentModel.class ).getContent() );
+		assertTrue( container.getMember( "body", TextWebCmsComponentModel.class ).isEmpty() );
+		assertEquals( "teaser", container.getComponentType().getTypeKey() );
+
+		container.setName( componentName );
+		container.getMember( "title", TextWebCmsComponentModel.class ).setContent( "modified teaser title" );
+		componentModelService.save( container );
+
+		ContainerWebCmsComponentModel fetched = componentModelService.getComponentModelByName( componentName, null, ContainerWebCmsComponentModel.class );
+		assertEquals( container, fetched );
+		assertEquals( "modified teaser title", container.getMember( "title", TextWebCmsComponentModel.class ).getContent() );
+		assertTrue( container.getMember( "body", TextWebCmsComponentModel.class ).isEmpty() );
+	}
+
+	@Test
+	public void updatedComponentOfSpecificType() {
+		ContainerWebCmsComponentModel container = componentModelService.getComponentModelByName( "test-teaser", null, ContainerWebCmsComponentModel.class );
+		assertNotNull( container );
+		assertEquals( "Teaser title", container.getMember( "title", TextWebCmsComponentModel.class ).getContent() );
+		assertEquals( "Sample teaser body", container.getMember( "body", TextWebCmsComponentModel.class ).getContent() );
+	}
 }

@@ -1,0 +1,11 @@
+#
+# Import default components
+#
+# See: ITComponentImportAndCreation
+assets:
+  component:
+    test-teaser:
+      componentType: teaser
+      wcm:components:
+        body:
+          content: Sample teaser body

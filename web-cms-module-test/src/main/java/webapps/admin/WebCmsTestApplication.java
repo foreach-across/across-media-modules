@@ -25,17 +25,16 @@ import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.user.UserModuleSettings;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.imageserver.admin.ImageServerAdminWebModule;
-import com.foreach.imageserver.admin.ImageServerAdminWebModuleSettings;
 import com.foreach.imageserver.core.ImageServerCoreModule;
-import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
-import java.io.File;
+import java.util.Collections;
 
 /**
  * Main application for a website with the administration UI active, allowing dynamic addition of pages.
@@ -53,8 +52,14 @@ import java.io.File;
 		}
 )
 @Import({ DataSourceAutoConfiguration.class, H2ConsoleAutoConfiguration.class })
-public class AdminWebCmsApplication
+public class WebCmsTestApplication
 {
+	public static void main( String[] args ) {
+		SpringApplication springApplication = new SpringApplication( WebCmsTestApplication.class );
+		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.location", "${user.home}/dev-configs/wcm-test-application.yml" ) );
+		springApplication.run( args );
+	}
+
 	@Bean
 	public UserModule userModule() {
 		UserModule userModule = new UserModule();
@@ -63,37 +68,14 @@ public class AdminWebCmsApplication
 	}
 
 	@Bean
+	@Profile("local-imageserver")
 	public ImageServerCoreModule imageServerCoreModule() {
-		ImageServerCoreModule coreModule = new ImageServerCoreModule();
-		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
-		                        new File( "../db/images" ) );
-		                        //new File( System.getProperty( "java.io.tmpdir" ), UUID.randomUUID().toString() ) );
-		coreModule.setProperty( ImageServerCoreModuleSettings.PROVIDE_STACKTRACE, true );
-		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_ENABLED, true );
-		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GRAPHICSMAGICK, true );
-		//coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PATH, imageMagickPath );
-
-		coreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/resources/images" );
-		coreModule.setProperty( ImageServerCoreModuleSettings.ACCESS_TOKEN, "standalone-access-token" );
-		coreModule.setProperty( ImageServerCoreModuleSettings.CREATE_LOCAL_CLIENT, true );
-		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_SERVER_URL, "http://localhost:8080/resources/images" );
-		coreModule.setProperty( ImageServerCoreModuleSettings.MD5_HASH_TOKEN, "imageserver" );
-
-		return coreModule;
+		return new ImageServerCoreModule();
 	}
 
 	@Bean
+	@Profile("local-imageserver")
 	public ImageServerAdminWebModule imageServerAdminModule() {
-		ImageServerAdminWebModule imageServerAdminWebModule = new ImageServerAdminWebModule();
-		imageServerAdminWebModule.setProperty( ImageServerAdminWebModuleSettings.IMAGE_SERVER_URL,
-		                                       "/resources/images" );
-		imageServerAdminWebModule.setProperty( ImageServerAdminWebModuleSettings.ACCESS_TOKEN,
-		                                       "standalone-access-token" );
-
-		return imageServerAdminWebModule;
-	}
-
-	public static void main( String[] args ) {
-		SpringApplication.run( AdminWebCmsApplication.class, args );
+		return new ImageServerAdminWebModule();
 	}
 }

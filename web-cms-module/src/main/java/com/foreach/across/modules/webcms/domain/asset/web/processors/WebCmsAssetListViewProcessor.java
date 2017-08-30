@@ -40,29 +40,31 @@ public class WebCmsAssetListViewProcessor extends EntityViewProcessorAdapter
 {
 	@Override
 	protected void createViewElementBuilders( EntityViewRequest entityViewRequest, EntityView entityView, ViewElementBuilderMap builderMap ) {
-		builderMap.get( SortableTableRenderingViewProcessor.TABLE_BUILDER, SortableTableBuilder.class )
-		          .valueRowProcessor( ( builderContext, row ) -> {
-			          WebCmsAsset asset = EntityViewElementUtils.currentEntity( builderContext, WebCmsAsset.class );
+		if ( builderMap.containsKey( SortableTableRenderingViewProcessor.TABLE_BUILDER ) ) {
+			builderMap.get( SortableTableRenderingViewProcessor.TABLE_BUILDER, SortableTableBuilder.class )
+			          .valueRowProcessor( ( builderContext, row ) -> {
+				          WebCmsAsset asset = EntityViewElementUtils.currentEntity( builderContext, WebCmsAsset.class );
 
-			          if ( !asset.isPublished() ) {
-				          row.setStyle( Style.WARNING );
+				          if ( !asset.isPublished() ) {
+					          row.setStyle( Style.WARNING );
 
-				          // was published but is offline
-				          if ( asset.getPublicationDate() != null && asset.getPublicationDate().before( new Date() ) ) {
-					          row.setStyle( Style.DANGER );
+					          // was published but is offline
+					          if ( asset.getPublicationDate() != null && asset.getPublicationDate().before( new Date() ) ) {
+						          row.setStyle( Style.DANGER );
+					          }
 				          }
-			          }
-			          else if ( asset.getPublicationDate() == null || asset.getPublicationDate().before( new Date() ) ) {
-				          row.setStyle( Style.SUCCESS );
-			          }
-			          else {
-				          row.setStyle( Style.INFO );
-			          }
+				          else if ( asset.getPublicationDate() == null || asset.getPublicationDate().before( new Date() ) ) {
+					          row.setStyle( Style.SUCCESS );
+				          }
+				          else {
+					          row.setStyle( Style.INFO );
+				          }
 
-			          if ( asset.getAssetType() != null && !asset.getAssetType().isPublishable() ) {
-				          row.setStyle( Style.INFO );
-			          }
-		          } );
+				          if ( asset.getAssetType() != null && !asset.getAssetType().isPublishable() ) {
+					          row.setStyle( Style.INFO );
+				          }
+			          } );
+		}
 	}
 
 	@Override

@@ -17,8 +17,6 @@
 package com.foreach.across.modules.webcms.domain.component;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,13 +24,11 @@ import org.springframework.stereotype.Component;
  * @author Arne Vandamme
  * @since 0.0.2
  */
+@Deprecated
 @Component
 @RequiredArgsConstructor
 class WebCmsComponentInterceptor extends EntityInterceptorAdapter<WebCmsComponent>
 {
-	private static final String TEMPLATE_COMPONENT = "componentTemplate";
-
-	private final WebCmsComponentModelService componentModelService;
 	private final WebCmsContentMarkerService contentMarkerService;
 
 	@Override
@@ -53,18 +49,6 @@ class WebCmsComponentInterceptor extends EntityInterceptorAdapter<WebCmsComponen
 	private void updateBodyContainsMarkers( WebCmsComponent component ) {
 		if ( contentMarkerService.containsMarkers( component.getBody() ) ) {
 			component.setBodyWithContentMarkers( true );
-		}
-	}
-
-	@Override
-	public void afterCreate( WebCmsComponent component ) {
-		WebCmsComponentModel model = componentModelService.getComponentModelByName( TEMPLATE_COMPONENT, component.getComponentType() );
-
-		if ( model != null ) {
-			WebCmsComponentModel template = model.asComponentTemplate();
-			template.setComponent( component );
-
-			componentModelService.save( template );
 		}
 	}
 }

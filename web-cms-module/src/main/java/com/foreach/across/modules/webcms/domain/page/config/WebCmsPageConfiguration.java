@@ -173,26 +173,29 @@ public class WebCmsPageConfiguration
 
 		@Override
 		protected void createViewElementBuilders( EntityViewRequest entityViewRequest, EntityView entityView, ViewElementBuilderMap builderMap ) {
-			builderMap.get( SortableTableRenderingViewProcessor.TABLE_BUILDER, SortableTableBuilder.class )
-			          .valueRowProcessor( ( ctx, row ) -> {
-				          WebCmsPage page = EntityViewElementUtils.currentEntity( ctx, WebCmsPage.class );
-				          ContainerViewElementUtils
-						          .find( row, EntityListActionsProcessor.CELL_NAME, TableViewElement.Cell.class )
-						          .ifPresent( cell ->
-								                      endpointService
-										                      .buildPreviewUrl( page )
-										                      .ifPresent( previewUrl -> {
-											                      EntityMessages entityMessages = entityViewRequest.getEntityViewContext().getEntityMessages();
-											                      cell.addFirstChild(
-													                      bootstrapUiFactory.button()
-													                                        .link( previewUrl )
-													                                        .attribute( "target", "_blank" )
-													                                        .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
-													                                        .text( entityMessages.withNameSingular( "actions.open" ) )
-													                                        .build( ctx ) );
-										                      } )
-						          );
-			          } );
+			if ( builderMap.containsKey( SortableTableRenderingViewProcessor.TABLE_BUILDER ) ) {
+				builderMap.get( SortableTableRenderingViewProcessor.TABLE_BUILDER, SortableTableBuilder.class )
+				          .valueRowProcessor( ( ctx, row ) -> {
+					          WebCmsPage page = EntityViewElementUtils.currentEntity( ctx, WebCmsPage.class );
+					          ContainerViewElementUtils
+							          .find( row, EntityListActionsProcessor.CELL_NAME, TableViewElement.Cell.class )
+							          .ifPresent( cell ->
+									                      endpointService
+											                      .buildPreviewUrl( page )
+											                      .ifPresent( previewUrl -> {
+												                      EntityMessages entityMessages =
+														                      entityViewRequest.getEntityViewContext().getEntityMessages();
+												                      cell.addFirstChild(
+														                      bootstrapUiFactory.button()
+														                                        .link( previewUrl )
+														                                        .attribute( "target", "_blank" )
+														                                        .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
+														                                        .text( entityMessages.withNameSingular( "actions.open" ) )
+														                                        .build( ctx ) );
+											                      } )
+							          );
+				          } );
+			}
 		}
 
 		@Autowired

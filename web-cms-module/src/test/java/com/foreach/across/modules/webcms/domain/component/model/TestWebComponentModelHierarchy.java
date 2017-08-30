@@ -185,11 +185,13 @@ public class TestWebComponentModelHierarchy
 		assertNull( components.get( "two", false ) );
 		assertSame( three, components.get( "three", false ) );
 
-		assertSame( one, components.getFromScope( "one", "asset" ) );
-		assertSame( two, components.getFromScope( "two", "asset" ) );
+		assertNull( components.getFromScope( "one", "asset" ) );
+		assertSame( one, components.getFromScope( "one", "asset", true ) );
+		assertNull( components.getFromScope( "two", "asset" ) );
+		assertSame( two, components.getFromScope( "two", "asset", true ) );
 		assertSame( three, components.getFromScope( "three", "asset" ) );
 
-		assertSame( one, components.getFromScope( "one", "page" ) );
+		assertNull( components.getFromScope( "one", "page" ) );
 		assertSame( two, components.getFromScope( "two", "page" ) );
 		assertSame( anotherThree, components.getFromScope( "three", "page" ) );
 

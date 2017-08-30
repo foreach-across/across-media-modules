@@ -96,6 +96,16 @@ public class TestWebCmsUtils
 	}
 
 	@Test
+	public void isObjectIdForCollection() {
+		String objectId = "wcm:asset:test:1561sd65f1sd56";
+		assertFalse( WebCmsUtils.isObjectIdForCollection( null, "wcm:asset:test") );
+		assertFalse( WebCmsUtils.isObjectIdForCollection( "", "wcm:asset:test") );
+		assertTrue( WebCmsUtils.isObjectIdForCollection( objectId, "wcm:asset:test") );
+		assertFalse( WebCmsUtils.isObjectIdForCollection( objectId, "wcm:asset:test2") );
+		assertFalse( WebCmsUtils.isObjectIdForCollection( "wcm:asset:test1561sd65f1sd56", "wcm:asset:test") );
+	}
+
+	@Test
 	public void prefixObjectIdForCollection() {
 		assertEquals( "wcm:asset:page:test-page", WebCmsUtils.prefixObjectIdForCollection( "test-page", "wcm:asset:page" ) );
 		assertEquals( "wcm:asset:page:tp:tp", WebCmsUtils.prefixObjectIdForCollection( "wcm:asset:page:tp:tp", "wcm:asset:page" ) );

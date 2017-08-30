@@ -28,13 +28,13 @@ import java.util.List;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@Installer(description = "Install some test data", phase = InstallerPhase.AfterModuleBootstrap, version = 11, runCondition = InstallerRunCondition.AlwaysRun)
+@Installer(description = "Install some test data", phase = InstallerPhase.AfterContextBootstrap, version = 11, runCondition = InstallerRunCondition.AlwaysRun)
 @RequiredArgsConstructor
 public class TestDataInstaller extends AbstractWebCmsDataInstaller
 {
 	@Override
 	protected void registerResources( List<String> locations ) {
-		//locations.add( "classpath:installers/test-data/components.yml" );
+		locations.add( "classpath:installers/test-data/components.yml" );
 		//locations.add( "classpath:installers/test-data/articles.yml" );
 		//locations.add( "classpath:installers/test-data/menu.yml" );
 		//locations.add( "classpath:installers/test-data/pages.yml" );

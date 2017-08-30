@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:h2:../local-data/cloudinary/application-db
+
+webCmsModule:
+  images:
+    cloudinary:
+      # Actual Cloudinary credentials should be added to the local application config: ${user.home}/dev-configs/wcm-test-application.yml
+      enabled: true

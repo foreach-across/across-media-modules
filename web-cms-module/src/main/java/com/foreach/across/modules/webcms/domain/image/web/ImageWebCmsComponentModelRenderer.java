@@ -19,11 +19,13 @@ package com.foreach.across.modules.webcms.domain.image.web;
 import com.foreach.across.modules.web.thymeleaf.ThymeleafModelBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.modules.webcms.web.thymeleaf.WebCmsComponentModelRenderer;
-import com.foreach.imageserver.client.ImageServerClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector.ORIGINAL_HEIGHT;
+import static com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector.ORIGINAL_WIDTH;
 
 /**
  * @author Arne Vandamme
@@ -33,7 +35,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ImageWebCmsComponentModelRenderer implements WebCmsComponentModelRenderer<ImageWebCmsComponentModel>
 {
-	private final BeanFactory beanFactory;
+	private final WebCmsImageConnector imageConnector;
 
 	@Override
 	public boolean supports( WebCmsComponentModel componentModel ) {
@@ -42,10 +44,9 @@ public class ImageWebCmsComponentModelRenderer implements WebCmsComponentModelRe
 
 	@Override
 	public void writeComponent( ImageWebCmsComponentModel component, ThymeleafModelBuilder model ) {
-		ImageServerClient imageServerClient = beanFactory.getBean( ImageServerClient.class );
-		if ( imageServerClient != null && component.hasImageServerKey() ) {
+		if ( component.hasImage() ) {
 			model.addOpenElement( "img" );
-			model.addAttribute( "src", imageServerClient.imageUrl( component.getImageServerKey(), "default", 0, 0 ) );
+			model.addAttribute( "src", imageConnector.buildImageUrl( component.getImage(), ORIGINAL_WIDTH, ORIGINAL_HEIGHT ) );
 			model.addCloseElement();
 		}
 	}

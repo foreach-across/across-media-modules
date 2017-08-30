@@ -16,13 +16,84 @@
 (function ( $ ) {
     EntityModule.registerInitializer( function ( node ) {
         $( '[data-wcm-markup-type=rich-text]', node ).each( function () {
-            CKEDITOR.disableAutoInline = true;
-            // { extraPlugins: 'autogrow', autoGrow_minHeight : 300, autoGrow_onStartup: true }
-            CKEDITOR.inline( $( this ).attr( 'id' ), {} );
+            /*
+             CKEDITOR.disableAutoInline = true;
+             // { extraPlugins: 'autogrow', autoGrow_minHeight : 300, autoGrow_onStartup: true }
+             CKEDITOR.inline( $( this ).attr( 'id' ), {} );
+             */
+            var id = '[id="' + $( this ).attr( 'id' ) + '"]';
+            tinymce.init( {
+                              selector: id,
+                              plugins: 'autoresize image contextmenu table hr pagebreak code codesample noneditable lists advlist link paste textcolor charmap anchor',
+                              toolbar1: 'undo redo | insert | styleselect | bold italic forecolor backcolor ' +
+                              '| outdent indent | bullist numlist table | link image codesample | pastetext',
+                              insert_button_items: 'image link inserttable | pagebreak hr anchor charmap',
+                              autoresize_bottom_margin: 0,
+                              statusbar: false,
+                              branding: false,
+                              menubar: false,
+                              object_resizing: 'img',
+                              relative_urls: false,
+                              remove_script_host: true,
+                              // todo: document_base_url: "http://localhost:8080",
+                              content_css: [
+                                  AcrossWebModule.staticPath + '/WebCmsModule/css/wcm-tinymce-content.css'
+                              ],
+                              codesample_languages: [
+                                  {text: 'C#', value: 'csharp'},
+                                  {text: 'CSS', value: 'css'},
+                                  {text: 'HTML/XML', value: 'markup'},
+                                  {text: 'Java', value: 'java'},
+                                  {text: 'JavaScript', value: 'javascript'},
+                                  {text: 'JSON', value: 'json'},
+                                  {text: 'PHP', value: 'php'},
+                                  {text: 'Properties file', value: 'properties'},
+                                  {text: 'Python', value: 'python'},
+                                  {text: 'YAML', value: 'yaml'}
+                              ],
+                              file_picker_types: 'image',
+                              file_picker_callback: function ( callback, value, meta ) {
+                                  // Provide image and alt text for the image dialog
+                                  if ( meta.filetype === 'image' ) {
+                                      WebCmsModule.imageSelector( {
+                                                                      outputBox: {width: 800, height: 800},
+                                                                      callback: function ( image ) {
+                                                                          callback( image.url, {'data-wcm-object-id': image.imageId} );
+                                                                      }
+                                                                  } );
+                                  }
+                              },
+                              setup: function ( theEditor ) {
+                                  theEditor.on( 'focus', function () {
+                                      $( this.contentAreaContainer.parentElement )
+                                              .toggleClass( 'wcm-mce-toolbar-hidden', false )
+                                              .find( "div.mce-toolbar-grp" ).unstick().sticky( {topSpacing: 60} );
+                                  } );
+                                  theEditor.on( 'blur', function (e) {
+                                      theEditor.selection.collapse();
+                                      var parent = $( this.contentAreaContainer.parentElement );
+                                      setTimeout( function () {
+                                          parent.toggleClass( 'wcm-mce-toolbar-hidden', true );
+                                      }, 250 );
+                                  } );
+                                  theEditor.on( "init", function () {
+                                      $( this.contentAreaContainer.parentElement )
+                                              .toggleClass( 'wcm-mce-toolbar-hidden', true )
+                                              .find( "div.mce-toolbar-grp" ).unstick();
+                                  } );
+
+                                  theEditor.on( "change", function ( cm ) {
+                                      $( this.contentAreaContainer.parentElement ).closest( 'form' ).data( 'changed', true );
+                                  } );
+                              }
+                          } );
         } );
 
         $( '[data-wcm-markup-type=markup]', node ).each( function () {
             var cm = CodeMirror.fromTextArea( $( this )[0], {lineNumbers: true, mode: 'htmlmixed', viewportMargin: Infinity} );
+            cm.on( "change", function ( cm ) {
+                $( cm.getTextArea().closest( 'form' ) ).data( 'changed', true );
+            } );
             $( this ).on( 'wcm:componentRefresh',
                           function () {
                               cm.refresh();

@@ -133,6 +133,16 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 		);
 	}
 
+	@Transactional
+	@Override
+	public WebCmsComponent save( WebCmsComponent component ) {
+		if ( component.isNew() ) {
+			return save( buildModelForComponent( component ) );
+		}
+
+		return componentRepository.save( component );
+	}
+
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override

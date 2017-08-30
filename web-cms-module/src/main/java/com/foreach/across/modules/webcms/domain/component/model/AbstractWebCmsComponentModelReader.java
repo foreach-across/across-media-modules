@@ -24,7 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
- * Base class that builds the metadata for a {@link WebCmsComponentModel}.
+ * Base class that builds the metadata for a {@link WebCmsComponentModel} and supports component template.
+ * A component type can have a <strong>componentTemplate</strong> component attached that will serve as the
+ * base component for the type.  Note that the implemented {@link WebCmsComponentModel} type of the template
+ * component must be the same as the type defined by the component type itself.
  *
  * @author Arne Vandamme
  * @since 0.0.2
@@ -32,18 +35,37 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 @Slf4j
 public abstract class AbstractWebCmsComponentModelReader<T extends WebCmsComponentModel> implements WebCmsComponentModelReader<T>
 {
+	private static final String TEMPLATE_COMPONENT = "componentTemplate";
+
 	private WebCmsDataObjectMapper dataObjectMapper;
 	private AutowireCapableBeanFactory beanFactory;
 
+	private WebCmsComponentModelService componentModelService;
+
 	@Override
 	public final T readFromComponent( WebCmsComponent component ) {
-		T model = buildComponentModel( component );
+		T model = createComponentModel( component );
 
 		if ( model != null ) {
 			model.setMetadata( buildMetadata( model.getMetadata(), component ) );
 		}
 
 		return model;
+	}
+
+	@SuppressWarnings("unchecked")
+	private T createComponentModel( WebCmsComponent component ) {
+		if ( component.isNew() ) {
+			WebCmsComponentModel template = componentModelService.getComponentModelByName( TEMPLATE_COMPONENT, component.getComponentType() );
+
+			if ( template != null ) {
+				WebCmsComponentModel model = template.asComponentTemplate();
+				model.setComponent( component );
+				return (T) model;
+			}
+		}
+
+		return buildComponentModel( component );
 	}
 
 	/**
@@ -94,5 +116,10 @@ public abstract class AbstractWebCmsComponentModelReader<T extends WebCmsCompone
 	@Autowired
 	void setBeanFactory( AutowireCapableBeanFactory beanFactory ) {
 		this.beanFactory = beanFactory;
+	}
+
+	@Autowired
+	void setComponentModelService( WebCmsComponentModelService componentModelService ) {
+		this.componentModelService = componentModelService;
 	}
 }

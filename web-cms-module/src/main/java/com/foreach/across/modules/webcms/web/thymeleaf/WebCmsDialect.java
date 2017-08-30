@@ -15,8 +15,13 @@
  */
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
+import com.foreach.across.modules.webcms.web.WebCmsRenderUtilityService;
+import org.springframework.beans.factory.BeanFactory;
+import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.dialect.AbstractProcessorDialect;
+import org.thymeleaf.dialect.IExpressionObjectDialect;
 import org.thymeleaf.dialect.IPostProcessorDialect;
+import org.thymeleaf.expression.IExpressionObjectFactory;
 import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
@@ -30,12 +35,15 @@ import java.util.Set;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class WebCmsDialect extends AbstractProcessorDialect implements IPostProcessorDialect
+public class WebCmsDialect extends AbstractProcessorDialect implements IPostProcessorDialect, IExpressionObjectDialect
 {
 	public static final String PREFIX = "wcm";
 
-	public WebCmsDialect() {
+	private final BeanFactory beanFactory;
+
+	public WebCmsDialect( BeanFactory beanFactory ) {
 		super( "WebCms", PREFIX, StandardDialect.PROCESSOR_PRECEDENCE );
+		this.beanFactory = beanFactory;
 	}
 
 	@Override
@@ -57,5 +65,34 @@ public class WebCmsDialect extends AbstractProcessorDialect implements IPostProc
 		processors.add( new PlaceholderTemplatePostProcessor() );
 		processors.add( new ComponentTemplatePostProcessor() );
 		return processors;
+	}
+
+	@Override
+	public IExpressionObjectFactory getExpressionObjectFactory() {
+		return new AcrossExpressionObjectFactory();
+	}
+
+	public class AcrossExpressionObjectFactory implements IExpressionObjectFactory
+	{
+		@Override
+		public Set<String> getAllExpressionObjectNames() {
+			HashSet<String> names = new HashSet<>();
+			names.add( PREFIX );
+			return names;
+		}
+
+		@Override
+		public Object buildObject( IExpressionContext context, String expressionObjectName ) {
+			if ( PREFIX.equals( expressionObjectName ) ) {
+				return beanFactory.getBean( WebCmsRenderUtilityService.class );
+			}
+
+			return null;
+		}
+
+		@Override
+		public boolean isCacheable( String expressionObjectName ) {
+			return true;
+		}
 	}
 }

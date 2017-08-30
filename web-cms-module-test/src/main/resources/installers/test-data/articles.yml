@@ -35,6 +35,8 @@ assets:
       subTitle:
       published: true
       wcm:components:
+        main-image:
+          image: "file:./src/main/test-data/test-image.jpg"
         content:
           wcm:components:
             content:

@@ -24,6 +24,7 @@ import java.util.Optional;
  * @author: Sander Van Loock
  * @since: 0.0.1
  */
+@Deprecated
 public interface ImageOwner
 {
 	/**
