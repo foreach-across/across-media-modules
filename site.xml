@@ -27,9 +27,5 @@
 			<directory>${project.basedir}/web-cms-module/target/apidocs</directory>
 			<outputDirectory>${project.version}/javadoc</outputDirectory>
 		</fileSet>
-		<fileSet>
-			<directory>${project.basedir}/web-cms-module/target/site</directory>
-			<outputDirectory>.</outputDirectory>
-		</fileSet>
 	</fileSets>
 </assembly>
