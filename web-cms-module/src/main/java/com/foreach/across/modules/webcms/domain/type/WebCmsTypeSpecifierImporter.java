@@ -104,6 +104,5 @@ final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCm
 		LOG.debug( "Saving WebCmsTypeSpecifier {} with objectId {} (insert: {}) - {}",
 		           dto.getClass().getSimpleName(), dto.getObjectId(), dto.isNew(), dto );
 		typeRepository.save( dto );
-
 	}
 }
