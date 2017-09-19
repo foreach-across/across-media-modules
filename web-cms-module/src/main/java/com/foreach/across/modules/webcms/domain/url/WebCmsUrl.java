@@ -20,6 +20,7 @@ import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
@@ -100,4 +101,29 @@ public class WebCmsUrl extends SettableIdBasedEntity<WebCmsUrl>
 	@NotNull
 	@Column(name = "is_primary_locked")
 	private boolean primaryLocked;
+
+	/**
+	 * Prefix the path if it does not start with a /
+	 *
+	 * @param path
+	 */
+	public void setPath( String path ) {
+		if ( !StringUtils.startsWith( path, "/" ) ) {
+			path = "/" + path;
+		}
+		this.path = path;
+	}
+
+	public static class WebCmsUrlBuilder
+	{
+		private String path;
+
+		public WebCmsUrlBuilder path( String path ) {
+			if ( !StringUtils.startsWith( path, "/" ) ) {
+				path = "/" + path;
+			}
+			this.path = path;
+			return this;
+		}
+	}
 }

@@ -17,12 +17,12 @@
 package com.foreach.across.modules.webcms.domain.article;
 
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.*;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Date;
 import java.util.Map;
 
@@ -35,7 +35,6 @@ import java.util.Map;
 @NotThreadSafe
 @Entity
 @DiscriminatorValue(WebCmsArticleType.OBJECT_TYPE)
-@Table(name = "wcm_article_type")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -59,10 +58,12 @@ public class WebCmsArticleType extends WebCmsAssetType<WebCmsArticleType>
 	                             @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                             @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                             @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                             @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                             @Builder.ObtainVia(method = "getName") String name,
 	                             @Builder.ObtainVia(method = "getTypeKey") String typeKey,
+	                             @Builder.ObtainVia(method = "getDescription") String description,
 	                             @Singular @Builder.ObtainVia(method = "getAttributes") Map<String, String> attributes ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, name, typeKey, attributes );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, name, typeKey, description, attributes );
 	}
 
 	@Override

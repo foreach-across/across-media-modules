@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.entity.util.EntityUtils;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
@@ -81,11 +82,20 @@ public class WebCmsComponentAutoCreateService
 	 * @return component model of the root component created
 	 */
 	@Transactional
-	public WebCmsComponentModel createComponent( WebCmsComponentAutoCreateTask task ) {
+	public synchronized WebCmsComponentModel createComponent( WebCmsComponentAutoCreateTask task ) {
 		WebCmsComponentModel componentModel = buildComponent( task );
 
 		if ( componentModel != null && componentModel.isNew() ) {
-			componentModelService.save( componentModel );
+			WebCmsComponentModel existing
+					= componentModelService.getComponentModelByName( componentModel.getName(), WebCmsObject.forObjectId( componentModel.getOwnerObjectId() ) );
+
+			if ( existing == null ) {
+				componentModelService.save( componentModel );
+			}
+			else {
+				LOG.warn( "Skipping auto-creation of component, component with name {} already exists for owner {}", task.getComponentName(), task.getOwner() );
+				componentModel = existing;
+			}
 		}
 
 		return componentModel;

@@ -1,0 +1,10 @@
+wcm:domain: de-foreach
+types:
+  publication:
+    de-foreach:cool-facts:
+      name: Cool Facts (DE)
+
+assets:
+  page:
+    /pool-request:
+      title: Pool Request (DE)

@@ -21,6 +21,7 @@ import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.entity.views.processors.*;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
+import com.foreach.across.modules.webcms.WebCmsEntityAttributes;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
@@ -29,6 +30,7 @@ import com.foreach.across.modules.webcms.domain.component.placeholder.Placeholde
 import com.foreach.across.modules.webcms.domain.component.web.ContainerMemberViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.web.SingleWebCmsComponentFormProcessor;
+import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,6 +49,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 	private final SingleWebCmsComponentFormProcessor formProcessor;
 	private final SearchComponentViewProcessor searchComponentViewProcessor;
 	private final WebCmsComponentModelService componentModelService;
+	private final WebCmsMultiDomainConfiguration multiDomainConfiguration;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
@@ -58,8 +61,10 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				                      .property( "description" ).order( 2 )
 		        )
 		        .hide()
-		        .updateFormView( fvb -> fvb.showProperties( "objectId", "name", "typeKey", "description", "created", "lastModified" ) );
+		        .updateFormView( fvb -> fvb.showProperties( "name", "typeKey", "description", "created", "lastModified" ) );
 		//.listView( lvb -> lvb.showProperties( "name", "typeKey", "description", "lastModified" ) );
+
+		String domainFilterEql = multiDomainConfiguration.isDomainBound( WebCmsComponent.class ) ? " and domain = selectedDomain()" : "";
 
 		// Configure the globally shared components
 		entities.withType( WebCmsComponent.class )
@@ -78,11 +83,12 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 		        )
 		        .attribute(
 				        SearchComponentViewProcessor.COMPONENT_SEARCH_QUERY,
-				        "(title like '%{0}%' or name like '%{0}') and ownerObjectId is NULL"
+				        "((title like '%{0}%' or name like '%{0}') and ownerObjectId is NULL)" + domainFilterEql
 		        )
+		        .attribute( WebCmsEntityAttributes.MultiDomainConfiguration.LIST_VIEW_ADJUSTED, true )
 		        .listView(
 				        lvb -> lvb.entityQueryFilter( true )
-				                  .entityQueryPredicate( "ownerObjectId is NULL" )
+				                  .entityQueryPredicate( "(ownerObjectId is NULL)" + domainFilterEql )
 				                  .showProperties( "title", "name", "componentType", "lastModified" )
 				                  .defaultSort( "title" )
 		        )

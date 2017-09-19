@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain.page.services;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
@@ -38,16 +40,20 @@ class DefaultWebCmsPageService implements WebCmsPageService
 {
 	private final PagePropertyGenerator pagePropertyGenerator;
 	private final WebCmsPageRepository pageRepository;
+	private final WebCmsMultiDomainService multiDomainService;
 
 	@Override
 	public Optional<WebCmsPage> findByCanonicalPath( String canonicalPath ) {
-		return Optional.ofNullable( pageRepository.findOneByCanonicalPath( canonicalPath ) );
+		return findByCanonicalPathAndDomain( canonicalPath, multiDomainService.getCurrentDomainForType( WebCmsPage.class ) );
+	}
+
+	@Override
+	public Optional<WebCmsPage> findByCanonicalPathAndDomain( String canonicalPath, WebCmsDomain domain ) {
+		return Optional.ofNullable( pageRepository.findOneByCanonicalPathAndDomain( canonicalPath, domain ) );
 	}
 
 	@Override
 	public Map<ModificationType, ModificationReport<PrepareModificationType, Object>> prepareForSaving( WebCmsPage page ) {
-
 		return pagePropertyGenerator.prepareForSaving( page );
 	}
-
 }

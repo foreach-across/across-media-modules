@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.asset;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -87,9 +88,10 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	                       Date createdDate,
 	                       String lastModifiedBy,
 	                       Date lastModifiedDate,
+	                       WebCmsDomain domain,
 	                       boolean published,
 	                       Date publicationDate ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain );
 		setPublished( published );
 		setPublicationDate( publicationDate );
 	}

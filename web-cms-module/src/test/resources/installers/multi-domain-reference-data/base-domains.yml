@@ -1,0 +1,43 @@
+#
+# Import default domain structures
+#
+domains:
+  be-foreach:
+    objectId: "wcm:domain:be-foreach"
+    name: Foreach (BE)
+    active: true
+    attributes:
+      # Any custom structures (list, map) should be
+      # converted to string values using the ObjectMapper (JSON)
+      customString: some text
+      customNumber: 123
+      hostNames:
+        - foreach.be
+        - nl.foreach.be
+        - fr.foreach.be
+      sortIndex: 1
+      cookieDomain: foreach.be
+      defaultLocale: de_DE
+      locales:
+        nl.foreach.be: nl_BE
+        fr.foreach.be: null
+
+  nl-foreach:
+    objectId: "wcm:domain:nl-foreach"
+    name: Foreach (NL)
+    active: false
+    attributes:
+      sortIndex: -2
+      hostName:
+        - "foreach.be:8080"
+      defaultLocale: jp
+
+  de-foreach:
+    objectId: "wcm:domain:de-foreach"
+    name: Foreach (DE)
+    active: true
+    attributes:
+      sortIndex: -1
+      hostNames:
+        - "*.foreach.be:8080"
+      defaultLocale: nl_NL

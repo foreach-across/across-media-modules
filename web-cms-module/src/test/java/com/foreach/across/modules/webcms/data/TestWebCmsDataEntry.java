@@ -132,4 +132,21 @@ public class TestWebCmsDataEntry
 
 		assertEquals( WebCmsDataImportAction.CREATE, data.getImportAction() );
 	}
+
+	@Test
+	public void getLocation() {
+		assertEquals( "/", new WebCmsDataEntry( null, "data" ).getLocation() );
+		assertEquals( "/", new WebCmsDataEntry( "<root>", "data" ).getLocation() );
+		assertEquals( "/<map>", new WebCmsDataEntry( null, Collections.emptyMap() ).getLocation() );
+		assertEquals( "/<list>", new WebCmsDataEntry( null, Collections.emptyList() ).getLocation() );
+		assertEquals( "/key", new WebCmsDataEntry( "key", "data" ).getLocation() );
+
+		WebCmsDataEntry parentWithKey = new WebCmsDataEntry( "parent", "parentData" );
+		WebCmsDataEntry parentMapWithoutKey = new WebCmsDataEntry( null, parentWithKey, Collections.emptyMap() );
+		WebCmsDataEntry parentListWithoutKey = new WebCmsDataEntry( null, parentMapWithoutKey, Collections.emptyList() );
+
+		assertEquals( "/parent/key", new WebCmsDataEntry( "key", parentWithKey, "data" ).getLocation() );
+		assertEquals( "/parent/<map>/key", new WebCmsDataEntry( "key", parentMapWithoutKey, "data" ).getLocation() );
+		assertEquals( "/parent/<map>/<list>/key", new WebCmsDataEntry( "key", parentListWithoutKey, "data" ).getLocation() );
+	}
 }

@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Multi-domain: manage per entity" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="webapps.admin.WebCmsTestApplication" />
+    <option name="ACTIVE_PROFILES" value="local-imageserver,multi-domain,domain-per-entity" />
+    <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <module name="web-cms-module-test" />
+    <envs />
+    <method />
+  </configuration>
+</component>

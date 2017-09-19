@@ -8,11 +8,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="web-cms-module" />
+        <module name="web-cms-module-multi-domain-test" />
         <module name="web-cms-module-test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="web-cms-module" target="1.8" />
+      <module name="web-cms-module-multi-domain-test" target="1.8" />
       <module name="web-cms-module-project" target="1.8" />
       <module name="web-cms-module-test" target="1.8" />
     </bytecodeTargetLevel>

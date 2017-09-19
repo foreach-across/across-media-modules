@@ -28,6 +28,7 @@ import com.foreach.across.modules.entity.views.processors.support.ViewElementBui
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
+import com.foreach.across.modules.webcms.WebCmsEntityAttributes;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.web.WebCmsUrlEndpointViewElementBuilder;
@@ -53,6 +54,7 @@ class WebCmsUrlConfiguration implements EntityConfigurer
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsUrl.class )
+		        .attribute( WebCmsEntityAttributes.DOMAIN_PROPERTY, "endpoint.domain" )
 		        .properties(
 				        props -> props.property( "httpStatus" )
 				                      .attribute(

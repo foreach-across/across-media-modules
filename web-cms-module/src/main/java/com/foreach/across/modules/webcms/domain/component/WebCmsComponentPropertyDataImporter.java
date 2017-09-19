@@ -54,7 +54,13 @@ public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataIm
 		WebCmsComponentImporter componentImporter = beanFactory.getBean( WebCmsComponentImporter.class );
 		componentImporter.setOwner( asset );
 
-		componentImporter.importData( propertyData );
+		if ( propertyData.isMapData() ) {
+			propertyData.getMapData().forEach(
+					( key, value ) -> componentImporter.importData( new WebCmsDataEntry( propertyData.getIdentifier(), key, value ) ) );
+		}
+		else {
+			propertyData.getCollectionData().forEach( properties -> componentImporter.importData( new WebCmsDataEntry( null, propertyData, properties ) ) );
+		}
 
 		return true;
 	}

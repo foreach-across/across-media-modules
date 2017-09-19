@@ -19,7 +19,9 @@ package com.foreach.across.modules.webcms.domain.asset.web;
 import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.domain.web.WebCmsDomainMapping;
 import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointMapping;
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
 
 import java.lang.annotation.*;
@@ -58,4 +60,13 @@ public @interface WebCmsAssetMapping
 	 * matched on has a status in this series configured.
 	 */
 	HttpStatus.Series[] series() default HttpStatus.Series.SUCCESSFUL;
+
+	/**
+	 * Mapping will only apply if the current {@link com.foreach.across.modules.webcms.domain.domain.WebCmsDomainContext}
+	 * if for any of the domains specified. If the array of domains is empty, mapping will always apply.
+	 * <p/>
+	 * A domain is specified by its domain key, {@code null} represent the explicit no-domain.
+	 */
+	@AliasFor(annotation = WebCmsDomainMapping.class, attribute = "value")
+	String[] domain() default {};
 }

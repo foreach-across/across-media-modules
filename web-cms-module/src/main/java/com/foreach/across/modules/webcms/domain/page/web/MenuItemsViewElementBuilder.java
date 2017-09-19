@@ -23,6 +23,8 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainAdminUiService;
+import com.foreach.across.modules.webcms.domain.menu.QWebCmsMenu;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -41,6 +43,7 @@ public class MenuItemsViewElementBuilder implements ViewElementBuilder<Container
 {
 	private final WebCmsMenuRepository menuRepository;
 	private final BootstrapUiFactory bootstrapUiFactory;
+	private final WebCmsMultiDomainAdminUiService multiDomainAdminUiService;
 
 	@Override
 	public ContainerViewElement build( ViewElementBuilderContext builderContext ) {
@@ -49,7 +52,9 @@ public class MenuItemsViewElementBuilder implements ViewElementBuilder<Container
 
 		ContainerViewElementBuilder options = bootstrapUiFactory.container();
 
-		menuRepository.findAll( new Sort( "description", "name" ) )
+		QWebCmsMenu query = QWebCmsMenu.webCmsMenu;
+
+		menuRepository.findAll( multiDomainAdminUiService.applyVisibleDomainsPredicate( query.isNotNull(), query.domain ), new Sort( "description", "name" ) )
 		              .forEach( menu ->
 				                        options.add(
 						                        bootstrapUiFactory.checkbox()

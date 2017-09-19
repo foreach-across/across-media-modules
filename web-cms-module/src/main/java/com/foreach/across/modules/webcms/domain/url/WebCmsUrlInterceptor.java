@@ -46,7 +46,7 @@ class WebCmsUrlInterceptor extends EntityInterceptorAdapter<WebCmsUrl>
 
 	@Override
 	public void beforeCreate( WebCmsUrl entity ) {
-		urlCache.remove( entity.getPath() );
+		urlCache.remove( entity );
 	}
 
 	@Override
@@ -54,15 +54,15 @@ class WebCmsUrlInterceptor extends EntityInterceptorAdapter<WebCmsUrl>
 		WebCmsUrl current = urlRepository.findOne( updatedUrl.getId() );
 
 		if ( current != null && !StringUtils.equals( current.getPath(), updatedUrl.getPath() ) ) {
-			urlCache.remove( current.getPath() );
+			urlCache.remove( current );
 		}
 
-		urlCache.remove( updatedUrl.getPath() );
+		urlCache.remove( updatedUrl );
 	}
 
 	@Override
 	public void beforeDelete( WebCmsUrl entity ) {
-		urlCache.remove( entity.getPath() );
+		urlCache.remove( entity );
 	}
 
 	@Override

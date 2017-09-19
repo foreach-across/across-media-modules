@@ -25,6 +25,7 @@ import com.foreach.across.modules.webcms.domain.component.model.AbstractWebCmsCo
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
+import it.DynamicDataSourceConfigurer;
 import lombok.Data;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +42,6 @@ import static org.junit.Assert.*;
  * @since 0.0.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@DirtiesContext
 @AcrossWebAppConfiguration
 public class TestAbstractWebCmsComponentModelReader
 {
@@ -166,7 +166,7 @@ public class TestAbstractWebCmsComponentModelReader
 	}
 
 	@AcrossTestConfiguration(modules = WebCmsModule.NAME)
-	protected static class Config
+	protected static class Config extends DynamicDataSourceConfigurer
 	{
 		@Bean
 		public EmptyAcrossModule myModule() {

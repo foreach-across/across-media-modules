@@ -18,12 +18,17 @@ package com.foreach.across.modules.webcms.domain.url.repositories;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,9 +38,21 @@ import java.util.List;
 @Exposed
 public interface WebCmsUrlRepository extends IdBasedEntityJpaRepository<WebCmsUrl>, QueryDslPredicateExecutor<WebCmsUrl>
 {
-	WebCmsUrl findOneByPath( String path );
+	WebCmsUrl findOneByPathAndEndpoint_Domain( String path, WebCmsDomain domain );
 
 	List<WebCmsUrl> findAllByEndpoint( WebCmsEndpoint entity );
 
 	Page<WebCmsUrl> findAllByEndpoint( WebCmsEndpoint entity, Pageable pageable );
+
+	@Override
+	List<WebCmsUrl> findAll( Predicate predicate );
+
+	@Override
+	List<WebCmsUrl> findAll( Predicate predicate, Sort sort );
+
+	@Override
+	List<WebCmsUrl> findAll( Predicate predicate, OrderSpecifier<?>[] orders );
+
+	@Override
+	List<WebCmsUrl> findAll( OrderSpecifier<?>[] orders );
 }

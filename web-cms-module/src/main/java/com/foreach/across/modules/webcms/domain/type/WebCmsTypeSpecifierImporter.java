@@ -19,11 +19,14 @@ package com.foreach.across.modules.webcms.domain.type;
 import com.foreach.across.modules.webcms.data.AbstractWebCmsDataImporter;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.type.web.WebCmsTypeSpecifierValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 
 import java.util.Map;
 
@@ -38,10 +41,11 @@ final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCm
 {
 	private final WebCmsTypeRegistry typeRegistry;
 	private final WebCmsTypeSpecifierRepository typeRepository;
+	private final WebCmsTypeSpecifierValidator typeValidator;
 
 	@Override
 	public boolean supports( WebCmsDataEntry data ) {
-		return "types".equals( data.getParentKey() );
+		return data.getParent() != null && "types".equals( data.getParent().getParentKey() );
 	}
 
 	@Override
@@ -56,7 +60,9 @@ final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCm
 			existing = typeRepository.findOneByObjectId( objectId );
 		}
 
-		return existing != null ? existing : typeRepository.findOneByObjectTypeAndTypeKey( typeGroup, typeKey );
+		WebCmsDomain domain = retrieveDomainForDataEntry( data, WebCmsTypeSpecifier.class );
+
+		return existing != null ? existing : typeRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, typeKey, domain );
 	}
 
 	@Override
@@ -81,7 +87,9 @@ final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCm
 
 			return type;
 		}
-
+//		WebCmsDomain domain = retrieveDomainForDataEntry( data, implementationType );
+//		WebCmsTypeSpecifier<?> type = supplier.get();
+//		type.setDomain( domain );
 		return supplier.get();
 	}
 
@@ -91,16 +99,26 @@ final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCm
 	}
 
 	@Override
-	protected void saveDto( WebCmsTypeSpecifier dto, WebCmsDataAction action, WebCmsDataEntry data ) {
+	protected WebCmsTypeSpecifier<?> prepareForSaving( WebCmsTypeSpecifier<?> dto, WebCmsDataEntry data ) {
 		if ( dto.isNew() ) {
 			if ( dto.getTypeKey() == null ) {
 				dto.setTypeKey( data.getKey() );
 			}
-			if ( !data.getMapData().containsKey( "objectId" ) ) {
-				dto.setObjectId( dto.getTypeKey() );
-			}
+//			if ( !data.getMapData().containsKey( "objectId" ) ) {
+//				dto.setObjectId( dto.getTypeKey() );
+//			}
 		}
 
+		return dto;
+	}
+
+	@Override
+	protected void validate( WebCmsTypeSpecifier<?> dto, Errors errors ) {
+		typeValidator.validate( dto, errors );
+	}
+
+	@Override
+	protected void saveDto( WebCmsTypeSpecifier dto, WebCmsDataAction action, WebCmsDataEntry data ) {
 		LOG.debug( "Saving WebCmsTypeSpecifier {} with objectId {} (insert: {}) - {}",
 		           dto.getClass().getSimpleName(), dto.getObjectId(), dto.isNew(), dto );
 		typeRepository.save( dto );

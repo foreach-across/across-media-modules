@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.image;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -83,11 +84,12 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 	                       @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                       @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                       @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                       @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                       @Builder.ObtainVia(method = "isPublished") boolean published,
 	                       @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
 	                       String name,
 	                       String externalId ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate );
 		this.name = name;
 		this.externalId = externalId;
 	}

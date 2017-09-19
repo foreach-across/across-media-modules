@@ -1,0 +1,70 @@
+types:
+  component:
+    wcm:domain: nl-foreach
+    ax-blog:
+      name: Across Blog NL
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType:
+            typeKey: container
+            domain: null
+          wcm:components:
+            title:
+              componentType:
+                typeKey: text-field
+                domain: null
+              content: Thinking Across
+              sortIndex: 1
+            header:
+              componentType:
+               typeKey: text-field
+               domain: null
+              sortIndex: 2
+            body:
+              componentType:
+                typeKey: rich-text
+                domain: null
+              sortIndex: 3
+            footer:
+              componentType:
+                typeKey: text-field
+                domain: null
+              sortIndex: 4
+assets:
+  page:
+    /faq:
+      objectId: "wcm:asset:page:reference-faq-nl"
+      title: Frequently Asked Questions
+      domain: nl-foreach
+
+  publication:
+    movies:
+#      objectId: "wcm:asset:publication:movies-nl"
+      name: Movies (NL)
+      publicationType:
+        typeKey: "nl-foreach:weird-facts"
+        domain: nl-foreach
+      published: true
+      articleTemplatePage: "wcm:asset:page:fact-nl"
+      domain: nl-foreach
+
+  component:
+    content:
+      title: Content (NL)
+      componentType: plain-text
+      content: "Global component: content (NL)"
+      domain: nl-foreach
+
+    wcm:domain: nl-foreach
+    ax-blog-nl:
+      componentType:
+        typeKey: "ax-blog"
+      wcm:components:
+        header:
+          content: Multi-domain support for WebCmsModule has been released (NL)
+        body:
+          content: Lorem ipsum (NL)
+        footer:
+          content: Start with across using start-across.foreach.nl

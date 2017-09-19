@@ -17,8 +17,13 @@
 package com.foreach.across.modules.webcms.domain;
 
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
+
+import java.util.List;
 
 /**
  * Base interface for a repository managing either {@link WebCmsObjectSuperClass} or {@link WebCmsObjectInheritanceSuperClass}.
@@ -29,4 +34,15 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface WebCmsObjectEntityRepository<T extends WebCmsObjectSuperClass> extends WebCmsObjectRepository<T>, IdBasedEntityJpaRepository<T>, QueryDslPredicateExecutor<T>
 {
+	@Override
+	List<T> findAll( Predicate predicate );
+
+	@Override
+	List<T> findAll( Predicate predicate, Sort sort );
+
+	@Override
+	List<T> findAll( Predicate predicate, OrderSpecifier<?>[] orders );
+
+	@Override
+	List<T> findAll( OrderSpecifier<?>[] orders );
 }

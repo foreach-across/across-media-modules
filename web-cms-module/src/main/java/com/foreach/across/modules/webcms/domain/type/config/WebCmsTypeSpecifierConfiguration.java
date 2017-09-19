@@ -38,10 +38,8 @@ class WebCmsTypeSpecifierConfiguration implements EntityConfigurer
 		        .hide()
 		        .properties(
 				        props -> props.property( "attributes" ).hidden( true ).and()
-				                      .property( "objectId" ).order( Ordered.HIGHEST_PRECEDENCE ).writable( false )
 		        )
-		        .updateFormView( fvb -> fvb.showProperties( "objectId", "name", "typeKey", "created", "lastModified" ) )
-		        .listView( lvb -> lvb.showProperties( "~objectId", "." ) );
+		        .updateFormView( fvb -> fvb.showProperties( "name", "typeKey", "created", "lastModified" ) );
 
 		entities.assignableTo( WebCmsTypeSpecifierLink.class ).hide();
 	}

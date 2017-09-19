@@ -1,0 +1,43 @@
+#
+# Import default domain structures
+#
+# See: ITDomainsReferenceData
+domains:
+  simple_domain:
+     name: Simple domain with _
+
+  domain.simple.domain:
+    objectId: "wcm:domain:simple-domain"
+    name: Simple domain with ObjectId simple-domain
+    active: false
+
+  # update name
+  simple.domain:
+     name: Simple domain with .
+     description: A simple domain needs a simple description
+
+  # update active
+  domain.complex.domain:
+    objectId: "wcm:domain:complex-domain"
+    name: A complex domain
+    active: false
+    attributes:
+      dns: 127.0.0.1
+      cookies: I love cookies
+
+  # update attributes and description
+  domain.cookies:
+    name: Cookies
+    description: Master of all the cookies
+    attributes:
+      dns: 127.0.0.1
+      cookies: 527
+
+  # key to be replaced
+  domain.domain.with.id:
+    objectId: "wcm:domain:domain-with-id"
+    name: Simple domain with ObjectId
+
+  # to be deleted
+  deleteMeDomain:
+    name: Extension should delete this domain

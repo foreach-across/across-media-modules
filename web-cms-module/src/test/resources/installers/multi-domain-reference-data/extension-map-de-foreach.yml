@@ -1,0 +1,21 @@
+assets:
+  page:
+    /my-other-page:
+      wcm:action: delete
+      domain: de-foreach
+    /domain-mapped-page:
+      title: Domain mapped page DE
+      published: true
+      domain: de-foreach
+
+  publication:
+    movies:
+      name: Movies (DE)
+      domain: de-foreach
+
+  component:
+    de-teaser:
+      domain: de-foreach
+      wcm:components:
+        header:
+          content: Sample teaser header (DE)

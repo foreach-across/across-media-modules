@@ -1,0 +1,49 @@
+assets:
+  page:
+    /faq:
+      objectId: "wcm:asset:page:reference-faq-be"
+      title: Frequently Asked Questions
+      domain: "wcm:domain:be-foreach"
+
+  publication:
+    movies:
+#      objectId: "wcm:asset:publication:movies-be"
+      name: To be deleted
+      publicationType:
+        typeKey: "be-foreach:weird-facts"
+        domain: be-foreach
+      published: true
+      articleTemplatePage: "wcm:asset:page:fact-be"
+      domain: be-foreach
+
+  component:
+    content:
+      title: Content (BE)
+      componentType: plain-text
+      content: "Global component: content (BE)"
+      domain: be-foreach
+
+    ax-blog-be:
+      domain: be-foreach
+      componentType:
+        typeKey: "ax-blog"
+      wcm:components:
+        header:
+          content: Multi-domain support for WebCmsModule has been released (BE)
+        body:
+          content: Lorem ipsum (BE)
+        footer:
+          content: Start with across using start-across.foreach.be
+
+  wcm:domain: be-foreach
+  article:
+    - objectId: "wcm:asset:article:webcms-multi-dom-be"
+      title: MultiDomainSupport for WebCmsModule (BE)
+      description: MultiDomainSupport for WebCmsModule @ be-foreach
+      articleType:
+        typeKey: blog
+        domain: null
+      publication:
+        publicationKey: blogs
+        domain: null
+      domain: be-foreach

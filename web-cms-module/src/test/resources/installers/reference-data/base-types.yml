@@ -7,6 +7,7 @@ types:
   #
   component:
     teaser:
+      objectId: "wcm:type:component:teaser"
       name: Teaser
       attributes:
         type: fixed-container
@@ -21,15 +22,37 @@ types:
             body:
               componentType: rich-text
               sortIndex: 2
+    domain.complex.domain:big-teaser:
+      name: Big Teaser
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          wcm:components:
+            title:
+              componentType: text-field
+              content: Teaser title
+              sortIndex: 1
+            body:
+              componentType: rich-text
+              sortIndex: 2
+      domain: domain.complex.domain
 
   #
   # Custom article types: small article, big article
   #
   article:
     small-article:
+      objectId: "wcm:type:article:small-article"
       name: Small Article
     big-article:
+      objectId: "wcm:type:article:big-article"
       name: Big Article
+    domain.complex.domain:medium-article:
+      objectId: "wcm:type:article:domain.complex.domain:medium-article"
+      name: Medium Article
+      domain: domain.complex.domain
 
   #
   # Custom publication types: fun facts, boring facts
@@ -49,3 +72,11 @@ types:
           linkType: article
         - typeSpecifier: "wcm:type:article:big-article"
           linkType: article
+    domain.complex.domain:weird-facts:
+      name: Weird Facts
+      wcm:types:
+        - typeSpecifier: "wcm:type:article:small-article"
+          linkType: article
+        - typeSpecifier: "wcm:type:article:domain.complex.domain:medium-article"
+          linkType: article
+      domain: "wcm:domain:complex-domain"

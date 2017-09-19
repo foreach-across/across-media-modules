@@ -19,6 +19,9 @@ package com.foreach.across.modules.webcms.domain.component.model;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.*;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,7 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 {
 	private final WebCmsComponentRepository componentRepository;
 	private final WebCmsComponentTypeRepository componentTypeRepository;
+	private final WebCmsMultiDomainService multiDomainService;
 
 	private Collection<WebCmsComponentModelReader> modelReaders = Collections.emptyList();
 	private Collection<WebCmsComponentModelWriter> modelWriters = Collections.emptyList();
@@ -82,8 +86,18 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 
 	@Override
 	public WebCmsComponentModel getComponentModelByName( String componentName, WebCmsObject owner ) {
+		WebCmsDomain domain = ( ( "componentTemplate".equals( componentName ) || "contentTemplate".equals(
+				componentName ) ) && owner instanceof WebCmsTypeSpecifier )
+				? ( (WebCmsTypeSpecifier) owner ).getDomain()
+				: multiDomainService.getCurrentDomainForType( WebCmsComponent.class );
+		return this.getComponentModelByNameAndDomain( componentName, owner, domain );
+	}
+
+	@Override
+	public WebCmsComponentModel getComponentModelByNameAndDomain( String componentName, WebCmsObject owner, WebCmsDomain domain ) {
 		Assert.notNull( componentName );
-		return Optional.ofNullable( componentRepository.findOneByOwnerObjectIdAndName( owner != null ? owner.getObjectId() : null, componentName ) )
+		return Optional.ofNullable(
+				componentRepository.findOneByOwnerObjectIdAndNameAndDomain( owner != null ? owner.getObjectId() : null, componentName, domain ) )
 		               .map( this::buildModelForComponent )
 		               .orElse( null );
 	}

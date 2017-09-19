@@ -50,35 +50,42 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 		return true;
 	}
 
-	private void importSingleEntry( WebCmsDataEntry menuDataSet, T parent ) {
-		LOG.trace( "Importing data entry {}", menuDataSet );
+	private void importSingleEntry( WebCmsDataEntry data, T parent ) {
+		try {
+			LOG.trace( "Importing data entry {}", data );
 
-		U existing = getExisting( menuDataSet, parent );
-		WebCmsDataAction action = resolveAction( existing, menuDataSet );
-		LOG.trace( "Resolved import action {} to {}, existing item: {}", menuDataSet.getImportAction(), action, existing != null );
+			U existing = getExisting( data, parent );
+			WebCmsDataAction action = resolveAction( existing, data );
+			LOG.trace( "Resolved import action {} to {}, existing item: {}", data.getImportAction(), action, existing != null );
 
-		if ( action != null ) {
-			if ( action == DELETE ) {
-				delete( existing );
-			}
-			else {
-				U dto = createDto( menuDataSet, existing, action, parent );
+			if ( action != null ) {
+				if ( action == DELETE ) {
+					delete( existing );
+				}
+				else {
+					U dto = createDto( data, existing, action, parent );
 
-				if ( dto != null ) {
-					boolean dataValuesApplied = applyDataValues( menuDataSet.getMapData(), dto );
-					if ( existing == null || dataValuesApplied ) {
-						save( dto );
-					}
-					else {
-						LOG.trace( "Skipping saving DTO as no actual values have been updated" );
+					if ( dto != null ) {
+						boolean dataValuesApplied = applyDataValues( data.getMapData(), dto );
+						if ( existing == null || dataValuesApplied ) {
+							save( dto );
+						}
+						else {
+							LOG.trace( "Skipping saving DTO as no actual values have been updated" );
+						}
 					}
 				}
 			}
+			else {
+				LOG.trace( "Skipping data entry as no valid action was resolved" );
+			}
 		}
-		else {
-			LOG.trace( "Skipping data entry as no valid action was resolved" );
+		catch ( WebCmsDataImportException die ) {
+			throw die;
 		}
-
+		catch ( Exception e ) {
+			throw new WebCmsDataImportException( data, e );
+		}
 	}
 
 	protected abstract U createDto( WebCmsDataEntry menuDataSet, U existing, WebCmsDataAction action, T parent );

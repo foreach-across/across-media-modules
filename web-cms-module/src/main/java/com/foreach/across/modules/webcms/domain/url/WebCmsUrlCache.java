@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.url;
 
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.modules.webcms.WebCmsModuleCache;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
@@ -35,7 +36,7 @@ import java.util.Optional;
  * <p/>
  * This implementation serves as a read-through cache, which will fetch the actual {@link WebCmsUrl} if not found.
  * <p/>
- * The {@link WebCmsUrlCache} always exist but might not use an actual backing {@link org.springframework.cache.Cache}
+ * The {@link WebCmsUrlCache} always exists but might not use an actual backing {@link org.springframework.cache.Cache}
  * if no cache provider is present.  Uses a {@link TransactionAwareCacheDecorator} around the actual {@link Cache}
  * ensuring that paths are only flushed after a transaction commits in case a running transaction is busy.
  *
@@ -56,13 +57,14 @@ public class WebCmsUrlCache
 	private Cache cache = DEFAULT_CACHE;
 
 	@SuppressWarnings("unchecked")
-	public Optional<WebCmsUrl> getUrlForPath( String path ) {
-		Cache.ValueWrapper urlId = cache.get( path );
+	public Optional<WebCmsUrl> getUrlForPathAndDomain( String path, WebCmsDomain domain ) {
+		String cacheKey = cacheKey( path, domain );
+		Cache.ValueWrapper urlId = cache.get( cacheKey );
 
 		if ( urlId == null ) {
-			WebCmsUrl url = urlRepository.findOneByPath( path );
+			WebCmsUrl url = urlRepository.findOneByPathAndEndpoint_Domain( path, domain );
 			Optional<WebCmsUrl> value = Optional.ofNullable( url );
-			cache.put( path, value.map( WebCmsUrl::getId ).orElse( null ) );
+			cache.put( cacheKey, value.map( WebCmsUrl::getId ).orElse( null ) );
 			return value;
 		}
 
@@ -70,8 +72,12 @@ public class WebCmsUrlCache
 		return Optional.ofNullable( actualId != null ? urlRepository.findOne( actualId ) : null );
 	}
 
-	public void remove( String path ) {
-		cache.evict( path );
+	public void remove( WebCmsUrl url ) {
+		cache.evict( cacheKey( url.getPath(), url.getEndpoint().getDomain() ) );
+	}
+
+	private String cacheKey( String path, WebCmsDomain domain ) {
+		return ( domain != null ? domain.getId() + ":" : "no-domain:" ) + path;
 	}
 
 	@PostRefresh

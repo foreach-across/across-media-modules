@@ -22,6 +22,8 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -38,7 +40,7 @@ import java.util.Objects;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
+public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject, WebCmsDomainBound
 {
 	/**
 	 * Common attribute used to specify the base type of the component type.
@@ -246,6 +248,22 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject
 	 */
 	public void setSortIndex( int sortIndex ) {
 		component.setSortIndex( sortIndex );
+	}
+
+	/**
+	 * @return domain of the component in its owner scope
+	 */
+	@Override
+	public WebCmsDomain getDomain() {
+		return component.getDomain();
+	}
+
+	/**
+	 * @param domain of the component in its owner scope
+	 */
+	@Override
+	public void setDomain( WebCmsDomain domain ) {
+		component.setDomain( domain );
 	}
 
 	/**

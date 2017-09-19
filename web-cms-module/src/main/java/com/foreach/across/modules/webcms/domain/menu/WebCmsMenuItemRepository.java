@@ -37,4 +37,6 @@ public interface WebCmsMenuItemRepository extends IdBasedEntityJpaRepository<Web
 	Collection<WebCmsMenuItem> findAllByEndpoint( WebCmsEndpoint endpoint );
 
 	WebCmsMenuItem findByMenuNameAndPath( String menuName, String path );
+
+	WebCmsMenuItem findByMenuAndPath( WebCmsMenu menu, String path );
 }

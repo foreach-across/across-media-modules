@@ -17,15 +17,16 @@
 package com.foreach.across.modules.webcms.domain;
 
 import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ import java.util.UUID;
  * Base implementation for a {@link WebCmsObject} entity that ensures that the object id is part of an object collection.
  * Requires the entity table to have a <strong>object_id</strong> column with a max length of 100.
  * <p/>
- * This is a base class for single entities, if you want a base class for a joined inheritance strategy, consider using
+ * This is a base class for single entities, if you want a base class for an inheritance strategy, consider using
  * the {@link WebCmsObjectInheritanceSuperClass}.
  *
  * @author Arne Vandamme
@@ -42,7 +43,7 @@ import java.util.UUID;
  */
 @Access(AccessType.FIELD)
 @MappedSuperclass
-public abstract class WebCmsObjectSuperClass<T extends WebCmsObjectSuperClass<T>> extends SettableIdAuditableEntity<T> implements WebCmsObject
+public abstract class WebCmsObjectSuperClass<T extends WebCmsObjectSuperClass<T>> extends SettableIdAuditableEntity<T> implements WebCmsObject, WebCmsDomainBound
 {
 	/**
 	 * Globally unique id for this object. Alternative for the generated id property as the key should be set manually.
@@ -56,6 +57,15 @@ public abstract class WebCmsObjectSuperClass<T extends WebCmsObjectSuperClass<T>
 	@Length(max = 100)
 	private String objectId;
 
+	/**
+	 * The (optional) {@link WebCmsDomain} this object belongs to.
+	 */
+	@Getter
+	@Setter
+	@ManyToOne
+	@JoinColumn(name = "domain_id")
+	private WebCmsDomain domain;
+
 	protected WebCmsObjectSuperClass() {
 		setObjectId( UUID.randomUUID().toString() );
 	}
@@ -66,7 +76,8 @@ public abstract class WebCmsObjectSuperClass<T extends WebCmsObjectSuperClass<T>
 	                                  String createdBy,
 	                                  Date createdDate,
 	                                  String lastModifiedBy,
-	                                  Date lastModifiedDate ) {
+	                                  Date lastModifiedDate,
+	                                  WebCmsDomain domain ) {
 		setNewEntityId( newEntityId );
 		setId( id );
 		setCreatedBy( createdBy );
@@ -75,6 +86,7 @@ public abstract class WebCmsObjectSuperClass<T extends WebCmsObjectSuperClass<T>
 		setLastModifiedDate( lastModifiedDate );
 
 		setObjectId( StringUtils.isNotEmpty( objectId ) ? objectId : UUID.randomUUID().toString() );
+		setDomain( domain );
 	}
 
 	/**

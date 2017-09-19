@@ -22,12 +22,18 @@ import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.domain.StringToWebCmsDomainConverter;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates one (or many) {@link WebCmsMenuItem}s attached to a {@link WebCmsAsset} from a data import.
@@ -45,6 +51,8 @@ public class WebCmsMenuItemOnAssetImporter extends AbstractWebCmsPropertyDataImp
 	private final WebCmsMenuRepository menuRepository;
 	private final WebCmsMenuItemRepository menuItemRepository;
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;
+	private final WebCmsMultiDomainService multiDomainService;
+	private final StringToWebCmsDomainConverter domainConverter;
 
 	@Override
 	public Phase getPhase() {
@@ -75,16 +83,18 @@ public class WebCmsMenuItemOnAssetImporter extends AbstractWebCmsPropertyDataImp
 	}
 
 	private WebCmsMenuItem createNewMenuItemDto( WebCmsDataEntry data, WebCmsAsset asset, WebCmsEndpoint endpointToUse ) {
-		WebCmsEndpoint endpoint = endpointToUse != null ? endpointToUse : assetEndpointRepository.findOneByAsset( asset );
+		WebCmsEndpoint endpoint = endpointToUse != null
+				? endpointToUse : assetEndpointRepository.findOneByAssetAndDomain( asset, asset.getDomain() );
 
 		if ( endpoint != null ) {
+			WebCmsMenu menu = retrieveMenu( data, asset.getDomain() );
 			WebCmsUrl primaryUrl = endpoint.getPrimaryUrl().orElse( null );
 
 			if ( primaryUrl != null ) {
-				WebCmsMenu menu = retrieveMenu( data );
 				boolean generated = !data.getMapData().containsKey( "title" ) && !data.getMapData().containsKey( "path" );
 
-				return WebCmsMenuItem.builder().menu( menu )
+				return WebCmsMenuItem.builder()
+				                     .menu( menu )
 				                     .endpoint( endpoint )
 				                     .path( primaryUrl.getPath() )
 				                     .title( asset.getName() )
@@ -108,11 +118,19 @@ public class WebCmsMenuItemOnAssetImporter extends AbstractWebCmsPropertyDataImp
 	}
 
 	@Override
+	protected boolean applyDataValues( Map<String, Object> values, WebCmsMenuItem dto ) {
+		Map<String, Object> filtered = new HashMap<>( values );
+		filtered.remove( "menu" );
+		filtered.remove( "domain" );
+		return super.applyDataValues( filtered, dto );
+	}
+
+	@Override
 	protected WebCmsMenuItem getExisting( WebCmsDataEntry data, WebCmsAsset parent ) {
-		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAsset( parent );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( parent, multiDomainService.getCurrentDomainForEntity( parent ) );
 
 		if ( endpoint != null ) {
-			WebCmsMenu menu = retrieveMenu( data );
+			WebCmsMenu menu = retrieveMenu( data, parent.getDomain() );
 
 			return menuItemRepository.findAllByEndpoint( endpoint )
 			                         .stream()
@@ -124,7 +142,8 @@ public class WebCmsMenuItemOnAssetImporter extends AbstractWebCmsPropertyDataImp
 		return null;
 	}
 
-	private WebCmsMenu retrieveMenu( WebCmsDataEntry data ) {
-		return menuRepository.findOneByName( StringUtils.defaultString( (String) data.getMapData().get( "menu" ), data.getKey() ) );
+	private WebCmsMenu retrieveMenu( WebCmsDataEntry data, WebCmsDomain domain ) {
+		WebCmsDomain dataDomain = data.getMapData().containsKey( "domain" ) ? domainConverter.convert( (String) data.getMapData().get( "domain" ) ) : domain;
+		return menuRepository.findOneByNameAndDomain( StringUtils.defaultString( (String) data.getMapData().get( "menu" ), data.getKey() ), dataDomain );
 	}
 }

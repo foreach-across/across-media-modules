@@ -1,0 +1,79 @@
+domains:
+  fr-foreach:
+    objectId: "wcm:domain:fr-foreach"
+    name: Foreach (FR)
+    active: true
+
+assets:
+  component:
+    my-custom-component:
+      componentType:
+        typeKey: my-custom-component
+        domain: null
+      metadata:
+        title: My Custom Title
+        backgroundColor: blue
+        zIndex: 2
+        active: false
+
+    # Globally defined content component - used for testing that assets don't fallback to global level for their content
+    nl-teaser:
+      componentType:
+        typeKey: "nl-foreach:teaser"
+        domain: "nl-foreach"
+      domain: nl-foreach
+      wcm:components:
+        header:
+          content: Sample teaser header (NL)
+        body:
+          content: Sample teaser body (NL)
+        footer:
+          content: Sample teaser footer (NL)
+
+    be-teaser:
+      componentType:
+        typeKey: "be-foreach:teaser"
+        domain: be-foreach
+      domain: be-foreach
+      wcm:components:
+        header:
+          content: Sample teaser header (BE)
+        body:
+          content: Sample teaser body (BE)
+        footer:
+          content: Sample teaser footer (BE)
+
+    de-teaser:
+      componentType:
+        typeKey: "de-foreach:teaser"
+        domain: de-foreach
+      domain: de-foreach
+      wcm:components:
+        header:
+          content: Sample teaser header
+        body:
+          content: Sample teaser body (DE)
+        footer:
+          content: Sample teaser footer (DE)
+
+    fr-teaser:
+      componentType: teaser
+      domain: fr-foreach
+      wcm:components:
+        header:
+          content: Sample teaser header (FR)
+        body:
+          content: Sample teaser body (FR)
+        footer:
+          content: Sample teaser footer (FR)
+
+  page:
+    - objectId: "wcm:asset:page:homepage-nl"
+      canonicalPath: /homepage
+      title: Homepage (NL)
+      domain: nl-foreach
+      wcm:components:
+        header:
+          domain: nl-foreach
+          componentType: html
+          content: Header content...

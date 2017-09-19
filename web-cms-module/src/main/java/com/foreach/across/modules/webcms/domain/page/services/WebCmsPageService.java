@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.page.services;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
@@ -33,11 +34,21 @@ public interface WebCmsPageService
 {
 	/**
 	 * Find a single page by its unique canonical path.
-	 *
+	 * This method will use {@link #findByCanonicalPathAndDomain} to retrieve the page.
+	 * The domain used in looking up the page will be retrieved from the {@link com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService}
 	 * @param canonicalPath unique path
 	 * @return page if found
 	 */
 	Optional<WebCmsPage> findByCanonicalPath( String canonicalPath );
+
+	/**
+	 * Find a single page by its canonicalPath within the specified domain.
+	 *
+	 * @param canonicalPath the unique path within the domain
+	 * @param domain        the domain
+	 * @return page if found
+	 */
+	Optional<WebCmsPage> findByCanonicalPathAndDomain( String canonicalPath, WebCmsDomain domain );
 
 	/**
 	 * Prepares a {@link WebCmsPage} for saving.  This will check the different settings on the page,

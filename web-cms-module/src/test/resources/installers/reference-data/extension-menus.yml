@@ -30,6 +30,12 @@ menus:
         title: Contact2
         asset: /my/other/contact
         sortIndex: 3
+
   # Remove the dummy menu
   - name: deleteMeNav
     wcm:action: delete
+
+  # Remove the domain
+  - objectId: "wcm:menu:my-other-nav"
+    name: myOtherNav
+    domain: null

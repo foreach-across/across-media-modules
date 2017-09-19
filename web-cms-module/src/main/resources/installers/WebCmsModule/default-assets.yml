@@ -15,11 +15,13 @@ assets:
   # Default publications: News and Blogs
   publication:
     blogs:
+      objectId: "wcm:asset:publication:blogs"
       name: Blogs
       publicationType: blog
       published: true
       articleTemplatePage: "wcm:asset:page:blog-detail"
     news:
+      objectId: "wcm:asset:publication:news"
       name: News
       publicationType: news
       published: true

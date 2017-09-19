@@ -39,8 +39,8 @@ import java.util.stream.Stream;
  * {@link WebCmsEndpointMapping} into account.
  *
  * @author Sander Van Loock
- * @since 0.0.1
  * @see com.foreach.across.modules.web.mvc.condition.CustomRequestCondition
+ * @since 0.0.1
  */
 @RequiredArgsConstructor
 @Slf4j
@@ -81,7 +81,7 @@ public class WebCmsEndpointCondition extends AbstractCustomRequestCondition<WebC
 	 * <p>
 	 * Two conditions are merged by modifying this instance of {@link WebCmsEndpointCondition}.
 	 * The classes of the conditions are combined to the most specific child in the inheritance tree.  If the two
-	 * {@link WebCmsEndpoint} types are unrelated, a {@link InvalidWebCmsEndpointConditionCombination} is thrown.
+	 * {@link WebCmsEndpoint} types are unrelated, a {@link InvalidWebCmsConditionCombination} is thrown.
 	 * <p>
 	 * Both the {@link HttpStatus}es and {@link HttpStatus.Series} are combined.
 	 * To combine these arrays we take the intersection of both arrays if both are not empty.  If only one array is not empty, we take
@@ -100,6 +100,8 @@ public class WebCmsEndpointCondition extends AbstractCustomRequestCondition<WebC
 	 * <p>
 	 * must be combined into a{@link WebCmsEndpointCondition} with status 501 and series CLIENT_ERROR because the both share this status and series.
 	 * The status 301 is also added because 301 the first contains the REDIRECTION serie and the other the 301 status.
+	 * <p>
+	 * As with statuses, domain are merged.
 	 */
 	@Override
 	public WebCmsEndpointCondition combine( WebCmsEndpointCondition other ) {
@@ -110,7 +112,7 @@ public class WebCmsEndpointCondition extends AbstractCustomRequestCondition<WebC
 		else if ( !other.endpointType.isAssignableFrom( this.endpointType ) ) {
 			String message = String.format( "A condition with endpoint type %s and type %s cannot be merged", this.endpointType,
 			                                other.endpointType );
-			throw new InvalidWebCmsEndpointConditionCombination( message );
+			throw new InvalidWebCmsConditionCombination( message );
 		}
 		else {
 			result.endpointType = this.endpointType;
@@ -134,9 +136,12 @@ public class WebCmsEndpointCondition extends AbstractCustomRequestCondition<WebC
 		if ( !context.isResolved() ) {
 			resolver.resolve( context, request );
 		}
-		if ( endpointType.isInstance( context.getEndpoint() ) && hasCorrectStatus( context.getUrl().getHttpStatus() ) ) {
+
+		if ( endpointType.isInstance( context.getEndpoint() )
+				&& hasCorrectStatus( context.getUrl().getHttpStatus() ) ) {
 			WebCmsEndpointCondition result = new WebCmsEndpointCondition( context, resolver );
 			result.endpointType = this.endpointType;
+
 			if ( this.series.length == 0 ) {
 				result.statuses = new HttpStatus[] { context.getUrl().getHttpStatus() };
 			}

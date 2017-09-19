@@ -19,7 +19,9 @@ package com.foreach.across.modules.webcms.domain.page;
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataImportServiceImpl;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
@@ -36,6 +38,7 @@ import org.springframework.stereotype.Component;
 public final class StringToWebCmsPageConverter implements Converter<String, WebCmsPage>
 {
 	private final WebCmsPageRepository pageRepository;
+	private final WebCmsPageService pageService;
 
 	@Autowired
 	void register( WebCmsDataConversionService conversionService ) {
@@ -44,8 +47,12 @@ public final class StringToWebCmsPageConverter implements Converter<String, WebC
 
 	@Override
 	public WebCmsPage convert( String source ) {
+		if ( NumberUtils.isDigits( source ) ) {
+			return pageRepository.findOne( Long.parseLong( source ) );
+		}
+
 		if ( source.startsWith( "/" ) ) {
-			return pageRepository.findOneByCanonicalPath( source );
+			return pageService.findByCanonicalPath( source ).orElse( null );
 		}
 
 		return pageRepository.findOneByObjectId( source );

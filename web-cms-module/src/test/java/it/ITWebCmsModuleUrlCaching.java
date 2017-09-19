@@ -24,6 +24,7 @@ import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.WebCmsModuleCache;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageTypeRepository;
@@ -60,7 +61,6 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@DirtiesContext
 @AcrossWebAppConfiguration
 @ContextConfiguration(classes = ITWebCmsModuleUrlCaching.CacheConfig.class)
 public class ITWebCmsModuleUrlCaching
@@ -103,7 +103,7 @@ public class ITWebCmsModuleUrlCaching
 		                 .build();
 		pageRepository.save( page );
 
-		endpoint = endpointRepository.findOneByAsset( page );
+		endpoint = endpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE );
 	}
 
 	@Test
@@ -113,8 +113,8 @@ public class ITWebCmsModuleUrlCaching
 		Optional<WebCmsUrl> url = webCmsEndpointService.getUrlForPath( "/path" );
 
 		assertFalse( url.isPresent() );
-		assertTrue( pathToUrlCache.containsKey( "/path" ) );
-		assertTrue( pathToUrlCache.get( "/path" ) instanceof NullValue );
+		assertTrue( pathToUrlCache.containsKey( "no-domain:/path" ) );
+		assertTrue( pathToUrlCache.get( "no-domain:/path" ) instanceof NullValue );
 	}
 
 	@Test
@@ -132,8 +132,8 @@ public class ITWebCmsModuleUrlCaching
 		Optional<WebCmsUrl> url = webCmsEndpointService.getUrlForPath( "/path" );
 
 		assertTrue( url.isPresent() );
-		assertTrue( pathToUrlCache.containsKey( "/path" ) );
-		assertEquals( 646L, pathToUrlCache.get( "/path" ) );
+		assertTrue( pathToUrlCache.containsKey( "no-domain:/path" ) );
+		assertEquals( 646L, pathToUrlCache.get( "no-domain:/path" ) );
 	}
 
 	@Test
@@ -152,8 +152,8 @@ public class ITWebCmsModuleUrlCaching
 		Optional<WebCmsUrl> url = webCmsEndpointService.getUrlForPath( "/path" );
 
 		assertTrue( url.isPresent() );
-		assertTrue( pathToUrlCache.containsKey( "/path" ) );
-		assertEquals( 646L, pathToUrlCache.get( "/path" ) );
+		assertTrue( pathToUrlCache.containsKey( "no-domain:/path" ) );
+		assertEquals( 646L, pathToUrlCache.get( "no-domain:/path" ) );
 
 		repository.delete( webCmsUrl );
 		assertTrue( pathToUrlCache.isEmpty() );
@@ -179,8 +179,8 @@ public class ITWebCmsModuleUrlCaching
 		Optional<WebCmsUrl> url = webCmsEndpointService.getUrlForPath( "/path" );
 
 		assertTrue( url.isPresent() );
-		assertTrue( pathToUrlCache.containsKey( "/path" ) );
-		assertEquals( 646L, pathToUrlCache.get( "/path" ) );
+		assertTrue( pathToUrlCache.containsKey( "no-domain:/path" ) );
+		assertEquals( 646L, pathToUrlCache.get( "no-domain:/path" ) );
 
 		webCmsUrl.setPath( "/path2" );
 		repository.save( webCmsUrl );
@@ -192,10 +192,10 @@ public class ITWebCmsModuleUrlCaching
 		Optional<WebCmsUrl> newPath = webCmsEndpointService.getUrlForPath( "/path2" );
 		assertTrue( newPath.isPresent() );
 
-		assertTrue( pathToUrlCache.containsKey( "/path" ) );
-		assertTrue( pathToUrlCache.containsKey( "/path2" ) );
-		assertTrue( pathToUrlCache.get( "/path" ) instanceof NullValue );
-		assertEquals( 646L, pathToUrlCache.get( "/path2" ) );
+		assertTrue( pathToUrlCache.containsKey( "no-domain:/path" ) );
+		assertTrue( pathToUrlCache.containsKey( "no-domain:/path2" ) );
+		assertTrue( pathToUrlCache.get( "no-domain:/path" ) instanceof NullValue );
+		assertEquals( 646L, pathToUrlCache.get( "no-domain:/path2" ) );
 	}
 
 	@Configuration

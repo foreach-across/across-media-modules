@@ -1,0 +1,183 @@
+#
+# Defines custom types used by different tests.
+#
+types:
+  publication:
+    be-foreach:weird-facts:
+      name: Weird Facts (BE)
+      domain: "wcm:domain:be-foreach"
+    nl-foreach:weird-facts:
+      name: Weird Facts (NL)
+      domain: "wcm:domain:nl-foreach"
+    de-foreach:weird-facts:
+      name: Weird Facts (DE)
+      domain: "wcm:domain:de-foreach"
+
+  component:
+    my-custom-component:
+      name: My Custom Component
+      attributes:
+        type: fixed-container
+        metadata: "modules.multidomaintest.ui.CustomComponentMetadata"
+
+    teaser:
+      name: Teaser
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          wcm:components:
+            title:
+              componentType: text-field
+              content: Teaser title
+              sortIndex: 1
+            header:
+              componentType: text-field
+              sortIndex: 2
+            body:
+              componentType: rich-text
+              sortIndex: 3
+            footer:
+              componentType: text-field
+              sortIndex: 4
+
+    ax-blog:
+      name: Across Blog
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          wcm:components:
+            title:
+              componentType: text-field
+              content: Thinking Across
+              sortIndex: 1
+            header:
+              componentType: text-field
+              sortIndex: 2
+            body:
+              componentType: rich-text
+              sortIndex: 3
+            footer:
+              componentType: text-field
+              sortIndex: 4
+
+    nl-foreach:teaser:
+      name: Teaser (NL)
+      domain: nl-foreach
+      wcm:domain: nl-foreach
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType:
+            typeKey: container
+            domain: null
+          wcm:components:
+            title:
+              componentType:
+                typeKey: text-field
+                domain: null
+              content: Teaser title
+              sortIndex: 1
+            header:
+              componentType:
+                typeKey: text-field
+                domain: null
+              sortIndex: 2
+            body:
+              componentType:
+                typeKey: rich-text
+                domain: null
+              sortIndex: 3
+            footer:
+              componentType:
+                typeKey: text-field
+                domain: null
+              sortIndex: 4
+
+    de-foreach:teaser:
+      name: Teaser (DE)
+      wcm:domain: de-foreach
+      domain: de-foreach
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType:
+            typeKey: container
+            domain: null
+          wcm:components:
+            title:
+              componentType:
+                typeKey: text-field
+                domain: null
+              content: Teaser title
+              sortIndex: 1
+#              domain: de-foreach
+            header:
+              componentType:
+                typeKey: text-field
+                domain: null
+              sortIndex: 2
+#              domain: de-foreach
+            body:
+              componentType:
+                typeKey: rich-text
+                domain: null
+              sortIndex: 3
+#              domain: de-foreach
+            footer:
+              componentType:
+                typeKey: text-field
+                domain: null
+              sortIndex: 4
+#              domain: de-foreach
+
+    wcm:domain: be-foreach
+    be-foreach:teaser:
+      name: Teaser (BE)
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType:
+            typeKey: container
+            domain: null
+          wcm:components:
+            title:
+              componentType:
+                typeKey: text-field
+                domain: null
+              content: Teaser title
+              sortIndex: 1
+#              domain: be-foreach
+            header:
+              componentType:
+                typeKey: text-field
+                domain: null
+              sortIndex: 2
+#              domain: be-foreach
+            body:
+              componentType:
+                typeKey: rich-text
+                domain: null
+              sortIndex: 3
+#              domain: be-foreach
+            footer:
+              componentType:
+                typeKey: text-field
+                domain: null
+              sortIndex: 4
+#              domain: be-foreach
+
+  article:
+    big-article:
+      objectId: "wcm:type:article:big-article"
+      name: Big Article
+    domain.complex.domain:medium-article:
+      objectId: "wcm:type:article:be-foreach:medium-article"
+      name: Medium Article
+      domain: be-foreach

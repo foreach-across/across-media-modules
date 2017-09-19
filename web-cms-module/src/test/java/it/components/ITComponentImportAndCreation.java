@@ -21,10 +21,8 @@ import com.foreach.across.modules.webcms.domain.component.container.ContainerWeb
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import it.AbstractCmsApplicationWithTestDataIT;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -37,7 +35,6 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-@DirtiesContext
 public class ITComponentImportAndCreation extends AbstractCmsApplicationWithTestDataIT
 {
 	private final String componentName = UUID.randomUUID().toString();
@@ -86,7 +83,10 @@ public class ITComponentImportAndCreation extends AbstractCmsApplicationWithTest
 		componentDef.put( "sortIndex", 33 );
 
 		dataImportService.importData(
-				Collections.singletonMap( "assets", Collections.singletonMap( "component", Collections.singletonList( componentDef ) ) )
+				Collections.singletonMap( "root",
+				                          Collections
+						                          .singletonMap( "assets", Collections.singletonMap( "component", Collections.singletonList( componentDef ) ) )
+				)
 		);
 
 		TextWebCmsComponentModel updated = componentModelService.getComponentModelByName( componentName, null, TextWebCmsComponentModel.class );
@@ -126,7 +126,10 @@ public class ITComponentImportAndCreation extends AbstractCmsApplicationWithTest
 		componentDef.put( "componentType", componentType );
 
 		dataImportService.importData(
-				Collections.singletonMap( "assets", Collections.singletonMap( "component", Collections.singletonList( componentDef ) ) )
+				Collections.singletonMap( "root",
+				                          Collections
+						                          .singletonMap( "assets", Collections.singletonMap( "component", Collections.singletonList( componentDef ) ) )
+				)
 		);
 	}
 

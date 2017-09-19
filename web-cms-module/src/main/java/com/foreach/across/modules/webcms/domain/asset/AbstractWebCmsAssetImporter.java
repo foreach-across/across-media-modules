@@ -19,11 +19,9 @@ package com.foreach.across.modules.webcms.domain.asset;
 import com.foreach.across.modules.webcms.data.AbstractWebCmsDataImporter;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
-import com.foreach.across.modules.webcms.data.WebCmsDataImportException;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -36,12 +34,9 @@ import org.springframework.util.Assert;
  */
 public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends AbstractWebCmsDataImporter<T, T>
 {
-	protected final Logger LOG = LoggerFactory.getLogger( getClass() );
-
-	private WebCmsAssetRepository assetRepository;
-
 	private final String dataKey;
 	private final Class<T> assetType;
+	private WebCmsAssetRepository assetRepository;
 
 	protected AbstractWebCmsAssetImporter( String dataKey, Class<T> assetType ) {
 		Assert.notNull( assetType );
@@ -52,7 +47,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends
 
 	@Override
 	public final boolean supports( WebCmsDataEntry data ) {
-		return "assets".equals( data.getParentKey() ) && dataKey.equals( data.getKey() );
+		return data.getParent() != null && "assets".equals( data.getParent().getParentKey() ) && dataKey.equals( data.getParentKey() );
 	}
 
 	@Override
@@ -67,7 +62,9 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends
 			existing = assetRepository.findOneByObjectId( objectId );
 		}
 
-		return existing != null ? assetType.cast( existing ) : ( entryKey != null ? getExistingByEntryKey( entryKey ) : null );
+		WebCmsDomain domain = retrieveDomainForDataEntry( item, assetType );
+
+		return existing != null ? assetType.cast( existing ) : getExistingEntity( entryKey, item, domain );
 	}
 
 	/**
@@ -82,7 +79,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends
 		if ( !StringUtils.equals( asset.getObjectId(), objectId ) ) {
 			LOG.error( "Invalid objectId specified: {} would be converted to {}, only fully qualified object ids are supported", objectId,
 			           asset.getObjectId() );
-			throw new WebCmsDataImportException(
+			throw new IllegalArgumentException(
 					"Invalid objectId: " + objectId + " - only fully qualified object ids are supported, value would be converted to " + asset.getObjectId() );
 		}
 	}
@@ -93,37 +90,20 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends
 	}
 
 	@Override
-	protected void saveDto( T dto, WebCmsDataAction action, WebCmsDataEntry data ) {
-		T itemToSave = prepareForSaving( dto, data );
-
-		if ( itemToSave != null ) {
-			LOG.debug( "Saving WebCmsAsset {} with objectId {} (insert: {}) - {}", dataKey, itemToSave.getObjectId(), dto.isNew(), dto );
-			assetRepository.save( itemToSave );
-		}
-		else {
-			LOG.trace( "Skipping WebCmsAsset {} import for objectId {} - prepareForSaving returned null", dataKey, dto.getObjectId() );
-		}
+	protected void saveDto( T itemToSave, WebCmsDataAction action, WebCmsDataEntry data ) {
+		LOG.debug( "Saving WebCmsAsset {} with objectId {} (insert: {}) - {}", dataKey, itemToSave.getObjectId(), itemToSave.isNew(), itemToSave );
+		assetRepository.save( itemToSave );
 	}
 
 	/**
-	 * Override if you want to post process an item before saving.
-	 * Useful if you want to generate property values for example.
+	 * If no asset has been found by the unique asset key and domain combination (or no asset key was defined), this method will be called with the entry key.
 	 *
-	 * @param itemToBeSaved original item to be saved
-	 * @param data          that was used to build the item
-	 * @return new item to be saved instead - null if saving should be skipped
-	 */
-	protected T prepareForSaving( T itemToBeSaved, WebCmsDataEntry data ) {
-		return itemToBeSaved;
-	}
-
-	/**
-	 * If no asset has been found by the unique asset key (or no asset key was defined), this method will be called with the entry key.
-	 *
-	 * @param entryKey for the asset
+	 * @param entryKey  for the asset
+	 * @param entryData for he asset
+	 * @param domain    for the asset
 	 * @return existing entity or null
 	 */
-	protected T getExistingByEntryKey( String entryKey ) {
+	protected T getExistingEntity( String entryKey, WebCmsDataEntry entryData, WebCmsDomain domain ) {
 		return null;
 	}
 

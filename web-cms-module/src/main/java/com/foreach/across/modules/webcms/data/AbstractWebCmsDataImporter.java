@@ -16,9 +16,16 @@
 
 package com.foreach.across.modules.webcms.data;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
+import com.foreach.across.modules.webcms.infrastructure.ValidationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -42,58 +49,81 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 {
 	protected final Logger LOG = LoggerFactory.getLogger( getClass() );
 
+	private MessageSource messageSource;
 	private WebCmsDataConversionService conversionService;
+	private WebCmsMultiDomainService multiDomainService;
 	private WebCmsPropertyDataImportService propertyDataImportService;
-
-	@Override
-	public final void importData( WebCmsDataEntry data ) {
-		if ( data.isMapData() ) {
-			data.getMapData().forEach( ( key, properties ) -> importSingleEntry( new WebCmsDataEntry( key, data, properties ) ) );
-		}
-		else {
-			data.getCollectionData().forEach( properties -> importSingleEntry( new WebCmsDataEntry( null, data, properties ) ) );
-		}
-	}
 
 	/**
 	 * Import a single data entry from the original data set.
 	 * Depending on the original data set the single entry will have a key set or not.
+	 * If the given data entry results in a new {@link WebCmsDomainBound} object,
+	 * the domain will be prefilled with {@link WebCmsMultiDomainService#getCurrentDomain()}
 	 *
 	 * @param data to import
 	 */
-	final void importSingleEntry( WebCmsDataEntry data ) {
-		LOG.trace( "Importing data entry {} {}", data.getImportAction(), data );
+	@Override
+	public final void importData( WebCmsDataEntry data ) {
+		try {
+			LOG.trace( "Importing data entry {} {}", data.getImportAction(), data );
 
-		T existing = retrieveExistingInstance( data );
-		WebCmsDataAction action = resolveAction( data.getImportAction(), existing );
-		LOG.trace( "Resolved import action {} to {}, existing item: {}", data.getImportAction(), action, existing != null );
+			T existing = retrieveExistingInstance( data );
+			WebCmsDataAction action = resolveAction( data.getImportAction(), existing );
+			LOG.trace( "Resolved import action {} to {}, existing item: {}", data.getImportAction(), action, existing != null );
 
-		if ( action != null ) {
-			if ( action == DELETE ) {
-				deleteInstance( existing, data );
-			}
-			else {
-				Map<String, Object> dataValues = new LinkedHashMap<>( data.getMapData() );
-				U dto = createDto( data, existing, action, dataValues );
+			if ( action != null ) {
+				if ( action == DELETE ) {
+					deleteInstance( existing, data );
+				}
+				else {
+					Map<String, Object> dataValues = new LinkedHashMap<>( data.getMapData() );
+					U dto = createDto( data, existing, action, dataValues );
 
-				if ( dto != null ) {
-					boolean dataValuesApplied = applyDataValues( dataValues, dto );
-					boolean customPropertyDataApplied = propertyDataImportService.executeBeforeAssetSaved( data, dataValues, dto, action );
-
-					if ( existing == null || dataValuesApplied || customPropertyDataApplied ) {
-						saveDto( dto, action, data );
-					}
-					else {
-						LOG.trace( "Skipping saving DTO as no actual values have been updated" );
+					if ( existing == null && dto instanceof WebCmsDomainBound ) {
+						( (WebCmsDomainBound) dto ).setDomain( multiDomainService.getCurrentDomain() );
 					}
 
-					propertyDataImportService.executeAfterAssetSaved( data, data.getMapData(), dto, action );
+					if ( dto != null ) {
+						boolean dataValuesApplied = applyDataValues( dataValues, dto );
+						boolean customPropertyDataApplied = propertyDataImportService.executeBeforeAssetSaved( data, dataValues, dto, action );
+
+						if ( existing == null || dataValuesApplied || customPropertyDataApplied ) {
+							save( dto, action, data );
+						}
+						else {
+							LOG.trace( "Skipping saving DTO as no actual values have been updated" );
+						}
+
+						propertyDataImportService.executeAfterAssetSaved( data, data.getMapData(), dto, action );
+					}
 				}
 			}
+			else {
+				LOG.trace( "Skipping data entry as no valid action was resolved" );
+			}
 		}
-		else {
-			LOG.trace( "Skipping data entry as no valid action was resolved" );
+		catch ( WebCmsDataImportException die ) {
+			throw die;
 		}
+		catch ( Exception e ) {
+			throw new WebCmsDataImportException( data, e );
+		}
+	}
+
+	/**
+	 * Retrieves the current domain for the specified data entry and class.
+	 * If the data entry contains a key, that domain will be returned.
+	 * If the data entry does not contain a key, the domain will be retrieved using
+	 * {@link WebCmsMultiDomainService#getCurrentDomainForType(Class)}
+	 *
+	 * @param item       the data entry
+	 * @param entityType
+	 * @return the domain to which the entity should be attached
+	 */
+	protected WebCmsDomain retrieveDomainForDataEntry( WebCmsDataEntry item, Class<?> entityType ) {
+		return item.getMapData().containsKey( "domain" )
+				? conversionService.convert( item.getMapData().get( "domain" ), WebCmsDomain.class )
+				: multiDomainService.getCurrentDomainForType( entityType );
 	}
 
 	/**
@@ -122,6 +152,60 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	 */
 	protected WebCmsDataAction resolveAction( WebCmsDataImportAction requested, T existing ) {
 		return convertImportActionToDataAction( existing, requested );
+	}
+
+	private void save( U dto, WebCmsDataAction action, WebCmsDataEntry data ) {
+		U itemToSave = prepareForSaving( dto, data );
+
+		if ( itemToSave != null ) {
+			validateForSaving( itemToSave );
+			saveDto( itemToSave, action, data );
+		}
+		else {
+			LOG.trace( "Skipping data import {} import for {} - prepareForSaving returned null", data );
+		}
+	}
+
+	/**
+	 * This performs validation by building an {@link Errors} object, and dispatching to the {@link #validate(T, Errors)}
+	 * method.  If actual validation errors are added, this will result in a validation exception.
+	 *
+	 * @param itemToSave item to be saved
+	 */
+	protected final void validateForSaving( U itemToSave ) {
+		if ( itemToSave != null ) {
+			Errors errors = new BeanPropertyBindingResult( itemToSave, itemToSave.getClass().getSimpleName() );
+			validate( itemToSave, errors );
+
+			if ( errors.hasErrors() ) {
+				throw new ValidationFailedException( messageSource, "Validation failed for " + itemToSave.getClass(), errors );
+			}
+		}
+		else {
+			throw new IllegalArgumentException( "Attempting to validate null object" );
+		}
+	}
+
+	/**
+	 * Override if you want to post process an item before saving.
+	 * Useful if you want to generate property values for example.
+	 *
+	 * @param itemToBeSaved original item to be saved
+	 * @param data          that was used to build the item
+	 * @return new item to be saved instead - null if saving should be skipped
+	 */
+	protected U prepareForSaving( U itemToBeSaved, WebCmsDataEntry data ) {
+		return itemToBeSaved;
+	}
+
+	/**
+	 * Perform some custom validation on the item to be saved.
+	 * If any errors are added to the collection, this will result in a validation exception being thrown.
+	 *
+	 * @param itemToBeSaved item to be saved
+	 * @param errors        collection to add validation errors to
+	 */
+	protected void validate( U itemToBeSaved, Errors errors ) {
 	}
 
 	/**
@@ -178,8 +262,18 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	}
 
 	@Autowired
-	public void setConversionService( WebCmsDataConversionService conversionService ) {
+	void setMessageSource( MessageSource messageSource ) {
+		this.messageSource = messageSource;
+	}
+
+	@Autowired
+	void setConversionService( WebCmsDataConversionService conversionService ) {
 		this.conversionService = conversionService;
+	}
+
+	@Autowired
+	void setMultiDomainService( WebCmsMultiDomainService multiDomainService ) {
+		this.multiDomainService = multiDomainService;
 	}
 
 	@Autowired

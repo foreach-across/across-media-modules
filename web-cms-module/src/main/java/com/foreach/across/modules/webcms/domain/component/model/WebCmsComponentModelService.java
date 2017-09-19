@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.component.model;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 
 import java.util.Collection;
 
@@ -67,12 +68,25 @@ public interface WebCmsComponentModelService
 
 	/**
 	 * Get a single {@link WebCmsComponentModel} for a specific owner by name.
+	 * Calls {@link #getComponentModelByNameAndDomain(String, WebCmsObject, WebCmsDomain)} with the
+	 * domain of the owner object, if it is an instance of {@link WebCmsComponentType}, otherwise with the
+	 * domain provided by {@link com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService#getCurrentDomainForType(Class<WebCmsComponent>)}.
 	 *
 	 * @param componentName name of the component
 	 * @param owner         of the component
 	 * @return component or null if not found
 	 */
 	WebCmsComponentModel getComponentModelByName( String componentName, WebCmsObject owner );
+
+	/**
+	 * Get a single {@link WebCmsComponentModel} for a specific owner by name and domain.
+	 *
+	 * @param componentName name of the component
+	 * @param owner         of the component
+	 * @param domain        domain of the component
+	 * @return component or null if not found
+	 */
+	WebCmsComponentModel getComponentModelByNameAndDomain( String componentName, WebCmsObject owner, WebCmsDomain domain );
 
 	/**
 	 * Get a single {@link WebCmsComponentModel} by name.

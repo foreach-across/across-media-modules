@@ -81,25 +81,25 @@ public class TestWebCmsComponentValidator
 	@Test
 	public void nameMustBeUniqueWithinTheOwner() {
 		WebCmsComponent existing = WebCmsComponent.builder().id( 1L ).name( "other" ).build();
-		when( componentRepository.findOneByOwnerObjectIdAndName( any(), eq( "some name" ) ) ).thenReturn( existing );
+		when( componentRepository.findOneByOwnerObjectIdAndNameAndDomain( any(), eq( "some name" ), eq( null ) ) ).thenReturn( existing );
 
 		WebCmsComponent component = WebCmsComponent.builder().name( "some name" ).build();
 		validator.postValidation( component, errors );
 
 		verify( errors ).rejectValue( "name", "alreadyExists" );
-		verify( componentRepository ).findOneByOwnerObjectIdAndName( null, "some name" );
+		verify( componentRepository ).findOneByOwnerObjectIdAndNameAndDomain( null, "some name", null );
 
 		reset( errors );
 		validator.postValidation( WebCmsComponent.builder().ownerObjectId( "123" ).name( "some name" ).build(), errors );
 		verify( errors ).rejectValue( "name", "alreadyExists" );
-		verify( componentRepository ).findOneByOwnerObjectIdAndName( "123", "some name" );
+		verify( componentRepository ).findOneByOwnerObjectIdAndNameAndDomain( "123", "some name", null );
 	}
 
 	@Test
 	public void nameLookupShouldHappen() {
 		WebCmsComponent component = WebCmsComponent.builder().name( "some name" ).build();
 		validator.postValidation( component, errors );
-		verify( componentRepository ).findOneByOwnerObjectIdAndName( null, "some name" );
+		verify( componentRepository ).findOneByOwnerObjectIdAndNameAndDomain( null, "some name", null );
 		verify( errors, never() ).rejectValue( "name", "alreadyExists" );
 	}
 

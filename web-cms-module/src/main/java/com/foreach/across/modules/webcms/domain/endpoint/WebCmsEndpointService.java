@@ -17,9 +17,11 @@
 package com.foreach.across.modules.webcms.domain.endpoint;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.endpoint.support.EndpointModificationType;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
@@ -33,11 +35,21 @@ public interface WebCmsEndpointService
 {
 	/**
 	 * Retrieve the {@link WebCmsUrl} corresponding to a particular path.
+	 * Will use the current {@link com.foreach.across.modules.webcms.domain.domain.WebCmsDomainContext} to perform the lookup.
 	 *
 	 * @param path to find the url for
 	 * @return url if found
 	 */
 	Optional<WebCmsUrl> getUrlForPath( String path );
+
+	/**
+	 * Retrieve the {@link WebCmsUrl} corresponding to a particular path on a specific domain.
+	 *
+	 * @param path   to find the url for
+	 * @param domain to look on
+	 * @return url if found
+	 */
+	Optional<WebCmsUrl> getUrlForPathAndDomain( String path, WebCmsDomain domain );
 
 	/**
 	 * Update the primary URL for a {@link WebCmsAsset}.  Depending on the published status of the asset
@@ -62,7 +74,7 @@ public interface WebCmsEndpointService
 	                                                                                          boolean publishEventOnFailure );
 
 	/**
-	 * Get the primary URL for a {@link WebCmsAsset}.
+	 * Get the primary URL for a {@link WebCmsAsset} on the current domain.
 	 *
 	 * @param asset to get the primary url for
 	 * @return url or none if no endpoint with a primary url
@@ -70,13 +82,15 @@ public interface WebCmsEndpointService
 	Optional<WebCmsUrl> getPrimaryUrlForAsset( WebCmsAsset asset );
 
 	/**
-	 * Builds a preview url for a particular {@link WebCmsAsset}.
-	 * The preview url is the primary url appended with a request parameter <strong>wcmPreview</strong>.
+	 * Get the primary URL for a {@link WebCmsAsset} on the specified domain.
 	 *
-	 * @param asset to create the url for
-	 * @return url if a primary url was available
+	 * @param asset  to get the primary url for
+	 * @param domain to get the primary url on
+	 * @return url or none if no endpoint with a primary url
 	 */
-	Optional<String> buildPreviewUrl( WebCmsAsset asset );
+	Optional<WebCmsUrl> getPrimaryUrlForAssetOnDomain( WebCmsAsset asset, WebCmsDomain domain );
+
+	UriComponentsBuilder appendPreviewCode( WebCmsEndpoint endpoint, UriComponentsBuilder uriComponentsBuilder );
 
 	/**
 	 * Check if a particular security code allows access to an endpoint.
@@ -85,5 +99,5 @@ public interface WebCmsEndpointService
 	 * @param securityCode that was used
 	 * @return true if allowed
 	 */
-	boolean isPreviewAllowed( WebCmsEndpoint endpoint, String securityCode );
+	boolean isValidPreviewCode( WebCmsEndpoint endpoint, String securityCode );
 }

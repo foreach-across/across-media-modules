@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.article;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import lombok.Builder;
 import lombok.Getter;
@@ -103,6 +104,7 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 	                         @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                         @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                         @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                         @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                         @Builder.ObtainVia(method = "isPublished") boolean published,
 	                         @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
 	                         WebCmsPublication publication,
@@ -110,7 +112,7 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 	                         String title,
 	                         String subTitle,
 	                         String description ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate );
 		this.publication = publication;
 		this.articleType = articleType;
 		this.title = title;

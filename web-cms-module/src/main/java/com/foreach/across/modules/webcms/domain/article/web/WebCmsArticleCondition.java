@@ -33,8 +33,8 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointConditionUtils.combineArrays;
-import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointConditionUtils.compareArrays;
+import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsConditionUtils.combineArrays;
+import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsConditionUtils.compareArrays;
 import static org.apache.commons.lang3.ArrayUtils.contains;
 
 /**

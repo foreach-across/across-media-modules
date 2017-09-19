@@ -33,10 +33,10 @@ import com.foreach.across.modules.entity.views.support.EntityMessages;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetService;
 import com.foreach.across.modules.webcms.domain.asset.web.processors.WebCmsAssetListViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.menu.config.WebCmsAssetMenuViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
@@ -169,7 +169,7 @@ public class WebCmsPageConfiguration
 	private static class PageListViewProcessor extends EntityViewProcessorAdapter
 	{
 		private BootstrapUiFactory bootstrapUiFactory;
-		private WebCmsEndpointService endpointService;
+		private WebCmsAssetService assetPreviewService;
 
 		@Override
 		protected void createViewElementBuilders( EntityViewRequest entityViewRequest, EntityView entityView, ViewElementBuilderMap builderMap ) {
@@ -180,7 +180,7 @@ public class WebCmsPageConfiguration
 					          ContainerViewElementUtils
 							          .find( row, EntityListActionsProcessor.CELL_NAME, TableViewElement.Cell.class )
 							          .ifPresent( cell ->
-									                      endpointService
+									                      assetPreviewService
 											                      .buildPreviewUrl( page )
 											                      .ifPresent( previewUrl -> {
 												                      EntityMessages entityMessages =
@@ -204,9 +204,8 @@ public class WebCmsPageConfiguration
 		}
 
 		@Autowired
-		public void setEndpointService( WebCmsEndpointService endpointService ) {
-			this.endpointService = endpointService;
+		public void setAssetPreviewService( WebCmsAssetService assetPreviewService ) {
+			this.assetPreviewService = assetPreviewService;
 		}
-
 	}
 }

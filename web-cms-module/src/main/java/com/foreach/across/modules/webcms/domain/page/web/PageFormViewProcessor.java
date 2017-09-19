@@ -36,9 +36,13 @@ import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetService;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
-import com.foreach.across.modules.webcms.domain.menu.*;
+import com.foreach.across.modules.webcms.domain.menu.QWebCmsMenuItem;
+import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
+import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
+import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItemRepository;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.config.WebCmsPageConfiguration;
 import lombok.Data;
@@ -59,16 +63,17 @@ import java.util.*;
 @RequiredArgsConstructor
 public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 {
-	private final WebCmsEndpointService endpointService;
+	private final WebCmsAssetService assetPreviewService;
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;
 	private final WebCmsMenuItemRepository menuItemRepository;
 	private final PageTypeProperties pageTypeProperties;
+	private final WebCmsMultiDomainService multiDomainService;
 
 	@SuppressWarnings("unused")
 	@Event
 	void setPreviewLinkOnMenu( EntityPageStructureRenderedEvent<WebCmsPage> event ) {
 		if ( event.holdsEntity() ) {
-			endpointService
+			assetPreviewService
 					.buildPreviewUrl( event.getEntity() )
 					.ifPresent( previewUrl -> {
 						LinkViewElement openLink = new LinkViewElement();
@@ -103,7 +108,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 		WebCmsPage page = entityViewRequest.getEntityViewContext().getEntity( WebCmsPage.class );
 		WebCmsPage pageFromCommand = command.getEntity( WebCmsPage.class );
 		if ( page != null ) {
-			WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAsset( page );
+			WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, multiDomainService.getCurrentDomainForEntity( page ) );
 
 			if ( endpoint != null ) {
 				menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ).and( QWebCmsMenuItem.webCmsMenuItem.generated.isTrue() ) )
@@ -125,7 +130,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 			val page = command.getEntity( WebCmsPage.class );
 			val advancedSettings = command.getExtension( "advanced", AdvancedSettings.class );
 
-			WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAsset( page );
+			WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, multiDomainService.getCurrentDomainForEntity( page ) );
 
 			if ( endpoint != null ) {
 				menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ) )

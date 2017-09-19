@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -38,6 +40,7 @@ public abstract class WebCmsObjectInheritanceSuperClass<T extends WebCmsObjectIn
 	 */
 	public static final String DISCRIMINATOR_COLUMN = "object_type";
 
+	@SuppressWarnings("unused")
 	@Column(name = DISCRIMINATOR_COLUMN, insertable = false, updatable = false)
 	private String objectType = getObjectType();
 
@@ -51,8 +54,9 @@ public abstract class WebCmsObjectInheritanceSuperClass<T extends WebCmsObjectIn
 	                                             String createdBy,
 	                                             Date createdDate,
 	                                             String lastModifiedBy,
-	                                             Date lastModifiedDate ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+	                                             Date lastModifiedDate,
+	                                             WebCmsDomain domain ) {
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain );
 	}
 
 	/**

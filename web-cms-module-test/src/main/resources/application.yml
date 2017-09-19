@@ -48,6 +48,3 @@ webCmsModule:
     excluded-path-patterns: /resources/**
   pages:
     default-page-type: default
-
-acrossHibernate:
-  create-unit-of-work-factory: true

@@ -18,7 +18,13 @@ package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+
+import java.util.List;
 
 /**
  * @author Sander Van Loock
@@ -27,5 +33,19 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 @Exposed
 public interface WebCmsAssetEndpointRepository extends IdBasedEntityJpaRepository<WebCmsAssetEndpoint>, QueryDslPredicateExecutor<WebCmsAssetEndpoint>
 {
-	<T extends WebCmsAsset> WebCmsAssetEndpoint<T> findOneByAsset( T asset );
+	WebCmsAssetEndpoint findOneByAssetAndDomain( WebCmsAsset asset, WebCmsDomain domain );
+
+	List<WebCmsAssetEndpoint> findAllByAsset( WebCmsAsset asset );
+
+	@Override
+	List<WebCmsAssetEndpoint> findAll( Predicate predicate );
+
+	@Override
+	List<WebCmsAssetEndpoint> findAll( Predicate predicate, Sort sort );
+
+	@Override
+	List<WebCmsAssetEndpoint> findAll( Predicate predicate, OrderSpecifier<?>[] orders );
+
+	@Override
+	List<WebCmsAssetEndpoint> findAll( OrderSpecifier<?>[] orders );
 }

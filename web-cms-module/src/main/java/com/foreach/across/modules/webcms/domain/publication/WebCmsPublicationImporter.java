@@ -19,8 +19,14 @@ package com.foreach.across.modules.webcms.domain.publication;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.AbstractWebCmsAssetImporter;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.publication.web.WebCmsPublicationValidator;
+import com.querydsl.core.BooleanBuilder;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 
 import java.util.Map;
 
@@ -34,6 +40,7 @@ import java.util.Map;
 public final class WebCmsPublicationImporter extends AbstractWebCmsAssetImporter<WebCmsPublication>
 {
 	private WebCmsPublicationRepository publicationRepository;
+	private WebCmsPublicationValidator publicationValidator;
 
 	public WebCmsPublicationImporter() {
 		super( "publication", WebCmsPublication.class );
@@ -44,6 +51,7 @@ public final class WebCmsPublicationImporter extends AbstractWebCmsAssetImporter
 		if ( action == WebCmsDataAction.REPLACE ) {
 			return WebCmsPublication.builder()
 			                        .id( itemToUpdate.getId() ).createdBy( itemToUpdate.getCreatedBy() ).createdDate( itemToUpdate.getCreatedDate() )
+			                        .objectId( itemToUpdate.getObjectId() )
 			                        .build();
 		}
 
@@ -57,20 +65,38 @@ public final class WebCmsPublicationImporter extends AbstractWebCmsAssetImporter
 			if ( itemToBeSaved.getPublicationKey() == null ) {
 				itemToBeSaved.setPublicationKey( data.getKey() );
 			}
-			if ( !data.getMapData().containsKey( "objectId" ) ) {
-				itemToBeSaved.setObjectId( itemToBeSaved.getPublicationKey() );
-			}
 		}
 		return itemToBeSaved;
 	}
 
 	@Override
-	protected WebCmsPublication getExistingByEntryKey( String entryKey ) {
-		return publicationRepository.findOne( QWebCmsPublication.webCmsPublication.publicationKey.eq( entryKey ) );
+	protected WebCmsPublication getExistingEntity( String entryKey, WebCmsDataEntry data, WebCmsDomain domain ) {
+		if ( StringUtils.isEmpty( entryKey ) ) {
+			if ( !data.getMapData().containsKey( "publicationKey" ) ) {
+				return null;
+			}
+			entryKey = (String) data.getMapData().get( "publicationKey" );
+		}
+		val query = QWebCmsPublication.webCmsPublication;
+		BooleanBuilder builder = new BooleanBuilder();
+		if ( domain != null ) {
+			builder.and( query.domain.eq( domain ) );
+		}
+		return publicationRepository.findOne( builder.and( query.publicationKey.eq( entryKey ) ) );
+	}
+
+	@Override
+	protected void validate( WebCmsPublication itemToBeSaved, Errors errors ) {
+		publicationValidator.validate( itemToBeSaved, errors );
 	}
 
 	@Autowired
 	void setPublicationRepository( WebCmsPublicationRepository publicationRepository ) {
 		this.publicationRepository = publicationRepository;
+	}
+
+	@Autowired
+	void setPublicationValidator( WebCmsPublicationValidator publicationValidator ) {
+		this.publicationValidator = publicationValidator;
 	}
 }

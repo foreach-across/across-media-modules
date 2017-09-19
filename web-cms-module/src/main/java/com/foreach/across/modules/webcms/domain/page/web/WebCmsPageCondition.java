@@ -22,17 +22,17 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
 import java.util.Collection;
 
-import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointConditionUtils.combineArrays;
-import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointConditionUtils.compareArrays;
+import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsConditionUtils.combineArrays;
+import static com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsConditionUtils.compareArrays;
 import static org.apache.commons.lang3.ArrayUtils.contains;
 
 /**
@@ -69,7 +69,7 @@ final class WebCmsPageCondition extends AbstractCustomRequestCondition<WebCmsPag
 
 	@Override
 	protected Collection<?> getContent() {
-		return Lists.asList( canonicalPath, pageType );
+		return Arrays.asList( canonicalPath, pageType );
 	}
 
 	@Override

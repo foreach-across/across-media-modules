@@ -35,3 +35,7 @@ assets:
     /extension/ignoreme2:
       objectId: "wcm:asset:page:extension-updateme2"
       title: Extension Updated 2
+
+    /reference/common-domains:
+      objectId: "wcm:asset:page:reference-common-domains"
+      domain: null

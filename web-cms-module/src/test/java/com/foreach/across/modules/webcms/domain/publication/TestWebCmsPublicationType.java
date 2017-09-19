@@ -47,7 +47,7 @@ public class TestWebCmsPublicationType
 		assertNull( publicationType.getId() );
 		assertNull( publicationType.getNewEntityId() );
 		assertTrue( publicationType.isNew() );
-		assertNull( publicationType.getObjectId() );
+		assertNotNull( publicationType.getObjectId() );
 		assertNull( publicationType.getTypeKey() );
 		assertNull( publicationType.getName() );
 		assertNull( publicationType.getCreatedBy() );
@@ -73,7 +73,6 @@ public class TestWebCmsPublicationType
 
 		assertNull( publicationType.getId() );
 		assertEquals( Long.valueOf( 123L ), publicationType.getNewEntityId() );
-		assertEquals( "wcm:type:publication:publicationType-key", publicationType.getObjectId() );
 		assertEquals( "publicationType-key", publicationType.getTypeKey() );
 		assertEquals( "my-publicationType", publicationType.getName() );
 		assertEquals( "john", publicationType.getCreatedBy() );
