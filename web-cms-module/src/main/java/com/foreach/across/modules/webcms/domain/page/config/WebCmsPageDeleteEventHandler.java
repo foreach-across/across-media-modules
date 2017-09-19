@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Raf Ceuls
@@ -42,13 +43,15 @@ public class WebCmsPageDeleteEventHandler
 	@Event
 	public void handleDeleteEvent( BuildEntityDeleteViewEvent<WebCmsPage> event ) {
 		if ( event.getEntity() != null ) {
-			WebCmsAssetEndpoint<WebCmsPage> endpointOnPage = endpointRepository.findOneByAsset( event.getEntity() );
-			if ( endpointOnPage != null ) {
-				Collection<WebCmsMenuItem> menuItem = menuItemRepository.findAllByEndpoint( endpointOnPage );
-				if ( !menuItem.isEmpty() ) {
-					event.setDeleteDisabled( true );
-				}
-			}
+			List<WebCmsAssetEndpoint> endpoints = endpointRepository.findAllByAsset( event.getEntity() );
+			endpoints.forEach(
+					endpointOnPage -> {
+						Collection<WebCmsMenuItem> menuItem = menuItemRepository.findAllByEndpoint( endpointOnPage );
+						if ( !menuItem.isEmpty() ) {
+							event.setDeleteDisabled( true );
+						}
+					}
+			);
 		}
 	}
 }

@@ -17,15 +17,17 @@
 package com.foreach.across.modules.webcms.domain.menu;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsMenuRepository extends IdBasedEntityJpaRepository<WebCmsMenu>, QueryDslPredicateExecutor<WebCmsMenu>
+public interface WebCmsMenuRepository extends WebCmsObjectEntityRepository<WebCmsMenu>
 {
 	WebCmsMenu findOneByName( String name );
+
+	WebCmsMenu findOneByNameAndDomain( String name, WebCmsDomain domain );
 }

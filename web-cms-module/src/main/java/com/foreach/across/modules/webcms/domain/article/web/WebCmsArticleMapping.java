@@ -20,8 +20,10 @@ import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetMapping;
+import com.foreach.across.modules.webcms.domain.domain.web.WebCmsDomainMapping;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
 
 import java.lang.annotation.*;
@@ -75,4 +77,13 @@ public @interface WebCmsArticleMapping
 	 * Note that if publication type is also configured, the match on publication will fail if that publication does not have the publication type.
 	 */
 	String[] publication() default {};
+
+	/**
+	 * Mapping will only apply if the current {@link com.foreach.across.modules.webcms.domain.domain.WebCmsDomainContext}
+	 * if for any of the domains specified. If the array of domains is empty, mapping will always apply.
+	 * <p/>
+	 * A domain is specified by its domain key, {@code null} represent the explicit no-domain.
+	 */
+	@AliasFor(annotation = WebCmsDomainMapping.class, attribute = "value")
+	String[] domain() default {};
 }

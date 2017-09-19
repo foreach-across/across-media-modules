@@ -18,6 +18,8 @@ package com.foreach.across.modules.webcms.installers;
 
 import com.foreach.across.core.annotations.Installer;
 import com.foreach.across.core.installers.InstallerPhase;
+import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.util.List;
@@ -26,13 +28,19 @@ import java.util.List;
  * @author Arne Vandamme
  * @since 0.0.1
  */
+@RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "webCmsModule.default-data.assets", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 17)
 public class WebCmsDefaultAssetsInstaller extends AbstractWebCmsDataInstaller
 {
+	private final WebCmsMultiDomainConfiguration multiDomainConfiguration;
+
 	@Override
 	protected void registerResources( List<String> locations ) {
 		locations.add( "classpath:installers/WebCmsModule/default-types.yml" );
-		locations.add( "classpath:installers/WebCmsModule/default-assets.yml" );
+
+		if ( multiDomainConfiguration.isDisabled() ) {
+			locations.add( "classpath:installers/WebCmsModule/default-assets.yml" );
+		}
 	}
 }

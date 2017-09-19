@@ -20,7 +20,7 @@ import com.foreach.across.core.annotations.ModuleConfiguration;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.hibernate.provider.HibernatePackageConfigurer;
 import com.foreach.across.modules.hibernate.provider.HibernatePackageRegistry;
-import com.foreach.across.modules.webcms.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 
 /**
  * Register entities for scanning by the Hibernate module.
@@ -30,6 +30,6 @@ public class EntityScanConfiguration implements HibernatePackageConfigurer
 {
 	@Override
 	public void configureHibernatePackage( HibernatePackageRegistry hibernatePackageRegistry ) {
-		hibernatePackageRegistry.addPackageToScan( WebCmsDomain.class );
+		hibernatePackageRegistry.addPackageToScan( WebCmsObject.class );
 	}
 }

@@ -100,7 +100,7 @@ public class DefaultWebCmsEndpointContextResolver implements WebCmsEndpointConte
 
 	private boolean isPreviewRequest( WebCmsEndpoint endpoint, HttpServletRequest request ) {
 		String securityCode = request.getParameter( "wcmPreview" );
-		boolean previewMode = !StringUtils.isEmpty( securityCode ) && endpointService.isPreviewAllowed( endpoint, securityCode );
+		boolean previewMode = !StringUtils.isEmpty( securityCode ) && endpointService.isValidPreviewCode( endpoint, securityCode );
 
 		if ( previewMode ) {
 			LOG.trace( "Activating preview mode for endpoint {} - security code {}", endpoint, securityCode );

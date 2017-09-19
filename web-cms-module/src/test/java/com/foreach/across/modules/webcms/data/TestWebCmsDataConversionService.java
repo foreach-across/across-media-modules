@@ -93,6 +93,19 @@ public class TestWebCmsDataConversionService
 		assertFalse( conversionService.convertToPropertyValues( values, dto ) );
 	}
 
+	@Test
+	public void simpleMapZIndex() {
+		Map<String, Object> values = new HashMap<>();
+		values.put( "zIndex", 2 );
+		values.put( "name", "test" );
+
+		MyObject dto = new MyObject();
+		assertTrue( conversionService.convertToPropertyValues( values, dto ) );
+		assertEquals( "test", dto.getName() );
+		assertEquals( 2, dto.getZIndex() );
+		assertFalse( conversionService.convertToPropertyValues( values, dto ) );
+	}
+
 	@Data
 	static class MyObject
 	{
@@ -100,5 +113,6 @@ public class TestWebCmsDataConversionService
 		private int sortIndex;
 		private MyObject nested;
 		private Map<String, String> children;
+		private int zIndex;
 	}
 }

@@ -19,18 +19,21 @@ package com.foreach.across.modules.webcms.domain.component;
 import com.foreach.across.modules.entity.util.EntityUtils;
 import com.foreach.across.modules.webcms.data.AbstractWebCmsDataImporter;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
+import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Base class for importing a simple asset type.  An asset has a specific data key (in the asset collection)
@@ -47,11 +50,13 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 
 	private WebCmsComponentRepository componentRepository;
 	private WebCmsComponentModelService componentModelService;
+	private WebCmsComponentValidator componentValidator;
+	private WebCmsDataConversionService conversionService;
 	private WebCmsObject owner;
 
 	@Override
 	public final boolean supports( WebCmsDataEntry data ) {
-		return "assets".equals( data.getParentKey() ) && dataKey.equals( data.getKey() );
+		return "assets".equals( data.getParent().getParentKey() ) && dataKey.equals( data.getParentKey() );
 	}
 
 	@Override
@@ -65,8 +70,17 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 			existing = componentModelService.getComponentModel( objectId );
 		}
 
+		WebCmsDomain domain;
+
+		if ( owner != null && ( owner instanceof WebCmsComponent || owner instanceof WebCmsComponentModel ) ) {
+			domain = ( (WebCmsDomainBound) owner ).getDomain();
+		}
+		else {
+			domain = retrieveDomainForDataEntry( data, WebCmsComponent.class );
+		}
+
 		if ( existing == null && entryKey != null ) {
-			existing = componentModelService.getComponentModelByName( entryKey, WebCmsObject.forObjectId( getOwnerObjectId() ) );
+			existing = componentModelService.getComponentModelByNameAndDomain( entryKey, WebCmsObject.forObjectId( getOwnerObjectId() ), domain );
 		}
 
 		return existing;
@@ -79,7 +93,7 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 	                                          Map<String, Object> dataValues ) {
 		if ( itemToUpdate == null ) {
 			WebCmsComponentModel componentModel = componentModelService.createComponentModel(
-					Objects.toString( dataValues.get( "componentType" ) ),
+					conversionService.convert( dataValues.get( "componentType" ), WebCmsComponentType.class ),
 					WebCmsComponentModel.class
 			);
 			componentModel.setName( data.getKey() );
@@ -102,6 +116,7 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 			newComponent.setSortIndex( existing.getSortIndex() );
 			newComponent.setCreatedBy( existing.getCreatedBy() );
 			newComponent.setCreatedDate( existing.getCreatedDate() );
+			newComponent.setDomain( existing.getDomain() );
 			addForceUpdateProperty( dataValues );
 			return dto;
 		}
@@ -113,21 +128,6 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 	protected void deleteInstance( WebCmsComponentModel instance, WebCmsDataEntry data ) {
 		LOG.trace( "WebCmsComponent {} with objectId {}: removing component", dataKey, instance.getObjectId() );
 		componentRepository.delete( instance.getComponent() );
-	}
-
-	@SuppressWarnings("findbugs:RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
-	@Override
-	protected void saveDto( WebCmsComponentModel dto, WebCmsDataAction action, WebCmsDataEntry data ) {
-		WebCmsComponentModel itemToSave = prepareForSaving( dto, data );
-
-		if ( itemToSave != null ) {
-			LOG.debug( "Saving WebCmsComponent {} with objectId {} (insert: {}) - {}",
-			           dataKey, itemToSave.getObjectId(), dto.isNew(), dto );
-			componentModelService.save( itemToSave );
-		}
-		else {
-			LOG.trace( "Skipping WebCmsComponent {} import for objectId {} - prepareForSaving returned null", dataKey, dto.getObjectId() );
-		}
 	}
 
 	/**
@@ -146,6 +146,14 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 			itemToBeSaved.setTitle( EntityUtils.generateDisplayName( itemToBeSaved.getName() ) );
 		}
 		return itemToBeSaved;
+	}
+
+	@SuppressWarnings("findbugs:RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
+	@Override
+	protected void saveDto( WebCmsComponentModel itemToSave, WebCmsDataAction action, WebCmsDataEntry data ) {
+		LOG.debug( "Saving WebCmsComponent {} with objectId {} (insert: {}) - {}",
+		           dataKey, itemToSave.getObjectId(), itemToSave.isNew(), itemToSave );
+		componentModelService.save( itemToSave );
 	}
 
 	@Override
@@ -167,6 +175,11 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 		this.owner = owner;
 	}
 
+	@Override
+	protected void validate( WebCmsComponentModel itemToBeSaved, Errors errors ) {
+		componentValidator.validate( itemToBeSaved.getComponent(), errors );
+	}
+
 	@Autowired
 	void setComponentModelService( WebCmsComponentModelService componentModelService ) {
 		this.componentModelService = componentModelService;
@@ -175,5 +188,15 @@ public class WebCmsComponentImporter extends AbstractWebCmsDataImporter<WebCmsCo
 	@Autowired
 	void setComponentRepository( WebCmsComponentRepository componentRepository ) {
 		this.componentRepository = componentRepository;
+	}
+
+	@Autowired
+	void setComponentValidator( WebCmsComponentValidator componentValidator ) {
+		this.componentValidator = componentValidator;
+	}
+
+	@Autowired
+	void setConversionService( WebCmsDataConversionService conversionService ) {
+		this.conversionService = conversionService;
 	}
 }

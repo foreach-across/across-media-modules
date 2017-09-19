@@ -17,6 +17,8 @@
 package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
 import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -39,6 +41,7 @@ public class WebCmsAssetInterceptor extends EntityInterceptorAdapter<WebCmsAsset
 {
 	private final WebCmsAssetEndpointRepository endpointRepository;
 	private final WebCmsAssetUrlConfiguration urlConfiguration;
+	private final WebCmsMultiDomainConfiguration multiDomainConfiguration;
 
 	@Override
 	public boolean handles( Class<?> entityClass ) {
@@ -66,6 +69,11 @@ public class WebCmsAssetInterceptor extends EntityInterceptorAdapter<WebCmsAsset
 		if ( urlConfiguration.isEnabledForAsset( entity ) ) {
 			val endpoint = new WebCmsAssetEndpoint<WebCmsAsset>();
 			endpoint.setAsset( entity );
+
+			if ( multiDomainConfiguration.isDomainBound( WebCmsAssetEndpoint.class ) ) {
+				endpoint.setDomain( entity.getDomain() );
+			}
+
 			endpointRepository.save( endpoint );
 		}
 	}
@@ -73,7 +81,8 @@ public class WebCmsAssetInterceptor extends EntityInterceptorAdapter<WebCmsAsset
 	@Override
 	public void afterUpdate( WebCmsAsset entity ) {
 		if ( urlConfiguration.isEnabledForAsset( entity ) ) {
-			WebCmsAssetEndpoint<?> endpoint = endpointRepository.findOneByAsset( entity );
+			WebCmsDomain domain = multiDomainConfiguration.isDomainBound( WebCmsAssetEndpoint.class ) ? entity.getDomain() : WebCmsDomain.NONE;
+			WebCmsAssetEndpoint<?> endpoint = endpointRepository.findOneByAssetAndDomain( entity, domain );
 
 			if ( endpoint == null ) {
 				afterCreate( entity );
@@ -84,8 +93,7 @@ public class WebCmsAssetInterceptor extends EntityInterceptorAdapter<WebCmsAsset
 	@Override
 	public void beforeDelete( WebCmsAsset entity ) {
 		if ( urlConfiguration.isEnabledForAsset( entity ) ) {
-			WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( entity );
-			endpointRepository.delete( endpoint );
+			endpointRepository.findAllByAsset( entity ).forEach( endpointRepository::delete );
 		}
 	}
 }

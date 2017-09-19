@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain.page.services;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageTypeRepository;
@@ -26,6 +28,7 @@ import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -35,7 +38,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
@@ -59,18 +62,31 @@ public class TestDefaultWebCmsPageService
 	@Mock
 	private WebCmsPage page;
 
+	@Mock
+	private WebCmsMultiDomainService multiDomainService;
+
 	@InjectMocks
 	private DefaultWebCmsPageService pageService;
 
 	@Test
 	public void findByCanonicalPath() {
-		when( pageRepository.findOneByCanonicalPath( "custom path" ) ).thenReturn( page );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "custom path", null ) ).thenReturn( page );
+		when( multiDomainService.isDomainBound( Matchers.eq( WebCmsPage.class ) ) ).thenReturn( false );
 		assertEquals( Optional.of( page ), pageService.findByCanonicalPath( "custom path" ) );
+		verify( pageRepository, times( 1 ) ).findOneByCanonicalPathAndDomain( "custom path", null );
+	}
+
+	@Test
+	public void findByCanonicalPathAndDomain() {
+		WebCmsDomain domain = new WebCmsDomain();
+		when( pageRepository.findOneByCanonicalPathAndDomain( "custom path", domain ) ).thenReturn( page );
+		assertEquals( Optional.of( page ), pageService.findByCanonicalPathAndDomain( "custom path", domain ) );
+		verify( pageRepository, times( 1 ) ).findOneByCanonicalPathAndDomain( "custom path", domain );
 	}
 
 	@Test
 	public void prepareForSavingDispatchesToPreparator() {
-		Map<ModificationType, ModificationReport<PrepareModificationType,Object>> modifications = Collections.emptyMap();
+		Map<ModificationType, ModificationReport<PrepareModificationType, Object>> modifications = Collections.emptyMap();
 		when( pagePreparator.prepareForSaving( page ) ).thenReturn( modifications );
 		when( pageTypeProperties.getDefaultPageType() ).thenReturn( "xyz" );
 		when( webCmsPageTypeRepository.findOneByObjectId( "xyz" ) ).thenReturn( WebCmsPageType.builder().build() );

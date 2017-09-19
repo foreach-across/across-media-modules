@@ -20,11 +20,14 @@ import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.webcms.WebCmsModule;
+import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
+import com.foreach.across.modules.webcms.domain.domain.web.AbstractWebCmsDomainContextFilter;
 import com.foreach.across.test.AcrossTestContext;
+import com.foreach.across.test.AcrossTestWebContext;
 import org.junit.Test;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Arne Vandamme
@@ -34,10 +37,19 @@ public class ITWebCmsModule
 {
 	@Test
 	public void noAdminWebModule() {
-		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME )
-		                                  .build()) {
+		try (AcrossTestWebContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME )
+		                                     .build()) {
 			assertTrue( ctx.contextInfo().hasModule( WebCmsModule.NAME ) );
+
+			assertMultiDomainConfigurationIsPresent( ctx );
+			assertNull( ctx.getServletContext().getFilterRegistration( AbstractWebCmsDomainContextFilter.FILTER_NAME ) );
 		}
+	}
+
+	private void assertMultiDomainConfigurationIsPresent( AcrossTestContext ctx ) {
+		WebCmsMultiDomainConfiguration config = ctx.getBeanOfType( WebCmsMultiDomainConfiguration.class );
+		assertNotNull( config );
+		assertEquals( WebCmsMultiDomainConfiguration.disabled().build(), config );
 	}
 
 	@Test

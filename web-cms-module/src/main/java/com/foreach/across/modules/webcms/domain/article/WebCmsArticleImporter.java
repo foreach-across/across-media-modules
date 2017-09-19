@@ -19,6 +19,8 @@ package com.foreach.across.modules.webcms.domain.article;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.AbstractWebCmsAssetImporter;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -49,12 +51,10 @@ public final class WebCmsArticleImporter extends AbstractWebCmsAssetImporter<Web
 	}
 
 	@Override
-	protected WebCmsArticle prepareForSaving( WebCmsArticle itemToBeSaved, WebCmsDataEntry data ) {
-		return itemToBeSaved;
-	}
-
-	@Override
-	protected WebCmsArticle getExistingByEntryKey( String entryKey ) {
+	protected WebCmsArticle getExistingEntity( String entryKey, WebCmsDataEntry data, WebCmsDomain domain ) {
+		if ( StringUtils.isEmpty( entryKey ) ) {
+			return null;
+		}
 		return articleRepository.findOneByObjectId( entryKey );
 	}
 

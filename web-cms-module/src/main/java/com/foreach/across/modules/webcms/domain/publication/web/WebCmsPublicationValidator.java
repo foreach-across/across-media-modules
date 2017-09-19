@@ -17,10 +17,10 @@
 package com.foreach.across.modules.webcms.domain.publication.web;
 
 import com.foreach.across.modules.entity.validators.EntityValidatorSupport;
-import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.publication.QWebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationRepository;
+import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -34,7 +34,6 @@ import org.springframework.validation.Errors;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-@ConditionalOnAdminUI
 @Component
 @Order(Ordered.LOWEST_PRECEDENCE)
 @RequiredArgsConstructor
@@ -51,14 +50,18 @@ public final class WebCmsPublicationValidator extends EntityValidatorSupport<Web
 	protected void postValidation( WebCmsPublication entity, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "name" ) ) {
 			QWebCmsPublication query = QWebCmsPublication.webCmsPublication;
-			WebCmsPublication existing = publicationRepository.findOne( query.name.equalsIgnoreCase( entity.getName() ) );
+			BooleanBuilder builder = new BooleanBuilder();
+			if ( entity.getDomain() != null ) {
+				builder.and( query.domain.eq( entity.getDomain() ) );
+			}
+			WebCmsPublication existing = publicationRepository.findOne( builder.and( query.name.equalsIgnoreCase( entity.getName() ) ) );
 			if ( existing != null && !entity.equals( existing ) ) {
 				errors.rejectValue( "name", "alreadyExists" );
 			}
 		}
 
 		if ( !errors.hasFieldErrors( "publicationKey" ) ) {
-			WebCmsPublication existing = publicationRepository.findOneByPublicationKey( entity.getPublicationKey() );
+			WebCmsPublication existing = publicationRepository.findOneByPublicationKeyAndDomain( entity.getPublicationKey(), entity.getDomain() );
 			if ( existing != null && !entity.equals( existing ) ) {
 				errors.rejectValue( "publicationKey", "alreadyExists" );
 			}

@@ -24,6 +24,8 @@ import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.user.UserModuleSettings;
 import com.foreach.across.modules.webcms.WebCmsModule;
+import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
+import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.imageserver.admin.ImageServerAdminWebModule;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import org.springframework.boot.SpringApplication;
@@ -77,5 +79,21 @@ public class WebCmsTestApplication
 	@Profile("local-imageserver")
 	public ImageServerAdminWebModule imageServerAdminModule() {
 		return new ImageServerAdminWebModule();
+	}
+
+	@Bean("multiDomainConfiguration")
+	@Profile("domain-per-entity")
+	public WebCmsMultiDomainConfiguration multiDomainPerEntity() {
+		return WebCmsMultiDomainConfiguration.managementPerEntity()
+		                                     .domainIgnoredTypes( WebCmsImage.class )
+		                                     .build();
+	}
+
+	@Bean("multiDomainConfiguration")
+	@Profile("domain-per-domain")
+	public WebCmsMultiDomainConfiguration multiDomainPerDomain() {
+		return WebCmsMultiDomainConfiguration.managementPerDomain()
+		                                     .domainIgnoredTypes( WebCmsImage.class )
+		                                     .build();
 	}
 }

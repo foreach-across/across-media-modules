@@ -1,0 +1,43 @@
+#types:
+#  publication:
+#    facts:
+#      name: Facts (DE)
+#      domain: de-foreach
+
+assets:
+  page:
+    /faq:
+      objectId: "wcm:asset:page:reference-faq-de"
+      title: Frequently Asked Questions
+      domain: de-foreach
+
+  publication:
+    movies:
+#      objectId: "wcm:asset:publication:movies-de"
+      name: Movies
+      publicationType:
+        typeKey: "de-foreach:weird-facts"
+        domain: de-foreach
+      published: true
+      articleTemplatePage: /facts/* # should be facts page of domain null (no domain scope has been specified)
+      domain: de-foreach
+
+  component:
+    content:
+      title: Content (DE)
+      componentType: plain-text
+      content: "Global component: content (DE)"
+      domain: de-foreach
+
+    wcm:domain: de-foreach
+    ax-blog-de:
+      componentType:
+        typeKey: "ax-blog"
+        domain: null
+      wcm:components:
+        header:
+          content: Multi-domain support for WebCmsModule has been released (DE)
+        body:
+          content: Lorem ipsum (DE)
+        footer:
+          content: Start with across using start-across.foreach.de

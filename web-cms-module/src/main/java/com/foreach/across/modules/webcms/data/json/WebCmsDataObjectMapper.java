@@ -16,12 +16,16 @@
 
 package com.foreach.across.modules.webcms.data.json;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +36,9 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN
 import static com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE;
 
 /**
+ * Wraps around an {@link ObjectMapper} for JSON (de-)serialization.
+ * Customized configuration for data importing and exporting.
+ *
  * @author Arne Vandamme
  * @since 0.0.2
  */
@@ -40,6 +47,7 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN
 public final class WebCmsDataObjectMapper
 {
 	private final ObjectMapper objectMapper;
+	private final TypeFactory typeFactory;
 
 	public WebCmsDataObjectMapper( WebCmsObjectSerializer cmsObjectSerializer, WebCmsObjectDeserializers cmsObjectDeserializers ) {
 		SimpleModule jsonModule = new SimpleModule( WebCmsModule.NAME );
@@ -57,6 +65,7 @@ public final class WebCmsDataObjectMapper
 				                                          READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE
 		                                          )
 		                                          .build();
+		typeFactory = objectMapper.getTypeFactory();
 	}
 
 	public String writeToString( Object object ) {
@@ -91,21 +100,43 @@ public final class WebCmsDataObjectMapper
 		return false;
 	}
 
+	/**
+	 * Deserialize a string to the output type.
+	 *
+	 * @param json      data as string
+	 * @param valueType to create
+	 * @param <T>       value type reference
+	 * @return instance
+	 */
 	public <T> T readFromString( String json, Class<T> valueType ) {
-		try {
-			return objectMapper.readValue( json, valueType );
-		}
-		catch ( IOException ioe ) {
-			throw new RuntimeException( ioe );
-		}
+		return readFromString( json, TypeDescriptor.valueOf( valueType ) );
 	}
 
-	public <T> T readFromString( String json, TypeReference<T> valueType ) {
-		try {
-			return objectMapper.readValue( json, valueType );
+	/**
+	 * Deserialize a string to the output type.
+	 *
+	 * @param json           data as string
+	 * @param typeDescriptor representing the output type to create
+	 * @param <T>            output type reference
+	 * @return instance
+	 */
+	@SuppressWarnings("all")
+	@SneakyThrows
+	public <T> T readFromString( String json, TypeDescriptor typeDescriptor ) {
+		return (T) objectMapper.readValue( json, convertResolvableTypeToJavaType( typeDescriptor.getResolvableType() ) );
+	}
+
+	private JavaType convertResolvableTypeToJavaType( ResolvableType resolvableType ) {
+		return typeFactory.constructSimpleType( resolvableType.resolve(), convertResolvableTypeToJavaType( resolvableType.getGenerics() ) );
+	}
+
+	private JavaType[] convertResolvableTypeToJavaType( ResolvableType[] resolvableTypes ) {
+		JavaType[] javaTypes = new JavaType[resolvableTypes.length];
+
+		for ( int i = 0; i < resolvableTypes.length; i++ ) {
+			javaTypes[i] = convertResolvableTypeToJavaType( resolvableTypes[i] );
 		}
-		catch ( IOException ioe ) {
-			throw new RuntimeException( ioe );
-		}
+
+		return javaTypes;
 	}
 }

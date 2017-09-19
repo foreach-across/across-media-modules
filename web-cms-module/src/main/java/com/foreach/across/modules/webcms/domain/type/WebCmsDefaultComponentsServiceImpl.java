@@ -23,6 +23,7 @@ import com.foreach.across.modules.webcms.domain.component.container.ContainerWeb
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -86,6 +87,9 @@ final class WebCmsDefaultComponentsServiceImpl implements WebCmsDefaultComponent
 					members.forEach( m -> {
 						WebCmsComponentModel clone = m.asComponentTemplate();
 						clone.setOwner( asset );
+						if ( asset instanceof WebCmsDomainBound ) {
+							clone.setDomain( ( (WebCmsDomainBound) asset ).getDomain() );
+						}
 						replaceAttributesInTextComponents( clone, markerValues );
 						componentModelService.save( clone );
 					} );

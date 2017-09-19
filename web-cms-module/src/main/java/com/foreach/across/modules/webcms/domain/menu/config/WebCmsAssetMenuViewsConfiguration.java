@@ -28,8 +28,11 @@ import com.foreach.across.modules.entity.registry.EntityConfiguration;
 import com.foreach.across.modules.entity.registry.EntityFactory;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.asset.QWebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainAdminUiService;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
 import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +61,8 @@ public class WebCmsAssetMenuViewsConfiguration
 	private final Set<Class<?>> assetTypes = new HashSet<>();
 	private final EntityRegistry entityRegistry;
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;
+	private final WebCmsMultiDomainService multiDomainService;
+	private final WebCmsMultiDomainAdminUiService multiDomainAdminUiService;
 
 	/**
 	 * Enable {@link com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem} management for a specific {@link WebCmsAsset} implementation.
@@ -117,8 +122,11 @@ public class WebCmsAssetMenuViewsConfiguration
 		{
 			@Override
 			protected EntityQueryCondition buildEqualsOrContainsCondition( Object value ) {
-				val endpoint = assetEndpointRepository.findOneByAsset( (WebCmsAsset) value );
-				return new EntityQueryCondition( "endpoint", EntityQueryOps.EQ, endpoint );
+				QWebCmsAssetEndpoint query = QWebCmsAssetEndpoint.webCmsAssetEndpoint;
+				val endpoint = assetEndpointRepository.findAll(
+						multiDomainAdminUiService.applyVisibleDomainsPredicate( query.asset.eq( (WebCmsAsset) value ), query.domain )
+				);
+				return new EntityQueryCondition( "endpoint", EntityQueryOps.IN, endpoint.toArray() );
 			}
 		};
 	}
@@ -130,7 +138,8 @@ public class WebCmsAssetMenuViewsConfiguration
 			public WebCmsMenuItem createNew( Object... args ) {
 				WebCmsMenuItem item = new WebCmsMenuItem();
 				if ( args[0] instanceof WebCmsAsset ) {
-					item.setEndpoint( assetEndpointRepository.findOneByAsset( (WebCmsAsset) args[0] ) );
+					WebCmsAsset asset = (WebCmsAsset) args[0];
+					item.setEndpoint( assetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) ) );
 				}
 
 				return item;

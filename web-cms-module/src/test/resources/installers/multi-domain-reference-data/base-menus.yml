@@ -1,0 +1,34 @@
+#
+# Import default menu structures
+#
+menus:
+  - name: topNav
+    domain: be-foreach
+    description: A top navigation menu bound to be-foreach domain.
+    items:
+      /home:
+        title: Home
+        url: /home
+        sortIndex: 1
+      /info:
+        title: Information
+        sortIndex: 2
+
+  - name: sideNav
+    domain: be-foreach
+    description: A side navigation menu bound to be-foreach domain.
+
+  - name: topNav
+    domain: "wcm:domain:de-foreach"
+    description: A top navigation menu bound to de-foreach domain.
+    items:
+      /home:
+        title: Home
+      /contact:
+        title: Contact
+        url: /contact-us
+
+  - name: topNav
+    description: A top navigation menu not bound to any domain.
+    objectId: "wcm:menu:top-nav"
+

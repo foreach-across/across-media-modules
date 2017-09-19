@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.asset.web;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import lombok.*;
 
@@ -45,10 +46,12 @@ public abstract class WebCmsAssetType<T extends WebCmsTypeSpecifier<T>> extends 
 	                           @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                           @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                           @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                           @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                           @Builder.ObtainVia(method = "getName") String name,
 	                           @Builder.ObtainVia(method = "getTypeKey") String typeKey,
+	                           @Builder.ObtainVia(method = "getDescription") String description,
 	                           @Singular @Builder.ObtainVia(method = "getAttributes") Map<String, String> attributes ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, name, typeKey, attributes );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, name, typeKey, description, attributes );
 	}
 
 	/**

@@ -16,9 +16,10 @@
 
 package com.foreach.across.modules.webcms.domain.menu;
 
-import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.web.menu.Menu;
+import com.foreach.across.modules.webcms.domain.WebCmsObjectSuperClass;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
@@ -26,6 +27,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Corresponds to a named {@link com.foreach.across.modules.web.menu.Menu}.
@@ -36,13 +38,17 @@ import javax.persistence.*;
 @NotThreadSafe
 @Entity
 @Table(name = "wcm_menu")
-@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Setter
-public class WebCmsMenu extends SettableIdBasedEntity<WebCmsMenu>
+public class WebCmsMenu extends WebCmsObjectSuperClass<WebCmsMenu>
 {
+	/**
+	 * Prefix that all object ids of a WebCmsMenu have.
+	 */
+	public static final String COLLECTION_ID = "wcm:menu";
+
 	@Id
 	@GeneratedValue(generator = "seq_wcm_menu_id")
 	@GenericGenerator(
@@ -56,7 +62,8 @@ public class WebCmsMenu extends SettableIdBasedEntity<WebCmsMenu>
 	private Long id;
 
 	/**
-	 * Unique name of the menu.  This should correspond to the {@link Menu} name.
+	 * Unique name of the menu within it's domain.  This should correspond to the {@link Menu} name.
+	 * If the {@link WebCmsMenu} is not {@link com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound} then the name has to be unique.
 	 */
 	@Column
 	@NotBlank
@@ -69,4 +76,33 @@ public class WebCmsMenu extends SettableIdBasedEntity<WebCmsMenu>
 	@Column
 	@Length(max = 255)
 	private String description;
+
+	@Builder(toBuilder = true)
+	public WebCmsMenu( @Builder.ObtainVia(method = "getId") Long id,
+	                   @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
+	                   @Builder.ObtainVia(method = "getObjectId") String objectId,
+	                   @Builder.ObtainVia(method = "getCreatedBy") String createdBy,
+	                   @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
+	                   @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
+	                   @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                   @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
+	                   String name,
+	                   String description ) {
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain );
+		setName( name );
+		setDescription( description );
+	}
+
+	@Override
+	public String toString() {
+		return "WebCmsMenu{" +
+				"objectId='" + getObjectId() + "\'," +
+				"name='" + getName() + "\'" +
+				'}';
+	}
+
+	@Override
+	protected String getObjectCollectionId() {
+		return COLLECTION_ID;
+	}
 }

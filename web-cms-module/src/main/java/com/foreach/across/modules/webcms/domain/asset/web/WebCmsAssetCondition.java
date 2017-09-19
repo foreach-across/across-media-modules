@@ -22,7 +22,7 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
-import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsEndpointConditionCombination;
+import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsConditionCombination;
 import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsEndpointMapping;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +84,7 @@ public class WebCmsAssetCondition extends AbstractCustomRequestCondition<WebCmsA
 		else if ( !other.assetType.isAssignableFrom( this.assetType ) ) {
 			String message = String.format( "A condition with asset type %s and type %s cannot be merged", this.assetType,
 			                                other.assetType );
-			throw new InvalidWebCmsEndpointConditionCombination( message );
+			throw new InvalidWebCmsConditionCombination( message );
 		}
 		else {
 			result.assetType = this.assetType;
@@ -113,7 +113,7 @@ public class WebCmsAssetCondition extends AbstractCustomRequestCondition<WebCmsA
 		// check that "other" is more specific (being a subset) or equal to "this"
 		for ( String otherObjectId : other.objectId ) {
 			if ( !ArrayUtils.contains( this.objectId, otherObjectId ) ) {
-				throw new InvalidWebCmsEndpointConditionCombination(
+				throw new InvalidWebCmsConditionCombination(
 						String.format( "Current objectid collection does not contain [%s]", otherObjectId ) );
 			}
 			combined.add( otherObjectId );

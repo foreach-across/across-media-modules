@@ -19,9 +19,12 @@ package com.foreach.across.modules.webcms.domain.menu;
 import com.foreach.across.modules.webcms.data.AbstractWebCmsDataImporter;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.menu.validators.WebCmsMenuValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,16 +41,22 @@ import java.util.Map;
 public class WebCmsMenuImporter extends AbstractWebCmsDataImporter<WebCmsMenu, WebCmsMenu>
 {
 	private final WebCmsMenuRepository webCmsMenuRepository;
+	private final WebCmsMenuValidator menuValidator;
 
 	@Override
 	public boolean supports( WebCmsDataEntry data ) {
-		return "menus".equals( data.getKey() );
+		return "menus".equals( data.getParentKey() );
 	}
 
 	@Override
 	protected WebCmsMenu retrieveExistingInstance( WebCmsDataEntry data ) {
 		String dataKey = data.getMapData().containsKey( "name" ) ? (String) data.getMapData().get( "name" ) : data.getKey();
-		return webCmsMenuRepository.findOneByName( dataKey );
+		String objectId = (String) data.getMapData().get( "objectId" );
+		if ( objectId != null ) {
+			return webCmsMenuRepository.findOneByObjectId( objectId );
+		}
+		WebCmsDomain domain = retrieveDomainForDataEntry( data, WebCmsMenu.class );
+		return webCmsMenuRepository.findOneByNameAndDomain( dataKey, domain );
 	}
 
 	@Override
@@ -85,5 +94,10 @@ public class WebCmsMenuImporter extends AbstractWebCmsDataImporter<WebCmsMenu, W
 	@Override
 	protected void saveDto( WebCmsMenu dto, WebCmsDataAction action, WebCmsDataEntry data ) {
 		webCmsMenuRepository.save( dto );
+	}
+
+	@Override
+	protected void validate( WebCmsMenu itemToBeSaved, Errors errors ) {
+		menuValidator.validate( itemToBeSaved, errors );
 	}
 }

@@ -19,10 +19,15 @@ package com.foreach.across.modules.webcms.domain.page;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.AbstractWebCmsAssetImporter;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.page.config.WebCmsPageConfiguration;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
+import com.foreach.across.modules.webcms.domain.page.validators.WebCmsPageValidator;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 
 import java.util.Map;
 
@@ -33,7 +38,9 @@ import java.util.Map;
 @Component
 public final class WebCmsPageImporter extends AbstractWebCmsAssetImporter<WebCmsPage>
 {
+	private WebCmsPageValidator pageValidator;
 	private WebCmsPageService pageService;
+	private WebCmsMultiDomainService multiDomainService;
 
 	public WebCmsPageImporter() {
 		super( "page", WebCmsPage.class );
@@ -89,12 +96,33 @@ public final class WebCmsPageImporter extends AbstractWebCmsAssetImporter<WebCms
 	}
 
 	@Override
-	protected WebCmsPage getExistingByEntryKey( String entryKey ) {
-		return pageService.findByCanonicalPath( entryKey ).orElse( null );
+	protected WebCmsPage getExistingEntity( String entryKey, WebCmsDataEntry data, WebCmsDomain domain ) {
+		if ( StringUtils.isEmpty( entryKey ) ) {
+			if ( !data.getMapData().containsKey( "canonicalPath" ) ) {
+				return null;
+			}
+			entryKey = (String) data.getMapData().get( "canonicalPath" );
+		}
+		return pageService.findByCanonicalPathAndDomain( entryKey, domain ).orElse( null );
+	}
+
+	@Override
+	protected void validate( WebCmsPage itemToBeSaved, Errors errors ) {
+		pageValidator.validate( itemToBeSaved, errors );
 	}
 
 	@Autowired
 	void setPageService( WebCmsPageService pageService ) {
 		this.pageService = pageService;
+	}
+
+	@Autowired
+	void setPageValidator( WebCmsPageValidator pageValidator ) {
+		this.pageValidator = pageValidator;
+	}
+
+	@Autowired
+	void setMultiDomainService( WebCmsMultiDomainService multiDomainService ) {
+		this.multiDomainService = multiDomainService;
 	}
 }

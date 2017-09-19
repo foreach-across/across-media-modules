@@ -18,8 +18,10 @@ package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetMapping;
+import com.foreach.across.modules.webcms.domain.domain.web.WebCmsDomainMapping;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
 
 import java.lang.annotation.*;
@@ -64,4 +66,13 @@ public @interface WebCmsPageMapping
 	 * Globally unique asset object ids.  Mapping will only apply for this list of assets.
 	 */
 	String[] objectId() default {};
+
+	/**
+	 * Mapping will only apply if the current {@link com.foreach.across.modules.webcms.domain.domain.WebCmsDomainContext}
+	 * if for any of the domains specified. If the array of domains is empty, mapping will always apply.
+	 * <p/>
+	 * A domain is specified by its domain key, {@code null} represent the explicit no-domain.
+	 */
+	@AliasFor(annotation = WebCmsDomainMapping.class, attribute = "value")
+	String[] domain() default {};
 }

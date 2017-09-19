@@ -44,6 +44,7 @@ public class TestAbstractWebCmsDataImporter
 
 	@Mock
 	private WebCmsPropertyDataImporter<String> before;
+
 	@Mock
 	private WebCmsPropertyDataImporter<String> after;
 
@@ -79,7 +80,7 @@ public class TestAbstractWebCmsDataImporter
 		data.setImportAction( WebCmsDataImportAction.DELETE );
 
 		when( importer.retrieveExistingInstance( data ) ).thenReturn( "one" );
-		importer.importSingleEntry( data );
+		importer.importData( data );
 
 		verify( importer, never() ).saveDto( any(), any(), any() );
 		verify( importer ).deleteInstance( "one", data );
@@ -142,7 +143,7 @@ public class TestAbstractWebCmsDataImporter
 		when( importer.createDto( data, null, CREATE, data.getMapData() ) ).thenReturn( "create" );
 		when( conversionService.convertToPropertyValues( values, "create" ) ).thenReturn( false );
 
-		importer.importSingleEntry( data );
+		importer.importData( data );
 
 		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "create", CREATE );
 		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "create", CREATE );
@@ -157,7 +158,7 @@ public class TestAbstractWebCmsDataImporter
 		when( importer.createDto( data, "one", UPDATE, data.getMapData()) ).thenReturn( "updated" );
 		when( conversionService.convertToPropertyValues( values, "updated" ) ).thenReturn( false );
 
-		importer.importSingleEntry( data );
+		importer.importData( data );
 
 		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", UPDATE );
 		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", UPDATE );
@@ -173,7 +174,7 @@ public class TestAbstractWebCmsDataImporter
 		when( conversionService.convertToPropertyValues( values, "updated" ) ).thenReturn( false );
 		when( before.importData( any(), any(), any(), any() ) ).thenReturn( true );
 
-		importer.importSingleEntry( data );
+		importer.importData( data );
 
 		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", UPDATE );
 		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", UPDATE );
@@ -184,7 +185,7 @@ public class TestAbstractWebCmsDataImporter
 		data.setImportAction( importAction );
 
 		when( importer.createDto( data, null, CREATE, data.getMapData() ) ).thenReturn( "create" );
-		importer.importSingleEntry( data );
+		importer.importData( data );
 
 		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "create", CREATE );
 		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "create", CREATE );
@@ -198,7 +199,7 @@ public class TestAbstractWebCmsDataImporter
 		when( importer.retrieveExistingInstance( data ) ).thenReturn( "one" );
 		when( importer.createDto( data, "one", action, data.getMapData() ) ).thenReturn( "updated" );
 
-		importer.importSingleEntry( data );
+		importer.importData( data );
 
 		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", action );
 		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", action );
@@ -211,14 +212,14 @@ public class TestAbstractWebCmsDataImporter
 
 		when( importer.retrieveExistingInstance( data ) ).thenReturn( "one" );
 
-		importer.importSingleEntry( data );
+		importer.importData( data );
 		verify( importer, never() ).saveDto( any(), any(), any() );
 		verify( importer, never() ).deleteInstance( any(), any() );
 	}
 
 	private void expectIgnoredIfNotExists( WebCmsDataImportAction importAction ) {
 		data.setImportAction( importAction );
-		importer.importSingleEntry( data );
+		importer.importData( data );
 		verify( importer, never() ).saveDto( any(), any(), any() );
 		verify( importer, never() ).deleteInstance( any(), any() );
 	}

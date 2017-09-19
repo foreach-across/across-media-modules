@@ -22,6 +22,7 @@ import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Creates one (or many) @{@link WebCmsMenuItem}s from a import data.
+ * Creates one (or many) {@link WebCmsMenuItem}s from import data.
  *
  * @author Raf Ceuls
  * @since 0.0.2
@@ -48,6 +49,7 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 	private final WebCmsMenuItemRepository webCmsMenuItemRepository;
 	private final WebCmsAssetEndpointRepository webCmsAssetEndpointRepository;
 	private final WebCmsDataConversionService webCmsDataConversionService;
+	private final WebCmsMultiDomainService multiDomainService;
 
 	@Override
 	public Phase getPhase() {
@@ -92,7 +94,7 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 			WebCmsAsset asset = webCmsDataConversionService.convert( assetKey, WebCmsAsset.class );
 
 			if ( asset != null ) {
-				WebCmsEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAsset( asset );
+				WebCmsEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) );
 
 				if ( endpoint != null ) {
 					WebCmsUrl primaryUrl = endpoint.getPrimaryUrl().orElse( null );
@@ -124,6 +126,6 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 
 	protected WebCmsMenuItem getExisting( WebCmsDataEntry dataKey, WebCmsMenu parent ) {
 		String key = dataKey.getMapData().containsKey( "path" ) ? (String) dataKey.getMapData().get( "path" ) : dataKey.getKey();
-		return webCmsMenuItemRepository.findByMenuNameAndPath( parent.getName(), key );
+		return webCmsMenuItemRepository.findByMenuAndPath( parent, key );
 	}
 }

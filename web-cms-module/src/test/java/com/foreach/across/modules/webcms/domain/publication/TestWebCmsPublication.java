@@ -41,7 +41,7 @@ public class TestWebCmsPublication
 		assertNull( publication.getId() );
 		assertNull( publication.getNewEntityId() );
 		assertTrue( publication.isNew() );
-		assertNull( publication.getObjectId() );
+		assertNotNull( publication.getObjectId() );
 		assertNull( publication.getPublicationKey() );
 		assertNull( publication.getPublicationType() );
 		assertNull( publication.getName() );
@@ -69,7 +69,6 @@ public class TestWebCmsPublication
 
 		assertNull( publication.getId() );
 		assertEquals( Long.valueOf( 123L ), publication.getNewEntityId() );
-		assertEquals( "wcm:asset:publication:publication-key", publication.getObjectId() );
 		assertSame( publicationType, publication.getPublicationType() );
 		assertEquals( "publication-key", publication.getPublicationKey() );
 		assertEquals( "my-publication", publication.getName() );

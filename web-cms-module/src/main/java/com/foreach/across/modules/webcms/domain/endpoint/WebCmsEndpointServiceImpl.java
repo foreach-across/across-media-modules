@@ -20,6 +20,8 @@ import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.endpoint.support.EndpointModificationType;
 import com.foreach.across.modules.webcms.domain.endpoint.support.PrimaryUrlForAssetFailedEvent;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
@@ -32,7 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -55,14 +56,20 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 {
 	private static final Charset UTF8 = Charset.forName( "UTF-8" );
 
-	private final WebCmsAssetEndpointRepository endpointRepository;
+	private final WebCmsAssetEndpointRepository assetEndpointRepository;
 	private final WebCmsUrlRepository urlRepository;
 	private final WebCmsUrlCache urlCache;
 	private final AcrossEventPublisher eventPublisher;
+	private final WebCmsMultiDomainService multiDomainService;
 
 	@Override
 	public Optional<WebCmsUrl> getUrlForPath( String path ) {
-		return urlCache.getUrlForPath( path );
+		return getUrlForPathAndDomain( path, multiDomainService.getCurrentDomainForType( WebCmsEndpoint.class ) );
+	}
+
+	@Override
+	public Optional<WebCmsUrl> getUrlForPathAndDomain( String path, WebCmsDomain domain ) {
+		return urlCache.getUrlForPathAndDomain( path, domain );
 	}
 
 	@Transactional
@@ -72,7 +79,8 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 	                                                                                                 boolean publishEventOnFailure ) {
 		boolean canBeUpdated = asset.getPublicationDate() == null || ( new Date() ).before( asset.getPublicationDate() );
 
-		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( asset );
+		WebCmsDomain domain = multiDomainService.isDomainBound( WebCmsAssetEndpoint.class ) ? asset.getDomain() : WebCmsDomain.NONE;
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, domain );
 
 		if ( endpoint != null ) {
 			Optional<WebCmsUrl> currentUrl = endpoint.getPrimaryUrl();
@@ -87,7 +95,7 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 			newPrimaryUrl.setPrimary( true );
 			newPrimaryUrl.setEndpoint( endpoint );
 
-			WebCmsUrl existing = urlRepository.findOneByPath( primaryUrl );
+			WebCmsUrl existing = urlRepository.findOneByPathAndEndpoint_Domain( primaryUrl, domain );
 
 			if ( existing != null && !endpoint.equals( existing.getEndpoint() ) ) {
 				ModificationReport<EndpointModificationType, WebCmsUrl> modificationReport =
@@ -144,7 +152,13 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 	@Transactional(readOnly = true)
 	@Override
 	public Optional<WebCmsUrl> getPrimaryUrlForAsset( WebCmsAsset asset ) {
-		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( asset );
+		return getPrimaryUrlForAssetOnDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) );
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Optional<WebCmsUrl> getPrimaryUrlForAssetOnDomain( WebCmsAsset asset, WebCmsDomain domain ) {
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, domain );
 
 		if ( endpoint != null ) {
 			return endpoint.getPrimaryUrl();
@@ -154,28 +168,12 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 	}
 
 	@Override
-	public Optional<String> buildPreviewUrl( WebCmsAsset asset ) {
-		Assert.notNull( asset );
-
-		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAsset( asset );
-
-		if ( endpoint != null ) {
-			return endpoint.getPrimaryUrl()
-			               .map( url -> {
-
-				                     return UriComponentsBuilder.fromUriString( url.getPath() )
-				                                                .queryParam( "wcmPreview",
-				                                                             DigestUtils.md5DigestAsHex(
-						                                                             endpoint.getId().toString().getBytes( UTF8 ) ) )
-				                                                .toUriString();
-			                     }
-			               );
-		}
-
-		return Optional.empty();
+	public UriComponentsBuilder appendPreviewCode( WebCmsEndpoint endpoint, UriComponentsBuilder uriComponentsBuilder ) {
+		return uriComponentsBuilder.queryParam( "wcmPreview",
+		                                        DigestUtils.md5DigestAsHex( endpoint.getId().toString().getBytes( UTF8 ) ) );
 	}
 
-	public boolean isPreviewAllowed( WebCmsEndpoint endpoint, String securityCode ) {
+	public boolean isValidPreviewCode( WebCmsEndpoint endpoint, String securityCode ) {
 		return !StringUtils.isEmpty( securityCode ) && DigestUtils.md5DigestAsHex( endpoint.getId().toString().getBytes( UTF8 ) ).equals( securityCode );
 	}
 }

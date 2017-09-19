@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.type.web;
 
 import com.foreach.across.modules.entity.validators.EntityValidatorSupport;
-import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.type.QWebCmsTypeSpecifier;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierRepository;
@@ -34,7 +33,6 @@ import org.springframework.validation.Errors;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-@ConditionalOnAdminUI
 @Component
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class WebCmsTypeSpecifierValidator extends EntityValidatorSupport<WebCmsTypeSpecifier>
@@ -58,9 +56,12 @@ public class WebCmsTypeSpecifierValidator extends EntityValidatorSupport<WebCmsT
 		}
 
 		if ( !errors.hasFieldErrors( "typeKey" ) ) {
-			WebCmsTypeSpecifier existing = typeSpecifierRepository.findOneByObjectTypeAndTypeKey( entity.getObjectType(), entity.getTypeKey() );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "typeKey", "alreadyExists" );
+			if ( !errors.hasFieldErrors( "typeKey" ) ) {
+				WebCmsTypeSpecifier existing = typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( entity.getObjectType(), entity.getTypeKey(),
+				                                                                                               entity.getDomain() );
+				if ( existing != null && !entity.equals( existing ) ) {
+					errors.rejectValue( "typeKey", "alreadyExists" );
+				}
 			}
 		}
 

@@ -1,0 +1,36 @@
+domains:
+  another-foreach:
+    objectId: "wcm:domain:another-foreach"
+    name: Another Foreach Domain
+    active: true
+
+types:
+  publication:
+    wcm:domain: another-foreach
+    another-foreach:cool-facts:
+      name: Cool Facts (another-foreach)
+  component:
+    my-component:
+      name: My component
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          wcm:components:
+            title:
+              componentType: text-field
+              sortIndex: 1
+
+assets:
+  page:
+    wcm:domain: another-foreach
+    /pool-request:
+      title: Pool Request (another-foreach)
+  component:
+    my-component:
+      title: My component asset
+      componentType: my-component
+      wcm:components:
+        title:
+          content: My Component Title

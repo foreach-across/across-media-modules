@@ -1,0 +1,14 @@
+assets:
+  page:
+    /my-other-page:
+      domain: nl-foreach
+      title: My Other Page (NL)
+
+  publication:
+    music:
+      wcm:action: delete
+      domain: nl-foreach
+
+  article:
+    - objectId: "wcm:asset:article:devtalks-nl"
+      wcm:action: delete

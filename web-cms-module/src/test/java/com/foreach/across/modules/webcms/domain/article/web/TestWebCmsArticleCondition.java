@@ -22,7 +22,7 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
-import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsEndpointConditionCombination;
+import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsConditionCombination;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
@@ -141,7 +141,7 @@ public class TestWebCmsArticleCondition
 		assertArrayEquals( new String[] { "123" }, combination.publications );
 	}
 
-	@Test(expected = InvalidWebCmsEndpointConditionCombination.class)
+	@Test(expected = InvalidWebCmsConditionCombination.class)
 	public void combineFailsIfChildScopeIsWider() {
 		condition( new String[] { "xyz" }, new String[] { "abc" }, new String[] { "123" } )
 				.combine( condition( new String[] { "xyz", "xyz2" }, new String[] { "abc2", "abc" }, new String[] { "123", "456" } ) );

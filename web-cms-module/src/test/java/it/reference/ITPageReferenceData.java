@@ -17,6 +17,7 @@
 package it.reference;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
@@ -40,6 +41,9 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Autowired
 	private WebCmsEndpointService endpointService;
+
+	@Autowired
+	private WebCmsDomainRepository domainRepository;
 
 	@Test
 	public void alwaysCreatedPageShouldBeCreatedWithBothObjectIdAndCanonicalPathGenerated() {
@@ -182,5 +186,26 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 		assertEquals( path, url.getPath() );
 		assertTrue( url.isPrimary() );
 		assertEquals( HttpStatus.OK, url.getHttpStatus() );
+	}
+
+	@Test
+	public void frequentlyUsedDomainsPageShouldHaveBeenImported() {
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-freq-domains" );
+		assertNotNull( page );
+		assertEquals( domainRepository.findOneByObjectId( "wcm:domain:simple-domain" ), page.getDomain() );
+	}
+
+	@Test
+	public void generalDomainsPageShouldHaveBeenImported() {
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-gen-domains" );
+		assertNotNull( page );
+		assertEquals( domainRepository.findOneByDomainKey( "domain.complex.domain" ), page.getDomain() );
+	}
+
+	@Test
+	public void commonDomainsPageShouldHaveBeenImportedAndExtended() {
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-common-domains" );
+		assertNotNull( page );
+		assertNull( page.getDomain() );
 	}
 }

@@ -67,7 +67,8 @@ public class WebCmsDataConversionService extends DefaultConversionService
 					LOG.warn( "Skipping unknown property: {}", propertyName );
 				}
 				else {
-					if ( propertyValue instanceof Map && !typeDescriptor.isMap() ) {
+					TypeDescriptor sourceType = TypeDescriptor.forObject( propertyValue );
+					if ( propertyValue instanceof Map && !canConvert( sourceType, typeDescriptor ) ) {
 						Object target = beanWrapper.getPropertyValue( propertyName );
 
 						if ( target == null ) {
@@ -80,7 +81,14 @@ public class WebCmsDataConversionService extends DefaultConversionService
 						}
 					}
 					else {
-						Object valueToSet = convert( propertyValue, TypeDescriptor.forObject( propertyValue ), typeDescriptor );
+						Object valueToSet = convert( propertyValue, sourceType, typeDescriptor );
+
+						if ( propertyValue != null && valueToSet == null ) {
+							throw new IllegalArgumentException(
+									"Illegal converted value for '" + propertyName + "': " +
+											sourceType.getName() + " to " + typeDescriptor.getName() + " resulted in null for '" + propertyValue + "'" );
+						}
+
 						Object currentValue = beanWrapper.getPropertyValue( propertyName );
 
 						if ( !Objects.equals( currentValue, valueToSet ) ) {
