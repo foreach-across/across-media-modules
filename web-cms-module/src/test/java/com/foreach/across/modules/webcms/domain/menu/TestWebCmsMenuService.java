@@ -54,10 +54,10 @@ public class TestWebCmsMenuService
 		when( menuRepository.findOneByNameAndDomain( "myMenu", WebCmsDomain.NONE ) ).thenReturn( noDomain );
 		when( menuRepository.findOneByNameAndDomain( "myMenu", domain ) ).thenReturn( withDomain );
 
-		assertSame( noDomain, menuService.getMenuWithName( "myMenu" ) );
+		assertSame( noDomain, menuService.getMenuByName( "myMenu" ) );
 		verify( multiDomainService ).getCurrentDomainForType( WebCmsMenu.class );
 
 		when( multiDomainService.getCurrentDomainForType( WebCmsMenu.class ) ).thenReturn( domain );
-		assertSame( withDomain, menuService.getMenuWithName( "myMenu" ) );
+		assertSame( withDomain, menuService.getMenuByName( "myMenu" ) );
 	}
 }

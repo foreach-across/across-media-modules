@@ -69,7 +69,7 @@ public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicati
 		assertEquals( "/auto-create-complex-container-components", page.getCanonicalPath() );
 		assertNull( page.getParent() );
 
-		assertTrue( componentModelService.getComponentModelsForOwner( page ).isEmpty() );
+		assertTrue( componentModelService.getComponentModelsForOwner( page, null ).isEmpty() );
 	}
 
 	@Test

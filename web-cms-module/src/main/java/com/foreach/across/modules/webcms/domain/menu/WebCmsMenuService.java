@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain.menu;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+
 /**
  * Higher-level API for interacting with {@link WebCmsMenu}.
  * Has notion of the possible current {@link com.foreach.across.modules.webcms.domain.domain.WebCmsDomain}.
@@ -27,11 +29,21 @@ public interface WebCmsMenuService
 {
 	/**
 	 * Find the menu with the specific name.
-	 * Will inspect the {@link com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService} to determine
-	 * if {@link WebCmsMenu} is domain bound, and if so will use the current domain to perform the menu lookup.
+	 * Will inspect the domain configuration to determine the domain the menu should be for.
+	 * Will use the current domain and fallback to no-domain if allowed for {@link WebCmsMenu}.
 	 *
 	 * @param menuName name of the menu
 	 * @return menu or null if not found
 	 */
-	WebCmsMenu getMenuWithName( String menuName );
+	WebCmsMenu getMenuByName( String menuName );
+
+	/**
+	 * Find the menu with the specific name for the given domain.
+	 * Will fallback to no-domain if allowed for {@link WebCmsMenu}.
+	 *
+	 * @param menuName name of the menu
+	 * @param domain   the menu belongs to
+	 * @return menu or null if not found
+	 */
+	WebCmsMenu getMenuByName( String menuName, WebCmsDomain domain );
 }

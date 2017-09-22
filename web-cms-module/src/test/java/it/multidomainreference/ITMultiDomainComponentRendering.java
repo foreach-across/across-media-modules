@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package it.pages;
+package it.multidomainreference;
 
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
-import it.AbstractCmsApplicationWithTestDataIT;
+import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,10 +32,13 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
+public class ITMultiDomainComponentRendering extends AbstractMultiDomainCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
+
+	@Autowired
+	private WebCmsDomainRepository domainRepository;
 
 	@Autowired
 	private WebCmsComponentModelService componentModelService;
@@ -44,13 +48,16 @@ public class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
 	@Before
 	public void setUp() throws Exception {
 		if ( html == null ) {
-			html = html( "/render-components" );
+			html = html( "http://foreach.be/render-components" );
 		}
 	}
 
 	@Test
 	public void verifyPageAndComponentsHaveBeenInstalled() {
-		val page = pageService.findByCanonicalPath( "/render-components" )
+		val foreachBe = domainRepository.findOneByDomainKey( "be-foreach" );
+		assertNotNull( foreachBe );
+
+		val page = pageService.findByCanonicalPathAndDomain( "/render-components", foreachBe )
 		                      .orElse( null );
 		assertNotNull( page );
 
@@ -63,13 +70,13 @@ public class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
 		assertEquals( "/render-components", page.getCanonicalPath() );
 		assertNull( page.getParent() );
 
-		val content = componentModelService.getComponentModelByName( "content", page, TextWebCmsComponentModel.class );
+		val content = componentModelService.getComponentModelByNameAndDomain( "content", page, page.getDomain(), TextWebCmsComponentModel.class );
 		assertNotNull( content );
 		assertEquals( "content", content.getName() );
 		assertEquals( "Content", content.getTitle() );
 		assertEquals( "Page component: content 2", content.getContent() );
 
-		val custom = componentModelService.getComponentModelByName( "custom", page, TextWebCmsComponentModel.class );
+		val custom = componentModelService.getComponentModelByNameAndDomain( "custom", page, page.getDomain(), TextWebCmsComponentModel.class );
 		assertNotNull( custom );
 		assertEquals( "custom", custom.getName() );
 		assertEquals( "Custom", custom.getTitle() );
@@ -112,8 +119,8 @@ public class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void domainScopeIsAliasForGlobal() {
-		html.assertElementHasText( "Global component: content", "#using-domain" );
+	public void domainScopeIsDomainBoundObjects() {
+		html.assertElementHasText( "Global component: content (BE)", "#using-domain" );
 	}
 
 	@Test

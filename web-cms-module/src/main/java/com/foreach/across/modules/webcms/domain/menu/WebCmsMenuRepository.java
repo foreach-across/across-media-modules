@@ -27,7 +27,5 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 @Exposed
 public interface WebCmsMenuRepository extends WebCmsObjectEntityRepository<WebCmsMenu>
 {
-	WebCmsMenu findOneByName( String name );
-
 	WebCmsMenu findOneByNameAndDomain( String name, WebCmsDomain domain );
 }

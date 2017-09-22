@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.page.services;
 
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 
@@ -33,9 +34,39 @@ import java.util.Optional;
 public interface WebCmsPageService
 {
 	/**
+	 * Get the {@link WebCmsPageType} with the specified object id.
+	 *
+	 * @param objectId the page type should have
+	 * @return page type or {@code null}
+	 */
+	WebCmsPageType getPageType( String objectId );
+
+	/**
+	 * Get the {@link WebCmsPageType} with the specified type key, attached to the current domain.
+	 * Will take the multi-domain configuration into account when looking for the page type:
+	 * will also inspect no-domain if allowed for {@link WebCmsPageType}.
+	 *
+	 * @param typeKey the page type should have
+	 * @return page type or {@code null} if not found
+	 */
+	WebCmsPageType getPageTypeByKey( String typeKey );
+
+	/**
+	 * Get the {@link WebCmsPageType} with the specified type key, attached to the specified domain.
+	 * Will take the multi-domain configuration into account when looking for the page type:
+	 * will also inspect no-domain if allowed for {@link WebCmsPageType}.
+	 *
+	 * @param typeKey the page type should have
+	 * @param domain  the page type is requested for
+	 * @return page type or {@code null} if not found
+	 */
+	WebCmsPageType getPageTypeByKey( String typeKey, WebCmsDomain domain );
+
+	/**
 	 * Find a single page by its unique canonical path.
 	 * This method will use {@link #findByCanonicalPathAndDomain} to retrieve the page.
 	 * The domain used in looking up the page will be retrieved from the {@link com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService}
+	 *
 	 * @param canonicalPath unique path
 	 * @return page if found
 	 */

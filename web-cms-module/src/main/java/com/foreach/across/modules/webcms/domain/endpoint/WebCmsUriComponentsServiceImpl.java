@@ -38,7 +38,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Service
-public class WebCmsUriComponentsServiceImpl implements WebCmsUriComponentsService
+class WebCmsUriComponentsServiceImpl implements WebCmsUriComponentsService
 {
 	private final WebCmsMultiDomainService multiDomainService;
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;

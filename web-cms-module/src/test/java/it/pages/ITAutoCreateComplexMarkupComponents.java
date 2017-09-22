@@ -65,7 +65,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 		assertEquals( "/auto-create-complex-markup-components", page.getCanonicalPath() );
 		assertNull( page.getParent() );
 
-		assertTrue( componentModelService.getComponentModelsForOwner( page ).isEmpty() );
+		assertTrue( componentModelService.getComponentModelsForOwner( page, null ).isEmpty() );
 		assertNull( componentModelService.getComponentModelByName( "auto-created-for-include", null ) );
 	}
 

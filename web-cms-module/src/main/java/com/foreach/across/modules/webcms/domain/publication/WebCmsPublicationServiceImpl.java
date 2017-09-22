@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.menu;
+package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * @author Arne Vandamme
@@ -27,24 +28,25 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-class WebCmsMenuServiceImpl implements WebCmsMenuService
+class WebCmsPublicationServiceImpl implements WebCmsPublicationService
 {
 	private final WebCmsMultiDomainService multiDomainService;
-	private final WebCmsMenuRepository menuRepository;
+	private final WebCmsPublicationRepository publicationRepository;
 
 	@Override
-	public WebCmsMenu getMenuByName( String menuName ) {
-		return getMenuByName( menuName, multiDomainService.getCurrentDomainForType( WebCmsMenu.class ) );
+	public WebCmsPublication getPublicationByKey( String publicationKey ) {
+		return getPublicationByKey( publicationKey, multiDomainService.getCurrentDomainForEntity( WebCmsPublication.class ) );
 	}
 
 	@Override
-	public WebCmsMenu getMenuByName( String menuName, WebCmsDomain domain ) {
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( menuName, domain );
+	public WebCmsPublication getPublicationByKey( String publicationKey, WebCmsDomain domain ) {
+		Assert.notNull( publicationKey, "Publication key is required" );
+		WebCmsPublication candidate = publicationRepository.findOneByPublicationKeyAndDomain( publicationKey, domain );
 
-		if ( menu == null && !WebCmsDomain.isNoDomain( domain ) && multiDomainService.isNoDomainAllowed( WebCmsMenu.class ) ) {
-			menu = menuRepository.findOneByNameAndDomain( menuName, WebCmsDomain.NONE );
+		if ( candidate == null && !WebCmsDomain.isNoDomain( domain ) && multiDomainService.isNoDomainAllowed( WebCmsPublication.class ) ) {
+			candidate = publicationRepository.findOneByPublicationKeyAndDomain( publicationKey, WebCmsDomain.NONE );
 		}
 
-		return menu;
+		return candidate;
 	}
 }

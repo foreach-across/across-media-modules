@@ -17,6 +17,7 @@
 package it.reference;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
@@ -167,7 +168,7 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void myOtherNavShouldHaveBeenImportedAndExtended() {
-		WebCmsMenu menu = menuRepository.findOneByName( "myOtherNav" );
+		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "myOtherNav", WebCmsDomain.NONE );
 		assertNotNull( menu );
 		assertEquals( "wcm:menu:my-other-nav", menu.getObjectId() );
 		assertEquals( "Another nav with an objectId", menu.getDescription() );

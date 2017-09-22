@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
@@ -34,9 +33,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class StringToWebCmsTypeSpecifierConverter implements ConverterFactory<String, WebCmsTypeSpecifier>
 {
-	private final WebCmsTypeRegistry typeRegistry;
 	private final WebCmsTypeSpecifierRepository typeSpecifierRepository;
-	private final WebCmsMultiDomainService multiDomainService;
+	private final WebCmsTypeSpecifierService typeSpecifierService;
 
 	@Autowired
 	public void registerToConversionService( WebCmsDataConversionService conversionService ) {
@@ -49,12 +47,7 @@ public class StringToWebCmsTypeSpecifierConverter implements ConverterFactory<St
 			WebCmsTypeSpecifier type = typeSpecifierRepository.findOneByObjectId( id );
 
 			if ( type == null ) {
-				String typeGroup = typeRegistry.retrieveObjectType( targetType ).orElse( null );
-
-				if ( typeGroup != null ) {
-					type = typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, id,
-					                                                                       multiDomainService.getCurrentDomainForType( targetType ) );
-				}
+				return typeSpecifierService.getTypeSpecifierByKey( id, targetType );
 			}
 
 			return targetType.cast( type );

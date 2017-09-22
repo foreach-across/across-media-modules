@@ -18,14 +18,14 @@ package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Steven Gentens
@@ -33,30 +33,38 @@ import java.util.Map;
  */
 @Component
 @RequiredArgsConstructor
-public class MapToWebCmsTypeSpecifierConverter implements ConverterFactory<Object, WebCmsTypeSpecifier>
+public class MapToWebCmsTypeSpecifierConverter implements ConverterFactory<Map<String, Object>, WebCmsTypeSpecifier>
 {
-	private final WebCmsTypeSpecifierRepository typeSpecifierRepository;
 	private final WebCmsDataConversionService conversionService;
-	private final WebCmsTypeRegistry typeRegistry;
-	private final WebCmsMultiDomainService multiDomainService;
+	private final WebCmsTypeSpecifierService typeSpecifierService;
+	private final WebCmsTypeSpecifierRepository typeSpecifierRepository;
 
-	@Autowired
-	public void registerToConversionService( WebCmsDataConversionService conversionService ) {
+	@PostConstruct
+	void registerToConversionService() {
 		conversionService.addConverterFactory( this );
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends WebCmsTypeSpecifier> Converter<Object, T> getConverter( Class<T> targetType ) {
-		return ( value ) -> {
-			Map<String, Object> data = (Map<String, Object>) value;
+	public <T extends WebCmsTypeSpecifier> Converter<Map<String, Object>, T> getConverter( Class<T> targetType ) {
+		return ( data ) -> {
+			if ( data.containsKey( "objectId" ) ) {
+				return targetType.cast( typeSpecifierRepository.findOneByObjectId( Objects.toString( data.get( "objectId" ) ) ) );
+			}
 
-			String typeKey = data.containsKey( "typeKey" ) ? (String) data.get( "typeKey" ) : "";
-			WebCmsDomain domain = data.containsKey( "domain" )
-					? conversionService.convert( data.get( "domain" ), WebCmsDomain.class )
-					: multiDomainService.getCurrentDomainForType( targetType );
-			String typeGroup = typeRegistry.retrieveObjectType( targetType ).orElse( null );
+			if ( data.containsKey( "typeKey" ) ) {
+				String typeKey = Objects.toString( data.get( "typeKey" ) );
 
-			return targetType.cast( typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, typeKey, domain ) );
+				if ( data.containsKey( "domain" ) ) {
+					return typeSpecifierService.getTypeSpecifierByKey(
+							typeKey, targetType, conversionService.convert( data.get( "domain" ), WebCmsDomain.class )
+					);
+				}
+
+				return typeSpecifierService.getTypeSpecifierByKey( typeKey, targetType );
+			}
+
+			return null;
 		};
 	}
 }

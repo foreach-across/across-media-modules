@@ -27,7 +27,5 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 @Exposed
 public interface WebCmsTypeSpecifierRepository extends WebCmsObjectEntityRepository<WebCmsTypeSpecifier<?>>
 {
-	WebCmsTypeSpecifier<?> findOneByObjectTypeAndTypeKey( String objectType, String typeKey );
-
 	WebCmsTypeSpecifier<?> findOneByObjectTypeAndTypeKeyAndDomain( String objectType, String typeKey, WebCmsDomain domain );
 }

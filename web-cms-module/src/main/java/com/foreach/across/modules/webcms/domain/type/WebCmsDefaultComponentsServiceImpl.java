@@ -18,12 +18,15 @@ package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsContentMarkerService;
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Default implementation of {@link WebCmsDefaultComponentsService}.
@@ -46,8 +50,9 @@ final class WebCmsDefaultComponentsServiceImpl implements WebCmsDefaultComponent
 	private static final String DEFAULT_CONTENT_TEMPLATE_COMPONENT = "contentTemplate";
 
 	private final WebCmsComponentModelService componentModelService;
-	private final WebCmsTypeSpecifierRepository typeSpecifierRepository;
 	private final WebCmsContentMarkerService contentMarkerService;
+	private final WebCmsMultiDomainService multiDomainService;
+	private final WebCmsTypeSpecifierService typeSpecifierService;
 
 	/**
 	 * Accepts a single {@link WebCmsObject}. If no {@link WebCmsTypeSpecifier} is specified, nothing happens. Otherwise
@@ -119,16 +124,23 @@ final class WebCmsDefaultComponentsServiceImpl implements WebCmsDefaultComponent
 
 	private WebCmsComponentModel retrieveContentTemplate( WebCmsTypeSpecifier<?> cmsTypeSpecifier ) {
 		String contentTemplateName = StringUtils.defaultString( cmsTypeSpecifier.getAttribute( "contentTemplate" ), DEFAULT_CONTENT_TEMPLATE_COMPONENT );
-		WebCmsComponentModel model = componentModelService.getComponentModelByName( contentTemplateName, cmsTypeSpecifier );
 
-		if ( model == null && cmsTypeSpecifier.hasAttribute( "parent" ) ) {
-			WebCmsTypeSpecifier<?> parentCmsType = typeSpecifierRepository.findOneByObjectTypeAndTypeKey( cmsTypeSpecifier.getObjectType(),
-			                                                                                              cmsTypeSpecifier.getAttribute( "parent" ) );
+		WebCmsDomain currentDomain = multiDomainService.getCurrentDomainForType( WebCmsComponent.class );
+		WebCmsDomain typeDomain = cmsTypeSpecifier.getDomain();
+
+		WebCmsComponentModel template = componentModelService.getComponentModelByNameAndDomain( contentTemplateName, cmsTypeSpecifier, currentDomain );
+
+		if ( template == null && !Objects.equals( currentDomain, typeDomain ) ) {
+			template = componentModelService.getComponentModelByNameAndDomain( contentTemplateName, cmsTypeSpecifier, typeDomain );
+		}
+
+		if ( template == null && cmsTypeSpecifier.hasAttribute( "parent" ) ) {
+			WebCmsTypeSpecifier<?> parentCmsType = typeSpecifierService.getTypeSpecifierByKey( cmsTypeSpecifier.getAttribute( "parent" ), cmsTypeSpecifier.getClass() );
 			if ( parentCmsType != null ) {
 				return retrieveContentTemplate( parentCmsType );
 			}
 		}
 
-		return model;
+		return template;
 	}
 }

@@ -18,13 +18,13 @@ package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Steven Gentens
@@ -32,11 +32,11 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Component
-public class MapToWebCmsPublicationConverter implements Converter<Object, WebCmsPublication>
+public class MapToWebCmsPublicationConverter implements Converter<Map<String, Object>, WebCmsPublication>
 {
 	private final WebCmsPublicationRepository publicationRepository;
-	private final WebCmsMultiDomainService multiDomainService;
 	private final WebCmsDataConversionService conversionService;
+	private final WebCmsPublicationService publicationService;
 
 	@Autowired
 	void register( WebCmsDataConversionService conversionService ) {
@@ -44,14 +44,21 @@ public class MapToWebCmsPublicationConverter implements Converter<Object, WebCms
 	}
 
 	@Override
-	public WebCmsPublication convert( Object source ) {
-		Map<String, Object> data = (Map<String, Object>) source;
+	public WebCmsPublication convert( Map<String, Object> data ) {
+		if ( data.containsKey( "objectId" ) ) {
+			return publicationRepository.findOneByObjectId( Objects.toString( data.get( "objectId" ) ) );
+		}
 
-		String publicationKey = data.containsKey( "publicationKey" ) ? (String) data.get( "publicationKey" ) : "";
-		WebCmsDomain domain = data.containsKey( "domain" )
-				? conversionService.convert( data.get( "domain" ), WebCmsDomain.class )
-				: multiDomainService.getCurrentDomainForType( WebCmsPublication.class );
+		if ( data.containsKey( "publicationKey" ) ) {
+			String typeKey = Objects.toString( data.get( "publicationKey" ) );
 
-		return publicationRepository.findOneByPublicationKeyAndDomain( publicationKey, domain );
+			if ( data.containsKey( "domain" ) ) {
+				return publicationService.getPublicationByKey( typeKey, conversionService.convert( data.get( "domain" ), WebCmsDomain.class ) );
+			}
+
+			return publicationService.getPublicationByKey( typeKey );
+		}
+
+		return null;
 	}
 }

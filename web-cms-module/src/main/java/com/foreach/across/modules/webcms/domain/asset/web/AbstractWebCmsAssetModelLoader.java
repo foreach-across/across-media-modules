@@ -56,9 +56,12 @@ public abstract class AbstractWebCmsAssetModelLoader<T extends WebCmsAsset> impl
 
 	protected abstract boolean loadModel( HttpServletRequest request, T asset, Model model );
 
-	protected void registerAssetComponentsForScope( WebCmsAsset owner, String scope ) {
+	protected void registerAssetComponentsForScope( WebCmsAsset owner, String scope, boolean isMainAsset ) {
 		WebCmsComponentModelSet componentModelSet = componentModelService.buildComponentModelSetForOwner( owner, false );
 		componentModelHierarchy.registerComponentsForScope( componentModelSet, scope );
+		if ( isMainAsset ) {
+			componentModelHierarchy.registerAliasForScope( WebCmsComponentModelHierarchy.ASSET, scope );
+		}
 	}
 
 	@Autowired

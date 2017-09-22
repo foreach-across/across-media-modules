@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.menu;
+package com.foreach.across.modules.webcms.domain.article;
 
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,24 +27,23 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-class WebCmsMenuServiceImpl implements WebCmsMenuService
+class WebCmsArticleServiceImpl implements WebCmsArticleService
 {
-	private final WebCmsMultiDomainService multiDomainService;
-	private final WebCmsMenuRepository menuRepository;
+	private final WebCmsTypeSpecifierService typeSpecifierService;
 
 	@Override
-	public WebCmsMenu getMenuByName( String menuName ) {
-		return getMenuByName( menuName, multiDomainService.getCurrentDomainForType( WebCmsMenu.class ) );
+	public WebCmsArticleType getArticleType( String objectId ) {
+		return typeSpecifierService.getTypeSpecifier( objectId, WebCmsArticleType.class );
 	}
 
 	@Override
-	public WebCmsMenu getMenuByName( String menuName, WebCmsDomain domain ) {
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( menuName, domain );
+	public WebCmsArticleType getArticleTypeByKey( String typeKey ) {
+		return typeSpecifierService.getTypeSpecifierByKey( typeKey, WebCmsArticleType.class );
+	}
 
-		if ( menu == null && !WebCmsDomain.isNoDomain( domain ) && multiDomainService.isNoDomainAllowed( WebCmsMenu.class ) ) {
-			menu = menuRepository.findOneByNameAndDomain( menuName, WebCmsDomain.NONE );
-		}
-
-		return menu;
+	@Override
+	public WebCmsArticleType getArticleTypeByKey( String typeKey, WebCmsDomain domain ) {
+		return typeSpecifierService.getTypeSpecifierByKey( typeKey, WebCmsArticleType.class, domain );
 	}
 }
+

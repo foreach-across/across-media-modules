@@ -19,7 +19,9 @@ package com.foreach.across.modules.webcms.domain.page.services;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierService;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +38,27 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-class DefaultWebCmsPageService implements WebCmsPageService
+class WebCmsPageServiceImpl implements WebCmsPageService
 {
 	private final PagePropertyGenerator pagePropertyGenerator;
 	private final WebCmsPageRepository pageRepository;
 	private final WebCmsMultiDomainService multiDomainService;
+	private final WebCmsTypeSpecifierService typeSpecifierService;
+
+	@Override
+	public WebCmsPageType getPageType( String objectId ) {
+		return typeSpecifierService.getTypeSpecifier( objectId, WebCmsPageType.class );
+	}
+
+	@Override
+	public WebCmsPageType getPageTypeByKey( String typeKey ) {
+		return typeSpecifierService.getTypeSpecifierByKey( typeKey, WebCmsPageType.class );
+	}
+
+	@Override
+	public WebCmsPageType getPageTypeByKey( String typeKey, WebCmsDomain domain ) {
+		return typeSpecifierService.getTypeSpecifierByKey( typeKey, WebCmsPageType.class, domain );
+	}
 
 	@Override
 	public Optional<WebCmsPage> findByCanonicalPath( String canonicalPath ) {
@@ -49,7 +67,12 @@ class DefaultWebCmsPageService implements WebCmsPageService
 
 	@Override
 	public Optional<WebCmsPage> findByCanonicalPathAndDomain( String canonicalPath, WebCmsDomain domain ) {
-		return Optional.ofNullable( pageRepository.findOneByCanonicalPathAndDomain( canonicalPath, domain ) );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( canonicalPath, domain );
+
+		if ( page == null && !WebCmsDomain.isNoDomain( domain ) && multiDomainService.isNoDomainAllowed( WebCmsPage.class ) ) {
+			page = pageRepository.findOneByCanonicalPathAndDomain( canonicalPath, WebCmsDomain.NONE );
+		}
+		return Optional.ofNullable( page );
 	}
 
 	@Override

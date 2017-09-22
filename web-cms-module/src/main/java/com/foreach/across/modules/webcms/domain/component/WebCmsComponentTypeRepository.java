@@ -17,14 +17,13 @@
 package com.foreach.across.modules.webcms.domain.component;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
+import com.foreach.across.modules.webcms.domain.type.BaseWebCmsTypeSpecifierRepository;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsComponentTypeRepository extends WebCmsObjectEntityRepository<WebCmsComponentType>
+public interface WebCmsComponentTypeRepository extends BaseWebCmsTypeSpecifierRepository<WebCmsComponentType>
 {
-	WebCmsComponentType findOneByTypeKey( String typeKey );
 }

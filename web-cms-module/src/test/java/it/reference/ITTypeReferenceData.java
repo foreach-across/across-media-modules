@@ -18,6 +18,7 @@ package it.reference;
 
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeRegistry;
@@ -43,54 +44,69 @@ public class ITTypeReferenceData extends AbstractCmsApplicationWithTestDataIT
 	@Test
 	public void teaserComponentTypeShouldHaveBeenImported() {
 		String typeGroup = typeRegistry.retrieveObjectType( WebCmsComponentType.class ).orElse( null );
-		WebCmsComponentType teaser = (WebCmsComponentType) typeRepository.findOneByObjectTypeAndTypeKey( typeGroup, "teaser" );
+		WebCmsComponentType teaser = (WebCmsComponentType) typeRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, "teaser", WebCmsDomain.NONE );
 		assertNotNull( teaser );
 	}
 
 	@Test
 	public void bigTeaserComponentTypeShouldHaveBeenImported() {
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "domain.complex.domain" );
+		assertNotNull( domain );
+
 		String typeGroup = typeRegistry.retrieveObjectType( WebCmsComponentType.class ).orElse( null );
-		WebCmsComponentType bigTeaser = (WebCmsComponentType) typeRepository.findOneByObjectTypeAndTypeKey( typeGroup, "domain.complex.domain:big-teaser" );
+		WebCmsComponentType bigTeaser = (WebCmsComponentType) typeRepository.findOneByObjectTypeAndTypeKeyAndDomain(
+				typeGroup, "domain.complex.domain:big-teaser", domain
+		);
 		assertNotNull( bigTeaser );
-		assertEquals( domainRepository.findOneByDomainKey( "domain.complex.domain" ), bigTeaser.getDomain() );
+		assertEquals( domain, bigTeaser.getDomain() );
 	}
 
 	@Test
 	public void smallArticleArticleTypeShouldHaveBeenImported() {
 		String typeGroup = typeRegistry.retrieveObjectType( WebCmsArticleType.class ).orElse( null );
-		WebCmsArticleType smallArticle = (WebCmsArticleType) typeRepository.findOneByObjectTypeAndTypeKey( typeGroup, "small-article" );
+		WebCmsArticleType smallArticle = (WebCmsArticleType) typeRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, "small-article",
+		                                                                                                            WebCmsDomain.NONE );
 		assertNotNull( smallArticle );
 	}
 
-
 	@Test
 	public void mediumArticleArticleTypeShouldHaveBeenImported() {
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "domain.complex.domain" );
+		assertNotNull( domain );
+
 		String typeGroup = typeRegistry.retrieveObjectType( WebCmsArticleType.class ).orElse( null );
-		WebCmsArticleType mediumArticle = (WebCmsArticleType) typeRepository.findOneByObjectTypeAndTypeKey( typeGroup, "domain.complex.domain:medium-article" );
+		WebCmsArticleType mediumArticle
+				= (WebCmsArticleType) typeRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, "domain.complex.domain:medium-article", domain );
 		assertNotNull( mediumArticle );
-		assertEquals( domainRepository.findOneByDomainKey( "domain.complex.domain" ), mediumArticle.getDomain() );
+		assertEquals( domain, mediumArticle.getDomain() );
 	}
 
 	@Test
 	public void funFactsPublicationTypeShouldHaveBeenImported() {
 		String typeGroup = typeRegistry.retrieveObjectType( WebCmsPublicationType.class ).orElse( null );
-		WebCmsPublicationType funFacts = (WebCmsPublicationType) typeRepository.findOneByObjectTypeAndTypeKey( typeGroup, "fun-facts" );
+		WebCmsPublicationType funFacts = (WebCmsPublicationType) typeRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, "fun-facts",
+		                                                                                                                WebCmsDomain.NONE );
 		assertNotNull( funFacts );
 	}
 
 	@Test
 	public void boringFactsPublicationTypeShouldHaveBeenImported() {
 		String typeGroup = typeRegistry.retrieveObjectType( WebCmsPublicationType.class ).orElse( null );
-		WebCmsPublicationType boringFacts = (WebCmsPublicationType) typeRepository.findOneByObjectTypeAndTypeKey( typeGroup, "boring-facts" );
+		WebCmsPublicationType boringFacts = (WebCmsPublicationType) typeRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, "boring-facts",
+		                                                                                                                   WebCmsDomain.NONE );
 		assertNotNull( boringFacts );
 	}
 
 	@Test
 	public void weirdFactsPublicationTypeShouldHaveBeenImported() {
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "domain.complex.domain" );
+		assertNotNull( domain );
+
 		String typeGroup = typeRegistry.retrieveObjectType( WebCmsPublicationType.class ).orElse( null );
-		WebCmsPublicationType weirdFacts = (WebCmsPublicationType) typeRepository.findOneByObjectTypeAndTypeKey( typeGroup,
-		                                                                                                         "domain.complex.domain:weird-facts" );
+		WebCmsPublicationType weirdFacts = (WebCmsPublicationType) typeRepository.findOneByObjectTypeAndTypeKeyAndDomain(
+				typeGroup, "domain.complex.domain:weird-facts", domain
+		);
 		assertNotNull( weirdFacts );
-		assertEquals( domainRepository.findOneByDomainKey( "domain.complex.domain" ), weirdFacts.getDomain() );
+		assertEquals( domain, weirdFacts.getDomain() );
 	}
 }

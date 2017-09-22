@@ -16,6 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.component.model;
 
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,19 +32,23 @@ import java.util.Collections;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TestWebComponentModelHierarchy
+public class TestWebCmsComponentModelHierarchy
 {
 	@Mock
 	private HttpServletRequest request;
 
 	@Mock
 	private WebCmsComponentModelService componentModelService;
+
+	@Mock
+	private WebCmsMultiDomainService multiDomainService;
 
 	private WebCmsComponentModelHierarchy components;
 
@@ -70,6 +77,15 @@ public class TestWebComponentModelHierarchy
 	}
 
 	@Test
+	public void aliasScope() {
+		components.registerComponentsForScope( page, "page" );
+		components.registerAliasForScope( "asset", "page" );
+
+		assertSame( page, components.getComponentsForScope( "page" ) );
+		assertSame( page, components.getComponentsForScope( "asset" ) );
+	}
+
+	@Test
 	public void scopesAddedInOrder() {
 		assertTrue( components.getScopeNames().isEmpty() );
 		assertNull( components.getDefaultScope() );
@@ -95,6 +111,29 @@ public class TestWebComponentModelHierarchy
 	}
 
 	@Test
+	public void aliasesAreNotShownInScopeNames() {
+		components.registerComponentsForScope( page, "page" );
+		components.registerAliasForScope( "test", "page" );
+		components.registerComponentsForScope( asset, "asset" );
+		components.registerAliasForScope( "other", "asset" );
+
+		assertEquals( Arrays.asList( "page", "asset" ), components.getScopeNames() );
+	}
+
+	@Test
+	public void aliasReplacedWithActualSetIsInjectedInLocation() {
+		components.registerComponentsForScope( page, "page" );
+		components.registerComponentsForScope( asset, "asset" );
+		components.registerAliasForScope( "custom", "page" );
+
+		WebCmsComponentModelSet newComponents = new WebCmsComponentModelSet();
+		components.registerComponentsForScope( newComponents, "custom" );
+
+		assertEquals( Arrays.asList( "page", "custom", "asset" ), components.getScopeNames() );
+		assertSame( newComponents, components.getComponentsForScope( "custom" ) );
+	}
+
+	@Test
 	public void reorderScopes() {
 		WebCmsComponentModelSet global = new WebCmsComponentModelSet();
 		components.registerComponentsForScope( global, "global" );
@@ -106,6 +145,14 @@ public class TestWebComponentModelHierarchy
 		components.setScopeOrder( "page", "asset", "global" );
 		assertEquals( Arrays.asList( "page", "asset", "global" ), components.getScopeNames() );
 		assertEquals( "global", components.getDefaultScope() );
+
+		components.registerAliasForScope( "one", "page" );
+		components.registerAliasForScope( "two", "global" );
+		components.registerAliasForScope( "three", "asset" );
+
+		components.setScopeOrder( "three", "two", "one", "asset" );
+		assertEquals( Arrays.asList( "asset", "global", "page" ), components.getScopeNames() );
+		assertEquals( "page", components.getDefaultScope() );
 	}
 
 	@Test
@@ -129,14 +176,60 @@ public class TestWebComponentModelHierarchy
 	}
 
 	@Test
+	public void removeAndContainsAlias() {
+		assertFalse( components.containsScope( "page" ) );
+
+		components.registerComponentsForScope( asset, "asset" );
+		components.registerAliasForScope( "page", "asset" );
+		assertTrue( components.containsScope( "page" ) );
+
+		assertTrue( components.removeComponents( "page" ) );
+		assertFalse( components.containsScope( "page" ) );
+		assertTrue( components.containsScope( "asset" ) );
+
+		components.registerAliasForScope( "page", "asset" );
+		assertTrue( components.containsScope( "page" ) );
+		assertTrue( components.removeComponents( "asset" ) );
+		assertFalse( components.containsScope( "page" ) );
+		assertFalse( components.containsScope( "asset" ) );
+	}
+
+	@Test
 	public void globalScope() {
-		components.buildGlobalComponentModelSet( componentModelService );
+		components.buildGlobalComponentModelSet( componentModelService, multiDomainService );
 
 		val global = components.getComponentsForScope( WebCmsComponentModelHierarchy.GLOBAL );
 		assertNotNull( global );
+		assertTrue( components.containsScope( WebCmsComponentModelHierarchy.DOMAIN ) );
 
 		global.get( "123" );
-		verify( componentModelService ).getComponentModelByName( "123", null );
+		verify( componentModelService ).getComponentModelByNameAndDomain( "123", null, WebCmsDomain.NONE );
+
+		assertEquals( Collections.singletonList( WebCmsComponentModelHierarchy.GLOBAL ), components.getScopeNames() );
+	}
+
+	@Test
+	public void globalAndSeparateScope() {
+		WebCmsDomain domain = WebCmsDomain.builder().id( 123L ).build();
+		when( multiDomainService.getCurrentDomainForType( WebCmsComponent.class ) ).thenReturn( domain );
+
+		components.buildGlobalComponentModelSet( componentModelService, multiDomainService );
+
+		val global = components.getComponentsForScope( WebCmsComponentModelHierarchy.GLOBAL );
+		assertNotNull( global );
+		val domainScope = components.getComponentsForScope( WebCmsComponentModelHierarchy.DOMAIN );
+		assertNotNull( domainScope );
+		assertNotSame( global, domainScope );
+
+		assertEquals( WebCmsComponentModelHierarchy.DOMAIN, components.getDefaultScope() );
+
+		global.get( "123" );
+		verify( componentModelService ).getComponentModelByNameAndDomain( "123", null, WebCmsDomain.NONE );
+
+		domainScope.get( "123" );
+		verify( componentModelService ).getComponentModelByNameAndDomain( "123", null, domain );
+
+		assertEquals( Arrays.asList( WebCmsComponentModelHierarchy.GLOBAL, WebCmsComponentModelHierarchy.DOMAIN ), components.getScopeNames() );
 	}
 
 	@Test

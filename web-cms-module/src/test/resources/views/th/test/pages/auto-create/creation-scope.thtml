@@ -7,6 +7,8 @@
 <div id="no-scope-or-type-specified" wcm:component="page-markup" wcm:auto-create>Page markup: [[${asset.title}]]</div>
 <div id="creation-scope-specified" wcm:component="global-markup" wcm:auto-create="global">Global markup: [[${asset.title}]]</div>
 <div id="component-scope-specified" wcm:component="global-markup2" wcm:scope="global" wcm:auto-create>Global markup2: [[${asset.title}]]</div>
+<div id="component-scope-specified-asset" wcm:component="asset-markup" wcm:scope="asset" wcm:auto-create>Asset markup: [[${asset.title}]]</div>
+<div id="component-scope-specified-domain" wcm:component="domain-markup" wcm:scope="domain" wcm:auto-create>Domain markup: [[${asset.title}]]</div>
 <div id="type-specified" wcm:component="page-rich-text" wcm:type="rich-text" wcm:auto-create>Page rich-text: [[${asset.title}]]</div>
 
 <div id="default-container-type" wcm:component="page-container" wcm:type="container" wcm:auto-create>

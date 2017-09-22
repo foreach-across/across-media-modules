@@ -56,7 +56,7 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "content", domain );
 		assertNotNull( component );
 		assertEquals( "Content (NL)", component.getTitle() );
-		assertEquals( componentTypeRepository.findOneByTypeKey( "plain-text" ), component.getComponentType() );
+		assertEquals( componentModelService.getComponentType( "plain-text" ), component.getComponentType() );
 		assertEquals( "Global component: content (NL)", component.getBody() );
 	}
 
@@ -66,7 +66,7 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "content", domain );
 		assertNotNull( component );
 		assertEquals( "Content (BE)", component.getTitle() );
-		assertEquals( componentTypeRepository.findOneByTypeKey( "plain-text" ), component.getComponentType() );
+		assertEquals( componentModelService.getComponentType( "plain-text" ), component.getComponentType() );
 		assertEquals( "Global component: content (BE)", component.getBody() );
 	}
 
@@ -76,7 +76,7 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "content", domain );
 		assertNotNull( component );
 		assertEquals( "Content (DE)", component.getTitle() );
-		assertEquals( componentTypeRepository.findOneByTypeKey( "plain-text" ), component.getComponentType() );
+		assertEquals( componentModelService.getComponentType( "plain-text" ), component.getComponentType() );
 		assertEquals( "Global component: content (DE)", component.getBody() );
 	}
 
@@ -84,9 +84,10 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 	public void teaserNlShouldHaveBeenImported() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
 		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "nl-teaser", domain );
-		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( component.getObjectId() );
+		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( component.getObjectId(),
+		                                                                                                         component.getDomain() );
 		assertNotNull( component );
-		assertEquals( componentTypeRepository.findOneByTypeKey( "nl-foreach:teaser" ), component.getComponentType() );
+		assertEquals( componentModelService.getComponentType( "nl-foreach:teaser", domain ), component.getComponentType() );
 		assertEquals( 4, children.size() );
 		assertEquals( "Teaser title", children.get( 0 ).getBody() );
 		assertEquals( "Sample teaser header (NL)", children.get( 1 ).getBody() );
@@ -105,9 +106,10 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 	public void teaserDeShouldHaveBeenImportedAndExtended() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
 		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "de-teaser", domain );
-		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( component.getObjectId() );
+		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( component.getObjectId(),
+		                                                                                                         component.getDomain() );
 		assertNotNull( component );
-		assertEquals( componentTypeRepository.findOneByTypeKey( "de-foreach:teaser" ), component.getComponentType() );
+		assertEquals( componentModelService.getComponentType( "de-foreach:teaser", domain ), component.getComponentType() );
 		assertEquals( 4, children.size() );
 		assertEquals( "Teaser title", children.get( 0 ).getBody() );
 		assertEquals( "Sample teaser header (DE)", children.get( 1 ).getBody() );
@@ -119,9 +121,10 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 	public void teaserFrShouldHaveBeenImported() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "fr-foreach" );
 		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "fr-teaser", domain );
-		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( component.getObjectId() );
+		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( component.getObjectId(),
+		                                                                                                         component.getDomain() );
 		assertNotNull( component );
-		assertEquals( componentTypeRepository.findOneByTypeKey( "teaser" ), component.getComponentType() );
+		assertEquals( componentModelService.getComponentType( "teaser", domain ), component.getComponentType() );
 		assertEquals( 4, children.size() );
 		assertEquals( "Teaser title", children.get( 0 ).getBody() );
 		assertEquals( "Sample teaser header (FR)", children.get( 1 ).getBody() );
@@ -134,7 +137,7 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
 		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/homepage", domain );
 		assertNotNull( page );
-		List<WebCmsComponent> components = componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( page.getObjectId() );
+		List<WebCmsComponent> components = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( page.getObjectId(), page.getDomain() );
 		assertEquals( 1, components.size() );
 		assertComponent( components.get( 0 ), "header", "Header content...", domain );
 	}
@@ -152,7 +155,7 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
 		WebCmsComponent blog = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "ax-blog-be", domain );
 		assertNotNull( blog );
-		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( blog.getObjectId() );
+		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( blog.getObjectId(), blog.getDomain() );
 		assertEquals( 4, children.size() );
 		assertEquals( "Thinking Across", children.get( 0 ).getBody() );
 		assertEquals( "Multi-domain support for WebCmsModule has been released (BE)", children.get( 1 ).getBody() );
@@ -165,7 +168,7 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
 		WebCmsComponent blog = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "ax-blog-de", domain );
 		assertNotNull( blog );
-		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( blog.getObjectId() );
+		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( blog.getObjectId(), blog.getDomain() );
 		assertEquals( 4, children.size() );
 		assertEquals( "Thinking Across", children.get( 0 ).getBody() );
 		assertEquals( "Multi-domain support for WebCmsModule has been released (DE)", children.get( 1 ).getBody() );
@@ -178,7 +181,7 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
 		WebCmsComponent blog = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "ax-blog-nl", domain );
 		assertNotNull( blog );
-		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( blog.getObjectId() );
+		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( blog.getObjectId(), blog.getDomain() );
 		assertEquals( 4, children.size() );
 		assertEquals( "Thinking Across", children.get( 0 ).getBody() );
 		assertEquals( "Multi-domain support for WebCmsModule has been released (NL)", children.get( 1 ).getBody() );
@@ -188,7 +191,7 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 
 	@Test
 	public void myCustomComponentTypeShouldHaveBeenImported() {
-		WebCmsComponentType componentType = componentTypeRepository.findOneByTypeKey( "my-custom-component" );
+		WebCmsComponentType componentType = componentTypeRepository.findOneByTypeKeyAndDomain( "my-custom-component", WebCmsDomain.NONE );
 		assertNotNull( componentType );
 		assertEquals( "modules.multidomaintest.ui.CustomComponentMetadata", componentType.getAttribute( "metadata" ) );
 	}

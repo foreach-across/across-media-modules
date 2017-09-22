@@ -19,6 +19,7 @@ package test.component.text;
 import com.foreach.across.modules.webcms.domain.component.*;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -43,7 +44,7 @@ public class TestTextWebCmsComponentModelCustomization extends AbstractWebCmsCom
 
 	@Autowired
 	public void registerCustomComponentType( WebCmsComponentTypeRepository typeRepository ) {
-		if ( typeRepository.findOneByTypeKey( "custom-text" ) == null ) {
+		if ( typeRepository.findOneByTypeKeyAndDomain( "custom-text", WebCmsDomain.NONE ) == null ) {
 			typeRepository.save(
 					WebCmsComponentType.builder()
 					                   .name( "Custom text component" )

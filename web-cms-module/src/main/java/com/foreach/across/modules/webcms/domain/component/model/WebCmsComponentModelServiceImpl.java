@@ -21,7 +21,7 @@ import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.*;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
-import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,83 +40,111 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-final class DefaultWebCmsComponentModelService implements WebCmsComponentModelService
+final class WebCmsComponentModelServiceImpl implements WebCmsComponentModelService
 {
 	private final WebCmsComponentRepository componentRepository;
-	private final WebCmsComponentTypeRepository componentTypeRepository;
 	private final WebCmsMultiDomainService multiDomainService;
+	private final WebCmsTypeSpecifierService typeSpecifierService;
 
 	private Collection<WebCmsComponentModelReader> modelReaders = Collections.emptyList();
 	private Collection<WebCmsComponentModelWriter> modelWriters = Collections.emptyList();
 
 	@Override
+	public WebCmsComponentType getComponentType( String componentTypeKey ) {
+		return typeSpecifierService.getTypeSpecifierByKey( componentTypeKey, WebCmsComponentType.class );
+	}
+
+	@Override
+	public WebCmsComponentType getComponentType( String componentTypeKey, WebCmsDomain domain ) {
+		return typeSpecifierService.getTypeSpecifierByKey( componentTypeKey, WebCmsComponentType.class, domain );
+	}
+
+	@Override
 	public <U extends WebCmsComponentModel> U createComponentModel( String componentTypeKey, Class<U> expectedType ) {
-		Assert.notNull( componentTypeKey );
-		return createComponentModel( componentTypeRepository.findOneByTypeKey( componentTypeKey ), expectedType );
+		Assert.notNull( componentTypeKey, "componentTypeKey is required" );
+		return createComponentModel( getComponentType( componentTypeKey ), expectedType );
+	}
+
+	@Override
+	public <U extends WebCmsComponentModel> U createComponentModel( String componentTypeKey, WebCmsDomain domain, Class<U> expectedType ) {
+		return createComponentModel( getComponentType( componentTypeKey, domain ), expectedType );
 	}
 
 	@Override
 	public <U extends WebCmsComponentModel> U createComponentModel( WebCmsComponentType componentType, Class<U> expectedType ) {
-		Assert.notNull( componentType );
-		Assert.notNull( expectedType );
+		Assert.notNull( componentType, "componentType is required" );
+		Assert.notNull( expectedType, "expectedType is required" );
 
 		WebCmsComponent component = new WebCmsComponent();
 		component.setComponentType( componentType );
+		component.setDomain( multiDomainService.getCurrentDomainForType( WebCmsComponent.class ) );
 		return expectedType.cast( buildModelForComponent( component ) );
 	}
 
 	@Override
 	public <U extends WebCmsComponentModel> U getComponentModel( String objectId, Class<U> expectedType ) {
-		Assert.notNull( expectedType );
+		Assert.notNull( expectedType, "expectedType is required" );
 		return expectedType.cast( getComponentModel( objectId ) );
 	}
 
 	@Override
 	public WebCmsComponentModel getComponentModel( String objectId ) {
-		Assert.notNull( objectId );
+		Assert.notNull( objectId, "objectId is required" );
 		WebCmsComponent component = componentRepository.findOneByObjectId( objectId );
 		return component != null ? buildModelForComponent( component ) : null;
 	}
 
 	@Override
 	public <U extends WebCmsComponentModel> U getComponentModelByName( String componentName, WebCmsObject owner, Class<U> expectedType ) {
-		Assert.notNull( expectedType );
+		Assert.notNull( expectedType, "expectedType is required" );
 		return expectedType.cast( getComponentModelByName( componentName, owner ) );
 	}
 
 	@Override
 	public WebCmsComponentModel getComponentModelByName( String componentName, WebCmsObject owner ) {
-		WebCmsDomain domain = ( ( "componentTemplate".equals( componentName ) || "contentTemplate".equals(
-				componentName ) ) && owner instanceof WebCmsTypeSpecifier )
-				? ( (WebCmsTypeSpecifier) owner ).getDomain()
-				: multiDomainService.getCurrentDomainForType( WebCmsComponent.class );
-		return this.getComponentModelByNameAndDomain( componentName, owner, domain );
+		return getComponentModelByNameAndDomain( componentName, owner, multiDomainService.getCurrentDomainForType( WebCmsComponent.class ) );
+	}
+
+	@Override
+	public <U extends WebCmsComponentModel> U getComponentModelByNameAndDomain( String componentName,
+	                                                                            WebCmsObject owner,
+	                                                                            WebCmsDomain domain,
+	                                                                            Class<U> expectedType ) {
+		Assert.notNull( expectedType, "expectedType is required" );
+		return expectedType.cast( getComponentModelByNameAndDomain( componentName, owner, domain ) );
 	}
 
 	@Override
 	public WebCmsComponentModel getComponentModelByNameAndDomain( String componentName, WebCmsObject owner, WebCmsDomain domain ) {
-		Assert.notNull( componentName );
+		Assert.notNull( componentName, "componentName is required" );
 		return Optional.ofNullable(
-				componentRepository.findOneByOwnerObjectIdAndNameAndDomain( owner != null ? owner.getObjectId() : null, componentName, domain ) )
+				componentRepository.findOneByOwnerObjectIdAndNameAndDomain( owner != null ? owner.getObjectId() : null, componentName, domain )
+		)
 		               .map( this::buildModelForComponent )
 		               .orElse( null );
 	}
 
 	@Override
 	public WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object, boolean eager ) {
-		Assert.notNull( object );
+		return buildComponentModelSetForOwner( object, multiDomainService.getCurrentDomainForType( WebCmsComponent.class ), eager );
+	}
+
+	@Override
+	public WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object, WebCmsDomain domain, boolean eager ) {
+		Assert.notNull( object, "owner is required" );
 
 		WebCmsComponentModelSet modelSet = new WebCmsComponentModelSet();
 		modelSet.setOwner( object );
+		modelSet.setDomain( domain );
 
 		if ( eager ) {
-			componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
+			componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( object.getObjectId(), domain )
 			                   .stream()
 			                   .filter( c -> !StringUtils.isEmpty( c.getName() ) )
 			                   .forEach( component -> modelSet.add( buildModelForComponent( component ) ) );
 		}
 		else {
-			modelSet.setFetcherFunction( ( owner, componentName ) -> this.getComponentModelByName( componentName, owner ) );
+			modelSet.setFetcherFunction( ( owner, componentName ) -> this.getComponentModelByNameAndDomain( componentName, owner, domain ) );
 		}
 
 		return modelSet;
@@ -124,7 +152,12 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 
 	@Override
 	public Collection<WebCmsComponentModel> getComponentModelsForOwner( WebCmsObject object ) {
-		return componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( object.getObjectId() )
+		return getComponentModelsForOwner( object, multiDomainService.getCurrentDomainForType( WebCmsComponent.class ) );
+	}
+
+	@Override
+	public Collection<WebCmsComponentModel> getComponentModelsForOwner( WebCmsObject object, WebCmsDomain domain ) {
+		return componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( object.getObjectId(), domain )
 		                          .stream()
 		                          .map( this::buildModelForComponent )
 		                          .collect( Collectors.toList() );
@@ -137,7 +170,7 @@ final class DefaultWebCmsComponentModelService implements WebCmsComponentModelSe
 
 	@Override
 	public <U extends WebCmsComponentModel> U buildModelForComponent( WebCmsComponent component, Class<U> expectedType ) {
-		Assert.notNull( component );
+		Assert.notNull( component, "component is required" );
 		return expectedType.cast(
 				modelReaders.stream()
 				            .filter( r -> r.supports( component ) )

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.asset.web;
+package com.foreach.across.modules.webcms.domain.endpoint;
 
 import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
@@ -25,9 +25,6 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetServiceImpl;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.domain.web.WebCmsDomainUrlConfigurer;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointServiceImpl;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsUriComponentsServiceImpl;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrlCache;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;

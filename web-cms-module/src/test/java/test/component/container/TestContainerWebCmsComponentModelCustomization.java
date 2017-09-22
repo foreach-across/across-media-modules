@@ -19,6 +19,7 @@ package test.component.container;
 import com.foreach.across.modules.webcms.domain.component.*;
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import test.component.text.TestTextWebCmsComponentModelCustomization.MyMetadata;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import lombok.val;
@@ -43,7 +44,7 @@ public class TestContainerWebCmsComponentModelCustomization extends AbstractWebC
 
 	@Autowired
 	public void registerCustomComponentType( WebCmsComponentTypeRepository typeRepository ) {
-		if ( typeRepository.findOneByTypeKey( "custom-container" ) == null ) {
+		if ( typeRepository.findOneByTypeKeyAndDomain( "custom-container", WebCmsDomain.NONE ) == null ) {
 			typeRepository.save(
 					WebCmsComponentType.builder()
 					                   .name( "Custom container component" )

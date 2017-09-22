@@ -52,6 +52,6 @@ public class StringToWebCmsMenuConverter implements Converter<String, WebCmsMenu
 			return webCmsMenuRepository.findOneByObjectId( value );
 		}
 
-		return menuService.getMenuWithName( value );
+		return menuService.getMenuByName( value );
 	}
 }

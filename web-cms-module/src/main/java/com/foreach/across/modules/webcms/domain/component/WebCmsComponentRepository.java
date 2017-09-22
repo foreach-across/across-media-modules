@@ -29,9 +29,7 @@ import java.util.List;
 @Exposed
 public interface WebCmsComponentRepository extends WebCmsObjectEntityRepository<WebCmsComponent>
 {
-	List<WebCmsComponent> findAllByOwnerObjectIdOrderBySortIndexAsc( String ownerObjectId );
-
-	WebCmsComponent findOneByOwnerObjectIdAndName( String ownerObjectId, String name );
-
 	WebCmsComponent findOneByOwnerObjectIdAndNameAndDomain( String ownerObjectId, String name, WebCmsDomain domain );
+
+	List<WebCmsComponent> findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( String ownerObjectId, WebCmsDomain domain );
 }

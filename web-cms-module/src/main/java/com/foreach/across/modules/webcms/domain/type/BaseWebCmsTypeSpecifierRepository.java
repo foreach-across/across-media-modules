@@ -16,6 +16,18 @@
 
 package com.foreach.across.modules.webcms.domain.type;
 
-public class TestStringToWebCmsTypeSpecifierConverter
+import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import org.springframework.data.repository.NoRepositoryBean;
+
+/**
+ * Repository interface for any {@link WebCmsTypeSpecifier} implementation.
+ *
+ * @author Arne Vandamme
+ * @since 0.0.3
+ */
+@NoRepositoryBean
+public interface BaseWebCmsTypeSpecifierRepository<T extends WebCmsTypeSpecifier<?>> extends WebCmsObjectEntityRepository<T>
 {
+	T findOneByTypeKeyAndDomain( String typeKey, WebCmsDomain domain );
 }

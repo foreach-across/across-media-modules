@@ -18,9 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.entity.util.EntityUtils;
-import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +46,6 @@ import java.util.Optional;
 @Service
 public class WebCmsComponentAutoCreateService
 {
-	private final WebCmsComponentTypeRepository componentTypeRepository;
 	private final WebCmsComponentModelService componentModelService;
 
 	private Collection<WebCmsComponentAutoCreateStrategy> createStrategies = Collections.emptyList();
@@ -71,7 +68,7 @@ public class WebCmsComponentAutoCreateService
 	 */
 	public WebCmsComponentType resolveComponentType( String componentTypeName ) {
 		String nameToResolve = StringUtils.isEmpty( componentTypeName ) ? defaultComponentType : componentTypeName;
-		return Optional.ofNullable( componentTypeRepository.findOneByTypeKey( nameToResolve ) )
+		return Optional.ofNullable( componentModelService.getComponentType( nameToResolve ) )
 		               .orElseThrow( () -> new IllegalArgumentException( "Unknown component type: " + componentTypeName ) );
 	}
 
@@ -87,7 +84,7 @@ public class WebCmsComponentAutoCreateService
 
 		if ( componentModel != null && componentModel.isNew() ) {
 			WebCmsComponentModel existing
-					= componentModelService.getComponentModelByName( componentModel.getName(), WebCmsObject.forObjectId( componentModel.getOwnerObjectId() ) );
+					= componentModelService.getComponentModelByNameAndDomain( componentModel.getName(), task.getOwner(), task.getDomain() );
 
 			if ( existing == null ) {
 				componentModelService.save( componentModel );
@@ -115,6 +112,7 @@ public class WebCmsComponentAutoCreateService
 		if ( componentType != null ) {
 			try {
 				val component = componentModelService.createComponentModel( componentType, WebCmsComponentModel.class );
+				component.setDomain( task.getDomain() );
 				component.setName( task.getComponentName() );
 				component.setTitle( EntityUtils.generateDisplayName( task.getComponentName() ) );
 				component.setOwner( task.getOwner() );

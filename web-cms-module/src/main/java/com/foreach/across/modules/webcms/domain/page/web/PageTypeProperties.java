@@ -16,8 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.page.web;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
+import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageTypeRepository;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +42,10 @@ import org.springframework.stereotype.Component;
 public class PageTypeProperties
 {
 	private static final String DEFAULT_PAGE_TYPE_TYPE_KEY = "default";
-	private final WebCmsPageTypeRepository webCmsPageTypeRepository;
+
+	private final WebCmsTypeSpecifierService typeSpecifierService;
+	private final WebCmsDomainRepository domainRepository;
+	private final WebCmsMultiDomainConfiguration multiDomainConfiguration;
 
 	/**
 	 * Type key or object id of the default page type that should assigned to a new page.
@@ -54,9 +60,15 @@ public class PageTypeProperties
 			keyOrObjectId = PageTypeProperties.DEFAULT_PAGE_TYPE_TYPE_KEY;
 		}
 
-		WebCmsPageType defaultPageType = webCmsPageTypeRepository.findOneByTypeKeyOrObjectId( keyOrObjectId, keyOrObjectId );
+		WebCmsDomain defaultDomain = domainRepository.findOneByDomainKey( multiDomainConfiguration.getDefaultDomainKey() );
+		WebCmsPageType defaultPageType = typeSpecifierService.getTypeSpecifier( keyOrObjectId, WebCmsPageType.class );
+
 		if ( defaultPageType == null ) {
-			LOG.error( "Could not resolve default page type with typeKey or objectId {}", keyOrObjectId );
+			defaultPageType = typeSpecifierService.getTypeSpecifierByKey( keyOrObjectId, WebCmsPageType.class, defaultDomain );
+		}
+
+		if ( defaultPageType == null ) {
+			LOG.error( "Could not resolve default page type with typeKey (domain: null) or objectId {}", keyOrObjectId );
 		}
 
 		return defaultPageType;

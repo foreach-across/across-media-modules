@@ -66,7 +66,7 @@ public class ContainerWebCmsComponentModelWriter extends AbstractWebCmsComponent
 		members.forEach( m -> replaceAttributesInTextComponents( componentModel, m ) );
 
 		Map<String, WebCmsComponentModel> modelsByObjectId
-				= webCmsComponentModelService.getComponentModelsForOwner( componentModel )
+				= webCmsComponentModelService.getComponentModelsForOwner( componentModel, componentModel.getDomain() )
 				                             .stream()
 				                             .collect( Collectors.toMap( WebCmsComponentModel::getObjectId, Function.identity() ) );
 
@@ -74,9 +74,7 @@ public class ContainerWebCmsComponentModelWriter extends AbstractWebCmsComponent
 			WebCmsComponentModel member = members.get( i );
 			member.setSortIndex( i + 1 );
 			member.setOwner( componentModel );
-			if ( member.getDomain() == null ) {
-				member.setDomain( componentModel.getDomain() );
-			}
+			member.setDomain( componentModel.getDomain() );
 			webCmsComponentModelService.save( member );
 
 			modelsByObjectId.remove( member.getObjectId() );

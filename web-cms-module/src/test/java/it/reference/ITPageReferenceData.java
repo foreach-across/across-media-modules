@@ -17,6 +17,7 @@
 package it.reference;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
@@ -47,7 +48,7 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void alwaysCreatedPageShouldBeCreatedWithBothObjectIdAndCanonicalPathGenerated() {
-		val page = pageRepository.findOneByCanonicalPath( "/always-created-page" );
+		val page = pageRepository.findOneByCanonicalPathAndDomain( "/always-created-page", WebCmsDomain.NONE );
 		assertNotNull( page );
 		assertNull( page.getParent() );
 		assertEquals( "Always Created Page", page.getTitle() );
@@ -125,7 +126,7 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void extensionPageShouldBeCreatedWithKeyAsCanonicalPath() {
-		val page = pageRepository.findOneByCanonicalPath( "/extension/one" );
+		val page = pageRepository.findOneByCanonicalPathAndDomain( "/extension/one", WebCmsDomain.NONE );
 		assertNotNull( page );
 		assertNull( page.getParent() );
 		assertEquals( "Extension Page One", page.getTitle() );
@@ -140,19 +141,19 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void updateForNonExistingPageShouldBeIgnored() {
-		assertNull( pageRepository.findOneByCanonicalPath( "/extension/two" ) );
+		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/two", WebCmsDomain.NONE ) );
 	}
 
 	@Test
 	public void existingPageShouldBeDeleted() {
-		assertNull( pageRepository.findOneByCanonicalPath( "/extension/deleteme" ) );
+		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/deleteme", WebCmsDomain.NONE ) );
 	}
 
 	@Test
 	public void existingPageShouldBeUpdatedUsingTheCanonicalPathAsKeyLookup() throws Exception {
-		assertNull( pageRepository.findOneByCanonicalPath( "/extension/updateme1" ) );
+		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/updateme1", WebCmsDomain.NONE ) );
 
-		val page = pageRepository.findOneByCanonicalPath( "/extension/updated1" );
+		val page = pageRepository.findOneByCanonicalPathAndDomain( "/extension/updated1", WebCmsDomain.NONE );
 		assertNotNull( page );
 		assertEquals( "Extension Updated 1", page.getTitle() );
 		assertNull( page.getParent() );

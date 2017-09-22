@@ -70,14 +70,14 @@ public class WebCmsArticleModelLoader extends AbstractWebCmsAssetModelLoader<Web
 		WebCmsPage page = article.getPublication().getArticleTemplatePage();
 		if ( page != null ) {
 			model.addAttribute( page.getObjectType(), page );
-			registerAssetComponentsForScope( page, page.getObjectType() );
+			registerAssetComponentsForScope( page, page.getObjectType(), false );
 			registerDefaultTemplate( request, page );
 		}
 
 		model.addAttribute( ASSET_MODEL_ATTRIBUTE, article );
 		model.addAttribute( article.getObjectType(), article );
 		model.addAttribute( article.getPublication().getObjectType(), article.getPublication() );
-		registerAssetComponentsForScope( article, article.getObjectType() );
+		registerAssetComponentsForScope( article, article.getObjectType(), true );
 
 		return false;
 	}

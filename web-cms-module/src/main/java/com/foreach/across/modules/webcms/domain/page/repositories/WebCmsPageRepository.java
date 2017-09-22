@@ -28,7 +28,5 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 @Exposed
 public interface WebCmsPageRepository extends WebCmsObjectEntityRepository<WebCmsPage>
 {
-	WebCmsPage findOneByCanonicalPath( String canonicalPath );
-
 	WebCmsPage findOneByCanonicalPathAndDomain( String canonicalPath, WebCmsDomain domain );
 }

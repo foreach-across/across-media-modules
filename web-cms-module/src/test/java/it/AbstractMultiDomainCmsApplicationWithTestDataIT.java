@@ -52,10 +52,9 @@ public abstract class AbstractMultiDomainCmsApplicationWithTestDataIT extends Ab
 			return WebCmsMultiDomainConfiguration.managementPerEntity()
 			                                     .domainBoundTypes(
 					                                     WebCmsPage.class, WebCmsMenu.class, WebCmsPublication.class,
-					                                     WebCmsComponent.class, WebCmsArticle.class, WebCmsTypeSpecifier.class,
-					                                     WebCmsPublicationType.class, WebCmsArticleType.class, WebCmsPageType.class,
-					                                     WebCmsComponentType.class
+					                                     WebCmsComponent.class, WebCmsArticle.class, WebCmsTypeSpecifier.class
 			                                     )
+			                                     .noDomainAllowedTypes( WebCmsTypeSpecifier.class )
 			                                     .build();
 		}
 

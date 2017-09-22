@@ -27,9 +27,5 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 @Exposed
 public interface WebCmsPublicationRepository extends WebCmsObjectEntityRepository<WebCmsPublication>
 {
-	WebCmsPublication findOneByPublicationKey( String publicationKey );
-
-	WebCmsPublication findOneByPublicationKeyOrObjectId( String publicationKey, String objectId );
-
-	WebCmsPublication findOneByPublicationKeyAndDomain( String music, WebCmsDomain domain );
+	WebCmsPublication findOneByPublicationKeyAndDomain( String publicationKey, WebCmsDomain domain );
 }

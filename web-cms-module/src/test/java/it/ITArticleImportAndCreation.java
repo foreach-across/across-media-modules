@@ -25,6 +25,7 @@ import com.foreach.across.modules.webcms.domain.component.container.ContainerWeb
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,8 +87,8 @@ public class ITArticleImportAndCreation extends AbstractCmsApplicationIT
 	@Test
 	public void creatingArticleSetsComponentsAttachedToTheArticleType() throws Exception {
 		WebCmsArticle blog = WebCmsArticle.builder()
-		                                  .articleType( articleTypeRepository.findOneByTypeKey( "blog" ) )
-		                                  .publication( publicationRepository.findOneByPublicationKey( "blogs" ) )
+		                                  .articleType( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ) )
+		                                  .publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ) )
 		                                  .title( "Blog article" )
 		                                  .build();
 		articleRepository.save( blog );
@@ -96,7 +97,7 @@ public class ITArticleImportAndCreation extends AbstractCmsApplicationIT
 	}
 
 	private void assertDefaultBodyComponent( WebCmsArticle article ) {
-		Collection<WebCmsComponentModel> models = componentModelService.getComponentModelsForOwner( article );
+		Collection<WebCmsComponentModel> models = componentModelService.getComponentModelsForOwner( article, WebCmsDomain.NONE );
 		assertEquals( 1, models.size() );
 
 		WebCmsComponentModel content = models.iterator().next();

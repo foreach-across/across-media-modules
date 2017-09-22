@@ -16,12 +16,11 @@
 
 package com.foreach.across.modules.webcms.data;
 
-import com.foreach.across.modules.webcms.domain.domain.CloseableWebCmsDomainContext;
-import com.foreach.across.modules.webcms.domain.domain.StringToWebCmsDomainConverter;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
+import com.foreach.across.modules.webcms.domain.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * Simple importer implementation that will set the current domain scope.
@@ -51,7 +50,14 @@ public class WebCmsDomainContextPropertyImporter implements WebCmsPropertyDataIm
 
 	@Override
 	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, Object asset, WebCmsDataAction action ) {
-		CloseableWebCmsDomainContext ctx = multiDomainService.attachDomainContext( domainConverter.convert( (String) propertyData.getSingleValue() ) );
+		String domainKey = (String) propertyData.getSingleValue();
+
+		WebCmsDomain domain = domainKey != null
+				? Optional.ofNullable( domainConverter.convert( domainKey ) )
+				          .orElseThrow( () -> new IllegalArgumentException( "No domain with key '" + domainKey + "' was found" ) )
+				: WebCmsDomain.NONE;
+
+		CloseableWebCmsDomainContext ctx = multiDomainService.attachDomainContext( domain );
 		if ( parentData != null ) {
 			parentData.addCompletedCallback( dataEntry -> ctx.close() );
 		}

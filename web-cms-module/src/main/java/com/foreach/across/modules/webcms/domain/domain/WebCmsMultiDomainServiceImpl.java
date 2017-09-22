@@ -29,7 +29,7 @@ import org.springframework.util.ClassUtils;
  */
 @Service
 @RequiredArgsConstructor
-public class WebCmsMultiDomainServiceImpl implements WebCmsMultiDomainService
+class WebCmsMultiDomainServiceImpl implements WebCmsMultiDomainService
 {
 	private final WebCmsMultiDomainConfiguration multiDomainConfiguration;
 	private final WebCmsDomainMetadataFactory metadataFactory;

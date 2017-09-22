@@ -66,7 +66,7 @@ public class TestDefaultWebCmsPageService
 	private WebCmsMultiDomainService multiDomainService;
 
 	@InjectMocks
-	private DefaultWebCmsPageService pageService;
+	private WebCmsPageServiceImpl pageService;
 
 	@Test
 	public void findByCanonicalPath() {

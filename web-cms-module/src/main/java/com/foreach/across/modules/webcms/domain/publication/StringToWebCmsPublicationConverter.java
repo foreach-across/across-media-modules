@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -34,7 +33,7 @@ import org.springframework.stereotype.Component;
 public final class StringToWebCmsPublicationConverter implements Converter<String, WebCmsPublication>
 {
 	private final WebCmsPublicationRepository publicationRepository;
-	private final WebCmsMultiDomainService multiDomainService;
+	private final WebCmsPublicationService publicationService;
 
 	@Autowired
 	void register( WebCmsDataConversionService conversionService ) {
@@ -49,7 +48,7 @@ public final class StringToWebCmsPublicationConverter implements Converter<Strin
 		else if ( WebCmsUtils.isObjectIdForCollection( source, WebCmsPublication.COLLECTION_ID ) ) {
 			return publicationRepository.findOneByObjectId( source );
 		}
-		return publicationRepository.findOneByPublicationKeyAndDomain( source, multiDomainService.getCurrentDomainForType( WebCmsPublication.class ) );
+		return publicationService.getPublicationByKey( source );
 	}
 }
 

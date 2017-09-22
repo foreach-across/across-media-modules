@@ -4,7 +4,8 @@
 </head>
 <body th:fragment="content">
 
-<div class="image-thumbnail-list">
+<div class="image-thumbnail-list" data-tbl-type="paged" th:data-tbl-size="${items.size}" data-tbl-entity-type="webCmsImage" data-tbl="itemsTable"
+     th:data-tbl-current-page="${items.number}" data-tbl-form="entityListForm" th:data-tbl-total-pages="${items.totalPages}">
     <div th:each="image : ${items.content}" class="image-thumbnail-container">
         <a th:href="${entityViewContext.linkBuilder.update(image)}" th:data-wcm-image-id="${image.objectId}">
             <img th:src="@{${imageUrlBuilder.apply(image)}}" />

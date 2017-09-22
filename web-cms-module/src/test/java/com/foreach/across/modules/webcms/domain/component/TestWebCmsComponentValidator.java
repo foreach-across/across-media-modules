@@ -106,7 +106,7 @@ public class TestWebCmsComponentValidator
 	@Test
 	public void sameInstanceWithSameNameIsNotAnError() {
 		WebCmsComponent existing = WebCmsComponent.builder().id( 1L ).name( "other" ).build();
-		when( componentRepository.findOneByOwnerObjectIdAndName( any(), eq( "some name" ) ) ).thenReturn( existing );
+		when( componentRepository.findOneByOwnerObjectIdAndNameAndDomain( any(), eq( "some name" ), any() ) ).thenReturn( existing );
 
 		WebCmsComponent component = WebCmsComponent.builder().id( 1L ).name( "some name" ).build();
 		validator.postValidation( component, errors );

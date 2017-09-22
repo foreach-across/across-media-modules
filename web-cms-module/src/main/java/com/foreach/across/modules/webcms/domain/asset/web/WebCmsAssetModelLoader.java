@@ -55,7 +55,7 @@ public class WebCmsAssetModelLoader extends AbstractWebCmsAssetModelLoader<WebCm
 		model.addAttribute( ASSET_MODEL_ATTRIBUTE, asset );
 		model.addAttribute( asset.getObjectType(), asset );
 
-		registerAssetComponentsForScope( asset, asset.getObjectType() );
+		registerAssetComponentsForScope( asset, asset.getObjectType(), true );
 
 		return false;
 	}

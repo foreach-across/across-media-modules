@@ -32,6 +32,24 @@ import java.util.Collection;
 public interface WebCmsComponentModelService
 {
 	/**
+	 * Get the component type represented by the type key.
+	 * Will use the current domain to look for component types.
+	 *
+	 * @param componentTypeKey type key
+	 * @return type or {@code null} if not found
+	 */
+	WebCmsComponentType getComponentType( String componentTypeKey );
+
+	/**
+	 * Get the component type represented by the type key on the specified domain.
+	 *
+	 * @param componentTypeKey type key
+	 * @param domain           to scan
+	 * @return type of {@code null} if not found
+	 */
+	WebCmsComponentType getComponentType( String componentTypeKey, WebCmsDomain domain );
+
+	/**
 	 * Create a new component model for a specific component type.
 	 *
 	 * @param componentTypeKey to create model for
@@ -41,7 +59,17 @@ public interface WebCmsComponentModelService
 	<U extends WebCmsComponentModel> U createComponentModel( String componentTypeKey, Class<U> expectedType );
 
 	/**
-	 * Create a new component model for a specific component type.
+	 * Create a new component model for a specific component type on the specified domain.
+	 * Component will be added to that domain and component type will be looked for in the domain.
+	 *
+	 * @param componentTypeKey to create model for
+	 * @param expectedType     type to coerce to
+	 * @return model
+	 */
+	<U extends WebCmsComponentModel> U createComponentModel( String componentTypeKey, WebCmsDomain domain, Class<U> expectedType );
+
+	/**
+	 * Create a new component model for a specific component type, on the current domain.
 	 *
 	 * @param componentType to create model for
 	 * @param expectedType  type to coerce to
@@ -90,6 +118,7 @@ public interface WebCmsComponentModelService
 
 	/**
 	 * Get a single {@link WebCmsComponentModel} by name.
+	 * Will use the context-bound domain to lookup the component.
 	 *
 	 * @param componentName name of the component
 	 * @param owner         of the component
@@ -99,7 +128,18 @@ public interface WebCmsComponentModelService
 	<U extends WebCmsComponentModel> U getComponentModelByName( String componentName, WebCmsObject owner, Class<U> expectedType );
 
 	/**
-	 * Return all components owned by the {@link WebCmsObject} according to their sort order.
+	 * Get a single {@link WebCmsComponentModel} for a specific owner by name and domain.
+	 *
+	 * @param componentName name of the component
+	 * @param owner         of the component
+	 * @param domain        domain of the component
+	 * @param expectedType  type to coerce to
+	 * @return component or null if not found
+	 */
+	<U extends WebCmsComponentModel> U getComponentModelByNameAndDomain( String componentName, WebCmsObject owner, WebCmsDomain domain, Class<U> expectedType );
+
+	/**
+	 * Return all components owned by the {@link WebCmsObject} on the current domain, according to their sort order.
 	 *
 	 * @param object owner
 	 * @return ordered collection of components
@@ -107,7 +147,18 @@ public interface WebCmsComponentModelService
 	Collection<WebCmsComponentModel> getComponentModelsForOwner( WebCmsObject object );
 
 	/**
-	 * Build a {@link WebCmsComponentModelSet} for all components owned by the {@link WebCmsObject}.
+	 * Return all components owned by the {@link WebCmsObject} on the specific domain, according to their sort order.
+	 *
+	 * @param object owner
+	 * @param domain the components should be attached to
+	 * @return ordered collection of components
+	 */
+	Collection<WebCmsComponentModel> getComponentModelsForOwner( WebCmsObject object, WebCmsDomain domain );
+
+	/**
+	 * Build a {@link WebCmsComponentModelSet} for all components owned by the {@link WebCmsObject},
+	 * and attached to the current domain.
+	 * <p>
 	 * The returned set only contains components with a configured name.
 	 *
 	 * @param object owner
@@ -116,6 +167,20 @@ public interface WebCmsComponentModelService
 	 * @return set of components
 	 */
 	WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object, boolean eager );
+
+	/**
+	 * Build a {@link WebCmsComponentModelSet} for all components owned by the {@link WebCmsObject},
+	 * and attached to the specified domain.
+	 * <p>
+	 * The returned set only contains components with a configured name.
+	 *
+	 * @param object owner
+	 * @param domain the components should be attached to
+	 * @param eager  {@code true} if component models should all be fetched eagerly,
+	 *               if {@code false} the set will only fetch the component when it is being requested
+	 * @return set of components
+	 */
+	WebCmsComponentModelSet buildComponentModelSetForOwner( WebCmsObject object, WebCmsDomain domain, boolean eager );
 
 	/**
 	 * Build the {@link WebCmsComponentModel} for a particular {@link WebCmsComponent} entity.

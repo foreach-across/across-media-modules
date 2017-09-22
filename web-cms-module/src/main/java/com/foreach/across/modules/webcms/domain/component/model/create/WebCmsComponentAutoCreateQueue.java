@@ -95,7 +95,7 @@ public class WebCmsComponentAutoCreateQueue
 	public void outputFinished( String taskId, String output ) {
 		if ( !componentsCreated.containsKey( taskId ) ) {
 			WebCmsComponentAutoCreateTask current = outputQueue.pop();
-			Assert.isTrue( taskId.equals( current.getTaskId() ) );
+			Assert.isTrue( taskId.equals( current.getTaskId() ), "Auto create component flow corrupt - task id did not match expected task id" );
 
 			current.setOutput( output );
 
@@ -109,6 +109,7 @@ public class WebCmsComponentAutoCreateQueue
 
 				if ( componentModelSet != null ) {
 					current.setOwner( componentModelSet.getOwner() );
+					current.setDomain( componentModelSet.getDomain() );
 
 					WebCmsComponentModel componentModel = autoCreateService.createComponent( current );
 					componentModelSet.add( componentModel );

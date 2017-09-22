@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -53,6 +54,7 @@ public class WebCmsComponentAutoCreateTask
 
 	private int sortIndex;
 	private WebCmsObject owner;
+	private WebCmsDomain domain;
 
 	private String output;
 
