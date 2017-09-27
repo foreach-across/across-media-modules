@@ -30,7 +30,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "webCmsModule.default-data.assets", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 17)
+@Installer(description = "Install default assets for a simple website", phase = InstallerPhase.AfterModuleBootstrap, version = 18)
 public class WebCmsDefaultAssetsInstaller extends AbstractWebCmsDataInstaller
 {
 	private final WebCmsMultiDomainConfiguration multiDomainConfiguration;
