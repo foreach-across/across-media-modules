@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Singular;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SortNatural;
@@ -53,6 +54,7 @@ import java.util.TreeMap;
 @Access(AccessType.FIELD)
 @Getter
 @Setter
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class WebCmsDomain extends SettableIdAuditableEntity<WebCmsDomain> implements WebCmsObject
 {
 	/**

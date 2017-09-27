@@ -7,12 +7,14 @@ types:
       description: A proxy for another component that will be rendered instead.
       attributes:
         type: proxy
+        componentRestricted: true
     placeholder:
       objectId: "wcm:type:component:placeholder"
       name: Placeholder
       description: Represents a placeholder for content provided by code or templates.
       attributes:
         type: placeholder
+        componentRestricted: true
     container:
       objectId: "wcm:type:component:container"
       name: Container
@@ -25,6 +27,7 @@ types:
       description: Container of a fixed set of components.
       attributes:
         type: fixed-container
+        componentRestricted: true
     text-field:
       objectId: "wcm:type:component:text-field"
       name: Text field

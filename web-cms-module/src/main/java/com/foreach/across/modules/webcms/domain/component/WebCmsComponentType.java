@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.component;
 
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
 import lombok.*;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -40,6 +41,13 @@ import java.util.Map;
 @NoArgsConstructor
 public class WebCmsComponentType extends WebCmsTypeSpecifier<WebCmsComponentType>
 {
+	/**
+	 * If set to {@code true}, this component will never be present as an option,
+	 * unless specified by a {@link com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink}
+	 * with {@link WebCmsTypeSpecifierLink#getLinkType()} {@link DefaultAllowedComponentTypeFetcher#ALLOWED_COMPONENT_LINK}
+	 */
+	public static final String COMPONENT_RESTRICTED = "componentRestricted";
+
 	/**
 	 * Object type name (discriminator value).
 	 */

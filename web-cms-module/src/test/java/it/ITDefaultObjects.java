@@ -73,6 +73,7 @@ public class ITDefaultObjects
 		{
 			val attr = new HashMap<String, String>();
 			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "proxy" );
+			attr.put( WebCmsComponentType.COMPONENT_RESTRICTED, "true" );
 
 			verifyComponentType(
 					componentTypeRepository,
@@ -87,6 +88,7 @@ public class ITDefaultObjects
 		{
 			val attr = new HashMap<String, String>();
 			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "placeholder" );
+			attr.put( WebCmsComponentType.COMPONENT_RESTRICTED, "true" );
 
 			verifyComponentType(
 					componentTypeRepository,
@@ -115,6 +117,7 @@ public class ITDefaultObjects
 		{
 			val attr = new HashMap<String, String>();
 			attr.put( TextWebCmsComponentModel.Attributes.TYPE, "fixed-container" );
+			attr.put( WebCmsComponentType.COMPONENT_RESTRICTED, "true" );
 
 			verifyComponentType(
 					componentTypeRepository,

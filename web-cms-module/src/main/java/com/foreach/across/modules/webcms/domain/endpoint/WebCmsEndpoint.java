@@ -23,6 +23,7 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.GenericGenerator;
@@ -49,6 +50,7 @@ import java.util.Optional;
 @Table(name = "wcm_endpoint")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SuppressWarnings("squid:S2160")
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public abstract class WebCmsEndpoint extends SettableIdBasedEntity<WebCmsEndpoint> implements WebCmsDomainBound
 {
 	@Id

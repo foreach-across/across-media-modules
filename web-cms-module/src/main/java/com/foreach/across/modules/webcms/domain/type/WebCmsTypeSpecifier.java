@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.across.modules.webcms.domain.WebCmsChildComponentRestrictable;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Getter;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SortNatural;
@@ -57,7 +59,8 @@ import static com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSu
 @DiscriminatorColumn(name = DISCRIMINATOR_COLUMN, discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> extends WebCmsObjectInheritanceSuperClass<T>
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> extends WebCmsObjectInheritanceSuperClass<T> implements WebCmsChildComponentRestrictable
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_type_id")
@@ -154,6 +157,11 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	 */
 	public boolean hasAttribute( String attributeKey ) {
 		return getAttributes().containsKey( attributeKey );
+	}
+
+	@Override
+	public boolean isChildComponentRestricted() {
+		return getBooleanAttribute( WebCmsChildComponentRestrictable.CHILD_COMPONENT_RESTRICTED, false );
 	}
 
 	@Override

@@ -20,7 +20,9 @@ import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.ehcache.EhcacheModule;
+import com.foreach.across.modules.ehcache.EhcacheModuleSettings;
 import com.foreach.across.modules.entity.EntityModule;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.user.UserModule;
 import com.foreach.across.modules.user.UserModuleSettings;
 import com.foreach.across.modules.webcms.WebCmsModule;
@@ -34,6 +36,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import java.util.Collections;
@@ -67,6 +70,24 @@ public class WebCmsTestApplication
 		UserModule userModule = new UserModule();
 		userModule.setProperty( UserModuleSettings.PASSWORD_ENCODER, NoOpPasswordEncoder.getInstance() );
 		return userModule;
+	}
+
+	@Bean
+	public EhcacheModule ehcacheModule() {
+		EhcacheModule ehcacheModule = new EhcacheModule();
+		ehcacheModule.setProperty( EhcacheModuleSettings.CACHE_MANAGER_NAME, "testWebCmsCacheManager" );
+		ehcacheModule.setProperty( EhcacheModuleSettings.CONFIGURATION_RESOURCE,
+		                           new ClassPathResource( "ehcache.xml" ) );
+		return ehcacheModule;
+	}
+
+	@Bean
+	public AcrossHibernateJpaModule acrossHibernateJpaModule() {
+		AcrossHibernateJpaModule acrossHibernateJpaModule = new AcrossHibernateJpaModule();
+		acrossHibernateJpaModule.setHibernateProperty( "hibernate.cache.use_second_level_cache", "true" );
+		acrossHibernateJpaModule.setHibernateProperty( "hibernate.cache.region.factory_class",
+		                                               "org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory" );
+		return acrossHibernateJpaModule;
 	}
 
 	@Bean

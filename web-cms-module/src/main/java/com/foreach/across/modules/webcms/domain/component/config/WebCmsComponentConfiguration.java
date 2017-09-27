@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.component.config;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.entity.views.bootstrapui.options.OptionIterableBuilder;
 import com.foreach.across.modules.entity.views.processors.*;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
 import com.foreach.across.modules.webcms.WebCmsEntityAttributes;
@@ -27,6 +28,7 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.web.ComponentTypeOptionIterableBuilder;
 import com.foreach.across.modules.webcms.domain.component.web.ContainerMemberViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.web.SearchComponentViewProcessor;
 import com.foreach.across.modules.webcms.domain.component.web.SingleWebCmsComponentFormProcessor;
@@ -50,6 +52,8 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 	private final SearchComponentViewProcessor searchComponentViewProcessor;
 	private final WebCmsComponentModelService componentModelService;
 	private final WebCmsMultiDomainConfiguration multiDomainConfiguration;
+	//	private final ComponentTypeFormProcessor componentTypeFormProcessor;
+	private final ComponentTypeOptionIterableBuilder componentTypeOptionIterableBuilder;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
@@ -70,7 +74,8 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 		entities.withType( WebCmsComponent.class )
 		        .entityModel( modelBuilder -> modelBuilder.saveMethod( componentModelService::save ) )
 		        .properties(
-				        props -> props.property( "componentType" ).order( 0 ).and()
+				        props -> props.property( "componentType" ).order( 0 )
+				                      .attribute( OptionIterableBuilder.class, componentTypeOptionIterableBuilder ).and()
 				                      .property( "title" ).order( 1 ).and()
 				                      .property( "name" ).order( 2 ).and()
 				                      .property( "ownerObjectId" ).hidden( true ).and()
@@ -107,12 +112,21 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 		        )
 		        .deleteFormView( fvb -> fvb.viewProcessor( containerMemberViewProcessor ) )
 		        .updateFormView(
-				        fvb -> fvb.properties( props -> props.property( "componentType" ).writable( false ) )
-				                  .showProperties()
-				                  .viewProcessor( formProcessor )
-				                  .removeViewProcessor( SaveEntityViewProcessor.class.getName() )
-				                  .removeViewProcessor( DefaultValidationViewProcessor.class.getName() )
-				                  .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 12 ) ) )
+				        fvb -> fvb
+//						        .properties(
+//						        props -> props.property( "componentType" ).writable( false )
+//						                      .and().property( "componentTypes" ).displayName( "Component types" )
+//						                      .propertyType( TypeDescriptor.collection( Set.class, TypeDescriptor.valueOf( WebCmsComponentType.class ) ) )
+//						                      .attribute( EntityAttributes.CONTROL_NAME, ComponentTypeFormProcessor.COMPONENT_TYPES_CONTROL_NAME )
+//						                      .valueFetcher( componentTypeFormProcessor )
+//						                      .writable( true )
+//						                      .readable( false ) )
+.showProperties()
+.viewProcessor( formProcessor )
+//				                  .viewProcessor( componentTypeFormProcessor )
+.removeViewProcessor( SaveEntityViewProcessor.class.getName() )
+.removeViewProcessor( DefaultValidationViewProcessor.class.getName() )
+.postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 12 ) ) )
 		        )
 		        .listView(
 				        "search",

@@ -1,5 +1,37 @@
 types:
   component:
+    partner:
+      objectId: "wcm:type:component:partner"
+      name: Partner
+      attributes:
+        type: fixed-container
+        componentRestricted: true
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          wcm:components:
+            name:
+              componentType: plain-text
+              title: Name
+            logo:
+              componentType: image
+              title: Logo
+            url:
+              componentType: plain-text
+              title: Url
+            opt-in:
+              componentType: rich-text
+              title: Opt in
+
+    partner-container:
+      name: Partners
+      attributes:
+        type: container
+        childComponentsRestricted: true
+      wcm:types:
+        - typeSpecifier: "wcm:type:component:partner"
+          linkType: allowed-component
+
     section:
       name: Page section
       description: Optionally allows configuring an image.

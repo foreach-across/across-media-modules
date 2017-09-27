@@ -21,6 +21,7 @@ import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
@@ -46,6 +47,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @SuppressWarnings("squid:S2160")
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class WebCmsUrl extends SettableIdBasedEntity<WebCmsUrl>
 {
 	@Id

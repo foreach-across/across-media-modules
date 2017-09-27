@@ -22,6 +22,7 @@ import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -49,6 +50,7 @@ import static com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSu
 @DiscriminatorColumn(name = DISCRIMINATOR_COLUMN, discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObjectInheritanceSuperClass<T>
 {
 	@Id
