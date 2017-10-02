@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class StringToWebCmsDomainConverter implements Converter<String, WebCmsDomain>
 {
+	private final WebCmsDomainService domainService;
 	private final WebCmsDomainRepository domainRepository;
 
 	@Autowired
@@ -56,10 +57,10 @@ public class StringToWebCmsDomainConverter implements Converter<String, WebCmsDo
 			return domainRepository.findOne( Long.parseLong( value ) );
 		}
 		else if ( WebCmsUtils.isObjectIdForCollection( value, WebCmsDomain.COLLECTION_ID ) ) {
-			return domainRepository.findOneByObjectId( value );
+			return domainService.getDomain( value );
 		}
 		else if ( !StringUtils.isEmpty( value ) ) {
-			return domainRepository.findOneByDomainKey( value );
+			return domainService.getDomainByKey( value );
 		}
 		return null;
 	}

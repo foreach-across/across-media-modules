@@ -80,7 +80,7 @@ public class WebCmsSiteConfigurationFilter extends AbstractWebCmsDomainContextFi
 	@Override
 	protected DomainContextLookup buildDefaultDomainLookup( List<DomainContextLookup> domainSpecificLookups ) {
 		String defaultDomainKey = multiDomainConfiguration.getDefaultDomainKey();
-		WebCmsDomain domain = defaultDomainKey != null ? domainRepository.findOneByDomainKey( defaultDomainKey ) : WebCmsDomain.NONE;
+		WebCmsDomain domain = defaultDomainKey != null ? multiDomainService.getDomainByKey( defaultDomainKey ) : WebCmsDomain.NONE;
 		Object metadata = multiDomainService.getMetadataForDomain( domain, Object.class );
 
 		return createDomainContextLookup( null, domain, metadata );

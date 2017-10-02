@@ -30,13 +30,9 @@ import java.util.Collection;
 @Exposed
 public interface WebCmsMenuItemRepository extends IdBasedEntityJpaRepository<WebCmsMenuItem>, QueryDslPredicateExecutor<WebCmsMenuItem>
 {
-	Collection<WebCmsMenuItem> findAllByMenuName( String menuName );
-
 	Collection<WebCmsMenuItem> findAllByMenu( WebCmsMenu menu );
 
 	Collection<WebCmsMenuItem> findAllByEndpoint( WebCmsEndpoint endpoint );
-
-	WebCmsMenuItem findByMenuNameAndPath( String menuName, String path );
 
 	WebCmsMenuItem findByMenuAndPath( WebCmsMenu menu, String path );
 }

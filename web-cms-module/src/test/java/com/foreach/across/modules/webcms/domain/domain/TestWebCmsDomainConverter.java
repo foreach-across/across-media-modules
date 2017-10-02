@@ -36,13 +36,16 @@ public class TestWebCmsDomainConverter
 	@Mock
 	private WebCmsDomainRepository domainRepository;
 
+	@Mock
+	private WebCmsDomainService domainService;
+
 	@InjectMocks
 	private StringToWebCmsDomainConverter converter;
 
 	@Test
 	public void objectIdIsLookedUpImmediately() {
 		String objectId = WebCmsUtils.generateObjectId( WebCmsDomain.COLLECTION_ID );
-		when( domainRepository.findOneByObjectId( objectId ) ).thenReturn( webCmsDomain );
+		when( domainService.getDomain( objectId ) ).thenReturn( webCmsDomain );
 		assertSame( webCmsDomain, converter.convert( objectId ) );
 		verify( domainRepository, never() ).findOne( anyLong() );
 		verify( domainRepository, never() ).findOneByDomainKey( any() );
@@ -60,7 +63,7 @@ public class TestWebCmsDomainConverter
 	@Test
 	public void domainKeyIsLookedUpImmediately() {
 		String key = "my-domain";
-		when( domainRepository.findOneByDomainKey( key ) ).thenReturn( webCmsDomain );
+		when( domainService.getDomainByKey( key ) ).thenReturn( webCmsDomain );
 		assertSame( webCmsDomain, converter.convert( key ) );
 		verify( domainRepository, never() ).findOneByObjectId( any() );
 		verify( domainRepository, never() ).findOne( anyLong() );

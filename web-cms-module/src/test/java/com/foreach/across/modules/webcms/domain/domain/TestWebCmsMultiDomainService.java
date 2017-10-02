@@ -45,7 +45,7 @@ public class TestWebCmsMultiDomainService
 	private WebCmsMultiDomainConfiguration multiDomainConfiguration;
 
 	@Mock
-	private WebCmsDomainMetadataFactory metadataFactory;
+	private WebCmsDomainCache domainCache;
 
 	@InjectMocks
 	private WebCmsMultiDomainServiceImpl multiDomainService;
@@ -74,9 +74,9 @@ public class TestWebCmsMultiDomainService
 	@Test
 	public void getMetadataForDomainBuildsTheMetadata() {
 		assertNull( multiDomainService.getMetadataForDomain( null, Long.class ) );
-		verify( metadataFactory ).createMetadataForDomain( null );
+		verify( domainCache ).getMetadataForDomain( null );
 
-		when( metadataFactory.createMetadataForDomain( one ) ).thenReturn( "metadata-for-one" );
+		when( domainCache.getMetadataForDomain( one ) ).thenReturn( "metadata-for-one" );
 		String metadata = multiDomainService.getMetadataForDomain( one, String.class );
 		assertEquals( "metadata-for-one", metadata );
 	}
@@ -136,8 +136,8 @@ public class TestWebCmsMultiDomainService
 
 	@Test
 	public void closeableDomainContext() {
-		when( metadataFactory.createMetadataForDomain( one ) ).thenReturn( "metadata-one" );
-		when( metadataFactory.createMetadataForDomain( null ) ).thenReturn( 123L );
+		when( domainCache.getMetadataForDomain( one ) ).thenReturn( "metadata-one" );
+		when( domainCache.getMetadataForDomain( null ) ).thenReturn( 123L );
 		assertNull( multiDomainService.getCurrentDomain() );
 		try (CloseableWebCmsDomainContext ignore = multiDomainService.attachDomainContext( one )) {
 			assertSame( one, multiDomainService.getCurrentDomain() );

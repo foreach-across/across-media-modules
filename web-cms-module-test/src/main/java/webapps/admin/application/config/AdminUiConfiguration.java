@@ -21,6 +21,7 @@ import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBu
 import com.foreach.across.modules.webcms.WebCmsEntityAttributes;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
@@ -50,9 +51,9 @@ class AdminUiConfiguration implements EntityConfigurer
 		assetUrlConfiguration.enable( WebCmsPublication.class );
 	}
 
-
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.withType( WebCmsDomain.class ).show();
 		entities.withType( WebCmsImage.class ).attribute( WebCmsEntityAttributes.ALLOW_PER_DOMAIN, true );
 		entities.withType( WebCmsPublicationType.class ).show();
 		entities.withType( WebCmsTypeSpecifierLink.class ).show();

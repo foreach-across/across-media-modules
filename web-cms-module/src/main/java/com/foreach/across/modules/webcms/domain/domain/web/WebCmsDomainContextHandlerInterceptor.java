@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 0.0.3
  */
 @RequiredArgsConstructor
-public class WebCmsDomainContextInterceptor extends HandlerInterceptorAdapter
+public class WebCmsDomainContextHandlerInterceptor extends HandlerInterceptorAdapter
 {
 	private final WebCmsDomainContextResolver domainContextResolver;
 

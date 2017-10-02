@@ -16,12 +16,15 @@
 
 package com.foreach.across.modules.webcms.domain.domain.web;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainCache;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainContext;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainContextHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,6 +38,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -47,7 +52,8 @@ import java.util.regex.Pattern;
  * For performance reasons, this base class caches its lookup records.  It is strongly advised that domain metadata
  * can be cached eternally as long as the domain itself is not modified.
  * <p/>
- * Extend this class to create your own domain selection logic.
+ * Extend this class to create your own domain selection logic.  Note however that your filter must be created as a bean and
+ * requires the {@link WebCmsDomainCache}.  Only a single filter can be active.
  *
  * @author Arne Vandamme
  * @see WebCmsSiteConfigurationFilter
@@ -56,6 +62,8 @@ import java.util.regex.Pattern;
 public abstract class AbstractWebCmsDomainContextFilter extends OncePerRequestFilter
 {
 	public static final String FILTER_NAME = "domainContextFilter";
+
+	private WebCmsDomainCache domainCache;
 
 	@Override
 	protected final void doFilterInternal( HttpServletRequest request,
@@ -91,12 +99,14 @@ public abstract class AbstractWebCmsDomainContextFilter extends OncePerRequestFi
 	private DomainContextLookup retrieveMatchingLookup( UriComponents uriComponents ) {
 		String hostNameAndPort = uriComponents.getHost() + ( uriComponents.getPort() > 0 ? ":" + uriComponents.getPort() : "" );
 
-		List<DomainContextLookup> lookups = retrieveLookups();
+		HostLookupData lookupData = domainCache.getLookupData( HostLookupData.class );
 
-		return lookups.stream()
-		              .filter( lookup -> lookup.matches( hostNameAndPort ) )
-		              .findFirst()
-		              .orElseGet( () -> buildDefaultDomainLookup( lookups ) );
+		if ( lookupData == null ) {
+			lookupData = new HostLookupData( retrieveLookups() );
+			domainCache.putLookupData( lookupData );
+		}
+
+		return lookupData.findDomainContextLookup( hostNameAndPort );
 	}
 
 	/**
@@ -157,6 +167,38 @@ public abstract class AbstractWebCmsDomainContextFilter extends OncePerRequestFi
 		}
 
 		return Pattern.compile( "^" + patternString + "$", Pattern.CASE_INSENSITIVE );
+	}
+
+	@Autowired
+	void setDomainCache( WebCmsDomainCache domainCache ) {
+		this.domainCache = domainCache;
+	}
+
+	/**
+	 * Lookup data object that gets cached.
+	 */
+	@RequiredArgsConstructor
+	class HostLookupData
+	{
+		private final Map<String, DomainContextLookup> lookupsByHostName = new ConcurrentHashMap<>();
+		private final List<DomainContextLookup> domainSpecificLookups;
+		private DomainContextLookup defaultDomainLookup;
+
+		DomainContextLookup findDomainContextLookup( String hostName ) {
+			return lookupsByHostName.computeIfAbsent( hostName, key ->
+					domainSpecificLookups.stream()
+					                     .filter( lookup -> lookup.matches( key ) )
+					                     .findFirst()
+					                     .orElseGet( this::getDefaultDomainLookup )
+			);
+		}
+
+		DomainContextLookup getDefaultDomainLookup() {
+			if ( defaultDomainLookup == null ) {
+				defaultDomainLookup = buildDefaultDomainLookup( domainSpecificLookups );
+			}
+			return defaultDomainLookup;
+		}
 	}
 
 	/**

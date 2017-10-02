@@ -18,8 +18,7 @@ package com.foreach.across.modules.webcms.domain.domain.web;
 
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainContext;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
@@ -42,12 +41,10 @@ public class CookieWebCmsDomainContextResolver extends CookieGenerator implement
 	public static final String DEFAULT_COOKIE_NAME = CookieWebCmsDomainContextResolver.class.getName() + ".DOMAIN";
 	private static final String NO_DOMAIN_VALUE = "no-domain";
 
-	private final WebCmsDomainRepository domainRepository;
-	private final WebCmsMultiDomainService multiDomainService;
+	private final WebCmsDomainService domainService;
 
-	public CookieWebCmsDomainContextResolver( WebCmsDomainRepository domainRepository, WebCmsMultiDomainService multiDomainService ) {
-		this.domainRepository = domainRepository;
-		this.multiDomainService = multiDomainService;
+	public CookieWebCmsDomainContextResolver( WebCmsDomainService domainService ) {
+		this.domainService = domainService;
 		setCookieName( DEFAULT_COOKIE_NAME );
 	}
 
@@ -57,13 +54,13 @@ public class CookieWebCmsDomainContextResolver extends CookieGenerator implement
 		String objectId = retrieveDomainObjectIdFromCookie( request );
 
 		if ( NO_DOMAIN_VALUE.equals( fixedDomainKey ) || ( fixedDomainKey == null && NO_DOMAIN_VALUE.equals( objectId ) ) ) {
-			return WebCmsDomainContext.noDomain( multiDomainService.getMetadataForDomain( WebCmsDomain.NONE, Object.class ) );
+			return WebCmsDomainContext.noDomain( domainService.getMetadataForDomain( WebCmsDomain.NONE, Object.class ) );
 		}
 
 		WebCmsDomain domain = retrieveDomain( fixedDomainKey, objectId );
 
 		if ( domain != null ) {
-			return new WebCmsDomainContext( domain, multiDomainService.getMetadataForDomain( domain, Object.class ) );
+			return new WebCmsDomainContext( domain, domainService.getMetadataForDomain( domain, Object.class ) );
 		}
 
 		return null;
@@ -73,11 +70,11 @@ public class CookieWebCmsDomainContextResolver extends CookieGenerator implement
 		WebCmsDomain domain = null;
 
 		if ( fixedDomainKey != null ) {
-			domain = domainRepository.findOneByDomainKey( fixedDomainKey );
+			domain = domainService.getDomainByKey( fixedDomainKey );
 		}
 
 		if ( domain == null && objectIdFromCookie != null ) {
-			domain = domainRepository.findOneByObjectId( objectIdFromCookie );
+			domain = domainService.getDomain( objectIdFromCookie );
 		}
 
 		return domain;

@@ -20,6 +20,8 @@ import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.webcms.WebCmsModuleCache;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
@@ -29,6 +31,7 @@ import org.springframework.cache.transaction.TransactionAwareCacheDecorator;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**
@@ -48,49 +51,62 @@ public final class WebCmsMenuCache
 	private static final Cache DEFAULT_CACHE = new NoOpCache( WebCmsModuleCache.MENU );
 
 	private final CacheManager cacheManager;
+	private final WebCmsMultiDomainService multiDomainService;
 	private final WebCmsMenuItemRepository menuItemRepository;
+	private final WebCmsMenuService menuService;
 
 	private Cache cache = DEFAULT_CACHE;
 
 	/**
-	 * Returns the flat list of menu items that are registered for a particular menu.
+	 * Returns the flat list of menu items that are registered for a particular menu
+	 * on the current domain.
 	 *
 	 * @param menuName name of he menu
 	 * @return collection of items (never {@code null})
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<Menu> getMenuItems( String menuName ) {
-		Collection<Menu> items = cache.get( menuName, Collection.class );
+		WebCmsDomain currentDomain = multiDomainService.getCurrentDomainForType( WebCmsMenu.class );
+		long domainId = WebCmsDomain.isNoDomain( currentDomain ) ? 0 : currentDomain.getId();
+		String cacheKey = domainId + ":" + menuName;
+		Collection<Menu> items = cache.get( cacheKey, Collection.class );
 
 		if ( items == null ) {
-			items = menuItemRepository.findAllByMenuName( menuName )
-			                          .stream()
-			                          .map( menuItem -> {
-				                          Menu item = new Menu( menuItem.getPath(), menuItem.getTitle() );
-				                          item.setOrder( menuItem.getSortIndex() );
-				                          item.setGroup( menuItem.isGroup() );
-				                          item.setDisabled( !isMenuItemAvailable( menuItem ) );
+			WebCmsMenu menu = menuService.getMenuByName( menuName, currentDomain );
 
-				                          item.setUrl( menuItem.getUrl() );
+			if ( menu != null ) {
+				items = menuItemRepository.findAllByMenu( menu )
+				                          .stream()
+				                          .map( menuItem -> {
+					                          Menu item = new Menu( menuItem.getPath(), menuItem.getTitle() );
+					                          item.setOrder( menuItem.getSortIndex() );
+					                          item.setGroup( menuItem.isGroup() );
+					                          item.setDisabled( !isMenuItemAvailable( menuItem ) );
 
-				                          WebCmsEndpoint endpoint = menuItem.getEndpoint();
+					                          item.setUrl( menuItem.getUrl() );
 
-				                          if ( !item.hasUrl() && endpoint != null ) {
-					                          endpoint.getPrimaryUrl().ifPresent( url -> item.setUrl( url.getPath() ) );
-				                          }
+					                          WebCmsEndpoint endpoint = menuItem.getEndpoint();
 
-				                          if ( endpoint != null ) {
-					                          item.setAttribute( ENDPOINT_ID, menuItem.getEndpoint().getId() );
-					                          if ( endpoint instanceof WebCmsAssetEndpoint ) {
-						                          item.setAttribute( ASSET_OBJECT_ID, ( (WebCmsAssetEndpoint) endpoint ).getAsset().getObjectId() );
+					                          if ( !item.hasUrl() && endpoint != null ) {
+						                          endpoint.getPrimaryUrl().ifPresent( url -> item.setUrl( url.getPath() ) );
 					                          }
-				                          }
 
-				                          return item;
-			                          } )
-			                          .collect( Collectors.toList() );
+					                          if ( endpoint != null ) {
+						                          item.setAttribute( ENDPOINT_ID, menuItem.getEndpoint().getId() );
+						                          if ( endpoint instanceof WebCmsAssetEndpoint ) {
+							                          item.setAttribute( ASSET_OBJECT_ID, ( (WebCmsAssetEndpoint) endpoint ).getAsset().getObjectId() );
+						                          }
+					                          }
 
-			cache.put( menuName, items );
+					                          return item;
+				                          } )
+				                          .collect( Collectors.toList() );
+			}
+			else {
+				items = Collections.emptyList();
+			}
+
+			cache.put( cacheKey, items );
 		}
 
 		return items;
@@ -115,6 +131,11 @@ public final class WebCmsMenuCache
 	@PostRefresh
 	public void reloadCache() {
 		Cache candidate = cacheManager.getCache( WebCmsModuleCache.MENU );
-		cache = candidate != null ? new TransactionAwareCacheDecorator( candidate ) : DEFAULT_CACHE;
+		if ( candidate != null ) {
+			cache = candidate instanceof TransactionAwareCacheDecorator ? candidate : new TransactionAwareCacheDecorator( candidate );
+		}
+		else {
+			cache = DEFAULT_CACHE;
+		}
 	}
 }

@@ -81,7 +81,8 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void topNavigationItemsWereImportedAndExtended() {
-		Map<String, WebCmsMenuItem> map = new ArrayList<>( menuItemRepository.findAllByMenuName( "topNav" ) )
+		WebCmsMenu topNav = menuRepository.findOneByNameAndDomain( "topNav", WebCmsDomain.NONE );
+		Map<String, WebCmsMenuItem> map = new ArrayList<>( menuItemRepository.findAllByMenu( topNav ) )
 				.stream()
 				.collect( Collectors.toMap( WebCmsMenuItem::getPath, Function.identity() ) );
 
@@ -94,7 +95,8 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void sidebarNavigationItemsWereImportedAndExtended() {
-		Map<String, WebCmsMenuItem> map = new ArrayList<>( menuItemRepository.findAllByMenuName( "sideNav" ) )
+		WebCmsMenu sideNav = menuRepository.findOneByNameAndDomain( "sideNav", WebCmsDomain.NONE );
+		Map<String, WebCmsMenuItem> map = new ArrayList<>( menuItemRepository.findAllByMenu( sideNav ) )
 				.stream()
 				.collect( Collectors.toMap( WebCmsMenuItem::getPath, Function.identity() ) );
 

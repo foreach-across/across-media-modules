@@ -106,6 +106,7 @@ class WebCmsDomainConfiguration
 	@Bean(DispatcherServlet.LOCALE_RESOLVER_BEAN_NAME)
 	@Primary
 	@Exposed
+	@ConditionalOnExpression("not @multiDomainConfiguration.disabled")
 	@ConditionalOnMissingBean(name = DispatcherServlet.LOCALE_RESOLVER_BEAN_NAME)
 	public LocaleContextResolver localeResolver( WebCmsDomainLocaleContextResolver domainLocaleContextResolver ) {
 		return domainLocaleContextResolver;
@@ -126,17 +127,18 @@ class WebCmsDomainConfiguration
 
 		@Override
 		public void addInterceptors( InterceptorRegistry interceptorRegistry ) {
-			WebCmsDomainContextInterceptor interceptor
-					= new WebCmsDomainContextInterceptor( beanFactory.getBean( "adminWebCookieDomainResolver", WebCmsDomainContextResolver.class ) );
+			if ( !multiDomainConfiguration.isDisabled() ) {
+				WebCmsDomainContextHandlerInterceptor interceptor
+						= new WebCmsDomainContextHandlerInterceptor( beanFactory.getBean( "adminWebCookieDomainResolver", WebCmsDomainContextResolver.class ) );
 
-			interceptorRegistry.addFirst( interceptor );
+				interceptorRegistry.addFirst( interceptor );
+			}
 		}
 
 		@Bean
 		@Lazy
-		public CookieWebCmsDomainContextResolver adminWebCookieDomainResolver( WebCmsDomainRepository domainRepository,
-		                                                                       WebCmsMultiDomainService multiDomainService ) {
-			return new CookieWebCmsDomainContextResolver( domainRepository, multiDomainService );
+		public CookieWebCmsDomainContextResolver adminWebCookieDomainResolver( WebCmsDomainService domainService ) {
+			return new CookieWebCmsDomainContextResolver( domainService );
 		}
 
 		@Override

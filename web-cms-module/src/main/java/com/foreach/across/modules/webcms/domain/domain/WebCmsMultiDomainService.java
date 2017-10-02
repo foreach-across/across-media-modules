@@ -25,7 +25,7 @@ import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainC
  * @see WebCmsMultiDomainConfiguration
  * @since 0.0.3
  */
-public interface WebCmsMultiDomainService
+public interface WebCmsMultiDomainService extends WebCmsDomainService
 {
 	/**
 	 * Always returns the current domain, bound to the {@link WebCmsDomainContextHolder}.
@@ -126,5 +126,11 @@ public interface WebCmsMultiDomainService
 	 */
 	CloseableWebCmsDomainContext attachDomainContext( WebCmsDomain domain );
 
+	/**
+	 * Test if a specific domain is the current domain bound tot the thread.
+	 *
+	 * @param domain to test
+	 * @return true if the domain is indeed the current domain
+	 */
 	boolean isCurrentDomain( WebCmsDomain domain );
 }

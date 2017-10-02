@@ -32,7 +32,22 @@ import org.springframework.util.ClassUtils;
 class WebCmsMultiDomainServiceImpl implements WebCmsMultiDomainService
 {
 	private final WebCmsMultiDomainConfiguration multiDomainConfiguration;
-	private final WebCmsDomainMetadataFactory metadataFactory;
+	private final WebCmsDomainCache domainCache;
+
+	@Override
+	public WebCmsDomain getDomain( String objectId ) {
+		return domainCache.getDomain( objectId );
+	}
+
+	@Override
+	public WebCmsDomain getDomainByKey( String domainKey ) {
+		return domainCache.getDomainByKey( domainKey );
+	}
+
+	@Override
+	public <U> U getMetadataForDomain( WebCmsDomain domain, Class<U> metadataType ) {
+		return metadataType.cast( domainCache.getMetadataForDomain( domain ) );
+	}
 
 	@Override
 	public WebCmsDomain getCurrentDomain() {
@@ -44,11 +59,6 @@ class WebCmsMultiDomainServiceImpl implements WebCmsMultiDomainService
 	public <U> U getCurrentDomainMetadata( Class<U> metadataType ) {
 		WebCmsDomainContext domainContext = WebCmsDomainContextHolder.getWebCmsDomainContext();
 		return domainContext != null ? domainContext.getMetadata( metadataType ) : null;
-	}
-
-	@Override
-	public <U> U getMetadataForDomain( WebCmsDomain domain, Class<U> metadataType ) {
-		return metadataType.cast( metadataFactory.createMetadataForDomain( domain ) );
 	}
 
 	@Override
