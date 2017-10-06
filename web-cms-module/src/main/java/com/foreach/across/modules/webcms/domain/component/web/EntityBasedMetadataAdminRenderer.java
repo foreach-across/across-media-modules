@@ -19,18 +19,22 @@ package com.foreach.across.modules.webcms.domain.component.web;
 import com.foreach.across.modules.bootstrapui.elements.FormInputElement;
 import com.foreach.across.modules.bootstrapui.elements.processor.ControlNamePrefixingPostProcessor;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
+import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.helpers.EntityViewElementBatch;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
-import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
+
+import static com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelFormElementBuilder.COMPONENT_MESSAGE_CODE_PREFIX;
 
 /**
  * Fallback metadata renderer that checks if the metadata type is registered as an entity in the {@link EntityRegistry}.
@@ -55,17 +59,28 @@ class EntityBasedMetadataAdminRenderer implements WebCmsComponentModelMetadataAd
 
 	@Override
 	public ViewElementBuilder createMetadataViewElementBuilder( WebCmsComponentModel componentModel, Object metadata, String controlNamePrefix ) {
-		EntityViewElementBatch<Object> formBuilder = builderHelper.createBatchForEntity( metadata );
-		formBuilder.setViewElementMode( ViewElementMode.FORM_WRITE );
+		return builderContext -> {
+			EntityViewElementBatch<Object> formBuilder = builderHelper.createBatchForEntity( metadata );
+			formBuilder.setViewElementMode( ViewElementMode.FORM_WRITE );
 
-		ContainerViewElementBuilder containerBuilder = new ContainerViewElementBuilder();
-		formBuilder.build().forEach( ( name, element ) -> containerBuilder.add( element ) );
-		containerBuilder.postProcessor( ( ctx, container ) -> {
+			String messageCodePrefix = StringUtils.defaultString( builderContext.getAttribute( COMPONENT_MESSAGE_CODE_PREFIX, String.class ) );
+
+			EntityMessageCodeResolver componentsResolver = builderContext.getAttribute( EntityMessageCodeResolver.class );
+			EntityMessageCodeResolver metadataCodeResolver = formBuilder.getAttribute( EntityMessageCodeResolver.class );
+
+			EntityMessageCodeResolver nestedResolver = new EntityMessageCodeResolver( metadataCodeResolver );
+			nestedResolver.setPrefixes( componentsResolver.buildMessageCodes( messageCodePrefix + ".metadata", false ) );
+			nestedResolver.setFallbackCollections( metadataCodeResolver.buildMessageCodes( "", true ) );
+
+			formBuilder.setAttribute( EntityMessageCodeResolver.class, nestedResolver );
+
+			ContainerViewElement container = new ContainerViewElement();
+			formBuilder.build().forEach( ( name, element ) -> container.addChild( element ) );
 			ControlNamePrefixingPostProcessor controlNamePrefixingPostProcessor = new ControlNamePrefixingPostProcessor( controlNamePrefix + ".metadata" );
 			container.findAll( FormInputElement.class )
-			         .forEach( e -> controlNamePrefixingPostProcessor.postProcess( ctx, e ) );
-		} );
+			         .forEach( e -> controlNamePrefixingPostProcessor.postProcess( builderContext, e ) );
 
-		return containerBuilder;
+			return container;
+		};
 	}
 }

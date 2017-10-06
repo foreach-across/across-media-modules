@@ -42,7 +42,7 @@ public interface WebCmsEntityAttributes
 	 * <p/>
 	 * The presence of this attribute would activate multi-domain auto-configuration for entities not implementing {@link WebCmsDomainBound} directly.
 	 * Examples include {@link com.foreach.across.modules.webcms.domain.url.WebCmsUrl} and {@link com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem}
-	 * have their domain linked transitively (resp. via <em>endpoint.domain</em> and <em>menu.domain</em>).
+	 * that have their domain linked transitively (resp. via <em>endpoint.domain</em> and <em>menu.domain</em>).
 	 */
 	String DOMAIN_PROPERTY = "webCmsModule.multiDomain.domainProperty";
 

@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 public class DefaultPageTemplate extends LayoutTemplateProcessorAdapterBean
 {
 	public DefaultPageTemplate() {
-		super( "default", "th/adminWebCms/layout/main" );
+		super( "default", "th/webCmsTest/layout/main" );
 	}
 
 	@Override

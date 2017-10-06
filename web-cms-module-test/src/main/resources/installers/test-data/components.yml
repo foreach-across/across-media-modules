@@ -37,7 +37,7 @@ types:
       description: Optionally allows configuring an image.
       attributes:
         type: fixed-container
-        template: "th/adminWebCms/fragments/components :: section"
+        template: "th/webCmsTest/fragments/components :: section"
         metadata: "webapps.admin.application.ui.SectionComponentMetadata"
       wcm:components:
         componentTemplate:

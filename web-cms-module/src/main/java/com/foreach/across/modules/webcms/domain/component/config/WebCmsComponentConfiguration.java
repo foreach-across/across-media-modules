@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.component.config;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.entity.views.bootstrapui.options.OptionIterableBuilder;
 import com.foreach.across.modules.entity.views.processors.*;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
@@ -112,21 +113,11 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 		        )
 		        .deleteFormView( fvb -> fvb.viewProcessor( containerMemberViewProcessor ) )
 		        .updateFormView(
-				        fvb -> fvb
-//						        .properties(
-//						        props -> props.property( "componentType" ).writable( false )
-//						                      .and().property( "componentTypes" ).displayName( "Component types" )
-//						                      .propertyType( TypeDescriptor.collection( Set.class, TypeDescriptor.valueOf( WebCmsComponentType.class ) ) )
-//						                      .attribute( EntityAttributes.CONTROL_NAME, ComponentTypeFormProcessor.COMPONENT_TYPES_CONTROL_NAME )
-//						                      .valueFetcher( componentTypeFormProcessor )
-//						                      .writable( true )
-//						                      .readable( false ) )
-.showProperties()
-.viewProcessor( formProcessor )
-//				                  .viewProcessor( componentTypeFormProcessor )
-.removeViewProcessor( SaveEntityViewProcessor.class.getName() )
-.removeViewProcessor( DefaultValidationViewProcessor.class.getName() )
-.postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 12 ) ) )
+				        fvb -> fvb.showProperties()
+				                  .viewProcessor( formProcessor )
+				                  .removeViewProcessor( SaveEntityViewProcessor.class.getName() )
+				                  .removeViewProcessor( DefaultValidationViewProcessor.class.getName() )
+				                  .postProcess( SingleEntityFormViewProcessor.class, processor -> processor.setGrid( Grid.create( 12 ) ) )
 		        )
 		        .listView(
 				        "search",
@@ -137,6 +128,10 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				                  .postProcess( SortableTableRenderingViewProcessor.class, p -> p.setIncludeDefaultActions( false ) )
 				                  .viewProcessor( searchComponentViewProcessor )
 		        )
-		        .association( ab -> ab.name( "webCmsComponent.proxyTarget" ).hide() );
+		        .association( ab -> ab.name( "webCmsComponent.proxyTarget" ).hide() )
+		        .postProcessor( configuration -> {
+			        EntityMessageCodeResolver codeResolver = configuration.getEntityMessageCodeResolver();
+			        codeResolver.setPrefixes( "webCmsComponents", "WebCmsModule.entities.webCmsComponent" );
+		        } );
 	}
 }
