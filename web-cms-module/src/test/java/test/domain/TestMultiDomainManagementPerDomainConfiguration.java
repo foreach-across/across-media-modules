@@ -59,8 +59,8 @@ public class TestMultiDomainManagementPerDomainConfiguration extends AbstractMul
 	}
 
 	@Test
-	public void defaultDomainOptionQueryIsAllDomainsThatAreVisibleForTheUser() {
-		assertOptionQuery( WebCmsDomain.class, "id in (visibleDomains())" );
+	public void defaultDomainOptionQueryIsAllDomainsThatAreAccessibleToTheUser() {
+		assertOptionQuery( WebCmsDomain.class, "id in (accessibleDomains())" );
 	}
 
 	@Test

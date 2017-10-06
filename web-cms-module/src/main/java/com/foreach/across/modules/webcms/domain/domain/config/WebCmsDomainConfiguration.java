@@ -235,7 +235,7 @@ class WebCmsDomainConfiguration
 		private void configureDomainManagementPerDomain( EntitiesConfigurationBuilder entities ) {
 			hideDomainRelatedConfiguration( entities );
 
-			EntityQueryCondition domainCondition = new EntityQueryCondition( "id", EntityQueryOps.IN, new EQValue( "visibleDomains()" ) );
+			EntityQueryCondition domainCondition = new EntityQueryCondition( "id", EntityQueryOps.IN, new EQValue( "accessibleDomains()" ) );
 			EntityQueryCondition visibleDomainsCondition = new EntityQueryCondition( "domain", EntityQueryOps.IN, new EQValue( "visibleDomains()" ) );
 			EntityQueryCondition selectedDomainCondition = new EntityQueryCondition( "domain", EntityQueryOps.EQ, new EQValue( "selectedDomain()" ) );
 
@@ -425,7 +425,7 @@ class WebCmsDomainConfiguration
 
 		private void hideDomainRelatedConfiguration( EntitiesConfigurationBuilder entities ) {
 			entities.assignableTo( WebCmsDomainBound.class )
-			        .properties( props -> props.property( PROPERTY ).readable( false ).writable( false ).hidden( true ) );
+			        .properties( props -> props.property( PROPERTY ).readable( false ).writable( true ).hidden( true ) );
 		}
 	}
 }

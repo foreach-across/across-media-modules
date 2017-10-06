@@ -87,7 +87,7 @@ public abstract class AbstractMultiDomainTest
 		                                              .getProperty( "domain" );
 
 		assertFalse( prop.isReadable() );
-		assertFalse( prop.isWritable() );
+		assertTrue( prop.isWritable() );
 		assertTrue( prop.isHidden() );
 	}
 }

@@ -47,7 +47,7 @@ public class TestDefaultMultiDomainConfiguration extends AbstractMultiDomainTest
 		              .map( cfg -> cfg.getPropertyRegistry().getProperty( "domain" ) )
 		              .forEach( prop -> {
 			              assertFalse( prop.isReadable() );
-			              assertFalse( prop.isWritable() );
+			              assertTrue( prop.isWritable() );
 			              assertTrue( prop.isHidden() );
 		              } );
 	}
