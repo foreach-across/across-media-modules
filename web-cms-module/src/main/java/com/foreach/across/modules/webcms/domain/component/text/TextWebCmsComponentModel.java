@@ -132,6 +132,10 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 		super( component );
 	}
 
+	protected TextWebCmsComponentModel( WebCmsComponentModel template ) {
+		super( template );
+	}
+
 	/**
 	 * @return true if there is no actual content set
 	 */
@@ -146,7 +150,7 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 
 	@Override
 	public TextWebCmsComponentModel asComponentTemplate() {
-		TextWebCmsComponentModel template = new TextWebCmsComponentModel( getComponent().asTemplate() );
+		TextWebCmsComponentModel template = new TextWebCmsComponentModel( this );
 		template.content = content;
 		template.markupType = markupType;
 		template.multiLine = multiLine;

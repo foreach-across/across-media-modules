@@ -16,9 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.component.proxy;
 
+import com.foreach.across.modules.webcms.domain.component.MyComponentMetadata;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -78,6 +80,8 @@ public class TestProxyWebCmsComponentModel
 		                                           .build();
 
 		proxy = new ProxyWebCmsComponentModel( component, target );
+		MyComponentMetadata metadata = MyComponentMetadata.builder().title( "some title" ).number( 123L ).page( new WebCmsPage() ).build();
+		proxy.setMetadata( metadata );
 		assertFalse( proxy.isNew() );
 		assertEquals( "component-name", proxy.getName() );
 		assertEquals( "My title", proxy.getTitle() );
@@ -93,5 +97,12 @@ public class TestProxyWebCmsComponentModel
 		assertNull( template.getOwnerObjectId() );
 		assertSame( componentType, template.getComponentType() );
 		assertSame( target, template.getTarget() );
+
+		assertTrue( template.hasMetadata() );
+		MyComponentMetadata cloned = template.getMetadata( MyComponentMetadata.class );
+		assertNotSame( metadata, cloned );
+		assertEquals( metadata.getTitle(), cloned.getTitle() );
+		assertEquals( metadata.getNumber(), cloned.getNumber() );
+		assertSame( metadata.getPage(), cloned.getPage() );
 	}
 }

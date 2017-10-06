@@ -46,6 +46,10 @@ public class ProxyWebCmsComponentModel extends WebCmsComponentModel
 		this.target = target;
 	}
 
+	protected ProxyWebCmsComponentModel( WebCmsComponentModel template ) {
+		super( template );
+	}
+
 	/**
 	 * Target component model that is proxied by this component.
 	 * Not allowed to be another proxy.
@@ -59,7 +63,9 @@ public class ProxyWebCmsComponentModel extends WebCmsComponentModel
 
 	@Override
 	public ProxyWebCmsComponentModel asComponentTemplate() {
-		return new ProxyWebCmsComponentModel( getComponent().asTemplate(), target );
+		ProxyWebCmsComponentModel template = new ProxyWebCmsComponentModel( this );
+		template.target = target;
+		return template;
 	}
 
 	/**

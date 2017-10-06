@@ -16,9 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.component.text;
 
+import com.foreach.across.modules.webcms.domain.component.MyComponentMetadata;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -34,7 +36,7 @@ public class TestTextWebCmsComponentModel
 	@Test
 	public void defaultValues() {
 		model = new TextWebCmsComponentModel();
-		assertNull(  model.getMetadata() );
+		assertNull( model.getMetadata() );
 		assertFalse( model.hasMetadata() );
 		assertNull( model.getComponentType() );
 		assertNull( model.getName() );
@@ -124,6 +126,8 @@ public class TestTextWebCmsComponentModel
 		model.setMarkupType( TextWebCmsComponentModel.MarkupType.RICH_TEXT );
 		model.setProfile( "some-profile" );
 		model.setContent( "body content..." );
+		MyComponentMetadata metadata = MyComponentMetadata.builder().title( "some title" ).number( 123L ).page( new WebCmsPage() ).build();
+		model.setMetadata( metadata );
 
 		TextWebCmsComponentModel template = model.asComponentTemplate();
 		assertNotEquals( component, template.getComponent() );
@@ -139,5 +143,12 @@ public class TestTextWebCmsComponentModel
 		assertFalse( template.isMultiLine() );
 		assertEquals( "body content...", template.getContent() );
 		assertFalse( template.isEmpty() );
+
+		assertTrue( template.hasMetadata() );
+		MyComponentMetadata cloned = template.getMetadata( MyComponentMetadata.class );
+		assertNotSame( metadata, cloned );
+		assertEquals( metadata.getTitle(), cloned.getTitle() );
+		assertEquals( metadata.getNumber(), cloned.getNumber() );
+		assertSame( metadata.getPage(), cloned.getPage() );
 	}
 }
