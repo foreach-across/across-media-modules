@@ -53,9 +53,9 @@ import static org.junit.Assert.*;
 public class TestMultiDomainManagementPerEntityConfiguration extends AbstractMultiDomainTest
 {
 	@Test
-	public void domainPropertyShouldBeHiddenForAllDomainIgnoredTypes() {
+	public void domainPropertyShouldBeDisabledForAllDomainIgnoredTypes() {
 		Stream.of( WebCmsPageType.class, WebCmsComponentType.class, WebCmsImage.class )
-		      .forEach( this::assertDomainPropertyHidden );
+		      .forEach( this::assertDomainPropertyDisabled );
 	}
 
 	@Test

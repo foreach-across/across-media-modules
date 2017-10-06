@@ -90,4 +90,14 @@ public abstract class AbstractMultiDomainTest
 		assertTrue( prop.isWritable() );
 		assertTrue( prop.isHidden() );
 	}
+
+	protected void assertDomainPropertyDisabled( Class<?> entityType ) {
+		EntityPropertyDescriptor prop = entityRegistry.getEntityConfiguration( entityType )
+		                                              .getPropertyRegistry()
+		                                              .getProperty( "domain" );
+
+		assertFalse( prop.isReadable() );
+		assertFalse( prop.isWritable() );
+		assertTrue( prop.isHidden() );
+	}
 }
