@@ -131,7 +131,7 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 		        .association( ab -> ab.name( "webCmsComponent.proxyTarget" ).hide() )
 		        .postProcessor( configuration -> {
 			        EntityMessageCodeResolver codeResolver = configuration.getEntityMessageCodeResolver();
-			        codeResolver.setPrefixes( "webCmsComponents", "WebCmsModule.entities.webCmsComponent" );
+			        codeResolver.addPrefixes( "webCmsComponents" );
 		        } );
 	}
 }
