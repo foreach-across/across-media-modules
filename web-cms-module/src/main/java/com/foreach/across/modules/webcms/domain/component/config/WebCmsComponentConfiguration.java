@@ -19,7 +19,6 @@ package com.foreach.across.modules.webcms.domain.component.config;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
-import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.entity.views.bootstrapui.options.OptionIterableBuilder;
 import com.foreach.across.modules.entity.views.processors.*;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
@@ -128,10 +127,6 @@ class WebCmsComponentConfiguration implements EntityConfigurer
 				                  .postProcess( SortableTableRenderingViewProcessor.class, p -> p.setIncludeDefaultActions( false ) )
 				                  .viewProcessor( searchComponentViewProcessor )
 		        )
-		        .association( ab -> ab.name( "webCmsComponent.proxyTarget" ).hide() )
-		        .postProcessor( configuration -> {
-			        EntityMessageCodeResolver codeResolver = configuration.getEntityMessageCodeResolver();
-			        codeResolver.addPrefixes( "webCmsComponents" );
-		        } );
+		        .association( ab -> ab.name( "webCmsComponent.proxyTarget" ).hide() );
 	}
 }

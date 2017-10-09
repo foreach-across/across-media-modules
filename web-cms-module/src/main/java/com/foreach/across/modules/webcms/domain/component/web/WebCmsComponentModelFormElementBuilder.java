@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.component.web;
 
-import com.foreach.across.modules.bootstrapui.elements.ButtonViewElement;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElement;
@@ -27,7 +26,6 @@ import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.NodeViewElement;
 import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.AbstractNodeViewElementBuilder;
-import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -142,28 +140,31 @@ public final class WebCmsComponentModelFormElementBuilder extends AbstractNodeVi
 		}
 
 		builderContext.setAttribute( COMPONENT_MESSAGE_CODE_PREFIX, messageCodePrefix );
+		EntityMessageCodeResolver newCodeResolver = new EntityMessageCodeResolver( codeResolver );
+		newCodeResolver.addPrefixes( "webCmsComponents" );
+		builderContext.setAttribute( EntityMessageCodeResolver.class, newCodeResolver );
 
 		if ( contentViewElementBuilder != null ) {
 			element.setContent(
-					applyDescription( contentViewElementBuilder.build( builderContext ), messageCodePrefix + ".content", codeResolver )
+					applyDescription( contentViewElementBuilder.build( builderContext ), messageCodePrefix + ".content", newCodeResolver )
 			);
 		}
 
 		if ( membersViewElementBuilder != null ) {
 			element.setMembers(
-					applyDescription( membersViewElementBuilder.build( builderContext ), messageCodePrefix + ".members", codeResolver )
+					applyDescription( membersViewElementBuilder.build( builderContext ), messageCodePrefix + ".members", newCodeResolver )
 			);
 		}
 
 		if ( metadataViewElementBuilder != null ) {
 			element.setMetadata(
-					applyDescription( metadataViewElementBuilder.build( builderContext ), messageCodePrefix + ".metadata", codeResolver )
+					applyDescription( metadataViewElementBuilder.build( builderContext ), messageCodePrefix + ".metadata", newCodeResolver )
 			);
 		}
 
 		if ( settingsViewElementBuilder != null ) {
 			element.setSettings(
-					applyDescription( settingsViewElementBuilder.build( builderContext ), messageCodePrefix + ".settings", codeResolver )
+					applyDescription( settingsViewElementBuilder.build( builderContext ), messageCodePrefix + ".settings", newCodeResolver )
 			);
 		}
 
@@ -177,7 +178,7 @@ public final class WebCmsComponentModelFormElementBuilder extends AbstractNodeVi
 		if ( StringUtils.isNotEmpty( descriptionText ) || StringUtils.isNotEmpty( additionalDescriptionText ) ) {
 			ContainerViewElement container = new ContainerViewElement();
 
-			if ( StringUtils.isNotEmpty( descriptionText )) {
+			if ( StringUtils.isNotEmpty( descriptionText ) ) {
 				NodeViewElement helpBlock = new NodeViewElement( "span" );
 				helpBlock.addCssClass( "help-block", "description-block" );
 				helpBlock.addChild( TextViewElement.html( descriptionText ) );
@@ -186,7 +187,7 @@ public final class WebCmsComponentModelFormElementBuilder extends AbstractNodeVi
 
 			container.addChild( original );
 
-			if ( StringUtils.isNotEmpty( additionalDescriptionText )) {
+			if ( StringUtils.isNotEmpty( additionalDescriptionText ) ) {
 				NodeViewElement helpBlock = new NodeViewElement( "span" );
 				helpBlock.addCssClass( "help-block", "description-block-additional" );
 				helpBlock.addChild( TextViewElement.html( additionalDescriptionText ) );
