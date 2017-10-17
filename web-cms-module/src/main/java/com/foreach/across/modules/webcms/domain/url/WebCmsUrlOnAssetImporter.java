@@ -44,7 +44,7 @@ import java.util.Map;
 @Slf4j
 public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter<WebCmsAsset, WebCmsUrl>
 {
-	private static final String PROPERTY_NAME = "wcm:urls";
+	static final String PROPERTY_NAME = "wcm:urls";
 
 	private final WebCmsUrlRepository urlRepository;
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;
@@ -108,6 +108,14 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 
 	@Override
 	protected void save( WebCmsUrl dto ) {
+		if ( dto.isPrimary() ) {
+			dto.getEndpoint().getUrls().stream()
+			   .filter( WebCmsUrl::isPrimary )
+			   .forEach( url -> {
+				   url.setPrimary( false );
+				   urlRepository.save( url );
+			   } );
+		}
 		urlRepository.save( dto );
 	}
 

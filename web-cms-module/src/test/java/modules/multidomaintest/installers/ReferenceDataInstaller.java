@@ -40,6 +40,7 @@ public class ReferenceDataInstaller extends AbstractWebCmsDataInstaller
 
 		// Apply base data import
 		locations.add( "classpath:installers/multi-domain-reference-data/base-domains.yml" );
+		locations.add( "classpath:installers/multi-domain-reference-data/base-redirects.yml" );
 		locations.add( "classpath:installers/multi-domain-reference-data/base-types.yml" );
 		locations.add( "classpath:installers/multi-domain-reference-data/base-menus.yml" );
 		locations.add( "classpath:installers/multi-domain-reference-data/base-pages.yml" );
@@ -53,6 +54,7 @@ public class ReferenceDataInstaller extends AbstractWebCmsDataInstaller
 		locations.add( "classpath:installers/multi-domain-reference-data/map-de-foreach.yml" );
 
 		// Apply changes to base data
+		locations.add( "classpath:installers/multi-domain-reference-data/extension-redirects.yml" );
 		locations.add( "classpath:installers/multi-domain-reference-data/extension-types.yml" );
 		locations.add( "classpath:installers/multi-domain-reference-data/extension-pages.yml" );
 		locations.add( "classpath:installers/multi-domain-reference-data/extension-map-be-foreach.yml" );

@@ -1,0 +1,33 @@
+#
+# Import default redirects.
+#
+redirects:
+  - targetUrl: "https://google.com"
+    wcm:urls:
+      /test-url:
+        httpStatus: 301
+      /google:
+        httpStatus: 302
+
+  - targetUrl: "https://google.be"
+    domain: be-foreach
+    wcm:urls:
+      - path: /be-test-url
+        httpStatus: 301
+      - path: /be-google
+        httpStatus: 302
+
+  - targetUrl: "http://outlook.com"
+    wcm:urls:
+      - path: /outlook
+        httpStatus: 301
+      - path: /to-be-deleted
+        httpStatus: 302
+
+  - targetUrl: "http://outlook.be"
+    domain: be-foreach
+    wcm:urls:
+      - path: /be-outlook
+        httpStatus: 301
+      - path: /to-be-deleted
+        httpStatus: 302

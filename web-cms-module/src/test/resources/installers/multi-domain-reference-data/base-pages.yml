@@ -62,7 +62,7 @@ assets:
       title: Page with url
       wcm:urls:
         - path: /test-url
-          httpStatus: 301
+          httpStatus: 200
         - path: /my-other-url
           httpStatus: 200
 

@@ -139,7 +139,7 @@ public class ITMultiDomainPageReferenceData extends AbstractMultiDomainCmsApplic
 		WebCmsUrl testUrl = endpoint.getUrlWithPath( "/test-url" ).orElse( null );
 		assertNotNull( testUrl );
 		assertFalse( testUrl.isPrimary() );
-		assertEquals( HttpStatus.valueOf( 301 ), testUrl.getHttpStatus() );
+		assertEquals( HttpStatus.valueOf( 200 ), testUrl.getHttpStatus() );
 
 		WebCmsUrl myOtherUrl = endpoint.getUrlWithPath( "/my-other-url" ).orElse( null );
 		assertNotNull( myOtherUrl );
