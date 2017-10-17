@@ -69,9 +69,19 @@ assets:
     - objectId: "wcm:asset:page:other-page-with-url"
       canonicalPath: /other-page-with-url
       domain: null
-      title: Page with url
+      title: Other page with url
       wcm:urls:
         - path: /other-test-url
           httpStatus: 301
         - path: /to-be-deleted
+          httpStatus: 200
+
+    - objectId: "wcm:asset:page:page-with-url-be"
+      canonicalPath: /page-with-url-be
+      domain: be-foreach
+      title: Page with url (BE)
+      wcm:urls:
+        /test-url-be:
+          httpStatus: 301
+        /to-be-deleted:
           httpStatus: 200

@@ -167,4 +167,26 @@ public class ITMultiDomainPageReferenceData extends AbstractMultiDomainCmsApplic
 		WebCmsUrl myOtherUrl = endpoint.getUrlWithPath( "/to-be-deleted" ).orElse( null );
 		assertNull( myOtherUrl );
 	}
+
+	@Test
+	@Transactional
+	public void pageWithUrlBeShouldHaveBeenImportedAndExtended() {
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/page-with-url-be", domain );
+		assertNotNull( page );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, domain );
+		assertEquals( 2, endpoint.getUrls().size() );
+		WebCmsUrl url = endpoint.getUrlWithPath( "/page-with-url-be" ).orElse( null );
+		assertNotNull( url );
+		assertTrue( url.isPrimary() );
+		assertEquals( HttpStatus.valueOf( 200 ), url.getHttpStatus() );
+
+		WebCmsUrl testUrl = endpoint.getUrlWithPath( "/test-url-be" ).orElse( null );
+		assertNotNull( testUrl );
+		assertFalse( testUrl.isPrimary() );
+		assertEquals( HttpStatus.valueOf( 301 ), testUrl.getHttpStatus() );
+
+		WebCmsUrl myOtherUrl = endpoint.getUrlWithPath( "/to-be-deleted" ).orElse( null );
+		assertNull( myOtherUrl );
+	}
 }

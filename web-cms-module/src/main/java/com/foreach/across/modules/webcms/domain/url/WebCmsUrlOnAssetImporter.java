@@ -47,7 +47,7 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 	private static final String PROPERTY_NAME = "wcm:urls";
 
 	private final WebCmsUrlRepository urlRepository;
-	private final WebCmsAssetEndpointRepository webCmsAssetEndpointRepository;
+	private final WebCmsAssetEndpointRepository assetEndpointRepository;
 	private final WebCmsMultiDomainService multiDomainService;
 
 	@Override
@@ -63,7 +63,7 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 	@Override
 	protected WebCmsUrl getExisting( WebCmsDataEntry data, WebCmsAsset parent ) {
 		String path = data.getMapData().containsKey( "path" ) ? (String) data.getMapData().get( "path" ) : data.getKey();
-		WebCmsAssetEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAssetAndDomain( parent, multiDomainService.getCurrentDomainForEntity( parent ) );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( parent, multiDomainService.getCurrentDomainForEntity( parent ) );
 		if ( endpoint != null ) {
 			return endpoint.getUrlWithPath( path ).orElse( null );
 		}
@@ -72,7 +72,7 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 
 	@Override
 	protected WebCmsUrl createDto( WebCmsDataEntry data, WebCmsUrl existing, WebCmsDataAction action, WebCmsAsset asset ) {
-		WebCmsEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) );
+		WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) );
 		if ( existing != null ) {
 			if ( action == WebCmsDataAction.REPLACE ) {
 				WebCmsUrl url = createNewWebCmsUrlDto( data, asset, endpoint );
@@ -89,12 +89,15 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 		}
 	}
 
-	private WebCmsUrl createNewWebCmsUrlDto( WebCmsDataEntry data, WebCmsAsset asset, WebCmsEndpoint endpoint ) {
+	private WebCmsUrl createNewWebCmsUrlDto( WebCmsDataEntry data, WebCmsAsset asset, WebCmsEndpoint endpointToUse ) {
+		WebCmsEndpoint endpoint = endpointToUse != null ? endpointToUse : assetEndpointRepository.findOneByAssetAndDomain( asset, asset.getDomain() );
 		if ( endpoint != null ) {
+			String path = data.getMapData().containsKey( "path" ) ? (String) data.getMapData().get( "path" ) : data.getKey();
 			HttpStatus httpStatus = data.getMapData().containsKey( "httpStatus" )
 					? HttpStatus.valueOf( (Integer) data.getMapData().get( "httpStatus" ) )
 					: HttpStatus.MOVED_PERMANENTLY;
 			return WebCmsUrl.builder()
+			                .path( path )
 			                .httpStatus( httpStatus )
 			                .endpoint( endpoint )
 			                .build();

@@ -17,9 +17,12 @@ assets:
       title: My Page (NL)
 
     - objectId: "wcm:asset:page:other-page-with-url"
-      canonicalPath: /other-page-with-url
-      domain: null
-      title: Page with url
       wcm:urls:
         - path: /to-be-deleted
+          wcm:action: delete
+
+    - objectId: "wcm:asset:page:page-with-url-be"
+      wcm:domain: be-foreach
+      wcm:urls:
+        /to-be-deleted:
           wcm:action: delete
