@@ -15,3 +15,11 @@ assets:
       canonicalPath: /my-page
       domain: nl-foreach
       title: My Page (NL)
+
+    - objectId: "wcm:asset:page:other-page-with-url"
+      canonicalPath: /other-page-with-url
+      domain: null
+      title: Page with url
+      wcm:urls:
+        - path: /to-be-deleted
+          wcm:action: delete

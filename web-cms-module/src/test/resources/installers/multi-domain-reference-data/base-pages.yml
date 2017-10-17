@@ -55,3 +55,23 @@ assets:
     - title: My other page
       canonicalPath: /my-other-page
       domain: de-foreach
+
+    - objectId: "wcm:asset:page:page-with-url"
+      canonicalPath: /page-with-url
+      domain: null
+      title: Page with url
+      wcm:urls:
+        - path: /test-url
+          httpStatus: 301
+        - path: /my-other-url
+          httpStatus: 200
+
+    - objectId: "wcm:asset:page:other-page-with-url"
+      canonicalPath: /other-page-with-url
+      domain: null
+      title: Page with url
+      wcm:urls:
+        - path: /other-test-url
+          httpStatus: 301
+        - path: /to-be-deleted
+          httpStatus: 200
