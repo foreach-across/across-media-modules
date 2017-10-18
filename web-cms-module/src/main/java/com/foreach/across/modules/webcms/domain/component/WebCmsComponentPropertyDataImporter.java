@@ -20,9 +20,16 @@ import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsPropertyDataImporter;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
+import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelAllowsSingleValueImports;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Supports assets or type specifiers to have the <strong>wcm:components</strong> property,
@@ -33,6 +40,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataImporter<WebCmsObject>
 {
 	public static final String PROPERTY_NAME = "wcm:components";
@@ -56,7 +64,16 @@ public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataIm
 
 		if ( propertyData.isMapData() ) {
 			propertyData.getMapData().forEach(
-					( key, value ) -> componentImporter.importData( new WebCmsDataEntry( propertyData.getIdentifier(), key, value ) ) );
+					( key, value ) -> {
+						WebCmsDataEntry entry = new WebCmsDataEntry( propertyData.getIdentifier(), key, value );
+						if ( entry.isSingleValue() ) {
+							WebCmsDataEntry temp = resolveSingleValueEntry( entry, asset );
+							if ( temp != null ) {
+								entry = temp;
+							}
+						}
+						componentImporter.importData( entry );
+					} );
 		}
 		else {
 			propertyData.getCollectionData().forEach( properties -> componentImporter.importData( new WebCmsDataEntry( null, propertyData, properties ) ) );
@@ -64,4 +81,26 @@ public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataIm
 
 		return true;
 	}
+
+	private WebCmsDataEntry resolveSingleValueEntry( WebCmsDataEntry data, WebCmsObject asset ) {
+		WebCmsComponentModelAllowsSingleValueImports model = null;
+
+		if ( asset instanceof ContainerWebCmsComponentModel ) {
+			WebCmsComponentModel member = ( (ContainerWebCmsComponentModel) asset ).getMember( data.getKey() );
+			if ( member instanceof WebCmsComponentModelAllowsSingleValueImports ) {
+				model = (WebCmsComponentModelAllowsSingleValueImports) member;
+			}
+		}
+		else if ( asset instanceof WebCmsComponentModelAllowsSingleValueImports ) {
+			model = (WebCmsComponentModelAllowsSingleValueImports) asset;
+		}
+
+		if ( model != null ) {
+			Map<String, Object> map = new HashMap<>();
+			map.put( model.getPropertyName(), data.getSingleValue() );
+			return new WebCmsDataEntry( data.getIdentifier(), data.getKey(), map );
+		}
+		return null;
+	}
+
 }

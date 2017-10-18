@@ -67,6 +67,14 @@ assets:
         footer:
           content: Sample teaser footer (FR)
 
+    teaser-single-value-imports:
+      componentType: teaser
+      domain: null
+      wcm:components:
+        header: Sample teaser header
+        body: Sample teaser body
+        footer: Sample teaser footer
+
   page:
     - objectId: "wcm:asset:page:homepage-nl"
       canonicalPath: /homepage

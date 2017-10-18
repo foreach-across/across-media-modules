@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.text;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelAllowsSingleValueImports;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,18 +39,18 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TextWebCmsComponentModel extends WebCmsComponentModel
+public class TextWebCmsComponentModel extends WebCmsComponentModel implements WebCmsComponentModelAllowsSingleValueImports
 {
 	/**
 	 * Attributes supported on a {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponentType}.
 	 */
 	public interface Attributes
 	{
+
 		/**
 		 * Type of component: plain-text, rich-text or markup are supported
 		 */
 		String TYPE = TYPE_ATTRIBUTE;
-
 		/**
 		 * If set to false, the component will behave as a single line of text.
 		 * In all other cases it should behave as a multi-line text component.
@@ -66,6 +67,7 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 		 * Only applicable in case of a multi-line component.
 		 */
 		String ROWS = "rows";
+
 	}
 
 	/**
@@ -97,8 +99,8 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 			             .findFirst()
 			             .orElse( null );
 		}
-	}
 
+	}
 	/**
 	 * The actual text content of this component.
 	 */
@@ -158,5 +160,10 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 		template.parseContentMarkers = parseContentMarkers;
 
 		return template;
+	}
+
+	@Override
+	public String getPropertyName() {
+		return "content";
 	}
 }
