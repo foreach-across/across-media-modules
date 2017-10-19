@@ -54,7 +54,7 @@ public class WebCmsTypeLinkPropertyDataImporter implements WebCmsPropertyDataImp
 	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, WebCmsObject asset, WebCmsDataAction action ) {
 		propertyData.getCollectionData()
 		            .forEach( data -> {
-			            WebCmsDataEntry values = new WebCmsDataEntry( propertyData.getKey(), data );
+			            WebCmsDataEntry values = new WebCmsDataEntry( null, PROPERTY_NAME, propertyData.getKey(), parentData, data );
 
 			            WebCmsTypeSpecifierLink typeLink = new WebCmsTypeSpecifierLink();
 			            conversionService.convertToPropertyValues( values.getMapData(), typeLink );

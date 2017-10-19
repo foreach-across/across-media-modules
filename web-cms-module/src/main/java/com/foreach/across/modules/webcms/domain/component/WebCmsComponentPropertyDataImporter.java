@@ -56,10 +56,12 @@ public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataIm
 
 		if ( propertyData.isMapData() ) {
 			propertyData.getMapData().forEach(
-					( key, value ) -> componentImporter.importData( new WebCmsDataEntry( propertyData.getIdentifier(), key, value ) ) );
+					( key, value ) -> componentImporter
+							.importData( new WebCmsDataEntry( propertyData.getIdentifier(), PROPERTY_NAME, key, parentData, value ) ) );
 		}
 		else {
-			propertyData.getCollectionData().forEach( properties -> componentImporter.importData( new WebCmsDataEntry( null, propertyData, properties ) ) );
+			propertyData.getCollectionData().forEach(
+					properties -> componentImporter.importData( new WebCmsDataEntry( null, PROPERTY_NAME, null, propertyData, properties ) ) );
 		}
 
 		return true;

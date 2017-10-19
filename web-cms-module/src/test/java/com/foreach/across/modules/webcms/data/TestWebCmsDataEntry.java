@@ -148,5 +148,10 @@ public class TestWebCmsDataEntry
 		assertEquals( "/parent/key", new WebCmsDataEntry( "key", parentWithKey, "data" ).getLocation() );
 		assertEquals( "/parent/<map>/key", new WebCmsDataEntry( "key", parentMapWithoutKey, "data" ).getLocation() );
 		assertEquals( "/parent/<map>/<list>/key", new WebCmsDataEntry( "key", parentListWithoutKey, "data" ).getLocation() );
+
+		WebCmsDataEntry parentWithContentTemplate = new WebCmsDataEntry( null, "wcm:components", "contentTemplate", parentWithKey, "data" );
+		assertEquals( "/parent/wcm:components/contentTemplate", parentWithContentTemplate.getLocation() );
+		assertEquals( "/parent/wcm:components/contentTemplate/wcm:components/key",
+		              new WebCmsDataEntry( null, "wcm:components", "key", parentWithContentTemplate, "data" ).getLocation() );
 	}
 }
