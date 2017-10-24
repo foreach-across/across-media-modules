@@ -30,12 +30,12 @@ public class TestWebCmsDataEntry
 {
 	@Test(expected = IllegalArgumentException.class)
 	public void dataMustNotBeNull() {
-		new WebCmsDataEntry( "publicationKey", null );
+		WebCmsDataEntry.builder().key( "publicationKey" ).build();
 	}
 
 	@Test
 	public void singleValueData() {
-		WebCmsDataEntry entry = new WebCmsDataEntry( "publicationKey", "some data" );
+		WebCmsDataEntry entry = WebCmsDataEntry.builder().key( "publicationKey" ).data( "some data" ).build();
 		assertTrue( entry.isSingleValue() );
 		assertEquals( "some data", entry.getSingleValue() );
 		assertFalse( entry.isMapData() );
@@ -48,7 +48,7 @@ public class TestWebCmsDataEntry
 		data.put( "publication", "one" );
 		data.put( "article", "two" );
 
-		WebCmsDataEntry entry = new WebCmsDataEntry( "mykey", data );
+		WebCmsDataEntry entry = WebCmsDataEntry.builder().key( "mykey" ).data( data ).build();
 		List<String> keysInOrder = new ArrayList<>( 2 );
 		entry.getMapData()
 		     .forEach( ( key, value ) -> keysInOrder.add( key ) );
@@ -61,7 +61,7 @@ public class TestWebCmsDataEntry
 		Map<String, String> data = new HashMap<>();
 		data.put( "1", "2" );
 
-		WebCmsDataEntry entry = new WebCmsDataEntry( "mykey", data );
+		WebCmsDataEntry entry = WebCmsDataEntry.builder().key( "mykey" ).data( data ).build();
 		assertEquals( "mykey", entry.getKey() );
 		assertFalse( entry.hasParent() );
 		assertNull( entry.getParent() );
@@ -74,7 +74,10 @@ public class TestWebCmsDataEntry
 		Map<String, String> data = new HashMap<>();
 		data.put( "1", "2" );
 
-		WebCmsDataEntry entry = new WebCmsDataEntry( "mykey", new WebCmsDataEntry( "parentKey", Collections.emptyMap() ), data );
+		WebCmsDataEntry entry = WebCmsDataEntry.builder().key( "mykey" )
+		                                       .parent( WebCmsDataEntry.builder().key( "parentKey" ).data( Collections.emptyMap() ).build() )
+		                                       .data( data )
+		                                       .build();
 		assertEquals( "mykey", entry.getKey() );
 		assertTrue( entry.hasParent() );
 		assertEquals( "parentKey", entry.getParentKey() );
@@ -83,21 +86,25 @@ public class TestWebCmsDataEntry
 
 	@Test
 	public void defaultActionIsCreateUpdate() {
-		assertEquals( WebCmsDataImportAction.CREATE_OR_UPDATE, new WebCmsDataEntry( "data", Collections.emptyMap() ).getImportAction() );
-		assertEquals( WebCmsDataImportAction.CREATE_OR_UPDATE, new WebCmsDataEntry( "data", Collections.emptyList() ).getImportAction() );
+		assertEquals( WebCmsDataImportAction.CREATE_OR_UPDATE, WebCmsDataEntry.builder().key( "data" ).data( Collections.emptyMap() ).build()
+		                                                                      .getImportAction() );
+		assertEquals( WebCmsDataImportAction.CREATE_OR_UPDATE, WebCmsDataEntry.builder().key( "data" ).data( Collections.emptyList() ).build()
+		                                                                      .getImportAction() );
 	}
 
 	@Test
 	public void actionSpecifiedInMapDataSetsTheEntryAction() {
 		assertEquals(
 				WebCmsDataImportAction.DELETE,
-				new WebCmsDataEntry( "data", Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) ).getImportAction()
+				WebCmsDataEntry.builder().key( "data" ).data( Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) ).build()
+				               .getImportAction()
 		);
 	}
 
 	@Test
 	public void actionKeyShouldBeRemovedFromMapData() {
-		WebCmsDataEntry entry = new WebCmsDataEntry( "data", Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) );
+		WebCmsDataEntry entry = WebCmsDataEntry.builder().key( "data" ).data( Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) )
+		                                       .build();
 		assertEquals( WebCmsDataImportAction.DELETE, entry.getImportAction() );
 
 		assertEquals( Collections.emptyMap(), entry.getMapData() );
@@ -105,29 +112,31 @@ public class TestWebCmsDataEntry
 
 	@Test
 	public void parentActionIsUsedIfNotSpecifiedInMapData() {
-		WebCmsDataEntry parent = new WebCmsDataEntry( "parent", Collections.emptyList() );
+		WebCmsDataEntry parent = WebCmsDataEntry.builder().key( "parent" ).data( Collections.emptyList() ).build();
 		parent.setImportAction( WebCmsDataImportAction.REPLACE );
 
 		assertEquals(
 				WebCmsDataImportAction.REPLACE,
-				new WebCmsDataEntry( "data", parent, Collections.emptyList() ).getImportAction()
+				WebCmsDataEntry.builder().key( "data" ).parent( parent ).data( Collections.emptyList() ).build().getImportAction()
 		);
 	}
 
 	@Test
 	public void actionSpecifiedWinsOverParentAction() {
-		WebCmsDataEntry parent = new WebCmsDataEntry( "parent", Collections.emptyList() );
+		WebCmsDataEntry parent = WebCmsDataEntry.builder().key( "parent" ).data( Collections.emptyList() ).build();
 		parent.setImportAction( WebCmsDataImportAction.REPLACE );
 
 		assertEquals(
 				WebCmsDataImportAction.DELETE,
-				new WebCmsDataEntry( "data", parent, Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) ).getImportAction()
+				WebCmsDataEntry.builder().key( "data" ).parent( parent ).data( Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) )
+				               .build().getImportAction()
 		);
 	}
 
 	@Test
 	public void entryLevelActionCanBeModifiedAfterEntryCreation() {
-		WebCmsDataEntry data = new WebCmsDataEntry( "data", Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder().key( "data" ).data( Collections.singletonMap( WebCmsDataImportAction.ATTRIBUTE_NAME, "delete" ) )
+		                                      .build();
 		data.setImportAction( WebCmsDataImportAction.CREATE );
 
 		assertEquals( WebCmsDataImportAction.CREATE, data.getImportAction() );
@@ -135,23 +144,29 @@ public class TestWebCmsDataEntry
 
 	@Test
 	public void getLocation() {
-		assertEquals( "/", new WebCmsDataEntry( null, "data" ).getLocation() );
-		assertEquals( "/", new WebCmsDataEntry( "<root>", "data" ).getLocation() );
-		assertEquals( "/<map>", new WebCmsDataEntry( null, Collections.emptyMap() ).getLocation() );
-		assertEquals( "/<list>", new WebCmsDataEntry( null, Collections.emptyList() ).getLocation() );
-		assertEquals( "/key", new WebCmsDataEntry( "key", "data" ).getLocation() );
+		assertEquals( "/", WebCmsDataEntry.builder().data( "data" ).build().getLocation() );
+		assertEquals( "/", WebCmsDataEntry.builder().key( "<root>" ).data( "data" ).build().getLocation() );
+		assertEquals( "/<map>", WebCmsDataEntry.builder().data( Collections.emptyMap() ).build().getLocation() );
+		assertEquals( "/<list>", WebCmsDataEntry.builder().data( Collections.emptyList() ).build().getLocation() );
+		assertEquals( "/key", WebCmsDataEntry.builder().key( "key" ).data( "data" ).build().getLocation() );
 
-		WebCmsDataEntry parentWithKey = new WebCmsDataEntry( "parent", "parentData" );
-		WebCmsDataEntry parentMapWithoutKey = new WebCmsDataEntry( null, parentWithKey, Collections.emptyMap() );
-		WebCmsDataEntry parentListWithoutKey = new WebCmsDataEntry( null, parentMapWithoutKey, Collections.emptyList() );
+		WebCmsDataEntry parentWithKey = WebCmsDataEntry.builder().key( "parent" ).data( "parentData" ).build();
+		WebCmsDataEntry parentMapWithoutKey = WebCmsDataEntry.builder().parent( parentWithKey ).data( Collections.emptyMap() ).build();
+		WebCmsDataEntry parentListWithoutKey = WebCmsDataEntry.builder().parent( parentMapWithoutKey ).data( Collections.emptyList() ).build();
 
-		assertEquals( "/parent/key", new WebCmsDataEntry( "key", parentWithKey, "data" ).getLocation() );
-		assertEquals( "/parent/<map>/key", new WebCmsDataEntry( "key", parentMapWithoutKey, "data" ).getLocation() );
-		assertEquals( "/parent/<map>/<list>/key", new WebCmsDataEntry( "key", parentListWithoutKey, "data" ).getLocation() );
+		assertEquals( "/parent/key", WebCmsDataEntry.builder().key( "key" ).parent( parentWithKey ).data( "data" ).build().getLocation() );
+		assertEquals( "/parent/<map>/key", WebCmsDataEntry.builder().key( "key" ).parent( parentMapWithoutKey ).data( "data" ).build().getLocation() );
+		assertEquals( "/parent/<map>/<list>/key", WebCmsDataEntry.builder().key( "key" ).parent( parentListWithoutKey ).data( "data" ).build().getLocation() );
 
-		WebCmsDataEntry parentWithContentTemplate = new WebCmsDataEntry( null, "wcm:components", "contentTemplate", parentWithKey, "data" );
+		WebCmsDataEntry parentWithContentTemplate = WebCmsDataEntry.builder()
+		                                                           .propertyDataName( "wcm:components" )
+		                                                           .key( "contentTemplate" )
+		                                                           .parent( parentWithKey )
+		                                                           .data( "data" )
+		                                                           .build();
 		assertEquals( "/parent/wcm:components/contentTemplate", parentWithContentTemplate.getLocation() );
 		assertEquals( "/parent/wcm:components/contentTemplate/wcm:components/key",
-		              new WebCmsDataEntry( null, "wcm:components", "key", parentWithContentTemplate, "data" ).getLocation() );
+		              WebCmsDataEntry.builder().propertyDataName( "wcm:components" ).key( "key" ).parent( parentWithContentTemplate ).data( "data" ).build()
+		                             .getLocation() );
 	}
 }
