@@ -42,10 +42,18 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 		if ( propertyData.isMapData() ) {
 			propertyData.getMapData().forEach(
 					( key, properties ) -> importSingleEntry(
-							new WebCmsDataEntry( key, propertyData, properties == null ? new HashMap<>() : properties ), asset ) );
+							WebCmsDataEntry.builder()
+							               .key( key )
+							               .parent( propertyData )
+							               .data( properties == null ? new HashMap<>() : properties )
+							               .build(), asset ) );
 		}
 		else {
-			propertyData.getCollectionData().forEach( properties -> importSingleEntry( new WebCmsDataEntry( null, propertyData, properties ), asset ) );
+			propertyData.getCollectionData().forEach( properties -> importSingleEntry(
+					WebCmsDataEntry.builder()
+					               .parent( propertyData )
+					               .data( properties )
+					               .build(), asset ) );
 		}
 		return true;
 	}

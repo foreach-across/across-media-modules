@@ -85,31 +85,12 @@ public final class WebCmsDataEntry
 	 */
 	private List<Consumer<WebCmsDataEntry>> completedCallbacks;
 
-	@Deprecated
-	public WebCmsDataEntry( String key, Object data ) {
-		this( key, (WebCmsDataEntry) null, data );
-	}
-
-	@Deprecated
-	public WebCmsDataEntry( String identifier, String key, Object data ) {
-		this( identifier, key, (WebCmsDataEntry) null, data );
-	}
-
 	@Builder
 	@Deprecated
-	public WebCmsDataEntry( String identifier, String propertyDataName, String key, WebCmsDataEntry parent, Object data ) {
-		this( key, parent, data );
+	private WebCmsDataEntry( String identifier, String propertyDataName, String key, WebCmsDataEntry parent, Object data ) {
 		this.propertyDataName = propertyDataName;
 		this.identifier = identifier;
-	}
 
-	@Deprecated
-	public WebCmsDataEntry( String identifier, String key, WebCmsDataEntry parent, Object data ) {
-		this( identifier, null, key, parent, data );
-	}
-
-	@SuppressWarnings("unchecked")
-	public WebCmsDataEntry( String key, WebCmsDataEntry parent, Object data ) {
 		Assert.notNull( data, "data should not be null" );
 		completedCallbacks = new ArrayList<>();
 
@@ -118,7 +99,7 @@ public final class WebCmsDataEntry
 
 		if ( parent != null ) {
 			importAction = parent.importAction;
-			identifier = parent.identifier;
+			this.identifier = parent.identifier;
 		}
 
 		if ( data instanceof Map ) {

@@ -66,7 +66,7 @@ public final class WebCmsPropertyDataImportService
 										.map(
 												importer -> importer.importData(
 														assetData,
-														new WebCmsDataEntry( propertyName, propertiesData.get( propertyName ) ),
+														WebCmsDataEntry.builder().key( propertyName ).data( propertiesData.get( propertyName ) ).build(),
 														asset,
 														action
 												)

@@ -39,10 +39,17 @@ public class WebCmsDataCollectionsImporter implements WebCmsDataImporter
 	@Override
 	public void importData( WebCmsDataEntry data ) {
 		if ( data.isMapData() ) {
-			data.getMapData().forEach( ( key, properties ) -> dataImportService.importData( new WebCmsDataEntry( key, data, properties ) ) );
+			data.getMapData().forEach( ( key, properties ) -> dataImportService.importData( WebCmsDataEntry.builder()
+			                                                                                               .key( key )
+			                                                                                               .parent( data )
+			                                                                                               .data( properties )
+			                                                                                               .build() ) );
 		}
 		else {
-			data.getCollectionData().forEach( properties -> dataImportService.importData( new WebCmsDataEntry( null, data, properties ) ) );
+			data.getCollectionData().forEach( properties -> dataImportService.importData( WebCmsDataEntry.builder()
+			                                                                                             .parent( data )
+			                                                                                             .data( properties )
+			                                                                                             .build() ) );
 		}
 	}
 }
