@@ -86,7 +86,6 @@ public final class WebCmsDataEntry
 	private List<Consumer<WebCmsDataEntry>> completedCallbacks;
 
 	@Builder
-	@Deprecated
 	private WebCmsDataEntry( String identifier, String propertyDataName, String key, WebCmsDataEntry parent, Object data ) {
 		this.propertyDataName = propertyDataName;
 		this.identifier = identifier;
