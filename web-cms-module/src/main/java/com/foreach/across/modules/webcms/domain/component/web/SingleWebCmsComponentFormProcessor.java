@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.ButtonViewElement;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.builder.ColumnViewElementBuilder;
 import com.foreach.across.modules.entity.views.EntityView;
@@ -32,8 +33,10 @@ import com.foreach.across.modules.entity.web.EntityLinkBuilder;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
+import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
@@ -41,6 +44,7 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponentValidat
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
+import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import com.foreach.across.modules.webcms.web.WebCmsComponentAdminResources;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -193,6 +197,26 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 		}
 
 		columnViewElementBuilder.add( componentModelAdminRenderService.createFormElement( componentModel, "extensions[" + EXTENSION_NAME + "]" ) );
+	}
+
+	@Override
+	protected void postRender( EntityViewRequest entityViewRequest,
+	                           EntityView entityView,
+	                           ContainerViewElement container,
+	                           ViewElementBuilderContext builderContext ) {
+		if ( StringUtils.isEmpty( entityViewRequest.getWebRequest().getParameter( "from" ) ) ) {
+			WebCmsComponentModel component = entityViewRequest.getCommand().getExtension( EXTENSION_NAME, WebCmsComponentModel.class );
+			String ownerObjectId = component != null ? component.getOwnerObjectId() : null;
+			ContainerViewElementUtils.find( container, "btn-cancel", ButtonViewElement.class )
+			                         .ifPresent( btn -> {
+				                         if ( StringUtils.isNotEmpty( ownerObjectId )
+						                         && WebCmsUtils.isObjectIdForCollection( ownerObjectId, WebCmsComponent.COLLECTION_ID ) ) {
+					                         EntityViewContext entityViewContext = entityViewRequest.getEntityViewContext();
+					                         WebCmsComponent owner = componentRepository.findOneByObjectId( ownerObjectId );
+					                         btn.setUrl( entityViewContext.getLinkBuilder().update( owner ) );
+				                         }
+			                         } );
+		}
 	}
 
 	private boolean addToOwnerTrail( NodeViewElementBuilder breadcrumb, String objectId, EntityLinkBuilder linkBuilder, boolean createLink ) {
