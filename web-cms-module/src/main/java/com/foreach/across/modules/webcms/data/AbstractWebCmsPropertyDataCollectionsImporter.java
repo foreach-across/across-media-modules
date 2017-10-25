@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractWebCmsPropertyDataCollectionsImporter implements WebCmsPropertyDataImporter
 {
-	@Autowired
 	private WebCmsPropertyDataImportService propertyDataImportService;
 
 	@Override
@@ -65,5 +64,10 @@ public abstract class AbstractWebCmsPropertyDataCollectionsImporter implements W
 			                .collect( Collectors.toList() )
 			                .contains( Boolean.TRUE );
 		}
+	}
+
+	@Autowired
+	void setPropertyDataImportService( WebCmsPropertyDataImportService propertyDataImportService ) {
+		this.propertyDataImportService = propertyDataImportService;
 	}
 }
