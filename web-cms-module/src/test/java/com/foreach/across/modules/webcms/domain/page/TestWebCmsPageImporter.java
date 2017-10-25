@@ -72,14 +72,13 @@ public class TestWebCmsPageImporter
 	@Test(expected = WebCmsDataImportException.class)
 	public void validateObjectIdFailsIfNotMatchingObjectId() {
 		WebCmsDataEntry data = WebCmsDataEntry.builder()
-		                                      .data( Collections.singleton( Collections.singletonMap( "objectId", "wcm:assets:page:invalid-page-id" ) ) )
+		                                      .data( Collections.singletonMap( "objectId", "wcm:assets:page:invalid-page-id" ) )
 		                                      .build();
 		pageImporter.importData( data );
 	}
 
 	@Test
 	public void validateObjectIdWithMatchingObjectId() {
-//		WebCmsDataEntry data = new WebCmsDataEntry( null, Collections.singleton( Collections.singletonMap( "objectId", "wcm:asset:page:valid-page-id" ) ) );
 		WebCmsDataEntry data = WebCmsDataEntry.builder()
 		                                      .data( Collections.singletonMap( "objectId", "wcm:asset:page:valid-page-id" ) )
 		                                      .build();

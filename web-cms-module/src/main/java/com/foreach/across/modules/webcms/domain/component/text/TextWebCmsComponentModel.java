@@ -18,7 +18,6 @@ package com.foreach.across.modules.webcms.domain.component.text;
 
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelAllowsSingleValueImports;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,7 +38,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TextWebCmsComponentModel extends WebCmsComponentModel implements WebCmsComponentModelAllowsSingleValueImports
+public class TextWebCmsComponentModel extends WebCmsComponentModel
 {
 	/**
 	 * Attributes supported on a {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponentType}.
@@ -160,10 +159,5 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel implements We
 		template.parseContentMarkers = parseContentMarkers;
 
 		return template;
-	}
-
-	@Override
-	public String getPropertyName() {
-		return "content";
 	}
 }

@@ -85,6 +85,11 @@ public final class WebCmsDataEntry
 	 */
 	private List<Consumer<WebCmsDataEntry>> completedCallbacks;
 
+	/**
+	 * Type of data held in the entry.
+	 */
+	private WebCmsDataEntryType dataType;
+
 	@Builder
 	private WebCmsDataEntry( String identifier, String propertyDataName, String key, WebCmsDataEntry parent, Object data ) {
 		this.propertyDataName = propertyDataName;
@@ -102,23 +107,26 @@ public final class WebCmsDataEntry
 		}
 
 		if ( data instanceof Map ) {
+			dataType = WebCmsDataEntryType.MAP_DATA;
 			Map<String, Object> map = new LinkedHashMap<>( (Map<String, Object>) data );
 			importAction = Optional.ofNullable( WebCmsDataImportAction.fromAttributeValue( (String) map.remove( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) )
 			                       .orElse( importAction );
 
 			this.mapData = Collections.unmodifiableMap( map );
-			this.collectionData = null;
+			this.collectionData = Collections.emptyList();
 			this.singleValue = null;
 		}
 		else if ( data instanceof Collection ) {
+			dataType = WebCmsDataEntryType.COLLECTION_DATA;
 			this.collectionData = (Collection) data;
-			this.mapData = null;
+			this.mapData = Collections.emptyMap();
 			this.singleValue = null;
 		}
 		else {
+			dataType = WebCmsDataEntryType.SINGLE_VALUE;
 			this.singleValue = data;
-			this.mapData = null;
-			this.collectionData = null;
+			this.mapData = Collections.emptyMap();
+			this.collectionData = Collections.emptyList();
 		}
 	}
 
@@ -126,14 +134,14 @@ public final class WebCmsDataEntry
 	 * @return true if data is of type map
 	 */
 	public boolean isMapData() {
-		return mapData != null;
+		return WebCmsDataEntryType.MAP_DATA.equals( dataType );
 	}
 
 	/**
 	 * @return true if data is of type collection
 	 */
 	public boolean isCollectionData() {
-		return collectionData != null;
+		return WebCmsDataEntryType.COLLECTION_DATA.equals( dataType );
 	}
 
 	/**
@@ -153,7 +161,7 @@ public final class WebCmsDataEntry
 	 * @return true if data is a single (usually primitive) value
 	 */
 	public boolean isSingleValue() {
-		return singleValue != null;
+		return WebCmsDataEntryType.SINGLE_VALUE.equals( dataType );
 	}
 
 	/**

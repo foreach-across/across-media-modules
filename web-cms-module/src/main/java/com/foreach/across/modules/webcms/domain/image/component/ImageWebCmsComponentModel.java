@@ -19,7 +19,6 @@ package com.foreach.across.modules.webcms.domain.image.component;
 import com.foreach.across.modules.hibernate.business.EntityWithDto;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelAllowsSingleValueImports;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import lombok.*;
 
@@ -29,7 +28,7 @@ import lombok.*;
  */
 @Getter
 @Setter
-public class ImageWebCmsComponentModel extends WebCmsComponentModel implements WebCmsComponentModelAllowsSingleValueImports
+public class ImageWebCmsComponentModel extends WebCmsComponentModel
 {
 	@Data
 	@NoArgsConstructor
@@ -105,10 +104,5 @@ public class ImageWebCmsComponentModel extends WebCmsComponentModel implements W
 		template.imageUrl = imageUrl;
 
 		return template;
-	}
-
-	@Override
-	public String getPropertyName() {
-		return "image";
 	}
 }

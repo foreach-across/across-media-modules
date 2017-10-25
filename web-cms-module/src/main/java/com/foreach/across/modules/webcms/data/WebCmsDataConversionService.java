@@ -23,6 +23,7 @@ import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,6 +38,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service("webCmsDataConversionService")
 public class WebCmsDataConversionService extends DefaultConversionService
 {
+	private Map<Class, String> singleValueProperties = new HashMap<>();
+
 	public WebCmsDataConversionService( StringToDateConverter defaultDateConverter ) {
 		addConverter( defaultDateConverter );
 	}
@@ -101,5 +104,35 @@ public class WebCmsDataConversionService extends DefaultConversionService
 		} );
 
 		return modified.get();
+	}
+
+	/**
+	 * Converts a raw value to a property on a DTO object.  Will convert the value
+	 * using the converters registered and will only modify the DTO for the property where the value
+	 * is different from the new.
+	 *
+	 * @param value to set
+	 * @param dto   to set the value on
+	 * @return true if a property has been set (values were different)
+	 */
+	public boolean convertToPropertyValue( Object value, Object dto ) {
+		Map<String, Object> map = new HashMap<>();
+		String propertyName = getSingleValuePropertyName( dto );
+		if ( propertyName == null ) {
+			throw new IllegalArgumentException( "Unable to convert value '" + value + "' as single value for " + dto.getClass().getName() );
+		}
+		map.put( getSingleValuePropertyName( dto ), value );
+		return convertToPropertyValues( map, dto );
+	}
+
+	private String getSingleValuePropertyName( Object dto ) {
+		if ( singleValueProperties.containsKey( dto.getClass() ) ) {
+			return singleValueProperties.get( dto.getClass() );
+		}
+		return null;
+	}
+
+	public void registerSingleValueProperty( Class owner, String propertyName ) {
+		singleValueProperties.put( owner, propertyName );
 	}
 }
