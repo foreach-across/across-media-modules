@@ -209,6 +209,19 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 		assertEquals( 2, metadata.getZIndex().intValue() );
 	}
 
+	@Test
+	public void teaserSingleValueImportsShouldHaveBeenImported() {
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "teaser-single-value-imports", null );
+		assertNotNull( component );
+		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( component.getObjectId(),
+		                                                                                                         component.getDomain() );
+		assertEquals( 4, children.size() );
+		assertEquals( "Teaser title", children.get( 0 ).getBody() );
+		assertEquals( "Sample teaser header", children.get( 1 ).getBody() );
+		assertEquals( "Sample teaser body", children.get( 2 ).getBody() );
+		assertEquals( "Sample teaser footer", children.get( 3 ).getBody() );
+	}
+
 	private void assertComponent( WebCmsComponent comp, String name, String body, WebCmsDomain domain ) {
 		assertNotNull( comp );
 		assertEquals( name, comp.getName() );
