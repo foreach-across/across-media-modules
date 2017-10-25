@@ -55,22 +55,22 @@ public final class WebCmsPropertyDataImportService
 		return propertiesData
 				.keySet()
 				.stream()
-				.map( propertyName ->
-						      propertyDataImporters
-								      .stream()
-								      .filter( importer -> importer.supports( phase, propertyName, asset, action ) )
-								      .findFirst()
-								      .map( importer -> importer.importData( phase,
-								                                             WebCmsDataEntry.builder().key( propertyName )
-								                                                            .parent( assetData )
-								                                                            .data( propertiesData.get( propertyName ) ).build(),
-								                                             asset,
-								                                             action ) )
-								      .orElse( Boolean.FALSE )
-
-				)
+				.map( propertyName -> WebCmsDataEntry.builder().key( propertyName )
+				                                     .parent( assetData )
+				                                     .data( propertiesData.get( propertyName ) ).build() )
+				.map( dataEntry -> importData( phase, dataEntry, asset, action ) )
 				.collect( Collectors.toSet() )
 				.contains( Boolean.TRUE );
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean importData( WebCmsPropertyDataImporter.Phase phase, WebCmsDataEntry dataEntry, Object asset, WebCmsDataAction action ) {
+		return propertyDataImporters
+				.stream()
+				.filter( importer -> importer.supports( phase, dataEntry, asset, action ) )
+				.findFirst()
+				.map( importer -> importer.importData( phase, dataEntry, asset, action ) )
+				.orElse( Boolean.FALSE );
 	}
 
 	@Autowired

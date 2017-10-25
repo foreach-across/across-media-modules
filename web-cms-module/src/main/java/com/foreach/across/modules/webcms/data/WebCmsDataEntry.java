@@ -20,7 +20,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -101,7 +100,6 @@ public final class WebCmsDataEntry
 		this.propertyDataName = propertyDataName;
 		this.identifier = identifier;
 
-		Assert.notNull( data, "data should not be null" );
 		completedCallbacks = new ArrayList<>();
 
 		this.key = key;

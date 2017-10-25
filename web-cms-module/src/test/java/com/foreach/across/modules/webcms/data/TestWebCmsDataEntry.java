@@ -28,11 +28,6 @@ import static org.junit.Assert.*;
  */
 public class TestWebCmsDataEntry
 {
-	@Test(expected = IllegalArgumentException.class)
-	public void dataMustNotBeNull() {
-		WebCmsDataEntry.builder().key( "publicationKey" ).build();
-	}
-
 	@Test
 	public void singleValueData() {
 		WebCmsDataEntry entry = WebCmsDataEntry.builder().key( "publicationKey" ).data( "some data" ).build();

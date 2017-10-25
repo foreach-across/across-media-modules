@@ -40,10 +40,9 @@ public class WebCmsDomainContextPropertyImporter implements WebCmsPropertyDataIm
 
 	@Override
 	public boolean supports( Phase phase,
-	                         String propertyName,
-	                         Object asset,
+	                         WebCmsDataEntry dataEntry, Object asset,
 	                         WebCmsDataAction action ) {
-		return Phase.BEFORE_ASSET_SAVED.equals( phase ) && DOMAIN.equals( propertyName ) && asset instanceof WebCmsDomainBound;
+		return Phase.BEFORE_ASSET_SAVED.equals( phase ) && DOMAIN.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsDomainBound;
 	}
 
 	@Override
@@ -59,11 +58,11 @@ public class WebCmsDomainContextPropertyImporter implements WebCmsPropertyDataIm
 				: WebCmsDomain.NONE;
 
 		CloseableWebCmsDomainContext ctx = multiDomainService.attachDomainContext( domain );
-		if ( propertyData.hasParent() ) {
-			propertyData.getParent().addCompletedCallback( dataEntry -> ctx.close() );
+		if ( propertyData.getParent().hasParent() ) {
+			propertyData.getParent().getParent().addCompletedCallback( dataEntry -> ctx.close() );
 		}
 		else {
-			propertyData.addCompletedCallback( dataEntry -> ctx.close() );
+			propertyData.getParent().addCompletedCallback( dataEntry -> ctx.close() );
 		}
 		return true;
 	}

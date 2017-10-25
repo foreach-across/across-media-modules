@@ -42,10 +42,9 @@ public class WebCmsTypeLinkPropertyDataImporter implements WebCmsPropertyDataImp
 
 	@Override
 	public boolean supports( Phase phase,
-	                         String propertyName,
-	                         Object asset,
+	                         WebCmsDataEntry dataEntry, Object asset,
 	                         WebCmsDataAction action ) {
-		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsObject;
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsObject;
 	}
 
 	@Override
@@ -53,29 +52,19 @@ public class WebCmsTypeLinkPropertyDataImporter implements WebCmsPropertyDataImp
 	                           WebCmsDataEntry propertyData,
 	                           WebCmsObject asset,
 	                           WebCmsDataAction action ) {
-		propertyData.getCollectionData()
-		            .forEach( data -> {
-			            WebCmsDataEntry values = WebCmsDataEntry.builder()
-			                                                    .propertyDataName( PROPERTY_NAME )
-			                                                    .key( propertyData.getKey() )
-			                                                    .parent( propertyData.getParent() )
-			                                                    .data( data )
-			                                                    .build();
+		WebCmsTypeSpecifierLink typeLink = new WebCmsTypeSpecifierLink();
+		conversionService.convertToPropertyValues( propertyData.getMapData(), typeLink );
+		typeLink.setOwner( asset );
 
-			            WebCmsTypeSpecifierLink typeLink = new WebCmsTypeSpecifierLink();
-			            conversionService.convertToPropertyValues( values.getMapData(), typeLink );
-			            typeLink.setOwner( asset );
+		WebCmsTypeSpecifierLink existing = typeLinkRepository.findOneByOwnerObjectIdAndLinkTypeAndTypeSpecifier(
+				typeLink.getOwnerObjectId(),
+				typeLink.getLinkType(),
+				typeLink.getTypeSpecifier()
+		);
 
-			            WebCmsTypeSpecifierLink existing = typeLinkRepository.findOneByOwnerObjectIdAndLinkTypeAndTypeSpecifier(
-					            typeLink.getOwnerObjectId(),
-					            typeLink.getLinkType(),
-					            typeLink.getTypeSpecifier()
-			            );
-
-			            if ( existing == null ) {
-				            typeLinkRepository.save( typeLink );
-			            }
-		            } );
+		if ( existing == null ) {
+			typeLinkRepository.save( typeLink );
+		}
 
 		return true;
 	}

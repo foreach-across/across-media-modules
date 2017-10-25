@@ -21,31 +21,21 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Simple importer implementation that will act as if a DTO has been changed in order to force saving the dto.
- * Useful for REPLACE action.
+ * Default {@link AbstractWebCmsPropertyDataCollectionsImporter} that redispatches {@link com.foreach.across.modules.webcms.domain.WebCmsObject} imports
+ * whose property key contains ":" and could not be resolved by other {@link WebCmsPropertyDataImporter}s.
  *
- * @author Arne Vandamme
- * @since 0.0.2
+ * @author Steven Gentens
+ * @since 0.0.3
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
-public final class WebCmsForceUpdatePropertyImporter implements WebCmsPropertyDataImporter
+@Order(Ordered.LOWEST_PRECEDENCE)
+public class WebCmsPropertyDataCollectionsImporter extends AbstractWebCmsPropertyDataCollectionsImporter
 {
-	public static final String FORCE_UPDATE = "wcm:force-update";
-
 	@Override
 	public boolean supports( Phase phase,
-	                         WebCmsDataEntry dataEntry, Object asset,
+	                         WebCmsDataEntry dataEntry,
+	                         Object asset,
 	                         WebCmsDataAction action ) {
-		return Phase.BEFORE_ASSET_SAVED.equals( phase ) && FORCE_UPDATE.equals( dataEntry.getKey() );
-	}
-
-	@Override
-	public boolean importData( Phase phase,
-	                           WebCmsDataEntry propertyData,
-	                           Object asset,
-	                           WebCmsDataAction action ) {
-		// return true as if object has been modified - forces saving a dto
-		return true;
+		return dataEntry.getKey() != null && dataEntry.getKey().contains( ":" );
 	}
 }

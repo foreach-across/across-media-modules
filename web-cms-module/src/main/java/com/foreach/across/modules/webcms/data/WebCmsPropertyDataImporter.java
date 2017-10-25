@@ -39,16 +39,13 @@ public interface WebCmsPropertyDataImporter<T>
 	}
 
 	/**
-	 *
-	 * @param phase        in which this importer should execute
-	 * @param propertyName property name to import
+	 *  @param phase        in which this importer should execute
+	 * @param dataEntry     property data to set
 	 * @param asset        asset being imported
-	 * @param action       that will be performed with the asset
-	 * @return true if this importer should be executed
-	 */
+	 * @param action       that will be performed with the asset   @return true if this importer should be executed
+	 * */
 	boolean supports( Phase phase,
-	                  String propertyName,
-	                  Object asset,
+	                  WebCmsDataEntry dataEntry, Object asset,
 	                  WebCmsDataAction action );
 
 	/**

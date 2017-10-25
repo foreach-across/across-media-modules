@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.foreach.across.modules.webcms.data.WebCmsDataAction.DELETE;
@@ -39,36 +38,14 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 
 	@Override
 	public boolean importData( Phase phase,
-	                           WebCmsDataEntry propertyData,
-	                           T asset,
+	                           WebCmsDataEntry data,
+	                           T parent,
 	                           WebCmsDataAction action ) {
-		if ( propertyData.isMapData() ) {
-			propertyData.getMapData().forEach(
-					( key, properties ) -> importSingleEntry(
-							WebCmsDataEntry.builder()
-							               .key( key )
-							               .importAction( WebCmsDataImportAction.CREATE_OR_UPDATE )
-							               .parent( propertyData )
-							               .data( properties == null ? new HashMap<>() : properties )
-							               .build(), asset ) );
-		}
-		else {
-			propertyData.getCollectionData().forEach( properties -> importSingleEntry(
-					WebCmsDataEntry.builder()
-					               .parent( propertyData )
-					               .importAction( WebCmsDataImportAction.CREATE_OR_UPDATE )
-					               .data( properties )
-					               .build(), asset ) );
-		}
-		return true;
-	}
-
-	private void importSingleEntry( WebCmsDataEntry data, T parent ) {
 		try {
 			LOG.trace( "Importing data entry {}", data );
 
 			U existing = getExisting( data, parent );
-			WebCmsDataAction action = resolveAction( existing, data );
+			action = resolveAction( existing, data );
 			LOG.trace( "Resolved import action {} to {}, existing item: {}", data.getImportAction(), action, existing != null );
 
 			if ( action != null ) {
@@ -99,6 +76,7 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 		catch ( Exception e ) {
 			throw new WebCmsDataImportException( data, e );
 		}
+		return true;
 	}
 
 	protected abstract U createDto( WebCmsDataEntry menuDataSet, U existing, WebCmsDataAction action, T parent );

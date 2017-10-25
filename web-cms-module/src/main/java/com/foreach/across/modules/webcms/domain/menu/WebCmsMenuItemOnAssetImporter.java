@@ -56,10 +56,9 @@ public class WebCmsMenuItemOnAssetImporter extends AbstractWebCmsPropertyDataImp
 
 	@Override
 	public boolean supports( Phase phase,
-	                         String propertyName,
-	                         Object asset,
+	                         WebCmsDataEntry dataEntry, Object asset,
 	                         WebCmsDataAction action ) {
-		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsAsset;
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsAsset;
 	}
 
 	@Override

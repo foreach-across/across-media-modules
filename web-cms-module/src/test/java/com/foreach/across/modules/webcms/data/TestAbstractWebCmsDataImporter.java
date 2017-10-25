@@ -63,8 +63,10 @@ public class TestAbstractWebCmsDataImporter
 
 		when( conversionService.convertToPropertyValues( any(), any() ) ).thenReturn( true );
 
-		when( before.supports( eq( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED ), anyString(), anyBoolean(), any() ) ).thenReturn( true );
-		when( after.supports( eq( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED ), anyString(), anyBoolean(), any() ) ).thenReturn( true );
+		when( before.supports( eq( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED ), any( WebCmsDataEntry.class ), anyBoolean(), any() ) ).thenReturn(
+				true );
+		when( after.supports( eq( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED ), any( WebCmsDataEntry.class ), anyBoolean(), any() ) ).thenReturn(
+				true );
 	}
 
 	@Test

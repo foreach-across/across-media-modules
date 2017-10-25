@@ -41,10 +41,9 @@ public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataIm
 
 	@Override
 	public boolean supports( Phase phase,
-	                         String propertyName,
-	                         Object asset,
+	                         WebCmsDataEntry dataEntry, Object asset,
 	                         WebCmsDataAction action ) {
-		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsObject;
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsObject;
 	}
 
 	@Override
@@ -55,27 +54,7 @@ public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataIm
 		WebCmsComponentImporter componentImporter = beanFactory.getBean( WebCmsComponentImporter.class );
 		componentImporter.setOwner( asset );
 
-		if ( propertyData.isMapData() ) {
-			propertyData.getMapData().forEach(
-					( key, value ) -> {
-						WebCmsDataEntry entry = WebCmsDataEntry.builder()
-						                                       .identifier( propertyData.getIdentifier() )
-						                                       .propertyDataName( PROPERTY_NAME )
-						                                       .key( key )
-						                                       .parent( propertyData.getParent() )
-						                                       .data( value )
-						                                       .build();
-						componentImporter.importData( entry );
-					} );
-		}
-		else {
-			propertyData.getCollectionData().forEach(
-					properties -> componentImporter.importData( WebCmsDataEntry.builder()
-					                                                           .propertyDataName( PROPERTY_NAME )
-					                                                           .parent( propertyData )
-					                                                           .data( properties )
-					                                                           .build() ) );
-		}
+		componentImporter.importData( propertyData );
 
 		return true;
 	}
