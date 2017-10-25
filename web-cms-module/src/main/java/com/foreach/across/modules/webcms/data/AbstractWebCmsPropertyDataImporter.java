@@ -38,12 +38,16 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 	private WebCmsDataConversionService conversionService;
 
 	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, T asset, WebCmsDataAction action ) {
+	public boolean importData( Phase phase,
+	                           WebCmsDataEntry propertyData,
+	                           T asset,
+	                           WebCmsDataAction action ) {
 		if ( propertyData.isMapData() ) {
 			propertyData.getMapData().forEach(
 					( key, properties ) -> importSingleEntry(
 							WebCmsDataEntry.builder()
 							               .key( key )
+							               .importAction( WebCmsDataImportAction.CREATE_OR_UPDATE )
 							               .parent( propertyData )
 							               .data( properties == null ? new HashMap<>() : properties )
 							               .build(), asset ) );
@@ -52,6 +56,7 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 			propertyData.getCollectionData().forEach( properties -> importSingleEntry(
 					WebCmsDataEntry.builder()
 					               .parent( propertyData )
+					               .importAction( WebCmsDataImportAction.CREATE_OR_UPDATE )
 					               .data( properties )
 					               .build(), asset ) );
 		}

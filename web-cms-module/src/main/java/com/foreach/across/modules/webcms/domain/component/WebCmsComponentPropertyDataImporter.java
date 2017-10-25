@@ -40,17 +40,18 @@ public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataIm
 	private final BeanFactory beanFactory;
 
 	@Override
-	public Phase getPhase() {
-		return Phase.AFTER_ASSET_SAVED;
+	public boolean supports( Phase phase,
+	                         String propertyName,
+	                         Object asset,
+	                         WebCmsDataAction action ) {
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsObject;
 	}
 
 	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
-		return PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsObject;
-	}
-
-	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, WebCmsObject asset, WebCmsDataAction action ) {
+	public boolean importData( Phase phase,
+	                           WebCmsDataEntry propertyData,
+	                           WebCmsObject asset,
+	                           WebCmsDataAction action ) {
 		WebCmsComponentImporter componentImporter = beanFactory.getBean( WebCmsComponentImporter.class );
 		componentImporter.setOwner( asset );
 
@@ -61,7 +62,7 @@ public class WebCmsComponentPropertyDataImporter implements WebCmsPropertyDataIm
 						                                       .identifier( propertyData.getIdentifier() )
 						                                       .propertyDataName( PROPERTY_NAME )
 						                                       .key( key )
-						                                       .parent( parentData )
+						                                       .parent( propertyData.getParent() )
 						                                       .data( value )
 						                                       .build();
 						componentImporter.importData( entry );

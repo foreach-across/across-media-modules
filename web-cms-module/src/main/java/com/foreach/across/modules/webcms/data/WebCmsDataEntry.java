@@ -91,7 +91,13 @@ public final class WebCmsDataEntry
 	private WebCmsDataEntryType dataType;
 
 	@Builder
-	private WebCmsDataEntry( String identifier, String propertyDataName, String key, WebCmsDataEntry parent, Object data ) {
+	@SuppressWarnings("unchecked")
+	private WebCmsDataEntry( String identifier,
+	                         String propertyDataName,
+	                         String key,
+	                         WebCmsDataEntry parent,
+	                         Object data,
+	                         WebCmsDataImportAction importAction ) {
 		this.propertyDataName = propertyDataName;
 		this.identifier = identifier;
 
@@ -102,15 +108,19 @@ public final class WebCmsDataEntry
 		this.parent = parent;
 
 		if ( parent != null ) {
-			importAction = parent.importAction;
+			this.importAction = parent.importAction;
 			this.identifier = parent.identifier;
+		}
+
+		if ( importAction != null ) {
+			this.importAction = importAction;
 		}
 
 		if ( data instanceof Map ) {
 			dataType = WebCmsDataEntryType.MAP_DATA;
 			Map<String, Object> map = new LinkedHashMap<>( (Map<String, Object>) data );
-			importAction = Optional.ofNullable( WebCmsDataImportAction.fromAttributeValue( (String) map.remove( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) )
-			                       .orElse( importAction );
+			this.importAction = Optional.ofNullable( WebCmsDataImportAction.fromAttributeValue( (String) map.remove( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) )
+			                            .orElse( this.importAction );
 
 			this.mapData = Collections.unmodifiableMap( map );
 			this.collectionData = Collections.emptyList();

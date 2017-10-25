@@ -150,7 +150,7 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	 * @return true if the DTO has been modified
 	 */
 	private boolean applySingleValue( Object value, U dto ) {
-		return conversionService.convertToPropertyValue( value, dto );
+		return conversionService.convertSingleValue( value, dto );
 	}
 
 	/**

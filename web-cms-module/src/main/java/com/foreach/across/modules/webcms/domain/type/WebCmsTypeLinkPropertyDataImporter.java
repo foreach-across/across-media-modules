@@ -41,23 +41,24 @@ public class WebCmsTypeLinkPropertyDataImporter implements WebCmsPropertyDataImp
 	private final WebCmsTypeSpecifierLinkRepository typeLinkRepository;
 
 	@Override
-	public Phase getPhase() {
-		return Phase.AFTER_ASSET_SAVED;
+	public boolean supports( Phase phase,
+	                         String propertyName,
+	                         Object asset,
+	                         WebCmsDataAction action ) {
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsObject;
 	}
 
 	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
-		return PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsObject;
-	}
-
-	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, WebCmsObject asset, WebCmsDataAction action ) {
+	public boolean importData( Phase phase,
+	                           WebCmsDataEntry propertyData,
+	                           WebCmsObject asset,
+	                           WebCmsDataAction action ) {
 		propertyData.getCollectionData()
 		            .forEach( data -> {
 			            WebCmsDataEntry values = WebCmsDataEntry.builder()
 			                                                    .propertyDataName( PROPERTY_NAME )
 			                                                    .key( propertyData.getKey() )
-			                                                    .parent( parentData )
+			                                                    .parent( propertyData.getParent() )
 			                                                    .data( data )
 			                                                    .build();
 

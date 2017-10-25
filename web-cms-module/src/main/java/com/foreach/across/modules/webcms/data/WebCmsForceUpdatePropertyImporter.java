@@ -34,17 +34,18 @@ public final class WebCmsForceUpdatePropertyImporter implements WebCmsPropertyDa
 	public static final String FORCE_UPDATE = "wcm:force-update";
 
 	@Override
-	public Phase getPhase() {
-		return Phase.BEFORE_ASSET_SAVED;
+	public boolean supports( Phase phase,
+	                         String propertyName,
+	                         Object asset,
+	                         WebCmsDataAction action ) {
+		return Phase.BEFORE_ASSET_SAVED.equals( phase ) && FORCE_UPDATE.equals( propertyName );
 	}
 
 	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
-		return FORCE_UPDATE.equals( propertyName );
-	}
-
-	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, Object asset, WebCmsDataAction action ) {
+	public boolean importData( Phase phase,
+	                           WebCmsDataEntry propertyData,
+	                           Object asset,
+	                           WebCmsDataAction action ) {
 		// return true as if object has been modified - forces saving a dto
 		return true;
 	}

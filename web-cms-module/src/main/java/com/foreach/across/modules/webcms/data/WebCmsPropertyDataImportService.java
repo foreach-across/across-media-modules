@@ -55,22 +55,18 @@ public final class WebCmsPropertyDataImportService
 		return propertiesData
 				.keySet()
 				.stream()
-				.flatMap(
-						propertyName ->
-								propertyDataImporters
-										.stream()
-										.filter(
-												importer -> importer.getPhase() == phase
-														&& importer.supports( assetData, propertyName, asset, action )
-										)
-										.map(
-												importer -> importer.importData(
-														assetData,
-														WebCmsDataEntry.builder().key( propertyName ).data( propertiesData.get( propertyName ) ).build(),
-														asset,
-														action
-												)
-										)
+				.map( propertyName ->
+						      propertyDataImporters
+								      .stream()
+								      .filter( importer -> importer.supports( phase, propertyName, asset, action ) )
+								      .findFirst()
+								      .map( importer -> importer.importData( phase,
+								                                             WebCmsDataEntry.builder().key( propertyName )
+								                                                            .parent( assetData )
+								                                                            .data( propertiesData.get( propertyName ) ).build(),
+								                                             asset,
+								                                             action ) )
+								      .orElse( Boolean.FALSE )
 
 				)
 				.collect( Collectors.toSet() )

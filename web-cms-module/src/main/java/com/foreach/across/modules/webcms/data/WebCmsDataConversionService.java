@@ -38,7 +38,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service("webCmsDataConversionService")
 public class WebCmsDataConversionService extends DefaultConversionService
 {
-	private Map<Class, String> singleValueProperties = new HashMap<>();
+	private final Map<Class, String> singleValueProperties = new HashMap<>();
+
+	/**
+	 * Registers a property name for a class to use during a single value import.
+	 * If a property name has already been registered for the class, the new property will override the existing one.
+	 *
+	 * @param owner        the owner of the property
+	 * @param propertyName of the property
+	 */
+	public void registerSingleValueProperty( Class owner, String propertyName ) {
+		singleValueProperties.put( owner, propertyName );
+	}
 
 	public WebCmsDataConversionService( StringToDateConverter defaultDateConverter ) {
 		addConverter( defaultDateConverter );
@@ -115,7 +126,7 @@ public class WebCmsDataConversionService extends DefaultConversionService
 	 * @param dto   to set the value on
 	 * @return true if a property has been set (values were different)
 	 */
-	public boolean convertToPropertyValue( Object value, Object dto ) {
+	public boolean convertSingleValue( Object value, Object dto ) {
 		Map<String, Object> map = new HashMap<>();
 		String propertyName = getSingleValuePropertyName( dto );
 		if ( propertyName == null ) {
@@ -130,9 +141,5 @@ public class WebCmsDataConversionService extends DefaultConversionService
 			return singleValueProperties.get( dto.getClass() );
 		}
 		return null;
-	}
-
-	public void registerSingleValueProperty( Class owner, String propertyName ) {
-		singleValueProperties.put( owner, propertyName );
 	}
 }
