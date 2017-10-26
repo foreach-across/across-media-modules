@@ -29,6 +29,13 @@ import static org.junit.Assert.*;
 public class TestWebCmsDataEntry
 {
 	@Test
+	public void nullValueIsSeenAsSingleValue() {
+		WebCmsDataEntry entry = WebCmsDataEntry.builder().key( "publicationKey" ).build();
+		assertTrue( entry.isSingleValue() );
+		assertNull( entry.getSingleValue() );
+	}
+
+	@Test
 	public void singleValueData() {
 		WebCmsDataEntry entry = WebCmsDataEntry.builder().key( "publicationKey" ).data( "some data" ).build();
 		assertTrue( entry.isSingleValue() );
@@ -152,16 +159,5 @@ public class TestWebCmsDataEntry
 		assertEquals( "/parent/key", WebCmsDataEntry.builder().key( "key" ).parent( parentWithKey ).data( "data" ).build().getLocation() );
 		assertEquals( "/parent/<map>/key", WebCmsDataEntry.builder().key( "key" ).parent( parentMapWithoutKey ).data( "data" ).build().getLocation() );
 		assertEquals( "/parent/<map>/<list>/key", WebCmsDataEntry.builder().key( "key" ).parent( parentListWithoutKey ).data( "data" ).build().getLocation() );
-
-		WebCmsDataEntry parentWithContentTemplate = WebCmsDataEntry.builder()
-		                                                           .propertyDataName( "wcm:components" )
-		                                                           .key( "contentTemplate" )
-		                                                           .parent( parentWithKey )
-		                                                           .data( "data" )
-		                                                           .build();
-		assertEquals( "/parent/wcm:components/contentTemplate", parentWithContentTemplate.getLocation() );
-		assertEquals( "/parent/wcm:components/contentTemplate/wcm:components/key",
-		              WebCmsDataEntry.builder().propertyDataName( "wcm:components" ).key( "key" ).parent( parentWithContentTemplate ).data( "data" ).build()
-		                             .getLocation() );
 	}
 }

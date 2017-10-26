@@ -69,11 +69,6 @@ public final class WebCmsDataEntry
 	private String identifier;
 
 	/**
-	 * Optional name of the property data being imported.
-	 */
-	private String propertyDataName;
-
-	/**
 	 * Action that should be performed with this data.
 	 */
 	@NonNull
@@ -92,12 +87,10 @@ public final class WebCmsDataEntry
 	@Builder
 	@SuppressWarnings("unchecked")
 	private WebCmsDataEntry( String identifier,
-	                         String propertyDataName,
 	                         String key,
 	                         WebCmsDataEntry parent,
 	                         Object data,
 	                         WebCmsDataImportAction importAction ) {
-		this.propertyDataName = propertyDataName;
 		this.identifier = identifier;
 
 		completedCallbacks = new ArrayList<>();
@@ -194,7 +187,7 @@ public final class WebCmsDataEntry
 	 * @return location (null if no parent)
 	 */
 	public String getLocation() {
-		String current = "/" + ( StringUtils.isEmpty( propertyDataName ) ? "" : propertyDataName + "/" ) +
+		String current = "/" +
 				( StringUtils.isEmpty( key )
 						? ( isMapData() ? "<map>" : ( isCollectionData() ? "<list>" : "" ) )
 						: ( ROOT.equals( key ) ) ? "" : key );
