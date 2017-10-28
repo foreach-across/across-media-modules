@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.foreach.across.modules.webcms.data.WebCmsDataAction.DELETE;
@@ -38,24 +37,15 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 	private WebCmsDataConversionService conversionService;
 
 	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, T asset, WebCmsDataAction action ) {
-		if ( propertyData.isMapData() ) {
-			propertyData.getMapData().forEach(
-					( key, properties ) -> importSingleEntry(
-							new WebCmsDataEntry( key, propertyData, properties == null ? new HashMap<>() : properties ), asset ) );
-		}
-		else {
-			propertyData.getCollectionData().forEach( properties -> importSingleEntry( new WebCmsDataEntry( null, propertyData, properties ), asset ) );
-		}
-		return true;
-	}
-
-	private void importSingleEntry( WebCmsDataEntry data, T parent ) {
+	public boolean importData( Phase phase,
+	                           WebCmsDataEntry data,
+	                           T parent,
+	                           WebCmsDataAction action ) {
 		try {
 			LOG.trace( "Importing data entry {}", data );
 
 			U existing = getExisting( data, parent );
-			WebCmsDataAction action = resolveAction( existing, data );
+			action = resolveAction( existing, data );
 			LOG.trace( "Resolved import action {} to {}, existing item: {}", data.getImportAction(), action, existing != null );
 
 			if ( action != null ) {
@@ -86,6 +76,7 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 		catch ( Exception e ) {
 			throw new WebCmsDataImportException( data, e );
 		}
+		return true;
 	}
 
 	protected abstract U createDto( WebCmsDataEntry menuDataSet, U existing, WebCmsDataAction action, T parent );

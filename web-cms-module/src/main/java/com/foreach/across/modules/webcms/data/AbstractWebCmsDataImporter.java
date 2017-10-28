@@ -84,7 +84,7 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 					}
 
 					if ( dto != null ) {
-						boolean dataValuesApplied = applyDataValues( dataValues, dto );
+						boolean dataValuesApplied = data.isSingleValue() ? applySingleValue( data.getSingleValue(), dto ) : applyDataValues( dataValues, dto );
 						boolean customPropertyDataApplied = propertyDataImportService.executeBeforeAssetSaved( data, dataValues, dto, action );
 
 						if ( existing == null || dataValuesApplied || customPropertyDataApplied ) {
@@ -139,6 +139,18 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	 */
 	protected boolean applyDataValues( Map<String, Object> values, U dto ) {
 		return conversionService.convertToPropertyValues( values, dto );
+	}
+
+	/**
+	 * Apply the data value to the dto object.
+	 * If this method returns {@code false} no values have been applied to the DTO and actual updating might get skipped.
+	 *
+	 * @param value to apply
+	 * @param dto   to set the value on
+	 * @return true if the DTO has been modified
+	 */
+	private boolean applySingleValue( Object value, U dto ) {
+		return conversionService.convertSingleValue( value, dto );
 	}
 
 	/**

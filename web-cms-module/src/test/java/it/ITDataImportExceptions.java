@@ -43,7 +43,11 @@ public class ITDataImportExceptions extends AbstractCmsApplicationIT
 
 	@Test
 	public void exceptionToString() {
-		WebCmsDataEntry data = new WebCmsDataEntry( "my-data", "mykey", map( "one", "two" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .identifier( "my-data" )
+		                                      .key( "mykey" )
+		                                      .data( map( "one", "two" ) )
+		                                      .build();
 		String dataToString = data.toString();
 
 		WebCmsDataImportException ie = new WebCmsDataImportException( data );

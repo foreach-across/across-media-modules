@@ -45,11 +45,11 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 	 */
 	public interface Attributes
 	{
+
 		/**
 		 * Type of component: plain-text, rich-text or markup are supported
 		 */
 		String TYPE = TYPE_ATTRIBUTE;
-
 		/**
 		 * If set to false, the component will behave as a single line of text.
 		 * In all other cases it should behave as a multi-line text component.
@@ -66,6 +66,7 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 		 * Only applicable in case of a multi-line component.
 		 */
 		String ROWS = "rows";
+
 	}
 
 	/**
@@ -97,8 +98,8 @@ public class TextWebCmsComponentModel extends WebCmsComponentModel
 			             .findFirst()
 			             .orElse( null );
 		}
-	}
 
+	}
 	/**
 	 * The actual text content of this component.
 	 */

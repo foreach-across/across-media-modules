@@ -52,13 +52,10 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 	private final WebCmsMultiDomainService multiDomainService;
 
 	@Override
-	public Phase getPhase() {
-		return Phase.AFTER_ASSET_SAVED;
-	}
-
-	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
-		return PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsMenu;
+	public boolean supports( Phase phase,
+	                         WebCmsDataEntry dataEntry, Object asset,
+	                         WebCmsDataAction action ) {
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsMenu;
 	}
 
 	@Override

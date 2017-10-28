@@ -36,14 +36,15 @@ public class ImageWebCmsComponentModel extends WebCmsComponentModel
 	@Builder(toBuilder = true)
 	public static class Metadata implements EntityWithDto<Metadata>
 	{
+
 		private WebCmsImage image;
 
 		@Override
 		public Metadata toDto() {
 			return toBuilder().build();
 		}
-	}
 
+	}
 	@Deprecated
 	private String imageServerKey;
 

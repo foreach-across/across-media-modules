@@ -51,7 +51,11 @@ public final class WebCmsDataImportServiceImpl implements WebCmsDataImportServic
 	@Transactional
 	@Override
 	public void importData( Map<String, Object> data, String identifier ) {
-		importData( new WebCmsDataEntry( identifier, WebCmsDataEntry.ROOT, data ) );
+		importData( WebCmsDataEntry.builder()
+		                           .identifier( identifier )
+		                           .key( WebCmsDataEntry.ROOT )
+		                           .data( data )
+		                           .build() );
 	}
 
 	@Transactional

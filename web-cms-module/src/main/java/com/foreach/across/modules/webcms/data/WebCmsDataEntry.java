@@ -16,10 +16,10 @@
 
 package com.foreach.across.modules.webcms.data;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -38,6 +38,18 @@ import java.util.function.Consumer;
 public final class WebCmsDataEntry
 {
 	public final static String ROOT = "<root>";
+
+	/**
+	 * Defines the kind of data type a {@link WebCmsDataEntry} holds.
+	 */
+	private enum WebCmsDataEntryType
+	{
+		SINGLE_VALUE,
+		MAP_DATA,
+		COLLECTION_DATA
+
+	}
+
 	/**
 	 * Key of this mapData entry item.
 	 */
@@ -79,46 +91,55 @@ public final class WebCmsDataEntry
 	 */
 	private List<Consumer<WebCmsDataEntry>> completedCallbacks;
 
-	public WebCmsDataEntry( String key, Object data ) {
-		this( key, (WebCmsDataEntry) null, data );
-	}
+	/**
+	 * Type of data held in the entry.
+	 */
+	private WebCmsDataEntryType dataType;
 
-	public WebCmsDataEntry( String identifier, String key, Object data ) {
-		this( key, (WebCmsDataEntry) null, data );
-		this.identifier = identifier;
-	}
-
+	@Builder
 	@SuppressWarnings("unchecked")
-	public WebCmsDataEntry( String key, WebCmsDataEntry parent, Object data ) {
-		Assert.notNull( data );
+	private WebCmsDataEntry( String identifier,
+	                         String key,
+	                         WebCmsDataEntry parent,
+	                         Object data,
+	                         WebCmsDataImportAction importAction ) {
+		this.identifier = identifier;
+
 		completedCallbacks = new ArrayList<>();
 
 		this.key = key;
 		this.parent = parent;
 
 		if ( parent != null ) {
-			importAction = parent.importAction;
-			identifier = parent.identifier;
+			this.importAction = parent.importAction;
+			this.identifier = parent.identifier;
+		}
+
+		if ( importAction != null ) {
+			this.importAction = importAction;
 		}
 
 		if ( data instanceof Map ) {
+			dataType = WebCmsDataEntryType.MAP_DATA;
 			Map<String, Object> map = new LinkedHashMap<>( (Map<String, Object>) data );
-			importAction = Optional.ofNullable( WebCmsDataImportAction.fromAttributeValue( (String) map.remove( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) )
-			                       .orElse( importAction );
+			this.importAction = Optional.ofNullable( WebCmsDataImportAction.fromAttributeValue( (String) map.remove( WebCmsDataImportAction.ATTRIBUTE_NAME ) ) )
+			                            .orElse( this.importAction );
 
 			this.mapData = Collections.unmodifiableMap( map );
-			this.collectionData = null;
+			this.collectionData = Collections.emptyList();
 			this.singleValue = null;
 		}
 		else if ( data instanceof Collection ) {
+			dataType = WebCmsDataEntryType.COLLECTION_DATA;
 			this.collectionData = (Collection) data;
-			this.mapData = null;
+			this.mapData = Collections.emptyMap();
 			this.singleValue = null;
 		}
 		else {
+			dataType = WebCmsDataEntryType.SINGLE_VALUE;
 			this.singleValue = data;
-			this.mapData = null;
-			this.collectionData = null;
+			this.mapData = Collections.emptyMap();
+			this.collectionData = Collections.emptyList();
 		}
 	}
 
@@ -126,14 +147,14 @@ public final class WebCmsDataEntry
 	 * @return true if data is of type map
 	 */
 	public boolean isMapData() {
-		return mapData != null;
+		return WebCmsDataEntryType.MAP_DATA.equals( dataType );
 	}
 
 	/**
 	 * @return true if data is of type collection
 	 */
 	public boolean isCollectionData() {
-		return collectionData != null;
+		return WebCmsDataEntryType.COLLECTION_DATA.equals( dataType );
 	}
 
 	/**
@@ -153,7 +174,7 @@ public final class WebCmsDataEntry
 	 * @return true if data is a single (usually primitive) value
 	 */
 	public boolean isSingleValue() {
-		return singleValue != null;
+		return WebCmsDataEntryType.SINGLE_VALUE.equals( dataType );
 	}
 
 	/**
