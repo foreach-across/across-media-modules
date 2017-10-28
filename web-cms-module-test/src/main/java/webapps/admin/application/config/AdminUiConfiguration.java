@@ -19,6 +19,7 @@ package webapps.admin.application.config;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.webcms.WebCmsEntityAttributes;
+import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
@@ -42,7 +43,8 @@ class AdminUiConfiguration implements EntityConfigurer
 	void enableComponents( WebCmsObjectComponentViewsConfiguration componentViewsConfiguration ) {
 		//componentViewsConfiguration.enable( WebCmsPublicationType.class );
 		//componentViewsConfiguration.enable( WebCmsComponentType.class );
-		//componentViewsConfiguration.enable( WebCmsArticle.class );
+
+		componentViewsConfiguration.enable( WebCmsArticle.class );
 		componentViewsConfiguration.enable( WebCmsPublication.class );
 	}
 

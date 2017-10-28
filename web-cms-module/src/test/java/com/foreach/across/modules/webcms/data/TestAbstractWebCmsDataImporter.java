@@ -52,7 +52,7 @@ public class TestAbstractWebCmsDataImporter
 	private AbstractWebCmsDataImporter<String, String> importer;
 
 	private Map<String, Object> values = Collections.singletonMap( "my", Collections.singletonMap( "sub", "value" ) );
-	private WebCmsDataEntry data = new WebCmsDataEntry( "data", values );
+	private WebCmsDataEntry data = WebCmsDataEntry.builder().key( "data" ).data( values ).build();
 
 	@Before
 	public void setUp() throws Exception {
@@ -63,11 +63,10 @@ public class TestAbstractWebCmsDataImporter
 
 		when( conversionService.convertToPropertyValues( any(), any() ) ).thenReturn( true );
 
-		when( before.getPhase() ).thenReturn( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED );
-		when( after.getPhase() ).thenReturn( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED );
-
-		when( before.supports( any(), anyString(), anyBoolean(), any() ) ).thenReturn( true );
-		when( after.supports( any(), anyString(), anyBoolean(), any() ) ).thenReturn( true );
+		when( before.supports( eq( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED ), any( WebCmsDataEntry.class ), anyBoolean(), any() ) ).thenReturn(
+				true );
+		when( after.supports( eq( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED ), any( WebCmsDataEntry.class ), anyBoolean(), any() ) ).thenReturn(
+				true );
 	}
 
 	@Test
@@ -145,8 +144,14 @@ public class TestAbstractWebCmsDataImporter
 
 		importer.importData( data );
 
-		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "create", CREATE );
-		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "create", CREATE );
+		verify( before ).importData( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                                 .parent( data )
+		                                                                                                 .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                                 .build(), "create", CREATE );
+		verify( after ).importData( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                               .parent( data )
+		                                                                                               .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                               .build(), "create", CREATE );
 		verify( importer ).saveDto( "create", CREATE, data );
 	}
 
@@ -155,13 +160,21 @@ public class TestAbstractWebCmsDataImporter
 		data.setImportAction( WebCmsDataImportAction.UPDATE );
 
 		when( importer.retrieveExistingInstance( data ) ).thenReturn( "one" );
-		when( importer.createDto( data, "one", UPDATE, data.getMapData()) ).thenReturn( "updated" );
+		when( importer.createDto( data, "one", UPDATE, data.getMapData() ) ).thenReturn( "updated" );
 		when( conversionService.convertToPropertyValues( values, "updated" ) ).thenReturn( false );
 
 		importer.importData( data );
 
-		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", UPDATE );
-		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", UPDATE );
+		verify( before ).importData( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                                 .parent( data )
+		                                                                                                 .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                                 .build(),
+		                             "updated",
+		                             UPDATE );
+		verify( after ).importData( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                               .parent( data )
+		                                                                                               .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                               .build(), "updated", UPDATE );
 		verify( importer, never() ).saveDto( "updated", UPDATE, data );
 	}
 
@@ -176,8 +189,15 @@ public class TestAbstractWebCmsDataImporter
 
 		importer.importData( data );
 
-		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", UPDATE );
-		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", UPDATE );
+		verify( before ).importData( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                                 .parent( data )
+		                                                                                                 .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                                 .build(), "updated",
+		                             UPDATE );
+		verify( after ).importData( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                               .parent( data )
+		                                                                                               .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                               .build(), "updated", UPDATE );
 		verify( importer ).saveDto( "updated", UPDATE, data );
 	}
 
@@ -187,8 +207,14 @@ public class TestAbstractWebCmsDataImporter
 		when( importer.createDto( data, null, CREATE, data.getMapData() ) ).thenReturn( "create" );
 		importer.importData( data );
 
-		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "create", CREATE );
-		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "create", CREATE );
+		verify( before ).importData( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                                 .parent( data )
+		                                                                                                 .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                                 .build(), "create", CREATE );
+		verify( after ).importData( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                               .parent( data )
+		                                                                                               .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                               .build(), "create", CREATE );
 		verify( conversionService ).convertToPropertyValues( values, "create" );
 		verify( importer ).saveDto( "create", CREATE, data );
 	}
@@ -201,8 +227,15 @@ public class TestAbstractWebCmsDataImporter
 
 		importer.importData( data );
 
-		verify( before ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", action );
-		verify( after ).importData( data, new WebCmsDataEntry( "my", Collections.singletonMap( "sub", "value" ) ), "updated", action );
+		verify( before ).importData( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                                 .parent( data )
+		                                                                                                 .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                                 .build(), "updated",
+		                             action );
+		verify( after ).importData( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED, WebCmsDataEntry.builder().key( "my" )
+		                                                                                               .parent( data )
+		                                                                                               .data( Collections.singletonMap( "sub", "value" ) )
+		                                                                                               .build(), "updated", action );
 		verify( conversionService ).convertToPropertyValues( values, "updated" );
 		verify( importer ).saveDto( "updated", action, data );
 	}

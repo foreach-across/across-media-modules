@@ -39,17 +39,17 @@ public class WebCmsDomainContextPropertyImporter implements WebCmsPropertyDataIm
 	public static final String DOMAIN = "wcm:domain";
 
 	@Override
-	public Phase getPhase() {
-		return Phase.BEFORE_ASSET_SAVED;
+	public boolean supports( Phase phase,
+	                         WebCmsDataEntry dataEntry, Object asset,
+	                         WebCmsDataAction action ) {
+		return Phase.BEFORE_ASSET_SAVED.equals( phase ) && DOMAIN.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsDomainBound;
 	}
 
 	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
-		return DOMAIN.equals( propertyName ) && asset instanceof WebCmsDomainBound;
-	}
-
-	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, Object asset, WebCmsDataAction action ) {
+	public boolean importData( Phase phase,
+	                           WebCmsDataEntry propertyData,
+	                           Object asset,
+	                           WebCmsDataAction action ) {
 		String domainKey = (String) propertyData.getSingleValue();
 
 		WebCmsDomain domain = domainKey != null
@@ -58,11 +58,11 @@ public class WebCmsDomainContextPropertyImporter implements WebCmsPropertyDataIm
 				: WebCmsDomain.NONE;
 
 		CloseableWebCmsDomainContext ctx = multiDomainService.attachDomainContext( domain );
-		if ( parentData != null ) {
-			parentData.addCompletedCallback( dataEntry -> ctx.close() );
+		if ( propertyData.getParent().hasParent() ) {
+			propertyData.getParent().getParent().addCompletedCallback( dataEntry -> ctx.close() );
 		}
 		else {
-			propertyData.addCompletedCallback( dataEntry -> ctx.close() );
+			propertyData.getParent().addCompletedCallback( dataEntry -> ctx.close() );
 		}
 		return true;
 	}

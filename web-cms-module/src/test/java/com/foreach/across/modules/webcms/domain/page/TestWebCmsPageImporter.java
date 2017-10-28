@@ -71,21 +71,27 @@ public class TestWebCmsPageImporter
 
 	@Test(expected = WebCmsDataImportException.class)
 	public void validateObjectIdFailsIfNotMatchingObjectId() {
-		WebCmsDataEntry data = new WebCmsDataEntry( null, Collections.singleton( Collections.singletonMap( "objectId", "wcm:assets:page:invalid-page-id" ) ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .data( Collections.singletonMap( "objectId", "wcm:assets:page:invalid-page-id" ) )
+		                                      .build();
 		pageImporter.importData( data );
 	}
 
 	@Test
 	public void validateObjectIdWithMatchingObjectId() {
-//		WebCmsDataEntry data = new WebCmsDataEntry( null, Collections.singleton( Collections.singletonMap( "objectId", "wcm:asset:page:valid-page-id" ) ) );
-		WebCmsDataEntry data = new WebCmsDataEntry( null, Collections.singletonMap( "objectId", "wcm:asset:page:valid-page-id" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .data( Collections.singletonMap( "objectId", "wcm:asset:page:valid-page-id" ) )
+		                                      .build();
 		when( multiDomainService.isDomainBound( any( WebCmsObject.class ) ) ).thenReturn( false );
 		pageImporter.importData( data );
 	}
 
 	@Test
 	public void createNewDto() {
-		WebCmsDataEntry data = new WebCmsDataEntry( "/my-page-key", Collections.singletonMap( "title", "My page" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .key( "/my-page-key" )
+		                                      .data( Collections.singletonMap( "title", "My page" ) )
+		                                      .build();
 		WebCmsPage dto = pageImporter.createDto( data, null, WebCmsDataAction.CREATE, null );
 		assertEquals( "/my-page-key", dto.getCanonicalPath() );
 		assertFalse( dto.isCanonicalPathGenerated() );
@@ -96,7 +102,9 @@ public class TestWebCmsPageImporter
 
 	@Test
 	public void createNewDtoWithEntryKeyNullAndCanonicalPath() {
-		WebCmsDataEntry data = new WebCmsDataEntry( null, Collections.singletonMap( "canonicalPath", "/my-page-key" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .data( Collections.singletonMap( "canonicalPath", "/my-page-key" ) )
+		                                      .build();
 		WebCmsPage dto = pageImporter.createDto( data, null, WebCmsDataAction.CREATE, null );
 		assertNull( dto.getCanonicalPath() );
 		assertFalse( dto.isCanonicalPathGenerated() );
@@ -109,7 +117,9 @@ public class TestWebCmsPageImporter
 		WebCmsPage existing = WebCmsPage.builder()
 		                                .title( "My title" )
 		                                .build();
-		WebCmsDataEntry data = new WebCmsDataEntry( null, Collections.singletonMap( "canonicalPath", "/my-page-key" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .data( Collections.singletonMap( "canonicalPath", "/my-page-key" ) )
+		                                      .build();
 		WebCmsPage dto = pageImporter.createDto( data, existing, WebCmsDataAction.UPDATE, null );
 		assertEquals( dto.getTitle(), existing.getTitle() );
 		assertNull( dto.getCanonicalPath() );
@@ -126,7 +136,9 @@ public class TestWebCmsPageImporter
 		                                .createdBy( "admin" )
 		                                .createdDate( new Date() )
 		                                .build();
-		WebCmsDataEntry data = new WebCmsDataEntry( null, Collections.singletonMap( "canonicalPath", "/my-page-key" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .data( Collections.singletonMap( "canonicalPath", "/my-page-key" ) )
+		                                      .build();
 
 		WebCmsPage dto = pageImporter.createDto( data, existing, WebCmsDataAction.REPLACE, null );
 		assertEquals( "wcm:asset:page:my-page", existing.getObjectId() );
@@ -141,8 +153,10 @@ public class TestWebCmsPageImporter
 
 	@Test
 	public void getExistingEntityWithEntryKeyNotNull() {
-		WebCmsDataEntry data = new WebCmsDataEntry( "/my-page-key",
-		                                            Collections.singletonMap( "objectId", "wcm:asset:page:valid-page-id" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .key( "/my-page-key" )
+		                                      .data( Collections.singletonMap( "objectId", "wcm:asset:page:valid-page-id" ) )
+		                                      .build();
 		WebCmsPage page = WebCmsPage.builder()
 		                            .canonicalPath( "/my-page-key" )
 		                            .domain( null )
@@ -155,8 +169,9 @@ public class TestWebCmsPageImporter
 
 	@Test
 	public void getExistingEntityWithEntryKeyNull() {
-		WebCmsDataEntry data = new WebCmsDataEntry( null,
-		                                            Collections.singletonMap( "canonicalPath", "/my-page-key" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .data( Collections.singletonMap( "canonicalPath", "/my-page-key" ) )
+		                                      .build();
 		WebCmsPage page = WebCmsPage.builder()
 		                            .canonicalPath( "/my-page-key" )
 		                            .domain( null )
@@ -168,8 +183,9 @@ public class TestWebCmsPageImporter
 
 	@Test
 	public void getExistingEntityWithEntryKeyNullAndCanonicalPathNull() {
-		WebCmsDataEntry data = new WebCmsDataEntry( null,
-		                                            Collections.singletonMap( "title", "My title" ) );
+		WebCmsDataEntry data = WebCmsDataEntry.builder()
+		                                      .data( Collections.singletonMap( "title", "My title" ) )
+		                                      .build();
 		WebCmsPage retrievedPage = pageImporter.getExistingEntity( null, data, null );
 		assertNull( retrievedPage );
 	}

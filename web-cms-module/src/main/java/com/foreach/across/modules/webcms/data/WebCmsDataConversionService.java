@@ -23,6 +23,8 @@ import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,8 +39,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service("webCmsDataConversionService")
 public class WebCmsDataConversionService extends DefaultConversionService
 {
+	private final Map<Class, String> singleValueProperties = new HashMap<>();
+
 	public WebCmsDataConversionService( StringToDateConverter defaultDateConverter ) {
 		addConverter( defaultDateConverter );
+	}
+
+	/**
+	 * Registers a property name for a class to use during a single value import.
+	 * If a property name has already been registered for the class, the new property will override the existing one.
+	 *
+	 * @param owner        the owner of the property
+	 * @param propertyName of the property
+	 */
+	public void registerSingleValueProperty( Class owner, String propertyName ) {
+		singleValueProperties.put( owner, propertyName );
 	}
 
 	/**
@@ -57,7 +72,7 @@ public class WebCmsDataConversionService extends DefaultConversionService
 		AtomicBoolean modified = new AtomicBoolean( false );
 
 		data.forEach( ( propertyName, propertyValue ) -> {
-			if ( propertyName.contains( ":" ) ) {
+			if ( propertyName.contains( ":" ) || propertyName.startsWith( "#" ) ) {
 				LOG.trace( "Skipping property {} - assuming separate importer wil be used", propertyName );
 			}
 			else {
@@ -101,5 +116,24 @@ public class WebCmsDataConversionService extends DefaultConversionService
 		} );
 
 		return modified.get();
+	}
+
+	/**
+	 * Converts a single raw value to a property on a DTO object.  Will convert the value
+	 * using the converters registered and will only modify the DTO for the property where the value
+	 * is different from the new.
+	 * <p/>
+	 * The property to which the single value should be converted should have been registered using {@link #registerSingleValueProperty(Class, String)}.
+	 *
+	 * @param value to set
+	 * @param dto   to set the value on
+	 * @return true if a property has been set (values were different)
+	 */
+	public boolean convertSingleValue( Object value, Object dto ) {
+		String propertyName = singleValueProperties.get( dto.getClass() );
+		if ( propertyName == null ) {
+			throw new IllegalArgumentException( "Unable to convert value '" + value + "' as single value for " + dto.getClass().getName() );
+		}
+		return convertToPropertyValues( Collections.singletonMap( propertyName, value ), dto );
 	}
 }

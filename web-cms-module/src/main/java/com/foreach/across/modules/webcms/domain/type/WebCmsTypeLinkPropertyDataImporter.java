@@ -41,35 +41,30 @@ public class WebCmsTypeLinkPropertyDataImporter implements WebCmsPropertyDataImp
 	private final WebCmsTypeSpecifierLinkRepository typeLinkRepository;
 
 	@Override
-	public Phase getPhase() {
-		return Phase.AFTER_ASSET_SAVED;
+	public boolean supports( Phase phase,
+	                         WebCmsDataEntry dataEntry, Object asset,
+	                         WebCmsDataAction action ) {
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsObject;
 	}
 
 	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
-		return PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsObject;
-	}
+	public boolean importData( Phase phase,
+	                           WebCmsDataEntry propertyData,
+	                           WebCmsObject asset,
+	                           WebCmsDataAction action ) {
+		WebCmsTypeSpecifierLink typeLink = new WebCmsTypeSpecifierLink();
+		conversionService.convertToPropertyValues( propertyData.getMapData(), typeLink );
+		typeLink.setOwner( asset );
 
-	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, WebCmsObject asset, WebCmsDataAction action ) {
-		propertyData.getCollectionData()
-		            .forEach( data -> {
-			            WebCmsDataEntry values = new WebCmsDataEntry( propertyData.getKey(), data );
+		WebCmsTypeSpecifierLink existing = typeLinkRepository.findOneByOwnerObjectIdAndLinkTypeAndTypeSpecifier(
+				typeLink.getOwnerObjectId(),
+				typeLink.getLinkType(),
+				typeLink.getTypeSpecifier()
+		);
 
-			            WebCmsTypeSpecifierLink typeLink = new WebCmsTypeSpecifierLink();
-			            conversionService.convertToPropertyValues( values.getMapData(), typeLink );
-			            typeLink.setOwner( asset );
-
-			            WebCmsTypeSpecifierLink existing = typeLinkRepository.findOneByOwnerObjectIdAndLinkTypeAndTypeSpecifier(
-					            typeLink.getOwnerObjectId(),
-					            typeLink.getLinkType(),
-					            typeLink.getTypeSpecifier()
-			            );
-
-			            if ( existing == null ) {
-				            typeLinkRepository.save( typeLink );
-			            }
-		            } );
+		if ( existing == null ) {
+			typeLinkRepository.save( typeLink );
+		}
 
 		return true;
 	}
