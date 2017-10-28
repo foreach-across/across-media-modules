@@ -16,19 +16,19 @@
 
 package com.foreach.across.modules.webcms.data;
 
-import org.springframework.core.Ordered;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Default {@link AbstractWebCmsPropertyDataCollectionsImporter} that redispatches {@link com.foreach.across.modules.webcms.domain.WebCmsObject} imports
+ * Default {@link AbstractWebCmsPropertyDataCollectionsImporter} that re-dispatches {@link com.foreach.across.modules.webcms.domain.WebCmsObject} imports
  * whose property key contains ":" and could not be resolved by other {@link WebCmsPropertyDataImporter}s.
  *
  * @author Steven Gentens
  * @since 0.0.3
  */
 @Component
-@Order(Ordered.LOWEST_PRECEDENCE)
+@Order
 public class WebCmsPropertyDataCollectionsImporter extends AbstractWebCmsPropertyDataCollectionsImporter
 {
 	@Override
@@ -36,6 +36,6 @@ public class WebCmsPropertyDataCollectionsImporter extends AbstractWebCmsPropert
 	                         WebCmsDataEntry dataEntry,
 	                         Object asset,
 	                         WebCmsDataAction action ) {
-		return dataEntry.getKey() != null && dataEntry.getKey().contains( ":" );
+		return StringUtils.contains( dataEntry.getKey(), ":" ) || StringUtils.startsWith( dataEntry.getKey(), "#" );
 	}
 }

@@ -38,6 +38,18 @@ import java.util.function.Consumer;
 public final class WebCmsDataEntry
 {
 	public final static String ROOT = "<root>";
+
+	/**
+	 * Defines the kind of data type a {@link WebCmsDataEntry} holds.
+	 */
+	private enum WebCmsDataEntryType
+	{
+		SINGLE_VALUE,
+		MAP_DATA,
+		COLLECTION_DATA
+
+	}
+
 	/**
 	 * Key of this mapData entry item.
 	 */

@@ -58,7 +58,7 @@ class WebCmsComponentConfiguration
 	@ConditionalOnAdminUI
 	@Configuration
 	@RequiredArgsConstructor
-	class AdminUiConfiguration implements EntityConfigurer
+	static class AdminUiConfiguration implements EntityConfigurer
 	{
 		private final ContainerMemberViewProcessor containerMemberViewProcessor;
 		private final SingleWebCmsComponentFormProcessor formProcessor;

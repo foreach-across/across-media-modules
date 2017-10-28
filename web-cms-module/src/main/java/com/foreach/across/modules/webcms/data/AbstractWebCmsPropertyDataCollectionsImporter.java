@@ -18,11 +18,11 @@ package com.foreach.across.modules.webcms.data;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**
- * Base class that redispatches incoming property data imports that could not be resolved.
+ * Base class that re-dispatches incoming property data imports that could not be resolved.
  *
  * @author Steven Gentens
  * @since 0.0.3
@@ -36,31 +36,33 @@ public abstract class AbstractWebCmsPropertyDataCollectionsImporter implements W
 		if ( dataEntry.isMapData() ) {
 			return dataEntry.getMapData().entrySet().stream()
 			                .map( entry ->
-					                      propertyDataImportService.importData( phase,
-					                                                            WebCmsDataEntry.builder()
-					                                                                           .key( entry.getKey() )
-					                                                                           .importAction( WebCmsDataImportAction.CREATE_OR_UPDATE )
-					                                                                           .parent( dataEntry )
-					                                                                           .data( entry.getValue() == null ? new HashMap<>() : entry
-							                                                                           .getValue() )
-					                                                                           .build(),
-					                                                            asset,
-					                                                            action )
+					                      propertyDataImportService.importPropertyData(
+							                      phase,
+							                      WebCmsDataEntry.builder()
+							                                     .key( entry.getKey() )
+							                                     .importAction( WebCmsDataImportAction.CREATE_OR_UPDATE )
+							                                     .parent( dataEntry )
+							                                     .data( entry.getValue() == null ? Collections.emptyMap() : entry.getValue() )
+							                                     .build(),
+							                      asset,
+							                      action
+					                      )
 			                )
 			                .collect( Collectors.toList() )
 			                .contains( Boolean.TRUE );
 		}
 		else {
 			return dataEntry.getCollectionData().stream()
-			                .map( properties -> propertyDataImportService.importData( phase,
-			                                                                          WebCmsDataEntry.builder()
-			                                                                                         .parent( dataEntry )
-			                                                                                         .importAction(
-					                                                                                         WebCmsDataImportAction.CREATE_OR_UPDATE )
-			                                                                                         .data( properties )
-			                                                                                         .build(),
-			                                                                          asset,
-			                                                                          action ) )
+			                .map( properties -> propertyDataImportService.importPropertyData(
+					                phase,
+					                WebCmsDataEntry.builder()
+					                               .parent( dataEntry )
+					                               .importAction( WebCmsDataImportAction.CREATE_OR_UPDATE )
+					                               .data( properties )
+					                               .build(),
+					                asset,
+					                action )
+			                )
 			                .collect( Collectors.toList() )
 			                .contains( Boolean.TRUE );
 		}

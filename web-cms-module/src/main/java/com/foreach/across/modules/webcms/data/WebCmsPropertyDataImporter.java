@@ -39,11 +39,11 @@ public interface WebCmsPropertyDataImporter<T>
 	}
 
 	/**
-	 *  @param phase        in which this importer should execute
-	 * @param dataEntry     property data to set
-	 * @param asset        asset being imported
-	 * @param action       that will be performed with the asset   @return true if this importer should be executed
-	 * */
+	 * @param phase     in which this importer should execute
+	 * @param dataEntry property data to set
+	 * @param asset     asset being imported
+	 * @param action    that will be performed with the asset   @return true if this importer should be executed
+	 */
 	boolean supports( Phase phase,
 	                  WebCmsDataEntry dataEntry, Object asset,
 	                  WebCmsDataAction action );
@@ -51,7 +51,6 @@ public interface WebCmsPropertyDataImporter<T>
 	/**
 	 * Perform the actual import of the property data.
 	 * If this method returns {@code true} this means that data has been imported.
-	 *
 	 *
 	 * @param phase        in which this importer should execute
 	 * @param propertyData specific property data set

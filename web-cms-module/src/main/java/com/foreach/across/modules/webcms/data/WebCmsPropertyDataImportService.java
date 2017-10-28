@@ -58,13 +58,13 @@ public final class WebCmsPropertyDataImportService
 				.map( propertyName -> WebCmsDataEntry.builder().key( propertyName )
 				                                     .parent( assetData )
 				                                     .data( propertiesData.get( propertyName ) ).build() )
-				.map( dataEntry -> importData( phase, dataEntry, asset, action ) )
+				.map( dataEntry -> importPropertyData( phase, dataEntry, asset, action ) )
 				.collect( Collectors.toSet() )
 				.contains( Boolean.TRUE );
 	}
 
 	@SuppressWarnings("unchecked")
-	public boolean importData( WebCmsPropertyDataImporter.Phase phase, WebCmsDataEntry dataEntry, Object asset, WebCmsDataAction action ) {
+	public boolean importPropertyData( WebCmsPropertyDataImporter.Phase phase, WebCmsDataEntry dataEntry, Object asset, WebCmsDataAction action ) {
 		return propertyDataImporters
 				.stream()
 				.filter( importer -> importer.supports( phase, dataEntry, asset, action ) )

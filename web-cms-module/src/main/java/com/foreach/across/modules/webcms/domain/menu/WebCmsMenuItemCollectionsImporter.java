@@ -22,7 +22,7 @@ import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link AbstractWebCmsPropertyDataCollectionsImporter} to redispatch menu items imports on a {@link WebCmsMenu}.
+ * {@link AbstractWebCmsPropertyDataCollectionsImporter} to re-dispatch menu items imports on a {@link WebCmsMenu}.
  *
  * @author Steven Gentens
  * @since 0.0.3
