@@ -50,15 +50,17 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 
 			if ( action != null ) {
 				if ( action == DELETE ) {
-					delete( existing );
+					delete( existing, parent );
 				}
 				else {
 					U dto = createDto( data, existing, action, parent );
 
 					if ( dto != null ) {
-						boolean dataValuesApplied = applyDataValues( data.getMapData(), dto );
+						boolean dataValuesApplied = data.isSingleValue()
+								? applySingleValue( data.getSingleValue(), dto ) : applyDataValues( data.getMapData(), dto );
+
 						if ( existing == null || dataValuesApplied ) {
-							save( dto );
+							save( dto, parent );
 						}
 						else {
 							LOG.trace( "Skipping saving DTO as no actual values have been updated" );
@@ -81,9 +83,9 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 
 	protected abstract U createDto( WebCmsDataEntry menuDataSet, U existing, WebCmsDataAction action, T parent );
 
-	protected abstract void save( U dto );
+	protected abstract void save( U dto, T parent );
 
-	protected abstract void delete( U dto );
+	protected abstract void delete( U dto, T parent );
 
 	protected abstract U getExisting( WebCmsDataEntry dataKey, T parent );
 
@@ -100,6 +102,18 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 	 */
 	protected boolean applyDataValues( Map<String, Object> values, U dto ) {
 		return conversionService.convertToPropertyValues( values, dto );
+	}
+
+	/**
+	 * Apply the data value to the dto object.
+	 * If this method returns {@code false} no values have been applied to the DTO and actual updating might get skipped.
+	 *
+	 * @param value to apply
+	 * @param dto   to set the value on
+	 * @return true if the DTO has been modified
+	 */
+	private boolean applySingleValue( Object value, U dto ) {
+		return conversionService.convertSingleValue( value, dto );
 	}
 
 	@Autowired

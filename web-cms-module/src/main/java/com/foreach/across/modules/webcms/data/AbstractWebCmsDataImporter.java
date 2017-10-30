@@ -117,7 +117,7 @@ public abstract class AbstractWebCmsDataImporter<T, U> implements WebCmsDataImpo
 	 * {@link WebCmsMultiDomainService#getCurrentDomainForType(Class)}
 	 *
 	 * @param item       the data entry
-	 * @param entityType
+	 * @param entityType to check domain support
 	 * @return the domain to which the entity should be attached
 	 */
 	protected WebCmsDomain retrieveDomainForDataEntry( WebCmsDataEntry item, Class<?> entityType ) {

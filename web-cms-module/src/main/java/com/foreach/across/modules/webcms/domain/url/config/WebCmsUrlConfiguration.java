@@ -30,9 +30,11 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.webcms.WebCmsEntityAttributes;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.web.WebCmsUrlEndpointViewElementBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 
@@ -44,47 +46,56 @@ import java.util.EnumSet;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@ConditionalOnAdminUI
 @Configuration
-@RequiredArgsConstructor
-class WebCmsUrlConfiguration implements EntityConfigurer
+class WebCmsUrlConfiguration
 {
-	private final WebCmsUrlEndpointViewElementBuilder endpointViewElementBuilder;
+	@Autowired
+	void registerSingleValuePropertyConverters( WebCmsDataConversionService conversionService ) {
+		conversionService.registerSingleValueProperty( WebCmsUrl.class, "httpStatus" );
+		conversionService.addConverter( Integer.class, HttpStatus.class, HttpStatus::valueOf );
+	}
 
-	@Override
-	public void configure( EntitiesConfigurationBuilder entities ) {
-		entities.withType( WebCmsUrl.class )
-		        .attribute( WebCmsEntityAttributes.DOMAIN_PROPERTY, "endpoint.domain" )
-		        .properties(
-				        props -> props.property( "httpStatus" )
-				                      .attribute(
-						                      EntityAttributes.OPTIONS_ALLOWED_VALUES,
-						                      EnumSet.of( HttpStatus.OK, HttpStatus.MOVED_PERMANENTLY, HttpStatus.FOUND, HttpStatus.NOT_FOUND )
-				                      )
-				                      .and()
-				                      .property( "endpoint" )
-				                      .viewElementBuilder( ViewElementMode.LIST_VALUE, endpointViewElementBuilder )
-		        )
-		        .listView(
-				        lvb -> lvb.defaultSort( "path" )
-				                  .showProperties( "path", "httpStatus", "endpoint" )
-				                  .sortableOn( "path", "httpStatus" )
-				                  .entityQueryFilter( true )
-				                  .pageSize( 50 )
-				                  .postProcess( ListFormViewProcessor.class, listFormViewProcessor -> listFormViewProcessor.setAddDefaultButtons( false ) )
-				                  .postProcess( SortableTableRenderingViewProcessor.class, table -> table.setIncludeDefaultActions( false ) )
-				                  .viewProcessor( new EntityViewProcessorAdapter()
-				                  {
-					                  @Override
-					                  protected void render( EntityViewRequest entityViewRequest,
-					                                         EntityView entityView,
-					                                         ContainerViewElementBuilderSupport<?, ?> containerBuilder,
-					                                         ViewElementBuilderMap builderMap,
-					                                         ViewElementBuilderContext builderContext ) {
-						                  entityViewRequest.getPageContentStructure().setPageTitle( "URL path browser" );
-					                  }
-				                  } )
-		        )
-		;
+	@ConditionalOnAdminUI
+	@Configuration
+	@RequiredArgsConstructor
+	static class AdminUiConfiguration implements EntityConfigurer
+	{
+		private final WebCmsUrlEndpointViewElementBuilder endpointViewElementBuilder;
+
+		@Override
+		public void configure( EntitiesConfigurationBuilder entities ) {
+			entities.withType( WebCmsUrl.class )
+			        .attribute( WebCmsEntityAttributes.DOMAIN_PROPERTY, "endpoint.domain" )
+			        .properties(
+					        props -> props.property( "httpStatus" )
+					                      .attribute(
+							                      EntityAttributes.OPTIONS_ALLOWED_VALUES,
+							                      EnumSet.of( HttpStatus.OK, HttpStatus.MOVED_PERMANENTLY, HttpStatus.FOUND, HttpStatus.NOT_FOUND )
+					                      )
+					                      .and()
+					                      .property( "endpoint" )
+					                      .viewElementBuilder( ViewElementMode.LIST_VALUE, endpointViewElementBuilder )
+			        )
+			        .listView(
+					        lvb -> lvb.defaultSort( "path" )
+					                  .showProperties( "path", "httpStatus", "endpoint" )
+					                  .sortableOn( "path", "httpStatus" )
+					                  .entityQueryFilter( true )
+					                  .pageSize( 50 )
+					                  .postProcess( ListFormViewProcessor.class, listFormViewProcessor -> listFormViewProcessor.setAddDefaultButtons( false ) )
+					                  .postProcess( SortableTableRenderingViewProcessor.class, table -> table.setIncludeDefaultActions( false ) )
+					                  .viewProcessor( new EntityViewProcessorAdapter()
+					                  {
+						                  @Override
+						                  protected void render( EntityViewRequest entityViewRequest,
+						                                         EntityView entityView,
+						                                         ContainerViewElementBuilderSupport<?, ?> containerBuilder,
+						                                         ViewElementBuilderMap builderMap,
+						                                         ViewElementBuilderContext builderContext ) {
+							                  entityViewRequest.getPageContentStructure().setPageTitle( "URL path browser" );
+						                  }
+					                  } )
+			        );
+		}
 	}
 }

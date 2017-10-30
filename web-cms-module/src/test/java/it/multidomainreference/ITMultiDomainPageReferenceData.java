@@ -16,13 +16,18 @@
 
 package it.multidomainreference;
 
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 
@@ -33,6 +38,9 @@ public class ITMultiDomainPageReferenceData extends AbstractMultiDomainCmsApplic
 
 	@Autowired
 	private WebCmsDomainRepository domainRepository;
+
+	@Autowired
+	private WebCmsAssetEndpointRepository assetEndpointRepository;
 
 	@Test
 	public void faqPageForeachNlShouldHaveBeenImported() {
@@ -114,5 +122,68 @@ public class ITMultiDomainPageReferenceData extends AbstractMultiDomainCmsApplic
 		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-other-page", domain );
 		assertNotNull( page );
 		assertEquals( "My Other Page (NL)", page.getTitle() );
+	}
+
+	@Test
+	@Transactional
+	public void pageWithUrlShouldHaveBeenImported() {
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/page-with-url", WebCmsDomain.NONE );
+		assertNotNull( page );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE );
+		assertEquals( 3, endpoint.getUrls().size() );
+		WebCmsUrl url = endpoint.getUrlWithPath( "/page-with-url" ).orElse( null );
+		assertNotNull( url );
+		assertTrue( url.isPrimary() );
+		assertEquals( HttpStatus.valueOf( 200 ), url.getHttpStatus() );
+
+		WebCmsUrl testUrl = endpoint.getUrlWithPath( "/test-url" ).orElse( null );
+		assertNotNull( testUrl );
+		assertFalse( testUrl.isPrimary() );
+		assertEquals( HttpStatus.valueOf( 200 ), testUrl.getHttpStatus() );
+
+		WebCmsUrl myOtherUrl = endpoint.getUrlWithPath( "/my-other-url" ).orElse( null );
+		assertNotNull( myOtherUrl );
+		assertFalse( myOtherUrl.isPrimary() );
+		assertEquals( HttpStatus.valueOf( 301 ), myOtherUrl.getHttpStatus() );
+	}
+
+	@Test
+	@Transactional
+	public void otherPageWithUrlShouldHaveItsSinglePrimaryChangedAndLocked() {
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/other-page-with-url", WebCmsDomain.NONE );
+		assertNotNull( page );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE );
+		assertEquals( 1, endpoint.getUrls().size() );
+
+		WebCmsUrl testUrl = endpoint.getUrlWithPath( "/other-test-url" ).orElse( null );
+		assertNotNull( testUrl );
+		assertTrue( testUrl.isPrimary() );
+		assertTrue( testUrl.isPrimaryLocked() );
+		assertEquals( HttpStatus.valueOf( 200 ), testUrl.getHttpStatus() );
+
+		WebCmsUrl myOtherUrl = endpoint.getUrlWithPath( "/to-be-deleted" ).orElse( null );
+		assertNull( myOtherUrl );
+	}
+
+	@Test
+	@Transactional
+	public void pageWithUrlBeShouldHaveBeenImportedAndExtended() {
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/page-with-url-be", domain );
+		assertNotNull( page );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, domain );
+		assertEquals( 2, endpoint.getUrls().size() );
+		WebCmsUrl url = endpoint.getUrlWithPath( "/page-with-url-be" ).orElse( null );
+		assertNotNull( url );
+		assertTrue( url.isPrimary() );
+		assertEquals( HttpStatus.valueOf( 200 ), url.getHttpStatus() );
+
+		WebCmsUrl testUrl = endpoint.getUrlWithPath( "/test-url-be" ).orElse( null );
+		assertNotNull( testUrl );
+		assertFalse( testUrl.isPrimary() );
+		assertEquals( HttpStatus.valueOf( 301 ), testUrl.getHttpStatus() );
+
+		WebCmsUrl myOtherUrl = endpoint.getUrlWithPath( "/to-be-deleted" ).orElse( null );
+		assertNull( myOtherUrl );
 	}
 }

@@ -44,14 +44,14 @@ public class WebCmsAssetServiceImpl implements WebCmsAssetService
 	@Transactional(readOnly = true)
 	@Override
 	public Optional<String> buildPreviewUrl( WebCmsAsset asset ) {
-		Assert.notNull( asset );
+		Assert.notNull( asset, "asset is required" );
 		return buildPreviewUrlOnDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) );
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public Optional<String> buildPreviewUrlOnDomain( WebCmsAsset asset, WebCmsDomain domain ) {
-		Assert.notNull( asset );
+		Assert.notNull( asset, "asset is required" );
 		return getUriComponents( asset, domain ).map( UriComponentsBuilder::toUriString );
 	}
 

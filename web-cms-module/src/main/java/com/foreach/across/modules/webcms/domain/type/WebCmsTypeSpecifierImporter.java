@@ -87,9 +87,6 @@ final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCm
 
 			return type;
 		}
-//		WebCmsDomain domain = retrieveDomainForDataEntry( data, implementationType );
-//		WebCmsTypeSpecifier<?> type = supplier.get();
-//		type.setDomain( domain );
 		return supplier.get();
 	}
 
@@ -104,9 +101,6 @@ final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCm
 			if ( dto.getTypeKey() == null ) {
 				dto.setTypeKey( data.getKey() );
 			}
-//			if ( !data.getMapData().containsKey( "objectId" ) ) {
-//				dto.setObjectId( dto.getTypeKey() );
-//			}
 		}
 
 		return dto;

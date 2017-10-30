@@ -36,6 +36,6 @@ public class WebCmsPropertyDataCollectionsImporter extends AbstractWebCmsPropert
 	                         WebCmsDataEntry dataEntry,
 	                         Object asset,
 	                         WebCmsDataAction action ) {
-		return StringUtils.contains( dataEntry.getKey(), ":" ) || StringUtils.startsWith( dataEntry.getKey(), "#" );
+		return ( StringUtils.contains( dataEntry.getKey(), ":" ) || StringUtils.startsWith( dataEntry.getKey(), "#" ) ) && !dataEntry.isSingleValue();
 	}
 }

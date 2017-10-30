@@ -105,12 +105,12 @@ public class WebCmsMenuItemOnAssetImporter extends AbstractWebCmsPropertyDataImp
 	}
 
 	@Override
-	protected void save( WebCmsMenuItem dto ) {
+	protected void save( WebCmsMenuItem dto, WebCmsAsset parent ) {
 		menuItemRepository.save( dto );
 	}
 
 	@Override
-	protected void delete( WebCmsMenuItem dto ) {
+	protected void delete( WebCmsMenuItem dto, WebCmsAsset parent ) {
 		menuItemRepository.delete( dto );
 	}
 

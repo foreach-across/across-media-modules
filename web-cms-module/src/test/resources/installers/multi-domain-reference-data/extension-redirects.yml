@@ -1,0 +1,11 @@
+redirects:
+  - targetUrl: "http://outlook.com"
+    wcm:urls:
+      - path: /to-be-deleted
+        wcm:action: delete
+
+  - targetUrl: "http://outlook.be"
+    domain: be-foreach
+    wcm:urls:
+      - path: /to-be-deleted
+        wcm:action: delete
