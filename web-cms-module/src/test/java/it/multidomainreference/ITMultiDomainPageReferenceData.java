@@ -24,7 +24,6 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -166,7 +165,6 @@ public class ITMultiDomainPageReferenceData extends AbstractMultiDomainCmsApplic
 		assertNull( myOtherUrl );
 	}
 
-	@Ignore("Something wrong with the wcm:domain scoping that does not work - existing url is not found")
 	@Test
 	@Transactional
 	public void pageWithUrlBeShouldHaveBeenImportedAndExtended() {

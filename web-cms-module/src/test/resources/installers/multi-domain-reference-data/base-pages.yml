@@ -77,6 +77,7 @@ assets:
     - objectId: "wcm:asset:page:page-with-url-be"
       canonicalPath: /page-with-url-be
       domain: be-foreach
+      wcm:domain: be-foreach
       title: Page with url (BE)
       wcm:urls:
         /test-url-be:
