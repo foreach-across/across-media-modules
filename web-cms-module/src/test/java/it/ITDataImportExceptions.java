@@ -20,7 +20,6 @@ import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsDataImportException;
 import com.foreach.across.modules.webcms.data.WebCmsDataImportService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -54,21 +53,20 @@ public class ITDataImportExceptions extends AbstractCmsApplicationIT
 		assertEquals( "Failed to import data: " + dataToString, ie.getMessage() );
 	}
 
-	@Ignore
 	@Test
 	public void unableToImportDataWithKey() {
 		WebCmsDataImportException e = importData(
 				"bad-data",
-				map( "unknown-data-key", list() )
+				map( "unknown-data-key", list( map( "one", "two" ) ) )
 		);
 
 		WebCmsDataEntry data = e.getDataEntry();
 		assertNotNull( data );
 		assertEquals( "bad-data", data.getIdentifier() );
-		assertEquals( "/root/unknown-data-key", data.getLocation() );
+		assertEquals( "/unknown-data-key/<map>/one", data.getLocation() );
 
 		assertTrue( e.getCause() instanceof IllegalArgumentException );
-		assertEquals( "Unable to import data for key: unknown-data-key", e.getCause().getMessage() );
+		assertEquals( "Unable to import data for key: one", e.getCause().getMessage() );
 	}
 
 	@Test

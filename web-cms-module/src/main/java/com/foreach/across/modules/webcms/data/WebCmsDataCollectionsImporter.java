@@ -22,7 +22,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Provides a default callback for {@link WebCmsDataEntry} imports.
+ * General importer that supports map or collection data and dispatches the individual entries.
  */
 @RequiredArgsConstructor
 @Component
