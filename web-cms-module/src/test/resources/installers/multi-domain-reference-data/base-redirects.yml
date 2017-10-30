@@ -6,8 +6,7 @@ redirects:
     wcm:urls:
       /test-url:
         httpStatus: 301
-      /google:
-        httpStatus: 302
+      /google: 302
 
   - targetUrl: "https://google.be"
     domain: be-foreach

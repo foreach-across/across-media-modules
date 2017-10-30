@@ -24,7 +24,10 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.endpoint.support.EndpointModificationType;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
+import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,15 +52,11 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 	private final WebCmsUrlRepository urlRepository;
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;
 	private final WebCmsMultiDomainService multiDomainService;
+	private final WebCmsEndpointService endpointService;
 
 	@Override
-	public Phase getPhase() {
-		return Phase.AFTER_ASSET_SAVED;
-	}
-
-	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
-		return PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsAsset;
+	public boolean supports( Phase phase, WebCmsDataEntry dataEntry, Object asset, WebCmsDataAction action ) {
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsAsset;
 	}
 
 	@Override
@@ -92,10 +91,11 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 	private WebCmsUrl createNewWebCmsUrlDto( WebCmsDataEntry data, WebCmsAsset asset, WebCmsEndpoint endpointToUse ) {
 		WebCmsEndpoint endpoint = endpointToUse != null ? endpointToUse : assetEndpointRepository.findOneByAssetAndDomain( asset, asset.getDomain() );
 		if ( endpoint != null ) {
-			String path = data.getMapData().containsKey( "path" ) ? (String) data.getMapData().get( "path" ) : data.getKey();
-			HttpStatus httpStatus = data.getMapData().containsKey( "httpStatus" )
-					? HttpStatus.valueOf( (Integer) data.getMapData().get( "httpStatus" ) )
-					: HttpStatus.MOVED_PERMANENTLY;
+			final Map<String, Object> dataValues = data.getMapData();
+			String path = dataValues.containsKey( "path" ) ? (String) dataValues.get( "path" ) : data.getKey();
+			Object rawStatus = data.isSingleValue() ? data.getSingleValue() : dataValues.get( "httpStatus" );
+			HttpStatus httpStatus = rawStatus != null ? HttpStatus.valueOf( (Integer) rawStatus ) : null;
+
 			return WebCmsUrl.builder()
 			                .path( path )
 			                .httpStatus( httpStatus )
@@ -107,20 +107,30 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 	}
 
 	@Override
-	protected void save( WebCmsUrl dto ) {
+	protected void save( WebCmsUrl dto, WebCmsAsset parent ) {
 		if ( dto.isPrimary() ) {
-			dto.getEndpoint().getUrls().stream()
-			   .filter( WebCmsUrl::isPrimary )
-			   .forEach( url -> {
-				   url.setPrimary( false );
-				   urlRepository.save( url );
-			   } );
+			ModificationReport<EndpointModificationType, WebCmsUrl> modificationReport
+					= endpointService.updateOrCreatePrimaryUrlForAsset( dto.getPath(), parent, false );
+
+			switch ( modificationReport.getModificationStatus() ) {
+				case SUCCESSFUL:
+					if ( dto.isPrimaryLocked() ) {
+						WebCmsUrl primaryUrl = modificationReport.getNewValue().toDto();
+						primaryUrl.setPrimaryLocked( true );
+						urlRepository.save( primaryUrl );
+					}
+					break;
+				case FAILED:
+					LOG.error( "Unable to change primary url for asset {} to {}", parent, dto.getPath() );
+			}
 		}
-		urlRepository.save( dto );
+		else {
+			urlRepository.save( dto );
+		}
 	}
 
 	@Override
-	protected void delete( WebCmsUrl dto ) {
+	protected void delete( WebCmsUrl dto, WebCmsAsset parent ) {
 		urlRepository.delete( dto );
 	}
 
@@ -128,6 +138,19 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 	protected boolean applyDataValues( Map<String, Object> values, WebCmsUrl dto ) {
 		Map<String, Object> filtered = new HashMap<>( values );
 		filtered.remove( "httpStatus" );
-		return super.applyDataValues( filtered, dto );
+		boolean modified = super.applyDataValues( filtered, dto );
+
+		if ( dto.isPrimary() ) {
+			if ( !values.containsKey( "httpStatus" ) && !HttpStatus.OK.equals( dto.getHttpStatus() ) ) {
+				dto.setHttpStatus( HttpStatus.OK );
+				modified = true;
+			}
+			if ( !values.containsKey( "primaryLocked" ) && !dto.isPrimaryLocked() ) {
+				dto.setPrimaryLocked( true );
+				modified = true;
+			}
+		}
+
+		return modified;
 	}
 }

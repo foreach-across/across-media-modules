@@ -43,13 +43,8 @@ public class WebCmsUrlOnEndpointImporter extends AbstractWebCmsPropertyDataImpor
 	private final WebCmsUrlRepository urlRepository;
 
 	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
-		return PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsEndpoint;
-	}
-
-	@Override
-	public Phase getPhase() {
-		return Phase.AFTER_ASSET_SAVED;
+	public boolean supports( Phase phase, WebCmsDataEntry dataEntry, Object asset, WebCmsDataAction action ) {
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsEndpoint;
 	}
 
 	@Override
@@ -78,9 +73,14 @@ public class WebCmsUrlOnEndpointImporter extends AbstractWebCmsPropertyDataImpor
 
 	private WebCmsUrl createNewWebCmsUrlDto( WebCmsDataEntry data, WebCmsEndpoint endpoint ) {
 		String path = data.getMapData().containsKey( "path" ) ? (String) data.getMapData().get( "path" ) : data.getKey();
-		HttpStatus httpStatus = data.getMapData().containsKey( "httpStatus" )
-				? HttpStatus.valueOf( (Integer) data.getMapData().get( "httpStatus" ) )
-				: HttpStatus.MOVED_PERMANENTLY;
+		Object rawStatus = data.isSingleValue() ? data.getSingleValue() : data.getMapData().get( "httpStatus" );
+
+		if ( rawStatus == null ) {
+			throw new IllegalArgumentException( "A valid HTTP status is required for importing urls" );
+		}
+
+		HttpStatus httpStatus = HttpStatus.valueOf( (Integer) rawStatus );
+
 		return WebCmsUrl.builder()
 		                .path( path )
 		                .httpStatus( httpStatus )
@@ -90,12 +90,12 @@ public class WebCmsUrlOnEndpointImporter extends AbstractWebCmsPropertyDataImpor
 	}
 
 	@Override
-	protected void save( WebCmsUrl dto ) {
+	protected void save( WebCmsUrl dto, WebCmsEndpoint parent ) {
 		urlRepository.save( dto );
 	}
 
 	@Override
-	protected void delete( WebCmsUrl dto ) {
+	protected void delete( WebCmsUrl dto, WebCmsEndpoint parent ) {
 		urlRepository.delete( dto );
 	}
 

@@ -61,10 +61,8 @@ assets:
       domain: null
       title: Page with url
       wcm:urls:
-        - path: /test-url
-          httpStatus: 200
-        - path: /my-other-url
-          httpStatus: 200
+        /test-url: 200
+        /my-other-url: 301
 
     - objectId: "wcm:asset:page:other-page-with-url"
       canonicalPath: /other-page-with-url
@@ -72,7 +70,7 @@ assets:
       title: Other page with url
       wcm:urls:
         - path: /other-test-url
-          httpStatus: 301
+          primary: true
         - path: /to-be-deleted
           httpStatus: 200
 

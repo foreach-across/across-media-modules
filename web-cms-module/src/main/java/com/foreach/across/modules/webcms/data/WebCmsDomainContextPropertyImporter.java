@@ -40,7 +40,8 @@ public class WebCmsDomainContextPropertyImporter implements WebCmsPropertyDataIm
 
 	@Override
 	public boolean supports( Phase phase,
-	                         WebCmsDataEntry dataEntry, Object asset,
+	                         WebCmsDataEntry dataEntry,
+	                         Object asset,
 	                         WebCmsDataAction action ) {
 		return Phase.BEFORE_ASSET_SAVED.equals( phase ) && DOMAIN.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsDomainBound;
 	}
