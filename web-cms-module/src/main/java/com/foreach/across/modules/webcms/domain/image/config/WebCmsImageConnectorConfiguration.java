@@ -173,6 +173,7 @@ class WebCmsImageConnectorConfiguration
 			settings.put( "cloud_name", properties.getCloudName() );
 			settings.put( "api_key", properties.getApiKey() );
 			settings.put( "api_secret", properties.getApiSecret() );
+			settings.putAll( properties.getSettings() );
 
 			return new Cloudinary( settings );
 		}
