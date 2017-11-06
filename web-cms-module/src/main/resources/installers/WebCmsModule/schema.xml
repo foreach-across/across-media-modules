@@ -50,6 +50,8 @@
 	<property name="table.asset_component_link" value="wcm_asset_component_link"/>
 	<property name="table.page_section" value="wcm_page_section"/>
 
+	<include file="com/foreach/across/core/installers/AcrossSequencesInstaller.xml"/>
+
 	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
 		<sql>
 			ALTER session SET nls_length_semantics=CHAR;
