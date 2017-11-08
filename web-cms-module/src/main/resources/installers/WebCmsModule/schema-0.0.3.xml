@@ -378,4 +378,23 @@
 			<column name="type_key"/>
 		</createIndex>
 	</changeSet>
+
+	<changeSet id="201711061549" author="stg">
+		<preConditions>
+			<not>
+				<columnExists tableName="${table.asset}" columnName="sort_index"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates sortIndex on wcm_asset table</comment>
+		<addColumn tableName="${table.asset}">
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="1000">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+
+		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_sort_index">
+			<column name="sort_index"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>

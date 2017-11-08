@@ -87,9 +87,10 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 	                       @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                       @Builder.ObtainVia(method = "isPublished") boolean published,
 	                       @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
+	                       @Builder.ObtainVia(method = "getSortIndex") int sortIndex,
 	                       String name,
 	                       String externalId ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate, sortIndex );
 		this.name = name;
 		this.externalId = externalId;
 	}
@@ -121,5 +122,10 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 	@Override
 	public Optional<String> getImageServerKey() {
 		return Optional.ofNullable( externalId );
+	}
+
+	public static class WebCmsImageBuilder
+	{
+		private int sortIndex = 1000;
 	}
 }

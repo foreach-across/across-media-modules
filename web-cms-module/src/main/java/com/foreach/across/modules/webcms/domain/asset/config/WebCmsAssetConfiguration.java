@@ -60,7 +60,8 @@ class WebCmsAssetConfiguration implements EntityConfigurer
 
 		entities.assignableTo( WebCmsAsset.class )
 		        .properties(
-				        props -> props.property( "published" ).hidden( true ).and()
+				        props -> props.property( "sortIndex" ).hidden( true ).and()
+				                      .property( "published" ).hidden( true ).and()
 				                      .property( "publicationDate" ).hidden( true ).and()
 				                      .property( "publish-settings" )
 				                      .writable( true )

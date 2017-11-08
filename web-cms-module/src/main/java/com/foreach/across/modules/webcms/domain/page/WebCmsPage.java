@@ -130,6 +130,7 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	                      @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                      @Builder.ObtainVia(method = "isPublished") boolean published,
 	                      @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
+	                      @Builder.ObtainVia(method = "getSortIndex") int sortIndex,
 	                      String title,
 	                      WebCmsPage parent,
 	                      String pathSegment,
@@ -138,7 +139,7 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	                      boolean canonicalPathGenerated,
 	                      String template,
 	                      WebCmsPageType pageType ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate, sortIndex );
 		this.title = title;
 		this.parent = parent;
 		this.pathSegment = pathSegment;
@@ -182,5 +183,6 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	{
 		private boolean pathSegmentGenerated = true;
 		private boolean canonicalPathGenerated = true;
+		private int sortIndex = 1000;
 	}
 }

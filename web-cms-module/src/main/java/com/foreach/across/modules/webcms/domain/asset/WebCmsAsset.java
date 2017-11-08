@@ -79,6 +79,9 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date publicationDate;
 
+	@Column(name = "sort_index")
+	private int sortIndex = 1000;
+
 	public WebCmsAsset() {
 		super();
 	}
@@ -92,10 +95,12 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	                       Date lastModifiedDate,
 	                       WebCmsDomain domain,
 	                       boolean published,
-	                       Date publicationDate ) {
+	                       Date publicationDate,
+	                       int sortIndex ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain );
 		setPublished( published );
 		setPublicationDate( publicationDate );
+		setSortIndex( sortIndex );
 	}
 
 	@Override

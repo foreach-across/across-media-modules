@@ -108,11 +108,12 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	                             @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                             @Builder.ObtainVia(method = "isPublished") boolean published,
 	                             @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
+	                             @Builder.ObtainVia(method = "getSortIndex") int sortIndex,
 	                             String name,
 	                             String publicationKey,
 	                             WebCmsPublicationType publicationType,
 	                             WebCmsPage articleTemplatePage ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate, sortIndex );
 		this.name = name;
 		this.publicationKey = publicationKey;
 		this.publicationType = publicationType;
@@ -132,5 +133,10 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	@Override
 	public WebCmsPublicationType getAssetType() {
 		return publicationType;
+	}
+
+	public static class WebCmsPublicationBuilder
+	{
+		private int sortIndex = 1000;
 	}
 }
