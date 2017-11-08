@@ -99,3 +99,13 @@ assets:
       title: Common Domains
       domain: domain.complex.domain
       canonicalPath: /reference/common-domains
+
+    - objectId: "wcm:asset:page:page-with-asset-links"
+      title: Page with asset links
+      wcm:assets:
+        - asset: "wcm:asset:page:reference-freq-domains"
+          linkType: related-page
+          sortIndex: 1
+        - asset: "wcm:asset:page:reference-common-domains"
+          linkType: related-page
+          sortIndex: 2

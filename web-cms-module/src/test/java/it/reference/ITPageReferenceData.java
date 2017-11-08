@@ -17,6 +17,8 @@
 package it.reference;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetLink;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetLinkRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
@@ -28,6 +30,8 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -45,6 +49,18 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Autowired
 	private WebCmsDomainRepository domainRepository;
+
+	@Autowired
+	private WebCmsAssetLinkRepository assetLinkRepository;
+
+	@Test
+	public void pageWithAssetLinksShouldHaveBeenImported() {
+		List<WebCmsAssetLink> assetLinks = assetLinkRepository.findAllByOwnerObjectId( "wcm:asset:page:page-with-asset-links" );
+		assertEquals( 2, assetLinks.size() );
+		assertEquals( 2, assetLinks.stream().filter( assetLink -> "related-page".equals( assetLink.getLinkType() ) ).count() );
+		assertEquals( "wcm:asset:page:reference-freq-domains", assetLinks.get( 0 ).getAsset().getObjectId() );
+		assertEquals( "wcm:asset:page:reference-common-domains", assetLinks.get( 1 ).getAsset().getObjectId() );
+	}
 
 	@Test
 	public void alwaysCreatedPageShouldBeCreatedWithBothObjectIdAndCanonicalPathGenerated() {
