@@ -84,7 +84,7 @@
 
 	<!-- Add domain id reference on all related tables -->
 	<changeSet id="201708311038" author="arne">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="${table.asset}" columnName="domain_id"/>
 			</not>
@@ -101,7 +101,7 @@
 	</changeSet>
 
 	<changeSet id="201708311044" author="arne">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="${table.type}" columnName="domain_id"/>
 			</not>
@@ -118,7 +118,7 @@
 	</changeSet>
 
 	<changeSet id="201708311045" author="arne">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="${table.menu}" columnName="domain_id"/>
 			</not>
@@ -135,7 +135,7 @@
 	</changeSet>
 
 	<changeSet id="201708311046" author="arne">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="${table.endpoint}" columnName="domain_id"/>
 			</not>
@@ -152,7 +152,7 @@
 	</changeSet>
 
 	<changeSet id="201708311047" author="arne">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="${table.component}" columnName="domain_id"/>
 			</not>
@@ -169,7 +169,7 @@
 	</changeSet>
 
 	<changeSet id="201709010914" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="${table.menu}" columnName="object_id"/>
 			</not>
@@ -205,7 +205,7 @@
 	</changeSet>
 
 	<changeSet id="201709011243" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<columnExists tableName="${table.menu}" columnName="object_id"/>
 		</preConditions>
 		<comment>requires menu objectId to have a value</comment>
@@ -218,7 +218,7 @@
 
 	<!--Refactoring WebCmsTypeSpecifier to SINGLE_TABLE inheritance-->
 	<changeSet id="201709011634a" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="${table.type}" columnName="description"/>
 			</not>
@@ -230,7 +230,7 @@
 	</changeSet>
 
 	<changeSet id="201709011634b" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<foreignKeyConstraintExists foreignKeyName="fk_wcm_art_art_type" foreignKeyTableName="${table.article}"/>
 			<tableExists tableName="${table.article_type}"/>
 		</preConditions>
@@ -245,7 +245,7 @@
 	</changeSet>
 
 	<changeSet id="201709011634c" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<foreignKeyConstraintExists foreignKeyName="fk_wcm_pub_pubtype" foreignKeyTableName="${table.publication}"/>
 			<tableExists tableName="${table.publication_type}"/>
 		</preConditions>
@@ -260,7 +260,7 @@
 	</changeSet>
 
 	<changeSet id="201709011634d" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<foreignKeyConstraintExists foreignKeyName="fk_wcm_pag_pag_type" foreignKeyTableName="${table.page}"/>
 			<tableExists tableName="${table.page_type}"/>
 		</preConditions>
@@ -303,7 +303,7 @@
 	</changeSet>
 
 	<changeSet id="201709011634f" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<foreignKeyConstraintExists foreignKeyName="fk_wcm_comp_comptype" foreignKeyTableName="${table.component}"/>
 			<tableExists tableName="${table.component_type}"/>
 		</preConditions>
@@ -344,7 +344,7 @@
 	</changeSet>
 
 	<changeSet id="201709061555" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<indexExists tableName="${table.publication}" indexName="ix_wcm_pub_key"/>
 		</preConditions>
 		<comment>publicationkey no longer has to be unique (but unique in combination with domain)</comment>
@@ -355,7 +355,7 @@
 	</changeSet>
 
 	<changeSet id="201709131126" author="arne">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<indexExists tableName="${table.url}" indexName="ix_wcm_url_path"/>
 			</not>
@@ -368,7 +368,7 @@
 	</changeSet>
 
 	<changeSet id="201709136134" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<indexExists tableName="${table.type}" indexName="ix_wcm_type_otype_key"/>
 		</preConditions>
 		<comment>combination of object type and type key should no longer be unique</comment>
@@ -380,7 +380,7 @@
 	</changeSet>
 
 	<changeSet id="201711061549" author="stg">
-		<preConditions>
+		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="${table.asset}" columnName="sort_index"/>
 			</not>

@@ -715,6 +715,11 @@
 	</changeSet>
 
 	<changeSet id="20170404115900" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.article}" columnName="image_id"/>
+			</not>
+		</preConditions>
 		<addColumn tableName="${table.article}">
 			<column name="image_id" type="java.sql.Types.BIGINT"/>
 		</addColumn>
@@ -954,6 +959,11 @@
 	</changeSet>
 
 	<changeSet id="201706210804" author="rcl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.url}" columnName="is_primary_locked"/>
+			</not>
+		</preConditions>
 		<addColumn tableName="${table.url}">
 			<column name="is_primary_locked" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
 				<constraints nullable="false"/>
