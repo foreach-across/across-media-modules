@@ -23,7 +23,13 @@ import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBu
 import com.foreach.across.modules.entity.registry.EntityConfiguration;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
+import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
+import com.foreach.across.modules.entity.views.request.EntityViewRequest;
+import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
@@ -74,7 +80,10 @@ class WebCmsAssetConfiguration implements EntityConfigurer
 						                      EntityPropertySelector.of( "published", "publicationDate" )
 				                      )
 		        )
-		        .updateFormView( fvb -> fvb.showProperties( ".", "~created" ) )
+		        .updateFormView(
+				        fvb -> fvb.showProperties( ".", "~created" )
+				                  .viewProcessor( new WebCmsAssetViewProcessor() )
+		        )
 		        .listView( lvb -> lvb.viewProcessor( new WebCmsAssetListViewProcessor() ) );
 	}
 
@@ -93,6 +102,17 @@ class WebCmsAssetConfiguration implements EntityConfigurer
 			String name = entityConfiguration.getEntityMessageCodeResolver().getNameSingular();
 
 			return name + ": " + entityConfiguration.getLabel( asset );
+		}
+	}
+
+	static class WebCmsAssetViewProcessor extends EntityViewProcessorAdapter
+	{
+		@Override
+		protected void postRender( EntityViewRequest entityViewRequest,
+		                           EntityView entityView,
+		                           ContainerViewElement container,
+		                           ViewElementBuilderContext builderContext ) {
+			ContainerViewElementUtils.move( container, "formGroup-sortIndex", "publish-settings" );
 		}
 	}
 }
