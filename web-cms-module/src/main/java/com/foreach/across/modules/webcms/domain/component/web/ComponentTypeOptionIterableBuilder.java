@@ -21,6 +21,7 @@ import com.foreach.across.modules.bootstrapui.elements.builder.OptionFormElement
 import com.foreach.across.modules.entity.views.bootstrapui.options.OptionIterableBuilder;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsAllowedComponentTypeFetcher;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
@@ -39,12 +40,13 @@ import java.util.stream.Collectors;
 /**
  * Builds the {@link WebCmsComponentType} options for a {@link WebCmsObject}.
  *
- * @see WebCmsAllowedComponentTypeFetcher
  * @author Steven Gentens
+ * @see WebCmsAllowedComponentTypeFetcher
  * @since 0.0.3
  */
 @RequiredArgsConstructor
 @Component
+@ConditionalOnAdminUI
 public class ComponentTypeOptionIterableBuilder implements OptionIterableBuilder
 {
 	private final WebCmsComponentRepository componentRepository;
