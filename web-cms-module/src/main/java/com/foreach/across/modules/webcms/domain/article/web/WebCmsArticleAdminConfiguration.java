@@ -80,7 +80,6 @@ public class WebCmsArticleAdminConfiguration
 					        .property( "title" ).viewElementType( ViewElementMode.CONTROL, TextareaFormElement.ELEMENT_TYPE ).and()
 					        .property( "subTitle" ).viewElementType( ViewElementMode.CONTROL, TextareaFormElement.ELEMENT_TYPE ).and()
 					        .property( "description" ).viewElementType( ViewElementMode.CONTROL, TextareaFormElement.ELEMENT_TYPE ).and()
-					        .property( "articleType" ).attribute( OptionIterableBuilder.class, articleTypeForPublicationIterableBuilder ).and()
 					        .property( "publication" ).attribute( EntityAttributes.OPTIONS_ENTITY_QUERY, "published = TRUE" )
 			        )
 			        .listView(
@@ -89,6 +88,10 @@ public class WebCmsArticleAdminConfiguration
 					                  .entityQueryPredicate( "publication.published = true" )
 					                  .viewProcessor( new WebCmsArticleListViewProcessor() )
 			        )
+			        .createOrUpdateFormView(
+					        fvb -> fvb.properties(
+							        props -> props.property( "articleType" ).attribute( OptionIterableBuilder.class, articleTypeForPublicationIterableBuilder )
+					        ) )
 			        .createFormView(
 					        fvb -> fvb.showProperties( ".", "~subTitle", "~publish-settings" )
 					                  .viewProcessor( createFormProcessor )
