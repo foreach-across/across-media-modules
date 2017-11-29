@@ -371,7 +371,9 @@ class WebCmsDomainConfiguration
 				if ( viewFactory != null && viewFactory instanceof DispatchingEntityViewFactory ) {
 					EntityViewProcessorRegistry processors = ( (DispatchingEntityViewFactory) viewFactory ).getProcessorRegistry();
 					processors.getProcessor( EntityQueryFilterProcessor.class.getName(), EntityQueryFilterProcessor.class )
-					          .ifPresent( pp -> pp.setBaseEqlPredicate( condition.toString() ) );
+					          .ifPresent( pp -> pp.setFilterConfiguration(
+							          pp.getFilterConfiguration().toBuilder().basePredicate( condition.toString() ).build()
+					          ) );
 					processors.getProcessor( DefaultEntityFetchingViewProcessor.class.getName(), DefaultEntityFetchingViewProcessor.class )
 					          .ifPresent( pp -> pp.setBaseEqlPredicate( condition.toString() ) );
 				}
