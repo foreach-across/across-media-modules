@@ -21,7 +21,7 @@
 	<parent>
 		<artifactId>web-cms-module-project</artifactId>
 		<groupId>com.foreach.across.modules</groupId>
-		<version>0.0.2.RELEASE</version>
+		<version>0.0.3.RELEASE</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>web-cms-module</artifactId>
-			<version>0.0.2.RELEASE</version>
+			<version>0.0.3.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
@@ -88,6 +88,16 @@
 		<dependency>
 			<groupId>com.cloudinary</groupId>
 			<artifactId>cloudinary-http44</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>net.sf.ehcache</groupId>
+					<artifactId>ehcache-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 

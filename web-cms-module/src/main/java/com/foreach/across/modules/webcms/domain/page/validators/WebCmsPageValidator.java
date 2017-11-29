@@ -32,7 +32,7 @@ import org.springframework.validation.Errors;
  * @since 0.0.1
  */
 @Component
-class WebCmsPageValidator extends EntityValidatorSupport<WebCmsPage>
+public class WebCmsPageValidator extends EntityValidatorSupport<WebCmsPage>
 {
 	private WebCmsPageService pageService;
 	private WebCmsPageRepository pageRepository;
@@ -50,7 +50,7 @@ class WebCmsPageValidator extends EntityValidatorSupport<WebCmsPage>
 	@Override
 	protected void postValidation( WebCmsPage page, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "canonicalPath" ) ) {
-			WebCmsPage other = pageRepository.findOneByCanonicalPath( page.getCanonicalPath() );
+			WebCmsPage other = pageRepository.findOneByCanonicalPathAndDomain( page.getCanonicalPath(), page.getDomain() );
 			if ( other != null && !other.equals( page ) ) {
 				errors.rejectValue( "canonicalPath", "alreadyExists" );
 			}

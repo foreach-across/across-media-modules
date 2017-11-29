@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,9 +61,19 @@ public class WebCmsComponentModelSet
 
 	private final Map<String, WebCmsComponentModel> componentsByName = new HashMap<>();
 
+	/**
+	 * The owner for the components in this set.
+	 */
 	@Getter
 	@Setter
 	private WebCmsObject owner;
+
+	/**
+	 * The domain that components in this set are expected to be attached to.
+	 */
+	@Getter
+	@Setter
+	private WebCmsDomain domain;
 
 	/**
 	 * Function to be used to fetch a component by name if it is not found.
@@ -71,10 +82,6 @@ public class WebCmsComponentModelSet
 	@Setter
 	private BiFunction<WebCmsObject, String, WebCmsComponentModel> fetcherFunction;
 
-	public WebCmsComponentModelSet( WebCmsObject owner ) {
-		this.owner = owner;
-	}
-
 	/**
 	 * Add a component to the ordered list.
 	 * If another component with that name exists, it will be replaced by name but will still be added to the ordered collection.
@@ -82,7 +89,7 @@ public class WebCmsComponentModelSet
 	 * @param componentModel to add
 	 */
 	public void add( WebCmsComponentModel componentModel ) {
-		Assert.notNull( componentModel );
+		Assert.notNull( componentModel, "componentModel is required" );
 		Assert.notNull( componentModel.getName(), "Only component models with a name are allowed in a WebCmsComponentModelSet" );
 		put( componentModel.getName(), componentModel );
 	}

@@ -17,6 +17,10 @@
 package it.reference;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetLink;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetLinkRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
@@ -26,6 +30,8 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -41,9 +47,24 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 	@Autowired
 	private WebCmsEndpointService endpointService;
 
+	@Autowired
+	private WebCmsDomainRepository domainRepository;
+
+	@Autowired
+	private WebCmsAssetLinkRepository assetLinkRepository;
+
+	@Test
+	public void pageWithAssetLinksShouldHaveBeenImported() {
+		List<WebCmsAssetLink> assetLinks = assetLinkRepository.findAllByOwnerObjectId( "wcm:asset:page:page-with-asset-links" );
+		assertEquals( 2, assetLinks.size() );
+		assertEquals( 2, assetLinks.stream().filter( assetLink -> "related-page".equals( assetLink.getLinkType() ) ).count() );
+		assertEquals( "wcm:asset:page:reference-freq-domains", assetLinks.get( 0 ).getAsset().getObjectId() );
+		assertEquals( "wcm:asset:page:reference-common-domains", assetLinks.get( 1 ).getAsset().getObjectId() );
+	}
+
 	@Test
 	public void alwaysCreatedPageShouldBeCreatedWithBothObjectIdAndCanonicalPathGenerated() {
-		val page = pageRepository.findOneByCanonicalPath( "/always-created-page" );
+		val page = pageRepository.findOneByCanonicalPathAndDomain( "/always-created-page", WebCmsDomain.NONE );
 		assertNotNull( page );
 		assertNull( page.getParent() );
 		assertEquals( "Always Created Page", page.getTitle() );
@@ -121,7 +142,7 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void extensionPageShouldBeCreatedWithKeyAsCanonicalPath() {
-		val page = pageRepository.findOneByCanonicalPath( "/extension/one" );
+		val page = pageRepository.findOneByCanonicalPathAndDomain( "/extension/one", WebCmsDomain.NONE );
 		assertNotNull( page );
 		assertNull( page.getParent() );
 		assertEquals( "Extension Page One", page.getTitle() );
@@ -136,19 +157,19 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void updateForNonExistingPageShouldBeIgnored() {
-		assertNull( pageRepository.findOneByCanonicalPath( "/extension/two" ) );
+		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/two", WebCmsDomain.NONE ) );
 	}
 
 	@Test
 	public void existingPageShouldBeDeleted() {
-		assertNull( pageRepository.findOneByCanonicalPath( "/extension/deleteme" ) );
+		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/deleteme", WebCmsDomain.NONE ) );
 	}
 
 	@Test
 	public void existingPageShouldBeUpdatedUsingTheCanonicalPathAsKeyLookup() throws Exception {
-		assertNull( pageRepository.findOneByCanonicalPath( "/extension/updateme1" ) );
+		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/updateme1", WebCmsDomain.NONE ) );
 
-		val page = pageRepository.findOneByCanonicalPath( "/extension/updated1" );
+		val page = pageRepository.findOneByCanonicalPathAndDomain( "/extension/updated1", WebCmsDomain.NONE );
 		assertNotNull( page );
 		assertEquals( "Extension Updated 1", page.getTitle() );
 		assertNull( page.getParent() );
@@ -182,5 +203,26 @@ public class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 		assertEquals( path, url.getPath() );
 		assertTrue( url.isPrimary() );
 		assertEquals( HttpStatus.OK, url.getHttpStatus() );
+	}
+
+	@Test
+	public void frequentlyUsedDomainsPageShouldHaveBeenImported() {
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-freq-domains" );
+		assertNotNull( page );
+		assertEquals( domainRepository.findOneByObjectId( "wcm:domain:simple-domain" ), page.getDomain() );
+	}
+
+	@Test
+	public void generalDomainsPageShouldHaveBeenImported() {
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-gen-domains" );
+		assertNotNull( page );
+		assertEquals( domainRepository.findOneByDomainKey( "domain.complex.domain" ), page.getDomain() );
+	}
+
+	@Test
+	public void commonDomainsPageShouldHaveBeenImportedAndExtended() {
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-common-domains" );
+		assertNotNull( page );
+		assertNull( page.getDomain() );
 	}
 }

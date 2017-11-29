@@ -7,3 +7,6 @@ webCmsModule:
     cloudinary:
       # Actual Cloudinary credentials should be added to the local application config: ${user.home}/dev-configs/wcm-test-application.yml
       enabled: true
+      # Configure additional settings to be passed
+      settings:
+        secure: true

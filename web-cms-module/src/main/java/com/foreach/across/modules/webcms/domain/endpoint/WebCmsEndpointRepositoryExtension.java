@@ -16,8 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint;
 
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-
 /**
  * @author Arne Vandamme
  * @since 0.0.2

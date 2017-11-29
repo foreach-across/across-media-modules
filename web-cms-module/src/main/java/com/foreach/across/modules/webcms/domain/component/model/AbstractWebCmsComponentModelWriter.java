@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.modules.webcms.data.json.WebCmsDataObjectMapper;
+import com.foreach.across.modules.webcms.domain.component.QWebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public abstract class AbstractWebCmsComponentModelWriter<T extends WebCmsCompone
 	 */
 	private void removeOwnedComponents( T componentModel ) {
 		if ( !componentModel.isNew() ) {
-			componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( componentModel.getObjectId() )
+			componentRepository.findAll( QWebCmsComponent.webCmsComponent.ownerObjectId.eq( componentModel.getObjectId() ) )
 			                   .forEach( componentRepository::delete );
 		}
 	}

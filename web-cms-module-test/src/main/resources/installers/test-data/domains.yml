@@ -1,0 +1,19 @@
+domains:
+  foreach.be:
+    name: foreach.be
+    description: Main Foreach website.
+    active: true
+    attributes:
+      hostNames:
+        - "domain-foreach.be:8080"
+      urlPrefix: "http://domain-foreach.be:8080/"
+      alwaysPrefix: true
+  across.foreach.be:
+    name: across.foreach.be
+    description: Across website.
+    active: true
+    attributes:
+      hostNames:
+        - "domain-across-foreach.be:8080"
+      urlPrefix: "http://domain-across-foreach.be:8080"
+      alwaysPrefix: true

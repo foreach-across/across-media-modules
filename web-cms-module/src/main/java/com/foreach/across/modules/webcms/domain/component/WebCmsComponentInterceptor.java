@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-@Deprecated
 @Component
 @RequiredArgsConstructor
 class WebCmsComponentInterceptor extends EntityInterceptorAdapter<WebCmsComponent>

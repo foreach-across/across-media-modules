@@ -19,8 +19,10 @@ package com.foreach.across.modules.webcms.domain.asset;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -48,6 +50,7 @@ import static com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSu
 @DiscriminatorColumn(name = DISCRIMINATOR_COLUMN, discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObjectInheritanceSuperClass<T>
 {
 	@Id
@@ -76,6 +79,9 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date publicationDate;
 
+	@Column(name = "sort_index")
+	private int sortIndex = 1000;
+
 	public WebCmsAsset() {
 		super();
 	}
@@ -87,11 +93,14 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	                       Date createdDate,
 	                       String lastModifiedBy,
 	                       Date lastModifiedDate,
+	                       WebCmsDomain domain,
 	                       boolean published,
-	                       Date publicationDate ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+	                       Date publicationDate,
+	                       int sortIndex ) {
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain );
 		setPublished( published );
 		setPublicationDate( publicationDate );
+		setSortIndex( sortIndex );
 	}
 
 	@Override

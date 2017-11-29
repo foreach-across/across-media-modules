@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 
 /**
  * @author Arne Vandamme
@@ -26,5 +27,5 @@ import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
 @Exposed
 public interface WebCmsTypeSpecifierRepository extends WebCmsObjectEntityRepository<WebCmsTypeSpecifier<?>>
 {
-	WebCmsTypeSpecifier<?> findOneByObjectTypeAndTypeKey( String objectType, String typeKey );
+	WebCmsTypeSpecifier<?> findOneByObjectTypeAndTypeKeyAndDomain( String objectType, String typeKey, WebCmsDomain domain );
 }

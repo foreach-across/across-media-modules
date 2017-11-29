@@ -19,9 +19,9 @@ package com.foreach.across.modules.webcms.domain.menu.web;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.webcms.WebCmsModuleCache;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuCache;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
-import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItemRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
+import com.foreach.across.modules.webcms.domain.menu.*;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.junit.Before;
@@ -50,36 +50,64 @@ public class TestWebCmsMenuCache
 	private WebCmsMenuItemRepository itemRepository;
 
 	@Mock
+	private WebCmsMenuService menuService;
+
+	@Mock
 	private CacheManager cacheManager;
+
+	@Mock
+	private WebCmsMultiDomainService multiDomainService;
 
 	private ConcurrentMapCache cache = new ConcurrentMapCache( "" );
 
 	@InjectMocks
 	private WebCmsMenuCache menuCache;
 
+	private WebCmsMenu myMenu = WebCmsMenu.builder().id( 123L ).build();
+
 	@Before
 	public void setUp() throws Exception {
 		when( cacheManager.getCache( WebCmsModuleCache.MENU ) ).thenReturn( cache );
 		menuCache.reloadCache();
+
+		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( myMenu );
 	}
 
 	@Test
-	public void noItems() {
-		when( itemRepository.findAllByMenuName( "myMenu" ) ).thenReturn( Collections.emptyList() );
-		assertNull( cache.get( "myMenu" ) );
+	public void noSuchMenu() {
+		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( null );
+		assertNull( cache.get( "0:myMenu" ) );
 
 		assertEquals( Collections.emptyList(), menuCache.getMenuItems( "myMenu" ) );
 
-		assertEquals( Collections.emptyList(), cache.get( "myMenu", Collection.class ) );
+		assertEquals( Collections.emptyList(), cache.get( "0:myMenu", Collection.class ) );
 		assertEquals( Collections.emptyList(), menuCache.getMenuItems( "myMenu" ) );
 
-		verify( itemRepository, times( 1 ) ).findAllByMenuName( "myMenu" );
+		verify( itemRepository, never() ).findAllByMenu( any() );
 	}
 
 	@Test
-	public void singleNonGroupItem() {
+	public void noItemsOnMenu() {
+		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Collections.emptyList() );
+		assertNull( cache.get( "0:myMenu" ) );
+
+		assertEquals( Collections.emptyList(), menuCache.getMenuItems( "myMenu" ) );
+
+		assertEquals( Collections.emptyList(), cache.get( "0:myMenu", Collection.class ) );
+		assertEquals( Collections.emptyList(), menuCache.getMenuItems( "myMenu" ) );
+
+		verify( itemRepository, times( 1 ) ).findAllByMenu( myMenu );
+	}
+
+	@Test
+	public void domainSpecificCaching() {
+		WebCmsDomain domain = WebCmsDomain.builder().id( 123L ).build();
+		when( multiDomainService.getCurrentDomainForType( WebCmsMenu.class ) ).thenReturn( domain );
+		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( null );
+		when( menuService.getMenuByName( "myMenu", domain ) ).thenReturn( myMenu );
+
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).url( "item url" ).sortIndex( 2 ).build();
-		when( itemRepository.findAllByMenuName( "myMenu" ) ).thenReturn( Collections.singletonList( item ) );
+		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Collections.singletonList( item ) );
 
 		Menu expected = new Menu( "/test", "item title" );
 		expected.setOrder( 2 );
@@ -90,14 +118,31 @@ public class TestWebCmsMenuCache
 		assertEquals( 1, actual.size() );
 		assertMenu( expected, actual.get( 0 ) );
 
-		assertEquals( actual, cache.get( "myMenu", Collection.class ) );
+		assertEquals( actual, cache.get( "123:myMenu", Collection.class ) );
+	}
+
+	@Test
+	public void singleNonGroupItem() {
+		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).url( "item url" ).sortIndex( 2 ).build();
+		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Collections.singletonList( item ) );
+
+		Menu expected = new Menu( "/test", "item title" );
+		expected.setOrder( 2 );
+		expected.setUrl( "item url" );
+		expected.setGroup( false );
+
+		List<Menu> actual = new ArrayList<>( menuCache.getMenuItems( "myMenu" ) );
+		assertEquals( 1, actual.size() );
+		assertMenu( expected, actual.get( 0 ) );
+
+		assertEquals( actual, cache.get( "0:myMenu", Collection.class ) );
 	}
 
 	@Test
 	public void itemAndGroupItem() {
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).url( "item url" ).sortIndex( 2 ).build();
 		WebCmsMenuItem group = WebCmsMenuItem.builder().path( "/group" ).title( "group title" ).group( true ).sortIndex( 1 ).build();
-		when( itemRepository.findAllByMenuName( "myMenu" ) ).thenReturn( Arrays.asList( item, group ) );
+		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Arrays.asList( item, group ) );
 
 		Menu expectedItem = new Menu( "/test", "item title" );
 		expectedItem.setOrder( 2 );
@@ -123,7 +168,7 @@ public class TestWebCmsMenuCache
 
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).endpoint( endpoint ).build();
 
-		when( itemRepository.findAllByMenuName( "myMenu" ) ).thenReturn( Collections.singletonList( item ) );
+		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Collections.singletonList( item ) );
 
 		Menu expected = new Menu( "/test", "item title" );
 		expected.setOrder( 0 );
@@ -144,7 +189,7 @@ public class TestWebCmsMenuCache
 
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).endpoint( endpoint ).build();
 
-		when( itemRepository.findAllByMenuName( "myMenu" ) ).thenReturn( Collections.singletonList( item ) );
+		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Collections.singletonList( item ) );
 
 		Menu expected = new Menu( "/test", "item title" );
 		expected.setOrder( 0 );
@@ -166,7 +211,7 @@ public class TestWebCmsMenuCache
 
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).url( "item url" ).endpoint( endpoint ).build();
 
-		when( itemRepository.findAllByMenuName( "myMenu" ) ).thenReturn( Collections.singletonList( item ) );
+		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Collections.singletonList( item ) );
 
 		Menu expected = new Menu( "/test", "item title" );
 		expected.setOrder( 0 );

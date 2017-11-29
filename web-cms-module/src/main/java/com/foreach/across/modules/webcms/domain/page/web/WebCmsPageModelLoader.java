@@ -63,7 +63,7 @@ public class WebCmsPageModelLoader extends AbstractWebCmsAssetModelLoader<WebCms
 		model.addAttribute( ASSET_MODEL_ATTRIBUTE, page );
 		model.addAttribute( page.getObjectType(), page );
 
-		registerAssetComponentsForScope( page, page.getObjectType() );
+		registerAssetComponentsForScope( page, page.getObjectType(), true );
 
 		registerDefaultTemplate( request, page );
 

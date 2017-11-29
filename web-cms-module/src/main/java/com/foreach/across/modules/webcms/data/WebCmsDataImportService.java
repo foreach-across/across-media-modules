@@ -36,6 +36,18 @@ public interface WebCmsDataImportService
 	void importData( Map<String, Object> data );
 
 	/**
+	 * Import a collection of data.  The data is expected to be represented as a map containing other maps.
+	 * The initial keys in the data map should be the root types.
+	 * <p/>
+	 * This method takes an optional identifier for the data set being imported.
+	 * The identifier usually references something like the original file that contains the import data.
+	 *
+	 * @param data       containing everything that should be imported
+	 * @param identifier an optional identifier for the data being imported - useful for logging purposes
+	 */
+	void importData( Map<String, Object> data, String identifier );
+
+	/**
 	 * Import a data entry.  All registered {@link WebCmsDataImporter} beans will be checked to see if
 	 * they support the given data set.
 	 *

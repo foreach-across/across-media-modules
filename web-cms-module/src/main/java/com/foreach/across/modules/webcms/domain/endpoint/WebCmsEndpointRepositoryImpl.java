@@ -32,6 +32,7 @@ class WebCmsEndpointRepositoryImpl implements WebCmsEndpointRepositoryExtension
 	@Override
 	public void refresh( WebCmsEndpoint endpoint ) {
 		if ( entityManager.contains( endpoint ) ) {
+			entityManager.flush();
 			entityManager.refresh( endpoint );
 		}
 	}

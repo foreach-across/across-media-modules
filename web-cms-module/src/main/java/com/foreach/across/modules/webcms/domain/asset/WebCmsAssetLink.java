@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.asset;
 
 import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,15 +37,12 @@ import java.util.Date;
  * @since 0.0.1
  */
 @NotThreadSafe
-@MappedSuperclass
+@Entity
 @Table(name = "wcm_object_asset_link")
 @Access(AccessType.FIELD)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "discriminator", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-public abstract class WebCmsAssetLink<T extends WebCmsAssetLink<T, U>, U extends WebCmsAsset<U>>
-		extends SettableIdAuditableEntity<T>
+public class WebCmsAssetLink extends SettableIdAuditableEntity<WebCmsAssetLink>
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_object_asset_link_id")
@@ -72,7 +70,7 @@ public abstract class WebCmsAssetLink<T extends WebCmsAssetLink<T, U>, U extends
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "asset_id")
-	private U asset;
+	private WebCmsAsset asset;
 
 	/**
 	 * Optional type descriptor for the link.
@@ -97,7 +95,7 @@ public abstract class WebCmsAssetLink<T extends WebCmsAssetLink<T, U>, U extends
 	                           Date createdDate,
 	                           String lastModifiedBy,
 	                           Date lastModifiedDate,
-	                           U asset,
+	                           WebCmsAsset asset,
 	                           String linkType,
 	                           int sortIndex ) {
 		setId( id );
@@ -109,6 +107,17 @@ public abstract class WebCmsAssetLink<T extends WebCmsAssetLink<T, U>, U extends
 		setAsset( asset );
 		setLinkType( linkType );
 		setSortIndex( sortIndex );
+	}
+
+	public void setOwner( WebCmsObject owner ) {
+		setOwnerObjectId( owner != null ? owner.getObjectId() : null );
+	}
+
+	/**
+	 * @return type coerced version
+	 */
+	public <U extends WebCmsAsset<U>> U getAsset( Class<U> assetType ) {
+		return assetType.cast( getAsset() );
 	}
 
 	@Override

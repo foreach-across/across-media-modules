@@ -16,21 +16,36 @@
 
 package com.foreach.across.modules.webcms.data;
 
+import lombok.Getter;
+
+import java.util.Objects;
+
 /**
+ * Exception thrown when importing a data entry.
+ *
  * @author Arne Vandamme
  * @since 0.0.2
  */
 public final class WebCmsDataImportException extends RuntimeException
 {
-	public WebCmsDataImportException( String message ) {
-		super( message );
+	/**
+	 * The data entry that was being imported when the exception occurred.
+	 */
+	@Getter
+	private final WebCmsDataEntry dataEntry;
+
+	public WebCmsDataImportException( WebCmsDataEntry data ) {
+		super( "Failed to import data: " );
+		this.dataEntry = data;
 	}
 
-	public WebCmsDataImportException( Throwable cause ) {
-		super( cause );
+	public WebCmsDataImportException( WebCmsDataEntry data, Throwable cause ) {
+		super( "Failed to import data: ", cause );
+		this.dataEntry = data;
 	}
 
-	public WebCmsDataImportException( String message, Throwable cause ) {
-		super( message, cause );
+	@Override
+	public String getMessage() {
+		return super.getMessage() + Objects.toString( dataEntry );
 	}
 }

@@ -9,7 +9,9 @@
 <div id="found-in-page" wcm:component="custom">Replaced with content found in page.</div>
 <div id="found-in-global" wcm:component="footer">Replaced with content found in global.</div>
 <div id="shadowing-global" wcm:component="content">Found in both page and global but using page value.</div>
+<div id="using-asset" wcm:component="custom" wcm:scope="asset">Replaced with content found in page - but using asset alias scope.</div>
 <div id="using-global" wcm:component="content" wcm:scope="global">Using version from global instead of page.</div>
+<div id="using-domain" wcm:component="content" wcm:scope="domain">Using version from global instead of page - but using domain alias scope.</div>
 <div id="not-found-in-scope" wcm:component="footer" wcm:search-parent-scopes="false">Not found in scope and not searching parents.</div>
 <div id="not-found-in-scope-specified" wcm:component="footer" wcm:scope="page">Not found in scope specified and not searching parents.</div>
 <div id="found-by-search" wcm:component="footer" wcm:scope="page" wcm:search-parent-scopes>Not found in scope specified but searching parents.</div>

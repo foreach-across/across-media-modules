@@ -29,6 +29,7 @@ import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.webcms.WebCmsEntityAttributes;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
@@ -55,6 +56,7 @@ class WebCmsMenuConfiguration implements EntityConfigurer
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsMenuItem.class )
+		        .attribute( WebCmsEntityAttributes.DOMAIN_PROPERTY, "menu.domain" )
 		        .properties(
 				        props -> props.property( "url" ).attribute( TextboxFormElement.Type.class, TextboxFormElement.Type.TEXT ).and()
 				                      .property( "endpoint" )

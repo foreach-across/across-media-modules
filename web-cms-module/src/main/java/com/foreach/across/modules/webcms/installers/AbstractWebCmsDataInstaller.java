@@ -89,7 +89,7 @@ public abstract class AbstractWebCmsDataInstaller
 					try {
 						LOG.info( "Importing YAML data from: " + resource );
 						Map<String, Object> data = (Map<String, Object>) yaml.load( resource.getInputStream() );
-						dataImportService.importData( data );
+						dataImportService.importData( data, resource.toString() );
 						LOG.info( "Finished importing YAML data from: " + resource );
 					}
 					catch ( IOException ioe ) {

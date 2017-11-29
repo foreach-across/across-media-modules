@@ -1,0 +1,60 @@
+#
+# Defines publications used by different tests.
+#
+assets:
+  #
+  # Template page for the fact publications
+  #
+  page:
+    - objectId: "wcm:asset:page:fact"
+      title: Fact detail template
+      canonicalPath: /facts/*
+      pageType: template
+    - objectId: "wcm:asset:page:fact-be"
+      title: Fact detail template
+      canonicalPath: /facts/*
+      pageType: template
+      domain: be-foreach
+    - objectId: "wcm:asset:page:fact-nl"
+      title: Fact detail template
+      canonicalPath: /facts/*
+      pageType: template
+      domain: nl-foreach
+    - objectId: "wcm:asset:page:fact-de"
+      title: Fact detail template
+      canonicalPath: /facts/*
+      pageType: template
+      domain: de-foreach
+
+  #
+  # Custom publications: Music, Movies
+  #
+  publication:
+    - objectId: "wcm:asset:publication:music-nl"
+      publicationKey: music
+      name: To be deleted
+      publicationType:
+        typeKey: "nl-foreach:weird-facts"
+        domain: nl-foreach
+      published: true
+      domain: nl-foreach
+
+    - objectId: "wcm:asset:publication:music-de"
+      publicationKey: music
+      name: Music (DE)
+      publicationType:
+        typeKey: "de-foreach:weird-facts"
+        domain: de-foreach
+      articleTemplatePage: /facts/* # Page with key /facts/* and domain null will be searched for because no domain scope has been specified.
+      published: false
+      domain: de-foreach
+
+    - objectId: "wcm:asset:publication:music-be"
+      publicationKey: music
+      publicationType:
+        typeKey: "be-foreach:weird-facts"
+        domain: be-foreach
+      name: Music
+      articleTemplatePage: "wcm:asset:page:fact-be"
+      published: true
+      domain: be-foreach

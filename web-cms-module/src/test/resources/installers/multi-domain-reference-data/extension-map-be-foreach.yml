@@ -1,0 +1,26 @@
+assets:
+  page:
+    /my-other-page:
+      wcm:action: delete
+      domain: be-foreach
+    /domain-mapped-page:
+      title: Domain mapped page BE
+      published: true
+      domain: be-foreach
+
+  publication:
+    music:
+      name: Music (BE)
+      domain: be-foreach
+    movies:
+      wcm:action: delete
+      domain: be-foreach
+
+  article:
+    - objectId: "wcm:asset:article:devtalks-be"
+      title: DevTalks Maart (BE)
+
+  component:
+    be-teaser:
+      wcm:action: delete
+      domain: be-foreach

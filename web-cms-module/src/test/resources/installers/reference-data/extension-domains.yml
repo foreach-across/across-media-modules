@@ -1,0 +1,27 @@
+#
+# Extends previously defined data items
+#
+# See: ITDomainsReferenceData
+domains:
+  # update name of the simple.domain
+  - domainKey: simple.domain
+    name: Name of simple.domain should have been replaced
+
+  # update active
+  - domainKey: domain.complex.domain
+    active: true
+
+  # update attributes and description
+  - domainKey: domain.cookies
+    name: Cookies
+    description: Where cookies live
+    attributes:
+      cookies: 999
+
+  # replace the key of the domain.with-id
+  -  domainKey: domain.domain_with_id
+     objectId: "wcm:domain:domain-with-id"
+
+  # remove the deleteMeDomain
+  - domainKey: deleteMeDomain
+    wcm:action: delete

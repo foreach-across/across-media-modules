@@ -47,6 +47,7 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentUtils;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -60,6 +61,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * This processor is a work in progress.
+ *
  * @author Arne Vandamme
  * @since 0.0.2
  */
@@ -84,7 +87,7 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 
 		if ( parent != null ) {
 			entityView.addAttribute( AbstractEntityFetchingViewProcessor.DEFAULT_ATTRIBUTE_NAME,
-			                         componentRepository.findAllByOwnerObjectIdOrderBySortIndexAsc( parent ) );
+			                         componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( parent, WebCmsDomain.NONE ) );
 		}
 		else {
 			entityView.addAttribute( AbstractEntityFetchingViewProcessor.DEFAULT_ATTRIBUTE_NAME, Collections.emptyList() );

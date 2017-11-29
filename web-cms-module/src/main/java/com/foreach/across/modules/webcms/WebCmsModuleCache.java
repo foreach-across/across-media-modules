@@ -27,4 +27,9 @@ public interface WebCmsModuleCache
 	String PATH_TO_URL_ID = "WebCmsUrlCache";
 
 	String MENU = "WebCmsMenuCache";
+
+	/**
+	 * Cache for domains and domain metadata.
+	 */
+	String DOMAIN = "WebCmsDomainCache";
 }

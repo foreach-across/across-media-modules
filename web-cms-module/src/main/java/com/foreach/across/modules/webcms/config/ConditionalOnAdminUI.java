@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.config;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.entity.EntityModule;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 
 import java.lang.annotation.*;
 
@@ -31,6 +32,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @AcrossDepends(required = { AdminWebModule.NAME, EntityModule.NAME })
+@ConditionalOnClass(name = "com.foreach.across.modules.entity.config.EntityConfigurer")
 @Inherited
 public @interface ConditionalOnAdminUI
 {

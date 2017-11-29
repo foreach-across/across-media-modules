@@ -35,4 +35,6 @@
 	       timeToLiveSeconds="259200"
 	       maxElementsInMemory="1000"/>
 
+	<cache name="WebCmsDomainCache" timeToLiveSeconds="86400" timeToIdleSeconds="86400" maxElementsInMemory="100" />
+
 </ehcache>

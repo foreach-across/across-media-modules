@@ -26,8 +26,12 @@ import com.foreach.across.modules.entity.views.processors.DefaultValidationViewP
 import com.foreach.across.modules.entity.views.processors.PropertyRenderingViewProcessor;
 import com.foreach.across.modules.entity.views.processors.SaveEntityViewProcessor;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
+import com.foreach.across.modules.webcms.domain.asset.QWebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainAdminUiService;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
+import com.foreach.across.modules.webcms.domain.url.QWebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import com.foreach.across.modules.webcms.domain.url.web.WebCmsAssetPrimaryUrlFailedFormProcessor;
@@ -142,14 +146,15 @@ public class WebCmsAssetUrlConfiguration
 
 	@ConditionalOnAdminUI
 	@Bean
-	EntityFactory<WebCmsUrl> webCmsUrlEntityFactory( WebCmsAssetEndpointRepository endpointRepository ) {
+	EntityFactory<WebCmsUrl> webCmsUrlEntityFactory( WebCmsAssetEndpointRepository endpointRepository, WebCmsMultiDomainService multiDomainService ) {
 		return new EntityFactory<WebCmsUrl>()
 		{
 			@Override
 			public WebCmsUrl createNew( Object... args ) {
 				WebCmsUrl url = new WebCmsUrl();
 				if ( args[0] instanceof WebCmsAsset ) {
-					url.setEndpoint( endpointRepository.findOneByAsset( (WebCmsAsset) args[0] ) );
+					WebCmsAsset asset = (WebCmsAsset) args[0];
+					url.setEndpoint( endpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) ) );
 				}
 
 				return url;
@@ -162,22 +167,32 @@ public class WebCmsAssetUrlConfiguration
 		};
 	}
 
+	@SuppressWarnings("unchecked")
 	@ConditionalOnAdminUI
 	@Bean
 	AssociatedEntityQueryExecutor<WebCmsUrl> webCmsUrlExecutorForPage( WebCmsAssetEndpointRepository pageEndpointRepository,
-	                                                                   WebCmsUrlRepository urlRepository ) {
+	                                                                   WebCmsUrlRepository urlRepository,
+	                                                                   WebCmsMultiDomainAdminUiService multiDomainAdminUiService ) {
 		return new AssociatedEntityQueryExecutor<WebCmsUrl>( null, null )
 		{
 			@Override
 			public List<WebCmsUrl> findAll( Object parent, EntityQuery query ) {
-				val endpoint = pageEndpointRepository.findOneByAsset( (WebCmsAsset) parent );
-				return urlRepository.findAllByEndpoint( endpoint );
+				QWebCmsAssetEndpoint q = QWebCmsAssetEndpoint.webCmsAssetEndpoint;
+				val endpoints = pageEndpointRepository.findAll(
+						multiDomainAdminUiService.applyVisibleDomainsPredicate( q.asset.eq( (WebCmsAsset) parent ), q.domain )
+				);
+
+				return urlRepository.findAll( QWebCmsUrl.webCmsUrl.endpoint.in( endpoints ) );
 			}
 
 			@Override
 			public Page<WebCmsUrl> findAll( Object parent, EntityQuery query, Pageable pageable ) {
-				val endpoint = pageEndpointRepository.findOneByAsset( (WebCmsAsset) parent );
-				return urlRepository.findAllByEndpoint( endpoint, pageable );
+				QWebCmsAssetEndpoint q = QWebCmsAssetEndpoint.webCmsAssetEndpoint;
+				val endpoints = pageEndpointRepository.findAll(
+						multiDomainAdminUiService.applyVisibleDomainsPredicate( q.asset.eq( (WebCmsAsset) parent ), q.domain )
+				);
+
+				return urlRepository.findAll( QWebCmsUrl.webCmsUrl.endpoint.in( endpoints ), pageable );
 			}
 		};
 	}

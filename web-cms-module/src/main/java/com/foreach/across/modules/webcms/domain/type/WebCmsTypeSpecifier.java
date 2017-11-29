@@ -17,12 +17,15 @@
 package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.across.modules.webcms.domain.WebCmsChildComponentRestrictable;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
-import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SortNatural;
@@ -49,13 +52,15 @@ import static com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSu
  */
 @NotThreadSafe
 @Entity
+@NoArgsConstructor
 @Table(name = "wcm_type")
 @Access(AccessType.FIELD)
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = DISCRIMINATOR_COLUMN, discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> extends WebCmsObjectInheritanceSuperClass<T>
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> extends WebCmsObjectInheritanceSuperClass<T> implements WebCmsChildComponentRestrictable
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_type_id")
@@ -78,13 +83,23 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	private String name;
 
 	/**
-	 * Key of the type, should be unique within the object type.
+	 * Key of the type, should be unique within the object type and domain.
+	 * If the specified {@link WebCmsTypeSpecifier} is not {@link com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound}
+	 * then the key has to be unique.
 	 */
 	@Column(name = "type_key")
 	@NotBlank
 	@Length(max = 255)
 	@Pattern(regexp = "[^\\s]*")
 	private String typeKey;
+
+	/**
+	 * Description of the component type.
+	 */
+	@Column(name = "description")
+	@Length(max = 500)
+	private String description;
+
 	/**
 	 * Attributes of the type specifier, simple key values usually used for rendering.
 	 */
@@ -96,11 +111,6 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	@SortNatural
 	private SortedMap<String, String> attributes = new TreeMap<>();
 
-	public WebCmsTypeSpecifier() {
-		super();
-		setObjectId( null );
-	}
-
 	protected WebCmsTypeSpecifier( Long id,
 	                               Long newEntityId,
 	                               String objectId,
@@ -108,22 +118,16 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	                               Date createdDate,
 	                               String lastModifiedBy,
 	                               Date lastModifiedDate,
+	                               WebCmsDomain domain,
 	                               String name,
 	                               String typeKey,
+	                               String description,
 	                               Map<String, String> attributes ) {
-		super( id, newEntityId, null, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain );
 		this.name = name;
+		this.description = description;
 		this.attributes = new TreeMap<>( attributes );
-
-		setObjectId( objectId );
-		setTypeKey( typeKey );
-	}
-
-	public void setTypeKey( String typeKey ) {
 		this.typeKey = typeKey;
-		if ( getObjectId() == null && StringUtils.isNotEmpty( typeKey ) ) {
-			setObjectId( typeKey );
-		}
 	}
 
 	/**
@@ -153,6 +157,11 @@ public abstract class WebCmsTypeSpecifier<T extends WebCmsTypeSpecifier<T>> exte
 	 */
 	public boolean hasAttribute( String attributeKey ) {
 		return getAttributes().containsKey( attributeKey );
+	}
+
+	@Override
+	public boolean isChildComponentRestricted() {
+		return getBooleanAttribute( WebCmsChildComponentRestrictable.CHILD_COMPONENT_RESTRICTED, false );
 	}
 
 	@Override

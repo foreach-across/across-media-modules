@@ -17,11 +17,12 @@
 package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -41,6 +42,7 @@ import static com.foreach.across.modules.webcms.domain.publication.WebCmsPublica
  */
 @NotThreadSafe
 @Entity
+@NoArgsConstructor
 @DiscriminatorValue(OBJECT_TYPE)
 @Table(name = "wcm_publication")
 @Getter
@@ -66,12 +68,13 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	private String name;
 
 	/**
-	 * Unique key of the publication.
+	 * Unique key of the publication within it's domain.
+	 * If {@link WebCmsPublication}s are not {@link com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound} then the key has to be unique.
 	 * Do not confuse with {@link #getObjectId()} which is a globally unique key across all assets.
 	 */
 	@NotBlank
 	@Length(max = 255)
-	@Column(name = "publication_key", unique = true)
+	@Column(name = "publication_key")
 	@Pattern(regexp = "[^\\s]*")
 	private String publicationKey;
 
@@ -94,11 +97,6 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 
 	//private WebCmsTagCollection tagCollection;
 
-	public WebCmsPublication() {
-		super();
-		setObjectId( null );
-	}
-
 	@Builder(toBuilder = true)
 	protected WebCmsPublication( @Builder.ObtainVia(method = "getId") Long id,
 	                             @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
@@ -107,27 +105,19 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	                             @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                             @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                             @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                             @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                             @Builder.ObtainVia(method = "isPublished") boolean published,
 	                             @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
+	                             @Builder.ObtainVia(method = "getSortIndex") int sortIndex,
 	                             String name,
 	                             String publicationKey,
 	                             WebCmsPublicationType publicationType,
 	                             WebCmsPage articleTemplatePage ) {
-		super( id, newEntityId, null, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate, sortIndex );
 		this.name = name;
 		this.publicationKey = publicationKey;
 		this.publicationType = publicationType;
 		this.articleTemplatePage = articleTemplatePage;
-
-		setObjectId( objectId );
-		setPublicationKey( publicationKey );
-	}
-
-	public void setPublicationKey( String publicationKey ) {
-		this.publicationKey = publicationKey;
-		if ( getObjectId() == null && StringUtils.isNotEmpty( publicationKey ) ) {
-			setObjectId( publicationKey );
-		}
 	}
 
 	@Override
@@ -143,5 +133,10 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 	@Override
 	public WebCmsPublicationType getAssetType() {
 		return publicationType;
+	}
+
+	public static class WebCmsPublicationBuilder
+	{
+		private int sortIndex = 1000;
 	}
 }

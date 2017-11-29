@@ -47,7 +47,7 @@ public class TestWebCmsComponentType
 		assertNull( componentType.getId() );
 		assertNull( componentType.getNewEntityId() );
 		assertTrue( componentType.isNew() );
-		assertNull( componentType.getObjectId() );
+		assertNotNull( componentType.getObjectId() );
 		assertNull( componentType.getTypeKey() );
 		assertNull( componentType.getName() );
 		assertNull( componentType.getCreatedBy() );
@@ -76,7 +76,6 @@ public class TestWebCmsComponentType
 
 		assertNull( componentType.getId() );
 		assertEquals( Long.valueOf( 123L ), componentType.getNewEntityId() );
-		assertEquals( "wcm:type:component:componentType-key", componentType.getObjectId() );
 		assertEquals( "componentType-key", componentType.getTypeKey() );
 		assertEquals( "my-componentType", componentType.getName() );
 		assertEquals( "my-description", componentType.getDescription() );

@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.page.validators;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
@@ -64,7 +65,7 @@ public class TestWebCmsPageValidator
 		InOrder sequence = inOrder( pageService, pageRepository, errors );
 		sequence.verify( pageService ).prepareForSaving( page );
 		sequence.verify( errors ).hasFieldErrors( "canonicalPath" );
-		sequence.verify( pageRepository, never() ).findOneByCanonicalPath( anyString() );
+		sequence.verify( pageRepository, never() ).findOneByCanonicalPathAndDomain( anyString(), any() );
 		verifyNoMoreInteractions( errors );
 	}
 
@@ -73,14 +74,14 @@ public class TestWebCmsPageValidator
 		WebCmsPage page = new WebCmsPage();
 		page.setCanonicalPath( "canonical path" );
 
-		when( pageRepository.findOneByCanonicalPath( "canonical path" ) ).thenReturn( null );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", null ) ).thenReturn( null );
 
 		validator.validate( page, errors );
 
 		InOrder sequence = inOrder( pageService, pageRepository, errors );
 		sequence.verify( pageService ).prepareForSaving( page );
 		sequence.verify( errors ).hasFieldErrors( "canonicalPath" );
-		sequence.verify( pageRepository ).findOneByCanonicalPath( "canonical path" );
+		sequence.verify( pageRepository ).findOneByCanonicalPathAndDomain( "canonical path", null );
 		verifyNoMoreInteractions( errors );
 	}
 
@@ -89,14 +90,14 @@ public class TestWebCmsPageValidator
 		WebCmsPage page = new WebCmsPage();
 		page.setCanonicalPath( "canonical path" );
 
-		when( pageRepository.findOneByCanonicalPath( "canonical path" ) ).thenReturn( page );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", null ) ).thenReturn( page );
 
 		validator.validate( page, errors );
 
 		InOrder sequence = inOrder( pageService, pageRepository, errors );
 		sequence.verify( pageService ).prepareForSaving( page );
 		sequence.verify( errors ).hasFieldErrors( "canonicalPath" );
-		sequence.verify( pageRepository ).findOneByCanonicalPath( "canonical path" );
+		sequence.verify( pageRepository ).findOneByCanonicalPathAndDomain( "canonical path", null );
 		verifyNoMoreInteractions( errors );
 	}
 
@@ -105,15 +106,40 @@ public class TestWebCmsPageValidator
 		WebCmsPage page = new WebCmsPage();
 		page.setCanonicalPath( "canonical path" );
 
-		when( pageRepository.findOneByCanonicalPath( "canonical path" ) ).thenReturn( mock( WebCmsPage.class ) );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", null ) ).thenReturn( mock( WebCmsPage.class ) );
 
 		validator.validate( page, errors );
 
 		InOrder sequence = inOrder( pageService, pageRepository, errors );
 		sequence.verify( pageService ).prepareForSaving( page );
 		sequence.verify( errors ).hasFieldErrors( "canonicalPath" );
-		sequence.verify( pageRepository ).findOneByCanonicalPath( "canonical path" );
+		sequence.verify( pageRepository ).findOneByCanonicalPathAndDomain( "canonical path", null );
 		sequence.verify( errors ).rejectValue( "canonicalPath", "alreadyExists" );
 		verifyNoMoreInteractions( errors );
+	}
+
+	@Test
+	public void canonicalPathMustBeUniqueWithinDomain() {
+		WebCmsDomain domain = WebCmsDomain.builder()
+		                                  .domainKey( "my-domain" )
+		                                  .build();
+		WebCmsPage page = new WebCmsPage();
+		page.setCanonicalPath( "canonical path" );
+		page.setDomain( domain );
+
+		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", domain ) ).thenReturn( page );
+
+		WebCmsPage newPage = WebCmsPage.builder().canonicalPath( "canonical path" )
+		                               .domain( domain )
+		                               .build();
+
+		validator.validate( newPage, errors );
+		InOrder sequence = inOrder( pageService, pageRepository, errors );
+		sequence.verify( pageService ).prepareForSaving( newPage );
+		sequence.verify( errors ).hasFieldErrors( "canonicalPath" );
+		sequence.verify( pageRepository ).findOneByCanonicalPathAndDomain( "canonical path", domain );
+		sequence.verify( errors ).rejectValue( "canonicalPath", "alreadyExists" );
+		verifyNoMoreInteractions( errors );
+
 	}
 }

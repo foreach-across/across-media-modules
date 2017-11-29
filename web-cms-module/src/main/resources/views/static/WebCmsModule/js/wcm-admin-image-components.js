@@ -77,7 +77,7 @@ WebCmsModule.imageSelector = (function ( $ ) {
                 }
             }
 
-            $( 'a', node ).on( 'click', function ( e ) {
+            $( 'a:not([href^="#"])', node ).on( 'click', function ( e ) {
                 var link = $( this );
                 e.preventDefault();
 
@@ -85,12 +85,16 @@ WebCmsModule.imageSelector = (function ( $ ) {
                     selectImageCandidate( link );
                 }
                 else {
-                    get( link.attr( 'href' ) );
+                    var href = link.attr( 'href' );
+                    if ( href ) {
+                        get( href );
+                    }
                 }
             } );
 
             $( 'form', node ).on( 'submit', function ( e ) {
                 e.preventDefault();
+                e.stopPropagation();
 
                 var useFormData = ("" + $( this ).attr( 'enctype' )).toLowerCase().indexOf( 'form-data' ) > 0;
 
@@ -157,7 +161,7 @@ WebCmsModule.imageSelector = (function ( $ ) {
                 WebCmsModule.imageSelector(
                         {
                             outputBox: {width: 188, height: 154},
-                            callback: function( image ) {
+                            callback: function ( image ) {
                                 container.find( '[data-wcm-component-property=image]' ).val( image.imageId );
                                 container.find( 'img' ).attr( 'src', image.url );
                                 container.find( '.image-thumbnail-container' ).removeClass( 'hidden' );

@@ -18,10 +18,16 @@ package webapps.admin.application.config;
 
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.webcms.WebCmsEntityAttributes;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.config.WebCmsObjectComponentViewsConfiguration;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
+import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
+import com.foreach.across.modules.webcms.domain.url.config.WebCmsAssetUrlConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import webapps.admin.application.ui.SectionComponentMetadata;
@@ -37,11 +43,24 @@ class AdminUiConfiguration implements EntityConfigurer
 	void enableComponents( WebCmsObjectComponentViewsConfiguration componentViewsConfiguration ) {
 		//componentViewsConfiguration.enable( WebCmsPublicationType.class );
 		//componentViewsConfiguration.enable( WebCmsComponentType.class );
-		//componentViewsConfiguration.enable( WebCmsArticle.class );
+
+		componentViewsConfiguration.enable( WebCmsArticle.class );
+		componentViewsConfiguration.enable( WebCmsPublication.class );
+	}
+
+	@Autowired
+	void enableUrls( WebCmsAssetUrlConfiguration assetUrlConfiguration ) {
+		assetUrlConfiguration.enable( WebCmsPublication.class );
 	}
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.withType( WebCmsDomain.class ).show();
+		entities.withType( WebCmsImage.class ).attribute( WebCmsEntityAttributes.ALLOW_PER_DOMAIN, true )
+		.listView( lvb -> lvb.pageSize( 5 ) );
+		entities.withType( WebCmsPublicationType.class ).show();
+		entities.withType( WebCmsTypeSpecifierLink.class ).show();
+
 		entities.withType( WebCmsComponentType.class ).show();
 
 		entities.create()

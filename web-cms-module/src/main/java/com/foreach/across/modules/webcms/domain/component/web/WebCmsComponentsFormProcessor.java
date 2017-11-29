@@ -31,6 +31,7 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
+import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
@@ -78,6 +79,7 @@ import java.util.stream.Stream;
 @Exposed
 @Scope("prototype")
 @RequiredArgsConstructor
+@ConditionalOnAdminUI
 public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 {
 	private final BootstrapUiFactory bootstrapUiFactory;

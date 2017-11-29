@@ -83,3 +83,29 @@ assets:
     - objectId: "wcm:asset:page:other-contact"
       title: My Other Fancy Contact Page
       canonicalPath: /my/other/contact
+
+    #
+    # Pages with auto-created domains attached
+    #
+    - objectId: "wcm:asset:page:reference-freq-domains"
+      title: Frequently Used Domains
+      domain: "wcm:domain:simple-domain"
+
+    - objectId: "wcm:asset:page:reference-gen-domains"
+      title: General Domains
+      domain: domain.complex.domain
+
+    - objectId: "wcm:asset:page:reference-common-domains"
+      title: Common Domains
+      domain: domain.complex.domain
+      canonicalPath: /reference/common-domains
+
+    - objectId: "wcm:asset:page:page-with-asset-links"
+      title: Page with asset links
+      wcm:assets:
+        - asset: "wcm:asset:page:reference-freq-domains"
+          linkType: related-page
+          sortIndex: 1
+        - asset: "wcm:asset:page:reference-common-domains"
+          linkType: related-page
+          sortIndex: 2

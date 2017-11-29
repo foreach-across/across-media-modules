@@ -16,12 +16,13 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint.web.controllers;
 
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
+import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
+import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,11 +59,14 @@ public class TestWebCmsEndpointCondition
 	@Before
 	public void setUp() throws Exception {
 		endpoint = WebCmsAssetEndpoint.builder().build();
+		endpoint.setDomain( WebCmsDomain.builder().domainKey( "some-domain" ).build() );
+
 		url = WebCmsUrl.builder().httpStatus( HttpStatus.I_AM_A_TEAPOT ).build();
 
 		when( context.isResolved() ).thenReturn( true );
 		when( context.getEndpoint() ).thenReturn( endpoint );
 		when( context.getUrl() ).thenReturn( url );
+
 	}
 
 	@Test
@@ -83,7 +87,6 @@ public class TestWebCmsEndpointCondition
 
 	@Test
 	public void statusHasPreferenceOverSeries() throws Exception {
-		// TODO: remove all setters - just use helper methods like the one i created
 		WebCmsEndpointCondition conditionWithSeries = condition( HttpStatus.Series.SUCCESSFUL );
 		WebCmsEndpointCondition conditionWithStatus = condition( HttpStatus.OK );
 
@@ -97,7 +100,6 @@ public class TestWebCmsEndpointCondition
 	@Test
 	public void moreStatusesHasPreference() throws Exception {
 		WebCmsEndpointCondition conditionWithStatus = condition( HttpStatus.OK );
-
 		WebCmsEndpointCondition conditionWithTwoStatus = condition( HttpStatus.OK, HttpStatus.NO_CONTENT );
 
 		int actual = conditionWithStatus.compareTo( conditionWithTwoStatus, new MockHttpServletRequest() );
@@ -108,7 +110,6 @@ public class TestWebCmsEndpointCondition
 	@Test
 	public void moreSeriesHasPreference() throws Exception {
 		WebCmsEndpointCondition conditionWithSeries = condition( HttpStatus.Series.SUCCESSFUL );
-
 		WebCmsEndpointCondition conditionWithTwoSeries = condition( HttpStatus.Series.SUCCESSFUL, HttpStatus.Series.INFORMATIONAL );
 
 		int actual = conditionWithSeries.compareTo( conditionWithTwoSeries, new MockHttpServletRequest() );
@@ -119,7 +120,6 @@ public class TestWebCmsEndpointCondition
 	@Test
 	public void subclassHasPreferenceOverParent() throws Exception {
 		WebCmsEndpointCondition conditionWithParent = condition( WebCmsAssetEndpoint.class );
-
 		WebCmsEndpointCondition conditionWithSubClass = condition( DummyWebCmsPageEndpoint.class );
 
 		int actual = conditionWithParent.compareTo( conditionWithSubClass, new MockHttpServletRequest() );
@@ -131,7 +131,6 @@ public class TestWebCmsEndpointCondition
 	public void equalConditions() throws Exception {
 		WebCmsEndpointCondition conditionOne = condition( WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.ACCEPTED },
 		                                                  new HttpStatus.Series[] { HttpStatus.Series.CLIENT_ERROR } );
-
 		WebCmsEndpointCondition conditionTwo = condition( WebCmsAssetEndpoint.class, new HttpStatus[] { HttpStatus.NO_CONTENT },
 		                                                  new HttpStatus.Series[] { HttpStatus.Series.SERVER_ERROR } );
 
@@ -172,7 +171,8 @@ public class TestWebCmsEndpointCondition
 		WebCmsEndpointCondition actualCondition = condition.getMatchingCondition( request );
 
 		assertNotNull( actualCondition );
-		verifyCondition( actualCondition, WebCmsAssetEndpoint.class, new HttpStatus[0], new HttpStatus.Series[] { HttpStatus.Series.CLIENT_ERROR } );
+		verifyCondition( actualCondition, WebCmsAssetEndpoint.class, new HttpStatus[0], new HttpStatus.Series[] { HttpStatus.Series.CLIENT_ERROR }
+		);
 	}
 
 	@Test
@@ -260,25 +260,19 @@ public class TestWebCmsEndpointCondition
 	@Test
 	public void invalidCombineDueToDifferentTypes() throws Exception {
 		WebCmsEndpointCondition conditionOne = condition( WebCmsAssetEndpoint.class );
-
 		WebCmsEndpointCondition conditionTwo = condition( WebCmsRemoteEndpoint.class );
 
 		boolean exceptionThrown = false;
 		try {
 			conditionOne.combine( conditionTwo );
 		}
-		catch ( InvalidWebCmsEndpointConditionCombination e ) {
+		catch ( InvalidWebCmsConditionCombination e ) {
 			String message = String.format( "A condition with endpoint type %s and type %s cannot be merged", WebCmsAssetEndpoint.class,
 			                                WebCmsRemoteEndpoint.class );
 			assertEquals( message, e.getLocalizedMessage() );
 			exceptionThrown = true;
 		}
 		assertTrue( exceptionThrown );
-	}
-
-	class DummyWebCmsPageEndpoint extends WebCmsEndpoint
-	{
-
 	}
 
 	private WebCmsEndpointCondition condition( HttpStatus.Series... series ) {
@@ -289,7 +283,9 @@ public class TestWebCmsEndpointCondition
 		return condition( WebCmsEndpoint.class, statuses, new HttpStatus.Series[0] );
 	}
 
-	private WebCmsEndpointCondition condition( Class<? extends WebCmsEndpoint> endpointType, HttpStatus[] statuses, HttpStatus.Series[] series ) {
+	private WebCmsEndpointCondition condition( Class<? extends WebCmsEndpoint> endpointType,
+	                                           HttpStatus[] statuses,
+	                                           HttpStatus.Series[] series ) {
 		WebCmsEndpointCondition condition = new WebCmsEndpointCondition( context, resolver );
 
 		Map<String, Object> values = new HashMap<>();
@@ -325,5 +321,10 @@ public class TestWebCmsEndpointCondition
 		for ( HttpStatus.Series serie : expectedSeries ) {
 			assertTrue( seriesAsList.contains( serie ) );
 		}
+	}
+
+	class DummyWebCmsPageEndpoint extends WebCmsEndpoint
+	{
+
 	}
 }

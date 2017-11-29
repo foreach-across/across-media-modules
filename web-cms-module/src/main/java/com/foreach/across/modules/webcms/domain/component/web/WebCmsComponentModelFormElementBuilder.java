@@ -16,10 +16,15 @@
 
 package com.foreach.across.modules.webcms.domain.component.web;
 
+import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
+import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
+import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.NodeViewElement;
+import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.AbstractNodeViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.Getter;
@@ -35,9 +40,15 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class WebCmsComponentModelFormElementBuilder extends AbstractNodeViewElementBuilder<WebCmsComponentModelFormElementBuilder.WebCmsComponentModelFormElement, WebCmsComponentModelFormElementBuilder>
 {
+	public static final String COMPONENT_MESSAGE_CODE_PREFIX = WebCmsComponentModelFormElement.class.getName() + ".messageCodePrefix";
+
+	private final WebCmsComponentModel componentModel;
+
 	private ViewElementBuilder contentViewElementBuilder, membersViewElementBuilder, settingsViewElementBuilder, metadataViewElementBuilder;
 
 	public WebCmsComponentModelFormElementBuilder( WebCmsComponentModel componentModel ) {
+		this.componentModel = componentModel;
+
 		customTemplate( "th/webCmsModule/admin/fragments :: componentModelFormElement(${component},${component.componentModel})" );
 		name( "formControl-" + componentModel.getName() );
 		attribute( "componentModel", componentModel );
@@ -113,26 +124,80 @@ public final class WebCmsComponentModelFormElementBuilder extends AbstractNodeVi
 	}
 
 	@Override
-	protected WebCmsComponentModelFormElement createElement( ViewElementBuilderContext builderContext ) {
+	protected WebCmsComponentModelFormElement createElement( ViewElementBuilderContext parentBuilderContext ) {
+		ViewElementBuilderContext builderContext = new DefaultViewElementBuilderContext( parentBuilderContext );
+
 		WebCmsComponentModelFormElement element = new WebCmsComponentModelFormElement();
 
+		EntityMessageCodeResolver codeResolver = builderContext.getAttribute( EntityMessageCodeResolver.class );
+		String messageCodePrefix = StringUtils.defaultString( builderContext.getAttribute( COMPONENT_MESSAGE_CODE_PREFIX, String.class ) );
+
+		if ( messageCodePrefix.isEmpty() ) {
+			messageCodePrefix = componentModel.getComponentType().getTypeKey();
+		}
+		else {
+			messageCodePrefix += ".members." + componentModel.getName();
+		}
+
+		builderContext.setAttribute( COMPONENT_MESSAGE_CODE_PREFIX, messageCodePrefix );
+		EntityMessageCodeResolver newCodeResolver = new EntityMessageCodeResolver( codeResolver );
+		newCodeResolver.addPrefixes( "webCmsComponents" );
+		builderContext.setAttribute( EntityMessageCodeResolver.class, newCodeResolver );
+
 		if ( contentViewElementBuilder != null ) {
-			element.setContent( contentViewElementBuilder.build( builderContext ) );
+			element.setContent(
+					applyDescription( contentViewElementBuilder.build( builderContext ), messageCodePrefix + ".content", newCodeResolver )
+			);
 		}
 
 		if ( membersViewElementBuilder != null ) {
-			element.setMembers( membersViewElementBuilder.build( builderContext ) );
+			element.setMembers(
+					applyDescription( membersViewElementBuilder.build( builderContext ), messageCodePrefix + ".members", newCodeResolver )
+			);
 		}
 
 		if ( metadataViewElementBuilder != null ) {
-			element.setMetadata( metadataViewElementBuilder.build( builderContext ) );
+			element.setMetadata(
+					applyDescription( metadataViewElementBuilder.build( builderContext ), messageCodePrefix + ".metadata", newCodeResolver )
+			);
 		}
 
 		if ( settingsViewElementBuilder != null ) {
-			element.setSettings( settingsViewElementBuilder.build( builderContext ) );
+			element.setSettings(
+					applyDescription( settingsViewElementBuilder.build( builderContext ), messageCodePrefix + ".settings", newCodeResolver )
+			);
 		}
 
 		return apply( element, builderContext );
+	}
+
+	private ViewElement applyDescription( ViewElement original, String messageCodePrefix, EntityMessageCodeResolver codeResolver ) {
+		String descriptionText = codeResolver.getMessageWithFallback( messageCodePrefix + "[description]", "" );
+		String additionalDescriptionText = codeResolver.getMessageWithFallback( messageCodePrefix + "[additionalDescription]", "" );
+
+		if ( StringUtils.isNotEmpty( descriptionText ) || StringUtils.isNotEmpty( additionalDescriptionText ) ) {
+			ContainerViewElement container = new ContainerViewElement();
+
+			if ( StringUtils.isNotEmpty( descriptionText ) ) {
+				NodeViewElement helpBlock = new NodeViewElement( "span" );
+				helpBlock.addCssClass( "help-block", "description-block" );
+				helpBlock.addChild( TextViewElement.html( descriptionText ) );
+				container.addChild( helpBlock );
+			}
+
+			container.addChild( original );
+
+			if ( StringUtils.isNotEmpty( additionalDescriptionText ) ) {
+				NodeViewElement helpBlock = new NodeViewElement( "span" );
+				helpBlock.addCssClass( "help-block", "description-block-additional" );
+				helpBlock.addChild( TextViewElement.html( additionalDescriptionText ) );
+				container.addChild( helpBlock );
+			}
+
+			return container;
+		}
+
+		return original;
 	}
 
 	static class WebCmsComponentModelFormElement extends AbstractNodeViewElement

@@ -56,6 +56,7 @@ public class TestWebCmsPage
 		assertNull( built.getCreatedDate() );
 		assertNull( built.getLastModifiedBy() );
 		assertNull( built.getLastModifiedDate() );
+		assertEquals( 1000, built.getSortIndex() );
 	}
 
 	@Test
@@ -91,6 +92,7 @@ public class TestWebCmsPage
 		assertEquals( timestamp, page.getCreatedDate() );
 		assertEquals( "josh", page.getLastModifiedBy() );
 		assertNull( page.getLastModifiedDate() );
+		assertEquals( 1000, page.getSortIndex() );
 
 		WebCmsPage other = page.toBuilder()
 		                       .id( 333L )
@@ -114,5 +116,6 @@ public class TestWebCmsPage
 		assertEquals( timestamp, other.getCreatedDate() );
 		assertEquals( "josh", other.getLastModifiedBy() );
 		assertEquals( timestamp, other.getLastModifiedDate() );
+		assertEquals( 1000, other.getSortIndex() );
 	}
 }

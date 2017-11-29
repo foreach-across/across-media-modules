@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 
 /**
  * @author Arne Vandamme
@@ -26,7 +27,5 @@ import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
 @Exposed
 public interface WebCmsPublicationRepository extends WebCmsObjectEntityRepository<WebCmsPublication>
 {
-	WebCmsPublication findOneByPublicationKey( String publicationKey );
-
-	WebCmsPublication findOneByPublicationKeyOrObjectId( String publicationKey, String objectId );
+	WebCmsPublication findOneByPublicationKeyAndDomain( String publicationKey, WebCmsDomain domain );
 }

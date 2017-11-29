@@ -46,6 +46,6 @@ public class ContainerWebCmsComponentModelReader extends AbstractWebCmsComponent
 
 	@Override
 	protected ContainerWebCmsComponentModel buildComponentModel( WebCmsComponent component ) {
-		return new ContainerWebCmsComponentModel( component, webCmsComponentModelService.getComponentModelsForOwner( component ) );
+		return new ContainerWebCmsComponentModel( component, webCmsComponentModelService.getComponentModelsForOwner( component, component.getDomain() ) );
 	}
 }

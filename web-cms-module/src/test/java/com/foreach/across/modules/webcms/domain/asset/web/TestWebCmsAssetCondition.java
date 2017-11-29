@@ -22,7 +22,7 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
-import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsEndpointConditionCombination;
+import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsConditionCombination;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,7 +97,7 @@ public class TestWebCmsAssetCondition
 		assertTrue( Arrays.equals( combined.objectId, new String[] { "xyz", "abc" } ) ); // should do a regular pass
 	}
 
-	@Test(expected = InvalidWebCmsEndpointConditionCombination.class)
+	@Test(expected = InvalidWebCmsConditionCombination.class)
 	public void checkObjectIdControllerIsNotAllowedToBeSupersededByMethod() throws Exception {
 		WebCmsAssetCondition controller = condition( HttpStatus.OK, new String[] { "xyz", "abc" } );
 		WebCmsAssetCondition method = condition( HttpStatus.OK, new String[] { "xyz", "abc", "googly" } );

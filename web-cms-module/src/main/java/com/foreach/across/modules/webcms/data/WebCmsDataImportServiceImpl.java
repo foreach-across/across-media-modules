@@ -17,22 +17,20 @@
 package com.foreach.across.modules.webcms.data;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
-import com.foreach.across.modules.hibernate.unitofwork.UnitOfWork;
-import com.foreach.across.modules.hibernate.unitofwork.UnitOfWorkFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Core API for importing data represented as a map into known assets.
- * <p/>
- * It is strongly advised to set a {@link UnitOfWorkFactory} on the service for managing persistence sessions.
- * If no {@link UnitOfWorkFactory} is configured, a global session might not be available in which case lazy loading will fail.
+ * Data imports are transactional and use the default {@link org.springframework.transaction.PlatformTransactionManager}.
  *
  * @author Arne Vandamme
  * @since 0.0.1
@@ -42,43 +40,47 @@ import java.util.Map;
 @Slf4j
 public final class WebCmsDataImportServiceImpl implements WebCmsDataImportService
 {
-	private UnitOfWorkFactory unitOfWorkFactory;
-
 	private Collection<WebCmsDataImporter> importers = Collections.emptyList();
 
+	@Transactional
 	@Override
 	public void importData( Map<String, Object> data ) {
-		data.forEach( ( key, value ) -> importData( new WebCmsDataEntry( key, value ) ) );
+		importData( data, "generated:" + UUID.randomUUID().toString() );
 	}
 
+	@Transactional
+	@Override
+	public void importData( Map<String, Object> data, String identifier ) {
+		importData( WebCmsDataEntry.builder()
+		                           .identifier( identifier )
+		                           .key( WebCmsDataEntry.ROOT )
+		                           .data( data )
+		                           .build() );
+	}
+
+	@Transactional
 	@Override
 	public void importData( WebCmsDataEntry data ) {
-		if ( unitOfWorkFactory != null ) {
-			try (UnitOfWork ignore = unitOfWorkFactory.start()) {
-				performImport( data );
-			}
+		try {
+			importers.stream()
+			         .filter( i -> i.supports( data ) )
+			         .findFirst()
+			         .orElseThrow( () -> new IllegalArgumentException( "Unable to import data for key: " + data.getKey() ) )
+			         .importData( data );
 		}
-		else {
-			LOG.warn( "No UnitOfWorkFactory has been configured - strongly advised to have a UnitOfWorkFactory bean for data importing outside a web request" );
-			performImport( data );
+		catch ( WebCmsDataImportException die ) {
+			throw die;
 		}
-	}
-
-	private void performImport( WebCmsDataEntry data ) {
-		importers.stream()
-		         .filter( i -> i.supports( data ) )
-		         .findFirst()
-		         .orElseThrow( () -> new IllegalArgumentException( "Unable to import data " + data.getKey() ) )
-		         .importData( data );
+		catch ( Exception e ) {
+			throw new WebCmsDataImportException( data, e );
+		}
+		finally {
+			data.getCompletedCallbacks().forEach( callback -> callback.accept( data ) );
+		}
 	}
 
 	@Autowired
 	void setImporters( @RefreshableCollection(includeModuleInternals = true, incremental = true) Collection<WebCmsDataImporter> importers ) {
 		this.importers = importers;
-	}
-
-	@Autowired(required = false)
-	public void setUnitOfWorkFactory( UnitOfWorkFactory unitOfWorkFactory ) {
-		this.unitOfWorkFactory = unitOfWorkFactory;
 	}
 }

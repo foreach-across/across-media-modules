@@ -107,6 +107,16 @@ public class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
+	public void assetScopeIsAliasForPage() {
+		html.assertElementHasText( "Page component: custom", "#using-asset" );
+	}
+
+	@Test
+	public void domainScopeIsAliasForGlobal() {
+		html.assertElementHasText( "Global component: content", "#using-domain" );
+	}
+
+	@Test
 	public void notSearchingParentScopesIfExplicitlyDenied() {
 		html.assertElementHasText( "Not found in scope and not searching parents.", "#not-found-in-scope" );
 	}

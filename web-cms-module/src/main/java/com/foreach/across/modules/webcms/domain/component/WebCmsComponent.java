@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.component;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectSuperClass;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
@@ -49,7 +50,13 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	 * Prefix that all object ids of a WebCmsComponent have.
 	 */
 	public static final String COLLECTION_ID = "wcm:component";
-
+	/**
+	 * Type of the WebCmsComponent.
+	 */
+	@ManyToOne
+	@JoinColumn(name = "component_type_id")
+	@NotNull
+	WebCmsComponentType componentType;
 	@Id
 	@GeneratedValue(generator = "seq_wcm_component_id")
 	@GenericGenerator(
@@ -61,15 +68,6 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 			}
 	)
 	private Long id;
-
-	/**
-	 * Type of the WebCmsComponent.
-	 */
-	@ManyToOne
-	@JoinColumn(name = "component_type_id")
-	@NotNull
-	WebCmsComponentType componentType;
-
 	/**
 	 * Unique object id of the asset that owns this component.
 	 * There is no actual referential integrity here, custom asset implementations must make sure they perform the required cleanup.
@@ -144,6 +142,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	                        @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                        @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                        @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                        @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                        WebCmsComponentType componentType,
 	                        String ownerObjectId,
 	                        String name,
@@ -152,7 +151,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	                        String body,
 	                        String metadata,
 	                        WebCmsComponent proxyTarget ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain );
 
 		this.componentType = componentType;
 		this.ownerObjectId = ownerObjectId;
@@ -204,6 +203,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 		template.metadata = metadata;
 		template.sortIndex = sortIndex;
 		template.proxyTarget = proxyTarget;
+		template.setDomain( getDomain() );
 		return template;
 	}
 

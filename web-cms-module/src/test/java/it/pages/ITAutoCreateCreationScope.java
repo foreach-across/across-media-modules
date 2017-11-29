@@ -66,7 +66,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 		assertEquals( "/auto-create-creation-scope", page.getCanonicalPath() );
 		assertNull( page.getParent() );
 
-		assertTrue( componentModelService.getComponentModelsForOwner( page ).isEmpty() );
+		assertTrue( componentModelService.getComponentModelsForOwner( page, null ).isEmpty() );
 	}
 
 	@Test
@@ -106,6 +106,32 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 		assertEquals( "global-markup2", text.getName() );
 		assertEquals( "Global markup2", text.getTitle() );
 		assertEquals( "Global markup2: Auto create creation scope", text.getContent() );
+		assertEquals( TextWebCmsComponentModel.MarkupType.MARKUP, text.getMarkupType() );
+	}
+
+	@Test
+	public void assetScopeCreationLinksToTheAsset() {
+		html.assertElementHasText( "Asset markup: Auto create creation scope", "#component-scope-specified-asset" );
+
+		val text = componentModelService.getComponentModelByName( "asset-markup", page, TextWebCmsComponentModel.class );
+		assertNotNull( text );
+		assertEquals( "asset-markup", text.getName() );
+		assertEquals( "Asset markup", text.getTitle() );
+		assertEquals( "Asset markup: Auto create creation scope", text.getContent() );
+		assertEquals( TextWebCmsComponentModel.MarkupType.MARKUP, text.getMarkupType() );
+	}
+
+	@Test
+	public void domainScopeCreationDefaultsToGlobal() {
+		html.assertElementHasText( "Domain markup: Auto create creation scope", "#component-scope-specified-domain" );
+
+		assertNull( componentModelService.getComponentModelByName( "domain-markup", page ) );
+
+		val text = componentModelService.getComponentModelByName( "domain-markup", null, TextWebCmsComponentModel.class );
+		assertNotNull( text );
+		assertEquals( "domain-markup", text.getName() );
+		assertEquals( "Domain markup", text.getTitle() );
+		assertEquals( "Domain markup: Auto create creation scope", text.getContent() );
 		assertEquals( TextWebCmsComponentModel.MarkupType.MARKUP, text.getMarkupType() );
 	}
 
@@ -189,6 +215,8 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 		secondRender.assertElementHasText( "Page markup: Auto create creation scope", "#no-scope-or-type-specified" );
 		secondRender.assertElementHasText( "Global markup: Auto create creation scope", "#creation-scope-specified" );
 		secondRender.assertElementHasText( "Global markup2: Auto create creation scope", "#component-scope-specified" );
+		secondRender.assertElementHasText( "Asset markup: Auto create creation scope", "#component-scope-specified-asset" );
+		secondRender.assertElementHasText( "Domain markup: Auto create creation scope", "#component-scope-specified-domain" );
 		secondRender.assertElementHasText( "Page rich-text: Auto create creation scope", "#type-specified" );
 		secondRender.assertElementHasHTML( "container titlecontainer body", "#default-container-type" );
 		secondRender.assertElementHasHTML( "container titlecontainer sub titlecontainer footer text", "#nested-containers" );

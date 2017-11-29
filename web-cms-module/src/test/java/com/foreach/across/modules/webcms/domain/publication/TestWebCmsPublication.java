@@ -41,7 +41,7 @@ public class TestWebCmsPublication
 		assertNull( publication.getId() );
 		assertNull( publication.getNewEntityId() );
 		assertTrue( publication.isNew() );
-		assertNull( publication.getObjectId() );
+		assertNotNull( publication.getObjectId() );
 		assertNull( publication.getPublicationKey() );
 		assertNull( publication.getPublicationType() );
 		assertNull( publication.getName() );
@@ -49,6 +49,7 @@ public class TestWebCmsPublication
 		assertNull( publication.getCreatedDate() );
 		assertNull( publication.getLastModifiedBy() );
 		assertNull( publication.getLastModifiedDate() );
+		assertEquals( 1000, publication.getSortIndex() );
 	}
 
 	@Test
@@ -69,7 +70,6 @@ public class TestWebCmsPublication
 
 		assertNull( publication.getId() );
 		assertEquals( Long.valueOf( 123L ), publication.getNewEntityId() );
-		assertEquals( "wcm:asset:publication:publication-key", publication.getObjectId() );
 		assertSame( publicationType, publication.getPublicationType() );
 		assertEquals( "publication-key", publication.getPublicationKey() );
 		assertEquals( "my-publication", publication.getName() );
@@ -77,6 +77,7 @@ public class TestWebCmsPublication
 		assertEquals( timestamp, publication.getCreatedDate() );
 		assertEquals( "josh", publication.getLastModifiedBy() );
 		assertNull( publication.getLastModifiedDate() );
+		assertEquals( 1000, publication.getSortIndex() );
 
 		WebCmsPublication other = publication.toBuilder()
 		                                     .objectId( "my-asset" )
@@ -95,5 +96,6 @@ public class TestWebCmsPublication
 		assertEquals( timestamp, other.getCreatedDate() );
 		assertEquals( "josh", other.getLastModifiedBy() );
 		assertEquals( timestamp, other.getLastModifiedDate() );
+		assertEquals( 1000, other.getSortIndex() );
 	}
 }

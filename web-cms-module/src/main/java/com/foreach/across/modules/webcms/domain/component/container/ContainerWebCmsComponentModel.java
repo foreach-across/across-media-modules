@@ -66,6 +66,10 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 		this.markup = component.getBody();
 	}
 
+	protected ContainerWebCmsComponentModel( WebCmsComponentModel template ) {
+		super( template );
+	}
+
 	/**
 	 * Add a member to the list.
 	 *
@@ -141,7 +145,7 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 
 	@Override
 	public ContainerWebCmsComponentModel asComponentTemplate() {
-		ContainerWebCmsComponentModel template = new ContainerWebCmsComponentModel( getComponent().asTemplate() );
+		ContainerWebCmsComponentModel template = new ContainerWebCmsComponentModel( this );
 		template.markup = markup;
 		members.forEach( member -> template.addMember( member.asComponentTemplate() ) );
 		return template;

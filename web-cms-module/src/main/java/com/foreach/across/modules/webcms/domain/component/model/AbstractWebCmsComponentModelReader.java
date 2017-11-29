@@ -18,10 +18,13 @@ package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.modules.webcms.data.json.WebCmsDataObjectMapper;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+
+import java.util.Objects;
 
 /**
  * Base class that builds the metadata for a {@link WebCmsComponentModel} and supports component template.
@@ -56,7 +59,15 @@ public abstract class AbstractWebCmsComponentModelReader<T extends WebCmsCompone
 	@SuppressWarnings("unchecked")
 	private T createComponentModel( WebCmsComponent component ) {
 		if ( component.isNew() ) {
-			WebCmsComponentModel template = componentModelService.getComponentModelByName( TEMPLATE_COMPONENT, component.getComponentType() );
+			WebCmsDomain componentDomain = component.getDomain();
+			WebCmsDomain componentTypeDomain = component.getComponentType().getDomain();
+
+			WebCmsComponentModel template
+					= componentModelService.getComponentModelByNameAndDomain( TEMPLATE_COMPONENT, component.getComponentType(), componentDomain );
+
+			if ( template == null && !Objects.equals( componentDomain, componentTypeDomain ) ) {
+				template = componentModelService.getComponentModelByNameAndDomain( TEMPLATE_COMPONENT, component.getComponentType(), componentTypeDomain );
+			}
 
 			if ( template != null ) {
 				WebCmsComponentModel model = template.asComponentTemplate();

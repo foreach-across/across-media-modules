@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/web-cms-module" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/web-cms-module-multi-domain-test" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/web-cms-module-test" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/web-cms-module-test/src/main/resources/application.yml" charset="UTF-8" />
   </component>

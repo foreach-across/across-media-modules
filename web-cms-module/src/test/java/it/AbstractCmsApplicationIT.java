@@ -21,7 +21,6 @@ import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -31,12 +30,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since 0.0.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@AcrossWebAppConfiguration
-@TestPropertySource(properties = "acrossHibernate.createUnitOfWorkFactory=true")
+@AcrossWebAppConfiguration(classes = { AbstractCmsApplicationIT.Config.class })
 public abstract class AbstractCmsApplicationIT
 {
 	@AcrossTestConfiguration(modules = { WebCmsModule.NAME, AcrossHibernateJpaModule.NAME })
-	protected static class Config
+	protected static class Config extends DynamicDataSourceConfigurer
 	{
 	}
 }

@@ -19,13 +19,17 @@ package com.foreach.across.modules.webcms.domain.component.text;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelContentAdminRenderer;
 import com.foreach.across.modules.webcms.web.TextWebCmsComponentAdminResources;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelFormElementBuilder.COMPONENT_MESSAGE_CODE_PREFIX;
 
 /**
  * @author Arne Vandamme
@@ -58,6 +62,16 @@ public class TextWebCmsComponentModelAdminRenderer implements WebCmsComponentMod
 		                         .attribute( "data-wcm-profile", componentModel.getProfile() )
 		                         .postProcessor( ( ( builderContext, element ) -> {
 			                         builderContext.getAttribute( WebResourceRegistry.class ).addPackage( TextWebCmsComponentAdminResources.NAME );
+
+			                         EntityMessageCodeResolver codeResolver = builderContext.getAttribute( EntityMessageCodeResolver.class );
+			                         if ( codeResolver != null ) {
+				                         element.setPlaceholder(
+						                         codeResolver.getMessageWithFallback(
+								                         builderContext.getAttribute( COMPONENT_MESSAGE_CODE_PREFIX, String.class ) + ".content[placeholder]",
+								                         StringUtils.defaultString( element.getPlaceholder() )
+						                         )
+				                         );
+			                         }
 		                         } ) );
 	}
 }

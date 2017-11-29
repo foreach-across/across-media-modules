@@ -19,9 +19,11 @@ package it;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageTypeRepository;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
+import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import com.foreach.across.test.AcrossTestConfiguration;
@@ -31,7 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -44,7 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 0.0.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@DirtiesContext
 @AcrossWebAppConfiguration
 public class ITEndpointLogic
 {
@@ -61,7 +61,7 @@ public class ITEndpointLogic
 	private WebCmsPageRepository pageRepository;
 
 	@Autowired
-	private WebCmsPageTypeRepository pageTypeRepository;
+	private WebCmsPageService pageService;
 
 	private WebCmsPage page;
 	private WebCmsAssetEndpoint endpoint;
@@ -73,12 +73,12 @@ public class ITEndpointLogic
 		                 .pathSegment( "about" )
 		                 .canonicalPath( "/a" )
 		                 .title( "About page" )
-		                 .pageType( pageTypeRepository.findOneByTypeKey( "default" ) )
+		                 .pageType( pageService.getPageTypeByKey( "default" ) )
 		                 .published( true )
 		                 .build();
 		pageRepository.save( page );
 
-		endpoint = endpointRepository.findOneByAsset( page );
+		endpoint = endpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE );
 	}
 
 	@Test
@@ -99,7 +99,7 @@ public class ITEndpointLogic
 	}
 
 	@AcrossTestConfiguration(modules = WebCmsModule.NAME)
-	protected static class Config
+	protected static class Config extends DynamicDataSourceConfigurer
 	{
 	}
 }

@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain;
 
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
+import com.foreach.across.modules.webcms.domain.component.QWebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ class WebCmsObjectDeleteInterceptor extends EntityInterceptorAdapter<WebCmsObjec
 
 	private void deleteOwnedComponents( WebCmsObject entity ) {
 		componentRepository
-				.findAllByOwnerObjectIdOrderBySortIndexAsc( entity.getObjectId() )
+				.findAll( QWebCmsComponent.webCmsComponent.ownerObjectId.eq( entity.getObjectId() ) )
 				.forEach( component -> {
 					// todo: check if there is a proxy pointing to us and if so simply transfer ownership to the first one
 					// if not, clear to delete

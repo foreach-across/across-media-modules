@@ -1,0 +1,34 @@
+types:
+  wcm:domain: nl-foreach
+  publication:
+    nl-foreach:cool-facts:
+      name: Cool Facts (NL)
+  component:
+    nl-foreach:my-component:
+      name: My component (NL)
+      attributes:
+        type: fixed-container
+      wcm:components:
+        componentTemplate:
+          componentType:
+            typeKey: container
+            domain: null
+          wcm:components:
+            title:
+              componentType:
+                typeKey: text-field
+                domain: null
+              sortIndex: 1
+
+assets:
+  wcm:domain: nl-foreach
+  page:
+    /pool-request:
+      title: Pool Request (NL)
+  component:
+    nl-component:
+      title: My component asset (NL)
+      componentType: "nl-foreach:my-component"
+      wcm:components:
+        title:
+          content: My Component Title (NL)

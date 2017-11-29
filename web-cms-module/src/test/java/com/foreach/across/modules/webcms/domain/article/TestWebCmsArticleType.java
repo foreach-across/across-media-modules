@@ -47,7 +47,7 @@ public class TestWebCmsArticleType
 		assertNull( articleType.getId() );
 		assertNull( articleType.getNewEntityId() );
 		assertTrue( articleType.isNew() );
-		assertNull( articleType.getObjectId() );
+		assertNotNull( articleType.getObjectId() );
 		assertNull( articleType.getTypeKey() );
 		assertNull( articleType.getName() );
 		assertNull( articleType.getCreatedBy() );
@@ -73,7 +73,6 @@ public class TestWebCmsArticleType
 
 		assertNull( articleType.getId() );
 		assertEquals( Long.valueOf( 123L ), articleType.getNewEntityId() );
-		assertEquals( "wcm:type:article:articleType-key", articleType.getObjectId() );
 		assertEquals( "articleType-key", articleType.getTypeKey() );
 		assertEquals( "my-articleType", articleType.getName() );
 		assertEquals( "john", articleType.getCreatedBy() );
@@ -90,7 +89,6 @@ public class TestWebCmsArticleType
 
 		assertNull( other.getNewEntityId() );
 		assertEquals( Long.valueOf( 333L ), other.getId() );
-		assertEquals( "wcm:type:article:articleType-key", other.getObjectId() );
 		assertEquals( "articleType-key", articleType.getTypeKey() );
 		assertEquals( "my-articleType", articleType.getName() );
 		assertEquals( "john", other.getCreatedBy() );

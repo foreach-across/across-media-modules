@@ -18,9 +18,12 @@ package com.foreach.across.modules.webcms.domain.endpoint;
 
 import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.GenericGenerator;
@@ -47,7 +50,8 @@ import java.util.Optional;
 @Table(name = "wcm_endpoint")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SuppressWarnings("squid:S2160")
-public abstract class WebCmsEndpoint extends SettableIdBasedEntity<WebCmsEndpoint>
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public abstract class WebCmsEndpoint extends SettableIdBasedEntity<WebCmsEndpoint> implements WebCmsDomainBound
 {
 	@Id
 	@GeneratedValue(generator = "seq_wcm_endpoint_id")
@@ -62,6 +66,18 @@ public abstract class WebCmsEndpoint extends SettableIdBasedEntity<WebCmsEndpoin
 	@Column(name = "id")
 	protected Long id;
 
+	/**
+	 * The (optional) {@link WebCmsDomain} this object belongs to.
+	 */
+	@Getter
+	@Setter
+	@ManyToOne
+	@JoinColumn(name = "domain_id")
+	private WebCmsDomain domain;
+
+	/**
+	 * Collection of urls attached to this endpoint.
+	 */
 	@Cascade(CascadeType.DELETE)
 	@OneToMany(mappedBy = "endpoint")
 	protected Collection<WebCmsUrl> urls = Collections.emptySet();

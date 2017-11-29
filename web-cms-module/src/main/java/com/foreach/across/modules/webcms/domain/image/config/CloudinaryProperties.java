@@ -19,6 +19,9 @@ package com.foreach.across.modules.webcms.domain.image.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Contains configuration properties for auto-creation of a {@link com.cloudinary.Cloudinary}.
  *
@@ -43,4 +46,9 @@ class CloudinaryProperties
 	 * Cloudinary API secret for secure operations (eg. file upload).
 	 */
 	private String apiSecret;
+
+	/**
+	 * Additional settings to be configured on the Cloudinary.
+	 */
+	Map<String, String> settings = new HashMap<>();
 }

@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.page;
 
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -91,7 +92,9 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 
 	/**
 	 * Fully qualified canonical path of this page, usually corresponds with the path relative within
-	 * the application.  The canonical path is unique for every page and will always start with a /.
+	 * the application.  The canonical path is unique for every page within a domain and will always start with a /.
+	 * If {@link WebCmsPage} is not {@link com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound} then the canonical path
+	 * has to be unique.
 	 */
 	@Column(name = "canonical_path")
 	@NotNull
@@ -124,8 +127,10 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	                      @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                      @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                      @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                      @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                      @Builder.ObtainVia(method = "isPublished") boolean published,
 	                      @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
+	                      @Builder.ObtainVia(method = "getSortIndex") int sortIndex,
 	                      String title,
 	                      WebCmsPage parent,
 	                      String pathSegment,
@@ -134,7 +139,7 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	                      boolean canonicalPathGenerated,
 	                      String template,
 	                      WebCmsPageType pageType ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, published, publicationDate );
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate, sortIndex );
 		this.title = title;
 		this.parent = parent;
 		this.pathSegment = pathSegment;
@@ -178,5 +183,6 @@ public class WebCmsPage extends WebCmsAsset<WebCmsPage>
 	{
 		private boolean pathSegmentGenerated = true;
 		private boolean canonicalPathGenerated = true;
+		private int sortIndex = 1000;
 	}
 }

@@ -33,7 +33,7 @@ import com.foreach.across.modules.web.ui.elements.TextViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -47,13 +47,13 @@ import org.springframework.stereotype.Component;
 final class ArticleUpdateFormProcessor extends EntityViewProcessorAdapter
 {
 	private final BootstrapUiFactory bootstrapUiFactory;
-	private final WebCmsEndpointService endpointService;
+	private final WebCmsAssetService assetPreviewService;
 
 	@SuppressWarnings("unused")
 	@Event
 	void setPreviewLinkOnMenu( EntityPageStructureRenderedEvent<WebCmsArticle> event ) {
 		if ( event.holdsEntity() ) {
-			endpointService
+			assetPreviewService
 					.buildPreviewUrl( event.getEntity() )
 					.ifPresent( previewUrl -> {
 						LinkViewElement openLink = new LinkViewElement();

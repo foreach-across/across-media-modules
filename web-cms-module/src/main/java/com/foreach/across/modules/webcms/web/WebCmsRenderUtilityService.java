@@ -22,12 +22,13 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.proxy.ProxyWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsUriComponentsService;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.image.component.ImageWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +47,7 @@ public class WebCmsRenderUtilityService
 	private final WebCmsImageConnector imageConnector;
 	private final WebCmsComponentModelHierarchy componentModelHierarchy;
 	private final WebCmsEndpointService endpointService;
+	private final WebCmsUriComponentsService uriComponentsService;
 
 	/**
 	 * Build a url to the original image file of the image configured on a {@link WebCmsImage}.
@@ -171,8 +173,8 @@ public class WebCmsRenderUtilityService
 	 * @return url or {@code null}
 	 */
 	public String url( WebCmsAsset asset ) {
-		return endpointService.getPrimaryUrlForAsset( asset )
-		                      .map( WebCmsUrl::getPath )
-		                      .orElse( null );
+		return uriComponentsService.buildUriComponents( asset )
+		                           .map( UriComponentsBuilder::toUriString )
+		                           .orElse( null );
 	}
 }

@@ -1,0 +1,61 @@
+#
+# Multi-domain configuration for component rendering.
+# Uses the same templates as single-domain rendering tests.
+#
+assets:
+  wcm:domain: be-foreach
+  component:
+    # Components shared across all domains
+    - name: content
+      title: Content
+      domain: null
+      componentType:
+        typeKey: plain-text
+        domain: null
+      content: "Global component: content"
+    - name: footer
+      title: Footer
+      domain: null
+      componentType:
+        typeKey: plain-text
+        domain: null
+      content: "Global component: footer"
+
+  page:
+
+    #
+    # Page with a custom template for rendering multiple components
+    #
+    - objectId: "wcm:asset:page:render-components"
+      title: Render components
+      template: th/test/pages/render-components
+      pathSegmentGenerated: false
+      pathSegment: render-components
+      published: true
+      pageType:
+        typeKey: default
+        domain: null
+      wcm:components:
+        custom:
+          componentType:
+            typeKey: plain-text
+            domain: null
+          content: "Page component: custom"
+        content:
+          componentType:
+            typeKey: plain-text
+            domain: null
+          content: "Page component: content 2"
+
+    #
+    # Page with a custom template for automatically creating simple components upon rendering.
+    #
+    - objectId: "wcm:asset:page:auto-create-creation-scope"
+      title: Auto create creation scope
+      template: th/test/pages/auto-create/creation-scope
+      pathSegmentGenerated: false
+      pathSegment: auto-create-creation-scope
+      published: true
+      pageType:
+        typeKey: default
+        domain: null

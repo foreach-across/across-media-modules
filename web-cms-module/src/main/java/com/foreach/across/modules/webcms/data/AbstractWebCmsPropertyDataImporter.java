@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.foreach.across.modules.webcms.data.WebCmsDataAction.DELETE;
@@ -38,54 +37,55 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 	private WebCmsDataConversionService conversionService;
 
 	@Override
-	public boolean importData( WebCmsDataEntry parentData, WebCmsDataEntry propertyData, T asset, WebCmsDataAction action ) {
-		if ( propertyData.isMapData() ) {
-			propertyData.getMapData().forEach(
-					( key, properties ) -> importSingleEntry(
-							new WebCmsDataEntry( key, propertyData, properties == null ? new HashMap<>() : properties ), asset ) );
+	public boolean importData( Phase phase,
+	                           WebCmsDataEntry data,
+	                           T parent,
+	                           WebCmsDataAction action ) {
+		try {
+			LOG.trace( "Importing data entry {}", data );
+
+			U existing = getExisting( data, parent );
+			action = resolveAction( existing, data );
+			LOG.trace( "Resolved import action {} to {}, existing item: {}", data.getImportAction(), action, existing != null );
+
+			if ( action != null ) {
+				if ( action == DELETE ) {
+					delete( existing, parent );
+				}
+				else {
+					U dto = createDto( data, existing, action, parent );
+
+					if ( dto != null ) {
+						boolean dataValuesApplied = data.isSingleValue()
+								? applySingleValue( data.getSingleValue(), dto ) : applyDataValues( data.getMapData(), dto );
+
+						if ( existing == null || dataValuesApplied ) {
+							save( dto, parent );
+						}
+						else {
+							LOG.trace( "Skipping saving DTO as no actual values have been updated" );
+						}
+					}
+				}
+			}
+			else {
+				LOG.trace( "Skipping data entry as no valid action was resolved" );
+			}
 		}
-		else {
-			propertyData.getCollectionData().forEach( properties -> importSingleEntry( new WebCmsDataEntry( null, propertyData, properties ), asset ) );
+		catch ( WebCmsDataImportException die ) {
+			throw die;
+		}
+		catch ( Exception e ) {
+			throw new WebCmsDataImportException( data, e );
 		}
 		return true;
 	}
 
-	private void importSingleEntry( WebCmsDataEntry menuDataSet, T parent ) {
-		LOG.trace( "Importing data entry {}", menuDataSet );
-
-		U existing = getExisting( menuDataSet, parent );
-		WebCmsDataAction action = resolveAction( existing, menuDataSet );
-		LOG.trace( "Resolved import action {} to {}, existing item: {}", menuDataSet.getImportAction(), action, existing != null );
-
-		if ( action != null ) {
-			if ( action == DELETE ) {
-				delete( existing );
-			}
-			else {
-				U dto = createDto( menuDataSet, existing, action, parent );
-
-				if ( dto != null ) {
-					boolean dataValuesApplied = applyDataValues( menuDataSet.getMapData(), dto );
-					if ( existing == null || dataValuesApplied ) {
-						save( dto );
-					}
-					else {
-						LOG.trace( "Skipping saving DTO as no actual values have been updated" );
-					}
-				}
-			}
-		}
-		else {
-			LOG.trace( "Skipping data entry as no valid action was resolved" );
-		}
-
-	}
-
 	protected abstract U createDto( WebCmsDataEntry menuDataSet, U existing, WebCmsDataAction action, T parent );
 
-	protected abstract void save( U dto );
+	protected abstract void save( U dto, T parent );
 
-	protected abstract void delete( U dto );
+	protected abstract void delete( U dto, T parent );
 
 	protected abstract U getExisting( WebCmsDataEntry dataKey, T parent );
 
@@ -102,6 +102,18 @@ public abstract class AbstractWebCmsPropertyDataImporter<T, U extends SettableId
 	 */
 	protected boolean applyDataValues( Map<String, Object> values, U dto ) {
 		return conversionService.convertToPropertyValues( values, dto );
+	}
+
+	/**
+	 * Apply the data value to the dto object.
+	 * If this method returns {@code false} no values have been applied to the DTO and actual updating might get skipped.
+	 *
+	 * @param value to apply
+	 * @param dto   to set the value on
+	 * @return true if the DTO has been modified
+	 */
+	private boolean applySingleValue( Object value, U dto ) {
+		return conversionService.convertSingleValue( value, dto );
 	}
 
 	@Autowired

@@ -17,12 +17,9 @@
 package com.foreach.across.modules.webcms.domain.page;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
+import com.foreach.across.modules.webcms.domain.type.BaseWebCmsTypeSpecifierRepository;
 
 @Exposed
-public interface WebCmsPageTypeRepository extends WebCmsObjectEntityRepository<WebCmsPageType>
+public interface WebCmsPageTypeRepository extends BaseWebCmsTypeSpecifierRepository<WebCmsPageType>
 {
-	WebCmsPageType findOneByTypeKey( String typeKey );
-
-	WebCmsPageType findOneByTypeKeyOrObjectId( String typeKey, String objectId );
 }

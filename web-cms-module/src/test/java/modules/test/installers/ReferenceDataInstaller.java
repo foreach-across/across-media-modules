@@ -37,6 +37,7 @@ public class ReferenceDataInstaller extends AbstractWebCmsDataInstaller
 	@Override
 	protected void registerResources( List<String> locations ) {
 		// Apply base data import
+		locations.add( "classpath:installers/reference-data/base-domains.yml" );
 		locations.add( "classpath:installers/reference-data/base-types.yml" );
 		locations.add( "classpath:installers/reference-data/base-publications.yml" );
 		locations.add( "classpath:installers/reference-data/base-menus.yml" );
@@ -44,6 +45,7 @@ public class ReferenceDataInstaller extends AbstractWebCmsDataInstaller
 		locations.add( "classpath:installers/reference-data/base-components.yml" );
 
 		// Apply extensions that modify previously imported base data
+		locations.add( "classpath:installers/reference-data/extension-domains.yml" );
 		locations.add( "classpath:installers/reference-data/extension-menus.yml" );
 		locations.add( "classpath:installers/reference-data/extension-pages.yml" );
 	}

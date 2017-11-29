@@ -17,9 +17,11 @@
 package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -29,14 +31,17 @@ import org.springframework.util.Assert;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Represents an ordered hierarchy of {@link WebCmsComponentModelSet}s that have a scope name.
  * Components can be looked up by name in the hierarchy in which case (depending on the parameter)
  * all registered sets will be queried in reverse order until a result is returned.
  * <p/>
- * The hierarchy will always contain an initial scope name {@link #GLOBAL}.
- * The global scope component set will fetch a component from the repository only when it is requested.
+ * The hierarchy will always contain an initial scope name {@link #GLOBAL} and {@link #DOMAIN}.
+ * Both scopes will fetch a component from the repository only when it is requested.
+ * If no current domain is active, the {@link #DOMAIN} scope will be an alias to {@link #GLOBAL}.
+ * Otherwise the {@link #DOMAIN} scope will contain all components shared across that domain.
  *
  * @author Arne Vandamme
  * @since 0.0.2
@@ -50,18 +55,38 @@ public class WebCmsComponentModelHierarchy
 
 	public static final String GLOBAL = "global";
 	public static final String DEFAULT = "default";
+	public static final String DOMAIN = "domain";
+	public static final String ASSET = "asset";
+
 	public static final String CONTAINER = "container";
 
 	private final List<ComponentsWithScope> scopedComponentSets = new ArrayList<>();
 
 	@Autowired
-	void buildGlobalComponentModelSet( WebCmsComponentModelService webCmsComponentModelService ) {
+	void buildGlobalComponentModelSet( WebCmsComponentModelService webCmsComponentModelService, WebCmsMultiDomainService multiDomainService ) {
 		registerComponentsForScope(
 				new WebCmsComponentModelSet(
 						null,
-						( owner, componentName ) -> webCmsComponentModelService.getComponentModelByName( componentName, owner )
+						WebCmsDomain.NONE,
+						( owner, componentName ) -> webCmsComponentModelService.getComponentModelByNameAndDomain( componentName, owner, WebCmsDomain.NONE )
 				), GLOBAL
 		);
+
+		WebCmsDomain currentDomain = multiDomainService.getCurrentDomainForType( WebCmsComponent.class );
+
+		if ( currentDomain != WebCmsDomain.NONE ) {
+			registerComponentsForScope(
+					new WebCmsComponentModelSet(
+							null,
+							currentDomain,
+							( owner, componentName ) -> webCmsComponentModelService.getComponentModelByNameAndDomain( componentName, owner, currentDomain )
+					),
+					DOMAIN
+			);
+		}
+		else {
+			registerAliasForScope( DOMAIN, GLOBAL );
+		}
 	}
 
 	@Autowired
@@ -73,6 +98,9 @@ public class WebCmsComponentModelHierarchy
 	 * Add a set of components to the very end of the hierarchy.
 	 * If a new scope name is specified, this scope will be registered as the first scope to look in.
 	 * If an existing scope name is specified, the components will be replaced but the query order of that scope will not change.
+	 * <p/>
+	 * If an alias is being replaced by a separate set, it will be inserted right before the scope it was
+	 * originally an alias for (so it will be queried earlier).
 	 *
 	 * @param componentModelSet to add
 	 * @param scopeName         for which to register components
@@ -83,7 +111,13 @@ public class WebCmsComponentModelHierarchy
 
 		ComponentsWithScope current = getForScope( scopeName );
 		if ( current != null ) {
-			current.components = componentModelSet;
+			if ( scopeName.equals( current.getScopeName() ) ) {
+				current.components = componentModelSet;
+			}
+			else {
+				current.removeAlias( scopeName );
+				scopedComponentSets.add( scopedComponentSets.indexOf( current ) + 1, new ComponentsWithScope( scopeName, componentModelSet ) );
+			}
 		}
 		else {
 			scopedComponentSets.add( new ComponentsWithScope( scopeName, componentModelSet ) );
@@ -91,11 +125,24 @@ public class WebCmsComponentModelHierarchy
 	}
 
 	/**
+	 * Removes the components for that scope.  If the scope is an alias for another scope,
+	 * only the alias will be removed but the actual components will still be available under
+	 * the original scope name.
+	 * <p/>
+	 * If the scope name is not an alias, the entire scope - including itse aliases - will be removed.
+	 *
 	 * @return true if the component set for that scope has been removed
 	 */
 	public boolean removeComponents( String scopeName ) {
 		return Optional.ofNullable( getForScope( scopeName ) )
-		               .map( scopedComponentSets::remove )
+		               .map( scope -> {
+			               if ( scopeName.equals( scope.scopeName ) ) {
+				               return scopedComponentSets.remove( scope );
+			               }
+			               else {
+				               return scope.removeAlias( scopeName );
+			               }
+		               } )
 		               .orElse( false );
 	}
 
@@ -115,7 +162,7 @@ public class WebCmsComponentModelHierarchy
 	 * @return components registered to that scope
 	 */
 	public WebCmsComponentModelSet getComponentsForScope( String scopeName ) {
-		Assert.notNull( scopeName );
+		Assert.notNull( scopeName, "scope name is required" );
 
 		ComponentsWithScope entry = getForScope( scopeName );
 		return entry != null ? entry.components : null;
@@ -126,15 +173,22 @@ public class WebCmsComponentModelHierarchy
 	 * Any unknown scope name will be ignored.
 	 * <p/>
 	 * Scope names are defined left-to-right but scopes will be traversed right-to-left when looking for components.
+	 * <p/>
+	 * If the names contains one or more aliases, the earliest occurrence of the entire set will be used.
 	 *
 	 * @param scopeNames in order
 	 */
 	public void setScopeOrder( String... scopeNames ) {
-		scopedComponentSets.sort( Comparator.comparingInt( entry -> ArrayUtils.indexOf( scopeNames, entry.scopeName ) ) );
+		List<String> nonAliases = Stream.of( scopeNames )
+		                                .map( this::getForScope )
+		                                .map( ComponentsWithScope::getScopeName )
+		                                .collect( Collectors.toList() );
+
+		scopedComponentSets.sort( Comparator.comparingInt( entry -> nonAliases.indexOf( entry.scopeName ) ) );
 	}
 
 	/**
-	 * @return all registered scope names in their order
+	 * @return all registered scope names in their order - this will not show aliases
 	 */
 	public Collection<String> getScopeNames() {
 		return scopedComponentSets.stream()
@@ -202,7 +256,7 @@ public class WebCmsComponentModelHierarchy
 	 * @return component or null if not found
 	 */
 	public WebCmsComponentModel getFromScope( String componentName, String scopeName, boolean searchParentScopes ) {
-		Assert.notNull( scopeName );
+		Assert.notNull( scopeName, "scope name is required" );
 		WebCmsComponentModel component = null;
 
 		boolean scopeFound = false;
@@ -210,7 +264,7 @@ public class WebCmsComponentModelHierarchy
 
 		for ( int i = scopedComponentSets.size() - 1; i >= 0 && component == null; i-- ) {
 			ComponentsWithScope componentsWithScope = scopedComponentSets.get( i );
-			if ( scopeFound || actualScope.equals( componentsWithScope.getScopeName() ) ) {
+			if ( scopeFound || componentsWithScope.isScope( actualScope ) ) {
 				scopeFound = true;
 				component = componentsWithScope.components.get( componentName );
 				if ( !searchParentScopes ) {
@@ -223,6 +277,21 @@ public class WebCmsComponentModelHierarchy
 	}
 
 	/**
+	 * Add an alias for another scope. The target scope must exist.
+	 * Any other set already registered under that alias will be removed.
+	 *
+	 * @param alias           to add
+	 * @param targetScopeName the alias is for
+	 */
+	public void registerAliasForScope( String alias, String targetScopeName ) {
+		ComponentsWithScope target = getForScope( targetScopeName );
+		Assert.notNull( target, "No components registered for target scope: '" + targetScopeName + "'" );
+
+		removeComponents( alias );
+		target.addAlias( alias );
+	}
+
+	/**
 	 * @return true if components scope is registered
 	 */
 	public boolean containsScope( String scopeName ) {
@@ -231,7 +300,7 @@ public class WebCmsComponentModelHierarchy
 
 	private ComponentsWithScope getForScope( String scopeName ) {
 		for ( ComponentsWithScope entry : scopedComponentSets ) {
-			if ( scopeName.equals( entry.scopeName ) ) {
+			if ( entry.isScope( scopeName ) ) {
 				return entry;
 			}
 		}
@@ -243,6 +312,19 @@ public class WebCmsComponentModelHierarchy
 	{
 		@Getter
 		private final String scopeName;
+		private final Collection<String> aliases = new ArrayList<>( 2 );
 		private WebCmsComponentModelSet components;
+
+		boolean isScope( String requested ) {
+			return scopeName.equals( requested ) || aliases.contains( requested );
+		}
+
+		boolean removeAlias( String alias ) {
+			return aliases.remove( alias );
+		}
+
+		void addAlias( String alias ) {
+			aliases.add( alias );
+		}
 	}
 }

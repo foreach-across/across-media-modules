@@ -16,15 +16,14 @@
 
 package com.foreach.across.modules.webcms.domain.component;
 
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
+import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Date;
 import java.util.Map;
 
@@ -37,12 +36,18 @@ import java.util.Map;
 @NotThreadSafe
 @Entity
 @DiscriminatorValue(WebCmsComponentType.OBJECT_TYPE)
-@Table(name = "wcm_component_type")
 @Getter
 @Setter
 @NoArgsConstructor
 public class WebCmsComponentType extends WebCmsTypeSpecifier<WebCmsComponentType>
 {
+	/**
+	 * If set to {@code true}, this component will never be present as an option,
+	 * unless specified by a {@link com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink}
+	 * with {@link WebCmsTypeSpecifierLink#getLinkType()} {@link DefaultAllowedComponentTypeFetcher#ALLOWED_COMPONENT_LINK}
+	 */
+	public static final String COMPONENT_RESTRICTED = "componentRestricted";
+
 	/**
 	 * Object type name (discriminator value).
 	 */
@@ -53,13 +58,6 @@ public class WebCmsComponentType extends WebCmsTypeSpecifier<WebCmsComponentType
 	 */
 	public static final String COLLECTION_ID = "wcm:type:component";
 
-	/**
-	 * Description of the component type.
-	 */
-	@Column(name = "description")
-	@Length(max = 500)
-	private String description;
-
 	@Builder(toBuilder = true)
 	protected WebCmsComponentType( @Builder.ObtainVia(method = "getId") Long id,
 	                               @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
@@ -68,13 +66,12 @@ public class WebCmsComponentType extends WebCmsTypeSpecifier<WebCmsComponentType
 	                               @Builder.ObtainVia(method = "getCreatedDate") Date createdDate,
 	                               @Builder.ObtainVia(method = "getLastModifiedBy") String lastModifiedBy,
 	                               @Builder.ObtainVia(method = "getLastModifiedDate") Date lastModifiedDate,
+	                               @Builder.ObtainVia(method = "getDomain") WebCmsDomain domain,
 	                               @Builder.ObtainVia(method = "getName") String name,
 	                               @Builder.ObtainVia(method = "getTypeKey") String typeKey,
-	                               @Singular @Builder.ObtainVia(method = "getAttributes") Map<String, String> attributes,
-	                               String description ) {
-		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, name, typeKey, attributes );
-
-		setDescription( description );
+	                               @Builder.ObtainVia(method = "getDescription") String description,
+	                               @Singular @Builder.ObtainVia(method = "getAttributes") Map<String, String> attributes ) {
+		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, name, typeKey, description, attributes );
 	}
 
 	@Override

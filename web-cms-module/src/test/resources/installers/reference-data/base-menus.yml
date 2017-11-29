@@ -41,3 +41,13 @@ menus:
       /home:
         title: Deleted home
         url: /home-url
+
+  navWithObjectId:
+    objectId: "wcm:menu:nav-object-id"
+    description: nav with an objectId
+    domain: domain.complex.domain
+
+  myOtherNav:
+    objectId: "wcm:menu:my-other-nav"
+    description: Another nav with an objectId
+    domain: domain.complex.domain

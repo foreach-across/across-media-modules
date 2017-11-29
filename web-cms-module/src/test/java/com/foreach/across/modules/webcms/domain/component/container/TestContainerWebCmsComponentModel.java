@@ -16,9 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.component.container;
 
+import com.foreach.across.modules.webcms.domain.component.MyComponentMetadata;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -92,6 +94,8 @@ public class TestContainerWebCmsComponentModel
 		assertFalse( body.isNew() );
 
 		model.setMarkup( "my component markup" );
+		MyComponentMetadata metadata = MyComponentMetadata.builder().title( "some title" ).number( 123L ).page( new WebCmsPage() ).build();
+		model.setMetadata( metadata );
 		model.addMember( title );
 		model.addMember( body );
 
@@ -104,6 +108,13 @@ public class TestContainerWebCmsComponentModel
 		assertNotEquals( "123", template.getOwnerObjectId() );
 		assertTrue( template.isNew() );
 		assertEquals( "my component markup", template.getMarkup() );
+
+		assertTrue( template.hasMetadata() );
+		MyComponentMetadata cloned = template.getMetadata( MyComponentMetadata.class );
+		assertNotSame( metadata, cloned );
+		assertEquals( metadata.getTitle(), cloned.getTitle() );
+		assertEquals( metadata.getNumber(), cloned.getNumber() );
+		assertSame( metadata.getPage(), cloned.getPage() );
 
 		assertEquals( 2, template.getMembers().size() );
 		assertTrue( template.getMember( "title" ).isNew() );

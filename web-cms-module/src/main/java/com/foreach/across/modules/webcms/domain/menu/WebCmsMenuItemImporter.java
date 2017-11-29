@@ -22,6 +22,7 @@ import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Creates one (or many) @{@link WebCmsMenuItem}s from a import data.
+ * Creates one (or many) {@link WebCmsMenuItem}s from import data.
  *
  * @author Raf Ceuls
  * @since 0.0.2
@@ -48,15 +49,13 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 	private final WebCmsMenuItemRepository webCmsMenuItemRepository;
 	private final WebCmsAssetEndpointRepository webCmsAssetEndpointRepository;
 	private final WebCmsDataConversionService webCmsDataConversionService;
+	private final WebCmsMultiDomainService multiDomainService;
 
 	@Override
-	public Phase getPhase() {
-		return Phase.AFTER_ASSET_SAVED;
-	}
-
-	@Override
-	public boolean supports( WebCmsDataEntry parentData, String propertyName, Object asset, WebCmsDataAction action ) {
-		return PROPERTY_NAME.equals( propertyName ) && asset instanceof WebCmsMenu;
+	public boolean supports( Phase phase,
+	                         WebCmsDataEntry dataEntry, Object asset,
+	                         WebCmsDataAction action ) {
+		return Phase.AFTER_ASSET_SAVED.equals( phase ) && PROPERTY_NAME.equals( dataEntry.getParentKey() ) && asset instanceof WebCmsMenu;
 	}
 
 	@Override
@@ -92,7 +91,7 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 			WebCmsAsset asset = webCmsDataConversionService.convert( assetKey, WebCmsAsset.class );
 
 			if ( asset != null ) {
-				WebCmsEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAsset( asset );
+				WebCmsEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) );
 
 				if ( endpoint != null ) {
 					WebCmsUrl primaryUrl = endpoint.getPrimaryUrl().orElse( null );
@@ -113,17 +112,17 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 	}
 
 	@Override
-	protected void save( WebCmsMenuItem dto ) {
+	protected void save( WebCmsMenuItem dto, WebCmsMenu parent ) {
 		webCmsMenuItemRepository.save( dto );
 	}
 
 	@Override
-	protected void delete( WebCmsMenuItem dto ) {
+	protected void delete( WebCmsMenuItem dto, WebCmsMenu parent ) {
 		webCmsMenuItemRepository.delete( dto );
 	}
 
 	protected WebCmsMenuItem getExisting( WebCmsDataEntry dataKey, WebCmsMenu parent ) {
 		String key = dataKey.getMapData().containsKey( "path" ) ? (String) dataKey.getMapData().get( "path" ) : dataKey.getKey();
-		return webCmsMenuItemRepository.findByMenuNameAndPath( parent.getName(), key );
+		return webCmsMenuItemRepository.findByMenuAndPath( parent, key );
 	}
 }

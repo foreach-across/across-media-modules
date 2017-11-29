@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:h2:../local-data/multi-domain/application-db
+
+imageServerCore:
+  store:
+    folder: ../local-data/multi-domain/images
