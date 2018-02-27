@@ -164,7 +164,6 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			val associationLinkBuilder = association.getAttribute( EntityLinkBuilder.class )
 			                                        .asAssociationFor( entityViewContext.getLinkBuilder(), entityViewContext.getEntity() );
 			EntityListActionsProcessor actionsProcessor = new EntityListActionsProcessor(
-					bootstrapUiFactory,
 					association.getTargetEntityConfiguration(),
 					associationLinkBuilder,
 					new EntityMessages( codeResolver )

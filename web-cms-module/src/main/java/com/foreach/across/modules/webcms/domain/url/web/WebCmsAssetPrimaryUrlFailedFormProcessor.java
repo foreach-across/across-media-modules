@@ -213,8 +213,7 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 												)
 										)
 						)
-						.helpBlockRenderedBeforeControl( true )
-						.helpBlock( codeResolver.getMessageWithFallback( "action.createPrimaryUrl[description]", null ) )
+						.descriptionBlock( codeResolver.getMessageWithFallback( "action.createPrimaryUrl[description]", null ) )
 		);
 
 		form.add(
@@ -226,7 +225,7 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 						                                    .selected( data.getAction() == PrimaryUrlUpdateAction.DO_NOTHING )
 						                                    .label( codeResolver.getMessageWithFallback( "action.doNothing", null ) )
 				                  )
-				                  .helpBlock( codeResolver.getMessageWithFallback( "action.doNothing[description]", null ) )
+				                  .helpBlock( codeResolver.getMessageWithFallback( "action.doNothing[help]", null ) )
 		);
 
 		builderMap.get( LEFT_COLUMN, ContainerViewElementBuilderSupport.class ).add( form );

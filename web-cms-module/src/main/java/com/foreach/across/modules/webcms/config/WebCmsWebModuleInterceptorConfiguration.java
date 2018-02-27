@@ -16,14 +16,13 @@
 
 package com.foreach.across.modules.webcms.config;
 
-import com.foreach.across.modules.web.AcrossWebModule;
-import com.foreach.across.modules.web.config.support.PrefixingHandlerMappingConfigurerAdapter;
-import com.foreach.across.modules.web.mvc.InterceptorRegistry;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.WebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.endpoint.web.interceptor.WebCmsEndpointHandlerInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * @author Sander Van Loock
@@ -31,22 +30,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @RequiredArgsConstructor
-public class WebCmsWebModuleInterceptorConfiguration extends PrefixingHandlerMappingConfigurerAdapter
+public class WebCmsWebModuleInterceptorConfiguration extends WebMvcConfigurerAdapter
 {
 	private final WebCmsEndpointContext context;
 
 	@Override
-	public void addInterceptors( InterceptorRegistry interceptorRegistry ) {
-		interceptorRegistry.addInterceptor( webCmsEndpointInterceptor() );
+	public void addInterceptors( InterceptorRegistry registry ) {
+		registry.addInterceptor( webCmsEndpointInterceptor() );
 	}
 
 	@Bean
 	public WebCmsEndpointHandlerInterceptor webCmsEndpointInterceptor() {
 		return new WebCmsEndpointHandlerInterceptor( context );
-	}
-
-	@Override
-	public boolean supports( String mapperName ) {
-		return AcrossWebModule.NAME.equals( mapperName );
 	}
 }

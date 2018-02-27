@@ -2,7 +2,6 @@
   <configuration default="false" name="Local ImageServer" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="webapps.admin.WebCmsTestApplication" />
-    <option name="SHOW_IN_DASHBOARD" value="true" />
     <option name="ACTIVE_PROFILES" value="local-imageserver" />
     <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
     <option name="ALTERNATIVE_JRE_PATH" />
