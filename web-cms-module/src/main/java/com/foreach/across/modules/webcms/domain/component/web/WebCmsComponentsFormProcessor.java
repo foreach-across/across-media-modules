@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.builder.ColumnViewElementBuilder;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
@@ -82,7 +82,6 @@ import java.util.stream.Stream;
 @ConditionalOnAdminUI
 public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 {
-	private final BootstrapUiFactory bootstrapUiFactory;
 	private final WebCmsComponentRepository componentRepository;
 	private final WebCmsComponentModelService componentModelService;
 	private final WebCmsComponentModelAdminRenderService componentModelAdminRenderService;
@@ -187,7 +186,7 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 
 		if ( isSingleComponent( command ) ) {
 			val componentModel = componentModels.models[0];
-			val ownerTrail = bootstrapUiFactory.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
+			val ownerTrail = BootstrapUiBuilders.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
 			val baseUrl = entityViewRequest.getEntityViewContext().getLinkBuilder().update( entityViewRequest.getEntityViewContext().getEntity() );
 			WebCmsObject root = entityViewRequest.getEntityViewContext().getEntity( WebCmsObject.class );
 			ModelsHolder rootComponents = entityView.getAttribute( "configuredWebCmsComponents", ModelsHolder.class );
@@ -217,20 +216,20 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 			val linkToRoot = ( owner.hasOwner() && owner.getOwnerObjectId().equals( root.getObjectId() ) ) || rootComponents.contains( owner );
 			String title = StringUtils.defaultIfBlank( owner.getTitle(), StringUtils.defaultIfBlank( owner.getName(), owner.getComponentType().getName() ) );
 			breadcrumb.addFirst(
-					bootstrapUiFactory.node( "li" )
-					                  .attribute( "title", owner.getName() )
-					                  .add(
+					BootstrapUiBuilders.node( "li" )
+					                   .attribute( "title", owner.getName() )
+					                   .add(
 							                  createLink
-									                  ? bootstrapUiFactory.link()
-									                                      .url(
+									                  ? BootstrapUiBuilders.link()
+									                                       .url(
 											                                      linkToRoot
 													                                      ? baseUrl
 													                                      : UriComponentsBuilder.fromUriString( linkBuilder.update( owner ) )
 													                                                            .queryParam( "from", baseUrl )
 													                                                            .toUriString()
 									                                      )
-									                                      .text( title )
-									                  : bootstrapUiFactory.text( title )
+									                                       .text( title )
+									                  : BootstrapUiBuilders.text( title )
 					                  )
 			);
 

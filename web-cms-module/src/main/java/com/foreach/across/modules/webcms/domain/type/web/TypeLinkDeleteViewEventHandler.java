@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.type.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.views.events.BuildEntityDeleteViewEvent;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
@@ -37,7 +37,6 @@ import org.springframework.stereotype.Component;
 class TypeLinkDeleteViewEventHandler
 {
 	private final WebCmsTypeSpecifierLinkRepository linkRepository;
-	private final BootstrapUiFactory bootstrapUiFactory;
 
 	@EventListener
 	void handleTypeBeingDeleted( BuildEntityDeleteViewEvent<WebCmsTypeSpecifier> deleteViewEvent ) {
@@ -52,14 +51,14 @@ class TypeLinkDeleteViewEventHandler
 			deleteViewEvent.setDeleteDisabled( true );
 			deleteViewEvent.associations()
 			               .addChild(
-					               bootstrapUiFactory.node( "li" )
-					                                 .add(
-							                                 bootstrapUiFactory.html(
+					               BootstrapUiBuilders.node( "li" )
+					                                  .add(
+							                                  BootstrapUiBuilders.html(
 									                                 builderContext
 											                                 .getMessage( "objectsLinkedToTypeSpecifier", new Object[] { nonSelfLinks } )
 							                                 )
 					                                 )
-					                                 .build( builderContext )
+					                                  .build( builderContext )
 			               );
 		}
 	}

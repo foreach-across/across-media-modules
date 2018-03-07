@@ -19,10 +19,7 @@ package com.foreach.across.modules.webcms.domain.component.model;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -104,8 +101,7 @@ public class WebCmsComponentModelSet
 	 * @param name           to register the component under
 	 * @param componentModel to add
 	 */
-	public void put( String name, WebCmsComponentModel componentModel ) {
-		Assert.notNull( name );
+	public void put( @NonNull String name, WebCmsComponentModel componentModel ) {
 		componentsByName.put( name, componentModel != null ? componentModel : NOT_FOUND_MARKER );
 	}
 
@@ -156,9 +152,7 @@ public class WebCmsComponentModelSet
 	 * @param componentModel to remove
 	 * @return true if at least one entry has been removed
 	 */
-	public boolean remove( WebCmsComponentModel componentModel ) {
-		Assert.notNull( componentModel );
-
+	public boolean remove( @NonNull WebCmsComponentModel componentModel ) {
 		List<String> namesToRemove = new ArrayList<>();
 		componentsByName.forEach( ( key, value ) -> {
 			if ( componentModel.equals( value ) ) {

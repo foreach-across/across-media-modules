@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.asset.web.builders;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.registry.EntityConfiguration;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
@@ -40,7 +40,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WebCmsAssetEndpointViewElementBuilder implements ViewElementBuilder
 {
-	private final BootstrapUiFactory bootstrapUiFactory;
 	private final EntityRegistry entityRegistry;
 
 	@Override
@@ -53,9 +52,9 @@ public class WebCmsAssetEndpointViewElementBuilder implements ViewElementBuilder
 		String updateUrl = entityConfiguration.getAttribute( EntityLinkBuilder.class ).update( asset );
 		String name = entityConfiguration.getEntityMessageCodeResolver().getNameSingular();
 
-		return bootstrapUiFactory.link()
-		                         .url( updateUrl )
-		                         .text( name + ": " + entityConfiguration.getLabel( asset ) )
-		                         .build( viewElementBuilderContext );
+		return BootstrapUiBuilders.link()
+		                          .url( updateUrl )
+		                          .text( name + ": " + entityConfiguration.getLabel( asset ) )
+		                          .build( viewElementBuilderContext );
 	}
 }

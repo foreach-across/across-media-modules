@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  */
 public class TestWebCmsUtils
 {
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void unableToGeneratePathSegmentForNull() {
 		generateUrlPathSegment( null );
 	}
@@ -44,7 +44,7 @@ public class TestWebCmsUtils
 		assertEquals( "nested-path-things", generateUrlPathSegment( "/nested/path/things" ) );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void unableToGenerateCanonicalPathForNull() {
 		generateCanonicalPath( null );
 	}

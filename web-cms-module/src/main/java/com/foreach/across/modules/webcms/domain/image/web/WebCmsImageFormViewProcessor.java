@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.image.web;
 
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
-import com.foreach.across.modules.bootstrapui.components.BootstrapUiComponentFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.ColumnViewElement;
 import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
@@ -65,7 +65,6 @@ import javax.servlet.http.HttpServletRequest;
 public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 {
 	private final WebCmsImageConnector imageConnector;
-	private final BootstrapUiComponentFactory bootstrapUiComponentFactory;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
@@ -147,7 +146,7 @@ public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 			page.getHeader().clearChildren();
 
 			Menu menu = buildImageMenu( entityViewRequest, linkBuilder );
-			page.withNav( nav -> nav.addFirstChild( bootstrapUiComponentFactory.nav( menu ).pills().build() ) );
+			page.withNav( nav -> nav.addFirstChild( BootstrapUiBuilders.nav( menu ).pills().build() ) );
 		}
 
 		ContainerViewElementUtils.find( container, "entityForm", FormViewElement.class )

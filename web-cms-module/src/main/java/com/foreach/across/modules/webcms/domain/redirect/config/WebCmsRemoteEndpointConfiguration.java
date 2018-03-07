@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.redirect.config;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.TextareaFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
@@ -136,7 +136,6 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 	@RequiredArgsConstructor
 	private static class UrlsControlViewElementBuilder implements ViewElementBuilder<ContainerViewElement>
 	{
-		private final BootstrapUiFactory bootstrapUiFactory;
 		private final EntityViewElementBuilderHelper builderHelper;
 
 		@Override
@@ -159,7 +158,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			tableBuilder.items( EntityUtils.asPage( urls ) );
 			tableBuilder.tableOnly();
 			tableBuilder.hideResultNumber();
-			tableBuilder.noResults( bootstrapUiFactory.container() );
+			tableBuilder.noResults( BootstrapUiBuilders.container() );
 
 			val associationLinkBuilder = association.getAttribute( EntityLinkBuilder.class )
 			                                        .asAssociationFor( entityViewContext.getLinkBuilder(), entityViewContext.getEntity() );
@@ -174,14 +173,14 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			String message = entityViewContext.getMessageCodeResolver()
 			                                  .getMessage( "properties.urls.add", "Add a path to redirect" );
 
-			return bootstrapUiFactory.div()
-			                         .name( "formGroup-urls" )
-			                         .add( tableBuilder )
-			                         .add( bootstrapUiFactory.button()
-			                                                 .link( associationLinkBuilder.create() )
-			                                                 .style( Style.PRIMARY )
-			                                                 .text( message ) )
-			                         .build( new DefaultViewElementBuilderContext() );
+			return BootstrapUiBuilders.div()
+			                          .name( "formGroup-urls" )
+			                          .add( tableBuilder )
+			                          .add( BootstrapUiBuilders.button()
+			                                                   .link( associationLinkBuilder.create() )
+			                                                   .style( Style.PRIMARY )
+			                                                   .text( message ) )
+			                          .build( new DefaultViewElementBuilderContext() );
 		}
 	}
 

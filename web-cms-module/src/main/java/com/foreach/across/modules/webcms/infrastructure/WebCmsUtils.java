@@ -20,8 +20,8 @@ import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataImportAction;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.text.Normalizer;
 import java.util.Date;
@@ -47,9 +47,7 @@ public class WebCmsUtils
 	 * @param date  to check for
 	 * @return true if asset is published
 	 */
-	public static boolean isPublishedOnDate( WebCmsAsset asset, Date date ) {
-		Assert.notNull( asset );
-		Assert.notNull( date );
+	public static boolean isPublishedOnDate( @NonNull WebCmsAsset asset, @NonNull Date date ) {
 		return asset.isPublished() && ( asset.getPublicationDate() == null || asset.getPublicationDate().before( date ) );
 	}
 
@@ -60,8 +58,7 @@ public class WebCmsUtils
 	 * @param collectionId the key should have
 	 * @return unique key
 	 */
-	public static String generateObjectId( String collectionId ) {
-		Assert.notNull( collectionId );
+	public static String generateObjectId( @NonNull String collectionId ) {
 		return prefixObjectIdForCollection( UUID.randomUUID().toString(), collectionId );
 	}
 
@@ -73,9 +70,7 @@ public class WebCmsUtils
 	 * @param collectionId the key should have
 	 * @return collection prefixed key
 	 */
-	public static String prefixObjectIdForCollection( String objectId, String collectionId ) {
-		Assert.notNull( collectionId );
-		Assert.notNull( objectId );
+	public static String prefixObjectIdForCollection( @NonNull String objectId, @NonNull String collectionId ) {
 		return StringUtils.startsWith( objectId, collectionId + ":" ) ? objectId : collectionId + ":" + objectId;
 	}
 
@@ -86,8 +81,7 @@ public class WebCmsUtils
 	 * @param collectionId the object id should have
 	 * @return true if object id is for the collection
 	 */
-	public static boolean isObjectIdForCollection( String objectId, String collectionId ) {
-		Assert.notNull( collectionId );
+	public static boolean isObjectIdForCollection( String objectId, @NonNull String collectionId ) {
 		return StringUtils.startsWith( objectId, collectionId + ":" );
 	}
 
@@ -98,9 +92,7 @@ public class WebCmsUtils
 	 * @param text to convert
 	 * @return path segment
 	 */
-	public static String generateUrlPathSegment( String text ) {
-		Assert.notNull( text );
-
+	public static String generateUrlPathSegment( @NonNull String text ) {
 		return StringUtils.removeStart(
 				StringUtils.removeEnd(
 						Normalizer.normalize( StringUtils.lowerCase( text ), Normalizer.Form.NFD )
@@ -118,9 +110,7 @@ public class WebCmsUtils
 	 * @param page to generate the path for
 	 * @return canonical path
 	 */
-	public static String generateCanonicalPath( WebCmsPage page ) {
-		Assert.notNull( page );
-
+	public static String generateCanonicalPath( @NonNull WebCmsPage page ) {
 		WebCmsPage parent = page.getParent();
 
 		if ( parent != null ) {
@@ -140,10 +130,7 @@ public class WebCmsUtils
 	 * @param path    to inject into the base url
 	 * @return combined
 	 */
-	public static String combineUrlSegments( String baseUrl, String path ) {
-		Assert.notNull( baseUrl );
-		Assert.notNull( path );
-
+	public static String combineUrlSegments( @NonNull String baseUrl, @NonNull String path ) {
 		if ( StringUtils.contains( baseUrl, '*' ) ) {
 			return StringUtils.replace( baseUrl, "*", path );
 		}

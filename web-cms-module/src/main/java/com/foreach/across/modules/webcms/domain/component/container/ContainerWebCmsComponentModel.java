@@ -20,9 +20,9 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,8 +84,7 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 	 * @param expectedType to coerce to
 	 * @return member with the given name or null if not found
 	 */
-	public <U extends WebCmsComponentModel> U getMember( String name, Class<U> expectedType ) {
-		Assert.notNull( expectedType );
+	public <U extends WebCmsComponentModel> U getMember( String name, @NonNull Class<U> expectedType ) {
 		return expectedType.cast( getMember( name ) );
 	}
 
@@ -93,8 +92,7 @@ public class ContainerWebCmsComponentModel extends WebCmsComponentModel
 	 * @param name of the component
 	 * @return member with the given name or null if not found
 	 */
-	public WebCmsComponentModel getMember( String name ) {
-		Assert.notNull( name );
+	public WebCmsComponentModel getMember( @NonNull String name ) {
 		for ( WebCmsComponentModel member : members ) {
 			if ( name.equals( member.getName() ) ) {
 				return member;

@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.FormInputElement;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
@@ -51,7 +51,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public final class WebCmsComponentModelAdminRenderService
 {
-	private final BootstrapUiFactory bootstrapUiFactory;
 	private final EntityViewElementBuilderHelper builderHelper;
 	private final WebCmsComponentRepository componentRepository;
 
@@ -74,9 +73,9 @@ public final class WebCmsComponentModelAdminRenderService
 		}
 
 		formElementBuilder.add(
-				bootstrapUiFactory.hidden()
-				                  .controlName( controlNamePrefix + ".component.sortIndex" )
-				                  .value( componentModel.getComponent().getSortIndex() )
+				BootstrapUiBuilders.hidden()
+				                   .controlName( controlNamePrefix + ".component.sortIndex" )
+				                   .value( componentModel.getComponent().getSortIndex() )
 		);
 
 		return formElementBuilder;
@@ -103,25 +102,25 @@ public final class WebCmsComponentModelAdminRenderService
 
 		WebCmsComponent ownerContainer = componentModel.hasOwner() ? componentRepository.findOneByObjectId( componentModel.getOwnerObjectId() ) : null;
 
-		return bootstrapUiFactory.row()
-		                         .add(
-				                         bootstrapUiFactory.column( Grid.Device.MEDIUM.width( 6 ) )
-				                                           .add( formGroups.get( "title" ) )
-				                                           .add( formGroups.get( "name" ) )
-				                                           .add( formGroups.get( "sortIndex" ) )
+		return BootstrapUiBuilders.row()
+		                          .add(
+				                          BootstrapUiBuilders.column( Grid.Device.MEDIUM.width( 6 ) )
+				                                             .add( formGroups.get( "title" ) )
+				                                             .add( formGroups.get( "name" ) )
+				                                             .add( formGroups.get( "sortIndex" ) )
 		                         )
-		                         .add(
-				                         bootstrapUiFactory.column( Grid.Device.MEDIUM.width( 6 ) )
-				                                           .add( formGroups.get( "componentType" ) )
-				                                           .add( formGroups.get( "lastModified" ) )
+		                          .add(
+				                          BootstrapUiBuilders.column( Grid.Device.MEDIUM.width( 6 ) )
+				                                             .add( formGroups.get( "componentType" ) )
+				                                             .add( formGroups.get( "lastModified" ) )
 		                         )
-		                         .postProcessor( ( builderContext, container ) -> {
+		                          .postProcessor( ( builderContext, container ) -> {
 			                         ControlNamePrefixingPostProcessor controlNamePrefixingPostProcessor = new ControlNamePrefixingPostProcessor(
 					                         controlNamePrefix + ".component" );
 			                         container.findAll( FormInputElement.class )
 			                                  .forEach( e -> controlNamePrefixingPostProcessor.postProcess( builderContext, e ) );
 		                         } )
-		                         .postProcessor( ( builderContext, container ) -> {
+		                          .postProcessor( ( builderContext, container ) -> {
 			                         if ( ownerContainer != null ) {
 				                         container.find( "formGroup-title", FormGroupElement.class )
 				                                  .ifPresent( group -> group.setRequired( false ) );

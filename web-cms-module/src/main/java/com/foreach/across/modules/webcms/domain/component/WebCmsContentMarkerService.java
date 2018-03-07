@@ -16,9 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.component;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.function.Function;
@@ -109,9 +109,7 @@ public class WebCmsContentMarkerService
 	 * @param markerValueFunction to determine a marker value
 	 * @return text with all markers replaced
 	 */
-	public String replaceMarkers( String text, Function<WebCmsContentMarker, String> markerValueFunction ) {
-		Assert.notNull( markerValueFunction );
-
+	public String replaceMarkers( String text, @NonNull Function<WebCmsContentMarker, String> markerValueFunction ) {
 		if ( !StringUtils.isEmpty( text ) ) {
 			StringBuilder stringBuilder = new StringBuilder( text.length() );
 

@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.image.web;
 
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
-import com.foreach.across.modules.bootstrapui.components.BootstrapUiComponentFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.TableViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
@@ -49,7 +49,6 @@ import java.util.function.Function;
 public class WebCmsImageListViewProcessor extends EntityViewProcessorAdapter
 {
 	private final WebCmsImageConnector imageConnector;
-	private final BootstrapUiComponentFactory bootstrapUiComponentFactory;
 
 	@Override
 	protected void registerWebResources( EntityViewRequest entityViewRequest, EntityView entityView, WebResourceRegistry webResourceRegistry ) {
@@ -68,7 +67,7 @@ public class WebCmsImageListViewProcessor extends EntityViewProcessorAdapter
 		page.addCssClass( "wcm-image" );
 
 		Menu menu = WebCmsImageFormViewProcessor.buildImageMenu( entityViewRequest, linkBuilder );
-		page.addToNav( bootstrapUiComponentFactory.nav( menu ).pills().build() );
+		page.addToNav( BootstrapUiBuilders.nav( menu ).pills().build() );
 	}
 
 	@Override

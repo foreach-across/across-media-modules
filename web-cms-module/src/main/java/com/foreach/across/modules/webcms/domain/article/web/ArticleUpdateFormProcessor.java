@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.article.web;
 
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.bootstrapui.elements.LinkViewElement;
@@ -46,7 +46,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 final class ArticleUpdateFormProcessor extends EntityViewProcessorAdapter
 {
-	private final BootstrapUiFactory bootstrapUiFactory;
 	private final WebCmsAssetService assetPreviewService;
 
 	@SuppressWarnings("unused")
@@ -77,11 +76,11 @@ final class ArticleUpdateFormProcessor extends EntityViewProcessorAdapter
 		container.find( SingleEntityFormViewProcessor.RIGHT_COLUMN, ContainerViewElement.class )
 		         .ifPresent( target -> {
 			         target.addChild(
-					         bootstrapUiFactory.row()
-					                           .name( "pub-metadata" )
-					                           .add( bootstrapUiFactory.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-left" ) )
-					                           .add( bootstrapUiFactory.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-right" ) )
-					                           .build( builderContext )
+					         BootstrapUiBuilders.row()
+					                            .name( "pub-metadata" )
+					                            .add( BootstrapUiBuilders.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-left" ) )
+					                            .add( BootstrapUiBuilders.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-right" ) )
+					                            .build( builderContext )
 			         );
 
 			         container

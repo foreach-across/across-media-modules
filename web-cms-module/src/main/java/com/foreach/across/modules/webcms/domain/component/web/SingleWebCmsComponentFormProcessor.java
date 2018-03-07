@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.ButtonViewElement;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.builder.ColumnViewElementBuilder;
@@ -84,7 +84,6 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 	private final WebCmsComponentModelAdminRenderService componentModelAdminRenderService;
 	private final EntityViewCommandValidator entityViewCommandValidator;
 	private final WebCmsComponentValidator componentValidator;
-	private final BootstrapUiFactory bootstrapUiFactory;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
@@ -190,7 +189,7 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 		ColumnViewElementBuilder columnViewElementBuilder = builderMap.get( SingleEntityFormViewProcessor.LEFT_COLUMN, ColumnViewElementBuilder.class );
 
 		if ( componentModel.hasOwner() ) {
-			val ownerTrail = bootstrapUiFactory.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
+			val ownerTrail = BootstrapUiBuilders.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
 			if ( addToOwnerTrail( ownerTrail, componentModel.getObjectId(), entityViewRequest.getEntityViewContext().getLinkBuilder(), false ) ) {
 				columnViewElementBuilder.add( ownerTrail );
 			}
@@ -224,12 +223,12 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 		if ( owner != null ) {
 			String title = StringUtils.defaultIfBlank( owner.getTitle(), StringUtils.defaultIfBlank( owner.getName(), owner.getComponentType().getName() ) );
 			breadcrumb.addFirst(
-					bootstrapUiFactory.node( "li" )
-					                  .attribute( "title", owner.getName() )
-					                  .add(
+					BootstrapUiBuilders.node( "li" )
+					                   .attribute( "title", owner.getName() )
+					                   .add(
 							                  createLink
-									                  ? bootstrapUiFactory.link().url( linkBuilder.update( owner ) ).text( title )
-									                  : bootstrapUiFactory.text( title )
+									                  ? BootstrapUiBuilders.link().url( linkBuilder.update( owner ) ).text( title )
+									                  : BootstrapUiBuilders.text( title )
 					                  )
 			);
 

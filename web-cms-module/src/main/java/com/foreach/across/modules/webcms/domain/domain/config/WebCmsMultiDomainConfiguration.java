@@ -27,7 +27,6 @@ import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.*;
-import org.springframework.util.Assert;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -190,9 +189,7 @@ public class WebCmsMultiDomainConfiguration
 	 * @param entityType to check if domain bound
 	 * @return true if domain bound
 	 */
-	public boolean isDomainBound( Class<?> entityType ) {
-		Assert.notNull( entityType );
-
+	public boolean isDomainBound( @NonNull Class<?> entityType ) {
 		if ( isDisabled() ) {
 			return false;
 		}
@@ -232,9 +229,7 @@ public class WebCmsMultiDomainConfiguration
 	 * @param entityType to check for no-domain allowed
 	 * @return true is domain bound and no domain is allowed
 	 */
-	public boolean isNoDomainAllowed( Class<?> entityType ) {
-		Assert.notNull( entityType );
-
+	public boolean isNoDomainAllowed( @NonNull Class<?> entityType ) {
 		if ( isDisabled() || !isDomainBound( entityType ) ) {
 			return true;
 		}

@@ -17,10 +17,10 @@
 package com.foreach.across.modules.webcms.domain.component.placeholder;
 
 import com.foreach.across.core.annotations.Exposed;
+import lombok.NonNull;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -42,8 +42,7 @@ public class WebCmsPlaceholderContentModel implements WebCmsPlaceholderLookupSer
 		increaseLevel();
 	}
 
-	public void setPlaceholderContent( String placeholderName, Object content ) {
-		Assert.notNull( placeholderName );
+	public void setPlaceholderContent( @NonNull String placeholderName, Object content ) {
 		currentData.put( placeholderName, content != null ? content : NULL );
 	}
 
