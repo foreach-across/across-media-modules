@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.page.config;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.entity.views.events.BuildEntityDeleteViewEvent;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
@@ -24,6 +23,7 @@ import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItemRepository;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -40,7 +40,7 @@ public class WebCmsPageDeleteEventHandler
 	private final WebCmsAssetEndpointRepository endpointRepository;
 	private final WebCmsMenuItemRepository menuItemRepository;
 
-	@Event
+	@EventListener
 	public void handleDeleteEvent( BuildEntityDeleteViewEvent<WebCmsPage> event ) {
 		if ( event.getEntity() != null ) {
 			List<WebCmsAssetEndpoint> endpoints = endpointRepository.findAllByAsset( event.getEntity() );

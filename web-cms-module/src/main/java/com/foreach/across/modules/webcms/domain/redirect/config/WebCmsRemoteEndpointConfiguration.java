@@ -16,8 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.redirect.config;
 
-import com.foreach.across.core.annotations.Event;
-import com.foreach.across.modules.adminweb.menu.EntityAdminMenuEvent;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.TextareaFormElement;
@@ -35,6 +33,7 @@ import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.bootstrapui.processors.element.EntityListActionsProcessor;
 import com.foreach.across.modules.entity.views.bootstrapui.util.SortableTableBuilder;
+import com.foreach.across.modules.entity.views.menu.EntityAdminMenuEvent;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SimpleEntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
@@ -55,6 +54,7 @@ import com.foreach.across.modules.webcms.domain.redirect.web.WebCmsRemoteEndpoin
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.context.event.EventListener;
 import org.springframework.format.Printer;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -74,7 +74,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 	private final UrlsControlViewElementBuilder urlsControlViewElementBuilder;
 	private final WebCmsRemoteEndpointViewElementBuilder remoteEndpointViewElementBuilder;
 
-	@Event
+	@EventListener
 	void hideUrlsTab( EntityAdminMenuEvent<WebCmsRemoteEndpoint> menu ) {
 		menu.builder()
 		    .item( "webCmsRemoteEndpoint.urls" ).disable();

@@ -22,7 +22,6 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLink;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 
 /**
  * @author Arne Vandamme

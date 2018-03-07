@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.domain.web;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.adminweb.menu.AdminMenu;
 import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
 import com.foreach.across.modules.adminweb.ui.AdminWebLayoutTemplate;
@@ -29,6 +28,7 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.domain.*;
 import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
@@ -51,7 +51,7 @@ class WebCmsDomainNavBuilder
 
 	private final WebCmsMultiDomainAdminUiService adminUiService;
 
-	@Event
+	@EventListener
 	void buildDomainSelector( AdminMenuEvent event ) {
 		if ( !multiDomainConfiguration.isDisabled() && !multiDomainConfiguration.isDomainSelectablePerEntity() ) {
 			PathBasedMenuBuilder menuBuilder = event.builder()

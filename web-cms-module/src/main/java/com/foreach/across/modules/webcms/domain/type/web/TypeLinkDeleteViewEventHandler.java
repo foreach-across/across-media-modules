@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.type.web;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.entity.views.events.BuildEntityDeleteViewEvent;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -25,6 +24,7 @@ import com.foreach.across.modules.webcms.domain.type.QWebCmsTypeSpecifierLink;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,7 +39,7 @@ class TypeLinkDeleteViewEventHandler
 	private final WebCmsTypeSpecifierLinkRepository linkRepository;
 	private final BootstrapUiFactory bootstrapUiFactory;
 
-	@Event
+	@EventListener
 	void handleTypeBeingDeleted( BuildEntityDeleteViewEvent<WebCmsTypeSpecifier> deleteViewEvent ) {
 		QWebCmsTypeSpecifierLink query = QWebCmsTypeSpecifierLink.webCmsTypeSpecifierLink;
 		long nonSelfLinks = linkRepository.count(

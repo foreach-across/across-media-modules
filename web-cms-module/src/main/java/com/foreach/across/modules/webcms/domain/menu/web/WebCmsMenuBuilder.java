@@ -16,11 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.menu.web;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.web.events.BuildMenuEvent;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuCache;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,7 +39,7 @@ final class WebCmsMenuBuilder
 {
 	private final WebCmsMenuCache menuCache;
 
-	@Event
+	@EventListener
 	void registerWebCmsMenuItems( BuildMenuEvent buildMenuEvent ) {
 		PathBasedMenuBuilder builder = buildMenuEvent.builder();
 

@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.url.web;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
@@ -25,6 +24,7 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.endpoint.support.PrimaryUrlForAssetFailedEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestAttributes;
@@ -48,7 +48,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public final class WebCmsAssetPrimaryUrlFailureDetectionProcessor extends EntityViewProcessorAdapter
 {
-	@Event
+	@EventListener
 	void detectPrimaryUrlUpdateFailure( PrimaryUrlForAssetFailedEvent event ) {
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 

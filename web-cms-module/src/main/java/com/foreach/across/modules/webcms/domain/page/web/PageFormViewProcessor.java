@@ -16,13 +16,12 @@
 
 package com.foreach.across.modules.webcms.domain.page.web;
 
-import com.foreach.across.core.annotations.Event;
-import com.foreach.across.modules.adminweb.menu.EntityAdminMenuEvent;
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.LinkViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
+import com.foreach.across.modules.entity.views.menu.EntityAdminMenuEvent;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
 import com.foreach.across.modules.entity.views.processors.support.EntityPageStructureRenderedEvent;
@@ -48,6 +47,7 @@ import com.foreach.across.modules.webcms.domain.page.config.WebCmsPageConfigurat
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -70,7 +70,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 	private final WebCmsMultiDomainService multiDomainService;
 
 	@SuppressWarnings("unused")
-	@Event
+	@EventListener
 	void setPreviewLinkOnMenu( EntityPageStructureRenderedEvent<WebCmsPage> event ) {
 		if ( event.holdsEntity() ) {
 			assetPreviewService
@@ -89,7 +89,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 		}
 	}
 
-	@Event
+	@EventListener
 	void handleMenuCreationEvent( EntityAdminMenuEvent<WebCmsPage> event ) {
 		if ( event.getEntity() != null && event.getEntity().getPageType() != null ) {
 			boolean hasEndpoint = event.getEntity().getPageType().hasEndpoint();

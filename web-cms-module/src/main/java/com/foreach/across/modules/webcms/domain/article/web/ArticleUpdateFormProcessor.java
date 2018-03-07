@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.article.web;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
@@ -35,6 +34,7 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -50,7 +50,7 @@ final class ArticleUpdateFormProcessor extends EntityViewProcessorAdapter
 	private final WebCmsAssetService assetPreviewService;
 
 	@SuppressWarnings("unused")
-	@Event
+	@EventListener
 	void setPreviewLinkOnMenu( EntityPageStructureRenderedEvent<WebCmsArticle> event ) {
 		if ( event.holdsEntity() ) {
 			assetPreviewService

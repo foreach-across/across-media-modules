@@ -18,8 +18,8 @@ package com.foreach.across.modules.webcms.domain.article.web;
 
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetEndpointAccessValidator;
+import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import org.springframework.stereotype.Component;
 
 /**

@@ -16,8 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.asset;
 
-import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
-
 /**
  * Represents the type specifier for a link between a {@link WebCmsAsset} and a {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponent}.
  *

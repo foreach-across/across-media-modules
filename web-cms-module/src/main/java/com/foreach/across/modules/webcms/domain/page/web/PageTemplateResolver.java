@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.core.DynamicAcrossModule;
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.info.AcrossModuleInfo;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
@@ -26,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -85,7 +85,7 @@ public class PageTemplateResolver
 	 * If no default prefix is set but there is a {@link com.foreach.across.core.DynamicAcrossModule.DynamicApplicationModule}
 	 * present, generate a Thymeleaf prefix for those resources.
 	 */
-	@Event
+	@EventListener
 	void determineDefaultPrefix( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
 		if ( properties.getTemplatePrefix() == null ) {
 			contextBootstrappedEvent
