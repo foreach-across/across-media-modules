@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.image.web;
 
-import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@AcrossDepends(required = AdminWebModule.NAME)
+@ConditionalOnAcrossModule(AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
 public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<ImageWebCmsComponentModel>
@@ -71,7 +71,7 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 								                   BootstrapUiBuilders.node( "img" )
 								                                      .attribute( "src", thumbnailUrl )
 								                                      .attribute( "border", "1" )
-						                  )
+						                   )
 				)
 				.add(
 						BootstrapUiBuilders.div()
@@ -82,14 +82,14 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 								                                      .attribute( "data-wcm-image-action", "edit" )
 								                                      .iconOnly( new GlyphIcon( GlyphIcon.EDIT ) )
 								                                      .text( "Change image" )
-						                  )
+						                   )
 						                   .add(
 								                   BootstrapUiBuilders.button()
 								                                      .link()
 								                                      .attribute( "data-wcm-image-action", "delete" )
 								                                      .iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) )
 								                                      .text( "Remove image" )
-						                  )
+						                   )
 				)
 				.add(
 						BootstrapUiBuilders.button()

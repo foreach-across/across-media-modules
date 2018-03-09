@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.asset.web.builders;
 
-import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component;
  */
 @Deprecated
 @Component
-@AcrossDepends(required = BootstrapUiModule.NAME)
+@ConditionalOnAcrossModule(BootstrapUiModule.NAME)
 @RequiredArgsConstructor
 @Slf4j
 public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewElement>
@@ -59,7 +59,7 @@ public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewEle
 		                          .add(
 				                          BootstrapUiBuilders.node( "img" )
 				                                             .attribute( "src", imageUrl )
-		                         )
+		                          )
 		                          .build( viewElementBuilderContext );
 
 		/*

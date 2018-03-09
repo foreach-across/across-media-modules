@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.text;
 
-import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
@@ -35,7 +35,7 @@ import static com.foreach.across.modules.webcms.domain.component.web.WebCmsCompo
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@AcrossDepends(required = AdminWebModule.NAME)
+@ConditionalOnAcrossModule(AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
 public class TextWebCmsComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<TextWebCmsComponentModel>
@@ -50,26 +50,26 @@ public class TextWebCmsComponentModelAdminRenderer implements WebCmsComponentMod
 		return BootstrapUiBuilders.textbox()
 		                          .controlName( controlNamePrefix + ".content" )
 		                          .rows(
-				                         Integer.parseInt( componentModel.getComponentType()
-				                                                         .getAttribute( TextWebCmsComponentModel.Attributes.ROWS, "3" ) )
-		                         )
+				                          Integer.parseInt( componentModel.getComponentType()
+				                                                          .getAttribute( TextWebCmsComponentModel.Attributes.ROWS, "3" ) )
+		                          )
 		                          .multiLine( componentModel.isMultiLine() )
 		                          .text( componentModel.getContent() )
 		                          .attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
 		                          .attribute( "data-wcm-markup-type", componentModel.getMarkupType().asAttributeValue() )
 		                          .attribute( "data-wcm-profile", componentModel.getProfile() )
 		                          .postProcessor( ( ( builderContext, element ) -> {
-			                         builderContext.getAttribute( WebResourceRegistry.class ).addPackage( TextWebCmsComponentAdminResources.NAME );
+			                          builderContext.getAttribute( WebResourceRegistry.class ).addPackage( TextWebCmsComponentAdminResources.NAME );
 
-			                         EntityMessageCodeResolver codeResolver = builderContext.getAttribute( EntityMessageCodeResolver.class );
-			                         if ( codeResolver != null ) {
-				                         element.setPlaceholder(
-						                         codeResolver.getMessageWithFallback(
-								                         builderContext.getAttribute( COMPONENT_MESSAGE_CODE_PREFIX, String.class ) + ".content[placeholder]",
-								                         StringUtils.defaultString( element.getPlaceholder() )
-						                         )
-				                         );
-			                         }
-		                         } ) );
+			                          EntityMessageCodeResolver codeResolver = builderContext.getAttribute( EntityMessageCodeResolver.class );
+			                          if ( codeResolver != null ) {
+				                          element.setPlaceholder(
+						                          codeResolver.getMessageWithFallback(
+								                          builderContext.getAttribute( COMPONENT_MESSAGE_CODE_PREFIX, String.class ) + ".content[placeholder]",
+								                          StringUtils.defaultString( element.getPlaceholder() )
+						                          )
+				                          );
+			                          }
+		                          } ) );
 	}
 }
