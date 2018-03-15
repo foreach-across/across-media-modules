@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.data;
 
-import com.foreach.across.core.convert.StringToDateConverter;
+import com.foreach.across.core.convert.StringToDateTimeConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.convert.TypeDescriptor;
@@ -41,8 +41,8 @@ public class WebCmsDataConversionService extends DefaultConversionService
 {
 	private final Map<Class, String> singleValueProperties = new HashMap<>();
 
-	public WebCmsDataConversionService( StringToDateConverter defaultDateConverter ) {
-		addConverter( defaultDateConverter );
+	public WebCmsDataConversionService() {
+		addConverter( new StringToDateTimeConverter( this ) );
 	}
 
 	/**

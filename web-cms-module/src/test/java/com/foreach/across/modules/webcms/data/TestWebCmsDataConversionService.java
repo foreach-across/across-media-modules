@@ -16,10 +16,14 @@
 
 package com.foreach.across.modules.webcms.data;
 
-import com.foreach.across.core.convert.StringToDateConverter;
 import lombok.Data;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +35,18 @@ import static org.junit.Assert.*;
  */
 public class TestWebCmsDataConversionService
 {
-	private WebCmsDataConversionService conversionService = new WebCmsDataConversionService( new StringToDateConverter() );
+	private WebCmsDataConversionService conversionService = new WebCmsDataConversionService();
+
+	@Test
+	@SneakyThrows
+	public void defaultDateConversion() {
+		String source = "2018-03-16 13:45";
+		Date expectedDate = DateUtils.parseDate( source, "yyyy-MM-dd HH:mm" );
+		assertEquals( expectedDate, conversionService.convert( source, Date.class ) );
+
+		LocalDateTime ldt = LocalDateTime.parse( source, DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm" ) );
+		assertEquals( ldt, conversionService.convert( source, LocalDateTime.class ) );
+	}
 
 	@Test
 	public void simpleMap() {

@@ -48,3 +48,4 @@ webCmsModule:
     excluded-path-patterns: /resources/**
   pages:
     default-page-type: default
+
