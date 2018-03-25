@@ -86,7 +86,10 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 		if ( data.getCurrentPrimaryUrl() != null && data.getCurrentPrimaryUrl().isPrimaryLocked() ) {
 			// Edge case: if primary url is already locked, send back to update page as there is no longer an issue
 			entityView.setRedirectUrl(
-					entityViewRequest.getEntityViewContext().getLinkBuilder().update( entityViewRequest.getEntityViewContext().getEntity() )
+					entityViewRequest.getEntityViewContext().getLinkBuilder()
+					                 .forInstance( entityViewRequest.getEntityViewContext().getEntity() )
+					                 .updateView()
+					                 .toUriString()
 			);
 		}
 	}
@@ -106,7 +109,7 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 		}
 
 		if ( actionCompleted ) {
-			entityView.setRedirectUrl( entityViewRequest.getEntityViewContext().getLinkBuilder().update( asset ) );
+			entityView.setRedirectUrl( entityViewRequest.getEntityViewContext().getLinkBuilder().forInstance( asset ).updateView().toUriString() );
 		}
 	}
 
@@ -161,9 +164,9 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 				                   .warning()
 				                   .add(
 						                   BootstrapUiBuilders
-								                  .html( codeResolver.getMessageWithFallback( "description", null )
-								                  )
-				                  )
+								                   .html( codeResolver.getMessageWithFallback( "description", null )
+								                   )
+				                   )
 		);
 
 		if ( data.getCurrentPrimaryUrl() != null ) {
@@ -223,7 +226,7 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 						                                      .value( PrimaryUrlUpdateAction.DO_NOTHING.name() )
 						                                      .selected( data.getAction() == PrimaryUrlUpdateAction.DO_NOTHING )
 						                                      .label( codeResolver.getMessageWithFallback( "action.doNothing", null ) )
-				                  )
+				                   )
 				                   .helpBlock( codeResolver.getMessageWithFallback( "action.doNothing[help]", null ) )
 		);
 

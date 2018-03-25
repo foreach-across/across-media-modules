@@ -25,7 +25,6 @@ import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewPr
 import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
@@ -51,14 +50,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -123,8 +120,7 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 								      }
 						      )
 						      .filter( Objects::nonNull )
-						      .collect( Collectors.toList() )
-						      .toArray( new WebCmsComponentModel[0] )
+						      .toArray( WebCmsComponentModel[]::new )
 				)
 		);
 
@@ -153,11 +149,13 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 				"currentComponentUrl",
 				pathHelper.getPathWithinApplication( entityViewRequest.getWebRequest().getNativeRequest( HttpServletRequest.class ) )
 		);
+		// add a custom link builder proxy to edit components on the same page
 		entityView.addAttribute(
 				"componentLinkBuilder",
-				new InnerComponentLinkBuilder(
-						entityViewRequest.getEntityViewContext().getLinkBuilder().update( entityViewRequest.getEntityViewContext().getEntity() )
-				)
+				(WebCmsComponentUpdateLinkBuilder) component -> entityViewRequest.getEntityViewContext().getLinkBuilder()
+				                                                                 .forInstance( entityViewRequest.getEntityViewContext().getEntity() )
+				                                                                 .updateView()
+				                                                                 .withQueryParam( "componentObjectId", component.getObjectId() )
 		);
 	}
 
@@ -182,12 +180,15 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 		ModelsHolder componentModels = command.getExtension( "webCmsComponents", ModelsHolder.class );
 
 		ColumnViewElementBuilder columnViewElementBuilder = builderMap.get( SingleEntityFormViewProcessor.LEFT_COLUMN, ColumnViewElementBuilder.class );
-		val componentLinkBuilder = entityView.getAttribute( "componentLinkBuilder", EntityLinkBuilder.class );
+		val componentLinkBuilder = entityView.getAttribute( "componentLinkBuilder", WebCmsComponentUpdateLinkBuilder.class );
 
 		if ( isSingleComponent( command ) ) {
 			val componentModel = componentModels.models[0];
 			val ownerTrail = BootstrapUiBuilders.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
-			val baseUrl = entityViewRequest.getEntityViewContext().getLinkBuilder().update( entityViewRequest.getEntityViewContext().getEntity() );
+			val baseUrl = entityViewRequest.getEntityViewContext().getLinkBuilder()
+			                               .forInstance( entityViewRequest.getEntityViewContext().getEntity() )
+			                               .updateView()
+			                               .toUriString();
 			WebCmsObject root = entityViewRequest.getEntityViewContext().getEntity( WebCmsObject.class );
 			ModelsHolder rootComponents = entityView.getAttribute( "configuredWebCmsComponents", ModelsHolder.class );
 			if ( addToOwnerTrail( ownerTrail, componentModel.getObjectId(), componentLinkBuilder, rootComponents, root, baseUrl, false ) ) {
@@ -206,7 +207,7 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 
 	private boolean addToOwnerTrail( NodeViewElementBuilder breadcrumb,
 	                                 String objectId,
-	                                 EntityLinkBuilder linkBuilder,
+	                                 WebCmsComponentUpdateLinkBuilder linkBuilder,
 	                                 ModelsHolder rootComponents,
 	                                 WebCmsObject root,
 	                                 String baseUrl,
@@ -219,18 +220,16 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 					BootstrapUiBuilders.node( "li" )
 					                   .attribute( "title", owner.getName() )
 					                   .add(
-							                  createLink
-									                  ? BootstrapUiBuilders.link()
-									                                       .url(
-											                                      linkToRoot
-													                                      ? baseUrl
-													                                      : UriComponentsBuilder.fromUriString( linkBuilder.update( owner ) )
-													                                                            .queryParam( "from", baseUrl )
-													                                                            .toUriString()
-									                                      )
-									                                       .text( title )
-									                  : BootstrapUiBuilders.text( title )
-					                  )
+							                   createLink
+									                   ? BootstrapUiBuilders.link()
+									                                        .url(
+											                                        linkToRoot
+													                                        ? baseUrl
+													                                        : linkBuilder.update( owner ).withFromUrl( baseUrl ).toUriString()
+									                                        )
+									                                        .text( title )
+									                   : BootstrapUiBuilders.text( title )
+					                   )
 			);
 
 			if ( owner.hasOwner() && !linkToRoot ) {
@@ -275,52 +274,6 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 
 		boolean contains( WebCmsComponent component ) {
 			return Arrays.stream( models ).anyMatch( m -> component.getObjectId().equals( m.getObjectId() ) );
-		}
-	}
-
-	/**
-	 * Dummy link builder implementation that ensures update links are rendered in the same page.
-	 */
-	@RequiredArgsConstructor
-	private static class InnerComponentLinkBuilder implements EntityLinkBuilder
-	{
-		private final String baseUrl;
-
-		@Override
-		public String overview() {
-			return null;
-		}
-
-		@Override
-		public String create() {
-			return null;
-		}
-
-		@Override
-		public String update( Object entity ) {
-			return UriComponentsBuilder.fromUriString( baseUrl )
-			                           .queryParam( "componentObjectId", ( (WebCmsObject) entity ).getObjectId() )
-			                           .toUriString();
-		}
-
-		@Override
-		public String delete( Object entity ) {
-			return null;
-		}
-
-		@Override
-		public String view( Object entity ) {
-			return null;
-		}
-
-		@Override
-		public String associations( Object entity ) {
-			return null;
-		}
-
-		@Override
-		public EntityLinkBuilder asAssociationFor( EntityLinkBuilder sourceLinkBuilder, Object sourceEntity ) {
-			return null;
 		}
 	}
 }

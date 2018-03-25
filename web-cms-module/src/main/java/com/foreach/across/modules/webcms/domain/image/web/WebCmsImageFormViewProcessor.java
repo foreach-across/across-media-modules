@@ -25,12 +25,11 @@ import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAda
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
+import com.foreach.across.modules.entity.web.links.EntityViewLinkBuilder;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import com.foreach.across.modules.web.menu.RequestMenuSelector;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
-import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
@@ -41,13 +40,13 @@ import com.foreach.across.modules.webcms.web.ImageWebCmsComponentAdminResources;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -114,15 +113,15 @@ public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 	@Override
 	protected void doPost( EntityViewRequest entityViewRequest, EntityView entityView, EntityViewCommand command, BindingResult bindingResult ) {
 		if ( !bindingResult.hasErrors() && Boolean.parseBoolean( entityViewRequest.getWebRequest().getParameter( "imageSelector" ) ) ) {
-			EntityLinkBuilder linkBuilder = entityViewRequest.getEntityViewContext().getLinkBuilder();
+			val linkBuilder = entityViewRequest.getEntityViewContext().getLinkBuilder();
 			WebCmsImage imageCreated = command.getEntity( WebCmsImage.class );
 
 			// redirect to list view filtered on uploaded image
 			entityView.setRedirectUrl(
-					UriComponentsBuilder.fromUriString( linkBuilder.overview() )
-					                    .queryParam( "extensions[eqFilter]", "id = " + imageCreated.getId() )
-					                    .queryParam( WebTemplateInterceptor.PARTIAL_PARAMETER, entityViewRequest.getPartialFragment() )
-					                    .toUriString()
+					linkBuilder.listView()
+					           .withQueryParam( "extensions[eqFilter]", "id = " + imageCreated.getId() )
+					           .withPartial( entityViewRequest.getPartialFragment() )
+					           .toUriString()
 			);
 		}
 	}
@@ -140,7 +139,7 @@ public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 			page.addCssClass( "wcm-image-upload" );
 		}
 
-		EntityLinkBuilder linkBuilder = entityViewRequest.getEntityViewContext().getLinkBuilder();
+		val linkBuilder = entityViewRequest.getEntityViewContext().getLinkBuilder();
 
 		if ( !entityViewRequest.getEntityViewContext().holdsEntity() ) {
 			page.getHeader().clearChildren();
@@ -162,10 +161,10 @@ public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 		         );
 	}
 
-	static Menu buildImageMenu( EntityViewRequest entityViewRequest, EntityLinkBuilder linkBuilder ) {
+	static Menu buildImageMenu( EntityViewRequest entityViewRequest, EntityViewLinkBuilder linkBuilder ) {
 		Menu menu = new PathBasedMenuBuilder()
-				.item( "/details", "Search images", linkBuilder.overview() ).order( 1 ).and()
-				.item( "/associations", "Upload new image", linkBuilder.create() ).order( 2 ).and()
+				.item( "/details", "Search images", linkBuilder.toUriString() ).order( 1 ).and()
+				.item( "/associations", "Upload new image", linkBuilder.createView().toUriString() ).order( 2 ).and()
 				.build();
 		menu.sort();
 		menu.select( new RequestMenuSelector( entityViewRequest.getWebRequest().getNativeRequest( HttpServletRequest.class ) ) );

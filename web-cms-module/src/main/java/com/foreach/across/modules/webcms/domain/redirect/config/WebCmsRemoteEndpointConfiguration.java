@@ -40,7 +40,6 @@ import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewPr
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
 import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -160,8 +159,9 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			tableBuilder.hideResultNumber();
 			tableBuilder.noResults( BootstrapUiBuilders.container() );
 
-			val associationLinkBuilder = association.getAttribute( EntityLinkBuilder.class )
-			                                        .asAssociationFor( entityViewContext.getLinkBuilder(), entityViewContext.getEntity() );
+			val associationLinkBuilder = entityViewContext.getLinkBuilder()
+			                                              .forInstance( entityViewContext.getEntity() )
+			                                              .association( "webCmsRemoteEndpoint.urls" );
 			EntityListActionsProcessor actionsProcessor = new EntityListActionsProcessor(
 					association.getTargetEntityConfiguration(),
 					associationLinkBuilder,
@@ -177,7 +177,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			                          .name( "formGroup-urls" )
 			                          .add( tableBuilder )
 			                          .add( BootstrapUiBuilders.button()
-			                                                   .link( associationLinkBuilder.create() )
+			                                                   .link( associationLinkBuilder.createView().toUriString() )
 			                                                   .style( Style.PRIMARY )
 			                                                   .text( message ) )
 			                          .build( new DefaultViewElementBuilderContext() );
@@ -204,7 +204,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 		@Override
 		public void doControl( EntityViewRequest entityViewRequest, EntityView entityView, EntityViewCommand command ) {
 			val endpointContext = entityViewRequest.getEntityViewContext().getParentContext();
-			entityView.setRedirectUrl( endpointContext.getLinkBuilder().update( endpointContext.getEntity() ) );
+			entityView.setRedirectUrl( endpointContext.getLinkBuilder().forInstance( endpointContext.getEntity() ).updateView().toUriString() );
 		}
 	}
 

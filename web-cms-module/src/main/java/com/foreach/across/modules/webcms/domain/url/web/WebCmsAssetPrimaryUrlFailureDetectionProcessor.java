@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Checks if primary URL update failed for the asset being updated.
@@ -87,10 +86,12 @@ public final class WebCmsAssetPrimaryUrlFailureDetectionProcessor extends Entity
 				String requestedUrl = event.getModificationReport().hasNewValue() ? event.getModificationReport().getNewValue().getPath() : null;
 
 				entityView.setRedirectUrl(
-						UriComponentsBuilder.fromUriString( entityViewRequest.getEntityViewContext().getLinkBuilder().update( command.getEntity() ) )
-						                    .queryParam( "view", "primaryUrlFailed" )
-						                    .queryParam( "requestedUrl", requestedUrl )
-						                    .toUriString()
+						entityViewRequest.getEntityViewContext().getLinkBuilder()
+						                 .forInstance( command.getEntity() )
+						                 .updateView()
+						                 .withViewName( "primaryUrlFailed" )
+						                 .withQueryParam( "requestedUrl", requestedUrl )
+						                 .toUriString()
 				);
 			}
 		}

@@ -20,7 +20,7 @@ import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.registry.EntityConfiguration;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
+import com.foreach.across.modules.entity.web.links.EntityViewLinkBuilder;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -47,7 +47,7 @@ public class WebCmsRemoteEndpointViewElementBuilder implements ViewElementBuilde
 
 		EntityConfiguration<WebCmsRemoteEndpoint> entityConfiguration = entityRegistry.getEntityConfiguration( WebCmsRemoteEndpoint.class );
 
-		String updateUrl = entityConfiguration.getAttribute( EntityLinkBuilder.class ).update( endpoint );
+		String updateUrl = entityConfiguration.getAttribute( EntityViewLinkBuilder.class ).forInstance( endpoint ).updateView().toUriString();
 		String name = entityConfiguration.getEntityMessageCodeResolver().getNameSingular();
 
 		return BootstrapUiBuilders.link()
