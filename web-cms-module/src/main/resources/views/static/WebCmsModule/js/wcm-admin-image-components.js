@@ -149,7 +149,7 @@ WebCmsModule.imageSelector = (function ( $ ) {
         $( '[data-wcm-component-base-type=image]', node ).each( function () {
             var container = $( this );
 
-            $( 'a[data-wcm-image-action=delete]' ).on( 'click', function () {
+            $( 'a[data-wcm-image-action=delete]', container ).on( 'click', function () {
                 container.find( '[data-wcm-component-property=image]' ).val( '' );
                 container.find( 'img' ).attr( 'src', '' );
                 container.find( '.image-thumbnail-container' ).addClass( 'hidden' );

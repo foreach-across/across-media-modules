@@ -16,6 +16,9 @@ types:
             logo:
               componentType: image
               title: Logo
+            small-logo:
+              componentType: image
+              title: Small logo
             url:
               componentType: plain-text
               title: Url
