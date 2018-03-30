@@ -58,7 +58,7 @@ public class TestWebCmsComponentModelSet
 		components.add( null );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void nameIsRequiredOnPut() {
 		components.put( null, noName );
 	}

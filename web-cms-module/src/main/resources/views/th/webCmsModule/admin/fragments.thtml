@@ -29,7 +29,7 @@
         </ul>
         <ul class="wcm-component-tabs" th:if="${element.showAsLinkedComponent}">
             <li>
-                <a th:href="@{${componentLinkBuilder.update(model.component)}(from=${currentComponentUrl})}"><span class="glyphicon glyphicon-edit"></span></a>
+                <a th:href="@{${componentLinkBuilder.update(model.component).withFromUrl(currentComponentUrl).toUriString()}}"><span class="glyphicon glyphicon-edit"></span></a>
             </li>
             <li th:if="${element.showDeleteButton}">
                 <a th:href="@{${'@adminWeb:/entities/webCmsComponent/' + model.component.id + '/delete'}(from=${currentComponentUrl})}"><span class="glyphicon glyphicon-remove"></span></a>

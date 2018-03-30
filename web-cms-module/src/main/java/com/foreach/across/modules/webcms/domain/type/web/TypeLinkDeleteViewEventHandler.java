@@ -16,8 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.type.web;
 
-import com.foreach.across.core.annotations.Event;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.views.events.BuildEntityDeleteViewEvent;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
@@ -25,6 +24,7 @@ import com.foreach.across.modules.webcms.domain.type.QWebCmsTypeSpecifierLink;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,9 +37,8 @@ import org.springframework.stereotype.Component;
 class TypeLinkDeleteViewEventHandler
 {
 	private final WebCmsTypeSpecifierLinkRepository linkRepository;
-	private final BootstrapUiFactory bootstrapUiFactory;
 
-	@Event
+	@EventListener
 	void handleTypeBeingDeleted( BuildEntityDeleteViewEvent<WebCmsTypeSpecifier> deleteViewEvent ) {
 		QWebCmsTypeSpecifierLink query = QWebCmsTypeSpecifierLink.webCmsTypeSpecifierLink;
 		long nonSelfLinks = linkRepository.count(
@@ -52,14 +51,14 @@ class TypeLinkDeleteViewEventHandler
 			deleteViewEvent.setDeleteDisabled( true );
 			deleteViewEvent.associations()
 			               .addChild(
-					               bootstrapUiFactory.node( "li" )
-					                                 .add(
-							                                 bootstrapUiFactory.html(
+					               BootstrapUiBuilders.node( "li" )
+					                                  .add(
+							                                  BootstrapUiBuilders.html(
 									                                 builderContext
 											                                 .getMessage( "objectsLinkedToTypeSpecifier", new Object[] { nonSelfLinks } )
 							                                 )
 					                                 )
-					                                 .build( builderContext )
+					                                  .build( builderContext )
 			               );
 		}
 	}

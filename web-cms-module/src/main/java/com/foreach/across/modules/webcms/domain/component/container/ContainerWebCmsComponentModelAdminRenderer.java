@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.container;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsComponentModelMembersAdminRenderer<ContainerWebCmsComponentModel>
 {
-	private final BootstrapUiFactory bootstrapUiFactory;
 	private final WebCmsComponentModelAdminRenderService adminRenderService;
 
 	@Override
@@ -47,12 +46,12 @@ public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsCompone
 	@Override
 	public ViewElementBuilder createMembersViewElementBuilder( ContainerWebCmsComponentModel componentModel, String controlNamePrefix ) {
 		if ( componentModel.isEmpty() ) {
-			return componentModel.isFixed() ? null : bootstrapUiFactory.alert().warning().text( "This container is currently empty." );
+			return componentModel.isFixed() ? null : BootstrapUiBuilders.alert().warning().text( "This container is currently empty." );
 		}
 
-		ContainerViewElementBuilder members = bootstrapUiFactory.container();
+		ContainerViewElementBuilder members = BootstrapUiBuilders.container();
 		if ( !componentModel.isFixed() ) {
-			members.add( bootstrapUiFactory.html( "<h5 class=\"wcm-sortable-component-title\">Drag the container members to reorder them.</h5>" ) );
+			members.add( BootstrapUiBuilders.html( "<h5 class=\"wcm-sortable-component-title\">Drag the container members to reorder them.</h5>" ) );
 		}
 		for ( int i = 0; i < componentModel.getMembers().size(); i++ ) {
 			String scopedPrefix = controlNamePrefix + ".members[" + i + "]";

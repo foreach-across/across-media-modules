@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint;
 
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
@@ -35,6 +34,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
@@ -69,7 +69,7 @@ public class TestWebCmsAssetService
 	private WebCmsUrlCache urlCache;
 
 	@Mock
-	private AcrossEventPublisher acrossEventPublisher;
+	private ApplicationEventPublisher eventPublisher;
 
 	@InjectMocks
 	@Spy
@@ -79,7 +79,7 @@ public class TestWebCmsAssetService
 
 	@Before
 	public void setUp() {
-		endpointService = new WebCmsEndpointServiceImpl( assetEndpointRepository, urlRepository, urlCache, acrossEventPublisher, multiDomainService );
+		endpointService = new WebCmsEndpointServiceImpl( assetEndpointRepository, urlRepository, urlCache, eventPublisher, multiDomainService );
 		assetService = new WebCmsAssetServiceImpl( uriComponentsService, endpointService, assetEndpointRepository, multiDomainService );
 	}
 

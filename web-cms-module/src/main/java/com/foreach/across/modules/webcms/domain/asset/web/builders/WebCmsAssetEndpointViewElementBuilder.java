@@ -16,11 +16,11 @@
 
 package com.foreach.across.modules.webcms.domain.asset.web.builders;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.registry.EntityConfiguration;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
+import com.foreach.across.modules.entity.web.links.EntityViewLinkBuilder;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -40,7 +40,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WebCmsAssetEndpointViewElementBuilder implements ViewElementBuilder
 {
-	private final BootstrapUiFactory bootstrapUiFactory;
 	private final EntityRegistry entityRegistry;
 
 	@Override
@@ -50,12 +49,12 @@ public class WebCmsAssetEndpointViewElementBuilder implements ViewElementBuilder
 
 		EntityConfiguration<WebCmsAsset> entityConfiguration = entityRegistry.getEntityConfiguration( asset );
 
-		String updateUrl = entityConfiguration.getAttribute( EntityLinkBuilder.class ).update( asset );
+		String updateUrl = entityConfiguration.getAttribute( EntityViewLinkBuilder.class ).forInstance( asset ).updateView().toUriString();
 		String name = entityConfiguration.getEntityMessageCodeResolver().getNameSingular();
 
-		return bootstrapUiFactory.link()
-		                         .url( updateUrl )
-		                         .text( name + ": " + entityConfiguration.getLabel( asset ) )
-		                         .build( viewElementBuilderContext );
+		return BootstrapUiBuilders.link()
+		                          .url( updateUrl )
+		                          .text( name + ": " + entityConfiguration.getLabel( asset ) )
+		                          .build( viewElementBuilderContext );
 	}
 }

@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.page.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -42,7 +42,6 @@ import org.springframework.stereotype.Component;
 public class MenuItemsViewElementBuilder implements ViewElementBuilder<ContainerViewElement>
 {
 	private final WebCmsMenuRepository menuRepository;
-	private final BootstrapUiFactory bootstrapUiFactory;
 	private final WebCmsMultiDomainAdminUiService multiDomainAdminUiService;
 
 	@Override
@@ -50,18 +49,18 @@ public class MenuItemsViewElementBuilder implements ViewElementBuilder<Container
 		EntityViewCommand command = builderContext.getAttribute( EntityViewCommand.class );
 		val settings = command.getExtension( "advanced", PageFormViewProcessor.AdvancedSettings.class );
 
-		ContainerViewElementBuilder options = bootstrapUiFactory.container();
+		ContainerViewElementBuilder options = BootstrapUiBuilders.container();
 
 		QWebCmsMenu query = QWebCmsMenu.webCmsMenu;
 
 		menuRepository.findAll( multiDomainAdminUiService.applyVisibleDomainsPredicate( query.isNotNull(), query.domain ), new Sort( "description", "name" ) )
 		              .forEach( menu ->
 				                        options.add(
-						                        bootstrapUiFactory.checkbox()
-						                                          .controlName( "extensions[advanced].autoCreateMenu" )
-						                                          .selected( settings.getAutoCreateMenu().contains( menu ) )
-						                                          .label( StringUtils.defaultIfBlank( menu.getDescription(), menu.getName() ) )
-						                                          .value( menu.getId() )
+						                        BootstrapUiBuilders.checkbox()
+						                                           .controlName( "extensions[advanced].autoCreateMenu" )
+						                                           .selected( settings.getAutoCreateMenu().contains( menu ) )
+						                                           .label( StringUtils.defaultIfBlank( menu.getDescription(), menu.getName() ) )
+						                                           .value( menu.getId() )
 				                        )
 		              );
 

@@ -25,10 +25,10 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import javax.validation.Valid;
 import java.util.Objects;
@@ -142,8 +142,7 @@ public abstract class WebCmsComponentModel implements ViewElement, WebCmsObject,
 	 *
 	 * @param component that backs this model
 	 */
-	public void setComponent( WebCmsComponent component ) {
-		Assert.notNull( component );
+	public void setComponent( @NonNull WebCmsComponent component ) {
 		this.component = component.toDto();
 	}
 

@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.domain.asset;
+package com.foreach.across.modules.webcms.domain.component.web;
+
+import com.foreach.across.modules.entity.web.links.EntityViewLinkBuilderSupport;
+import com.foreach.across.modules.webcms.domain.WebCmsObject;
 
 /**
- * Represents the type specifier for a link between a {@link WebCmsAsset} and a {@link com.foreach.across.modules.webcms.domain.component.WebCmsComponent}.
+ * Functional interface proxying the update URL for a component.
  *
  * @author Arne Vandamme
- * @since 0.0.1
+ * @since 0.0.4
  */
-public final class WebCmsAssetComponentLinkType //extends WebCmsTypeSpecifier
+@FunctionalInterface
+public interface WebCmsComponentUpdateLinkBuilder
 {
+	EntityViewLinkBuilderSupport update( WebCmsObject component );
 }

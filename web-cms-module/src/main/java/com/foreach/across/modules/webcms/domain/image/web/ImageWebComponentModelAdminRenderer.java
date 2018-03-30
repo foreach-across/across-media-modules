@@ -16,9 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.image.web;
 
-import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
@@ -35,13 +35,12 @@ import org.springframework.stereotype.Component;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@AcrossDepends(required = AdminWebModule.NAME)
+@ConditionalOnAcrossModule(AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
 public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<ImageWebCmsComponentModel>
 {
 	private final WebCmsImageConnector imageConnector;
-	private final BootstrapUiFactory bootstrapUiFactory;
 
 	@Override
 	public boolean supports( WebCmsComponentModel componentModel ) {
@@ -54,50 +53,50 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 				? imageConnector.buildImageUrl( componentModel.getImage(), 188, 154 )
 				: null;
 
-		return bootstrapUiFactory
+		return BootstrapUiBuilders
 				.div()
 				.attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
 				.attribute( "data-wcm-component-base-type", "image" )
 				.css( "image-selected-container", "clearfix" )
 				.add(
-						bootstrapUiFactory.hidden()
-						                  .controlName( controlNamePrefix + ".image" )
-						                  .attribute( "data-wcm-component-property", "image" )
-						                  .value( componentModel.hasImage() ? componentModel.getImage().getObjectId() : null )
+						BootstrapUiBuilders.hidden()
+						                   .controlName( controlNamePrefix + ".image" )
+						                   .attribute( "data-wcm-component-property", "image" )
+						                   .value( componentModel.hasImage() ? componentModel.getImage().getObjectId() : null )
 				)
 				.add(
-						bootstrapUiFactory.div()
-						                  .css( "image-thumbnail-container", thumbnailUrl != null ? "" : "hidden" )
-						                  .add(
-								                  bootstrapUiFactory.node( "img" )
-								                                    .attribute( "src", thumbnailUrl )
-								                                    .attribute( "border", "1" )
-						                  )
+						BootstrapUiBuilders.div()
+						                   .css( "image-thumbnail-container", thumbnailUrl != null ? "" : "hidden" )
+						                   .add(
+								                   BootstrapUiBuilders.node( "img" )
+								                                      .attribute( "src", thumbnailUrl )
+								                                      .attribute( "border", "1" )
+						                   )
 				)
 				.add(
-						bootstrapUiFactory.div()
-						                  .css( "image-thumbnail-actions", thumbnailUrl != null ? "" : "hidden" )
-						                  .add(
-								                  bootstrapUiFactory.button()
-								                                    .link()
-								                                    .attribute( "data-wcm-image-action", "edit" )
-								                                    .iconOnly( new GlyphIcon( GlyphIcon.EDIT ) )
-								                                    .text( "Change image" )
-						                  )
-						                  .add(
-								                  bootstrapUiFactory.button()
-								                                    .link()
-								                                    .attribute( "data-wcm-image-action", "delete" )
-								                                    .iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) )
-								                                    .text( "Remove image" )
-						                  )
+						BootstrapUiBuilders.div()
+						                   .css( "image-thumbnail-actions", thumbnailUrl != null ? "" : "hidden" )
+						                   .add(
+								                   BootstrapUiBuilders.button()
+								                                      .link()
+								                                      .attribute( "data-wcm-image-action", "edit" )
+								                                      .iconOnly( new GlyphIcon( GlyphIcon.EDIT ) )
+								                                      .text( "Change image" )
+						                   )
+						                   .add(
+								                   BootstrapUiBuilders.button()
+								                                      .link()
+								                                      .attribute( "data-wcm-image-action", "delete" )
+								                                      .iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) )
+								                                      .text( "Remove image" )
+						                   )
 				)
 				.add(
-						bootstrapUiFactory.button()
-						                  .name( "btn-select-image" )
-						                  .css( thumbnailUrl != null ? "hidden" : "" )
-						                  .style( Style.DEFAULT )
-						                  .text( "Select image" )
+						BootstrapUiBuilders.button()
+						                   .name( "btn-select-image" )
+						                   .css( thumbnailUrl != null ? "hidden" : "" )
+						                   .style( Style.DEFAULT )
+						                   .text( "Select image" )
 				)
 				.postProcessor( ( builderContext, wrapper ) -> {
 					builderContext.getAttribute( WebResourceRegistry.class ).addPackage( ImageWebCmsComponentAdminResources.NAME );

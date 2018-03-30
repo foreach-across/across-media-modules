@@ -16,9 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.asset.web.builders;
 
-import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
@@ -35,12 +35,11 @@ import org.springframework.stereotype.Component;
  */
 @Deprecated
 @Component
-@AcrossDepends(required = BootstrapUiModule.NAME)
+@ConditionalOnAcrossModule(BootstrapUiModule.NAME)
 @RequiredArgsConstructor
 @Slf4j
 public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewElement>
 {
-	private final BootstrapUiFactory bootstrapUiFactory;
 	private final WebCmsImageConnector imageConnector;
 
 	@Override
@@ -49,19 +48,19 @@ public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewEle
 
 		if ( image.isNew() ) {
 			// Only allow uploads for a new image
-			return bootstrapUiFactory.file()
-			                         .controlName( "extensions[image].imageData" )
-			                         .build( viewElementBuilderContext );
+			return BootstrapUiBuilders.file()
+			                          .controlName( "extensions[image].imageData" )
+			                          .build( viewElementBuilderContext );
 		}
 
 		String imageUrl = imageConnector.buildImageUrl( image, 800, 600 );
-		return bootstrapUiFactory.div()
-		                         .css( "image-preview-container" )
-		                         .add(
-				                         bootstrapUiFactory.node( "img" )
-				                                           .attribute( "src", imageUrl )
-		                         )
-		                         .build( viewElementBuilderContext );
+		return BootstrapUiBuilders.div()
+		                          .css( "image-preview-container" )
+		                          .add(
+				                          BootstrapUiBuilders.node( "img" )
+				                                             .attribute( "src", imageUrl )
+		                          )
+		                          .build( viewElementBuilderContext );
 
 		/*
 		ViewElement thumbnailPreview = image.getImageServerKey()

@@ -52,7 +52,7 @@ public class WebCmsModuleDomainConfiguration
 
 	@Bean(name = "entityValidator")
 	@Exposed
-	@ConditionalOnMissingBean(name = "entityValidator", search = SearchStrategy.PARENTS)
+	@ConditionalOnMissingBean(name = "entityValidator", search = SearchStrategy.ANCESTORS)
 	public SmartValidator entityValidator() {
 		LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
 		localValidatorFactoryBean.setValidationMessageSource( messageSource() );
@@ -60,7 +60,7 @@ public class WebCmsModuleDomainConfiguration
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(name = "entityValidator", search = SearchStrategy.PARENTS)
+	@ConditionalOnMissingBean(name = "entityValidator", search = SearchStrategy.ANCESTORS)
 	public MessageSource messageSource() {
 		AcrossModuleMessageSource messageSource = new AcrossModuleMessageSource();
 		messageSource.setBasenames(

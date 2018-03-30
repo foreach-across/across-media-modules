@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint;
 
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
@@ -31,6 +30,7 @@ import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +59,7 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 	private final WebCmsAssetEndpointRepository assetEndpointRepository;
 	private final WebCmsUrlRepository urlRepository;
 	private final WebCmsUrlCache urlCache;
-	private final AcrossEventPublisher eventPublisher;
+	private final ApplicationEventPublisher eventPublisher;
 	private final WebCmsMultiDomainService multiDomainService;
 
 	@Override
@@ -105,7 +105,7 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 				if ( publishEventOnFailure ) {
 					// Allow event handlers to take action
 					PrimaryUrlForAssetFailedEvent event = new PrimaryUrlForAssetFailedEvent( asset, endpoint, modificationReport );
-					eventPublisher.publish( event );
+					eventPublisher.publishEvent( event );
 					modificationReport = event.getModificationReport();
 				}
 

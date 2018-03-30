@@ -19,7 +19,6 @@ package com.foreach.across.modules.webcms.domain.image.component;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.model.AbstractWebCmsComponentModelWriter;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
-import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import org.springframework.stereotype.Component;
 
 /**

@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.ButtonViewElement;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.builder.ColumnViewElementBuilder;
@@ -29,9 +29,9 @@ import com.foreach.across.modules.entity.views.processors.support.ViewElementBui
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewCommandValidator;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
+import com.foreach.across.modules.entity.web.links.EntityViewLinkBuilder;
+import com.foreach.across.modules.entity.web.links.SingleEntityViewLinkBuilder;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
-import com.foreach.across.modules.web.template.WebTemplateInterceptor;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
@@ -54,7 +54,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +62,7 @@ import javax.validation.groups.Default;
 /**
  * Layouts the web component form pages, builds the actual component model and renders the form.
  * Mainly intended for indirect use by the {@link WebCmsObjectComponentViewsConfiguration}.
- * See the {@link WebCmsComponentsFormProcessor} if you want to add the ability to edit certain
+ * See the {@link WebCmsComponentsFormProcessor} if you want to add the ability to edit a certain
  * component to another form page.
  *
  * @author Arne Vandamme
@@ -84,7 +83,6 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 	private final WebCmsComponentModelAdminRenderService componentModelAdminRenderService;
 	private final EntityViewCommandValidator entityViewCommandValidator;
 	private final WebCmsComponentValidator componentValidator;
-	private final BootstrapUiFactory bootstrapUiFactory;
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
@@ -126,7 +124,7 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 		);
 		entityView.addAttribute(
 				"componentLinkBuilder",
-				entityViewRequest.getEntityViewContext().getLinkBuilder()
+				(WebCmsComponentUpdateLinkBuilder) component -> entityViewRequest.getEntityViewContext().getLinkBuilder().forInstance( component ).updateView()
 		);
 	}
 
@@ -145,29 +143,19 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 				entityViewPageHelper.addGlobalFeedbackAfterRedirect( entityViewRequest, Style.SUCCESS,
 				                                                     isNew ? "feedback.entityCreated" : "feedback.entityUpdated" );
 
-				String redirectTargetUrl = entityViewRequest.getWebRequest().getParameter( "from" );
+				String fromUrl = entityViewRequest.getWebRequest().getParameter( "from" );
 
-				if ( !isNew && redirectTargetUrl != null ) {
-					redirectTargetUrl = UriComponentsBuilder.fromUriString( entityViewContext.getLinkBuilder().update( savedEntity ) )
-					                                        .queryParam( "from", redirectTargetUrl )
-					                                        .toUriString();
-				}
+				SingleEntityViewLinkBuilder redirectTarget = entityViewContext.getLinkBuilder().forInstance( savedEntity ).updateView();
 
-				if ( redirectTargetUrl == null ) {
-					redirectTargetUrl = entityViewContext.getLinkBuilder().update( savedEntity );
+				if ( !isNew && fromUrl != null ) {
+					redirectTarget = redirectTarget.withFromUrl( fromUrl );
 				}
 
 				if ( entityViewRequest.hasPartialFragment() ) {
-					entityView.setRedirectUrl(
-							UriComponentsBuilder.fromUriString( redirectTargetUrl )
-							                    .queryParam( WebTemplateInterceptor.PARTIAL_PARAMETER, entityViewRequest.getPartialFragment() )
-							                    .toUriString()
-					);
-				}
-				else {
-					entityView.setRedirectUrl( redirectTargetUrl );
+					redirectTarget = redirectTarget.withPartial( entityViewRequest.getPartialFragment() );
 				}
 
+				entityView.setRedirectUrl( redirectTarget.toUriString() );
 			}
 			catch ( RuntimeException e ) {
 				entityViewPageHelper.throwOrAddExceptionFeedback( entityViewRequest, "feedback.entitySaveFailed", e );
@@ -190,7 +178,7 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 		ColumnViewElementBuilder columnViewElementBuilder = builderMap.get( SingleEntityFormViewProcessor.LEFT_COLUMN, ColumnViewElementBuilder.class );
 
 		if ( componentModel.hasOwner() ) {
-			val ownerTrail = bootstrapUiFactory.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
+			val ownerTrail = BootstrapUiBuilders.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
 			if ( addToOwnerTrail( ownerTrail, componentModel.getObjectId(), entityViewRequest.getEntityViewContext().getLinkBuilder(), false ) ) {
 				columnViewElementBuilder.add( ownerTrail );
 			}
@@ -213,24 +201,26 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 						                         && WebCmsUtils.isObjectIdForCollection( ownerObjectId, WebCmsComponent.COLLECTION_ID ) ) {
 					                         EntityViewContext entityViewContext = entityViewRequest.getEntityViewContext();
 					                         WebCmsComponent owner = componentRepository.findOneByObjectId( ownerObjectId );
-					                         btn.setUrl( entityViewContext.getLinkBuilder().update( owner ) );
+					                         btn.setUrl( entityViewContext.getLinkBuilder().forInstance( owner ).updateView().toUriString() );
 				                         }
 			                         } );
 		}
 	}
 
-	private boolean addToOwnerTrail( NodeViewElementBuilder breadcrumb, String objectId, EntityLinkBuilder linkBuilder, boolean createLink ) {
+	private boolean addToOwnerTrail( NodeViewElementBuilder breadcrumb, String objectId, EntityViewLinkBuilder linkBuilder, boolean createLink ) {
 		WebCmsComponent owner = componentRepository.findOneByObjectId( objectId );
 		if ( owner != null ) {
 			String title = StringUtils.defaultIfBlank( owner.getTitle(), StringUtils.defaultIfBlank( owner.getName(), owner.getComponentType().getName() ) );
 			breadcrumb.addFirst(
-					bootstrapUiFactory.node( "li" )
-					                  .attribute( "title", owner.getName() )
-					                  .add(
-							                  createLink
-									                  ? bootstrapUiFactory.link().url( linkBuilder.update( owner ) ).text( title )
-									                  : bootstrapUiFactory.text( title )
-					                  )
+					BootstrapUiBuilders.node( "li" )
+					                   .attribute( "title", owner.getName() )
+					                   .add(
+							                   createLink
+									                   ? BootstrapUiBuilders.link()
+									                                        .url( linkBuilder.forInstance( owner ).updateView().toUriString() )
+									                                        .text( title )
+									                   : BootstrapUiBuilders.text( title )
+					                   )
 			);
 
 			if ( owner.hasOwner() ) {

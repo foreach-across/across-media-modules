@@ -168,7 +168,6 @@ public class WebCmsPageConfiguration
 
 	private static class PageListViewProcessor extends EntityViewProcessorAdapter
 	{
-		private BootstrapUiFactory bootstrapUiFactory;
 		private WebCmsAssetService assetPreviewService;
 
 		@Override
@@ -186,21 +185,16 @@ public class WebCmsPageConfiguration
 												                      EntityMessages entityMessages =
 														                      entityViewRequest.getEntityViewContext().getEntityMessages();
 												                      cell.addFirstChild(
-														                      bootstrapUiFactory.button()
-														                                        .link( previewUrl )
-														                                        .attribute( "target", "_blank" )
-														                                        .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
-														                                        .text( entityMessages.withNameSingular( "actions.open" ) )
-														                                        .build( ctx ) );
+														                      BootstrapUiBuilders.button()
+														                                         .link( previewUrl )
+														                                         .attribute( "target", "_blank" )
+														                                         .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
+														                                         .text( entityMessages.withNameSingular( "actions.open" ) )
+														                                         .build( ctx ) );
 											                      } )
 							          );
 				          } );
 			}
-		}
-
-		@Autowired
-		public void setBootstrapUiFactory( BootstrapUiFactory bootstrapUiFactory ) {
-			this.bootstrapUiFactory = bootstrapUiFactory;
 		}
 
 		@Autowired

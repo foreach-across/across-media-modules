@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.FaIcon;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.builder.TableViewElementBuilder;
@@ -54,11 +54,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UrlPathHelper;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This processor is a work in progress.
@@ -73,7 +70,6 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 {
 	public static final String COMPONENT_SEARCH_QUERY = SearchComponentViewProcessor.class.getName() + ".SEARCH_QUERY";
 
-	private final BootstrapUiFactory bootstrapUiFactory;
 	private final WebCmsComponentRepository componentRepository;
 	private final WebCmsTypeSpecifierRepository typeSpecifierRepository;
 	private final WebCmsAssetRepository assetRepository;
@@ -103,8 +99,8 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 		if ( parent == null ) {
 			builderMap.remove( SortableTableRenderingViewProcessor.TABLE_BUILDER );
 
-			val pills = bootstrapUiFactory.node( "ul" )
-			                              .css( "nav", "nav-pills" );
+			val pills = BootstrapUiBuilders.node( "ul" )
+			                               .css( "nav", "nav-pills" );
 
 			entityRegistry.getEntities()
 			              .stream()
@@ -114,32 +110,32 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 				                                                      .replaceQueryParam( "filter", entityConfiguration.getName() )
 				                                                      .toUriString();
 
-				              pills.add( bootstrapUiFactory.node( "li" )
-				                                           .css( entityConfiguration.getName().equals( filterType ) ? "active" : null )
-				                                           .add(
-						                                           bootstrapUiFactory.link()
-						                                                             .url( url )
-						                                                             .text( entityConfiguration.getEntityMessageCodeResolver()
+				              pills.add( BootstrapUiBuilders.node( "li" )
+				                                            .css( entityConfiguration.getName().equals( filterType ) ? "active" : null )
+				                                            .add(
+						                                            BootstrapUiBuilders.link()
+						                                                               .url( url )
+						                                                               .text( entityConfiguration.getEntityMessageCodeResolver()
 						                                                                                       .getNameSingular() ) ) );
 			              } );
 
 			builderMap.put(
 					"filter",
-					bootstrapUiFactory.container()
-					                  .name( "filter" )
-					                  .add( bootstrapUiFactory.hidden().controlName( "filter" ).value( filterType ) )
-					                  .add( pills )
-					                  .add(
-							                  bootstrapUiFactory
+					BootstrapUiBuilders.container()
+					                   .name( "filter" )
+					                   .add( BootstrapUiBuilders.hidden().controlName( "filter" ).value( filterType ) )
+					                   .add( pills )
+					                   .add(
+							                   BootstrapUiBuilders
 									                  .inputGroup(
-											                  bootstrapUiFactory.textbox()
-											                                    .controlName( "qs" )
-											                                    .text( request.getParameter( "qs" ) )
+											                  BootstrapUiBuilders.textbox()
+											                                     .controlName( "qs" )
+											                                     .text( request.getParameter( "qs" ) )
 									                  )
 									                  .addonAfter(
-											                  bootstrapUiFactory.button()
-											                                    .submit()
-											                                    .iconOnly( new GlyphIcon( GlyphIcon.SEARCH ) )
+											                  BootstrapUiBuilders.button()
+											                                     .submit()
+											                                     .iconOnly( new GlyphIcon( GlyphIcon.SEARCH ) )
 									                  )
 					                  )
 			);
@@ -161,22 +157,22 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 		val request = entityViewRequest.getWebRequest();
 		String parent = request.getParameter( "parent" );
 
-		val breadcrumb = bootstrapUiFactory.node( "ol" )
-		                                   .css( "breadcrumb", "wcm-component-search-trail" );
+		val breadcrumb = BootstrapUiBuilders.node( "ol" )
+		                                    .css( "breadcrumb", "wcm-component-search-trail" );
 
 		addComponentToBreadcrumb( parent, breadcrumb, false );
 		breadcrumb.addFirst(
-				bootstrapUiFactory.node( "li" )
-				                  .add(
+				BootstrapUiBuilders.node( "li" )
+				                   .add(
 						                  parent != null
-								                  ? bootstrapUiFactory.link()
-								                                      .url(
+								                  ? BootstrapUiBuilders.link()
+								                                       .url(
 										                                      ServletUriComponentsBuilder.fromCurrentRequest()
 										                                                                 .replaceQueryParam( "parent" )
 										                                                                 .toUriString()
 								                                      )
-								                                      .text( "Search components" )
-								                  : bootstrapUiFactory.text( "Search components" )
+								                                       .text( "Search components" )
+								                  : BootstrapUiBuilders.text( "Search components" )
 				                  )
 		);
 
@@ -221,7 +217,7 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 	}
 
 	private void registerOpenButtonOnRow( SortableTableBuilder sortableTableBuilder ) {
-		TableViewElementBuilder table = bootstrapUiFactory.table();
+		TableViewElementBuilder table = BootstrapUiBuilders.table();
 
 		sortableTableBuilder.headerRowProcessor( ( ( viewElementBuilderContext, row ) -> {
 			row.addFirstChild( table.heading().build( viewElementBuilderContext ) );
@@ -235,10 +231,10 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 				row.addFirstChild(
 						table.cell()
 						     .add(
-								     bootstrapUiFactory.radio()
-								                       .unwrapped()
-								                       .name( "selectedComponent" )
-								                       .value( object.getObjectId() )
+								     BootstrapUiBuilders.radio()
+								                        .unwrapped()
+								                        .name( "selectedComponent" )
+								                        .value( object.getObjectId() )
 						     )
 						     .build( viewElementBuilderContext )
 				);
@@ -251,10 +247,10 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 					row.addChild(
 							table.cell()
 							     .add(
-									     bootstrapUiFactory.link()
-									                       .url( url )
-									                       .title( "View container members" )
-									                       .add( new FaIcon( FaIcon.VideoPlayer.FORWARD ) )
+									     BootstrapUiBuilders.link()
+									                        .url( url )
+									                        .title( "View container members" )
+									                        .add( new FaIcon( FaIcon.VideoPlayer.FORWARD ) )
 							     )
 							     .build( viewElementBuilderContext )
 					);
@@ -275,10 +271,10 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 				row.addChild(
 						table.cell()
 						     .add(
-								     bootstrapUiFactory.link()
-								                       .url( url )
-								                       .title( "View components" )
-								                       .add( new FaIcon( FaIcon.VideoPlayer.FORWARD ) )
+								     BootstrapUiBuilders.link()
+								                        .url( url )
+								                        .title( "View components" )
+								                        .add( new FaIcon( FaIcon.VideoPlayer.FORWARD ) )
 						     )
 						     .build( viewElementBuilderContext )
 				);
@@ -296,14 +292,14 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 			String title = StringUtils.defaultIfBlank( owner.getTitle(), StringUtils.defaultIfBlank( owner.getName(), owner.getComponentType().getName() ) );
 
 			breadcrumb.addFirst(
-					bootstrapUiFactory.node( "li" )
-					                  .add(
+					BootstrapUiBuilders.node( "li" )
+					                   .add(
 							                  asLink
-									                  ? bootstrapUiFactory.link()
-									                                      .url( url )
-									                                      .title( owner.getName() )
-									                                      .text( title )
-									                  : bootstrapUiFactory.text( title )
+									                  ? BootstrapUiBuilders.link()
+									                                       .url( url )
+									                                       .title( owner.getName() )
+									                                       .text( title )
+									                  : BootstrapUiBuilders.text( title )
 					                  )
 			);
 
@@ -329,14 +325,14 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 		String title = name + ": " + configuration.getLabel( object );
 
 		breadcrumb.addFirst(
-				bootstrapUiFactory.node( "li" )
-				                  .add(
+				BootstrapUiBuilders.node( "li" )
+				                   .add(
 						                  asLink
-								                  ? bootstrapUiFactory.link()
-								                                      .url( url )
-								                                      .title( title )
-								                                      .text( title )
-								                  : bootstrapUiFactory.text( title )
+								                  ? BootstrapUiBuilders.link()
+								                                       .url( url )
+								                                       .title( title )
+								                                       .text( title )
+								                  : BootstrapUiBuilders.text( title )
 				                  )
 		);
 

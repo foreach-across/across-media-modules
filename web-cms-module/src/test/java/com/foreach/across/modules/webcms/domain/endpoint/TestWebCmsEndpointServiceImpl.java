@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint;
 
-import com.foreach.across.core.events.AcrossEventPublisher;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
@@ -36,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
@@ -61,7 +61,7 @@ public class TestWebCmsEndpointServiceImpl
 	private WebCmsAssetEndpointRepository assetEndpointRepository;
 
 	@Mock
-	private AcrossEventPublisher eventPublisher;
+	private ApplicationEventPublisher eventPublisher;
 
 	@Mock
 	private WebCmsMultiDomainService multiDomainService;
@@ -187,7 +187,7 @@ public class TestWebCmsEndpointServiceImpl
 			event.setModificationReport( new ModificationReport<>( EndpointModificationType.PRIMARY_URL_UPDATED, SUCCESSFUL, null, existingUrl ) );
 
 			return null;
-		} ).when( eventPublisher ).publish( any( PrimaryUrlForAssetFailedEvent.class ) );
+		} ).when( eventPublisher ).publishEvent( any( PrimaryUrlForAssetFailedEvent.class ) );
 
 		val result = endpointService.updateOrCreatePrimaryUrlForAsset( "/my/page", page, true );
 		assertNotNull( result );

@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint.web.interceptor;
 
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.modules.bootstrapui.resource.JQueryWebResources;
 import com.foreach.across.modules.web.events.BuildTemplateWebResourcesEvent;
 import com.foreach.across.modules.web.resource.WebResource;
@@ -25,6 +24,7 @@ import com.foreach.across.modules.webcms.domain.endpoint.web.IgnoreEndpointModel
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.WebCmsEndpointContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -110,7 +110,7 @@ public class WebCmsEndpointHandlerInterceptor extends HandlerInterceptorAdapter
 		}
 	}
 
-	@Event
+	@EventListener
 	void registerPreviewModeWebResources( BuildTemplateWebResourcesEvent webResourcesEvent ) {
 		if ( context.isAvailable() && context.isPreviewMode() ) {
 			webResourcesEvent.addPackage( JQueryWebResources.NAME );

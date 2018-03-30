@@ -17,13 +17,12 @@
 package com.foreach.across.modules.webcms.domain.image.web;
 
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
-import com.foreach.across.modules.bootstrapui.components.BootstrapUiComponentFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.TableViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.support.ViewElementBuilderMap;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
 import com.foreach.across.modules.web.menu.Menu;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -35,6 +34,7 @@ import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.modules.webcms.web.ImageWebCmsComponentAdminResources;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
@@ -49,7 +49,6 @@ import java.util.function.Function;
 public class WebCmsImageListViewProcessor extends EntityViewProcessorAdapter
 {
 	private final WebCmsImageConnector imageConnector;
-	private final BootstrapUiComponentFactory bootstrapUiComponentFactory;
 
 	@Override
 	protected void registerWebResources( EntityViewRequest entityViewRequest, EntityView entityView, WebResourceRegistry webResourceRegistry ) {
@@ -63,12 +62,12 @@ public class WebCmsImageListViewProcessor extends EntityViewProcessorAdapter
 	                       ViewElementBuilderMap builderMap,
 	                       ViewElementBuilderContext builderContext ) {
 		PageContentStructure page = entityViewRequest.getPageContentStructure();
-		EntityLinkBuilder linkBuilder = entityViewRequest.getEntityViewContext().getLinkBuilder();
+		val linkBuilder = entityViewRequest.getEntityViewContext().getLinkBuilder();
 
 		page.addCssClass( "wcm-image" );
 
 		Menu menu = WebCmsImageFormViewProcessor.buildImageMenu( entityViewRequest, linkBuilder );
-		page.addToNav( bootstrapUiComponentFactory.nav( menu ).pills().build() );
+		page.addToNav( BootstrapUiBuilders.nav( menu ).pills().build() );
 	}
 
 	@Override

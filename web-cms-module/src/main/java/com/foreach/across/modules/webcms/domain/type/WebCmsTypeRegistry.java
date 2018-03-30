@@ -16,8 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain.type;
 
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,10 +46,7 @@ public final class WebCmsTypeRegistry
 	 * @param supplier           that returns a new instance
 	 * @param <U>                actual type
 	 */
-	public <U extends WebCmsTypeSpecifier> void register( String objectType, Class<U> implementationType, Supplier<U> supplier ) {
-		Assert.notNull( objectType );
-		Assert.notNull( implementationType );
-		Assert.notNull( supplier );
+	public <U extends WebCmsTypeSpecifier> void register( @NonNull String objectType, @NonNull Class<U> implementationType, @NonNull Supplier<U> supplier ) {
 		typesForGroup.put( objectType, implementationType );
 		suppliersForImplementationType.put( implementationType.getName(), supplier );
 		groupsForType.put( implementationType.getName(), objectType );
@@ -59,19 +56,16 @@ public final class WebCmsTypeRegistry
 	 * @param objectType for which to get the implementation type
 	 * @return implementation type or {@code null} if not exists
 	 */
-	public Optional<Class<? extends WebCmsTypeSpecifier>> retrieveTypeSpecifierClass( String objectType ) {
-		Assert.notNull( objectType );
+	public Optional<Class<? extends WebCmsTypeSpecifier>> retrieveTypeSpecifierClass( @NonNull String objectType ) {
 		return Optional.ofNullable( typesForGroup.get( objectType ) );
 	}
 
 	@SuppressWarnings("unchecked")
-	public <U extends WebCmsTypeSpecifier> Optional<Supplier<U>> retrieveSupplier( Class<U> implementationType ) {
-		Assert.notNull( implementationType );
+	public <U extends WebCmsTypeSpecifier> Optional<Supplier<U>> retrieveSupplier( @NonNull Class<U> implementationType ) {
 		return Optional.ofNullable( suppliersForImplementationType.get( implementationType.getName() ) );
 	}
 
-	public <U extends WebCmsTypeSpecifier> Optional<String> retrieveObjectType( Class<U> implementationType ) {
-		Assert.notNull( implementationType );
+	public <U extends WebCmsTypeSpecifier> Optional<String> retrieveObjectType( @NonNull Class<U> implementationType ) {
 		return Optional.ofNullable( groupsForType.get( implementationType.getName() ) );
 	}
 }

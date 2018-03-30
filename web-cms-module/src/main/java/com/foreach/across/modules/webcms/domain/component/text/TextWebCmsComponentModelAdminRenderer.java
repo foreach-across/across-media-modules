@@ -16,9 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.component.text;
 
-import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
@@ -35,13 +35,11 @@ import static com.foreach.across.modules.webcms.domain.component.web.WebCmsCompo
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@AcrossDepends(required = AdminWebModule.NAME)
+@ConditionalOnAcrossModule(AdminWebModule.NAME)
 @Component
 @RequiredArgsConstructor
 public class TextWebCmsComponentModelAdminRenderer implements WebCmsComponentModelContentAdminRenderer<TextWebCmsComponentModel>
 {
-	private final BootstrapUiFactory bootstrapUiFactory;
-
 	@Override
 	public boolean supports( WebCmsComponentModel componentModel ) {
 		return TextWebCmsComponentModel.class.isInstance( componentModel );
@@ -49,29 +47,29 @@ public class TextWebCmsComponentModelAdminRenderer implements WebCmsComponentMod
 
 	@Override
 	public ViewElementBuilder createContentViewElementBuilder( TextWebCmsComponentModel componentModel, String controlNamePrefix ) {
-		return bootstrapUiFactory.textbox()
-		                         .controlName( controlNamePrefix + ".content" )
-		                         .rows(
-				                         Integer.parseInt( componentModel.getComponentType()
-				                                                         .getAttribute( TextWebCmsComponentModel.Attributes.ROWS, "3" ) )
-		                         )
-		                         .multiLine( componentModel.isMultiLine() )
-		                         .text( componentModel.getContent() )
-		                         .attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
-		                         .attribute( "data-wcm-markup-type", componentModel.getMarkupType().asAttributeValue() )
-		                         .attribute( "data-wcm-profile", componentModel.getProfile() )
-		                         .postProcessor( ( ( builderContext, element ) -> {
-			                         builderContext.getAttribute( WebResourceRegistry.class ).addPackage( TextWebCmsComponentAdminResources.NAME );
+		return BootstrapUiBuilders.textbox()
+		                          .controlName( controlNamePrefix + ".content" )
+		                          .rows(
+				                          Integer.parseInt( componentModel.getComponentType()
+				                                                          .getAttribute( TextWebCmsComponentModel.Attributes.ROWS, "3" ) )
+		                          )
+		                          .multiLine( componentModel.isMultiLine() )
+		                          .text( componentModel.getContent() )
+		                          .attribute( "data-wcm-component-type", componentModel.getComponentType().getTypeKey() )
+		                          .attribute( "data-wcm-markup-type", componentModel.getMarkupType().asAttributeValue() )
+		                          .attribute( "data-wcm-profile", componentModel.getProfile() )
+		                          .postProcessor( ( ( builderContext, element ) -> {
+			                          builderContext.getAttribute( WebResourceRegistry.class ).addPackage( TextWebCmsComponentAdminResources.NAME );
 
-			                         EntityMessageCodeResolver codeResolver = builderContext.getAttribute( EntityMessageCodeResolver.class );
-			                         if ( codeResolver != null ) {
-				                         element.setPlaceholder(
-						                         codeResolver.getMessageWithFallback(
-								                         builderContext.getAttribute( COMPONENT_MESSAGE_CODE_PREFIX, String.class ) + ".content[placeholder]",
-								                         StringUtils.defaultString( element.getPlaceholder() )
-						                         )
-				                         );
-			                         }
-		                         } ) );
+			                          EntityMessageCodeResolver codeResolver = builderContext.getAttribute( EntityMessageCodeResolver.class );
+			                          if ( codeResolver != null ) {
+				                          element.setPlaceholder(
+						                          codeResolver.getMessageWithFallback(
+								                          builderContext.getAttribute( COMPONENT_MESSAGE_CODE_PREFIX, String.class ) + ".content[placeholder]",
+								                          StringUtils.defaultString( element.getPlaceholder() )
+						                          )
+				                          );
+			                          }
+		                          } ) );
 	}
 }

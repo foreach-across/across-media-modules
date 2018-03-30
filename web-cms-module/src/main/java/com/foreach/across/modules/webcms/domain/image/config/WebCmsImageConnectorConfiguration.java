@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.image.config;
 
 import com.cloudinary.Cloudinary;
-import com.foreach.across.core.annotations.Event;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.core.events.AcrossContextBootstrappedEvent;
@@ -44,6 +43,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 
 import java.util.HashMap;
@@ -89,7 +89,7 @@ class WebCmsImageConnectorConfiguration
 		return ProxyFactory.getProxy( WebCmsImageConnector.class, targetSource );
 	}
 
-	@Event
+	@EventListener
 	@Order
 	void verifyExistenceOfActualImageConnectorImplementation( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
 		if ( !beanFactory.containsBean( BEAN_NAME ) ) {
@@ -121,13 +121,13 @@ class WebCmsImageConnectorConfiguration
 			return imageServerClient;
 		}
 
-		@Event
+		@EventListener
 		@OrderInModule(1)
 		void autoConfigureImageServerConnector( AcrossModuleBootstrappedEvent moduleBootstrappedEvent ) {
 			autoConfigureImageServerConnector( false );
 		}
 
-		@Event
+		@EventListener
 		@OrderInModule(1)
 		void autoConfigureImageServerConnector( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
 			autoConfigureImageServerConnector( true );
@@ -178,13 +178,13 @@ class WebCmsImageConnectorConfiguration
 			return new Cloudinary( settings );
 		}
 
-		@Event
+		@EventListener
 		@OrderInModule(1)
 		void autoConfigureCloudinaryConnector( AcrossModuleBootstrappedEvent moduleBootstrappedEvent ) {
 			autoConfigureCloudinaryConnector( false );
 		}
 
-		@Event
+		@EventListener
 		@OrderInModule(1)
 		void autoConfigureCloudinaryConnector( AcrossContextBootstrappedEvent contextBootstrappedEvent ) {
 			autoConfigureCloudinaryConnector( true );

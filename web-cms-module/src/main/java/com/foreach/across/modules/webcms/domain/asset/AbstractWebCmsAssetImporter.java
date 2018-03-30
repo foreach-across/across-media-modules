@@ -20,10 +20,10 @@ import com.foreach.across.modules.webcms.data.AbstractWebCmsDataImporter;
 import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 /**
  * Base class for importing a simple asset type.  An asset has a specific data key (in the asset collection)
@@ -38,9 +38,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends
 	private final Class<T> assetType;
 	private WebCmsAssetRepository assetRepository;
 
-	protected AbstractWebCmsAssetImporter( String dataKey, Class<T> assetType ) {
-		Assert.notNull( assetType );
-		Assert.notNull( dataKey );
+	protected AbstractWebCmsAssetImporter( @NonNull String dataKey, @NonNull Class<T> assetType ) {
 		this.dataKey = dataKey;
 		this.assetType = assetType;
 	}

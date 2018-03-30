@@ -41,6 +41,9 @@ ehcacheModule:
 spring:
   datasource:
     username: sa
+  http:
+    multipart:
+      max-file-size: 10MB
 
 webCmsModule:
   urls:
@@ -48,3 +51,4 @@ webCmsModule:
     excluded-path-patterns: /resources/**
   pages:
     default-page-type: default
+

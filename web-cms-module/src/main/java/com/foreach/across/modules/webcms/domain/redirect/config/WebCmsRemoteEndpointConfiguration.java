@@ -16,9 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.redirect.config;
 
-import com.foreach.across.core.annotations.Event;
-import com.foreach.across.modules.adminweb.menu.EntityAdminMenuEvent;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiFactory;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.TextareaFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
@@ -35,13 +33,13 @@ import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.bootstrapui.processors.element.EntityListActionsProcessor;
 import com.foreach.across.modules.entity.views.bootstrapui.util.SortableTableBuilder;
+import com.foreach.across.modules.entity.views.menu.EntityAdminMenuEvent;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SimpleEntityViewProcessorAdapter;
 import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.entity.views.support.EntityMessages;
-import com.foreach.across.modules.entity.web.EntityLinkBuilder;
 import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -55,6 +53,7 @@ import com.foreach.across.modules.webcms.domain.redirect.web.WebCmsRemoteEndpoin
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.context.event.EventListener;
 import org.springframework.format.Printer;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -74,7 +73,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 	private final UrlsControlViewElementBuilder urlsControlViewElementBuilder;
 	private final WebCmsRemoteEndpointViewElementBuilder remoteEndpointViewElementBuilder;
 
-	@Event
+	@EventListener
 	void hideUrlsTab( EntityAdminMenuEvent<WebCmsRemoteEndpoint> menu ) {
 		menu.builder()
 		    .item( "webCmsRemoteEndpoint.urls" ).disable();
@@ -136,7 +135,6 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 	@RequiredArgsConstructor
 	private static class UrlsControlViewElementBuilder implements ViewElementBuilder<ContainerViewElement>
 	{
-		private final BootstrapUiFactory bootstrapUiFactory;
 		private final EntityViewElementBuilderHelper builderHelper;
 
 		@Override
@@ -159,12 +157,12 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			tableBuilder.items( EntityUtils.asPage( urls ) );
 			tableBuilder.tableOnly();
 			tableBuilder.hideResultNumber();
-			tableBuilder.noResults( bootstrapUiFactory.container() );
+			tableBuilder.noResults( BootstrapUiBuilders.container() );
 
-			val associationLinkBuilder = association.getAttribute( EntityLinkBuilder.class )
-			                                        .asAssociationFor( entityViewContext.getLinkBuilder(), entityViewContext.getEntity() );
+			val associationLinkBuilder = entityViewContext.getLinkBuilder()
+			                                              .forInstance( entityViewContext.getEntity() )
+			                                              .association( "webCmsRemoteEndpoint.urls" );
 			EntityListActionsProcessor actionsProcessor = new EntityListActionsProcessor(
-					bootstrapUiFactory,
 					association.getTargetEntityConfiguration(),
 					associationLinkBuilder,
 					new EntityMessages( codeResolver )
@@ -175,14 +173,14 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			String message = entityViewContext.getMessageCodeResolver()
 			                                  .getMessage( "properties.urls.add", "Add a path to redirect" );
 
-			return bootstrapUiFactory.div()
-			                         .name( "formGroup-urls" )
-			                         .add( tableBuilder )
-			                         .add( bootstrapUiFactory.button()
-			                                                 .link( associationLinkBuilder.create() )
-			                                                 .style( Style.PRIMARY )
-			                                                 .text( message ) )
-			                         .build( new DefaultViewElementBuilderContext() );
+			return BootstrapUiBuilders.div()
+			                          .name( "formGroup-urls" )
+			                          .add( tableBuilder )
+			                          .add( BootstrapUiBuilders.button()
+			                                                   .link( associationLinkBuilder.createView().toUriString() )
+			                                                   .style( Style.PRIMARY )
+			                                                   .text( message ) )
+			                          .build( new DefaultViewElementBuilderContext() );
 		}
 	}
 
@@ -206,7 +204,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 		@Override
 		public void doControl( EntityViewRequest entityViewRequest, EntityView entityView, EntityViewCommand command ) {
 			val endpointContext = entityViewRequest.getEntityViewContext().getParentContext();
-			entityView.setRedirectUrl( endpointContext.getLinkBuilder().update( endpointContext.getEntity() ) );
+			entityView.setRedirectUrl( endpointContext.getLinkBuilder().forInstance( endpointContext.getEntity() ).updateView().toUriString() );
 		}
 	}
 
