@@ -16,8 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.component.web;
 
-import com.foreach.across.modules.bootstrapui.elements.FormInputElement;
-import com.foreach.across.modules.bootstrapui.elements.processor.ControlNamePrefixingPostProcessor;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
@@ -34,6 +32,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
+import static com.foreach.across.modules.bootstrapui.utils.BootstrapElementUtils.prefixControlNames;
 import static com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelFormElementBuilder.COMPONENT_MESSAGE_CODE_PREFIX;
 
 /**
@@ -76,9 +75,7 @@ class EntityBasedMetadataAdminRenderer implements WebCmsComponentModelMetadataAd
 
 			ContainerViewElement container = new ContainerViewElement();
 			formBuilder.build().forEach( ( name, element ) -> container.addChild( element ) );
-			ControlNamePrefixingPostProcessor controlNamePrefixingPostProcessor = new ControlNamePrefixingPostProcessor( controlNamePrefix + ".metadata" );
-			container.findAll( FormInputElement.class )
-			         .forEach( e -> controlNamePrefixingPostProcessor.postProcess( builderContext, e ) );
+			container.apply( prefixControlNames( controlNamePrefix + ".metadata" ) );
 
 			return container;
 		};

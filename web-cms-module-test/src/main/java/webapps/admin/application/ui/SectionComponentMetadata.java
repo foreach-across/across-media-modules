@@ -20,6 +20,8 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.util.Date;
+
 import static webapps.admin.application.ui.SectionComponentMetadata.Layout.LEFT;
 
 /**
@@ -41,4 +43,6 @@ public class SectionComponentMetadata
 	@Length(max=50)
 	@NotBlank
 	private String shortTitle;
+
+	private Date visibleFrom;
 }
