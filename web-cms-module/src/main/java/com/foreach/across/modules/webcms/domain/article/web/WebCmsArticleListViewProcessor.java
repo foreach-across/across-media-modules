@@ -36,14 +36,17 @@ public class WebCmsArticleListViewProcessor extends EntityViewProcessorAdapter
 {
 	@Override
 	protected void createViewElementBuilders( EntityViewRequest entityViewRequest, EntityView entityView, ViewElementBuilderMap builderMap ) {
-		builderMap.get( SortableTableRenderingViewProcessor.TABLE_BUILDER, SortableTableBuilder.class )
-		          .valueRowProcessor( ( builderContext, row ) -> {
-			          WebCmsArticle asset = EntityViewElementUtils.currentEntity( builderContext, WebCmsArticle.class );
+		if ( builderMap.containsKey( SortableTableRenderingViewProcessor.TABLE_BUILDER ) ) {
+			builderMap.get( SortableTableRenderingViewProcessor.TABLE_BUILDER, SortableTableBuilder.class )
+			          .valueRowProcessor( ( builderContext, row ) -> {
+				          WebCmsArticle asset = EntityViewElementUtils.currentEntity( builderContext,
+				                                                                      WebCmsArticle.class );
+				          if ( !asset.getPublication().isPublished() ) {
+					          row.setStyle( Style.DANGER );
+					          row.addCssClass( "publication-offline" );
+				          }
+			          } );
 
-			          if ( !asset.getPublication().isPublished() ) {
-				          row.setStyle( Style.DANGER );
-				          row.addCssClass( "publication-offline" );
-			          }
-		          } );
+		}
 	}
 }

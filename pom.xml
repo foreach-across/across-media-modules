@@ -23,13 +23,13 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>standard-module-bom</artifactId>
-		<version>3.0.0.RELEASE</version>
+		<version>3.1.0.RELEASE</version>
 	</parent>
 
 	<groupId>com.foreach.across.modules</groupId>
 	<artifactId>web-cms-module-project</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.4.RELEASE</version>
+	<version>0.0.5.RELEASE</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>
@@ -46,7 +46,6 @@
 	<developers>
 		<developer>
 			<name>Arne Vandamme</name>
-			<email>arne at foreach.be</email>
 			<organization>Foreach</organization>
 			<organizationUrl>http://www.foreach.be</organizationUrl>
 		</developer>
@@ -85,7 +84,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>bootstrap-ui-module</artifactId>
-				<version>2.0.1.RELEASE</version>
+				<version>2.1.0.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
