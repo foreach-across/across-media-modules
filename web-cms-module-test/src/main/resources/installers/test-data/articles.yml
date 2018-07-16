@@ -12,6 +12,10 @@ types:
               sortIndex: 0
             content:
               sortIndex: 1
+            bottom-image:
+              componentType: image
+              title: Extra image
+              sortIndex: 2
 
 assets:
   # Update article template pages to point to article template
