@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Set;
 
 @AcrossDepends(required = { AcrossWebModule.NAME, AcrossHibernateJpaModule.NAME })
-public class ImageServerCoreModule extends AcrossModule implements HibernatePackageConfiguringModule, HasSchemaConfiguration
+public class ImageServerCoreModule extends AcrossModule implements HibernatePackageConfigurer, HasSchemaConfiguration
 {
 	public static final String NAME = "ImageServerCoreModule";
 	private final SchemaConfiguration schemaConfiguration = new ImageSchemaConfiguration();

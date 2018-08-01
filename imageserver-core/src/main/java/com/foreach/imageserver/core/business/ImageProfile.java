@@ -32,7 +32,7 @@ public class ImageProfile implements IdBasedEntity
 					@org.hibernate.annotations.Parameter(name = "initialValue", value = "2")
 			}
 	)
-	private long id;
+	private Long id;
 
 	@Column(name = "name", unique = true)
 	private String name;
