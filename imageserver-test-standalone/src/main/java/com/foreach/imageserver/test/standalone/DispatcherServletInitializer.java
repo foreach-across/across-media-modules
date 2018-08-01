@@ -1,6 +1,6 @@
 package com.foreach.imageserver.test.standalone;
 
-import com.foreach.across.modules.web.context.AcrossWebApplicationContext;
+import com.foreach.across.core.context.web.AcrossWebApplicationContext;
 import com.foreach.imageserver.test.standalone.config.StandaloneWebConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;

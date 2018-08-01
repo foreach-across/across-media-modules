@@ -1,9 +1,25 @@
 package com.foreach.imageserver.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
+@Getter
+@Setter
 public class ImageModificationDto
 {
+	/**
+	 * -- GETTER --
+	 *
+	 * The id of the resolution whose modification was used as the base for building this one.
+	 * If this modification is registered directly to the resolution, this id will be the same as
+	 * the id property of {@link #getResolution()}.  If another modification was used as base but then
+	 * translated to match the requested resolution, then this property should return the id of
+	 * the original modification, not the result of the translation.
+	 *
+	 * @return id of the resolution or {@code null} if none
+	 */
 	private Long baseResolutionId;
 	private ImageResolutionDto resolution;
 	private CropDto crop;
@@ -31,23 +47,6 @@ public class ImageModificationDto
 		resolution.setHeight( height );
 	}
 
-	/**
-	 * The id of the resolution whose modification was used as the base for building this one.
-	 * If this modification is registered directly to the resolution, this id will be the same as
-	 * the id property of {@link #getResolution()}.  If another modification was used as base but then
-	 * translated to match the requested resolution, then this property should return the id of
-	 * the original modification, not the result of the translation.
-	 *
-	 * @return id of the resolution or {@code null} if none
-	 */
-	public Long getBaseResolutionId() {
-		return baseResolutionId;
-	}
-
-	public void setBaseResolutionId( Long baseResolutionId ) {
-		this.baseResolutionId = baseResolutionId;
-	}
-
 	public ImageModificationDto( ImageResolutionDto resolution, CropDto crop, DimensionsDto density ) {
 		this( resolution, crop, density, new DimensionsDto() );
 	}
@@ -59,38 +58,6 @@ public class ImageModificationDto
 		this.resolution = resolution;
 		this.crop = crop;
 		this.density = density;
-		this.boundaries = boundaries;
-	}
-
-	public ImageResolutionDto getResolution() {
-		return resolution;
-	}
-
-	public void setResolution( ImageResolutionDto resolution ) {
-		this.resolution = resolution;
-	}
-
-	public CropDto getCrop() {
-		return crop;
-	}
-
-	public void setCrop( CropDto crop ) {
-		this.crop = crop;
-	}
-
-	public DimensionsDto getDensity() {
-		return density;
-	}
-
-	public void setDensity( DimensionsDto density ) {
-		this.density = density;
-	}
-
-	public DimensionsDto getBoundaries() {
-		return boundaries;
-	}
-
-	public void setBoundaries( DimensionsDto boundaries ) {
 		this.boundaries = boundaries;
 	}
 

@@ -3,6 +3,8 @@ package com.foreach.imageserver.core.business;
 import com.foreach.across.modules.hibernate.business.IdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -13,6 +15,8 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE_PROFILE)
+@Getter
+@Setter
 public class ImageProfile implements IdBasedEntity
 {
 	public static final int DEFAULT_PROFILE_ID = 1;
@@ -28,26 +32,10 @@ public class ImageProfile implements IdBasedEntity
 					@org.hibernate.annotations.Parameter(name = "initialValue", value = "2")
 			}
 	)
-	private long id;
+	private Long id;
 
 	@Column(name = "name", unique = true)
 	private String name;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId( long id ) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName( String name ) {
-		this.name = name;
-	}
 
 	@Override
 	public boolean equals( Object o ) {

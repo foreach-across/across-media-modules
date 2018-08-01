@@ -3,6 +3,8 @@ package com.foreach.imageserver.core.business;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import com.foreach.imageserver.dto.ImageModificationDto;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -13,6 +15,8 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE_PROFILE_MODIFICATION)
+@Getter
+@Setter
 public class ImageProfileModification
 {
 	@Id
@@ -39,38 +43,6 @@ public class ImageProfileModification
 
 	@Transient //TODO: FIX
 	private ImageModificationDto modificationDto = new ImageModificationDto();
-
-	public long getImageResolutionId() {
-		return imageResolutionId;
-	}
-
-	public void setImageResolutionId( long imageResolutionId ) {
-		this.imageResolutionId = imageResolutionId;
-	}
-
-	public long getImageProfileId() {
-		return imageProfileId;
-	}
-
-	public void setImageProfileId( long imageProfileId ) {
-		this.imageProfileId = imageProfileId;
-	}
-
-	public long getImageContextId() {
-		return imageContextId;
-	}
-
-	public void setImageContextId( long imageContextId ) {
-		this.imageContextId = imageContextId;
-	}
-
-	public ImageModificationDto getModificationDto() {
-		return modificationDto;
-	}
-
-	public void setModificationDto( ImageModificationDto modificationDto ) {
-		this.modificationDto = modificationDto;
-	}
 
 	public long getId() {
 		return id;

@@ -1,7 +1,12 @@
 package com.foreach.imageserver.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
+@Getter
+@Setter
 public class ImageVariantDto
 {
 	private ImageTypeDto imageType;
@@ -21,22 +26,6 @@ public class ImageVariantDto
 
 	public ImageVariantDto( ImageTypeDto imageType, DimensionsDto boundaries ) {
 		this.imageType = imageType;
-		this.boundaries = boundaries;
-	}
-
-	public ImageTypeDto getImageType() {
-		return imageType;
-	}
-
-	public void setImageType( ImageTypeDto imageType ) {
-		this.imageType = imageType;
-	}
-
-	public DimensionsDto getBoundaries() {
-		return boundaries;
-	}
-
-	public void setBoundaries( DimensionsDto boundaries ) {
 		this.boundaries = boundaries;
 	}
 

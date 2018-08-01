@@ -1,6 +1,8 @@
 package com.foreach.imageserver.core.business;
 
 import com.foreach.imageserver.math.AspectRatio;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;
@@ -12,6 +14,8 @@ import java.util.Objects;
  * for a certain dimension.
  */
 @Embeddable
+@Getter
+@Setter
 public class Dimensions
 {
 	public static final Dimensions EMPTY = new Dimensions();
@@ -29,22 +33,6 @@ public class Dimensions
 
 	public AspectRatio fetchAspectRatio() {
 		return new AspectRatio( width, height );
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth( int width ) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight( int height ) {
-		this.height = height;
 	}
 
 	public boolean fitsIn( Dimensions boundaries ) {
