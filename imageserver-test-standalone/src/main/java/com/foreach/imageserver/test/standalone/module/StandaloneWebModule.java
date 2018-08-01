@@ -16,7 +16,7 @@ import java.util.Set;
 @AcrossDepends(required = ImageServerCoreModule.NAME)
 public class StandaloneWebModule extends AcrossModule
 {
-	public static final String NAME = "StandaloneImageServerTestModule";
+	public static final String NAME = "StandaloneWebModule";
 
 	@Override
 	public String getName() {
