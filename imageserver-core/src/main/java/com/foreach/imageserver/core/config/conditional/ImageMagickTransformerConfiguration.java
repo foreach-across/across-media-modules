@@ -4,13 +4,14 @@ import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.transformers.ImageMagickImageTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
 /**
  * @author Arne Vandamme
  */
-@AcrossCondition("${" + ImageServerCoreModuleSettings.IMAGEMAGICK_ENABLED + ":false}")
+@ConditionalOnExpression("${" + ImageServerCoreModuleSettings.IMAGEMAGICK_ENABLED + ":false}")
 public class ImageMagickTransformerConfiguration
 {
 	@Autowired
