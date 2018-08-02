@@ -21,7 +21,6 @@ public interface ImageModificationRepository extends JpaRepository<ImageModifica
 	@Query("select i from ImageModification i where i.id.imageId = :imageId")
 	List<ImageModification> getAllModifications( @Param("imageId") long imageId );
 
-	default boolean hasModification( @Param("imageId") long imageId ) {
-		throw new RuntimeException();
-	}
+	@Query("select count(i)>0 from ImageModification i where i.id.imageId = :imageId")
+	boolean hasModification( @Param("imageId") long imageId );
 }

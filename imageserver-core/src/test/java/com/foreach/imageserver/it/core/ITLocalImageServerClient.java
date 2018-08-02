@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -43,6 +44,8 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration(classes = ITLocalImageServerClient.Config.class)
+@TestPropertySource(properties = { "spring.jpa.show-sql=true",
+                                   "acrossHibernate.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl" })
 public class ITLocalImageServerClient
 {
 	@Autowired(required = false)

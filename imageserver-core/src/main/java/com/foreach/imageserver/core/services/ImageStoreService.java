@@ -32,7 +32,7 @@ public interface ImageStoreService
 	                         ImageResolution imageResolution,
 	                         ImageVariant imageVariant );
 
-	void removeVariants( long imageId );
+	void removeVariants( Long imageId );
 
 	void removeOriginal( Image image );
 }
