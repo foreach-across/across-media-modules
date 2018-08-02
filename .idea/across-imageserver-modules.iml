@@ -8,7 +8,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.projectlombok:lombok:1.16.16" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.foreach.across:across-test:3.1.0.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.foreach.across:across-core:3.1.0.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-autoconfigure:1.5.14.RELEASE" level="project" />

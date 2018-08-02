@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
   <artifact type="war" name="imageserver-test-standalone:war">
     <output-path>$PROJECT_DIR$/imageserver-test-standalone/target</output-path>
-    <root id="archive" name="imageserver-test-standalone-4.0.0.RELEASE.war">
+    <root id="archive" name="imageserver-test-standalone-5.0.0-SNAPSHOT.war">
       <element id="artifact" artifact-name="imageserver-test-standalone:war exploded" />
     </root>
   </artifact>
