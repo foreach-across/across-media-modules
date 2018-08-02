@@ -36,10 +36,6 @@
 			<artifactId>across-hibernate-module</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.foreach.libs</groupId>
-			<artifactId>common-spring</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 		</dependency>
