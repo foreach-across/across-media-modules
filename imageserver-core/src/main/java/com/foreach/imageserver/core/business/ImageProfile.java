@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.business;
 
-import com.foreach.across.modules.hibernate.business.IdBasedEntity;
+import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import java.util.Objects;
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE_PROFILE)
 @Getter
 @Setter
-public class ImageProfile implements IdBasedEntity
+public class ImageProfile extends SettableIdBasedEntity<ImageProfile>
 {
 	public static final int DEFAULT_PROFILE_ID = 1;
 

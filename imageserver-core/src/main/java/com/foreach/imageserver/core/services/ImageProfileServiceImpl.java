@@ -21,7 +21,7 @@ public class ImageProfileServiceImpl implements ImageProfileService
 
 	@Override
 	public ImageProfile getById( long id ) {
-		return imageProfileRepository.getById( id );
+		return imageProfileRepository.findOne( id );
 	}
 
 	@Transactional
@@ -38,12 +38,7 @@ public class ImageProfileServiceImpl implements ImageProfileService
 
 		BeanUtils.copyProperties( imageProfileDto, imageProfile );
 
-		if ( imageProfileDto.isNewEntity() ) {
-			imageProfileRepository.create( imageProfile );
-		}
-		else {
-			imageProfileRepository.update( imageProfile );
-		}
+		imageProfileRepository.save( imageProfile );
 
 		BeanUtils.copyProperties( imageProfile, imageProfileDto );
 	}

@@ -27,7 +27,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest
 	public void insertAndGetById() {
 		ImageProfile imageProfile = new ImageProfile();
 		imageProfile.setName( "dummy_profile" );
-		imageProfileRepository.create( imageProfile );
+		imageProfileRepository.save( imageProfile );
 
 		Image writtenImage = new Image();
 		writtenImage.setExternalId( "external_id" );
@@ -51,7 +51,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest
 	public void insertAndGetByExternalId() {
 		ImageProfile imageProfile = new ImageProfile();
 		imageProfile.setName( "dummy_profile 2" );
-		imageProfileRepository.create( imageProfile );
+		imageProfileRepository.save( imageProfile );
 
 		Image writtenImage = new Image();
 		writtenImage.setExternalId( "external_id2" );

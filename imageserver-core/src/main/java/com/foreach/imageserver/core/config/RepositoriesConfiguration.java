@@ -15,11 +15,6 @@ public class RepositoriesConfiguration
 	}
 
 	@Bean
-	public ImageProfileRepository imageProfileRepository() {
-		return new ImageProfileRepositoryImpl();
-	}
-
-	@Bean
 	public ImageResolutionRepository imageResolutionRepository() {
 		return new ImageResolutionRepositoryImpl();
 	}
