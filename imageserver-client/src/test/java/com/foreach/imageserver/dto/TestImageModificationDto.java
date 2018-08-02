@@ -30,7 +30,7 @@ public class TestImageModificationDto
 		assertEquals( Long.valueOf( 3L ), dto.getBaseResolutionId() );
 
 		ImageResolutionDto res = new ImageResolutionDto();
-		res.setId( 4 );
+		res.setId( 4L );
 		dto.setResolution( res );
 		assertFalse( dto.isRegistered() );
 	}
@@ -38,7 +38,7 @@ public class TestImageModificationDto
 	@Test
 	public void registeredFalseIfBaseResolutionIdNotSet() {
 		ImageResolutionDto res = new ImageResolutionDto();
-		res.setId( 4 );
+		res.setId( 4L );
 		dto.setResolution( res );
 		assertFalse( dto.isRegistered() );
 	}
@@ -46,7 +46,7 @@ public class TestImageModificationDto
 	@Test
 	public void registeredTrueIfBaseResolutionIdMatchesOutputResolutionId() {
 		ImageResolutionDto res = new ImageResolutionDto();
-		res.setId( 4 );
+		res.setId( 4L );
 		dto.setResolution( res );
 		dto.setBaseResolutionId( 4L );
 

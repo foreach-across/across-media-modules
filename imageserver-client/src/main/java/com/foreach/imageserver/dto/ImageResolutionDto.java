@@ -11,7 +11,7 @@ import java.util.Set;
 @Setter
 public class ImageResolutionDto
 {
-	private long id;
+	private Long id;
 	private boolean configurable, pregenerateVariants;
 	private String name;
 	private int width;
