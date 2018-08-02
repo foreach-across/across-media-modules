@@ -3,8 +3,7 @@ package com.foreach.imageserver.it.core;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
-import com.foreach.across.test.AcrossTestWebConfiguration;
+import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
@@ -261,7 +260,7 @@ public class ITLocalImageServerClient
 	}
 
 	@Configuration
-	@AcrossTestWebConfiguration
+	@AcrossTestConfiguration
 	@PropertySource("classpath:integrationtests.properties")
 	protected static class Config implements AcrossContextConfigurer
 	{
@@ -272,7 +271,6 @@ public class ITLocalImageServerClient
 		@Override
 		public void configure( AcrossContext context ) {
 			context.addModule( imageServerCoreModule() );
-			context.addModule( new AcrossHibernateJpaModule() );
 		}
 
 		private ImageServerCoreModule imageServerCoreModule() {

@@ -6,7 +6,7 @@ import com.foreach.imageserver.core.business.ImageType;
 /**
  * @author Arne Vandamme
  */
-public class ImageTypeSetUserType extends HibernateBitFlag
+public class ImageTypeSetUserType extends HibernateBitFlag<ImageType>
 {
 	public static final String CLASS_NAME = "com.foreach.imageserver.core.hibernate.ImageTypeSetUserType";
 

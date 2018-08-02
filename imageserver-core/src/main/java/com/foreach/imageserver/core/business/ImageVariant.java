@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.business;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ import java.util.Objects;
  * of what exists on the filesystem makes for convenient housekeeping. Every image on the filesystem can be removed
  * at will; it will be refetched and/or recreated when necessary.
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ImageVariant
 {
 	private ImageType outputType;
