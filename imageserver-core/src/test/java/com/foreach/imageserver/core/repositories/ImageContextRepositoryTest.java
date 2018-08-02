@@ -15,13 +15,13 @@ public class ImageContextRepositoryTest extends AbstractIntegrationTest
 
 	@Test
 	public void getById() {
-		int fixedId = -100;
+		Long fixedId = -100L;
 		ImageContext context = new ImageContext();
 		context.setId( fixedId );
 		context.setCode( "the_application_code" );
-		contextRepository.create( context );
+		contextRepository.save( context );
 
-		ImageContext contextFromDb = contextRepository.getById( fixedId );
+		ImageContext contextFromDb = contextRepository.findOne( fixedId );
 
 		assertEquals( fixedId, contextFromDb.getId() );
 		assertEquals( "the_application_code", contextFromDb.getCode() );
@@ -29,11 +29,11 @@ public class ImageContextRepositoryTest extends AbstractIntegrationTest
 
 	@Test
 	public void getByCode() {
-		int fixedId = -101;
+		Long fixedId = -101L;
 		ImageContext context = new ImageContext();
 		context.setId( fixedId );
 		context.setCode( "the_application_code_by_code" );
-		contextRepository.create( context );
+		contextRepository.save( context );
 
 		ImageContext contextFromDb = contextRepository.getByCode( "the_application_code_by_code" );
 

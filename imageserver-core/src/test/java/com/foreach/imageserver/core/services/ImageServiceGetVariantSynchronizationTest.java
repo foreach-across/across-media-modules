@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.services;
 
+import com.foreach.common.test.MockedLoader;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
@@ -7,7 +8,6 @@ import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
-import com.foreach.common.test.MockedLoader;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -170,7 +170,7 @@ public class ImageServiceGetVariantSynchronizationTest
 	                             Answer<InMemoryImageSource> secondImageAnswer ) throws InterruptedException {
 		Image firstImage = image( 1 );
 		Image secondImage = image( 2 );
-		ImageContext context = context( 10 );
+		ImageContext context = context( 10L );
 		ImageResolution imageResolution = imageResolution( 20 );
 		ImageVariant imageVariant = imageVariant( ImageType.PNG );
 
@@ -229,7 +229,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		return image;
 	}
 
-	private ImageContext context( int id ) {
+	private ImageContext context( Long id ) {
 		ImageContext context = new ImageContext();
 		context.setId( id );
 		return context;

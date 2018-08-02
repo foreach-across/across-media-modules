@@ -45,12 +45,7 @@ public class ImageContextManagerImpl implements ImageContextManager
 
 		BeanUtils.copyProperties( contextDto, context );
 
-		if ( contextDto.isNewEntity() ) {
-			contextRepository.create( context );
-		}
-		else {
-			contextRepository.update( context );
-		}
+		contextRepository.save( context );
 
 		BeanUtils.copyProperties( context, contextDto );
 	}

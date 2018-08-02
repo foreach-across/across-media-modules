@@ -45,14 +45,14 @@ public class ImageResolutionRepositoryTest extends AbstractIntegrationTest
 	public void getForContext() {
 
 		ImageContext context10 = new ImageContext();
-		context10.setId( -10 );
+		context10.setId( -10L );
 		context10.setCode( "application_code" );
-		contextRepository.create( context10 );
+		contextRepository.save( context10 );
 
 		ImageContext context11 = new ImageContext();
-		context11.setId( -11 );
+		context11.setId( -11L );
 		context11.setCode( "the_other_application_code" );
-		contextRepository.create( context11 );
+		contextRepository.save( context11 );
 
 		imageResolutionRepository.create( createImageResolution( 10, 111, 222, Sets.newSet( context10 ) ) );
 		imageResolutionRepository.create( createImageResolution( 11, 1111, 2222, Sets.newSet( context10 ) ) );

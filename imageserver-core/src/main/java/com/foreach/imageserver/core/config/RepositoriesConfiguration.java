@@ -1,9 +1,11 @@
 package com.foreach.imageserver.core.config;
 
+import com.foreach.across.modules.hibernate.jpa.repositories.config.EnableAcrossJpaRepositories;
 import com.foreach.imageserver.core.repositories.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@EnableAcrossJpaRepositories(basePackageClasses = ImageRepository.class)
 @Configuration
 public class RepositoriesConfiguration
 {
@@ -15,11 +17,6 @@ public class RepositoriesConfiguration
 	@Bean
 	public ImageProfileRepository imageProfileRepository() {
 		return new ImageProfileRepositoryImpl();
-	}
-
-	@Bean
-	public ImageContextRepository contextRepository() {
-		return new ImageContextRepositoryImpl();
 	}
 
 	@Bean

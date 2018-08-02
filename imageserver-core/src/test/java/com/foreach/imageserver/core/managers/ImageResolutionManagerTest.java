@@ -67,9 +67,9 @@ public class ImageResolutionManagerTest extends AbstractCachedIntegrationTest
 	@Test
 	public void getForContext() {
 		ImageContext context = new ImageContext();
-		context.setId( 17 );
+		context.setId( 17L );
 		context.setCode( "the_application_code_17" );
-		imageContextRepository.create( context );
+		imageContextRepository.save( context );
 
 		createImageResolution( 11, 222, 333, Sets.newSet( context ) );
 

@@ -24,7 +24,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 
 	@Test
 	public void insertAndGetById() {
-		createContext( 1010, "the_application_code_1010" );
+		createContext( 1010L, "the_application_code_1010" );
 		createImage( 9998, "externalId", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImageResolution( -8, 8888, 1616 );
 
@@ -60,17 +60,17 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		              readImageModification.getDensity().getHeight() );
 	}
 
-	private void createContext( int id, String code ) {
+	private void createContext( Long id, String code ) {
 		ImageContext context = new ImageContext();
 		context.setId( id );
 		context.setCode( code );
-		contextRepository.create( context );
+		contextRepository.save( context );
 	}
 
 	@Test
 	public void getModifications() {
-		createContext( 8010, "the_application_code_8010" );
-		createContext( 8011, "the_application_code_8011" );
+		createContext( 8010L, "the_application_code_8010" );
+		createContext( 8011L, "the_application_code_8011" );
 
 		createImage( 19998, "externalId19998", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImage( 19999, "externalId19999", new Dimensions( 100, 100 ), ImageType.PNG );
@@ -107,8 +107,8 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 
 	@Test
 	public void getAllModifications() {
-		createContext( 7010, "the_application_code_7010" );
-		createContext( 7011, "the_application_code_7011" );
+		createContext( 7010L, "the_application_code_7010" );
+		createContext( 7011L, "the_application_code_7011" );
 
 		createImage( 29998, "externalId_29998", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImage( 29999, "externalId_29999", new Dimensions( 100, 100 ), ImageType.PNG );
@@ -154,7 +154,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 
 	@Test
 	public void updateAndGetById() {
-		createContext( 6666, "code" );
+		createContext( 6666L, "code" );
 		createImage( 78878, "externalId_78878", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImageResolution( 99994, 934, 9843 );
 
@@ -178,9 +178,9 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 	@Test
 	public void hasModification() {
 		ImageContext context6010 = new ImageContext();
-		context6010.setId( 6010 );
+		context6010.setId( 6010L );
 		context6010.setCode( "the_application_code_6010" );
-		contextRepository.create( context6010 );
+		contextRepository.save( context6010 );
 
 		createImage( 39998, "externalId_39998", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImage( 49998, "externalId_49998", new Dimensions( 100, 100 ), ImageType.PNG );
