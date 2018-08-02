@@ -69,6 +69,7 @@ public class ImageServerPermissionsInstaller
 		roleService.defineRole(
 				"ROLE_IMAGESERVER_ADMIN",
 				"ImageServer administrator",
+				"Role for viewing images, uploading images and managing resolutions",
 				Arrays.asList( "imageserver view images", "imageserver upload images",
 				               "imageserver manage resolutions" )
 		);

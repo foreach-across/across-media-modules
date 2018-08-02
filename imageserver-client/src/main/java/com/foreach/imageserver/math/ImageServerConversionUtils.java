@@ -3,6 +3,7 @@ package com.foreach.imageserver.math;
 import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
+import lombok.NonNull;
 import org.springframework.util.Assert;
 
 /**
@@ -320,10 +321,9 @@ public class ImageServerConversionUtils
 	 * @param to   dimension
 	 * @return distance number
 	 */
-	public static int calculateDistance( DimensionsDto from, DimensionsDto to ) {
-		Assert.notNull( from );
-		Assert.notNull( to );
-		Assert.isTrue( from.getWidth() > 0 && from.getHeight() > 0 && to.getWidth() > 0 && to.getHeight() > 0 );
+	public static int calculateDistance( @NonNull DimensionsDto from, @NonNull DimensionsDto to ) {
+		Assert.isTrue( from.getWidth() > 0 && from.getHeight() > 0 && to.getWidth() > 0 && to.getHeight() > 0,
+		               "Width and Height must be greater than 0" );
 
 		if ( from.equals( to ) ) {
 			return 0;

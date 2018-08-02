@@ -8,8 +8,8 @@ import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.math.AspectRatio;
 import com.foreach.imageserver.math.ImageServerConversionUtils;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.function.Function;
@@ -52,8 +52,7 @@ public class ImageModificationResolverImpl implements ImageModificationResolver
 	private Collection<ImageModificationSelector> imageModificationSelectors = Collections.emptyList();
 
 	@Autowired
-	public void setCropGeneratorUtil( CropGeneratorUtil cropGeneratorUtil ) {
-		Assert.notNull( cropGeneratorUtil );
+	public void setCropGeneratorUtil( @NonNull CropGeneratorUtil cropGeneratorUtil ) {
 		this.cropGeneratorUtil = cropGeneratorUtil;
 	}
 
@@ -62,19 +61,14 @@ public class ImageModificationResolverImpl implements ImageModificationResolver
 		this.imageService = imageService;
 	}
 
-	public void setImageModificationSelectors( List<ImageModificationSelector> imageModificationSelectors ) {
-		Assert.notNull( imageModificationSelectors );
+	public void setImageModificationSelectors( @NonNull List<ImageModificationSelector> imageModificationSelectors ) {
 		this.imageModificationSelectors = imageModificationSelectors;
 	}
 
 	@Override
-	public ImageModificationDto resolveModification( Image image,
-	                                                 ImageContext context,
-	                                                 ImageResolution imageResolution ) {
-		Assert.notNull( image );
-		Assert.notNull( context );
-		Assert.notNull( imageResolution );
-
+	public ImageModificationDto resolveModification( @NonNull Image image,
+	                                                 @NonNull ImageContext context,
+	                                                 @NonNull ImageResolution imageResolution ) {
 		ImageResolutionDto outputResolution = buildOutputResolution( image, imageResolution );
 
 		ImageModificationDto modificationDto = new ImageModificationDto();

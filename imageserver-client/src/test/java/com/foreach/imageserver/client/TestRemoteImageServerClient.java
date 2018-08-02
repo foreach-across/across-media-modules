@@ -1,9 +1,6 @@
 package com.foreach.imageserver.client;
 
 import com.foreach.imageserver.dto.*;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.Before;
@@ -11,7 +8,6 @@ import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.mock.http.client.MockClientHttpResponse;
@@ -19,22 +15,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -67,27 +54,26 @@ public class TestRemoteImageServerClient
 		CloseableHttpClient httpClient = HttpClients.custom()
 		                                            .build();
 
-		HttpComponentsClientHttpRequestFactory requestFactory = mock(HttpComponentsClientHttpRequestFactory.class);
-		when(requestFactory.getHttpClient()).thenReturn( httpClient );
-
+		HttpComponentsClientHttpRequestFactory requestFactory = mock( HttpComponentsClientHttpRequestFactory.class );
+		when( requestFactory.getHttpClient() ).thenReturn( httpClient );
 
 		MockClientHttpRequest mockClientHttpRequest = new MockClientHttpRequest( HttpMethod.GET, uri );
 		MockClientHttpResponse clientHttpResponse =
 				new MockClientHttpResponse( responseJson.getBytes(), HttpStatus.OK );
-		clientHttpResponse.getHeaders().add( "Content-Type",MediaType.APPLICATION_JSON_VALUE );
-		mockClientHttpRequest.setResponse(clientHttpResponse );
+		clientHttpResponse.getHeaders().add( "Content-Type", MediaType.APPLICATION_JSON_VALUE );
+		mockClientHttpRequest.setResponse( clientHttpResponse );
 
-		when( requestFactory.createRequest( uri, HttpMethod.GET )).thenReturn(mockClientHttpRequest );
+		when( requestFactory.createRequest( uri, HttpMethod.GET ) ).thenReturn( mockClientHttpRequest );
 
 		//set a custom requestFactory on the resttemplate
 		RestTemplate customRestTemplate = new RestTemplate( requestFactory );
 
-		imageServerClient = new RemoteImageServerClient( endpoint,token,customRestTemplate );
+		imageServerClient = new RemoteImageServerClient( endpoint, token, customRestTemplate );
 
 		assertTrue( imageServerClient.imageExists( imageId ) );
 
 		//check that the custom requestFacotry is used, than we know our custom resttemplate is used
-		verify(requestFactory,times(1)).createRequest( uri,HttpMethod.GET );
+		verify( requestFactory, times( 1 ) ).createRequest( uri, HttpMethod.GET );
 	}
 
 	@Test
