@@ -1,6 +1,5 @@
 package com.foreach.imageserver.core.config.conditional;
 
-import com.foreach.across.core.annotations.AcrossCondition;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.transformers.ImageMagickImageTransformer;
 import org.springframework.beans.factory.annotation.Autowired;

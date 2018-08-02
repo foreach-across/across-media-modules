@@ -15,11 +15,11 @@ import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.logging.LogHelper;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
@@ -135,9 +135,7 @@ public class ImageServiceImpl implements ImageService
 		return image;
 	}
 
-	private Image loadImageData( byte[] imageBytes ) {
-		Assert.notNull( imageBytes );
-
+	private Image loadImageData( @NonNull byte[] imageBytes ) {
 		ImageAttributes imageAttributes = imageTransformService.getAttributes( new ByteArrayInputStream( imageBytes ) );
 
 		Image image = new Image();

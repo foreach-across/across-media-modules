@@ -2,8 +2,8 @@ package com.foreach.imageserver.client;
 
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
 
 /**
@@ -23,8 +23,7 @@ public class Md5ImageRequestHashBuilder implements ImageRequestHashBuilder
 	 *
 	 * @param hashToken that will be added to the parameters when building the hash
 	 */
-	public Md5ImageRequestHashBuilder( String hashToken ) {
-		Assert.notNull( hashToken );
+	public Md5ImageRequestHashBuilder( @NonNull String hashToken ) {
 		this.hashToken = hashToken;
 	}
 
