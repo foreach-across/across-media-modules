@@ -25,7 +25,7 @@ import java.util.Objects;
 public class ImageModification implements Persistable<ImageModificationId>, Serializable
 {
 	@EmbeddedId
-	private ImageModificationId id;
+	private ImageModificationId id = new ImageModificationId();
 
 	@AttributeOverrides({
 			@AttributeOverride(name = "x", column = @Column(name = "cropX")),
@@ -72,7 +72,7 @@ public class ImageModification implements Persistable<ImageModificationId>, Seri
 
 	@Override
 	public boolean isNew() {
-		return id != null;
+		return ( id == null ) || ( id.getContextId() == 0 && id.getImageId() == 0 && id.getResolutionId() == 0 );
 	}
 
 	public long getImageId() {

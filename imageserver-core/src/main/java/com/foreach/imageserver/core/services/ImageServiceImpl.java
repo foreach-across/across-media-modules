@@ -446,13 +446,13 @@ public class ImageServiceImpl implements ImageService
 
 	private static class VariantImageRequest
 	{
-		private final long imageId;
+		private final Long imageId;
 		private final long contextId;
 		private final ImageModificationDto modification;
 		private final ImageResolution requestedResolution;
 		private final ImageVariant variant;
 
-		public VariantImageRequest( long imageId,
+		public VariantImageRequest( Long imageId,
 		                            long contextId,
 		                            ImageModificationDto modification,
 		                            ImageResolution requestedResolution, ImageVariant variant ) {
