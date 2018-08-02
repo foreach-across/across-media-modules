@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.core.repositories.ImageModificationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +15,10 @@ import java.util.List;
  * 'normal operation'.
  */
 @Repository
+@RequiredArgsConstructor
 public class ImageModificationManagerImpl implements ImageModificationManager
 {
-	@Autowired
-	private ImageModificationRepository imageModificationRepository;
+	private final ImageModificationRepository imageModificationRepository;
 
 	@Override
 	// Not cached -- see comments above.
@@ -57,8 +57,6 @@ public class ImageModificationManagerImpl implements ImageModificationManager
 	@Override
 	@Transactional
 	public void deleteModifications( long imageId ) {
-		for ( ImageModification imageModification : getAllModifications( imageId ) ) {
-			imageModificationRepository.delete( imageModification );
-		}
+		imageModificationRepository.delete( getAllModifications( imageId ) );
 	}
 }

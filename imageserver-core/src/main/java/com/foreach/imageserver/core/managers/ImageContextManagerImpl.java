@@ -3,8 +3,8 @@ package com.foreach.imageserver.core.managers;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.repositories.ImageContextRepository;
 import com.foreach.imageserver.dto.ImageContextDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 @Repository
+@RequiredArgsConstructor
 public class ImageContextManagerImpl implements ImageContextManager
 {
 	private static final String CACHE_NAME = "contexts";
 
-	@Autowired
-	private ImageContextRepository contextRepository;
+	private final ImageContextRepository contextRepository;
 
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "'byCode-'+#code")

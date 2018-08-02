@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.repositories.ImageResolutionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -12,12 +12,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class ImageResolutionManagerImpl implements ImageResolutionManager
 {
 	private static final String CACHE_NAME = "imageResolutions";
 
-	@Autowired
-	private ImageResolutionRepository imageResolutionRepository;
+	private final ImageResolutionRepository imageResolutionRepository;
 
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "'byId-'+#resolutionId")

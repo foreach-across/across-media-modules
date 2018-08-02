@@ -2,14 +2,14 @@ package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.business.ImageProfileModification;
 import com.foreach.imageserver.core.repositories.ImageProfileModificationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class ImageProfileManagerImpl implements ImageProfileManager
 {
-	@Autowired
-	private ImageProfileModificationRepository imageProfileModificationRepository;
+	private final ImageProfileModificationRepository imageProfileModificationRepository;
 
 	@Override
 	public ImageProfileModification getModification( long imageProfileId, long contextId, long resolutionId ) {
