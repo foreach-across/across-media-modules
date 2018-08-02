@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import com.foreach.imageserver.dto.ImageModificationDto;
@@ -17,7 +18,7 @@ import java.util.Objects;
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE_PROFILE_MODIFICATION)
 @Getter
 @Setter
-public class ImageProfileModification
+public class ImageProfileModification extends SettableIdBasedEntity<ImageProfileModification>
 {
 	@Id
 	@GeneratedValue(generator = "seq_img_image_profile_modification_id")
@@ -30,7 +31,7 @@ public class ImageProfileModification
 					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "10")
 			}
 	)
-	private long id;
+	private Long id;
 
 	@Column(name = "resolution_id")
 	private long imageResolutionId;
@@ -43,14 +44,6 @@ public class ImageProfileModification
 
 	@Transient //TODO: FIX
 	private ImageModificationDto modificationDto = new ImageModificationDto();
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId( long id ) {
-		this.id = id;
-	}
 
 	@Override
 	public boolean equals( Object o ) {

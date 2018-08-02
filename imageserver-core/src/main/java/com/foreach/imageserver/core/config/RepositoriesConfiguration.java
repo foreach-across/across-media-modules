@@ -29,8 +29,4 @@ public class RepositoriesConfiguration
 		return new ImageModificationRepositoryImpl();
 	}
 
-	@Bean
-	public ImageProfileModificationRepository imageProfileModificationRepository() {
-		return new ImageProfileModificationRepositoryImpl();
-	}
 }
