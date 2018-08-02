@@ -6,7 +6,7 @@ import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.rest.services.ImageRestServiceImpl;
 import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -22,10 +22,11 @@ import java.io.IOException;
 		basePackages = { "com.foreach.imageserver.core.managers" }
 )
 @Configuration
+@RequiredArgsConstructor
 public class ServicesConfiguration
 {
-	@Autowired
-	private Environment environment;
+	private final Environment environment;
+	private final ImageServerCoreModuleSettings settings;
 
 	@Bean
 	public ImageTransformerRegistry imageTransformerRegistry() {
@@ -45,10 +46,7 @@ public class ServicesConfiguration
 	@Bean
 	public ImageRestService imageRestService() {
 		ImageRestServiceImpl imageRestService = new ImageRestServiceImpl();
-		imageRestService.setFallbackImageKey(
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_NOT_FOUND_IMAGEKEY, "" )
-		);
-
+		imageRestService.setFallbackImageKey( settings.getStreaming().getImageNotFoundKey() );
 		return imageRestService;
 	}
 
@@ -67,13 +65,7 @@ public class ServicesConfiguration
 	@Bean
 	@Exposed
 	public ImageTransformService imageTransformService() {
-		return new ImageTransformServiceImpl(
-				environment.getProperty(
-						ImageServerCoreModuleSettings.TRANSFORMERS_CONCURRENT_LIMIT,
-						Integer.class,
-						10
-				)
-		);
+		return new ImageTransformServiceImpl( settings.getTransformers().getConcurrentLimit() );
 	}
 
 	@Bean
@@ -87,8 +79,8 @@ public class ServicesConfiguration
 		return new ImageStoreServiceImpl(
 				environment.getRequiredProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
 				                                 File.class ).toPath(),
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER_PERMISSIONS, "" ),
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FILE_PERMISSIONS, "" ) );
+				settings.getStoreSettings().getFolderPermissions(),
+				settings.getStoreSettings().getFilePermissions() );
 	}
 
 	@Bean

@@ -11,7 +11,6 @@ import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.test.standalone.module.StandaloneWebModule;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -26,10 +25,6 @@ import java.util.UUID;
 @PropertySource("classpath:application.properties")
 public class StandaloneWebConfiguration implements AcrossContextConfigurer
 {
-
-	@Value("${" + ImageServerCoreModuleSettings.IMAGEMAGICK_PATH + "}")
-	private String imageMagickPath;
-
 	@Bean
 	public DataSource acrossDataSource() {
 		BasicDataSource dataSource = new BasicDataSource();
@@ -55,8 +50,6 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 		coreModule.setProperty( ImageServerCoreModuleSettings.PROVIDE_STACKTRACE, true );
 		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_ENABLED, true );
 		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GRAPHICSMAGICK, true );
-		coreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PATH, imageMagickPath );
-
 		coreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/resources/images" );
 		coreModule.setProperty( ImageServerCoreModuleSettings.ACCESS_TOKEN, "standalone-access-token" );
 
