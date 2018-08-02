@@ -162,7 +162,7 @@ public class TestRemoteImageServerClient
 	public void imageUrlNoSizeNoImageResolution() {
 		ImageVariantDto variant = new ImageVariantDto();
 		variant.setImageType( ImageTypeDto.JPEG );
-		String url = imageServerClient.imageUrl( "10", "ONLINE", null, variant, null );
+		String url = imageServerClient.imageUrl( "10", "ONLINE", null, variant );
 		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&height=2000", url );
 	}
 
