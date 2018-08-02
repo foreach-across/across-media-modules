@@ -15,15 +15,13 @@ public interface ImageModificationRepository extends JpaRepository<ImageModifica
 	                           @Param("contextId") long contextId,
 	                           @Param("imageResolutionId") long imageResolutionId );
 
-	default List<ImageModification> getModifications( long imageId, long contextId ) {
-		throw new RuntimeException();
-	}
+	@Query("select i from ImageModification i where i.id.imageId = :imageId and i.id.contextId = :contextId")
+	List<ImageModification> getModifications( @Param("imageId") long imageId, @Param("contextId") long contextId );
 
-	default List<ImageModification> getAllModifications( long imageId ) {
-		throw new RuntimeException();
-	}
+	@Query("select i from ImageModification i where i.id.imageId = :imageId")
+	List<ImageModification> getAllModifications( @Param("imageId") long imageId );
 
-	default boolean hasModification( long imageId ) {
+	default boolean hasModification( @Param("imageId") long imageId ) {
 		throw new RuntimeException();
 	}
 }
