@@ -10,7 +10,9 @@
           <element id="archive" name="imageserver-core-5.0.0-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-core" />
           </element>
-          <element id="library" level="project" name="Maven: com.foreach.imageserver:imageserver-client:4.0.0.RELEASE" />
+          <element id="archive" name="imageserver-client-5.0.0-SNAPSHOT.jar">
+            <element id="module-output" name="imageserver-client" />
+          </element>
           <element id="library" level="project" name="Maven: com.foreach.across:across-core:3.1.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-autoconfigure:1.5.14.RELEASE" />
           <element id="library" level="project" name="Maven: org.yaml:snakeyaml:1.17" />
