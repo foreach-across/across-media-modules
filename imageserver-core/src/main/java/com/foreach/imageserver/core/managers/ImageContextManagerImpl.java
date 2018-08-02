@@ -36,7 +36,7 @@ public class ImageContextManagerImpl implements ImageContextManager
 	public void save( ImageContextDto contextDto ) {
 		ImageContext context;
 
-		if ( contextDto.isNewEntity() ) {
+		if ( contextDto.isNew() ) {
 			context = new ImageContext();
 		}
 		else {

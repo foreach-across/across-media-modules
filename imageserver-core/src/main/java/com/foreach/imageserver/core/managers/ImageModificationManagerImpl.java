@@ -40,12 +40,12 @@ public class ImageModificationManagerImpl implements ImageModificationManager
 
 	@Override
 	public void insert( ImageModification imageModification ) {
-		imageModificationRepository.create( imageModification );
+		imageModificationRepository.save( imageModification );
 	}
 
 	@Override
 	public void update( ImageModification imageModification ) {
-		imageModificationRepository.update( imageModification );
+		imageModificationRepository.save( imageModification );
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,17 +22,10 @@ import java.util.Objects;
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE_MODIFICATION)
 @Getter
 @Setter
-public class ImageModification implements Serializable
+public class ImageModification implements Persistable<ImageModificationId>, Serializable
 {
-	@Id
-	@Column(name = "image_id")
-	private long imageId;
-	@Id
-	@Column(name = "context_id")
-	private long contextId;
-	@Id
-	@Column(name = "resolution_id")
-	private long resolutionId;
+	@EmbeddedId
+	private ImageModificationId id;
 
 	@AttributeOverrides({
 			@AttributeOverride(name = "x", column = @Column(name = "cropX")),
@@ -58,13 +52,7 @@ public class ImageModification implements Serializable
 
 		ImageModification that = (ImageModification) o;
 
-		if ( contextId != that.contextId ) {
-			return false;
-		}
-		if ( imageId != that.imageId ) {
-			return false;
-		}
-		if ( resolutionId != that.resolutionId ) {
+		if ( !id.equals( that.id ) ) {
 			return false;
 		}
 		if ( crop != null ? !crop.equals( that.crop ) : that.crop != null ) {
@@ -79,6 +67,35 @@ public class ImageModification implements Serializable
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( imageId, contextId, resolutionId, crop, density );
+		return Objects.hash( id, crop, density );
+	}
+
+	@Override
+	public boolean isNew() {
+		return id != null;
+	}
+
+	public long getImageId() {
+		return id.getImageId();
+	}
+
+	public long getContextId() {
+		return id.getContextId();
+	}
+
+	public long getResolutionId() {
+		return id.getResolutionId();
+	}
+
+	public void setImageId( long imageId ) {
+		id.setImageId( imageId );
+	}
+
+	public void setContextId( long contextId ) {
+		id.setContextId( contextId );
+	}
+
+	public void setResolutionId( long resolutionId ) {
+		id.setResolutionId( resolutionId );
 	}
 }

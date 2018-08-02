@@ -5,11 +5,12 @@ import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface ImageResolutionRepository extends IdBasedEntityJpaRepository<ImageResolution>, ImageResolutionRepositoryCustom
+public interface ImageResolutionRepository extends IdBasedEntityJpaRepository<ImageResolution>
 {
 	@Query("select distinct r from ImageResolution r join r.contexts c where c.id = :contextId order by r.id")
 	List<ImageResolution> getForContext( @Param("contextId") long contextId );
@@ -17,5 +18,10 @@ public interface ImageResolutionRepository extends IdBasedEntityJpaRepository<Im
 	@Query("select i from ImageResolution i where i.width = :width and i.height = :height")
 	ImageResolution getByDimensions( @Param("width") int width, @Param("height") int height );
 
-	void updateContextsForResolution( long resolutionId, Collection<ImageContext> contexts );
+	@Transactional
+	default void updateContextsForResolution( long resolutionId, Collection<ImageContext> contexts ) {
+		ImageResolution imageResolution = findOne( resolutionId );
+		imageResolution.setContexts( contexts );
+		save( imageResolution );
+	}
 }

@@ -19,7 +19,7 @@ import java.util.Objects;
 @Setter
 public class ImageProfile extends SettableIdBasedEntity<ImageProfile>
 {
-	public static final int DEFAULT_PROFILE_ID = 1;
+	public static final Long DEFAULT_PROFILE_ID = 1L;
 
 	@Id
 	@GeneratedValue(generator = "seq_img_image_profile_id")

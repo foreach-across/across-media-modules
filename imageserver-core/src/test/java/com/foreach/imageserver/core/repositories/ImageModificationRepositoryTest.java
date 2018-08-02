@@ -45,7 +45,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		writtenImageModification.setCrop( writtenCrop );
 		writtenImageModification.setDensity( writtenDensity );
 
-		imageModificationRepository.create( writtenImageModification );
+		imageModificationRepository.save( writtenImageModification );
 
 		ImageModification readImageModification = imageModificationRepository.getById( 9998, 1010, -8 );
 		assertEquals( writtenImageModification.getImageId(), readImageModification.getImageId() );
@@ -80,10 +80,10 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		createImageResolution( -100L, 1411, 2222 );
 		createImageResolution( -101L, 1511, 2222 );
 
-		imageModificationRepository.create( someModification( 8010, 19998, -88 ) );
-		imageModificationRepository.create( someModification( 8010, 19998, -99 ) );
-		imageModificationRepository.create( someModification( 8011, 19998, -88 ) );
-		imageModificationRepository.create( someModification( 8010, 19999, -88 ) );
+		imageModificationRepository.save( someModification( 8010, 19998, -88 ) );
+		imageModificationRepository.save( someModification( 8010, 19998, -99 ) );
+		imageModificationRepository.save( someModification( 8011, 19998, -88 ) );
+		imageModificationRepository.save( someModification( 8010, 19999, -88 ) );
 
 		List<ImageModification> modifications = imageModificationRepository.getModifications( 19998, 8010 );
 		assertEquals( 2, modifications.size() );
@@ -116,10 +116,10 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		createImageResolution( -288L, 1211, 2242 );
 		createImageResolution( -299L, 1311, 2242 );
 
-		imageModificationRepository.create( someModification( 7010, 29998, -288 ) );
-		imageModificationRepository.create( someModification( 7010, 29998, -299 ) );
-		imageModificationRepository.create( someModification( 7011, 29998, -288 ) );
-		imageModificationRepository.create( someModification( 7010, 29999, -288 ) );
+		imageModificationRepository.save( someModification( 7010, 29998, -288 ) );
+		imageModificationRepository.save( someModification( 7010, 29998, -299 ) );
+		imageModificationRepository.save( someModification( 7011, 29998, -288 ) );
+		imageModificationRepository.save( someModification( 7010, 29999, -288 ) );
 
 		List<ImageModification> modifications = imageModificationRepository.getAllModifications( 29998 );
 		assertEquals( 3, modifications.size() );
@@ -159,9 +159,9 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		createImageResolution( 99994L, 934, 9843 );
 
 		ImageModification imageModification = modification( 78878, 6666, 99994, 0, 1, 2, 3, 4, 5 );
-		imageModificationRepository.create( imageModification );
+		imageModificationRepository.save( imageModification );
 
-		imageModificationRepository.update( modification( 78878, 6666, 99994, 10, 11, 12, 13, 14, 15 ) );
+		imageModificationRepository.save( modification( 78878, 6666, 99994, 10, 11, 12, 13, 14, 15 ) );
 
 		ImageModification readImageModification = imageModificationRepository.getById( 78878, 6666, 99994 );
 		assertEquals( 78878, readImageModification.getImageId() );
@@ -187,7 +187,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 
 		createImageResolution( 766L, 8473, 4398 );
 
-		imageModificationRepository.create( someModification( 6010, 39998, 766 ) );
+		imageModificationRepository.save( someModification( 6010, 39998, 766 ) );
 
 		assertTrue( imageModificationRepository.hasModification( 39998 ) );
 		assertFalse( imageModificationRepository.hasModification( 49998 ) );
