@@ -1,12 +1,12 @@
 package com.foreach.imageserver.core.client;
 
-import com.foreach.common.test.MockedLoader;
 import com.foreach.imageserver.client.ImageRequestHashBuilder;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
+import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(loader = MockedLoader.class, classes = TestLocalImageServerClient.Config.class)
+@ContextConfiguration(classes = TestLocalImageServerClient.Config.class)
 public class TestLocalImageServerClient
 {
 	@Autowired
@@ -197,6 +197,16 @@ public class TestLocalImageServerClient
 		@Bean
 		public ImageServerClient imageServerClient() {
 			return new LocalImageServerClient( "http://localhost:8078/" );
+		}
+
+		@Bean
+		public ImageRestService imageRestService() {
+			return mock( ImageRestService.class );
+		}
+
+		@Bean
+		public ImageService imageService() {
+			return mock( ImageService.class );
 		}
 	}
 }

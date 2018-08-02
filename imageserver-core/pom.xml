@@ -36,10 +36,6 @@
 			<artifactId>across-hibernate-module</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.foreach.libs</groupId>
-			<artifactId>common-spring</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 		</dependency>
@@ -84,11 +80,6 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.foreach.libs</groupId>
-			<artifactId>common-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
