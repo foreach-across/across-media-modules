@@ -2,7 +2,7 @@ package com.foreach.imageserver.admin.config;
 
 import com.foreach.imageserver.admin.ImageServerAdminWebModuleSettings;
 import com.foreach.imageserver.admin.controllers.AdminWebAppController;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -11,10 +11,10 @@ import org.springframework.core.env.Environment;
  * @author Arne Vandamme
  */
 @Configuration
+@RequiredArgsConstructor
 public class WebConfiguration
 {
-	@Autowired
-	private Environment environment;
+	private final Environment environment;
 
 	@Bean
 	public AdminWebAppController adminWebAppController() {
