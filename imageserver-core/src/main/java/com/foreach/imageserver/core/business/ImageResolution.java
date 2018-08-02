@@ -1,5 +1,6 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import com.foreach.imageserver.core.hibernate.ImageTypeSetUserType;
@@ -34,7 +35,7 @@ import java.util.*;
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
 @Getter
 @Setter
-public class ImageResolution
+public class ImageResolution extends SettableIdBasedEntity<ImageResolution>
 {
 	@Id
 	@GeneratedValue(generator = "seq_img_image_resolution_id")
@@ -46,7 +47,7 @@ public class ImageResolution
 					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "10")
 			}
 	)
-	private long id;
+	private Long id;
 
 	@Column(name = "width")
 	private int width;

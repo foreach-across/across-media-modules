@@ -26,7 +26,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 	public void insertAndGetById() {
 		createContext( 1010L, "the_application_code_1010" );
 		createImage( 9998, "externalId", new Dimensions( 100, 100 ), ImageType.PNG );
-		createImageResolution( -8, 8888, 1616 );
+		createImageResolution( -8L, 8888, 1616 );
 
 		Crop writtenCrop = new Crop();
 		writtenCrop.setX( 100 );
@@ -75,10 +75,10 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		createImage( 19998, "externalId19998", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImage( 19999, "externalId19999", new Dimensions( 100, 100 ), ImageType.PNG );
 
-		createImageResolution( -88, 1211, 2222 );
-		createImageResolution( -99, 1311, 2222 );
-		createImageResolution( -100, 1411, 2222 );
-		createImageResolution( -101, 1511, 2222 );
+		createImageResolution( -88L, 1211, 2222 );
+		createImageResolution( -99L, 1311, 2222 );
+		createImageResolution( -100L, 1411, 2222 );
+		createImageResolution( -101L, 1511, 2222 );
 
 		imageModificationRepository.create( someModification( 8010, 19998, -88 ) );
 		imageModificationRepository.create( someModification( 8010, 19998, -99 ) );
@@ -97,12 +97,12 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		assertEquals( -88, modifications.get( 1 ).getResolutionId() );
 	}
 
-	private void createImageResolution( int id, int width, int height ) {
+	private void createImageResolution( Long id, int width, int height ) {
 		ImageResolution imageResolution = new ImageResolution();
 		imageResolution.setId( id );
 		imageResolution.setWidth( width );
 		imageResolution.setHeight( height );
-		imageResolutionRepository.create( imageResolution );
+		imageResolutionRepository.save( imageResolution );
 	}
 
 	@Test
@@ -113,8 +113,8 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		createImage( 29998, "externalId_29998", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImage( 29999, "externalId_29999", new Dimensions( 100, 100 ), ImageType.PNG );
 
-		createImageResolution( -288, 1211, 2242 );
-		createImageResolution( -299, 1311, 2242 );
+		createImageResolution( -288L, 1211, 2242 );
+		createImageResolution( -299L, 1311, 2242 );
 
 		imageModificationRepository.create( someModification( 7010, 29998, -288 ) );
 		imageModificationRepository.create( someModification( 7010, 29998, -299 ) );
@@ -156,7 +156,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 	public void updateAndGetById() {
 		createContext( 6666L, "code" );
 		createImage( 78878, "externalId_78878", new Dimensions( 100, 100 ), ImageType.PNG );
-		createImageResolution( 99994, 934, 9843 );
+		createImageResolution( 99994L, 934, 9843 );
 
 		ImageModification imageModification = modification( 78878, 6666, 99994, 0, 1, 2, 3, 4, 5 );
 		imageModificationRepository.create( imageModification );
@@ -185,7 +185,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		createImage( 39998, "externalId_39998", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImage( 49998, "externalId_49998", new Dimensions( 100, 100 ), ImageType.PNG );
 
-		createImageResolution( 766, 8473, 4398 );
+		createImageResolution( 766L, 8473, 4398 );
 
 		imageModificationRepository.create( someModification( 6010, 39998, 766 ) );
 

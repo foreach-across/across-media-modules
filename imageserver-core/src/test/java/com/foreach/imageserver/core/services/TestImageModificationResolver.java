@@ -83,7 +83,7 @@ public class TestImageModificationResolver
 
 	private void requestModification( int width, int height ) {
 		ImageResolution resolution = new ImageResolution();
-		resolution.setId( 1 );
+		resolution.setId( 1L );
 		resolution.setWidth( width );
 		resolution.setHeight( height );
 

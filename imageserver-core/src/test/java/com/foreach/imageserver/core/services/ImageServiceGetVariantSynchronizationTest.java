@@ -171,7 +171,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		Image firstImage = image( 1L );
 		Image secondImage = image( 2L );
 		ImageContext context = context( 10L );
-		ImageResolution imageResolution = imageResolution( 20 );
+		ImageResolution imageResolution = imageResolution( 20L );
 		ImageVariant imageVariant = imageVariant( ImageType.PNG );
 
 		ImageModificationDto modificationDto = new ImageModificationDto();
@@ -235,7 +235,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		return context;
 	}
 
-	private ImageResolution imageResolution( int id ) {
+	private ImageResolution imageResolution( Long id ) {
 		ImageResolution imageResolution = new ImageResolution();
 		imageResolution.setId( id );
 		imageResolution.setWidth( 100 );

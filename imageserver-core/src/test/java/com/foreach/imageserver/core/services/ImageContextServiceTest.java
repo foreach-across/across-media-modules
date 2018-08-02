@@ -26,33 +26,33 @@ public class ImageContextServiceTest
 		ImageResolutionManager imageResolutionManager = mock( ImageResolutionManager.class );
 
 		List<ImageResolution> imageResolutions = new ArrayList<ImageResolution>();
-		imageResolutions.add( createImageResolution( 1, 10, 20 ) );
-		imageResolutions.add( createImageResolution( 2, 20, 20 ) );
-		imageResolutions.add( createImageResolution( 3, 30, 20 ) );
-		imageResolutions.add( createImageResolution( 4, 40, 20 ) );
-		imageResolutions.add( createImageResolution( 5, 50, 20 ) );
+		imageResolutions.add( createImageResolution( 1L, 10, 20 ) );
+		imageResolutions.add( createImageResolution( 2L, 20, 20 ) );
+		imageResolutions.add( createImageResolution( 3L, 30, 20 ) );
+		imageResolutions.add( createImageResolution( 4L, 40, 20 ) );
+		imageResolutions.add( createImageResolution( 5L, 50, 20 ) );
 
-		imageResolutions.add( createImageResolution( 6, 10, 50 ) );
-		imageResolutions.add( createImageResolution( 7, 20, 50 ) );
-		imageResolutions.add( createImageResolution( 8, 30, 50 ) );
-		imageResolutions.add( createImageResolution( 9, 40, 50 ) );
+		imageResolutions.add( createImageResolution( 6L, 10, 50 ) );
+		imageResolutions.add( createImageResolution( 7L, 20, 50 ) );
+		imageResolutions.add( createImageResolution( 8L, 30, 50 ) );
+		imageResolutions.add( createImageResolution( 9L, 40, 50 ) );
 
-		imageResolutions.add( createImageResolution( 10, 50, 0 ) );
+		imageResolutions.add( createImageResolution( 10L, 50, 0 ) );
 
-		imageResolutions.add( createImageResolution( 11, 10, 70 ) );
-		imageResolutions.add( createImageResolution( 12, 20, 70 ) );
-		imageResolutions.add( createImageResolution( 13, 30, 70 ) );
-		imageResolutions.add( createImageResolution( 14, 40, 70 ) );
-		imageResolutions.add( createImageResolution( 15, 50, 70 ) );
+		imageResolutions.add( createImageResolution( 11L, 10, 70 ) );
+		imageResolutions.add( createImageResolution( 12L, 20, 70 ) );
+		imageResolutions.add( createImageResolution( 13L, 30, 70 ) );
+		imageResolutions.add( createImageResolution( 14L, 40, 70 ) );
+		imageResolutions.add( createImageResolution( 15L, 50, 70 ) );
 
-		imageResolutions.add( createImageResolution( 16, 45, 0 ) );
-		imageResolutions.add( createImageResolution( 17, 0, 45 ) );
+		imageResolutions.add( createImageResolution( 16L, 45, 0 ) );
+		imageResolutions.add( createImageResolution( 17L, 0, 45 ) );
 
-		imageResolutions.add( createImageResolution( 18, 200, 400 ) );
-		imageResolutions.add( createImageResolution( 19, 400, 800 ) );
-		imageResolutions.add( createImageResolution( 20, 800, 1600 ) );
+		imageResolutions.add( createImageResolution( 18L, 200, 400 ) );
+		imageResolutions.add( createImageResolution( 19L, 400, 800 ) );
+		imageResolutions.add( createImageResolution( 20L, 800, 1600 ) );
 
-		imageResolutions.add( createImageResolution( 21, 640, 480 ) );
+		imageResolutions.add( createImageResolution( 21L, 640, 480 ) );
 
 		doReturn( imageResolutions ).when( imageResolutionManager ).getForContext( CONTEXT_ID );
 		ReflectionTestUtils.setField( contextService, "imageResolutionManager", imageResolutionManager );
@@ -74,7 +74,7 @@ public class ImageContextServiceTest
 	public void getImageResolution_ExactWidthExactHeight() {
 		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 30, 50 ); //-> 30x50
 		assertNotNull( imageResolution );
-		assertEquals( 8, (int) imageResolution.getId() );
+		assertEquals( 8L, imageResolution.getId().longValue() );
 	}
 
 	@Test
@@ -111,21 +111,21 @@ public class ImageContextServiceTest
 	public void getImageResolution_ExactWidthNoHeight() {
 		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 50, 0 ); //-> 50,0
 		assertNotNull( imageResolution );
-		assertEquals( 10, (int) imageResolution.getId() );
+		assertEquals( 10L, imageResolution.getId().longValue() );
 	}
 
 	@Test
 	public void getImageResolution_WidthNoHeightAllowed() {
 		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 45, 0 ); //-> 45,0
 		assertNotNull( imageResolution );
-		assertEquals( 16, (int) imageResolution.getId() );
+		assertEquals( 16L, imageResolution.getId().longValue() );
 	}
 
 	@Test
 	public void getImageResolution_HeightNoWidthAllowed() {
 		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, 0, 45 ); //-> 0,45
 		assertNotNull( imageResolution );
-		assertEquals( 17, (int) imageResolution.getId() );
+		assertEquals( 17L, imageResolution.getId().longValue() );
 	}
 
 	@Test
@@ -145,18 +145,18 @@ public class ImageContextServiceTest
 	public void getImageResolution_ForKnownRatio() {
 		AspectRatio half = new AspectRatio( "1/2" );
 		ImageResolution imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 100 );
-		assertEquals( 18, imageResolution.getId() );
+		assertEquals( 18L, imageResolution.getId().longValue() );
 		imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 400 );
-		assertEquals( 19, imageResolution.getId() );
+		assertEquals( 19L, imageResolution.getId().longValue() );
 		imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 401 );
-		assertEquals( 20, imageResolution.getId() );
+		assertEquals( 20L, imageResolution.getId().longValue() );
 		imageResolution = contextService.getImageResolution( CONTEXT_ID, half, 9000 );
-		assertEquals( 20, imageResolution.getId() );
+		assertEquals( 20L, imageResolution.getId().longValue() );
 		imageResolution = contextService.getImageResolution( CONTEXT_ID, new AspectRatio( "4/3" ), 400 );
-		assertEquals( 21, imageResolution.getId() );
+		assertEquals( 21L, imageResolution.getId().longValue() );
 	}
 
-	private ImageResolution createImageResolution( int id, int width, int height ) {
+	private ImageResolution createImageResolution( Long id, int width, int height ) {
 		ImageResolution imageResolution = new ImageResolution();
 		imageResolution.setId( id );
 		imageResolution.setWidth( width );
