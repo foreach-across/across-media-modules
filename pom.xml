@@ -72,17 +72,17 @@
 			<dependency>
 				<groupId>com.foreach.imageserver</groupId>
 				<artifactId>imageserver-client</artifactId>
-				<version>5.0.0-SNAPSHOT</version>
+				<version>${pom.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.imageserver</groupId>
 				<artifactId>imageserver-admin</artifactId>
-				<version>5.0.0-SNAPSHOT</version>
+				<version>${pom.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.imageserver</groupId>
 				<artifactId>imageserver-core</artifactId>
-				<version>5.0.0-SNAPSHOT</version>
+				<version>${pom.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
