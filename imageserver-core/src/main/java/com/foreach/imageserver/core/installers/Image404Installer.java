@@ -11,9 +11,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
+import java.io.InputStream;
 import java.util.Date;
 
 @Installer(description = "Installs the 404 dummy image", phase = InstallerPhase.AfterContextBootstrap, version = 1,
@@ -26,6 +28,9 @@ public class Image404Installer
 	private final Environment environment;
 	private final ImageService imageService;
 
+	@Value("classpath:/images/404-1280x960gge.jpg")
+	private Resource resource;
+
 	@InstallerMethod
 	public void setupImage() throws Exception {
 		String fallbackImageKey = environment.getProperty( "image.404.fallback", "" );
@@ -37,9 +42,9 @@ public class Image404Installer
 			if ( image == null ) {
 				LOG.info( "Installing default 404 image under key {}", fallbackImageKey );
 
-				byte[] img =
-						IOUtils.toByteArray( new ClassPathResource( "/images/404-1280x960.jpg" ).getInputStream() );
-				imageService.saveImage( fallbackImageKey, img, new Date(), false );
+				try (InputStream is = resource.getInputStream()) {
+					imageService.saveImage( fallbackImageKey, IOUtils.toByteArray( is ), new Date(), false );
+				}
 			}
 		}
 	}
