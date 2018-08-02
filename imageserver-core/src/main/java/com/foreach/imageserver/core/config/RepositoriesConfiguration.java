@@ -10,11 +10,6 @@ import org.springframework.context.annotation.Configuration;
 public class RepositoriesConfiguration
 {
 	@Bean
-	public ImageRepository imageRepository() {
-		return new ImageRepositoryImpl();
-	}
-
-	@Bean
 	public ImageResolutionRepository imageResolutionRepository() {
 		return new ImageResolutionRepositoryImpl();
 	}

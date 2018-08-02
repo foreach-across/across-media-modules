@@ -54,7 +54,7 @@ public class TestImageModificationResolver
 		resolver = r;
 
 		image = new Image();
-		image.setId( 1 );
+		image.setId( 1L );
 		image.setDimensions( new Dimensions( 4000, 2000 ) );
 
 		context = new ImageContext();

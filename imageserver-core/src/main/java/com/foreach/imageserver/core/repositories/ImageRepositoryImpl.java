@@ -1,41 +1,32 @@
 package com.foreach.imageserver.core.repositories;
 
-import com.foreach.across.modules.hibernate.repositories.BasicRepositoryImpl;
 import com.foreach.imageserver.core.business.Image;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
-@Repository
-public class ImageRepositoryImpl extends BasicRepositoryImpl<Image> implements ImageRepository
+@RequiredArgsConstructor
+public class ImageRepositoryImpl implements ImageRepositoryCustom
 {
-	@Transactional(readOnly = true)
-	@SuppressWarnings("unchecked")
-	@Override
-	public Image getByExternalId( String externalId ) {
-		Criteria criteria = session().createCriteria( Image.class );
-		criteria.add( Restrictions.eq( "externalId", externalId ) );
-
-		return (Image) criteria.uniqueResult();
-	}
-
+	private final ImageRepository imageRepository;
 	@Override
 	@Transactional
 	public void create( Image object ) {
-		setPath( object );
-		super.create( object );
+		save( object );
 	}
 
 	@Override
 	@Transactional
 	public void update( Image object ) {
+		save( object );
+	}
+
+	private void save( Image object ) {
 		setPath( object );
-		super.update( object );
+		imageRepository.save( object );
 	}
 
 	private void setPath( Image object ) {

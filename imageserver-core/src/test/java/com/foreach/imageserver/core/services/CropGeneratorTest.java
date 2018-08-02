@@ -57,7 +57,7 @@ public class CropGeneratorTest
 		imageResolutionService.setImageResolutionManager( imageResolutionManager );
 
 		image = new Image();
-		image.setId( 1 );
+		image.setId( 1L );
 		image.setDimensions( new Dimensions( 4000, 2000 ) );
 
 		context = new ImageContext();

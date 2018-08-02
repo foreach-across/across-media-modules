@@ -37,7 +37,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest
 		writtenImage.setImageProfileId( imageProfile.getId() );
 		imageRepository.create( writtenImage );
 
-		Image readImage = imageRepository.getById( writtenImage.getId() );
+		Image readImage = imageRepository.findOne( writtenImage.getId() );
 		assertEquals( writtenImage.getId(), readImage.getId() );
 		assertEquals( writtenImage.getExternalId(), readImage.getExternalId() );
 		assertTrue( DateUtils.truncatedEquals( writtenImage.getDateCreated(), readImage.getDateCreated(),

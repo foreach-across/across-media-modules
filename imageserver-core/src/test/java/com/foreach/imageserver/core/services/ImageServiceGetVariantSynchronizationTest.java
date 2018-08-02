@@ -168,8 +168,8 @@ public class ImageServiceGetVariantSynchronizationTest
 	private TestResults runTest( int threadsPerImage,
 	                             Answer<InMemoryImageSource> firstImageAnswer,
 	                             Answer<InMemoryImageSource> secondImageAnswer ) throws InterruptedException {
-		Image firstImage = image( 1 );
-		Image secondImage = image( 2 );
+		Image firstImage = image( 1L );
+		Image secondImage = image( 2L );
 		ImageContext context = context( 10L );
 		ImageResolution imageResolution = imageResolution( 20 );
 		ImageVariant imageVariant = imageVariant( ImageType.PNG );
@@ -218,7 +218,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		                        secondOriginalImageSource );
 	}
 
-	private Image image( int id ) {
+	private Image image( Long id ) {
 		Dimensions dimensions = new Dimensions();
 		dimensions.setWidth( 100 );
 		dimensions.setHeight( 100 );
