@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.business;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ import java.util.Objects;
  * Note that an ImageModification is generic; the non-generic options required for an actual transform are specified
  * using an ImageVariant object.
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE_MODIFICATION)
 @Getter

@@ -5,7 +5,7 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
-import com.foreach.across.test.AcrossTestWebConfiguration;
+import com.foreach.across.test.AcrossTestConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 @WebAppConfiguration
 public abstract class AbstractIntegrationTest
 {
-	@AcrossTestWebConfiguration
+	@AcrossTestConfiguration
 	@Configuration
 	public static class Config implements AcrossContextConfigurer
 	{
