@@ -28,7 +28,7 @@ public class Image404Installer
 	private final Environment environment;
 	private final ImageService imageService;
 
-	@Value("classpath:/images/404-1280x960gge.jpg")
+	@Value("classpath:/images/404-1280x960.jpg")
 	private Resource resource;
 
 	@InstallerMethod

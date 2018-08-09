@@ -124,6 +124,7 @@
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.6" level="project" />
     <orderEntry type="library" name="Maven: com.foreach.across.modules:debug-web-module:2.0.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:log4j-over-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:file-manager-module:1.2.0.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.foreach.across:across-test:3.1.0.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.zaxxer:HikariCP:2.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:4.3.18.RELEASE" level="project" />

@@ -106,6 +106,7 @@
           <element id="library" level="project" name="Maven: commons-pool:commons-pool:1.6" />
           <element id="library" level="project" name="Maven: com.foreach.across.modules:debug-web-module:2.0.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.slf4j:log4j-over-slf4j:1.7.25" />
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:file-manager-module:1.2.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-core:4.3.18.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot:1.5.14.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-orm:4.3.18.RELEASE" />

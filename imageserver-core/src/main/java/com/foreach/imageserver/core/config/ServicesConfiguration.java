@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.config;
 
 import com.foreach.across.core.annotations.Exposed;
+import com.foreach.across.modules.filemanager.services.*;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.rest.services.ImageRestServiceImpl;
@@ -14,6 +15,7 @@ import org.springframework.core.env.Environment;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * @author Arne Vandamme
@@ -25,8 +27,15 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ServicesConfiguration
 {
+	public static final String TEMP_REPOSITORY = "temp";
+	public static final String ORIGINALS_REPOSITORY = "originals";
+	public static final String VARIANTS_REPOSITORY = "variants";
+
+	private final static PathGenerator PATH_GENERATOR = new DateFormatPathGenerator( "yyyy/MM/dd/HH" );
+
 	private final Environment environment;
 	private final ImageServerCoreModuleSettings settings;
+	private final FileRepositoryRegistry fileRepositoryRegistry;
 
 	@Bean
 	public ImageTransformerRegistry imageTransformerRegistry() {
@@ -76,11 +85,29 @@ public class ServicesConfiguration
 
 	@Bean
 	public ImageStoreService imageStoreService() throws IOException {
+		registerFileRepositories();
 		return new ImageStoreServiceImpl(
 				environment.getRequiredProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
 				                                 File.class ).toPath(),
 				settings.getStoreSettings().getFolderPermissions(),
 				settings.getStoreSettings().getFilePermissions() );
+	}
+
+	private void registerFileRepositories() {
+		Path rootFolder = environment.getRequiredProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
+		                                                   File.class ).toPath();
+		fileRepositoryRegistry.registerRepository( createFileRepository( TEMP_REPOSITORY, rootFolder, false ) );
+		fileRepositoryRegistry.registerRepository( createFileRepository( ORIGINALS_REPOSITORY, rootFolder, true ) );
+		fileRepositoryRegistry.registerRepository( createFileRepository( VARIANTS_REPOSITORY, rootFolder, true ) );
+	}
+
+	private FileRepository createFileRepository( String repositoryId, Path rootFolder, boolean withPathGenerator ) {
+		LocalFileRepository repo =
+				new LocalFileRepository( repositoryId, rootFolder.resolve( repositoryId ).toString() );
+		if ( withPathGenerator ) {
+			repo.setPathGenerator( PATH_GENERATOR );
+		}
+		return repo;
 	}
 
 	@Bean

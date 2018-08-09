@@ -1,5 +1,7 @@
 package com.foreach.imageserver.core.services;
 
+import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
@@ -13,15 +15,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+
+import static com.foreach.imageserver.core.config.ServicesConfiguration.*;
 
 /**
  * Still to verify and/or implement:
@@ -39,6 +47,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private ImageContextService imageContextService;
 	@Autowired
 	private ImageService imageService;
+	@Autowired
+	private FileManager fileManager;
 
 	private final Path tempFolder;
 	private final Path originalsFolder;
@@ -57,9 +67,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		originalsFolder = imageStoreFolder.resolve( "originals" );
 		variantsFolder = imageStoreFolder.resolve( "variants" );
 
-		createDirectories( tempFolder );
-		createDirectories( originalsFolder );
-		createDirectories( variantsFolder );
+//		createDirectories( tempFolder );
+//		createDirectories( originalsFolder );
+//		createDirectories( variantsFolder );
 	}
 
 	@Override
@@ -77,19 +87,33 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public void storeOriginalImage( Image image, InputStream imageStream ) {
-		Path targetPath = getTargetPath( image );
-		createFoldersSafely( targetPath.getParent() );
-		writeSafely( imageStream, targetPath );
+//		Path targetPath = getTargetPath( image );
+//		createFoldersSafely( targetPath.getParent() );
+		writeSafely( imageStream, getOriginalFileDescriptor( image ) );
 	}
 
 	@Override
 	public StreamImageSource getOriginalImage( Image image ) {
-		Path targetPath = getTargetPath( image );
+		FileDescriptor fileDescriptor = getOriginalFileDescriptor( image );
 
 		if ( LOG.isDebugEnabled() ) {
-			LOG.debug( "Original image {} - expected location {}", image.getId(), targetPath );
+			LOG.debug( "Original image {} - expected location {}/{}", image.getId(), fileDescriptor );
 		}
-		return read( targetPath, image.getImageType() );
+
+		return read( fileDescriptor, image.getImageType() );
+	}
+
+	private FileDescriptor getOriginalFileDescriptor( Image image ) {
+		String fileName = constructFileName( image );
+		String targetPath = getFolderName( image );
+		FileDescriptor fileDescriptor;
+		if ( image.isTemporaryImage() ) {
+			fileDescriptor = new FileDescriptor( TEMP_REPOSITORY, fileName );
+		}
+		else {
+			fileDescriptor = new FileDescriptor( ORIGINALS_REPOSITORY, targetPath, fileName );
+		}
+		return fileDescriptor;
 	}
 
 	@Override
@@ -103,9 +127,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 					"Null parameters not allowed - ImageStoreServiceImpl#storeVariantImage: image={}, context={}, imageResolution={}, imageVariant={}, imageStream={}",
 					LogHelper.flatten( image, context, imageResolution, imageVariant, imageStream ) );
 		}
-		Path targetPath = getTargetPath( image, context, imageResolution, imageVariant );
-		createFoldersSafely( targetPath.getParent() );
-		writeSafely( imageStream, targetPath );
+//		Path targetPath = getTargetPath( image, context, imageResolution, imageVariant );
+//		createFoldersSafely( targetPath.getParent() );
+		writeSafely( imageStream, getVariantsFileDescriptor( image, context, imageResolution, imageVariant ) );
 	}
 
 	@Override
@@ -118,8 +142,16 @@ public class ImageStoreServiceImpl implements ImageStoreService
 					"Null parameters not allowed - ImageStoreServiceImpl#getVariantImage: image={}, context={}, imageResolution={}, imageVariant={}",
 					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
-		Path targetPath = getTargetPath( image, context, imageResolution, imageVariant );
-		return read( targetPath, imageVariant.getOutputType() );
+		FileDescriptor fileDescriptor = getVariantsFileDescriptor( image, context, imageResolution, imageVariant );
+		return read( fileDescriptor, imageVariant.getOutputType() );
+	}
+
+	private FileDescriptor getVariantsFileDescriptor( Image image,
+	                                                  ImageContext context,
+	                                                  ImageResolution imageResolution, ImageVariant imageVariant ) {
+		String fileName = constructFileName( image, imageResolution, imageVariant );
+		String targetPath = getFolderName( image, context );
+		return new FileDescriptor( VARIANTS_REPOSITORY, targetPath, fileName );
 	}
 
 	@Override
@@ -227,6 +259,15 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		}
 	}
 
+	private String getFolderName( Image image ) {
+		return image.isTemporaryImage() ? "" : image.getOriginalPath();
+	}
+
+	private String getFolderName( Image image,
+	                              ImageContext context ) {
+		return context.getCode() + "/" + image.getVariantPath();
+	}
+
 	private Path getTargetPath( Image image ) {
 		/**
 		 * We may at some point need image repositories that cannot re-retrieve their images. For this reason we
@@ -300,19 +341,34 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		return String.valueOf( imageId ) + '-';
 	}
 
-	private void writeSafely( InputStream inputStream, Path targetPath ) {
+	private void writeSafely( InputStream inputStream, FileDescriptor target ) {
 		try {
-			Path temporaryPath = Files.createTempFile( tempFolder, "image", ".tmp" );
-			Files.copy( inputStream, temporaryPath, StandardCopyOption.REPLACE_EXISTING );
-			Files.move( temporaryPath, targetPath, StandardCopyOption.REPLACE_EXISTING,
-			            StandardCopyOption.ATOMIC_MOVE );
-			setFilePermissionsWithoutFailing( targetPath );
+//			Path temporaryPath = Files.createTempFile( tempFolder, "image", ".tmp" );
+			FileDescriptor temp = fileManager.save( TEMP_REPOSITORY, inputStream );
+//			Files.createDirectories( targetPath );
+			fileManager.move( temp, target );
+			File file = fileManager.getAsFile( target );
+//			Files.copy( temp, target, StandardCopyOption.REPLACE_EXISTING );
+//			FileDescriptor save = fileManager.save( TEMP_REPOSITORY, FileUtils.getFile( temporaryPath.toFile() ) );
+//			.move( temporaryPath, targetPath, StandardCopyOption.REPLACE_EXISTING,
+//			            StandardCopyOption.ATOMIC_MOVE );
+//			fileManager.moveInto( repository, fileManager.getAsFile( save ) );
+//			fileManager.moveInto( repository, FileUtils.getFile( temporaryPath.toFile() ) );
+			setFilePermissionsWithoutFailing( file.toPath() );
 		}
-		catch ( IOException e ) {
-			LOG.error( "Error while creating folder - ImageStoreServiceImpl#writeSafely: targetPath={}", targetPath,
+		catch ( Exception e ) {
+			LOG.error( "Error while creating folder - ImageStoreServiceImpl#writeSafely: targetPath={}", target,
 			           e );
 			throw new ImageStoreException( e );
 		}
+	}
+
+	private StreamImageSource read( FileDescriptor fileDescriptor, ImageType imageType ) {
+		InputStream imageStream = fileManager.getInputStream( fileDescriptor );
+		if ( imageStream != null ) {
+			return new StreamImageSource( imageType, imageStream );
+		}
+		return null;
 	}
 
 	private StreamImageSource read( Path targetPath, ImageType imageType ) {
