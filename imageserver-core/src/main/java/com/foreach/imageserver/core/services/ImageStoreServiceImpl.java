@@ -67,9 +67,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		originalsFolder = imageStoreFolder.resolve( "originals" );
 		variantsFolder = imageStoreFolder.resolve( "variants" );
 
-//		createDirectories( tempFolder );
-//		createDirectories( originalsFolder );
-//		createDirectories( variantsFolder );
 	}
 
 	@Override
@@ -87,8 +84,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public void storeOriginalImage( Image image, InputStream imageStream ) {
-//		Path targetPath = getTargetPath( image );
-//		createFoldersSafely( targetPath.getParent() );
 		writeSafely( imageStream, getOriginalFileDescriptor( image ) );
 	}
 
@@ -101,6 +96,19 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		}
 
 		return read( fileDescriptor, image.getImageType() );
+	}
+
+	@Override
+	public void removeOriginal( Image image ) {
+		LOG.info( "Deleting original image file for {}", image );
+		FileDescriptor descriptor = getOriginalFileDescriptor( image );
+		if ( fileManager.exists( descriptor ) ) {
+			boolean deleted = fileManager.delete( descriptor );
+			LOG.debug( "Original image file for {} was {} deleted", image, deleted ? "successfully" : "not" );
+		}
+		else {
+			LOG.debug( "Original image file for {} does not exist.", image );
+		}
 	}
 
 	private FileDescriptor getOriginalFileDescriptor( Image image ) {
@@ -127,8 +135,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 					"Null parameters not allowed - ImageStoreServiceImpl#storeVariantImage: image={}, context={}, imageResolution={}, imageVariant={}, imageStream={}",
 					LogHelper.flatten( image, context, imageResolution, imageVariant, imageStream ) );
 		}
-//		Path targetPath = getTargetPath( image, context, imageResolution, imageVariant );
-//		createFoldersSafely( targetPath.getParent() );
 		writeSafely( imageStream, getVariantsFileDescriptor( image, context, imageResolution, imageVariant ) );
 	}
 
@@ -146,14 +152,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		return read( fileDescriptor, imageVariant.getOutputType() );
 	}
 
-	private FileDescriptor getVariantsFileDescriptor( Image image,
-	                                                  ImageContext context,
-	                                                  ImageResolution imageResolution, ImageVariant imageVariant ) {
-		String fileName = constructFileName( image, imageResolution, imageVariant );
-		String targetPath = getFolderName( image, context );
-		return new FileDescriptor( VARIANTS_REPOSITORY, targetPath, fileName );
-	}
-
 	@Override
 	public void removeVariantImage( Image image,
 	                                ImageContext context,
@@ -165,24 +163,25 @@ public class ImageStoreServiceImpl implements ImageStoreService
 					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
 
-		Path targetPath = getTargetPath( image, context, imageResolution, imageVariant );
-
-		try {
-			Files.deleteIfExists( targetPath );
+		FileDescriptor descriptor = getVariantsFileDescriptor( image, context, imageResolution, imageVariant );
+		if ( fileManager.exists( descriptor ) ) {
+			boolean deleted = fileManager.delete( descriptor );
+			LOG.debug( "Original image file for {} was {} deleted", image, deleted ? "successfully" : "not" );
 		}
-		catch ( IOException e ) {
-			/**
-			 * Unfortunately, we need to ignore this error.
-			 *
-			 * Experiments have revealed that removing the same file from different threads concurrently should work,
-			 * provided that we ignore all IOExceptions. I could not quickly find a good way around this;
-			 * Files::deleteIfExists raises exceptions when the file it is trying to consider is suddenly missing.
-			 *
-			 * This was also tested on a linux server on an NFS mount.
-			 */
+		else {
+			LOG.debug( "Original image file for {} does not exist.", image );
 		}
 	}
 
+	private FileDescriptor getVariantsFileDescriptor( Image image,
+	                                                  ImageContext context,
+	                                                  ImageResolution imageResolution, ImageVariant imageVariant ) {
+		String fileName = constructFileName( image, imageResolution, imageVariant );
+		String targetPath = getFolderName( image, context );
+		return new FileDescriptor( VARIANTS_REPOSITORY, targetPath, fileName );
+	}
+
+	//TODO refactor to use FileManagerModule?
 	@Override
 	public void removeVariants( Long imageId ) {
 		if ( imageId == null || imageId == 0 ) {
@@ -245,20 +244,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		}
 	}
 
-	@Override
-	public void removeOriginal( Image image ) {
-		LOG.info( "Deleting original image file for {}", image );
-
-		Path targetPath = getTargetPath( image );
-
-		try {
-			Files.deleteIfExists( targetPath );
-		}
-		catch ( IOException e ) {
-			LOG.debug( "Unable to delete original image {}", image, e );
-		}
-	}
-
 	private String getFolderName( Image image ) {
 		return image.isTemporaryImage() ? "" : image.getOriginalPath();
 	}
@@ -266,37 +251,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private String getFolderName( Image image,
 	                              ImageContext context ) {
 		return context.getCode() + "/" + image.getVariantPath();
-	}
-
-	private Path getTargetPath( Image image ) {
-		/**
-		 * We may at some point need image repositories that cannot re-retrieve their images. For this reason we
-		 * create a per-repository parent folder, so we can easily distinguish between repositories.
-		 */
-
-		String fileName = constructFileName( image );
-		Path folder = image.isTemporaryImage() ? tempFolder : originalsFolder.resolve( image.getOriginalPath() );
-		return folder.resolve( fileName );
-	}
-
-	private Path getTargetPath( Image image,
-	                            ImageContext context,
-	                            ImageResolution imageResolution,
-	                            ImageVariant imageVariant ) {
-		if ( image == null || context == null || imageResolution == null || imageVariant == null ) {
-			LOG.warn(
-					"Null parameters not allowed - ImageStoreServiceImpl#getTargetPath: image={}, context={}, imageResolution={}, imageVariant={}",
-					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
-		}
-
-		/**
-		 * We may at some point need image repositories that cannot re-create their images. For this reason we
-		 * create a per-repository parent folder, so we can easily distinguish between repositories.
-		 */
-
-		String fileName = constructFileName( image, imageResolution, imageVariant );
-
-		return variantsFolder.resolve( context.getCode() ).resolve( image.getVariantPath() ).resolve( fileName );
 	}
 
 	private String constructFileName( Image image, ImageResolution imageResolution, ImageVariant imageVariant ) {
@@ -343,17 +297,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	private void writeSafely( InputStream inputStream, FileDescriptor target ) {
 		try {
-//			Path temporaryPath = Files.createTempFile( tempFolder, "image", ".tmp" );
 			FileDescriptor temp = fileManager.save( TEMP_REPOSITORY, inputStream );
-//			Files.createDirectories( targetPath );
 			fileManager.move( temp, target );
 			File file = fileManager.getAsFile( target );
-//			Files.copy( temp, target, StandardCopyOption.REPLACE_EXISTING );
-//			FileDescriptor save = fileManager.save( TEMP_REPOSITORY, FileUtils.getFile( temporaryPath.toFile() ) );
-//			.move( temporaryPath, targetPath, StandardCopyOption.REPLACE_EXISTING,
-//			            StandardCopyOption.ATOMIC_MOVE );
-//			fileManager.moveInto( repository, fileManager.getAsFile( save ) );
-//			fileManager.moveInto( repository, FileUtils.getFile( temporaryPath.toFile() ) );
 			setFilePermissionsWithoutFailing( file.toPath() );
 		}
 		catch ( Exception e ) {
@@ -369,107 +315,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 			return new StreamImageSource( imageType, imageStream );
 		}
 		return null;
-	}
-
-	private StreamImageSource read( Path targetPath, ImageType imageType ) {
-		// Do not use .exists() kind of logic here! Open the file and check for an exception instead.
-		// This will ensure that we can read the full file contents, even should the file be deleted or replaced while
-		// we are busy with it.
-
-		InputStream imageStream = null;
-		try {
-			imageStream = Files.newInputStream( targetPath );
-		}
-		catch ( IOException e ) {
-			// Let imageStream be null.
-		}
-
-		StreamImageSource imageSource = null;
-		if ( imageStream != null ) {
-			imageSource = new StreamImageSource( imageType, imageStream );
-		}
-
-		return imageSource;
-	}
-
-	private void createFoldersSafely( Path path ) {
-		/**
-		 * Although I'm not entirely sure of this, I suspect that createDirectories might cause issues when multiple
-		 * actors try to create the same folder structure simultaneously. For this reason, we will simply retry
-		 * the creation a few times. This will most likely suffice as we know the folder structure will just be created
-		 * once and will be left untouched afterwards.
-		 */
-
-		boolean done = false;
-
-		for ( int i = 0; i < 3 && !done; ++i ) {
-			done = createFoldersWithoutFailing( path );
-			if ( !done ) {
-				sleep( 20 );
-			}
-		}
-
-		if ( !done ) {
-			createFoldersAndFail( path );
-		}
-	}
-
-	private boolean createFoldersWithoutFailing( Path path ) {
-		boolean done = false;
-		try {
-			createDirectories( path );
-			done = true;
-		}
-		catch ( IOException e ) {
-			// Ignore failure.
-		}
-		return done;
-	}
-
-	private void createFoldersAndFail( Path path ) {
-		try {
-			createDirectories( path );
-		}
-		catch ( IOException e ) {
-			LOG.error( "Error while creating folder - ImageStoreServiceImpl#createFoldersAndFail: path={}", path, e );
-			throw new ImageStoreException( e );
-		}
-	}
-
-	private void sleep( long millis ) {
-		try {
-			Thread.sleep( millis );
-		}
-		catch ( InterruptedException ie ) {
-			// Ignore.
-		}
-	}
-
-	private void createDirectories( Path path ) throws IOException {
-		/**
-		 * The variant of Files::createDirectories that allows for setting the file permissions in one go doesn't seem
-		 * to work on an NFS volume. Since folders are always created once and then left untouched, we can safely use
-		 * two separate calls here.
-		 */
-
-		Files.createDirectories( path );
-		if ( !CollectionUtils.isEmpty( folderPermissions ) ) {
-			setPosixFilePermissions( path, folderPermissions );
-		}
-	}
-
-	private void setPosixFilePermissions( Path path, Set<PosixFilePermission> folderPermissions ) throws IOException {
-		if ( isRootFolder( path ) ) {
-			return;
-		}
-
-		Files.setPosixFilePermissions( path, folderPermissions );
-
-		setPosixFilePermissions( path.getParent(), folderPermissions );
-	}
-
-	private boolean isRootFolder( Path path ) {
-		return path.equals( originalsFolder ) || path.equals( variantsFolder ) || path.equals( tempFolder );
 	}
 
 	private void setFilePermissionsWithoutFailing( Path path ) {
