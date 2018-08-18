@@ -65,8 +65,8 @@ public class TestCloudinaryImageConnector
 	@Test
 	public void cloudinaryIsCreatedAndExposedIfPropertiesSet() {
 		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME )
-		                                  .property( "webCmsModule.images.cloudinary.enabled", "true" )
-		                                  .property( "webCmsModule.images.cloudinary.cloudName", "someCloudName" )
+		                                  .property( "web-cms-module.images.cloudinary.enabled", "true" )
+		                                  .property( "web-cms-module.images.cloudinary.cloudName", "someCloudName" )
 		                                  .build()) {
 			List<WebCmsImageConnector> connectors = ctx.getBeansOfType( WebCmsImageConnector.class, true );
 			assertEquals( 2, connectors.size() );

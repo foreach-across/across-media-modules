@@ -26,8 +26,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.Errors;
+
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -49,7 +51,7 @@ public class TestWebCmsTypeSpecifierValidator
 		                                                   .name( "Test article type" )
 		                                                   .typeKey( "test-article-type" )
 		                                                   .build();
-		when( repository.findOne( Mockito.<Predicate>anyObject() ) ).thenReturn( articleType );
+		when( repository.findOne( Mockito.<Predicate>any() ) ).thenReturn( Optional.of( articleType ) );
 		WebCmsTypeSpecifier newArticleType = WebCmsArticleType.builder()
 		                                                      .name( "Test article type" )
 		                                                      .typeKey( "another-test-article-type" )

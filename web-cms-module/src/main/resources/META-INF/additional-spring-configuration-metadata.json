@@ -1,19 +1,19 @@
 {
   "properties": [
     {
-      "name": "webCmsModule.default-data.assets.enabled",
+      "name": "web-cms-module.default-data.assets.enabled",
       "type": "java.lang.Boolean",
       "description": "Should default assets news and blogs be created?",
       "defaultValue": true
     },
     {
-      "name": "webCmsModule.images.imageServer.enabled",
+      "name": "web-cms-module.images.image-server.enabled",
       "type": "java.lang.Boolean",
       "description": "Should a RemoteImageServerClient be created?",
       "defaultValue": false
     },
     {
-      "name": "webCmsModule.images.cloudinary.enabled",
+      "name": "web-cms-module.images.cloudinary.enabled",
       "type": "java.lang.Boolean",
       "description": "Should a Cloudinary bean be created?",
       "defaultValue": false

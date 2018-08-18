@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 
@@ -103,7 +103,6 @@ public class TestWebCmsMenuCache
 	public void domainSpecificCaching() {
 		WebCmsDomain domain = WebCmsDomain.builder().id( 123L ).build();
 		when( multiDomainService.getCurrentDomainForType( WebCmsMenu.class ) ).thenReturn( domain );
-		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( null );
 		when( menuService.getMenuByName( "myMenu", domain ) ).thenReturn( myMenu );
 
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).url( "item url" ).sortIndex( 2 ).build();

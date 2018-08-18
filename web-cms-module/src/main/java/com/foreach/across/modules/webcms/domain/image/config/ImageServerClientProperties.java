@@ -27,7 +27,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 0.0.2
  */
 @Data
-@ConfigurationProperties(prefix = "webCmsModule.images.imageServer")
+@ConfigurationProperties(prefix = "web-cms-module.images.image-server")
 class ImageServerClientProperties
 {
 	/**

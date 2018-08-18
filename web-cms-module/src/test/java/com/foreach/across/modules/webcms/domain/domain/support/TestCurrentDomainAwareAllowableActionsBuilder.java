@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -136,7 +136,6 @@ public class TestCurrentDomainAwareAllowableActionsBuilder
 
 	@Test
 	public void specificDomainBoundEntityCanBeManagedOnNoDomainIfItHasNoDomain() {
-		when( multiDomainService.isDomainBound( entity ) ).thenReturn( true );
 		when( multiDomainService.getCurrentDomain() ).thenReturn( WebCmsDomain.NONE );
 
 		assertSame( entityActions, actionsBuilder.getAllowableActions( entityConfiguration, entity ) );
@@ -144,7 +143,6 @@ public class TestCurrentDomainAwareAllowableActionsBuilder
 
 	@Test
 	public void specificDomainBoundEntityCanBeManagedOnDomainItBelongsTo() {
-		when( multiDomainService.isDomainBound( entity ) ).thenReturn( true );
 		when( multiDomainService.getCurrentDomain() ).thenReturn( currentDomain );
 		when( entity.getDomain() ).thenReturn( currentDomain );
 
@@ -153,7 +151,6 @@ public class TestCurrentDomainAwareAllowableActionsBuilder
 
 	@Test
 	public void domainBoundEntityCanNotBeManagedOnNoDomainIfDomainSet() {
-		when( multiDomainService.isDomainBound( entity ) ).thenReturn( true );
 		when( multiDomainService.getCurrentDomain() ).thenReturn( WebCmsDomain.NONE );
 		when( entity.getDomain() ).thenReturn( currentDomain );
 
@@ -163,7 +160,6 @@ public class TestCurrentDomainAwareAllowableActionsBuilder
 
 	@Test
 	public void domainBoundEntityCanNotBeManagedOnOtherDomain() {
-		when( multiDomainService.isDomainBound( entity ) ).thenReturn( true );
 		when( multiDomainService.getCurrentDomain() ).thenReturn( WebCmsDomain.builder().id( 456L ).build() );
 		when( entity.getDomain() ).thenReturn( currentDomain );
 
@@ -173,7 +169,6 @@ public class TestCurrentDomainAwareAllowableActionsBuilder
 
 	@Test
 	public void entityWithNoDomainCanBeManagedOnAnyDomainIfAttributeOverrides() {
-		when( multiDomainService.isDomainBound( entity ) ).thenReturn( true );
 		when( multiDomainService.getCurrentDomain() ).thenReturn( currentDomain );
 		when( entityConfiguration.getAttribute( WebCmsEntityAttributes.ALLOW_PER_DOMAIN, Boolean.class ) ).thenReturn( true );
 

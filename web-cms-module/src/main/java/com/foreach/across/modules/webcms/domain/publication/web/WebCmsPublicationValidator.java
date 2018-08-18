@@ -54,10 +54,10 @@ public final class WebCmsPublicationValidator extends EntityValidatorSupport<Web
 			if ( entity.getDomain() != null ) {
 				builder.and( query.domain.eq( entity.getDomain() ) );
 			}
-			WebCmsPublication existing = publicationRepository.findOne( builder.and( query.name.equalsIgnoreCase( entity.getName() ) ) );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "name", "alreadyExists" );
-			}
+
+			publicationRepository.findOne( builder.and( query.name.equalsIgnoreCase( entity.getName() ) ) )
+			                     .filter( existing -> !entity.equals( existing ) )
+			                     .ifPresent( e -> errors.rejectValue( "name", "alreadyExists" ) );
 		}
 
 		if ( !errors.hasFieldErrors( "publicationKey" ) ) {

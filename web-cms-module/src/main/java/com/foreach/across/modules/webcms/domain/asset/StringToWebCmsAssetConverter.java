@@ -56,7 +56,7 @@ public class StringToWebCmsAssetConverter implements ConverterFactory<String, We
 	public <T extends WebCmsAsset> Converter<String, T> getConverter( Class<T> targetType ) {
 		return ( id ) -> {
 			if ( NumberUtils.isDigits( id ) ) {
-				return targetType.cast( assetRepository.findOne( Long.parseLong( id ) ) );
+				return assetRepository.findById( Long.parseLong( id ) ).map( targetType::cast ).orElse( null );
 			}
 
 			if ( id.startsWith( "/" ) ) {

@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 @Slf4j
-@ConfigurationProperties(prefix = "webCmsModule.pages")
+@ConfigurationProperties(prefix = "web-cms-module.pages")
 @RequiredArgsConstructor
 public class PageTypeProperties
 {

@@ -33,7 +33,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -42,8 +42,8 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -94,7 +94,6 @@ public class TestWebCmsAssetService
 		assetEndpoint.setId( 123L );
 
 		when( multiDomainService.isDomainBound( eq( asset ) ) ).thenReturn( true );
-		when( multiDomainService.getCurrentDomain() ).thenReturn( domain );
 		when( multiDomainService.getMetadataForDomain( eq( domain ), any() ) ).thenReturn( urlConfigurer );
 		when( urlConfigurer.isAlwaysPrefix() ).thenReturn( true );
 		when( urlConfigurer.getUrlPrefix() ).thenReturn( "https://my-domain.be/" );
@@ -122,11 +121,8 @@ public class TestWebCmsAssetService
 
 		when( multiDomainService.isDomainBound( eq( asset ) ) ).thenReturn( true );
 		when( multiDomainService.getCurrentDomain() ).thenReturn( domain );
-		when( multiDomainService.isCurrentDomain( WebCmsDomain.NONE ) ).thenReturn( false );
 		when( assetEndpointRepository.findOneByAssetAndDomain( asset, domain ) ).thenReturn( assetEndpoint );
 		when( multiDomainService.getMetadataForDomain( eq( domain ), any() ) ).thenReturn( urlConfigurer );
-		when( urlConfigurer.isAlwaysPrefix() ).thenReturn( true );
-		when( urlConfigurer.getUrlPrefix() ).thenReturn( "https://my-domain.be/" );
 		Optional<UriComponentsBuilder> uriComponents = uriComponentsService.buildUriComponents( asset );
 
 		when( multiDomainService.getCurrentDomainForEntity( asset ) ).thenReturn( domain );

@@ -51,7 +51,7 @@ class WebCmsUrlInterceptor extends EntityInterceptorAdapter<WebCmsUrl>
 
 	@Override
 	public void beforeUpdate( WebCmsUrl updatedUrl ) {
-		WebCmsUrl current = urlRepository.findOne( updatedUrl.getId() );
+		WebCmsUrl current = urlRepository.findById( updatedUrl.getId() ).orElse( null );
 
 		if ( current != null && !StringUtils.equals( current.getPath(), updatedUrl.getPath() ) ) {
 			urlCache.remove( current );

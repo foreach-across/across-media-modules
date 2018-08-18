@@ -21,11 +21,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Optional;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,14 +49,14 @@ public class TestWebCmsDomainConverter
 		String objectId = WebCmsUtils.generateObjectId( WebCmsDomain.COLLECTION_ID );
 		when( domainService.getDomain( objectId ) ).thenReturn( webCmsDomain );
 		assertSame( webCmsDomain, converter.convert( objectId ) );
-		verify( domainRepository, never() ).findOne( anyLong() );
+		verify( domainRepository, never() ).findById( anyLong() );
 		verify( domainRepository, never() ).findOneByDomainKey( any() );
 	}
 
 	@Test
 	public void idIsLookedUpImmediately() {
 		Long id = 1L;
-		when( domainRepository.findOne( id ) ).thenReturn( webCmsDomain );
+		when( domainRepository.findById( id ) ).thenReturn( Optional.of( webCmsDomain ) );
 		assertSame( webCmsDomain, converter.convert( String.valueOf( id ) ) );
 		verify( domainRepository, never() ).findOneByObjectId( any() );
 		verify( domainRepository, never() ).findOneByDomainKey( any() );
@@ -66,15 +68,14 @@ public class TestWebCmsDomainConverter
 		when( domainService.getDomainByKey( key ) ).thenReturn( webCmsDomain );
 		assertSame( webCmsDomain, converter.convert( key ) );
 		verify( domainRepository, never() ).findOneByObjectId( any() );
-		verify( domainRepository, never() ).findOne( anyLong() );
+		verify( domainRepository, never() ).findById( anyLong() );
 	}
 
 	@Test
 	public void emptyString() {
-		when( domainRepository.findOneByDomainKey( "" ) ).thenReturn( null );
 		assertNull( converter.convert( "" ) );
 		verify( domainRepository, never() ).findOneByObjectId( any() );
-		verify( domainRepository, never() ).findOne( anyLong() );
+		verify( domainRepository, never() ).findById( anyLong() );
 		verify( domainRepository, never() ).findOneByDomainKey( any() );
 	}
 }

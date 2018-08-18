@@ -19,7 +19,6 @@ package com.foreach.across.modules.webcms.domain.page.services;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageTypeRepository;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.page.web.PageTypeProperties;
@@ -28,9 +27,8 @@ import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.Map;
@@ -71,7 +69,6 @@ public class TestDefaultWebCmsPageService
 	@Test
 	public void findByCanonicalPath() {
 		when( pageRepository.findOneByCanonicalPathAndDomain( "custom path", null ) ).thenReturn( page );
-		when( multiDomainService.isDomainBound( Matchers.eq( WebCmsPage.class ) ) ).thenReturn( false );
 		assertEquals( Optional.of( page ), pageService.findByCanonicalPath( "custom path" ) );
 		verify( pageRepository, times( 1 ) ).findOneByCanonicalPathAndDomain( "custom path", null );
 	}
@@ -88,8 +85,6 @@ public class TestDefaultWebCmsPageService
 	public void prepareForSavingDispatchesToPreparator() {
 		Map<ModificationType, ModificationReport<PrepareModificationType, Object>> modifications = Collections.emptyMap();
 		when( pagePreparator.prepareForSaving( page ) ).thenReturn( modifications );
-		when( pageTypeProperties.getDefaultPageType() ).thenReturn( "xyz" );
-		when( webCmsPageTypeRepository.findOneByObjectId( "xyz" ) ).thenReturn( WebCmsPageType.builder().build() );
 
 		assertSame( modifications, pageService.prepareForSaving( page ) );
 	}

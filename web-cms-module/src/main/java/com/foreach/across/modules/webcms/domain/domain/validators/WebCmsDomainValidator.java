@@ -46,10 +46,10 @@ public class WebCmsDomainValidator extends EntityValidatorSupport<WebCmsDomain>
 	protected void postValidation( WebCmsDomain entity, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "name" ) ) {
 			val query = QWebCmsDomain.webCmsDomain;
-			WebCmsDomain existing = domainRepository.findOne( query.name.equalsIgnoreCase( entity.getName() ) );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "name", "alreadyExists" );
-			}
+
+			domainRepository.findOne( query.name.equalsIgnoreCase( entity.getName() ) )
+			                .filter( existing -> !entity.equals( existing ) )
+			                .ifPresent( e -> errors.rejectValue( "name", "alreadyExists" ) );
 		}
 
 		if ( !errors.hasFieldErrors( "domainKey" ) ) {

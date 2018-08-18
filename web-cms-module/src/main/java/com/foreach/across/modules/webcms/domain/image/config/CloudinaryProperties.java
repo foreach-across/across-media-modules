@@ -29,7 +29,7 @@ import java.util.Map;
  * @since 0.0.2
  */
 @Data
-@ConfigurationProperties(prefix = "webCmsModule.images.cloudinary")
+@ConfigurationProperties(prefix = "web-cms-module.images.cloudinary")
 class CloudinaryProperties
 {
 	/**

@@ -69,7 +69,7 @@ public class WebCmsUrlCache
 		}
 
 		Long actualId = (Long) urlId.get();
-		return Optional.ofNullable( actualId != null ? urlRepository.findOne( actualId ) : null );
+		return actualId != null ? urlRepository.findById( actualId ) : Optional.empty();
 	}
 
 	public void remove( WebCmsUrl url ) {

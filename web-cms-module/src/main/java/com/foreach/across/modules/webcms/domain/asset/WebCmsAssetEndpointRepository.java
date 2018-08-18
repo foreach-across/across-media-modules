@@ -22,7 +22,7 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ import java.util.List;
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsAssetEndpointRepository extends IdBasedEntityJpaRepository<WebCmsAssetEndpoint>, QueryDslPredicateExecutor<WebCmsAssetEndpoint>
+public interface WebCmsAssetEndpointRepository extends IdBasedEntityJpaRepository<WebCmsAssetEndpoint>, QuerydslPredicateExecutor<WebCmsAssetEndpoint>
 {
 	WebCmsAssetEndpoint findOneByAssetAndDomain( WebCmsAsset asset, WebCmsDomain domain );
 

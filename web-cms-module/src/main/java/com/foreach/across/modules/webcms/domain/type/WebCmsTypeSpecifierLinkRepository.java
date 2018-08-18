@@ -18,7 +18,7 @@ package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import java.util.List;
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsTypeSpecifierLinkRepository extends IdBasedEntityJpaRepository<WebCmsTypeSpecifierLink>, QueryDslPredicateExecutor<WebCmsTypeSpecifierLink>
+public interface WebCmsTypeSpecifierLinkRepository extends IdBasedEntityJpaRepository<WebCmsTypeSpecifierLink>, QuerydslPredicateExecutor<WebCmsTypeSpecifierLink>
 {
 	List<WebCmsTypeSpecifierLink> findAllByOwnerObjectId( String ownerObjectId );
 

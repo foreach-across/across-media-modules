@@ -145,7 +145,7 @@ public class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsA
 	@Test
 	public void acrossBlogTypeShouldHaveBeenImported() {
 		val query = QWebCmsComponentType.webCmsComponentType;
-		WebCmsComponentType componentType = componentTypeRepository.findOne( query.typeKey.eq( "ax-blog" ).and( query.domain.isNull() ) );
+		WebCmsComponentType componentType = componentTypeRepository.findOne( query.typeKey.eq( "ax-blog" ).and( query.domain.isNull() ) ).orElse( null );
 		assertNotNull( componentType );
 		assertEquals( "Across Blog", componentType.getName() );
 	}

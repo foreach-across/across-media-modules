@@ -27,7 +27,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 0.0.1
  */
 @Data
-@ConfigurationProperties(prefix = "webCmsModule.pages")
+@ConfigurationProperties(prefix = "web-cms-module.pages")
 public class PageTemplateProperties
 {
 	static final String DEFAULT_TEMPLATE = "th/webCmsModule/default-page-template";

@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 
@@ -44,7 +44,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.foreach.across.modules.webcms.infrastructure.ModificationStatus.*;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -72,17 +71,14 @@ public class TestWebCmsEndpointServiceImpl
 	private WebCmsPage page;
 	private WebCmsUrl existingUrl;
 	private WebCmsAssetEndpoint<WebCmsPage> endpoint;
-	private WebCmsDomain domain;
 
 	@Before
 	public void setUp() throws Exception {
 		page = WebCmsPage.builder().build();
-		domain = WebCmsDomain.builder().build();
 		endpoint = WebCmsAssetEndpoint.<WebCmsPage>builder().asset( page ).build();
 		existingUrl = WebCmsUrl.builder().id( 123L ).path( "/test" ).primary( true ).httpStatus( HttpStatus.OK ).build();
 		endpoint.setUrls( Collections.singletonList( existingUrl ) );
 
-		when( multiDomainService.getCurrentDomainForEntity( any() ) ).thenReturn( WebCmsDomain.NONE );
 		when( assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ) ).thenReturn( endpoint );
 	}
 
@@ -112,7 +108,7 @@ public class TestWebCmsEndpointServiceImpl
 		AtomicReference<WebCmsUrl> created = new AtomicReference<>();
 
 		doAnswer( invocationOnMock -> {
-			created.set( invocationOnMock.getArgumentAt( 0, WebCmsUrl.class ) );
+			created.set( invocationOnMock.getArgument( 0 ) );
 			return null;
 		} ).when( urlRepository ).save( any( WebCmsUrl.class ) );
 
@@ -169,7 +165,7 @@ public class TestWebCmsEndpointServiceImpl
 		when( urlRepository.findOneByPathAndEndpoint_Domain( "/my/page", WebCmsDomain.NONE ) ).thenReturn( primary );
 
 		doAnswer( invocationOnMock -> {
-			PrimaryUrlForAssetFailedEvent event = invocationOnMock.getArgumentAt( 0, PrimaryUrlForAssetFailedEvent.class );
+			PrimaryUrlForAssetFailedEvent event = invocationOnMock.getArgument( 0 );
 			ModificationReport<EndpointModificationType, WebCmsUrl> result = event.getModificationReport();
 			assertEquals( EndpointModificationType.PRIMARY_URL_UPDATED, result.getModificationType() );
 			assertEquals( FAILED, result.getModificationStatus() );
@@ -202,7 +198,7 @@ public class TestWebCmsEndpointServiceImpl
 		AtomicReference<WebCmsUrl> created = new AtomicReference<>();
 
 		doAnswer( invocationOnMock -> {
-			created.set( invocationOnMock.getArgumentAt( 0, WebCmsUrl.class ) );
+			created.set( invocationOnMock.getArgument( 0 ) );
 			return null;
 		} ).when( urlRepository ).save( any( WebCmsUrl.class ) );
 
@@ -227,7 +223,7 @@ public class TestWebCmsEndpointServiceImpl
 		page.setPublicationDate( DateUtils.addYears( new Date(), 1 ) );
 
 		doAnswer( invocationOnMock -> {
-			created.set( invocationOnMock.getArgumentAt( 0, WebCmsUrl.class ) );
+			created.set( invocationOnMock.getArgument( 0 ) );
 			return null;
 		} ).when( urlRepository ).save( any( WebCmsUrl.class ) );
 
@@ -253,7 +249,7 @@ public class TestWebCmsEndpointServiceImpl
 		page.setPublicationDate( new Date() );
 
 		doAnswer( invocationOnMock -> {
-			WebCmsUrl url = invocationOnMock.getArgumentAt( 0, WebCmsUrl.class );
+			WebCmsUrl url = invocationOnMock.getArgument( 0 );
 			if ( url.isNew() ) {
 				created.set( url );
 			}
@@ -291,7 +287,7 @@ public class TestWebCmsEndpointServiceImpl
 		page.setPublicationDate( DateUtils.addYears( new Date(), -1 ) );
 
 		doAnswer( invocationOnMock -> {
-			WebCmsUrl url = invocationOnMock.getArgumentAt( 0, WebCmsUrl.class );
+			WebCmsUrl url = invocationOnMock.getArgument( 0 );
 			if ( url.isNew() ) {
 				created.set( url );
 			}

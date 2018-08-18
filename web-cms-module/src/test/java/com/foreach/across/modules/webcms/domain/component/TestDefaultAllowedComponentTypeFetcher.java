@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.convert.TypeDescriptor;
 
 import java.util.ArrayList;
@@ -41,8 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static junit.framework.TestCase.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -66,7 +66,6 @@ public class TestDefaultAllowedComponentTypeFetcher
 
 	@Test
 	public void supports() {
-		when( dataConversionService.convert( any(), eq( TypeDescriptor.valueOf( Boolean.class ) ) ) ).thenReturn( true );
 		val attr = new HashMap<String, String>();
 		attr.put( WebCmsChildComponentRestrictable.CHILD_COMPONENT_RESTRICTED, "true" );
 
@@ -88,8 +87,6 @@ public class TestDefaultAllowedComponentTypeFetcher
 
 	@Test
 	public void fetchComponentTypesByLinks() {
-		when( dataConversionService.convert( any(), eq( TypeDescriptor.valueOf( Boolean.class ) ) ) ).thenReturn( true );
-
 		val attr = new HashMap<String, String>();
 		attr.put( WebCmsChildComponentRestrictable.CHILD_COMPONENT_RESTRICTED, "true" );
 
@@ -124,7 +121,6 @@ public class TestDefaultAllowedComponentTypeFetcher
 	@Test
 	public void fetchComponentTypes() {
 		when( dataConversionService.convert( any(), eq( TypeDescriptor.valueOf( Boolean.class ) ) ) ).thenReturn( true );
-		when( multiDomainService.getCurrentDomainForType( WebCmsComponentType.class ) ).thenReturn( WebCmsDomain.NONE );
 
 		val attr = new HashMap<String, String>();
 		attr.put( WebCmsChildComponentRestrictable.CHILD_COMPONENT_RESTRICTED, "true" );
@@ -133,7 +129,9 @@ public class TestDefaultAllowedComponentTypeFetcher
 		                                                       .objectId( "wcm:type:component:my-object-id" )
 		                                                       .build();
 		List<WebCmsComponentType> componentTypes = getComponentTypes();
-		when( componentTypeRepository.findAll( Mockito.<Predicate>anyObject() ) ).thenReturn( componentTypes );
+		when( componentTypeRepository.findAll( Mockito.<Predicate>any() ) ).thenReturn( componentTypes );
+
+		when( multiDomainService.isDomainBound( any() ) ).thenReturn( false );
 
 		WebCmsObject owner = WebCmsComponent.builder()
 		                                    .objectId( "wcm:component:my-object-id" )

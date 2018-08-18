@@ -29,15 +29,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -65,7 +65,6 @@ public class TestWebCmsUriComponentsService
 
 		when( multiDomainService.isDomainBound( eq( asset ) ) ).thenReturn( true );
 		when( multiDomainService.getCurrentDomain() ).thenReturn( domain );
-		when( assetEndpointRepository.findOneByAssetAndDomain( asset, WebCmsDomain.NONE ) ).thenReturn( new WebCmsAssetEndpoint() );
 
 		Optional<UriComponentsBuilder> uriComponents = uriComponentsService.buildUriComponents( asset );
 
@@ -83,7 +82,6 @@ public class TestWebCmsUriComponentsService
 		asset.setDomain( domain );
 
 		when( multiDomainService.isDomainBound( eq( asset ) ) ).thenReturn( true );
-		when( assetEndpointRepository.findOneByAssetAndDomain( asset, WebCmsDomain.NONE ) ).thenReturn( new WebCmsAssetEndpoint() );
 
 		Optional<UriComponentsBuilder> uriComponents = uriComponentsService.buildUriComponents( asset );
 
@@ -174,9 +172,7 @@ public class TestWebCmsUriComponentsService
 		assetEndpoint.setDomain( domain );
 		url.setEndpoint( assetEndpoint );
 
-		when( multiDomainService.isDomainBound( eq( assetEndpoint ) ) ).thenReturn( true );
 		when( multiDomainService.getMetadataForDomain( eq( domain ), any() ) ).thenReturn( urlConfigurer );
-		when( urlConfigurer.isAlwaysPrefix() ).thenReturn( false );
 
 		Optional<UriComponentsBuilder> uriComponents = uriComponentsService.buildUriComponents( url, domain );
 
@@ -191,7 +187,6 @@ public class TestWebCmsUriComponentsService
 		assetEndpoint.setDomain( domain );
 		url.setEndpoint( assetEndpoint );
 
-		when( multiDomainService.isDomainBound( eq( assetEndpoint ) ) ).thenReturn( true );
 		when( multiDomainService.getMetadataForDomain( eq( domain ), any() ) ).thenReturn( urlConfigurer );
 		when( multiDomainService.isCurrentDomain( domain ) ).thenReturn( true );
 		when( urlConfigurer.isAlwaysPrefix() ).thenReturn( true );
@@ -210,7 +205,6 @@ public class TestWebCmsUriComponentsService
 		assetEndpoint.setDomain( domain );
 		url.setEndpoint( assetEndpoint );
 
-		when( multiDomainService.isDomainBound( eq( assetEndpoint ) ) ).thenReturn( true );
 		when( multiDomainService.getMetadataForDomain( eq( domain ), any() ) ).thenReturn( urlConfigurer );
 		when( multiDomainService.isCurrentDomain( domain ) ).thenReturn( true );
 		when( urlConfigurer.isAlwaysPrefix() ).thenReturn( true );
@@ -229,7 +223,6 @@ public class TestWebCmsUriComponentsService
 		assetEndpoint.setDomain( domain );
 		url.setEndpoint( assetEndpoint );
 
-		when( multiDomainService.isDomainBound( eq( assetEndpoint ) ) ).thenReturn( true );
 		when( multiDomainService.getMetadataForDomain( eq( domain ), any() ) ).thenReturn( urlConfigurer );
 		when( multiDomainService.isCurrentDomain( domain ) ).thenReturn( true );
 		when( urlConfigurer.isAlwaysPrefix() ).thenReturn( true );
@@ -248,7 +241,6 @@ public class TestWebCmsUriComponentsService
 		assetEndpoint.setDomain( domain );
 		url.setEndpoint( assetEndpoint );
 
-		when( multiDomainService.isDomainBound( eq( assetEndpoint ) ) ).thenReturn( true );
 		when( multiDomainService.getMetadataForDomain( eq( domain ), any() ) ).thenReturn( urlConfigurer );
 		when( multiDomainService.isCurrentDomain( domain ) ).thenReturn( true );
 		when( urlConfigurer.isAlwaysPrefix() ).thenReturn( true );

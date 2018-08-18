@@ -72,11 +72,13 @@ public class ITArticleImportAndCreation extends AbstractCmsApplicationIT
 		QWebCmsArticle query = QWebCmsArticle.webCmsArticle;
 
 		WebCmsArticle article = articleRepository.findOne( query.publication.publicationKey.eq( "test-publication" )
-		                                                                                   .and( query.title.eq( "Test article 1" ) ) );
+		                                                                                   .and( query.title.eq( "Test article 1" ) ) )
+		                                         .orElse( null );
 		assertNotNull( article );
 
 		WebCmsArticle other = articleRepository.findOne( query.publication.publicationKey.eq( "test-publication" )
-		                                                                                 .and( query.title.eq( "Test article 2" ) ) );
+		                                                                                 .and( query.title.eq( "Test article 2" ) ) )
+		                                       .orElse( null );
 		assertNotNull( other );
 		assertNotEquals( article, other );
 

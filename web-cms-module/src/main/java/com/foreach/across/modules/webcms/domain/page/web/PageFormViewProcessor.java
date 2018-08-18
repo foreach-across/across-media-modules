@@ -144,13 +144,12 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 
 				advancedSettings.getAutoCreateMenu()
 				                .forEach( menu -> {
-					                WebCmsMenuItem existing = menuItemRepository.findOne(
+					                Optional<WebCmsMenuItem> existing = menuItemRepository.findOne(
 							                QWebCmsMenuItem.webCmsMenuItem.menu.eq( menu ).and( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ) )
 					                );
 
-					                WebCmsMenuItem dto = existing != null
-							                ? existing.toDto()
-							                : WebCmsMenuItem.builder().menu( menu ).endpoint( endpoint ).build();
+					                WebCmsMenuItem dto = existing.map( WebCmsMenuItem::toDto )
+					                                             .orElseGet( () -> WebCmsMenuItem.builder().menu( menu ).endpoint( endpoint ).build() );
 
 					                dto.setTitle( page.getTitle() );
 					                dto.setPath( page.getCanonicalPath() );

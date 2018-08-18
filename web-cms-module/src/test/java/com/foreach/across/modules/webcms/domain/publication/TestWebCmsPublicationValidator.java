@@ -24,8 +24,10 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.Errors;
+
+import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -56,7 +58,7 @@ public class TestWebCmsPublicationValidator
 
 		InOrder sequence = inOrder( publicationRepository, errors );
 		sequence.verify( errors ).hasFieldErrors( "name" );
-		sequence.verify( publicationRepository, never() ).findOne( Mockito.<Predicate>anyObject() );
+		sequence.verify( publicationRepository, never() ).findOne( Mockito.<Predicate>any() );
 	}
 
 	@Test
@@ -64,7 +66,7 @@ public class TestWebCmsPublicationValidator
 		WebCmsPublication publication = WebCmsPublication.builder()
 		                                                 .name( "publication name" )
 		                                                 .build();
-		when( publicationRepository.findOne( Mockito.<Predicate>anyObject() ) ).thenReturn( publication );
+		when( publicationRepository.findOne( Mockito.<Predicate>any() ) ).thenReturn( Optional.of( publication ) );
 		WebCmsPublication newPublication = WebCmsPublication.builder()
 		                                                    .name( "publication name" )
 		                                                    .build();
@@ -72,7 +74,7 @@ public class TestWebCmsPublicationValidator
 		validator.validate( newPublication, errors );
 		InOrder sequence = inOrder( publicationRepository, errors );
 		sequence.verify( errors ).hasFieldErrors( "name" );
-		sequence.verify( publicationRepository ).findOne( Mockito.<Predicate>anyObject() );
+		sequence.verify( publicationRepository ).findOne( Mockito.<Predicate>any() );
 		sequence.verify( errors ).rejectValue( "name", "alreadyExists" );
 	}
 
@@ -86,7 +88,7 @@ public class TestWebCmsPublicationValidator
 
 		InOrder sequence = inOrder( publicationRepository, errors );
 		sequence.verify( errors ).hasFieldErrors( "name" );
-		sequence.verify( publicationRepository, times( 1 ) ).findOne( Mockito.<Predicate>anyObject() );
+		sequence.verify( publicationRepository, times( 1 ) ).findOne( Mockito.<Predicate>any() );
 		sequence.verify( errors, times( 2 ) ).hasFieldErrors( "publicationKey" );
 		sequence.verify( publicationRepository, never() ).findOneByPublicationKeyAndDomain( "new-publication-key", null );
 	}
@@ -106,7 +108,7 @@ public class TestWebCmsPublicationValidator
 		validator.validate( newPublication, errors );
 		InOrder sequence = inOrder( publicationRepository, errors );
 		sequence.verify( errors ).hasFieldErrors( "name" );
-		sequence.verify( publicationRepository, times( 1 ) ).findOne( Mockito.<Predicate>anyObject() );
+		sequence.verify( publicationRepository, times( 1 ) ).findOne( Mockito.<Predicate>any() );
 		sequence.verify( publicationRepository, times( 1 ) ).findOneByPublicationKeyAndDomain( "publication-key", null );
 		sequence.verify( errors, times( 1 ) ).rejectValue( "publicationKey", "alreadyExists" );
 	}
@@ -128,7 +130,7 @@ public class TestWebCmsPublicationValidator
 		validator.validate( newPublication, errors );
 		InOrder sequence = inOrder( publicationRepository, errors );
 		sequence.verify( errors ).hasFieldErrors( "name" );
-		sequence.verify( publicationRepository, times( 1 ) ).findOne( Mockito.<Predicate>anyObject() );
+		sequence.verify( publicationRepository, times( 1 ) ).findOne( Mockito.<Predicate>any() );
 		sequence.verify( errors ).hasFieldErrors( "publicationKey" );
 		sequence.verify( publicationRepository, times( 1 ) ).findOneByPublicationKeyAndDomain( "new-publication-key", null );
 		sequence.verify( errors ).hasFieldErrors( "publicationKey" );

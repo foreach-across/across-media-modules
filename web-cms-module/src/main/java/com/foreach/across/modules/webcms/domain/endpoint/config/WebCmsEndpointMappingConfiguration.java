@@ -39,7 +39,7 @@ import java.util.Collections;
 @Component
 @Getter
 @Setter
-@ConfigurationProperties("webCmsModule.urls")
+@ConfigurationProperties("web-cms-module.urls")
 public class WebCmsEndpointMappingConfiguration
 {
 	private final AntPathMatcher antPathMatcher = new AntPathMatcher();

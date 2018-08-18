@@ -75,8 +75,8 @@ public class TestImageServerImageConnector
 	@Test
 	public void imageServerClientIsCreatedAndExposedIfPropertiesSet() {
 		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME )
-		                                  .property( "webCmsModule.images.imageServer.enabled", "true" )
-		                                  .property( "webCmsModule.images.imageServer.url", "http://my-imageserver" )
+		                                  .property( "web-cms-module.images.image-server.enabled", "true" )
+		                                  .property( "web-cms-module.images.image-server.url", "http://my-imageserver" )
 		                                  .build()) {
 			List<WebCmsImageConnector> connectors = ctx.getBeansOfType( WebCmsImageConnector.class, true );
 			assertEquals( 2, connectors.size() );

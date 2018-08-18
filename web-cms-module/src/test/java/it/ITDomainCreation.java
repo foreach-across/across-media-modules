@@ -44,7 +44,7 @@ public class ITDomainCreation extends AbstractCmsApplicationIT
 		domainRepository.save( domain );
 		assertFalse( domain.isNew() );
 
-		WebCmsDomain byId = domainRepository.findOne( domain.getId() );
+		WebCmsDomain byId = domainRepository.findById( domain.getId() ).orElse( null );
 		assertEquals( domain, byId );
 
 		WebCmsDomain byKey = domainRepository.findOneByDomainKey( domain.getDomainKey() );
@@ -63,10 +63,10 @@ public class ITDomainCreation extends AbstractCmsApplicationIT
 
 		domainRepository.save( byObjectId.toBuilder().active( false ).build() );
 
-		WebCmsDomain updated = domainRepository.findOne( domain.getId() );
+		WebCmsDomain updated = domainRepository.findById( domain.getId() ).orElse( null );
 		assertFalse( updated.isActive() );
 
-		domainRepository.delete( updated.getId() );
+		domainRepository.deleteById( updated.getId() );
 
 		assertNull( domainRepository.findOneByDomainKey( domain.getDomainKey() ) );
 	}

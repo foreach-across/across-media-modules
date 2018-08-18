@@ -24,8 +24,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.Errors;
+
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -47,7 +49,7 @@ public class TestWebCmsDomainValidator
 		                                  .name( "Test Domain" )
 		                                  .domainKey( "test-domain" )
 		                                  .build();
-		when( repository.findOne( Mockito.<Predicate>anyObject() ) ).thenReturn( domain );
+		when( repository.findOne( Mockito.<Predicate>any() ) ).thenReturn( Optional.of( domain ) );
 		WebCmsDomain newDomain = WebCmsDomain.builder()
 		                                     .name( "Test Domain" )
 		                                     .domainKey( "another-key" )

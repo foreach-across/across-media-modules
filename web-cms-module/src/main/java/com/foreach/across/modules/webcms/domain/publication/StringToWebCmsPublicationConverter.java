@@ -43,7 +43,7 @@ public final class StringToWebCmsPublicationConverter implements Converter<Strin
 	@Override
 	public WebCmsPublication convert( String source ) {
 		if ( NumberUtils.isDigits( source ) ) {
-			return publicationRepository.findOne( Long.parseLong( source ) );
+			return publicationRepository.findById( Long.parseLong( source ) ).orElse( null );
 		}
 		else if ( WebCmsUtils.isObjectIdForCollection( source, WebCmsPublication.COLLECTION_ID ) ) {
 			return publicationRepository.findOneByObjectId( source );
