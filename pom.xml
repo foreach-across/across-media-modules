@@ -21,14 +21,14 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>standard-module-bom</artifactId>
-		<version>2.0.0.RELEASE</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.foreach.across.modules</groupId>
 	<artifactId>file-manager-module</artifactId>
-	<version>1.2.0.RELEASE</version>
+	<version>2.0.0-SNAPSHOT</version>
 
 	<repositories>
 		<repository>
@@ -54,13 +54,11 @@
 	<developers>
 		<developer>
 			<name>Arne Vandamme</name>
-			<email>arne at foreach.be</email>
 			<organization>Foreach</organization>
 			<organizationUrl>http://www.foreach.be</organizationUrl>
 		</developer>
 		<developer>
 			<name>Sander Van Loock</name>
-			<email>svl at foreach.be</email>
 			<organization>Foreach</organization>
 			<organizationUrl>http://www.foreach.be</organizationUrl>
 		</developer>
@@ -68,27 +66,6 @@
 
 	<build>
 		<plugins>
-
-			<plugin>
-				<groupId>org.asciidoctor</groupId>
-				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.0</version>
-				<configuration>
-					<sourceDirectory>${project.basedir}/src/doc</sourceDirectory>
-					<sourceDocumentName>index.adoc</sourceDocumentName>
-					<outputDirectory>${project.reporting.outputDirectory}/${project.version}/reference</outputDirectory>
-					<backend>html</backend>
-				</configuration>
-				<executions>
-					<execution>
-						<id>output-html</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>process-asciidoc</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.5.5</version>
@@ -129,7 +106,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.foreach.across</groupId>
-			<artifactId>across-core</artifactId>
+			<artifactId>across-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across</groupId>

@@ -18,11 +18,11 @@ package com.foreach.across.modules.filemanager;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("fileManagerModule")
+@ConfigurationProperties("file-manager-module")
 public class FileManagerModuleSettings
 {
-	public static final String LOCAL_REPOSITORIES_ROOT = "fileManagerModule.localRepositoriesRoot";
-	public static final String DEFAULT_TEMP_FOLDER = "fileManagerModule.tempFolder";
+	public static final String LOCAL_REPOSITORIES_ROOT = "file-manager-module.local-repositories-root";
+	public static final String DEFAULT_TEMP_FOLDER = "file-manager-module.temp-folder";
 
 	/***
 	 * The location of the root directory in which local repositories will be created.
