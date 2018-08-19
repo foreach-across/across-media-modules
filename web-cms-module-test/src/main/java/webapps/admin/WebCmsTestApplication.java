@@ -61,7 +61,7 @@ public class WebCmsTestApplication
 {
 	public static void main( String[] args ) {
 		SpringApplication springApplication = new SpringApplication( WebCmsTestApplication.class );
-		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.location", "${user.home}/dev-configs/wcm-test-application.yml" ) );
+		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.additional-location", "${user.home}/dev-configs/wcm-test-application.yml" ) );
 		springApplication.run( args );
 	}
 
