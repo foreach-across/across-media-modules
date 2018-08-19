@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,7 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void topNavigationMenuShouldHaveBeenImported() {
-		WebCmsMenu topNav = menuRepository.findOneByNameAndDomain( "topNav", null );
+		WebCmsMenu topNav = menuRepository.findOneByNameAndDomain( "topNav", null ).orElse( null );
 		assertNotNull( topNav );
 		assertEquals( "Top navigation - updated by extension", topNav.getDescription() );
 		assertNotNull( topNav.getObjectId() );
@@ -68,7 +69,7 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void sideNavigationMenuShouldHaveBeenImported() {
-		WebCmsMenu sideNav = menuRepository.findOneByNameAndDomain( "sideNav", null );
+		WebCmsMenu sideNav = menuRepository.findOneByNameAndDomain( "sideNav", null ).orElse( null );
 		assertNotNull( sideNav );
 		assertEquals( "Sidebar navigation", sideNav.getDescription() );
 		assertNotNull( sideNav.getObjectId() );
@@ -76,12 +77,12 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void deleteMeNavigationMenuShouldHaveBeenDeleted() {
-		assertNull( menuRepository.findOneByNameAndDomain( "deleteMeNav", null ) );
+		assertEquals( Optional.empty(), menuRepository.findOneByNameAndDomain( "deleteMeNav", null ) );
 	}
 
 	@Test
 	public void topNavigationItemsWereImportedAndExtended() {
-		WebCmsMenu topNav = menuRepository.findOneByNameAndDomain( "topNav", WebCmsDomain.NONE );
+		WebCmsMenu topNav = menuRepository.findOneByNameAndDomain( "topNav", WebCmsDomain.NONE ).orElse( null );
 		Map<String, WebCmsMenuItem> map = new ArrayList<>( menuItemRepository.findAllByMenu( topNav ) )
 				.stream()
 				.collect( Collectors.toMap( WebCmsMenuItem::getPath, Function.identity() ) );
@@ -95,7 +96,7 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void sidebarNavigationItemsWereImportedAndExtended() {
-		WebCmsMenu sideNav = menuRepository.findOneByNameAndDomain( "sideNav", WebCmsDomain.NONE );
+		WebCmsMenu sideNav = menuRepository.findOneByNameAndDomain( "sideNav", WebCmsDomain.NONE ).orElse( null );
 		Map<String, WebCmsMenuItem> map = new ArrayList<>( menuItemRepository.findAllByMenu( sideNav ) )
 				.stream()
 				.collect( Collectors.toMap( WebCmsMenuItem::getPath, Function.identity() ) );
@@ -106,11 +107,11 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void faqPageShouldHaveMenuItemsAutoCreated() {
-		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-faq" );
+		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-faq" ).orElse( null );
 		assertNotNull( page );
 
 		List<WebCmsMenuItem> items = new ArrayList<>(
-				menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page, page.getDomain() ) ) );
+				menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page, page.getDomain() ).orElse( null ) ) );
 		assertEquals( 2, items.size() );
 
 		Map<String, WebCmsMenuItem> map = items.stream().collect( Collectors.toMap( menuItem -> menuItem.getMenu().getName(), Function.identity() ) );
@@ -121,11 +122,11 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void conditionsPageShouldHaveMenuItemsAutoCreated() {
-		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-conditions" );
+		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-conditions" ).orElse( null );
 		assertNotNull( page );
 
 		List<WebCmsMenuItem> items = new ArrayList<>(
-				menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page, page.getDomain() ) ) );
+				menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page, page.getDomain() ).orElse( null ) ) );
 		assertEquals( 2, items.size() );
 
 		Map<String, WebCmsMenuItem> map = items.stream().collect( Collectors.toMap( menuItem -> menuItem.getMenu().getName(), Function.identity() ) );
@@ -136,11 +137,11 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void assetShouldHaveBeenLinkedWhenRequested() {
-		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:contact" );
+		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:contact" ).orElse( null );
 		assertNotNull( page );
 
 		List<WebCmsMenuItem> items = new ArrayList<>(
-				menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page, page.getDomain() ) ) );
+				menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page, page.getDomain() ).orElse( null ) ) );
 		Map<String, WebCmsMenuItem> map = items.stream().collect( Collectors.toMap( menuItem -> menuItem.getMenu().getName(), Function.identity() ) );
 
 		assertEquals( 2, items.size() );
@@ -148,11 +149,11 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 		assertMenuItem( "/my/contact", "My Fancy Contact Page", null, false, 0, true, map.get( "topNav" ) );
 
-		WebCmsPage page2 = pageRepository.findOneByObjectId( "wcm:asset:page:other-contact" );
+		WebCmsPage page2 = pageRepository.findOneByObjectId( "wcm:asset:page:other-contact" ).orElse( null );
 		assertNotNull( page );
 
 		List<WebCmsMenuItem> items2 = new ArrayList<>(
-				menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page2, page2.getDomain() ) ) );
+				menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page2, page2.getDomain() ).orElse( null ) ) );
 		Map<String, WebCmsMenuItem> map2 = items2.stream().collect( Collectors.toMap( menuItem -> menuItem.getMenu().getName(), Function.identity() ) );
 		assertMenuItem( "/my/other/contact", "My Other Fancy Contact Page", null, false, 0, true, map2.get( "topNav" ) );
 		assertMenuItem( "/contact2", "Contact2", null, false, 3, false, map2.get( "sideNav" ) );
@@ -161,20 +162,20 @@ public class ITMenuReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	public void navWithObjectIdShouldHaveBeenImported() {
-		WebCmsMenu menu = menuRepository.findOneByObjectId( "wcm:menu:nav-object-id" );
+		WebCmsMenu menu = menuRepository.findOneByObjectId( "wcm:menu:nav-object-id" ).orElse( null );
 		assertNotNull( menu );
 		assertEquals( "navWithObjectId", menu.getName() );
 		assertEquals( "nav with an objectId", menu.getDescription() );
-		assertEquals( domainRepository.findOneByDomainKey( "domain.complex.domain" ), menu.getDomain() );
+		assertEquals( domainRepository.findOneByDomainKey( "domain.complex.domain" ), Optional.of( menu.getDomain() ) );
 	}
 
 	@Test
 	public void myOtherNavShouldHaveBeenImportedAndExtended() {
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "myOtherNav", WebCmsDomain.NONE );
+		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "myOtherNav", WebCmsDomain.NONE ).orElse( null );
 		assertNotNull( menu );
 		assertEquals( "wcm:menu:my-other-nav", menu.getObjectId() );
 		assertEquals( "Another nav with an objectId", menu.getDescription() );
-		assertEquals( null, menu.getDomain() );
+		assertNull( menu.getDomain() );
 	}
 
 	private void assertMenuItem( String path, String title, String url, boolean group, int sortIndex, Map<String, WebCmsMenuItem> itemsByPath ) {

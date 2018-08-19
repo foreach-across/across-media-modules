@@ -44,82 +44,82 @@ public class ITMultiDomainPageReferenceData extends AbstractMultiDomainCmsApplic
 
 	@Test
 	public void faqPageForeachNlShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/faq", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/faq", domain ).orElse( null );
 		assertNotNull( page );
 	}
 
 	@Test
 	public void faqPageForeachBeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/faq", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/faq", domain ).orElse( null );
 		assertNotNull( page );
 	}
 
 	@Test
 	public void faqPageForeachDeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/faq", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/faq", domain ).orElse( null );
 		assertNotNull( page );
 	}
 
 	@Test
 	public void cafePageNlShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/cafe", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/cafe", domain ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Foreach Cafe (NL)", page.getTitle() );
 	}
 
 	@Test
 	public void cafePageBeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/cafe", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/cafe", domain ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Foreach Cafe (BE)", page.getTitle() );
 	}
 
 	@Test
 	public void cafePageDeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/cafe", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/cafe", domain ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Foreach Cafe (DE)", page.getTitle() );
 	}
 
 	@Test
 	public void myPageBeShouldHaveBeenDeleted() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-page", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-page", domain ).orElse( null );
 		assertNull( page );
 	}
 
 	@Test
 	public void myPageNlShouldHaveBeenImportedAndExtended() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-page", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-page", domain ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "My Page (NL)", page.getTitle() );
 	}
 
 	@Test
 	public void myOtherPageBeShouldHaveBeenDeleted() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-other-page", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-other-page", domain ).orElse( null );
 		assertNull( page );
 	}
 
 	@Test
 	public void myOtherPageDeShouldHaveBeenDeleted() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-other-page", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-other-page", domain ).orElse( null );
 		assertNull( page );
 	}
 
 	@Test
 	public void myOtherPageNlShouldHaveBeenImportedAndExtended() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-other-page", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/my-other-page", domain ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "My Other Page (NL)", page.getTitle() );
 	}
@@ -127,9 +127,9 @@ public class ITMultiDomainPageReferenceData extends AbstractMultiDomainCmsApplic
 	@Test
 	@Transactional
 	public void pageWithUrlShouldHaveBeenImported() {
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/page-with-url", WebCmsDomain.NONE );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/page-with-url", WebCmsDomain.NONE ).orElse( null );
 		assertNotNull( page );
-		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ).orElse( null );
 		assertEquals( 3, endpoint.getUrls().size() );
 		WebCmsUrl url = endpoint.getUrlWithPath( "/page-with-url" ).orElse( null );
 		assertNotNull( url );
@@ -150,9 +150,9 @@ public class ITMultiDomainPageReferenceData extends AbstractMultiDomainCmsApplic
 	@Test
 	@Transactional
 	public void otherPageWithUrlShouldHaveItsSinglePrimaryChangedAndLocked() {
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/other-page-with-url", WebCmsDomain.NONE );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/other-page-with-url", WebCmsDomain.NONE ).orElse( null );
 		assertNotNull( page );
-		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ).orElse( null );
 		assertEquals( 1, endpoint.getUrls().size() );
 
 		WebCmsUrl testUrl = endpoint.getUrlWithPath( "/other-test-url" ).orElse( null );
@@ -168,10 +168,10 @@ public class ITMultiDomainPageReferenceData extends AbstractMultiDomainCmsApplic
 	@Test
 	@Transactional
 	public void pageWithUrlBeShouldHaveBeenImportedAndExtended() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/page-with-url-be", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/page-with-url-be", domain ).orElse( null );
 		assertNotNull( page );
-		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, domain );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, domain ).orElse( null );
 		assertEquals( 2, endpoint.getUrls().size() );
 		WebCmsUrl url = endpoint.getUrlWithPath( "/page-with-url-be" ).orElse( null );
 		assertNotNull( url );

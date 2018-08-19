@@ -100,7 +100,7 @@ public class WebCmsAssetMenuViewsConfiguration
 								.targetProperty( "endpoint" )
 								.associationType( EntityAssociation.Type.EMBEDDED )
 								.parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
-								.listView( fvb -> fvb.showProperties( ".", "~endpoint" ).defaultSort( new Sort( "menu", "path" ) ) )
+								.listView( fvb -> fvb.showProperties( ".", "~endpoint" ).defaultSort( Sort.by( "menu", "path" ) ) )
 								.createFormView( fvb -> fvb.showProperties( ".", "~endpoint" ) )
 								.updateFormView( fvb -> fvb.showProperties( ".", "~endpoint" ) )
 								.deleteFormView()
@@ -139,7 +139,9 @@ public class WebCmsAssetMenuViewsConfiguration
 				WebCmsMenuItem item = new WebCmsMenuItem();
 				if ( args[0] instanceof WebCmsAsset ) {
 					WebCmsAsset asset = (WebCmsAsset) args[0];
-					item.setEndpoint( assetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) ) );
+					item.setEndpoint(
+							assetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) ).orElse( null )
+					);
 				}
 
 				return item;

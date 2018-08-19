@@ -25,6 +25,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.Errors;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,7 +46,7 @@ public class TestWebCmsMenuValidator
 		WebCmsMenu menu = WebCmsMenu.builder()
 		                            .name( "my-name" )
 		                            .build();
-		when( repository.findOneByNameAndDomain( any(), any() ) ).thenReturn( menu );
+		when( repository.findOneByNameAndDomain( any(), any() ) ).thenReturn( Optional.of( menu ) );
 
 		WebCmsMenu newMenu = WebCmsMenu.builder()
 		                               .name( "my-name" )
@@ -62,7 +64,7 @@ public class TestWebCmsMenuValidator
 		                            .name( "my-name" )
 		                            .objectId( "wcm:menu:my-name" )
 		                            .build();
-		when( repository.findOneByObjectId( any() ) ).thenReturn( menu );
+		when( repository.findOneByObjectId( any() ) ).thenReturn( Optional.of( menu ) );
 
 		WebCmsMenu newMenu = WebCmsMenu.builder()
 		                               .name( "my-other-name" )

@@ -56,7 +56,7 @@ public class WebCmsAssetServiceImpl implements WebCmsAssetService
 	}
 
 	private Optional<UriComponentsBuilder> getUriComponents( WebCmsAsset asset, WebCmsDomain domain ) {
-		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, domain );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, domain ).orElse( null );
 		return uriComponentsService.buildUriComponents( endpoint, domain ).map( uriComponents -> endpointService.appendPreviewCode( endpoint, uriComponents ) );
 	}
 }

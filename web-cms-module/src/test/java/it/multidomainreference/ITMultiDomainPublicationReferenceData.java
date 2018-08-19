@@ -25,6 +25,8 @@ import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 
 public class ITMultiDomainPublicationReferenceData extends AbstractMultiDomainCmsApplicationWithTestDataIT
@@ -40,53 +42,53 @@ public class ITMultiDomainPublicationReferenceData extends AbstractMultiDomainCm
 
 	@Test
 	public void musicNlPublicationShouldHaveBeenDeleted() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "music", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "music", domain ).orElse( null );
 		assertNull( publication );
 	}
 
 	@Test
 	public void musicBePublicationShouldHaveBeenImportedAndExtended() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "music", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "music", domain ).orElse( null );
 		assertNotNull( publication );
 		assertEquals( "wcm:asset:publication:music-be", publication.getObjectId() );
 		assertEquals( "Music (BE)", publication.getName() );
-		assertEquals( pageRepository.findOneByCanonicalPathAndDomain( "/facts/*", domain ), publication.getArticleTemplatePage() );
+		assertEquals( pageRepository.findOneByCanonicalPathAndDomain( "/facts/*", domain ), Optional.of( publication.getArticleTemplatePage() ) );
 	}
 
 	@Test
 	public void musicDePublicationShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "music", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "music", domain ).orElse( null );
 		assertNotNull( publication );
 		assertEquals( "wcm:asset:publication:music-de", publication.getObjectId() );
 		assertEquals( "Music (DE)", publication.getName() );
-		assertEquals( pageRepository.findOneByCanonicalPathAndDomain( "/facts/*", null ), publication.getArticleTemplatePage() );
+		assertEquals( pageRepository.findOneByCanonicalPathAndDomain( "/facts/*", null ), Optional.of( publication.getArticleTemplatePage() ) );
 	}
 
 	@Test
 	public void moviesNlShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "movies", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "movies", domain ).orElse( null );
 		assertNotNull( publication );
 		assertEquals( "Movies (NL)", publication.getName() );
-		assertEquals( pageRepository.findOneByCanonicalPathAndDomain( "/facts/*", domain ), publication.getArticleTemplatePage() );
+		assertEquals( pageRepository.findOneByCanonicalPathAndDomain( "/facts/*", domain ), Optional.of( publication.getArticleTemplatePage() ) );
 	}
 
 	@Test
 	public void moviesDeShouldHaveBeenImportedAndExtended() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "movies", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "movies", domain ).orElse( null );
 		assertNotNull( publication );
 		assertEquals( "Movies (DE)", publication.getName() );
-		assertEquals( pageRepository.findOneByCanonicalPathAndDomain( "/facts/*", null ), publication.getArticleTemplatePage() );
+		assertEquals( pageRepository.findOneByCanonicalPathAndDomain( "/facts/*", null ), Optional.of( publication.getArticleTemplatePage() ) );
 	}
 
 	@Test
 	public void moviesBeShouldHaveBeenDeleted() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "movies", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "movies", domain ).orElse( null );
 		assertNull( publication );
 	}
 }

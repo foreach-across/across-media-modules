@@ -40,6 +40,7 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.foreach.across.modules.webcms.domain.article.QWebCmsArticleType.webCmsArticleType;
@@ -194,7 +195,7 @@ public class ITDefaultObjects
 		assertEquals( typeKey, componentType.getTypeKey() );
 		assertNotNull( componentType.getDescription() );
 		assertEquals( attributes, new HashMap<>( componentType.getAttributes() ) );
-		assertEquals( componentType, typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "component", typeKey, WebCmsDomain.NONE ) );
+		assertEquals( Optional.of( componentType ), typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "component", typeKey, WebCmsDomain.NONE ) );
 	}
 
 	private void verifyPageTypes( AcrossContextBeanRegistry beanRegistry ) {
@@ -209,7 +210,7 @@ public class ITDefaultObjects
 		assertEquals( "default", defaultPageType.getTypeKey() );
 		assertTrue( defaultPageType.isPublishable() );
 		assertTrue( defaultPageType.hasEndpoint() );
-		assertEquals( defaultPageType, typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "page", "default", WebCmsDomain.NONE ) );
+		assertEquals( Optional.of( defaultPageType ), typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "page", "default", WebCmsDomain.NONE ) );
 
 		WebCmsPageType templatePageType = pageTypeRepository.findOne( QWebCmsPageType.webCmsPageType.objectId.eq( "wcm:type:page:template" ) ).orElse( null );
 		assertNotNull( templatePageType );
@@ -219,7 +220,8 @@ public class ITDefaultObjects
 		assertEquals( "template", templatePageType.getTypeKey() );
 		assertFalse( templatePageType.isPublishable() );
 		assertFalse( templatePageType.hasEndpoint() );
-		assertEquals( templatePageType, typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "page", "template", WebCmsDomain.NONE ) );
+		assertEquals( Optional.of( templatePageType ),
+		              typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "page", "template", WebCmsDomain.NONE ) );
 	}
 
 	private void verifyArticleTypes( AcrossContextBeanRegistry beanRegistry ) {
@@ -233,7 +235,7 @@ public class ITDefaultObjects
 		assertEquals( "News", newsType.getName() );
 		assertEquals( "news", newsType.getTypeKey() );
 		assertEquals( "blog", newsType.getAttribute( "parent" ) );
-		assertEquals( newsType, typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "article", "news", WebCmsDomain.NONE ) );
+		assertEquals( Optional.of( newsType ), typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "article", "news", WebCmsDomain.NONE ) );
 
 		WebCmsArticleType blogType = articleTypeRepository.findOne( webCmsArticleType.objectId.eq( "wcm:type:article:blog" ) ).orElse( null );
 		assertNotNull( blogType );
@@ -242,7 +244,7 @@ public class ITDefaultObjects
 		assertEquals( "Blog", blogType.getName() );
 		assertEquals( "blog", blogType.getTypeKey() );
 		assertNull( blogType.getAttribute( "parent" ) );
-		assertEquals( blogType, typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "article", "blog", WebCmsDomain.NONE ) );
+		assertEquals( Optional.of( blogType ), typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "article", "blog", WebCmsDomain.NONE ) );
 	}
 
 	private void verifyPublicationTypes( AcrossContextBeanRegistry beanRegistry ) {
@@ -256,11 +258,11 @@ public class ITDefaultObjects
 		assertEquals( "publication", newsType.getObjectType() );
 		assertEquals( "News", newsType.getName() );
 		assertEquals( "news", newsType.getTypeKey() );
-		assertEquals( newsType, typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "news", WebCmsDomain.NONE ) );
+		assertEquals( Optional.of( newsType ), typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "news", WebCmsDomain.NONE ) );
 
 		assertEquals(
 				Collections.singletonList( typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( WebCmsArticleType.OBJECT_TYPE, "news",
-				                                                                                           WebCmsDomain.NONE ) ),
+				                                                                                           WebCmsDomain.NONE ).orElse( null ) ),
 				typeSpecifierLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( newsType.getObjectId(), WebCmsArticleType.OBJECT_TYPE )
 				                           .stream()
 				                           .map( WebCmsTypeSpecifierLink::getTypeSpecifier )
@@ -273,11 +275,11 @@ public class ITDefaultObjects
 		assertEquals( "publication", blogType.getObjectType() );
 		assertEquals( "Blog", blogType.getName() );
 		assertEquals( "blog", blogType.getTypeKey() );
-		assertEquals( blogType, typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "blog", WebCmsDomain.NONE ) );
+		assertEquals( Optional.of( blogType ), typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "blog", WebCmsDomain.NONE ) );
 
 		assertEquals(
 				Collections.singletonList( typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( WebCmsArticleType.OBJECT_TYPE, "blog",
-				                                                                                           WebCmsDomain.NONE ) ),
+				                                                                                           WebCmsDomain.NONE ).orElse( null ) ),
 				typeSpecifierLinkRepository.findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( blogType.getObjectId(), WebCmsArticleType.OBJECT_TYPE )
 				                           .stream()
 				                           .map( WebCmsTypeSpecifierLink::getTypeSpecifier )
@@ -294,7 +296,7 @@ public class ITDefaultObjects
 		assertEquals( "wcm:asset:publication:news", news.getObjectId() );
 		assertEquals( "News", news.getName() );
 		assertEquals( "news", news.getPublicationKey() );
-		assertEquals( publicationTypeRepository.findOneByTypeKeyAndDomain( "news", WebCmsDomain.NONE ), news.getPublicationType() );
+		assertEquals( publicationTypeRepository.findOneByTypeKeyAndDomain( "news", WebCmsDomain.NONE ), Optional.of( news.getPublicationType() ) );
 
 		WebCmsPage newsTemplatePage = news.getArticleTemplatePage();
 		assertNotNull( newsTemplatePage );
@@ -306,7 +308,7 @@ public class ITDefaultObjects
 		assertEquals( "wcm:asset:publication:blogs", blogs.getObjectId() );
 		assertEquals( "Blogs", blogs.getName() );
 		assertEquals( "blogs", blogs.getPublicationKey() );
-		assertEquals( publicationTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ), blogs.getPublicationType() );
+		assertEquals( publicationTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ), Optional.of( blogs.getPublicationType() ) );
 
 		WebCmsPage blogTemplatePage = blogs.getArticleTemplatePage();
 		assertNotNull( blogTemplatePage );

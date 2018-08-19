@@ -97,7 +97,7 @@ public class TestWebCmsUriComponentsService
 		WebCmsAsset asset = new WebCmsArticle();
 
 		when( multiDomainService.isDomainBound( eq( asset ) ) ).thenReturn( false );
-		when( assetEndpointRepository.findOneByAssetAndDomain( asset, WebCmsDomain.NONE ) ).thenReturn( new WebCmsAssetEndpoint() );
+		when( assetEndpointRepository.findOneByAssetAndDomain( asset, WebCmsDomain.NONE ) ).thenReturn( Optional.of( new WebCmsAssetEndpoint() ) );
 
 		Optional<UriComponentsBuilder> uriComponents = uriComponentsService.buildUriComponents( asset );
 
@@ -113,7 +113,7 @@ public class TestWebCmsUriComponentsService
 		WebCmsAssetEndpoint endpoint = new WebCmsAssetEndpoint();
 		asset.setDomain( domain );
 
-		when( assetEndpointRepository.findOneByAssetAndDomain( asset, domain ) ).thenReturn( endpoint );
+		when( assetEndpointRepository.findOneByAssetAndDomain( asset, domain ) ).thenReturn( Optional.of( endpoint ) );
 
 		Optional<UriComponentsBuilder> uriComponents = uriComponentsService.buildUriComponents( asset, domain );
 

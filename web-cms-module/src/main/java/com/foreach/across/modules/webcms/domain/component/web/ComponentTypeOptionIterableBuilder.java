@@ -62,7 +62,7 @@ public class ComponentTypeOptionIterableBuilder implements OptionIterableBuilder
 			ownerObjectId = ( (WebCmsComponent) entity ).getOwnerObjectId();
 		}
 
-		WebCmsObject owner = componentRepository.findOneByObjectId( ownerObjectId );
+		WebCmsObject owner = componentRepository.findOneByObjectId( ownerObjectId ).orElse( null );
 
 		Collection<WebCmsComponentType> allowedTypes = getAllowedTypes( owner, multiDomainService.getCurrentDomain() );
 

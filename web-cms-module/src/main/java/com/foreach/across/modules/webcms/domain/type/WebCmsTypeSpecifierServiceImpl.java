@@ -49,7 +49,7 @@ class WebCmsTypeSpecifierServiceImpl implements WebCmsTypeSpecifierService
 
 	@Override
 	public WebCmsTypeSpecifier<?> getTypeSpecifier( String objectId ) {
-		return typeSpecifierRepository.findOneByObjectId( objectId );
+		return typeSpecifierRepository.findOneByObjectId( objectId ).orElse( null );
 	}
 
 	@Override
@@ -63,10 +63,10 @@ class WebCmsTypeSpecifierServiceImpl implements WebCmsTypeSpecifierService
 				() -> new IllegalArgumentException( "Unknown WebCmsTypeSpecifier: " + expectedType + ", must be registered in the WebCmsTypeRegistry" )
 		);
 
-		WebCmsTypeSpecifier candidate = typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( objectType, typeKey, domain );
+		WebCmsTypeSpecifier candidate = typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( objectType, typeKey, domain ).orElse( null );
 
 		if ( candidate == null && !WebCmsDomain.isNoDomain( domain ) && multiDomainService.isNoDomainAllowed( expectedType ) ) {
-			candidate = typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( objectType, typeKey, WebCmsDomain.NONE );
+			candidate = typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( objectType, typeKey, WebCmsDomain.NONE ).orElse( null );
 		}
 
 		return expectedType.cast( candidate );

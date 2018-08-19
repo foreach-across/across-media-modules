@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Sander Van Loock
@@ -33,7 +34,7 @@ import java.util.List;
 @Exposed
 public interface WebCmsAssetEndpointRepository extends IdBasedEntityJpaRepository<WebCmsAssetEndpoint>, QuerydslPredicateExecutor<WebCmsAssetEndpoint>
 {
-	WebCmsAssetEndpoint findOneByAssetAndDomain( WebCmsAsset asset, WebCmsDomain domain );
+	Optional<WebCmsAssetEndpoint> findOneByAssetAndDomain( WebCmsAsset asset, WebCmsDomain domain );
 
 	List<WebCmsAssetEndpoint> findAllByAsset( WebCmsAsset asset );
 

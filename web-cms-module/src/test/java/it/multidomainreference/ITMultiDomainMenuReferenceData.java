@@ -57,7 +57,7 @@ public class ITMultiDomainMenuReferenceData extends AbstractMultiDomainCmsApplic
 
 	@Test
 	public void topNavShouldHaveBeenImported() {
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", null );
+		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", null ).orElse( null );
 		assertNotNull( menu );
 		assertEquals( "wcm:menu:top-nav", menu.getObjectId() );
 		assertEquals( "A top navigation menu not bound to any domain.", menu.getDescription() );
@@ -66,32 +66,32 @@ public class ITMultiDomainMenuReferenceData extends AbstractMultiDomainCmsApplic
 
 	@Test
 	public void topNavForeachBeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", domain ).orElse( null );
 		assertNotNull( menu );
 		assertEquals( "A top navigation menu bound to be-foreach domain.", menu.getDescription() );
 	}
 
 	@Test
 	public void sideNavForeachBeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "sideNav", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "sideNav", domain ).orElse( null );
 		assertNotNull( menu );
 		assertEquals( "A side navigation menu bound to be-foreach domain.", menu.getDescription() );
 	}
 
 	@Test
 	public void topNavForeachDeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByObjectId( "wcm:domain:de-foreach" );
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", domain );
+		WebCmsDomain domain = domainRepository.findOneByObjectId( "wcm:domain:de-foreach" ).orElse( null );
+		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", domain ).orElse( null );
 		assertNotNull( menu );
 		assertEquals( "A top navigation menu bound to de-foreach domain.", menu.getDescription() );
 	}
 
 	@Test
 	public void topNavForeachBeMenuItemsShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", domain ).orElse( null );
 		Map<String, WebCmsMenuItem> map = new ArrayList<>( menuItemRepository.findAllByMenu( menu ) )
 				.stream()
 				.collect( Collectors.toMap( WebCmsMenuItem::getPath, Function.identity() ) );
@@ -102,8 +102,8 @@ public class ITMultiDomainMenuReferenceData extends AbstractMultiDomainCmsApplic
 
 	@Test
 	public void topNavForeachDeMenuItemsShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByObjectId( "wcm:domain:de-foreach" );
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", domain );
+		WebCmsDomain domain = domainRepository.findOneByObjectId( "wcm:domain:de-foreach" ).orElse( null );
+		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( "topNav", domain ).orElse( null );
 		Map<String, WebCmsMenuItem> map = new ArrayList<>( menuItemRepository.findAllByMenu( menu ) )
 				.stream()
 				.collect( Collectors.toMap( WebCmsMenuItem::getPath, Function.identity() ) );
@@ -114,15 +114,17 @@ public class ITMultiDomainMenuReferenceData extends AbstractMultiDomainCmsApplic
 
 	@Test
 	public void homepageForeachBeShouldHaveMenusImported() {
-		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:home-be-foreach" );
+		WebCmsPage page = pageRepository.findOneByObjectId( "wcm:asset:page:home-be-foreach" ).orElse( null );
 		assertNotNull( page );
-		List<WebCmsMenuItem> items = new ArrayList<>( menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page, page.getDomain() ) ) );
+		List<WebCmsMenuItem> items = new ArrayList<>( menuItemRepository.findAllByEndpoint( endpointRepository.findOneByAssetAndDomain( page, page.getDomain() )
+		                                                                                                      .orElse( null ) ) );
 		assertEquals( 2, items.size() );
 
 		Map<String, WebCmsMenuItem> map = items.stream().collect( Collectors.toMap( menuItem -> menuItem.getMenu().getName(), Function.identity() ) );
 
 		assertMenuItem( "/home-be", "Homepage (BE)", null, false, 0, true, map.get( "sideNav" ), page.getDomain() );
-		assertMenuItem( "/help/faq", "FAQ", null, false, 10, false, map.get( "topNav" ), domainRepository.findOneByDomainKey( "de-foreach" ) );
+		assertMenuItem( "/help/faq", "FAQ", null, false, 10, false, map.get( "topNav" ),
+		                domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null ) );
 	}
 
 	private void assertMenuItem( String path,

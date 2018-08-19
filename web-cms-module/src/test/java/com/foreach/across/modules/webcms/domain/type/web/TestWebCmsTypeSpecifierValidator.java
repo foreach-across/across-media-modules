@@ -64,11 +64,11 @@ public class TestWebCmsTypeSpecifierValidator
 
 	@Test
 	public void typeKeyMustBeUniqueWithinNoDomain() {
-		WebCmsTypeSpecifier articleType = WebCmsArticleType.builder()
-		                                                   .name( "My first article type" )
-		                                                   .typeKey( "test-article-type" )
-		                                                   .build();
-		when( repository.findOneByObjectTypeAndTypeKeyAndDomain( any(), any(), eq( null ) ) ).thenReturn( articleType );
+		WebCmsArticleType articleType = WebCmsArticleType.builder()
+		                                                 .name( "My first article type" )
+		                                                 .typeKey( "test-article-type" )
+		                                                 .build();
+		when( repository.findOneByObjectTypeAndTypeKeyAndDomain( any(), any(), eq( null ) ) ).thenReturn( Optional.of( articleType ) );
 		WebCmsTypeSpecifier newArticleType = WebCmsArticleType.builder()
 		                                                      .name( "My second article type" )
 		                                                      .typeKey( "test-article-type" )
@@ -82,12 +82,12 @@ public class TestWebCmsTypeSpecifierValidator
 	@Test
 	public void typeKeyMustBeUniqueWithinDomain() {
 		WebCmsDomain domain = WebCmsDomain.builder().domainKey( "my-domain" ).build();
-		WebCmsTypeSpecifier articleType = WebCmsArticleType.builder()
-		                                                   .name( "My first article type" )
-		                                                   .typeKey( "test-article-type" )
-		                                                   .domain( domain )
-		                                                   .build();
-		when( repository.findOneByObjectTypeAndTypeKeyAndDomain( any(), any(), eq( domain ) ) ).thenReturn( articleType );
+		WebCmsArticleType articleType = WebCmsArticleType.builder()
+		                                                 .name( "My first article type" )
+		                                                 .typeKey( "test-article-type" )
+		                                                 .domain( domain )
+		                                                 .build();
+		when( repository.findOneByObjectTypeAndTypeKeyAndDomain( any(), any(), eq( domain ) ) ).thenReturn( Optional.of( articleType ) );
 		WebCmsTypeSpecifier newArticleType = WebCmsArticleType.builder()
 		                                                      .name( "My second article type" )
 		                                                      .typeKey( "test-article-type" )
@@ -101,12 +101,12 @@ public class TestWebCmsTypeSpecifierValidator
 
 	@Test
 	public void objectIdMustBeUnique() {
-		WebCmsTypeSpecifier articleType = WebCmsArticleType.builder()
-		                                                   .name( "My first article type" )
-		                                                   .typeKey( "first-test-article-type" )
-		                                                   .objectId( "wcm:type:test-article-type" )
-		                                                   .build();
-		when( repository.findOneByObjectId( articleType.getObjectId() ) ).thenReturn( articleType );
+		WebCmsArticleType articleType = WebCmsArticleType.builder()
+		                                                 .name( "My first article type" )
+		                                                 .typeKey( "first-test-article-type" )
+		                                                 .objectId( "wcm:type:test-article-type" )
+		                                                 .build();
+		when( repository.findOneByObjectId( articleType.getObjectId() ) ).thenReturn( Optional.of( articleType ) );
 		WebCmsArticleType newArticleType = WebCmsArticleType.builder()
 		                                                    .name( "My second article type" )
 		                                                    .typeKey( "second-test-article-type" )

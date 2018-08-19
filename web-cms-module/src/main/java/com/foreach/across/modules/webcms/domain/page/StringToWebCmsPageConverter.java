@@ -55,6 +55,6 @@ public final class StringToWebCmsPageConverter implements Converter<String, WebC
 			return pageService.findByCanonicalPath( source ).orElse( null );
 		}
 
-		return pageRepository.findOneByObjectId( source );
+		return pageRepository.findOneByObjectId( source ).orElse( null );
 	}
 }

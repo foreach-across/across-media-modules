@@ -61,17 +61,15 @@ public final class WebCmsPublicationValidator extends EntityValidatorSupport<Web
 		}
 
 		if ( !errors.hasFieldErrors( "publicationKey" ) ) {
-			WebCmsPublication existing = publicationRepository.findOneByPublicationKeyAndDomain( entity.getPublicationKey(), entity.getDomain() );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "publicationKey", "alreadyExists" );
-			}
+			publicationRepository.findOneByPublicationKeyAndDomain( entity.getPublicationKey(), entity.getDomain() )
+			                     .filter( existing -> !entity.equals( existing ) )
+			                     .ifPresent( e -> errors.rejectValue( "publicationKey", "alreadyExists" ) );
 		}
 
 		if ( !errors.hasFieldErrors( "publicationKey" ) && !errors.hasFieldErrors( "objectId" ) ) {
-			WebCmsPublication existing = publicationRepository.findOneByObjectId( entity.getObjectId() );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "objectId", "alreadyExists" );
-			}
+			publicationRepository.findOneByObjectId( entity.getObjectId() )
+			                     .filter( existing -> !entity.equals( existing ) )
+			                     .ifPresent( e -> errors.rejectValue( "objectId", "alreadyExists" ) );
 		}
 	}
 }

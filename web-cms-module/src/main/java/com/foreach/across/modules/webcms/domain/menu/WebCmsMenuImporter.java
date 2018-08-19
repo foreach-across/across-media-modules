@@ -53,10 +53,10 @@ public class WebCmsMenuImporter extends AbstractWebCmsDataImporter<WebCmsMenu, W
 		String dataKey = data.getMapData().containsKey( "name" ) ? (String) data.getMapData().get( "name" ) : data.getKey();
 		String objectId = (String) data.getMapData().get( "objectId" );
 		if ( objectId != null ) {
-			return webCmsMenuRepository.findOneByObjectId( objectId );
+			return webCmsMenuRepository.findOneByObjectId( objectId ).orElse( null );
 		}
 		WebCmsDomain domain = retrieveDomainForDataEntry( data, WebCmsMenu.class );
-		return webCmsMenuRepository.findOneByNameAndDomain( dataKey, domain );
+		return webCmsMenuRepository.findOneByNameAndDomain( dataKey, domain ).orElse( null );
 	}
 
 	@Override

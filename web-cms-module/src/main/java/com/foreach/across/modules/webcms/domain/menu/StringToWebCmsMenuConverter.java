@@ -49,7 +49,7 @@ public class StringToWebCmsMenuConverter implements Converter<String, WebCmsMenu
 		}
 
 		if ( WebCmsUtils.isObjectIdForCollection( value, WebCmsMenu.COLLECTION_ID ) ) {
-			return webCmsMenuRepository.findOneByObjectId( value );
+			return webCmsMenuRepository.findOneByObjectId( value ).orElse( null );
 		}
 
 		return menuService.getMenuByName( value );

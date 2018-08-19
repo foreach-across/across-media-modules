@@ -21,6 +21,7 @@ import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Arne Vandamme
@@ -29,7 +30,7 @@ import java.util.List;
 @Exposed
 public interface WebCmsComponentRepository extends WebCmsObjectEntityRepository<WebCmsComponent>
 {
-	WebCmsComponent findOneByOwnerObjectIdAndNameAndDomain( String ownerObjectId, String name, WebCmsDomain domain );
+	Optional<WebCmsComponent> findOneByOwnerObjectIdAndNameAndDomain( String ownerObjectId, String name, WebCmsDomain domain );
 
 	List<WebCmsComponent> findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( String ownerObjectId, WebCmsDomain domain );
 }

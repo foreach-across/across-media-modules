@@ -41,10 +41,10 @@ class WebCmsPublicationServiceImpl implements WebCmsPublicationService
 	@Override
 	public WebCmsPublication getPublicationByKey( String publicationKey, WebCmsDomain domain ) {
 		Assert.notNull( publicationKey, "Publication key is required" );
-		WebCmsPublication candidate = publicationRepository.findOneByPublicationKeyAndDomain( publicationKey, domain );
+		WebCmsPublication candidate = publicationRepository.findOneByPublicationKeyAndDomain( publicationKey, domain ).orElse( null );
 
 		if ( candidate == null && !WebCmsDomain.isNoDomain( domain ) && multiDomainService.isNoDomainAllowed( WebCmsPublication.class ) ) {
-			candidate = publicationRepository.findOneByPublicationKeyAndDomain( publicationKey, WebCmsDomain.NONE );
+			candidate = publicationRepository.findOneByPublicationKeyAndDomain( publicationKey, WebCmsDomain.NONE ).orElse( null );
 		}
 
 		return candidate;

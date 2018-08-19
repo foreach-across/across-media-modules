@@ -53,7 +53,7 @@ public class MenuItemsViewElementBuilder implements ViewElementBuilder<Container
 
 		QWebCmsMenu query = QWebCmsMenu.webCmsMenu;
 
-		menuRepository.findAll( multiDomainAdminUiService.applyVisibleDomainsPredicate( query.isNotNull(), query.domain ), new Sort( "description", "name" ) )
+		menuRepository.findAll( multiDomainAdminUiService.applyVisibleDomainsPredicate( query.isNotNull(), query.domain ), Sort.by( "description", "name" ) )
 		              .forEach( menu ->
 				                        options.add(
 						                        BootstrapUiBuilders.checkbox()

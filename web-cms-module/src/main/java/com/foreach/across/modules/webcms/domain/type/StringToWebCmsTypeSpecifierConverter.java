@@ -44,7 +44,7 @@ public class StringToWebCmsTypeSpecifierConverter implements ConverterFactory<St
 	@Override
 	public <T extends WebCmsTypeSpecifier> Converter<String, T> getConverter( Class<T> targetType ) {
 		return ( id ) -> {
-			WebCmsTypeSpecifier type = typeSpecifierRepository.findOneByObjectId( id );
+			WebCmsTypeSpecifier type = typeSpecifierRepository.findOneByObjectId( id ).orElse( null );
 
 			if ( type == null ) {
 				return typeSpecifierService.getTypeSpecifierByKey( id, targetType );

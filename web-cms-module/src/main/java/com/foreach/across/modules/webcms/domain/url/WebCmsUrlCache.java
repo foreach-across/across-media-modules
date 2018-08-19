@@ -62,7 +62,7 @@ public class WebCmsUrlCache
 		Cache.ValueWrapper urlId = cache.get( cacheKey );
 
 		if ( urlId == null ) {
-			WebCmsUrl url = urlRepository.findOneByPathAndEndpoint_Domain( path, domain );
+			WebCmsUrl url = urlRepository.findOneByPathAndEndpoint_Domain( path, domain ).orElse( null );
 			Optional<WebCmsUrl> value = Optional.ofNullable( url );
 			cache.put( cacheKey, value.map( WebCmsUrl::getId ).orElse( null ) );
 			return value;

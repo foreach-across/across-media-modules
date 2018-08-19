@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.webcms.domain;
 
+import java.util.Optional;
+
 /**
  * Base interface for a repository allowing lookups by global object id.
  *
@@ -24,5 +26,5 @@ package com.foreach.across.modules.webcms.domain;
  */
 public interface WebCmsObjectRepository<T extends WebCmsObject>
 {
-	T findOneByObjectId( String objectId );
+	Optional<T> findOneByObjectId( String objectId );
 }

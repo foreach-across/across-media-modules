@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.image.component;
 
-import test.AbstractWebCmsComponentModelRenderingTest;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
@@ -24,6 +23,7 @@ import com.foreach.across.modules.webcms.domain.image.WebCmsImageRepository;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import test.AbstractWebCmsComponentModelRenderingTest;
 
 import static org.junit.Assert.*;
 
@@ -69,7 +69,7 @@ public class TestImageWebCmsComponentModel extends AbstractWebCmsComponentModelR
 		val component = componentModelService.save( model );
 
 		val created = componentModelService.buildModelForComponent(
-				componentRepository.findOneByObjectId( component.getObjectId() ), ImageWebCmsComponentModel.class
+				componentRepository.findOneByObjectId( component.getObjectId() ).orElse( null ), ImageWebCmsComponentModel.class
 		);
 
 		assertEquals( image, created.getImage() );
@@ -79,7 +79,7 @@ public class TestImageWebCmsComponentModel extends AbstractWebCmsComponentModelR
 		componentModelService.save( created );
 
 		val updated = componentModelService.buildModelForComponent(
-				componentRepository.findOneByObjectId( component.getObjectId() ), ImageWebCmsComponentModel.class
+				componentRepository.findOneByObjectId( component.getObjectId() ).orElse( null ), ImageWebCmsComponentModel.class
 		);
 		assertNull( created.getImage() );
 		assertNull( created.getImageServerKey() );

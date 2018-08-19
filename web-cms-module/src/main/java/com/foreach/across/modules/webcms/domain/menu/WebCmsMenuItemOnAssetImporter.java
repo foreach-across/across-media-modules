@@ -81,7 +81,7 @@ public class WebCmsMenuItemOnAssetImporter extends AbstractWebCmsPropertyDataImp
 
 	private WebCmsMenuItem createNewMenuItemDto( WebCmsDataEntry data, WebCmsAsset asset, WebCmsEndpoint endpointToUse ) {
 		WebCmsEndpoint endpoint = endpointToUse != null
-				? endpointToUse : assetEndpointRepository.findOneByAssetAndDomain( asset, asset.getDomain() );
+				? endpointToUse : assetEndpointRepository.findOneByAssetAndDomain( asset, asset.getDomain() ).orElse( null );
 
 		if ( endpoint != null ) {
 			WebCmsMenu menu = retrieveMenu( data, asset.getDomain() );
@@ -124,7 +124,8 @@ public class WebCmsMenuItemOnAssetImporter extends AbstractWebCmsPropertyDataImp
 
 	@Override
 	protected WebCmsMenuItem getExisting( WebCmsDataEntry data, WebCmsAsset parent ) {
-		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( parent, multiDomainService.getCurrentDomainForEntity( parent ) );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( parent, multiDomainService.getCurrentDomainForEntity( parent ) )
+		                                                      .orElse( null );
 
 		if ( endpoint != null ) {
 			WebCmsMenu menu = retrieveMenu( data, parent.getDomain() );
@@ -141,6 +142,7 @@ public class WebCmsMenuItemOnAssetImporter extends AbstractWebCmsPropertyDataImp
 
 	private WebCmsMenu retrieveMenu( WebCmsDataEntry data, WebCmsDomain domain ) {
 		WebCmsDomain dataDomain = data.getMapData().containsKey( "domain" ) ? domainConverter.convert( (String) data.getMapData().get( "domain" ) ) : domain;
-		return menuRepository.findOneByNameAndDomain( StringUtils.defaultString( (String) data.getMapData().get( "menu" ), data.getKey() ), dataDomain );
+		return menuRepository.findOneByNameAndDomain( StringUtils.defaultString( (String) data.getMapData().get( "menu" ), data.getKey() ), dataDomain )
+		                     .orElse( null );
 	}
 }

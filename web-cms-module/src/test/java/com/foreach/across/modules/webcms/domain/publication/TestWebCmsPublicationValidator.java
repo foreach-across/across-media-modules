@@ -99,7 +99,7 @@ public class TestWebCmsPublicationValidator
 		                                                 .name( "publication name" )
 		                                                 .publicationKey( "publication-key" )
 		                                                 .build();
-		when( publicationRepository.findOneByPublicationKeyAndDomain( "publication-key", null ) ).thenReturn( publication );
+		when( publicationRepository.findOneByPublicationKeyAndDomain( "publication-key", null ) ).thenReturn( Optional.of( publication ) );
 		WebCmsPublication newPublication = WebCmsPublication.builder()
 		                                                    .publicationKey( "publication-key" )
 		                                                    .name( "my name" )
@@ -120,7 +120,7 @@ public class TestWebCmsPublicationValidator
 		                                                 .publicationKey( "publication-key" )
 		                                                 .objectId( "objectId" )
 		                                                 .build();
-		when( publicationRepository.findOneByObjectId( "wcm:asset:publication:objectId" ) ).thenReturn( publication );
+		when( publicationRepository.findOneByObjectId( "wcm:asset:publication:objectId" ) ).thenReturn( Optional.of( publication ) );
 		WebCmsPublication newPublication = WebCmsPublication.builder()
 		                                                    .publicationKey( "new-publication-key" )
 		                                                    .name( "my name" )

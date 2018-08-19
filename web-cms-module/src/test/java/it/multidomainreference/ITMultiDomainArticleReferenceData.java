@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -52,43 +53,43 @@ public class ITMultiDomainArticleReferenceData extends AbstractMultiDomainCmsApp
 
 	@Test
 	public void devTalksNlShouldHaveBeenDeleted() {
-		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:devtalks-nl" );
+		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:devtalks-nl" ).orElse( null );
 		assertNull( article );
 	}
 
 	@Test
 	public void devTalksDeShouldHaveBeenImported() {
-		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:devtalks-de" );
+		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:devtalks-de" ).orElse( null );
 		assertNotNull( article );
 		assertEquals( "DevTalks Maart (DE)", article.getTitle() );
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		assertEquals( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ), article.getArticleType() );
-		assertEquals( publicationRepository.findOneByObjectId( "wcm:asset:publication:devtalks-de" ), article.getPublication() );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		assertEquals( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ), Optional.of( article.getArticleType() ) );
+		assertEquals( publicationRepository.findOneByObjectId( "wcm:asset:publication:devtalks-de" ), Optional.of( article.getPublication() ) );
 		assertEquals( domain, article.getDomain() );
 	}
 
 	@Test
 	public void devTalksBeShouldHaveBeenImportedAndExtended() {
-		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:devtalks-be" );
+		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:devtalks-be" ).orElse( null );
 		assertNotNull( article );
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
 		assertNotNull( domain );
 		assertEquals( "DevTalks Maart (BE)", article.getTitle() );
-		assertEquals( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ), article.getArticleType() );
-		assertEquals( publicationRepository.findOneByObjectId( "wcm:asset:publication:devtalks-be" ), article.getPublication() );
+		assertEquals( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ), Optional.of( article.getArticleType() ) );
+		assertEquals( publicationRepository.findOneByObjectId( "wcm:asset:publication:devtalks-be" ), Optional.of( article.getPublication() ) );
 		assertEquals( domain, article.getDomain() );
 	}
 
 	@Test
 	public void bigArticleArticleTypeShouldHaveBeenImportedAndExtended() {
-		WebCmsArticleType bigArticle = articleTypeRepository.findOneByObjectId( "wcm:type:article:big-article" );
+		WebCmsArticleType bigArticle = articleTypeRepository.findOneByObjectId( "wcm:type:article:big-article" ).orElse( null );
 		assertNotNull( bigArticle );
-		assertEquals( domainRepository.findOneByDomainKey( "be-foreach" ), bigArticle.getDomain() );
+		assertEquals( domainRepository.findOneByDomainKey( "be-foreach" ), Optional.of( bigArticle.getDomain() ) );
 	}
 
 	@Test
 	public void webCmsMultiDomArticleShouldHaveBeenImported() {
-		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:webcms-multi-dom" );
+		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:webcms-multi-dom" ).orElse( null );
 		assertNotNull( article );
 		List<WebCmsComponent> components = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( article.getObjectId(), article.getDomain() );
 		assertEquals( 1, components.size() );
@@ -97,7 +98,7 @@ public class ITMultiDomainArticleReferenceData extends AbstractMultiDomainCmsApp
 
 	@Test
 	public void webCmsMultiDomBeArticleShouldHaveBeenImported() {
-		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:webcms-multi-dom-be" );
+		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:webcms-multi-dom-be" ).orElse( null );
 		assertNotNull( article );
 		List<WebCmsComponent> components = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( article.getObjectId(), article.getDomain() );
 		assertEquals( 1, components.size() );

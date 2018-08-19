@@ -68,7 +68,7 @@ public class TestDefaultWebCmsPageService
 
 	@Test
 	public void findByCanonicalPath() {
-		when( pageRepository.findOneByCanonicalPathAndDomain( "custom path", null ) ).thenReturn( page );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "custom path", null ) ).thenReturn( Optional.of( page ) );
 		assertEquals( Optional.of( page ), pageService.findByCanonicalPath( "custom path" ) );
 		verify( pageRepository, times( 1 ) ).findOneByCanonicalPathAndDomain( "custom path", null );
 	}
@@ -76,7 +76,7 @@ public class TestDefaultWebCmsPageService
 	@Test
 	public void findByCanonicalPathAndDomain() {
 		WebCmsDomain domain = new WebCmsDomain();
-		when( pageRepository.findOneByCanonicalPathAndDomain( "custom path", domain ) ).thenReturn( page );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "custom path", domain ) ).thenReturn( Optional.of( page ) );
 		assertEquals( Optional.of( page ), pageService.findByCanonicalPathAndDomain( "custom path", domain ) );
 		verify( pageRepository, times( 1 ) ).findOneByCanonicalPathAndDomain( "custom path", domain );
 	}

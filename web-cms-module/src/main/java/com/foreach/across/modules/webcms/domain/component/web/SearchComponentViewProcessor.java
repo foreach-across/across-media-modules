@@ -283,7 +283,7 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 	}
 
 	private void addComponentToBreadcrumb( String parent, NodeViewElementBuilder breadcrumb, boolean asLink ) {
-		WebCmsComponent owner = componentRepository.findOneByObjectId( parent );
+		WebCmsComponent owner = componentRepository.findOneByObjectId( parent ).orElse( null );
 
 		if ( owner != null ) {
 			String url = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -339,10 +339,10 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 	}
 
 	private WebCmsObject retrieveOwner( String ownerId ) {
-		WebCmsObject owner = assetRepository.findOneByObjectId( ownerId );
+		WebCmsObject owner = assetRepository.findOneByObjectId( ownerId ).orElse( null );
 
 		if ( owner == null ) {
-			owner = typeSpecifierRepository.findOneByObjectId( ownerId );
+			owner = typeSpecifierRepository.findOneByObjectId( ownerId ).orElse( null );
 		}
 
 		return owner;

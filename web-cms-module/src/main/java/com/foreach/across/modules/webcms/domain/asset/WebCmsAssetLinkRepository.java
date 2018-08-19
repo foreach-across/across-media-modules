@@ -21,6 +21,7 @@ import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRep
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Steven Gentens
@@ -33,5 +34,5 @@ public interface WebCmsAssetLinkRepository extends IdBasedEntityJpaRepository<We
 
 	List<WebCmsAssetLink> findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( String ownerObjectId, String linkType );
 
-	WebCmsAssetLink findOneByOwnerObjectIdAndLinkTypeAndAsset( String ownerObjectId, String linkType, WebCmsAsset asset );
+	Optional<WebCmsAssetLink> findOneByOwnerObjectIdAndLinkTypeAndAsset( String ownerObjectId, String linkType, WebCmsAsset asset );
 }

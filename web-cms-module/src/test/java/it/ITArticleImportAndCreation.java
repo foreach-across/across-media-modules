@@ -88,11 +88,12 @@ public class ITArticleImportAndCreation extends AbstractCmsApplicationIT
 
 	@Test
 	public void creatingArticleSetsComponentsAttachedToTheArticleType() throws Exception {
-		WebCmsArticle blog = WebCmsArticle.builder()
-		                                  .articleType( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ) )
-		                                  .publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ) )
-		                                  .title( "Blog article" )
-		                                  .build();
+		WebCmsArticle blog = WebCmsArticle
+				.builder()
+				.articleType( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ).orElse( null ) )
+				.publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ).orElse( null ) )
+				.title( "Blog article" )
+				.build();
 		articleRepository.save( blog );
 
 		assertDefaultBodyComponent( blog );

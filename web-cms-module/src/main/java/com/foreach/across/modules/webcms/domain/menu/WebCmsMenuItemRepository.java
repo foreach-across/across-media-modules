@@ -22,6 +22,7 @@ import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * @author Arne Vandamme
@@ -34,5 +35,5 @@ public interface WebCmsMenuItemRepository extends IdBasedEntityJpaRepository<Web
 
 	Collection<WebCmsMenuItem> findAllByEndpoint( WebCmsEndpoint endpoint );
 
-	WebCmsMenuItem findByMenuAndPath( WebCmsMenu menu, String path );
+	Optional<WebCmsMenuItem> findByMenuAndPath( WebCmsMenu menu, String path );
 }

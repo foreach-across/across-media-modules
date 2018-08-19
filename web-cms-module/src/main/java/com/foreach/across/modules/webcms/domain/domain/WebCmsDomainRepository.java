@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Arne Vandamme
@@ -33,7 +34,7 @@ import java.util.List;
 @Exposed
 public interface WebCmsDomainRepository extends WebCmsObjectRepository<WebCmsDomain>, IdBasedEntityJpaRepository<WebCmsDomain>, QuerydslPredicateExecutor<WebCmsDomain>
 {
-	WebCmsDomain findOneByDomainKey( String domainKey );
+	Optional<WebCmsDomain> findOneByDomainKey( String domainKey );
 
 	@Override
 	List<WebCmsDomain> findAll( Predicate predicate );

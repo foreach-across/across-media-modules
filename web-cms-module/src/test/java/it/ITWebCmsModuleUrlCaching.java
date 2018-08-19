@@ -102,7 +102,7 @@ public class ITWebCmsModuleUrlCaching
 		                 .build();
 		pageRepository.save( page );
 
-		endpoint = endpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE );
+		endpoint = endpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ).orElse( null );
 	}
 
 	@Test

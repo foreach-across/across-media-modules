@@ -154,7 +154,9 @@ public class WebCmsAssetUrlConfiguration
 				WebCmsUrl url = new WebCmsUrl();
 				if ( args[0] instanceof WebCmsAsset ) {
 					WebCmsAsset asset = (WebCmsAsset) args[0];
-					url.setEndpoint( endpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) ) );
+					url.setEndpoint(
+							endpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) ).orElse( null )
+					);
 				}
 
 				return url;

@@ -66,7 +66,7 @@ public class TestWebCmsDomainValidator
 		                                  .name( "Test Domain" )
 		                                  .domainKey( "test-domain" )
 		                                  .build();
-		when( repository.findOneByDomainKey( domain.getDomainKey() ) ).thenReturn( domain );
+		when( repository.findOneByDomainKey( domain.getDomainKey() ) ).thenReturn( Optional.of( domain ) );
 		WebCmsDomain newDomain = WebCmsDomain.builder()
 		                                     .name( "Another Domain" )
 		                                     .domainKey( "test-domain" )
@@ -84,7 +84,7 @@ public class TestWebCmsDomainValidator
 		                                  .domainKey( "test-domain" )
 		                                  .objectId( "wcm:domain:test-domain" )
 		                                  .build();
-		when( repository.findOneByObjectId( domain.getObjectId() ) ).thenReturn( domain );
+		when( repository.findOneByObjectId( domain.getObjectId() ) ).thenReturn( Optional.of( domain ) );
 		WebCmsDomain newDomain = WebCmsDomain.builder()
 		                                     .name( "Another Domain" )
 		                                     .domainKey( "another-domain" )

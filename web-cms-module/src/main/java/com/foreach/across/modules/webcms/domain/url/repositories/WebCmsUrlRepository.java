@@ -29,6 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Sander Van Loock
@@ -37,7 +38,7 @@ import java.util.List;
 @Exposed
 public interface WebCmsUrlRepository extends IdBasedEntityJpaRepository<WebCmsUrl>, QuerydslPredicateExecutor<WebCmsUrl>
 {
-	WebCmsUrl findOneByPathAndEndpoint_Domain( String path, WebCmsDomain domain );
+	Optional<WebCmsUrl> findOneByPathAndEndpoint_Domain( String path, WebCmsDomain domain );
 
 	List<WebCmsUrl> findAllByEndpoint( WebCmsEndpoint entity );
 

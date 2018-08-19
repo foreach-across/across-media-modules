@@ -53,7 +53,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	@Before
 	public void setUp() throws Exception {
 		if ( html == null ) {
-			domain = domainRepository.findOneByDomainKey( "be-foreach" );
+			domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
 			assertNotNull( domain );
 
 			page = pageService.findByCanonicalPathAndDomain( "/auto-create-creation-scope", domain )
@@ -115,7 +115,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 
 		val text = componentModelService.getComponentModelByNameAndDomain( "global-markup2", null, WebCmsDomain.NONE, TextWebCmsComponentModel.class );
 		assertNotNull( text );
-		assertNull( text.getDomain());
+		assertNull( text.getDomain() );
 		assertEquals( "global-markup2", text.getName() );
 		assertEquals( "Global markup2", text.getTitle() );
 		assertEquals( "Global markup2: Auto create creation scope", text.getContent() );

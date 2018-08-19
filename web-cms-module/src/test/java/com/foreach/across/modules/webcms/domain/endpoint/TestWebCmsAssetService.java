@@ -98,7 +98,7 @@ public class TestWebCmsAssetService
 		when( urlConfigurer.isAlwaysPrefix() ).thenReturn( true );
 		when( urlConfigurer.getUrlPrefix() ).thenReturn( "https://my-domain.be/" );
 		when( multiDomainService.isCurrentDomain( domain ) ).thenReturn( true );
-		when( assetEndpointRepository.findOneByAssetAndDomain( asset, domain ) ).thenReturn( assetEndpoint );
+		when( assetEndpointRepository.findOneByAssetAndDomain( asset, domain ) ).thenReturn( Optional.of( assetEndpoint ) );
 		Optional<UriComponentsBuilder> uriComponents = uriComponentsService.buildUriComponents( asset );
 
 		when( multiDomainService.getCurrentDomainForEntity( asset ) ).thenReturn( domain );
@@ -121,7 +121,7 @@ public class TestWebCmsAssetService
 
 		when( multiDomainService.isDomainBound( eq( asset ) ) ).thenReturn( true );
 		when( multiDomainService.getCurrentDomain() ).thenReturn( domain );
-		when( assetEndpointRepository.findOneByAssetAndDomain( asset, domain ) ).thenReturn( assetEndpoint );
+		when( assetEndpointRepository.findOneByAssetAndDomain( asset, domain ) ).thenReturn( Optional.of( assetEndpoint ) );
 		when( multiDomainService.getMetadataForDomain( eq( domain ), any() ) ).thenReturn( urlConfigurer );
 		Optional<UriComponentsBuilder> uriComponents = uriComponentsService.buildUriComponents( asset );
 

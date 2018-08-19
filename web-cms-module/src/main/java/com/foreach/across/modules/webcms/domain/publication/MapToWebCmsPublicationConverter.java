@@ -46,7 +46,7 @@ public class MapToWebCmsPublicationConverter implements Converter<Map<String, Ob
 	@Override
 	public WebCmsPublication convert( Map<String, Object> data ) {
 		if ( data.containsKey( "objectId" ) ) {
-			return publicationRepository.findOneByObjectId( Objects.toString( data.get( "objectId" ) ) );
+			return publicationRepository.findOneByObjectId( Objects.toString( data.get( "objectId" ) ) ).orElse( null );
 		}
 
 		if ( data.containsKey( "publicationKey" ) ) {

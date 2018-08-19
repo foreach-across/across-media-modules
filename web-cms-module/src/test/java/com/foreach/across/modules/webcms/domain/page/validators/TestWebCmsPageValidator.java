@@ -28,6 +28,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.Errors;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -74,7 +76,7 @@ public class TestWebCmsPageValidator
 		WebCmsPage page = new WebCmsPage();
 		page.setCanonicalPath( "canonical path" );
 
-		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", null ) ).thenReturn( null );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", null ) ).thenReturn( Optional.empty() );
 
 		validator.validate( page, errors );
 
@@ -90,7 +92,7 @@ public class TestWebCmsPageValidator
 		WebCmsPage page = new WebCmsPage();
 		page.setCanonicalPath( "canonical path" );
 
-		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", null ) ).thenReturn( page );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", null ) ).thenReturn( Optional.of( page ) );
 
 		validator.validate( page, errors );
 
@@ -106,7 +108,7 @@ public class TestWebCmsPageValidator
 		WebCmsPage page = new WebCmsPage();
 		page.setCanonicalPath( "canonical path" );
 
-		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", null ) ).thenReturn( mock( WebCmsPage.class ) );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", null ) ).thenReturn( Optional.of( mock( WebCmsPage.class ) ) );
 
 		validator.validate( page, errors );
 
@@ -127,7 +129,7 @@ public class TestWebCmsPageValidator
 		page.setCanonicalPath( "canonical path" );
 		page.setDomain( domain );
 
-		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", domain ) ).thenReturn( page );
+		when( pageRepository.findOneByCanonicalPathAndDomain( "canonical path", domain ) ).thenReturn( Optional.of( page ) );
 
 		WebCmsPage newPage = WebCmsPage.builder().canonicalPath( "canonical path" )
 		                               .domain( domain )

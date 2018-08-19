@@ -60,7 +60,7 @@ public class PageTypeProperties
 			keyOrObjectId = PageTypeProperties.DEFAULT_PAGE_TYPE_TYPE_KEY;
 		}
 
-		WebCmsDomain defaultDomain = domainRepository.findOneByDomainKey( multiDomainConfiguration.getDefaultDomainKey() );
+		WebCmsDomain defaultDomain = domainRepository.findOneByDomainKey( multiDomainConfiguration.getDefaultDomainKey() ).orElse( null );
 		WebCmsPageType defaultPageType = typeSpecifierService.getTypeSpecifier( keyOrObjectId, WebCmsPageType.class );
 
 		if ( defaultPageType == null ) {

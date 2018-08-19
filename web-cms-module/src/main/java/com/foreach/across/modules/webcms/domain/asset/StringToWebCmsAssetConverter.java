@@ -63,7 +63,7 @@ public class StringToWebCmsAssetConverter implements ConverterFactory<String, We
 				return targetType.cast( pageService.findByCanonicalPath( id ).orElse( null ) );
 			}
 
-			return StringUtils.isEmpty( id ) ? null : targetType.cast( assetRepository.findOneByObjectId( id ) );
+			return StringUtils.isEmpty( id ) ? null : assetRepository.findOneByObjectId( id ).map( targetType::cast ).orElse( null );
 		};
 	}
 }

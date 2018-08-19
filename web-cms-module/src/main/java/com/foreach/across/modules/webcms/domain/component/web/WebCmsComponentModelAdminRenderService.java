@@ -100,7 +100,9 @@ public final class WebCmsComponentModelAdminRenderService
 
 		val formGroups = generalSettingsBuilder.build();
 
-		WebCmsComponent ownerContainer = componentModel.hasOwner() ? componentRepository.findOneByObjectId( componentModel.getOwnerObjectId() ) : null;
+		WebCmsComponent ownerContainer = componentModel.hasOwner()
+				? componentRepository.findOneByObjectId( componentModel.getOwnerObjectId() ).orElse( null )
+				: null;
 
 		return BootstrapUiBuilders.row()
 		                          .add(

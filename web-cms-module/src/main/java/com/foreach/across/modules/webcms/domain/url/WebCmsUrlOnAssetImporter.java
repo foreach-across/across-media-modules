@@ -62,7 +62,8 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 	@Override
 	protected WebCmsUrl getExisting( WebCmsDataEntry data, WebCmsAsset parent ) {
 		String path = data.getMapData().containsKey( "path" ) ? (String) data.getMapData().get( "path" ) : data.getKey();
-		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( parent, multiDomainService.getCurrentDomainForEntity( parent ) );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( parent, multiDomainService.getCurrentDomainForEntity( parent ) )
+		                                                      .orElse( null );
 		if ( endpoint != null ) {
 			return endpoint.getUrlWithPath( path ).orElse( null );
 		}
@@ -71,7 +72,8 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 
 	@Override
 	protected WebCmsUrl createDto( WebCmsDataEntry data, WebCmsUrl existing, WebCmsDataAction action, WebCmsAsset asset ) {
-		WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) );
+		WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) )
+		                                                 .orElse( null );
 		if ( existing != null ) {
 			if ( action == WebCmsDataAction.REPLACE ) {
 				WebCmsUrl url = createNewWebCmsUrlDto( data, asset, endpoint );
@@ -89,7 +91,9 @@ public class WebCmsUrlOnAssetImporter extends AbstractWebCmsPropertyDataImporter
 	}
 
 	private WebCmsUrl createNewWebCmsUrlDto( WebCmsDataEntry data, WebCmsAsset asset, WebCmsEndpoint endpointToUse ) {
-		WebCmsEndpoint endpoint = endpointToUse != null ? endpointToUse : assetEndpointRepository.findOneByAssetAndDomain( asset, asset.getDomain() );
+		WebCmsEndpoint endpoint = endpointToUse != null
+				? endpointToUse
+				: assetEndpointRepository.findOneByAssetAndDomain( asset, asset.getDomain() ).orElse( null );
 		if ( endpoint != null ) {
 			final Map<String, Object> dataValues = data.getMapData();
 			String path = dataValues.containsKey( "path" ) ? (String) dataValues.get( "path" ) : data.getKey();

@@ -97,17 +97,19 @@ public class ITWebCmsAssetService extends AbstractMultiDomainCmsApplicationWithT
 
 	@Test
 	public void buildPreviewUrlForAsset() {
-		WebCmsArticle asset = WebCmsArticle.builder()
-		                                   .publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ) )
-		                                   .articleType( (WebCmsArticleType) typeSpecifierRepository
-				                                   .findOneByObjectTypeAndTypeKeyAndDomain(
-						                                   typeRegistry.retrieveObjectType( WebCmsArticleType.class ).orElse( null ), "blog",
-						                                   WebCmsDomain.NONE ) )
-		                                   .title( "My asset" )
-		                                   .domain( domain )
-		                                   .build();
+		WebCmsArticle asset = WebCmsArticle
+				.builder()
+				.publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ).orElse( null ) )
+				.articleType( (WebCmsArticleType) typeSpecifierRepository
+						.findOneByObjectTypeAndTypeKeyAndDomain(
+								typeRegistry.retrieveObjectType( WebCmsArticleType.class ).orElse( null ), "blog",
+								WebCmsDomain.NONE )
+						.orElse( null ) )
+				.title( "My asset" )
+				.domain( domain )
+				.build();
 		articleRepository.save( asset );
-		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAssetAndDomain( asset, asset.getDomain() );
+		WebCmsAssetEndpoint endpoint = endpointRepository.findOneByAssetAndDomain( asset, asset.getDomain() ).orElse( null );
 		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).primary( true ).httpStatus( HttpStatus.OK ).path( "my-path" ).build();
 		urlRepository.save( url );
 
@@ -126,17 +128,19 @@ public class ITWebCmsAssetService extends AbstractMultiDomainCmsApplicationWithT
 
 	@Test
 	public void buildPreviewUrlForAssetAndDomain() {
-		WebCmsArticle assetNullDomain = WebCmsArticle.builder()
-		                                             .publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ) )
-		                                             .articleType( (WebCmsArticleType) typeSpecifierRepository
-				                                             .findOneByObjectTypeAndTypeKeyAndDomain(
-						                                             typeRegistry.retrieveObjectType( WebCmsArticleType.class ).orElse( null ), "blog",
-						                                             WebCmsDomain.NONE ) )
-		                                             .title( "My other asset" )
-		                                             .domain( WebCmsDomain.NONE )
-		                                             .build();
+		WebCmsArticle assetNullDomain = WebCmsArticle
+				.builder()
+				.publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ).orElse( null ) )
+				.articleType( (WebCmsArticleType) typeSpecifierRepository
+						.findOneByObjectTypeAndTypeKeyAndDomain(
+								typeRegistry.retrieveObjectType( WebCmsArticleType.class ).orElse( null ), "blog",
+								WebCmsDomain.NONE )
+						.orElse( null ) )
+				.title( "My other asset" )
+				.domain( WebCmsDomain.NONE )
+				.build();
 		articleRepository.save( assetNullDomain );
-		WebCmsAssetEndpoint endpointNullDomain = endpointRepository.findOneByAssetAndDomain( assetNullDomain, assetNullDomain.getDomain() );
+		WebCmsAssetEndpoint endpointNullDomain = endpointRepository.findOneByAssetAndDomain( assetNullDomain, assetNullDomain.getDomain() ).orElse( null );
 		WebCmsUrl urlNullDomain = WebCmsUrl.builder().endpoint( endpointNullDomain ).primary( true ).httpStatus( HttpStatus.OK ).path( "my-path" ).build();
 		urlRepository.save( urlNullDomain );
 

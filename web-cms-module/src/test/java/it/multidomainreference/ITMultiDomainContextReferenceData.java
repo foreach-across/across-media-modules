@@ -49,9 +49,10 @@ public class ITMultiDomainContextReferenceData extends AbstractMultiDomainCmsApp
 
 	@Test
 	public void coolFactsDePublicationTypeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
 		WebCmsTypeSpecifier publicationType
-				= typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "de-foreach:cool-facts", domain );
+				= typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "de-foreach:cool-facts", domain )
+				                         .orElse( null );
 		assertNotNull( publicationType );
 		assertEquals( "Cool Facts (DE)", publicationType.getName() );
 		assertEquals( domain, publicationType.getDomain() );
@@ -59,17 +60,18 @@ public class ITMultiDomainContextReferenceData extends AbstractMultiDomainCmsApp
 
 	@Test
 	public void poolRequestDePageShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/pool-request", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/pool-request", domain ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Pool Request (DE)", page.getTitle() );
 	}
 
 	@Test
 	public void coolFactsNlPublicationTypeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
 		WebCmsTypeSpecifier publicationType
-				= typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "nl-foreach:cool-facts", domain );
+				= typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "nl-foreach:cool-facts", domain )
+				                         .orElse( null );
 		assertNotNull( publicationType );
 		assertEquals( "Cool Facts (NL)", publicationType.getName() );
 		assertEquals( domain, publicationType.getDomain() );
@@ -77,25 +79,25 @@ public class ITMultiDomainContextReferenceData extends AbstractMultiDomainCmsApp
 
 	@Test
 	public void poolRequestNlPageShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/pool-request", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/pool-request", domain ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Pool Request (NL)", page.getTitle() );
 	}
 
 	@Test
 	public void myComponentNlTypeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
 		WebCmsTypeSpecifier componentType
-				= typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "component", "nl-foreach:my-component", domain );
+				= typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "component", "nl-foreach:my-component", domain ).orElse( null );
 		assertNotNull( componentType );
 		assertEquals( domain, componentType.getDomain() );
 	}
 
 	@Test
 	public void nlComponentShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "nl-component", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "nl-component", domain ).orElse( null );
 		assertNotNull( component );
 		assertEquals( "My component asset (NL)", component.getTitle() );
 		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( component.getObjectId(),
@@ -107,9 +109,10 @@ public class ITMultiDomainContextReferenceData extends AbstractMultiDomainCmsApp
 
 	@Test
 	public void coolFactsAnotherForeachShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "another-foreach" );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "another-foreach" ).orElse( null );
 		WebCmsTypeSpecifier publicationType
-				= typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "another-foreach:cool-facts", domain );
+				= typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "publication", "another-foreach:cool-facts", domain )
+				                         .orElse( null );
 		assertNotNull( publicationType );
 		assertEquals( "Cool Facts (another-foreach)", publicationType.getName() );
 		assertEquals( domain, publicationType.getDomain() );
@@ -117,22 +120,25 @@ public class ITMultiDomainContextReferenceData extends AbstractMultiDomainCmsApp
 
 	@Test
 	public void myComponentTypeShouldHaveBeenImported() {
-		WebCmsTypeSpecifier componentType = typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( "component", "my-component", WebCmsDomain.NONE );
+		WebCmsTypeSpecifier componentType = typeSpecifierRepository
+				.findOneByObjectTypeAndTypeKeyAndDomain( "component", "my-component", WebCmsDomain.NONE )
+				.orElse( null );
 		assertNotNull( componentType );
 		assertEquals( null, componentType.getDomain() );
 	}
 
 	@Test
 	public void poolRequestAnotherForeachShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "another-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/pool-request", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "another-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/pool-request", domain ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Pool Request (another-foreach)", page.getTitle() );
 	}
 
 	@Test
 	public void myComponentShouldHaveBeenImported() {
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "my-component", WebCmsDomain.NONE );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "my-component", WebCmsDomain.NONE )
+		                                               .orElse( null );
 		assertNotNull( component );
 		assertEquals( "My component asset", component.getTitle() );
 		List<WebCmsComponent> children

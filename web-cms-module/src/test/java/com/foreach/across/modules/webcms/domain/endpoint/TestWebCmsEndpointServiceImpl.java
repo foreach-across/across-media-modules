@@ -40,6 +40,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.foreach.across.modules.webcms.infrastructure.ModificationStatus.*;
@@ -79,12 +80,12 @@ public class TestWebCmsEndpointServiceImpl
 		existingUrl = WebCmsUrl.builder().id( 123L ).path( "/test" ).primary( true ).httpStatus( HttpStatus.OK ).build();
 		endpoint.setUrls( Collections.singletonList( existingUrl ) );
 
-		when( assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ) ).thenReturn( endpoint );
+		when( assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ) ).thenReturn( Optional.of( endpoint ) );
 	}
 
 	@Test
 	public void noEndpointReturnsSkipped() {
-		when( assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ) ).thenReturn( null );
+		when( assetEndpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ) ).thenReturn( Optional.empty() );
 		val result = fetchResultAndExpect( SKIPPED );
 		assertFalse( result.hasNewValue() );
 		assertFalse( result.hasOldValue() );
@@ -130,7 +131,7 @@ public class TestWebCmsEndpointServiceImpl
 		endpoint.setUrls( Collections.emptyList() );
 
 		WebCmsUrl primary = WebCmsUrl.builder().id( 1L ).path( "/test" ).primary( true ).httpStatus( HttpStatus.OK ).build();
-		when( urlRepository.findOneByPathAndEndpoint_Domain( "/my/page", WebCmsDomain.NONE ) ).thenReturn( primary );
+		when( urlRepository.findOneByPathAndEndpoint_Domain( "/my/page", WebCmsDomain.NONE ) ).thenReturn( Optional.of( primary ) );
 
 		val result = fetchResultAndExpect( FAILED );
 		assertFalse( result.hasOldValue() );
@@ -145,7 +146,7 @@ public class TestWebCmsEndpointServiceImpl
 	@Test
 	public void currentPrimaryUrlNotChangedIfUrlExistsOnAnotherEndpoint() {
 		WebCmsUrl primary = WebCmsUrl.builder().id( 1L ).path( "/test" ).primary( true ).httpStatus( HttpStatus.OK ).build();
-		when( urlRepository.findOneByPathAndEndpoint_Domain( "/my/page", WebCmsDomain.NONE ) ).thenReturn( primary );
+		when( urlRepository.findOneByPathAndEndpoint_Domain( "/my/page", WebCmsDomain.NONE ) ).thenReturn( Optional.of( primary ) );
 
 		val result = fetchResultAndExpect( FAILED );
 		assertSame( existingUrl, result.getOldValue() );
@@ -162,7 +163,7 @@ public class TestWebCmsEndpointServiceImpl
 	@Test
 	public void modificationReportCanBeUpdatedUsingEventHandler() {
 		WebCmsUrl primary = WebCmsUrl.builder().id( 1L ).path( "/test" ).primary( true ).httpStatus( HttpStatus.OK ).build();
-		when( urlRepository.findOneByPathAndEndpoint_Domain( "/my/page", WebCmsDomain.NONE ) ).thenReturn( primary );
+		when( urlRepository.findOneByPathAndEndpoint_Domain( "/my/page", WebCmsDomain.NONE ) ).thenReturn( Optional.of( primary ) );
 
 		doAnswer( invocationOnMock -> {
 			PrimaryUrlForAssetFailedEvent event = invocationOnMock.getArgument( 0 );

@@ -91,7 +91,8 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 			WebCmsAsset asset = webCmsDataConversionService.convert( assetKey, WebCmsAsset.class );
 
 			if ( asset != null ) {
-				WebCmsEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) );
+				WebCmsEndpoint endpoint = webCmsAssetEndpointRepository.findOneByAssetAndDomain( asset, multiDomainService.getCurrentDomainForEntity( asset ) )
+				                                                       .orElse( null );
 
 				if ( endpoint != null ) {
 					WebCmsUrl primaryUrl = endpoint.getPrimaryUrl().orElse( null );
@@ -123,6 +124,6 @@ public class WebCmsMenuItemImporter extends AbstractWebCmsPropertyDataImporter<W
 
 	protected WebCmsMenuItem getExisting( WebCmsDataEntry dataKey, WebCmsMenu parent ) {
 		String key = dataKey.getMapData().containsKey( "path" ) ? (String) dataKey.getMapData().get( "path" ) : dataKey.getKey();
-		return webCmsMenuItemRepository.findByMenuAndPath( parent, key );
+		return webCmsMenuItemRepository.findByMenuAndPath( parent, key ).orElse( null );
 	}
 }

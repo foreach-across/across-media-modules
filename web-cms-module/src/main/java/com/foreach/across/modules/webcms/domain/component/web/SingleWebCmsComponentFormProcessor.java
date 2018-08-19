@@ -200,7 +200,7 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 				                         if ( StringUtils.isNotEmpty( ownerObjectId )
 						                         && WebCmsUtils.isObjectIdForCollection( ownerObjectId, WebCmsComponent.COLLECTION_ID ) ) {
 					                         EntityViewContext entityViewContext = entityViewRequest.getEntityViewContext();
-					                         WebCmsComponent owner = componentRepository.findOneByObjectId( ownerObjectId );
+					                         WebCmsComponent owner = componentRepository.findOneByObjectId( ownerObjectId ).orElse( null );
 					                         btn.setUrl( entityViewContext.getLinkBuilder().forInstance( owner ).updateView().toUriString() );
 				                         }
 			                         } );
@@ -208,7 +208,7 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 	}
 
 	private boolean addToOwnerTrail( NodeViewElementBuilder breadcrumb, String objectId, EntityViewLinkBuilder linkBuilder, boolean createLink ) {
-		WebCmsComponent owner = componentRepository.findOneByObjectId( objectId );
+		WebCmsComponent owner = componentRepository.findOneByObjectId( objectId ).orElse( null );
 		if ( owner != null ) {
 			String title = StringUtils.defaultIfBlank( owner.getTitle(), StringUtils.defaultIfBlank( owner.getName(), owner.getComponentType().getName() ) );
 			breadcrumb.addFirst(

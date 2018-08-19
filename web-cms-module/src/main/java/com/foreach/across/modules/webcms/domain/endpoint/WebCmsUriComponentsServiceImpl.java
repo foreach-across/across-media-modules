@@ -54,7 +54,7 @@ class WebCmsUriComponentsServiceImpl implements WebCmsUriComponentsService
 	@Transactional(readOnly = true)
 	public Optional<UriComponentsBuilder> buildUriComponents( WebCmsAsset asset, WebCmsDomain domain ) {
 		Assert.notNull( asset, "asset is required" );
-		WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, domain );
+		WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, domain ).orElse( null );
 
 		if ( endpoint != null ) {
 			return buildUriComponents( endpoint, domain );

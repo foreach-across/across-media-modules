@@ -20,6 +20,8 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
+import java.util.Optional;
+
 /**
  * @author Arne Vandamme
  * @since 0.0.1
@@ -27,5 +29,5 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 @Exposed
 public interface WebCmsImageRepository extends IdBasedEntityJpaRepository<WebCmsImage>, QuerydslPredicateExecutor<WebCmsImage>
 {
-	WebCmsImage findOneByObjectId( String objectId );
+	Optional<WebCmsImage> findOneByObjectId( String objectId );
 }

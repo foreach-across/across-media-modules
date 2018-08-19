@@ -57,19 +57,16 @@ public class WebCmsTypeSpecifierValidator extends EntityValidatorSupport<WebCmsT
 
 		if ( !errors.hasFieldErrors( "typeKey" ) ) {
 			if ( !errors.hasFieldErrors( "typeKey" ) ) {
-				WebCmsTypeSpecifier existing = typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( entity.getObjectType(), entity.getTypeKey(),
-				                                                                                               entity.getDomain() );
-				if ( existing != null && !entity.equals( existing ) ) {
-					errors.rejectValue( "typeKey", "alreadyExists" );
-				}
+				typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( entity.getObjectType(), entity.getTypeKey(), entity.getDomain() )
+				                       .filter( existing -> !entity.equals( existing ) )
+				                       .ifPresent( e -> errors.rejectValue( "typeKey", "alreadyExists" ) );
 			}
 		}
 
 		if ( !errors.hasFieldErrors( "typeKey" ) && !errors.hasFieldErrors( "objectId" ) ) {
-			WebCmsTypeSpecifier existing = typeSpecifierRepository.findOneByObjectId( entity.getObjectId() );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "objectId", "alreadyExists" );
-			}
+			typeSpecifierRepository.findOneByObjectId( entity.getObjectId() )
+			                       .filter( existing -> !entity.equals( existing ) )
+			                       .ifPresent( e -> errors.rejectValue( "objectId", "alreadyExists" ) );
 		}
 	}
 

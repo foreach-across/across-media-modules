@@ -212,7 +212,7 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 	                                 WebCmsObject root,
 	                                 String baseUrl,
 	                                 boolean createLink ) {
-		WebCmsComponent owner = componentRepository.findOneByObjectId( objectId );
+		WebCmsComponent owner = componentRepository.findOneByObjectId( objectId ).orElse( null );
 		if ( owner != null ) {
 			val linkToRoot = ( owner.hasOwner() && owner.getOwnerObjectId().equals( root.getObjectId() ) ) || rootComponents.contains( owner );
 			String title = StringUtils.defaultIfBlank( owner.getTitle(), StringUtils.defaultIfBlank( owner.getName(), owner.getComponentType().getName() ) );

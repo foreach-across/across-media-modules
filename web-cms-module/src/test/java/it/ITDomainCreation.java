@@ -21,6 +21,8 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 
 /**
@@ -47,10 +49,10 @@ public class ITDomainCreation extends AbstractCmsApplicationIT
 		WebCmsDomain byId = domainRepository.findById( domain.getId() ).orElse( null );
 		assertEquals( domain, byId );
 
-		WebCmsDomain byKey = domainRepository.findOneByDomainKey( domain.getDomainKey() );
+		WebCmsDomain byKey = domainRepository.findOneByDomainKey( domain.getDomainKey() ).orElse( null );
 		assertEquals( domain, byKey );
 
-		WebCmsDomain byObjectId = domainRepository.findOneByObjectId( domain.getObjectId() );
+		WebCmsDomain byObjectId = domainRepository.findOneByObjectId( domain.getObjectId() ).orElse( null );
 		assertEquals( domain, byObjectId );
 
 		assertEquals( "manually-created-domain", byObjectId.getDomainKey() );
@@ -68,6 +70,6 @@ public class ITDomainCreation extends AbstractCmsApplicationIT
 
 		domainRepository.deleteById( updated.getId() );
 
-		assertNull( domainRepository.findOneByDomainKey( domain.getDomainKey() ) );
+		assertEquals( Optional.empty(), domainRepository.findOneByDomainKey( domain.getDomainKey() ) );
 	}
 }

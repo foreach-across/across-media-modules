@@ -31,7 +31,6 @@ import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -90,7 +89,7 @@ final class WebCmsComponentModelServiceImpl implements WebCmsComponentModelServi
 	@Override
 	public WebCmsComponentModel getComponentModel( String objectId ) {
 		Assert.notNull( objectId, "objectId is required" );
-		WebCmsComponent component = componentRepository.findOneByObjectId( objectId );
+		WebCmsComponent component = componentRepository.findOneByObjectId( objectId ).orElse( null );
 		return component != null ? buildModelForComponent( component ) : null;
 	}
 
@@ -117,11 +116,9 @@ final class WebCmsComponentModelServiceImpl implements WebCmsComponentModelServi
 	@Override
 	public WebCmsComponentModel getComponentModelByNameAndDomain( String componentName, WebCmsObject owner, WebCmsDomain domain ) {
 		Assert.notNull( componentName, "componentName is required" );
-		return Optional.ofNullable(
-				componentRepository.findOneByOwnerObjectIdAndNameAndDomain( owner != null ? owner.getObjectId() : null, componentName, domain )
-		)
-		               .map( this::buildModelForComponent )
-		               .orElse( null );
+		return componentRepository.findOneByOwnerObjectIdAndNameAndDomain( owner != null ? owner.getObjectId() : null, componentName, domain )
+		                          .map( this::buildModelForComponent )
+		                          .orElse( null );
 	}
 
 	@Override

@@ -24,6 +24,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,8 +53,8 @@ public class TestWebCmsMenuService
 		WebCmsMenu noDomain = WebCmsMenu.builder().id( 1L ).build();
 		WebCmsMenu withDomain = WebCmsMenu.builder().id( 2L ).build();
 
-		when( menuRepository.findOneByNameAndDomain( "myMenu", WebCmsDomain.NONE ) ).thenReturn( noDomain );
-		when( menuRepository.findOneByNameAndDomain( "myMenu", domain ) ).thenReturn( withDomain );
+		when( menuRepository.findOneByNameAndDomain( "myMenu", WebCmsDomain.NONE ) ).thenReturn( Optional.of( noDomain ) );
+		when( menuRepository.findOneByNameAndDomain( "myMenu", domain ) ).thenReturn( Optional.of( withDomain ) );
 
 		assertSame( noDomain, menuService.getMenuByName( "myMenu" ) );
 		verify( multiDomainService ).getCurrentDomainForType( WebCmsMenu.class );

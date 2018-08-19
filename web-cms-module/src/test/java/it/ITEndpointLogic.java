@@ -21,7 +21,6 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageTypeRepository;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
@@ -78,7 +77,7 @@ public class ITEndpointLogic
 		                 .build();
 		pageRepository.save( page );
 
-		endpoint = endpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE );
+		endpoint = endpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ).orElse( null );
 	}
 
 	@Test

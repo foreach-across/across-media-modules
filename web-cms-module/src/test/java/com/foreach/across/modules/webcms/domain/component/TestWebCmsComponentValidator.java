@@ -23,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.Errors;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -81,7 +83,7 @@ public class TestWebCmsComponentValidator
 	@Test
 	public void nameMustBeUniqueWithinTheOwner() {
 		WebCmsComponent existing = WebCmsComponent.builder().id( 1L ).name( "other" ).build();
-		when( componentRepository.findOneByOwnerObjectIdAndNameAndDomain( any(), eq( "some name" ), eq( null ) ) ).thenReturn( existing );
+		when( componentRepository.findOneByOwnerObjectIdAndNameAndDomain( any(), eq( "some name" ), eq( null ) ) ).thenReturn( Optional.of( existing ) );
 
 		WebCmsComponent component = WebCmsComponent.builder().name( "some name" ).build();
 		validator.postValidation( component, errors );
@@ -106,7 +108,7 @@ public class TestWebCmsComponentValidator
 	@Test
 	public void sameInstanceWithSameNameIsNotAnError() {
 		WebCmsComponent existing = WebCmsComponent.builder().id( 1L ).name( "other" ).build();
-		when( componentRepository.findOneByOwnerObjectIdAndNameAndDomain( any(), eq( "some name" ), any() ) ).thenReturn( existing );
+		when( componentRepository.findOneByOwnerObjectIdAndNameAndDomain( any(), eq( "some name" ), any() ) ).thenReturn( Optional.of( existing ) );
 
 		WebCmsComponent component = WebCmsComponent.builder().id( 1L ).name( "some name" ).build();
 		validator.postValidation( component, errors );

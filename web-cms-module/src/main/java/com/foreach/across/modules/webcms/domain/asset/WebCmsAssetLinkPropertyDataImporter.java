@@ -24,6 +24,8 @@ import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Supports WebCmsObjects to have the <strong>wcm:assets</strong> property,
  * create links to the assets specified.
@@ -51,13 +53,13 @@ public class WebCmsAssetLinkPropertyDataImporter implements WebCmsPropertyDataIm
 		conversionService.convertToPropertyValues( propertyData.getMapData(), assetLink );
 		assetLink.setOwner( asset );
 
-		WebCmsAssetLink existing = assetLinkRepository.findOneByOwnerObjectIdAndLinkTypeAndAsset(
+		Optional<WebCmsAssetLink> existing = assetLinkRepository.findOneByOwnerObjectIdAndLinkTypeAndAsset(
 				assetLink.getOwnerObjectId(),
 				assetLink.getLinkType(),
 				assetLink.getAsset()
 		);
 
-		if ( existing == null ) {
+		if ( !existing.isPresent() ) {
 			assetLinkRepository.save( assetLink );
 		}
 
