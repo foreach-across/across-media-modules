@@ -23,6 +23,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 
 import java.io.File;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Ignore("Ignored due to AWS credentials")
 public class TestAwsS3FileRepository extends BaseFileRepositoryTest
 {
 
