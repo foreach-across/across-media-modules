@@ -18,48 +18,31 @@ package com.foreach.across.modules.filemanager.it;
 
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
-import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.services.FileManager;
+import com.foreach.across.modules.filemanager.business.FileReferenceRepository;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration
-public class ITFileManagerModule
+public class ITFileManagerModuleWithHibernate
 {
-	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
-
-	@Autowired(required = false)
-	private FileManager fileManager;
+	@Autowired
+	private FileReferenceRepository fileReferenceRepository;
 
 	@Test
-	public void bothTestAndDefaultRepositoryShouldBeAvailable() {
-		assertNotNull( fileManager );
-		assertNotNull( fileManager.getRepository( FileManager.TEMP_REPOSITORY ) );
-		assertNotNull( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ) );
+	public void repositoryIsCreated() {
+		assertNotNull( fileReferenceRepository );
 	}
 
-	@Test
-	public void fileCanBeStoredInDefaultRepository() throws IOException {
-		FileDescriptor file = fileManager.save( RES_TEXTFILE.getInputStream() );
-
-		assertNotNull( file );
-		assertTrue( fileManager.exists( file ) );
-	}
-
-	@AcrossTestConfiguration
+	@AcrossTestConfiguration(modules = AcrossHibernateJpaModule.NAME)
 	protected static class Config
 	{
 		@Bean
@@ -69,7 +52,6 @@ public class ITFileManagerModule
 					FileManagerModuleSettings.LOCAL_REPOSITORIES_ROOT,
 					System.getProperty( "java.io.tmpdir" )
 			);
-
 			return module;
 		}
 	}

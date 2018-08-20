@@ -31,4 +31,9 @@ public class FileManagerModule extends AcrossModule
 	public String getDescription() {
 		return "Provides a centralized service for file repository storage and management.";
 	}
+
+//	@Override
+//	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+//		contextConfigurers.add( ComponentScanConfigurer.forAcrossModule( FileManagerModule.class ) );
+//	}
 }
