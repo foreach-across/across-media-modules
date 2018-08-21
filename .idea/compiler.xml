@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Annotation profile for com.foreach.across.modules:file-manager-module" enabled="true">
+      <profile name="Annotation profile for com.foreach.across.modules:file-manager-module-project" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -13,6 +13,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="file-manager-module" target="1.8" />
+      <module name="file-manager-module-project" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
