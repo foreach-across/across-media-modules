@@ -16,16 +16,12 @@
 
 package com.foreach.across.modules.filemanager.business.file.reference;
 
-import com.foreach.across.core.annotations.Exposed;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import com.foreach.across.modules.properties.services.EntityPropertiesService;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
-@Exposed
-public interface FileReferenceRepository extends JpaRepository<FileReference, String>, JpaSpecificationExecutor<FileReference>, QueryDslPredicateExecutor<FileReference>
+public interface FileReferencePropertiesService extends EntityPropertiesService<FileReferenceProperties, String>
 {
 }

@@ -70,24 +70,31 @@
 		<plugins>
 
 			<plugin>
-				<groupId>org.asciidoctor</groupId>
-				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.0</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
 				<configuration>
-					<sourceDirectory>${project.basedir}/src/doc</sourceDirectory>
-					<sourceDocumentName>index.adoc</sourceDocumentName>
-					<outputDirectory>${project.reporting.outputDirectory}/${project.version}/reference</outputDirectory>
-					<backend>html</backend>
+					<encoding>UTF-8</encoding>
+					<source>1.8</source>
+					<target>1.8</target>
+					<annotationProcessors>
+						<annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor
+						</annotationProcessor>
+						<annotationProcessor>com.querydsl.apt.jpa.JPAAnnotationProcessor</annotationProcessor>
+					</annotationProcessors>
 				</configuration>
-				<executions>
-					<execution>
-						<id>output-html</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>process-asciidoc</goal>
-						</goals>
-					</execution>
-				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.querydsl</groupId>
+						<artifactId>querydsl-apt</artifactId>
+						<version>${querydsl.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.hibernate.javax.persistence</groupId>
+						<artifactId>hibernate-jpa-2.1-api</artifactId>
+						<version>1.0.0.Final</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -128,10 +135,19 @@
 				<artifactId>across-hibernate-module</artifactId>
 				<version>3.0.0.RELEASE</version>
 			</dependency>
+			<dependency>
+				<groupId>com.foreach.across.modules</groupId>
+				<artifactId>properties-module</artifactId>
+				<version>1.1.0.RELEASE</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>properties-module</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>across-hibernate-module</artifactId>
@@ -188,6 +204,10 @@
 			<artifactId>lombok</artifactId>
 			<version>1.16.10</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
 		</dependency>
 	</dependencies>
 

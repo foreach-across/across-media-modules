@@ -20,6 +20,7 @@ import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
 import com.foreach.across.modules.filemanager.business.file.reference.FileReferenceRepository;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.Test;
@@ -33,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration
-public class ITFileManagerModuleWithHibernate
+public class ITFileManagerModuleIncludingOptionalModules
 {
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -43,7 +44,7 @@ public class ITFileManagerModuleWithHibernate
 		assertThat( applicationContext.getParent().getBeansOfType( FileReferenceRepository.class ) ).isNotEmpty();
 	}
 
-	@AcrossTestConfiguration(modules = AcrossHibernateJpaModule.NAME)
+	@AcrossTestConfiguration(modules = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
 	protected static class Config
 	{
 		@Bean

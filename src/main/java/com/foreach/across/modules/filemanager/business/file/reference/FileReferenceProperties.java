@@ -16,16 +16,27 @@
 
 package com.foreach.across.modules.filemanager.business.file.reference;
 
-import com.foreach.across.core.annotations.Exposed;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import com.foreach.across.modules.properties.business.EntityProperties;
+import com.foreach.common.spring.properties.PropertiesSource;
+import com.foreach.common.spring.properties.PropertyTypeRegistry;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
-@Exposed
-public interface FileReferenceRepository extends JpaRepository<FileReference, String>, JpaSpecificationExecutor<FileReference>, QueryDslPredicateExecutor<FileReference>
+public class FileReferenceProperties extends EntityProperties<String>
 {
+	private final String fileReferenceId;
+
+	public FileReferenceProperties( String fileReferenceId,
+	                                PropertyTypeRegistry<String> propertyTypeRegistry,
+	                                PropertiesSource source ) {
+		super( propertyTypeRegistry, source );
+		this.fileReferenceId = fileReferenceId;
+	}
+
+	@Override
+	public String getId() {
+		return fileReferenceId;
+	}
 }

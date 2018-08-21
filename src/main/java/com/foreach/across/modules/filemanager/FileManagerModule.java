@@ -16,8 +16,18 @@
 
 package com.foreach.across.modules.filemanager;
 
+import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.annotations.AcrossDepends;
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
+import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.properties.PropertiesModule;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@AcrossDepends(optional = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
 public class FileManagerModule extends AcrossModule
 {
 	public static final String NAME = "FileManagerModule";
@@ -32,8 +42,17 @@ public class FileManagerModule extends AcrossModule
 		return "Provides a centralized service for file repository storage and management.";
 	}
 
-//	@Override
-//	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-//		contextConfigurers.add( ComponentScanConfigurer.forAcrossModule( FileManagerModule.class ) );
-//	}
+	@Override
+	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
+		List<String> modules = contextConfig.getModules()
+		                                    .stream().map( ModuleBootstrapConfig::getModuleName )
+		                                    .collect( Collectors.toList() );
+		if ( modules.contains( AcrossHibernateJpaModule.NAME ) ) {
+			if ( !modules.contains( PropertiesModule.NAME ) ) {
+				throw new AcrossConfigurationException( NAME + " requires " + PropertiesModule.NAME
+						                                        + " to be present when " + AcrossHibernateJpaModule.NAME + " is configured." );
+			}
+		}
+	}
+
 }
