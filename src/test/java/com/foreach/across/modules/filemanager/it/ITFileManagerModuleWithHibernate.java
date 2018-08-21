@@ -18,28 +18,29 @@ package com.foreach.across.modules.filemanager.it;
 
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
-import com.foreach.across.modules.filemanager.business.FileReferenceRepository;
+import com.foreach.across.modules.filemanager.business.file.reference.FileReferenceRepository;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration
 public class ITFileManagerModuleWithHibernate
 {
 	@Autowired
-	private FileReferenceRepository fileReferenceRepository;
+	private ApplicationContext applicationContext;
 
 	@Test
 	public void repositoryIsCreated() {
-		assertNotNull( fileReferenceRepository );
+		assertThat( applicationContext.getParent().getBeansOfType( FileReferenceRepository.class ) ).isNotEmpty();
 	}
 
 	@AcrossTestConfiguration(modules = AcrossHibernateJpaModule.NAME)

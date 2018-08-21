@@ -50,9 +50,6 @@
 			<column name="name" type="java.sql.Types.NVARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="uuid" type="java.sql.Types.NVARCHAR(255)">
-				<constraints nullable="false"/>
-			</column>
 			<column name="file_descriptor" type="java.sql.Types.NVARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>

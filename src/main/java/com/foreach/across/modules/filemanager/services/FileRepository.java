@@ -109,7 +109,7 @@ public interface FileRepository
 	 * Gets the file contents as a File instance.  This file *should not be used for writing*
 	 * as the file instance might be a local cached instance depending on the implementation.
 	 * If you want to write directly you should use
-	 * {@link #getOutputStream(com.foreach.across.modules.filemanager.business.FileDescriptor)}.
+	 * {@link #getOutputStream(FileDescriptor)}.
 	 *
 	 * @param descriptor FileDescriptor instance.
 	 * @return File instance.

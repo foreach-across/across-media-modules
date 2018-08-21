@@ -22,6 +22,10 @@ import com.foreach.across.core.installers.AcrossLiquibaseInstaller;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import org.springframework.core.annotation.Order;
 
+/**
+ * @author Steven Gentens
+ * @since 1.3.0
+ */
 @ConditionalOnAcrossModule(allOf = AcrossHibernateJpaModule.NAME)
 @Order(1)
 @Installer(description = "Installs the required database tables", version = 4)

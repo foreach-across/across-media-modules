@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.business;
+package com.foreach.across.modules.filemanager.business.file.reference;
 
 import com.foreach.across.core.annotations.Exposed;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+/**
+ * @author Steven Gentens
+ * @since 1.3.0
+ */
 @Exposed
 public interface FileReferenceRepository extends JpaRepository<FileReference, String>, JpaSpecificationExecutor<FileReference>
 {

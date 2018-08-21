@@ -19,12 +19,14 @@ package com.foreach.across.modules.filemanager.it;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.file.reference.FileReferenceRepository;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -32,6 +34,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -43,6 +46,14 @@ public class ITFileManagerModule
 
 	@Autowired(required = false)
 	private FileManager fileManager;
+
+	@Autowired
+	private ApplicationContext applicationContext;
+
+	@Test
+	public void repositoryDoesNotExist() {
+		assertThat( applicationContext.getParent().getBeansOfType( FileReferenceRepository.class ) ).isEmpty();
+	}
 
 	@Test
 	public void bothTestAndDefaultRepositoryShouldBeAvailable() {

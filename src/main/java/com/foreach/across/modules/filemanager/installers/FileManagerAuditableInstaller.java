@@ -18,7 +18,7 @@ package com.foreach.across.modules.filemanager.installers;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.modules.filemanager.business.FileReference;
+import com.foreach.across.modules.filemanager.business.file.reference.FileReference;
 import com.foreach.across.modules.hibernate.installers.AuditableSchemaInstaller;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import org.springframework.core.annotation.Order;
@@ -26,6 +26,10 @@ import org.springframework.core.annotation.Order;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * @author Steven Gentens
+ * @since 1.3.0
+ */
 @ConditionalOnAcrossModule(allOf = AcrossHibernateJpaModule.NAME)
 @Order(2)
 @Installer(description = "Adds auditing columns to core tables", version = 1)
