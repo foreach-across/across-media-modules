@@ -76,6 +76,7 @@ public class TestFileReferenceService
 		when( fileReferenceRepository.save( any( FileReference.class ) ) )
 				.thenAnswer( (Answer<FileReference>) invocation -> {
 					FileReference fileReference = (FileReference) invocation.getArguments()[0];
+					fileReference.setId( 1L );
 					fileReference.setCreatedBy( "John Doe" );
 					fileReference.setCreatedDate( new Date() );
 
@@ -102,7 +103,7 @@ public class TestFileReferenceService
 		assertThat( argumentCaptor.getValue().getFileId() ).endsWith( ".txt" );
 		assertThat( argumentCaptor.getValue().getRepositoryId() ).isEqualTo( FileManager.DEFAULT_REPOSITORY );
 
-		assertThat( save ).hasNoNullFieldsOrProperties();
+		assertThat( save ).hasNoNullFieldsOrPropertiesExcept( "newEntityId" );
 		assertThat( save.getMimeType() ).isEqualTo( file.getContentType() );
 		assertThat( save.getFileSize() ).isEqualTo( file.getSize() );
 		assertThat( save.getFileDescriptor() ).isEqualTo( argumentCaptor.getValue() );
