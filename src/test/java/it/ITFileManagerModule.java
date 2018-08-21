@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.it;
+package it;
 
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
+import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.file.reference.FileReferenceRepository;
-import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
-import com.foreach.across.modules.properties.PropertiesModule;
+import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.Test;
@@ -28,23 +28,49 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration
-public class ITFileManagerModuleIncludingOptionalModules
+public class ITFileManagerModule
 {
+	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
+
+	@Autowired(required = false)
+	private FileManager fileManager;
+
 	@Autowired
 	private ApplicationContext applicationContext;
 
 	@Test
-	public void repositoryIsCreated() {
-		assertThat( applicationContext.getParent().getBeansOfType( FileReferenceRepository.class ) ).isNotEmpty();
+	public void repositoryDoesNotExist() {
+		assertThat( applicationContext.getParent().getBeansOfType( FileReferenceRepository.class ) ).isEmpty();
 	}
 
-	@AcrossTestConfiguration(modules = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
+	@Test
+	public void bothTestAndDefaultRepositoryShouldBeAvailable() {
+		assertNotNull( fileManager );
+		assertNotNull( fileManager.getRepository( FileManager.TEMP_REPOSITORY ) );
+		assertNotNull( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ) );
+	}
+
+	@Test
+	public void fileCanBeStoredInDefaultRepository() throws IOException {
+		FileDescriptor file = fileManager.save( RES_TEXTFILE.getInputStream() );
+
+		assertNotNull( file );
+		assertTrue( fileManager.exists( file ) );
+	}
+
+	@AcrossTestConfiguration
 	protected static class Config
 	{
 		@Bean
@@ -54,6 +80,7 @@ public class ITFileManagerModuleIncludingOptionalModules
 					FileManagerModuleSettings.LOCAL_REPOSITORIES_ROOT,
 					System.getProperty( "java.io.tmpdir" )
 			);
+
 			return module;
 		}
 	}

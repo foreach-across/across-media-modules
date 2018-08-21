@@ -21,10 +21,13 @@ import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfig;
 import com.foreach.across.core.context.bootstrap.ModuleBootstrapConfig;
+import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
+import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @AcrossDepends(optional = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
@@ -55,8 +58,8 @@ public class FileManagerModule extends AcrossModule
 		}
 	}
 
-//	@Override
-//	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
-//		contextConfigurers.add( ComponentScanConfigurer.forAcrossModule( FileManagerModule.class ) );
-//	}
+	@Override
+	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+		contextConfigurers.add( ComponentScanConfigurer.forAcrossModule( FileManagerModule.class ) );
+	}
 }

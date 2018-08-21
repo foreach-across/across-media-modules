@@ -16,6 +16,9 @@
 
 package com.foreach.across.modules.filemanager.business.file.reference;
 
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.properties.config.EntityPropertiesDescriptor;
 import com.foreach.across.modules.properties.registries.EntityPropertiesRegistry;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
  * @since 1.3.0
  */
 @Service
+@ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
 public class FileReferencePropertiesRegistry extends EntityPropertiesRegistry
 {
 

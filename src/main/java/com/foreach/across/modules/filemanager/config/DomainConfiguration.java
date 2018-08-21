@@ -20,13 +20,11 @@ import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.filemanager.business.DomainMarker;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.hibernate.jpa.repositories.config.EnableAcrossJpaRepositories;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @ConditionalOnAcrossModule(allOf = AcrossHibernateJpaModule.NAME)
 @Configuration
 @EnableAcrossJpaRepositories(basePackageClasses = DomainMarker.class)
-@ComponentScan(basePackageClasses = DomainMarker.class)
 public class DomainConfiguration
 {
 }

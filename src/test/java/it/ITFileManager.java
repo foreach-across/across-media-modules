@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.it;
+package it;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.services.FileManager;
