@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.business;
+package com.foreach.across.modules.filemanager.business.file.reference;
 
-import com.foreach.across.modules.filemanager.business.file.reference.FileReference;
+import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

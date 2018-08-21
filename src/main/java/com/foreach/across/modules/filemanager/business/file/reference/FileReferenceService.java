@@ -27,7 +27,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 /**
@@ -45,10 +47,23 @@ public class FileReferenceService
 	private final ApplicationEventPublisher eventPublisher;
 	private final FileReferenceRepository fileReferenceRepository;
 
+	/**
+	 * Saves a given {@link MultipartFile} to the default repository.
+	 *
+	 * @param file to save
+	 * @return {@link FileReference} to the file
+	 */
 	public FileReference save( MultipartFile file ) {
 		return save( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ), file );
 	}
 
+	/**
+	 * Saves a given {@link MultipartFile} to a specific {@link FileRepository}.
+	 *
+	 * @param fileRepository to save the file to
+	 * @param file to save
+	 * @return {@link FileReference} to the file
+	 */
 	public FileReference save( FileRepository fileRepository, MultipartFile file ) {
 		if ( file == null ) {
 			return null;
@@ -65,7 +80,7 @@ public class FileReferenceService
 			LOG.error( "Unable to read file {}", file.getOriginalFilename(), e );
 			return null;
 		}
-		FileDescriptor targetDescriptor = getTargetDescriptor( fileRepository, file );
+		FileDescriptor targetDescriptor = createTargetDescriptor( fileRepository, file );
 		fileManager.move( savedFile, targetDescriptor );
 		fileReference.setFileDescriptor( targetDescriptor );
 
@@ -76,12 +91,65 @@ public class FileReferenceService
 		return fileReferenceRepository.save( fileReference );
 	}
 
-	private FileDescriptor getTargetDescriptor( FileRepository fileRepository, MultipartFile file ) {
+	/**
+	 * Creates a {@link FileDescriptor} for the {@link FileRepository} in which the file should be saved.
+	 *
+	 * @param fileRepository where the file should be stored
+	 * @param file           to store
+	 * @return location where the file should be stored.
+	 */
+	private FileDescriptor createTargetDescriptor( FileRepository fileRepository, MultipartFile file ) {
 		return new FileDescriptor( fileRepository.getRepositoryId(), UUID.randomUUID() + "." + FilenameUtils.getExtension( file.getOriginalFilename() ) );
 	}
 
+	/**
+	 * Sends out an event for a given FileReference that can be used to modify the properties upon creation.
+	 *
+	 * @param fileReference that has been created
+	 * @return modified {@link FileReference}
+	 */
 	private FileReference modifyFileReference( FileReference fileReference ) {
 		eventPublisher.publishEvent( fileReference );
 		return fileReference;
+	}
+
+	/**
+	 * Checks whether the referenced file exists.
+	 *
+	 * @param fileReference to check
+	 * @return {@code true} if the file exists, {@code false} if not
+	 */
+	public boolean exists( FileReference fileReference ) {
+		return fileManager.exists( fileReference.getFileDescriptor() );
+	}
+
+	/**
+	 * Retrieves a referenced file.
+	 *
+	 * @param fileReference to retrieve
+	 * @return the referenced file
+	 */
+	public File getFile( FileReference fileReference ) {
+		return fileManager.getAsFile( fileReference.getFileDescriptor() );
+	}
+
+	/**
+	 * Creates an {@link InputStream} for the referenced file.
+	 *
+	 * @param fileReference to retrieve
+	 * @return {@link InputStream} of the referenced file.
+	 */
+	public InputStream getInputStream( FileReference fileReference ) {
+		return fileManager.getInputStream( fileReference.getFileDescriptor() );
+	}
+
+	/**
+	 * Removes a referenced file.
+	 *
+	 * @param fileReference to remove
+	 * @return {@code true} if the file was successfully deleted, {@code false} if the delete failed or the file does not exist.
+	 */
+	public boolean delete( FileReference fileReference ) {
+		return fileManager.delete( fileReference.getFileDescriptor() );
 	}
 }

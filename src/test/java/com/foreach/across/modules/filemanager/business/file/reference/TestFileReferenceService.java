@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.services;
+package com.foreach.across.modules.filemanager.business.file.reference;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.business.file.reference.FileReference;
-import com.foreach.across.modules.filemanager.business.file.reference.FileReferenceRepository;
-import com.foreach.across.modules.filemanager.business.file.reference.FileReferenceService;
+import com.foreach.across.modules.filemanager.services.FileManager;
+import com.foreach.across.modules.filemanager.services.FileRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -107,6 +106,45 @@ public class TestFileReferenceService
 		assertThat( save.getMimeType() ).isEqualTo( file.getContentType() );
 		assertThat( save.getFileSize() ).isEqualTo( file.getSize() );
 		assertThat( save.getFileDescriptor() ).isEqualTo( argumentCaptor.getValue() );
+	}
 
+	@Test
+	public void exists() {
+		FileReference fileReference = new FileReference();
+		FileDescriptor fileDescriptor = new FileDescriptor( "some-repository", "my-file.txt" );
+		fileReference.setFileDescriptor( fileDescriptor );
+
+		fileReferenceService.exists( fileReference );
+		verify( fileManager, times( 1 ) ).exists( fileDescriptor );
+	}
+
+	@Test
+	public void getFile() {
+		FileReference fileReference = new FileReference();
+		FileDescriptor fileDescriptor = new FileDescriptor( "some-repository", "my-file.txt" );
+		fileReference.setFileDescriptor( fileDescriptor );
+
+		fileReferenceService.getFile( fileReference );
+		verify( fileManager, times( 1 ) ).getAsFile( fileDescriptor );
+	}
+
+	@Test
+	public void getInputStream() {
+		FileReference fileReference = new FileReference();
+		FileDescriptor fileDescriptor = new FileDescriptor( "some-repository", "my-file.txt" );
+		fileReference.setFileDescriptor( fileDescriptor );
+
+		fileReferenceService.getInputStream( fileReference );
+		verify( fileManager, times( 1 ) ).getInputStream( fileDescriptor );
+	}
+
+	@Test
+	public void delete() {
+		FileReference fileReference = new FileReference();
+		FileDescriptor fileDescriptor = new FileDescriptor( "some-repository", "my-file.txt" );
+		fileReference.setFileDescriptor( fileDescriptor );
+
+		fileReferenceService.delete( fileReference );
+		verify( fileManager, times( 1 ) ).delete( fileDescriptor );
 	}
 }
