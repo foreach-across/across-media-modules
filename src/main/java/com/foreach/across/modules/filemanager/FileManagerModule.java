@@ -55,4 +55,8 @@ public class FileManagerModule extends AcrossModule
 		}
 	}
 
+//	@Override
+//	protected void registerDefaultApplicationContextConfigurers( Set<ApplicationContextConfigurer> contextConfigurers ) {
+//		contextConfigurers.add( ComponentScanConfigurer.forAcrossModule( FileManagerModule.class ) );
+//	}
 }

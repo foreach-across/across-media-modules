@@ -16,15 +16,19 @@
 
 package com.foreach.across.modules.filemanager.business.file.reference;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import com.foreach.across.modules.properties.config.EntityPropertiesDescriptor;
+import com.foreach.across.modules.properties.registries.EntityPropertiesRegistry;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
-@Exposed
-public interface FileReferenceRepository extends IdBasedEntityJpaRepository<FileReference>, QueryDslPredicateExecutor<FileReference>
+@Service
+public class FileReferencePropertiesRegistry extends EntityPropertiesRegistry
 {
+
+	public FileReferencePropertiesRegistry( EntityPropertiesDescriptor descriptor ) {
+		super( descriptor );
+	}
 }

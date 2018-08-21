@@ -24,6 +24,7 @@
 
 	<!-- Default table names -->
 	<property name="table.file_reference" value="fmm_file_reference"/>
+	<property name="table.file_reference_properties" value="fmm_file_ref_props"/>
 
 	<include file="com/foreach/across/core/installers/AcrossSequencesInstaller.xml"/>
 
@@ -33,7 +34,7 @@
 		</sql>
 	</changeSet>
 
-	<!-- Data Set -->
+	<!-- File Reference -->
 	<changeSet id="201808201522" author="stg">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -44,8 +45,11 @@
 		<comment>Creates file reference table</comment>
 
 		<createTable tableName="${table.file_reference}">
-			<column name="id" type="java.sql.Types.NVARCHAR(255)">
+			<column name="id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pf_fmm_file_reference"/>
+			</column>
+			<column name="uuid" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
 			</column>
 			<column name="name" type="java.sql.Types.NVARCHAR(255)">
 				<constraints nullable="false"/>
@@ -59,4 +63,11 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="201808211525" author="stg">
+		<comment>Add referential key between file ref properties and file ref table</comment>
+		<addForeignKeyConstraint baseTableName="${table.file_reference_properties}"
+		                         baseColumnNames="file_ref_id" constraintName="fk_fmm_frp_fr"
+		                         referencedTableName="${table.file_reference}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
 </databaseChangeLog>

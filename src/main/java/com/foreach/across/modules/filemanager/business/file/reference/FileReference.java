@@ -17,21 +17,18 @@
 package com.foreach.across.modules.filemanager.business.file.reference;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.hibernate.business.AuditableEntity;
+import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
+import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.data.domain.Persistable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -44,13 +41,25 @@ import java.util.UUID;
 @Table(name = FileReference.TABLE_FILE_REFERENCE)
 @Getter
 @Setter
-public class FileReference extends AuditableEntity implements Persistable<String>
+public class FileReference extends SettableIdAuditableEntity<FileReference>
 {
 	public static final String TABLE_FILE_REFERENCE = "fmm_file_reference";
 
 	@Id
-	@Setter(AccessLevel.NONE)
-	private String id;
+	@GeneratedValue(generator = "seq_fmm_file_ref_id")
+	@GenericGenerator(
+			name = "seq_fmm_file_ref_id",
+			strategy = AcrossSequenceGenerator.STRATEGY,
+			parameters = {
+					@org.hibernate.annotations.Parameter(name = "sequenceName", value = "seq_fmm_file_ref_id"),
+					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "1")
+			}
+	)
+	private Long id;
+
+	@NotBlank
+	@Column(name = "uuid")
+	private String uuid;
 
 	@Size(max = 255)
 	@NotBlank
@@ -73,21 +82,21 @@ public class FileReference extends AuditableEntity implements Persistable<String
 	private String hash;
 
 	public FileReference() {
-		setId( "" );
+		setUuid( "" );
 	}
 
-	public FileReference( String id, String name, FileDescriptor fileDescriptor, Long fileSize, String mimeType, String hash ) {
+	public FileReference( Long id, String uuid, String name, FileDescriptor fileDescriptor, Long fileSize, String mimeType, String hash ) {
 		this.id = id;
 		this.name = name;
 		setFileDescriptor( fileDescriptor );
-		setId( id );
+		setUuid( uuid );
 		this.fileSize = fileSize;
 		this.mimeType = mimeType;
 		this.hash = hash;
 	}
 
-	public void setId( String id ) {
-		this.id = StringUtils.isNotEmpty( id ) ? id : UUID.randomUUID().toString();
+	public void setUuid( String uuid ) {
+		this.uuid = StringUtils.isNotEmpty( uuid ) ? uuid : UUID.randomUUID().toString();
 	}
 
 	public FileDescriptor getFileDescriptor() {
@@ -97,32 +106,4 @@ public class FileReference extends AuditableEntity implements Persistable<String
 	public void setFileDescriptor( FileDescriptor fileDescriptor ) {
 		this.fileDescriptor = fileDescriptor.getUri();
 	}
-
-	@Override
-	public boolean isNew() {
-		return StringUtils.isBlank( id );
-	}
-
-	public boolean equals( Object o ) {
-		if ( this == o ) {
-			return true;
-		}
-		else if ( o != null && getClass().isAssignableFrom( o.getClass() ) ) {
-			FileReference that = (FileReference) o;
-			if ( isNew() ) {
-				return this == that;
-			}
-			else {
-				return Objects.equals( getId(), that.getId() );
-			}
-		}
-		else {
-			return false;
-		}
-	}
-
-	public int hashCode() {
-		return isNew() ? super.hashCode() : Objects.hash( new Object[] { getId() } );
-	}
-
 }

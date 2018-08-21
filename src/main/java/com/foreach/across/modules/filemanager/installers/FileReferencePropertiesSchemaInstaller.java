@@ -18,25 +18,32 @@ package com.foreach.across.modules.filemanager.installers;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.modules.filemanager.business.file.reference.FileReference;
-import com.foreach.across.modules.hibernate.installers.AuditableSchemaInstaller;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.properties.PropertiesModule;
+import com.foreach.across.modules.properties.installers.EntityPropertiesInstaller;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 
-import java.util.Collection;
-import java.util.Collections;
+import static com.foreach.across.modules.filemanager.config.FileReferencePropertiesConfiguration.COLUMN_FILE_REFERENCE_ID;
+import static com.foreach.across.modules.filemanager.config.FileReferencePropertiesConfiguration.TABLE_FILE_REFERENCE_PROPERTIES;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
-@ConditionalOnAcrossModule(allOf = AcrossHibernateJpaModule.NAME)
-@Order(3)
-@Installer(description = "Adds auditing columns to core tables", version = 1)
-public class FileManagerAuditableInstaller extends AuditableSchemaInstaller
+@ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
+@Installer(description = "Installs the file reference properties table", version = 1)
+@RequiredArgsConstructor
+@Order(1)
+public class FileReferencePropertiesSchemaInstaller extends EntityPropertiesInstaller
 {
 	@Override
-	protected Collection<String> getTableNames() {
-		return Collections.singletonList( FileReference.TABLE_FILE_REFERENCE );
+	protected String getTableName() {
+		return TABLE_FILE_REFERENCE_PROPERTIES;
+	}
+
+	@Override
+	protected String getKeyColumnName() {
+		return COLUMN_FILE_REFERENCE_ID;
 	}
 }

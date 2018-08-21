@@ -16,9 +16,11 @@
 
 package com.foreach.across.modules.filemanager.business.file.reference;
 
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -33,7 +35,8 @@ import java.io.InputStream;
 import java.util.UUID;
 
 /**
- * Enables the storage of multipart files.
+ * Central point for working with {@link FileReference}s.
+ * Allows for {@link MultipartFile}s to be stored as well as the retrieval/removal of files.
  *
  * @author Steven Gentens
  * @since 1.3.0
@@ -41,6 +44,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@ConditionalOnAcrossModule(allOf = AcrossHibernateJpaModule.NAME)
 public class FileReferenceService
 {
 	private final FileManager fileManager;
@@ -61,7 +65,7 @@ public class FileReferenceService
 	 * Saves a given {@link MultipartFile} to a specific {@link FileRepository}.
 	 *
 	 * @param fileRepository to save the file to
-	 * @param file to save
+	 * @param file           to save
 	 * @return {@link FileReference} to the file
 	 */
 	public FileReference save( FileRepository fileRepository, MultipartFile file ) {
@@ -114,12 +118,12 @@ public class FileReferenceService
 	}
 
 	/**
-	 * Checks whether the referenced file exists.
+	 * Checks whether the referenced file is still stored.
 	 *
 	 * @param fileReference to check
 	 * @return {@code true} if the file exists, {@code false} if not
 	 */
-	public boolean exists( FileReference fileReference ) {
+	public boolean existsAsFile( FileReference fileReference ) {
 		return fileManager.exists( fileReference.getFileDescriptor() );
 	}
 
@@ -144,12 +148,16 @@ public class FileReferenceService
 	}
 
 	/**
-	 * Removes a referenced file.
+	 * Removes a referenced file as well as its {@link FileReference} if the file was successfully deleted.
 	 *
 	 * @param fileReference to remove
 	 * @return {@code true} if the file was successfully deleted, {@code false} if the delete failed or the file does not exist.
 	 */
 	public boolean delete( FileReference fileReference ) {
-		return fileManager.delete( fileReference.getFileDescriptor() );
+		boolean delete = fileManager.delete( fileReference.getFileDescriptor() );
+		if ( delete ) {
+			fileReferenceRepository.delete( fileReference.getId() );
+		}
+		return delete;
 	}
 }

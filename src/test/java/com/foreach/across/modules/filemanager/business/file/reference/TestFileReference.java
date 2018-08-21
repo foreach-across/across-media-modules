@@ -29,7 +29,7 @@ public class TestFileReference
 	@Test
 	public void idIsSetIfNotPresent() {
 		FileReference fileReference = new FileReference();
-		assertThat( fileReference.getId() ).isNotBlank();
+		assertThat( fileReference.getUuid() ).isNotBlank();
 	}
 
 	@Test
@@ -42,9 +42,10 @@ public class TestFileReference
 		assertThat( fileReference ).hasFieldOrPropertyWithValue( "fileDescriptor", fileDescriptor );
 		assertThat( fileReference.getFileDescriptor() ).isEqualTo( fileDescriptor );
 
-		fileReference = new FileReference( "my-original-id", "Some name", fileDescriptor, null, null, null );
+		fileReference = new FileReference( 0L, "my-original-id", "Some name", fileDescriptor, null, null, null );
 		assertThat( fileReference )
-				.hasFieldOrPropertyWithValue( "id", "my-original-id" )
+				.hasFieldOrPropertyWithValue( "id", 0L )
+				.hasFieldOrPropertyWithValue( "uuid", "my-original-id" )
 				.hasFieldOrPropertyWithValue( "name", "Some name" )
 				.hasFieldOrPropertyWithValue( "fileDescriptor", fileDescriptor )
 				.hasFieldOrPropertyWithValue( "fileSize", null )

@@ -52,7 +52,7 @@ public class ITFileManageModuleBootstrap
 	public void fileManagerModuleAndHibernateModule() {
 		try (AcrossTestContext ctx = web().modules( FileManagerModule.NAME, AcrossHibernateJpaModule.NAME )
 		                                  .build()) {
-			ctx.contextInfo().isBootstrapped();
+			assertThat( ctx.contextInfo().isBootstrapped() ).isFalse();
 		}
 		catch ( AcrossConfigurationException e ) {
 			assertThat( e.getMessage() ).isEqualTo( FileManagerModule.NAME + " requires " + PropertiesModule.NAME

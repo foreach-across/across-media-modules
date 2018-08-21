@@ -27,7 +27,7 @@ import org.springframework.core.annotation.Order;
  * @since 1.3.0
  */
 @ConditionalOnAcrossModule(allOf = AcrossHibernateJpaModule.NAME)
-@Order(1)
+@Order(2)
 @Installer(description = "Installs the required database tables", version = 4)
 public class FileManagerSchemaInstaller extends AcrossLiquibaseInstaller
 {

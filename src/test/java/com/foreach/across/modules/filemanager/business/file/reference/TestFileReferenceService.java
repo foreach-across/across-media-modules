@@ -114,7 +114,7 @@ public class TestFileReferenceService
 		FileDescriptor fileDescriptor = new FileDescriptor( "some-repository", "my-file.txt" );
 		fileReference.setFileDescriptor( fileDescriptor );
 
-		fileReferenceService.exists( fileReference );
+		fileReferenceService.existsAsFile( fileReference );
 		verify( fileManager, times( 1 ) ).exists( fileDescriptor );
 	}
 
