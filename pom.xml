@@ -69,7 +69,8 @@
 
 	<modules>
 		<module>file-manager-module</module>
-	</modules>
+        <module>file-manager-module-test</module>
+    </modules>
 
 	<build>
 		<plugins>
@@ -144,6 +145,11 @@
 				<artifactId>properties-module</artifactId>
 				<version>1.1.0.RELEASE</version>
 			</dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.10</version>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 

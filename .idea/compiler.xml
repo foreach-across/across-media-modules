@@ -9,11 +9,13 @@
         <processor name="com.querydsl.apt.jpa.JPAAnnotationProcessor" />
         <processor name="lombok.launch.AnnotationProcessorHider$AnnotationProcessor" />
         <module name="file-manager-module" />
+        <module name="file-manager-module-test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="file-manager-module" target="1.8" />
       <module name="file-manager-module-project" target="1.8" />
+      <module name="file-manager-module-test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
