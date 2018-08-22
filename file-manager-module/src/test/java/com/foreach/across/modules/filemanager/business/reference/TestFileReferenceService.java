@@ -17,6 +17,7 @@
 package com.foreach.across.modules.filemanager.business.reference;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.reference.properties.FileReferenceProperties;
 import com.foreach.across.modules.filemanager.business.reference.properties.FileReferencePropertiesService;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
@@ -59,6 +60,7 @@ public class TestFileReferenceService
 		applicationEventPublisher = mock( ApplicationEventPublisher.class );
 		fileManager = mock( FileManager.class );
 		fileReferenceRepository = mock( FileReferenceRepository.class );
+		fileReferencePropertiesService = mock( FileReferencePropertiesService.class );
 		fileReferenceService = new FileReferenceService( fileManager, applicationEventPublisher, fileReferenceRepository, fileReferencePropertiesService );
 
 		FileRepository fileRepository = mock( FileRepository.class );
@@ -75,6 +77,9 @@ public class TestFileReferenceService
 
 		fileDescriptor = new FileDescriptor( FileManager.TEMP_REPOSITORY, "my-unique-file-name" );
 		when( fileManager.save( fileDescriptor.getRepositoryId(), inputStream ) ).thenReturn( fileDescriptor );
+
+		FileReferenceProperties fileReferenceProperties = mock( FileReferenceProperties.class );
+		when( fileReferencePropertiesService.getProperties( any() ) ).thenReturn( fileReferenceProperties );
 
 		when( fileReferenceRepository.save( any( FileReference.class ) ) )
 				.thenAnswer( (Answer<FileReference>) invocation -> {

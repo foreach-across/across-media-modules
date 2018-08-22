@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
 public class ITFileManager extends AbstractFileManagerModuleIT
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
-
 	private static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
 	private static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
 
