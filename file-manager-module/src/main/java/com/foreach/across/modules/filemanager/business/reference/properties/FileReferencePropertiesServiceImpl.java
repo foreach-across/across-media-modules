@@ -24,12 +24,14 @@ import com.foreach.across.modules.properties.registries.EntityPropertiesRegistry
 import com.foreach.across.modules.properties.repositories.EntityPropertiesRepository;
 import com.foreach.across.modules.properties.services.AbstractEntityPropertiesService;
 import com.foreach.common.spring.properties.PropertyTypeRegistry;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
 @ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
+@Service
 public class FileReferencePropertiesServiceImpl extends AbstractEntityPropertiesService<FileReferenceProperties, Long> implements FileReferencePropertiesService
 {
 	public FileReferencePropertiesServiceImpl( EntityPropertiesRegistry entityPropertiesRegistry,

@@ -18,33 +18,25 @@ package it;
 
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
-import com.foreach.across.modules.filemanager.business.reference.FileReferenceRepository;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.sql.DataSource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration
-public class ITFileManagerModuleIncludingOptionalModules
+public abstract class AbstractFileManagerAndHibernateIT
 {
-	@Autowired
-	private ApplicationContext applicationContext;
 
-	@Test
-	public void repositoryIsCreated() {
-		assertThat( applicationContext.getParent().getBeansOfType( FileReferenceRepository.class ) ).isNotEmpty();
-	}
-
-	@AcrossTestConfiguration(modules = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
+	@Configuration
+	@AcrossTestConfiguration(modules = { PropertiesModule.NAME })
 	protected static class Config
 	{
 		@Bean
@@ -54,6 +46,18 @@ public class ITFileManagerModuleIncludingOptionalModules
 					FileManagerModuleSettings.LOCAL_REPOSITORIES_ROOT,
 					System.getProperty( "java.io.tmpdir" )
 			);
+			return module;
+		}
+
+		@Bean
+		public DataSource acrossDataSource() {
+			return new EmbeddedDatabaseBuilder().build();
+		}
+
+		@Bean
+		public AcrossHibernateJpaModule acrossHibernateJpaModule() {
+			AcrossHibernateJpaModule module = new AcrossHibernateJpaModule();
+			module.setHibernateProperty( "hibernate.hbm2ddl.auto", "create-drop" );
 			return module;
 		}
 	}

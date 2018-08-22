@@ -32,7 +32,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class ITFileManager extends ITFileManagerModule
+public class ITFileManager extends AbstractFileManagerModuleIT
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 

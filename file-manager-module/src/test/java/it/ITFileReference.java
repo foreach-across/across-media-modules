@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Steven Gentens
  * @since 1.3.0
  */
-public class ITFileReference extends ITFileManagerModuleIncludingOptionalModules
+public class ITFileReference extends AbstractFileManagerAndHibernateIT
 {
 	public static final FileDescriptor FILE_DESCRIPTOR = FileDescriptor.of( "test:my-file-descriptor.txt" );
 	@Autowired
