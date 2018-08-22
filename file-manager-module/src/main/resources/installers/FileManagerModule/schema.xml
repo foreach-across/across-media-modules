@@ -61,6 +61,10 @@
 			<column name="mime_type" type="java.sql.Types.NVARCHAR(255)"/>
 			<column name="hash" type="java.sql.Types.NVARCHAR(255)"/>
 		</createTable>
+
+		<createIndex tableName="${table.file_reference}" indexName="ix_fmm_file_ref_uuid" unique="true">
+			<column name="uuid"/>
+		</createIndex>
 	</changeSet>
 
 	<changeSet id="201808211525" author="stg">

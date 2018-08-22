@@ -72,7 +72,7 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 
 	@NotNull
 	@Column(name = "file_descriptor")
-	@Type(type = "com.foreach.across.modules.filemanager.business.FileDescriptorType")
+	@Type(type = "FileDescriptorType")
 	private FileDescriptor fileDescriptor;
 
 	@Column(name = "file_size")
