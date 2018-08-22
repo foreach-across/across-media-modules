@@ -18,21 +18,25 @@ package com.foreach.across.modules.filemanager.business.reference;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.reference.properties.FileReferenceProperties;
+import com.foreach.across.modules.filemanager.business.reference.properties.FileReferencePropertiesService;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.properties.PropertiesModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.jdo.annotations.Transactional;
 import javax.validation.constraints.NotNull;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.UUID;
 
 /**
@@ -45,12 +49,13 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@ConditionalOnAcrossModule(allOf = AcrossHibernateJpaModule.NAME)
+@ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
 public class FileReferenceService
 {
 	private final FileManager fileManager;
 	private final ApplicationEventPublisher eventPublisher;
 	private final FileReferenceRepository fileReferenceRepository;
+	private final FileReferencePropertiesService fileReferencePropertiesService;
 
 	/**
 	 * Saves a given {@link MultipartFile} to the default repository.
@@ -89,8 +94,16 @@ public class FileReferenceService
 		fileReference.setName( file.getOriginalFilename() );
 		fileReference.setFileSize( file.getSize() );
 		fileReference.setMimeType( file.getContentType() );
-		modifyFileReference( fileReference );
-		return fileReferenceRepository.save( fileReference );
+		FileReferenceCreationEvent fileReferenceCreationEvent = modifyFileReference( fileReference );
+		fileReference = fileReferenceRepository.save( fileReferenceCreationEvent.getFileReference() );
+		saveFileReferenceProperties( fileReference, fileReferenceCreationEvent.getFileReferenceProperties() );
+		return fileReference;
+	}
+
+	private void saveFileReferenceProperties( FileReference fileReference, FileReferenceProperties fileReferenceProperties ) {
+		FileReferenceProperties properties = fileReferencePropertiesService.getProperties( fileReference.getId() );
+		properties.putAll( fileReferenceProperties );
+		fileReferencePropertiesService.saveProperties( properties );
 	}
 
 	/**
@@ -105,57 +118,35 @@ public class FileReferenceService
 	}
 
 	/**
-	 * Sends out an event for a given FileReference that can be used to modify the properties upon creation.
+	 * Sends out a {@link FileReferenceCreationEvent} for a given {@link FileReference} that can be used to modify the properties upon creation.
 	 *
-	 * @param fileReference that has been created
-	 * @return modified {@link FileReference}
+	 * @param fileReference that is to be created
+	 * @return modified {@link FileReferenceCreationEvent}
 	 */
-	private FileReference modifyFileReference( FileReference fileReference ) {
-		eventPublisher.publishEvent( fileReference );
-		return fileReference;
+	private FileReferenceCreationEvent modifyFileReference( FileReference fileReference ) {
+		FileReferenceProperties properties = fileReferencePropertiesService.getProperties( 0L );
+		FileReferenceCreationEvent event = new FileReferenceCreationEvent( fileReference, properties );
+		eventPublisher.publishEvent( event );
+		return event;
 	}
 
 	/**
-	 * Checks whether the referenced file is still stored.
-	 *
-	 * @param fileReference to check
-	 * @return {@code true} if the file exists, {@code false} if not
-	 */
-	public boolean existsAsFile( FileReference fileReference ) {
-		return fileManager.exists( fileReference.getFileDescriptor() );
-	}
-
-	/**
-	 * Retrieves a referenced file.
-	 *
-	 * @param fileReference to retrieve
-	 * @return the referenced file
-	 */
-	public File getFile( FileReference fileReference ) {
-		return fileManager.getAsFile( fileReference.getFileDescriptor() );
-	}
-
-	/**
-	 * Creates an {@link InputStream} for the referenced file.
-	 *
-	 * @param fileReference to retrieve
-	 * @return {@link InputStream} of the referenced file.
-	 */
-	public InputStream getInputStream( FileReference fileReference ) {
-		return fileManager.getInputStream( fileReference.getFileDescriptor() );
-	}
-
-	/**
-	 * Removes a referenced file as well as its {@link FileReference} if the file was successfully deleted.
+	 * Removes a {@link FileReference}. Optionally deletes the physical file if the {@link FileReference} has been deleted.
 	 *
 	 * @param fileReference to remove
-	 * @return {@code true} if the file was successfully deleted, {@code false} if the delete failed or the file does not exist.
+	 * @param deletePhysicalFile whether the physical file should be removed
 	 */
-	public boolean delete( FileReference fileReference ) {
-		boolean delete = fileManager.delete( fileReference.getFileDescriptor() );
-		if ( delete ) {
-			fileReferenceRepository.delete( fileReference.getId() );
+	@Transactional
+	public void delete( FileReference fileReference, boolean deletePhysicalFile ) {
+		if ( deletePhysicalFile ) {
+			TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronizationAdapter()
+			{
+				@Override
+				public void afterCommit() {
+					fileManager.delete( fileReference.getFileDescriptor() );
+				}
+			} );
 		}
-		return delete;
+		fileReferenceRepository.delete( fileReference.getId() );
 	}
 }

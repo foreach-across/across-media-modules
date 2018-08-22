@@ -69,7 +69,7 @@ public class FileDescriptor
 	 */
 	public static FileDescriptor of( String uri ) {
 		if ( StringUtils.isBlank( uri ) ) {
-			throw new IllegalArgumentException( "uri may not be blank" );
+			throw new IllegalArgumentException( "uri may not be null or empty" );
 		}
 
 		String[] parts = StringUtils.split( uri, ":" );
@@ -179,6 +179,10 @@ public class FileDescriptor
 	}
 
 	public static String buildUri( String repositoryId, String folderId, String fileId ) {
+		if ( StringUtils.isBlank( repositoryId ) || StringUtils.isBlank( fileId ) ) {
+			throw new IllegalArgumentException( "both a repositoryId and a fileId are required to build a valid uri" );
+		}
+
 		StringBuilder uri = new StringBuilder( repositoryId ).append( ":" );
 
 		if ( folderId != null ) {

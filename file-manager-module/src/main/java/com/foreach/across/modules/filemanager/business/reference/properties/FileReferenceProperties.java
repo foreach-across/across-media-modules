@@ -21,6 +21,8 @@ import com.foreach.common.spring.properties.PropertiesSource;
 import com.foreach.common.spring.properties.PropertyTypeRegistry;
 
 /**
+ * Holds additional typed properties for a {@link com.foreach.across.modules.filemanager.business.reference.FileReference}.
+ *
  * @author Steven Gentens
  * @since 1.3.0
  */

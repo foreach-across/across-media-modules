@@ -16,8 +16,10 @@
 
 package com.foreach.across.modules.filemanager.business;
 
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -42,6 +44,25 @@ public class TestFileDescriptor
 		assertEquals( "amazon-s3", descriptor.getRepositoryId() );
 		assertEquals( "2014/15/06", descriptor.getFolderId() );
 		assertEquals( "123-456-798", descriptor.getFileId() );
+	}
+
+	@Test
+	public void uriMayNotBeNull() {
+		String emptyUri = "uri may not be null or empty";
+		assertIllegalArgumentException( () -> FileDescriptor.of( null ), emptyUri );
+		assertIllegalArgumentException( () -> FileDescriptor.of( "" ), emptyUri );
+		assertIllegalArgumentException( () -> FileDescriptor.of( null ), emptyUri );
+		String buildUriMessage = "both a repositoryId and a fileId are required to build a valid uri";
+		assertIllegalArgumentException( () -> FileDescriptor.buildUri( null, null, null ), buildUriMessage );
+		assertIllegalArgumentException( () -> FileDescriptor.buildUri( "", null, null ), buildUriMessage );
+		assertIllegalArgumentException( () -> FileDescriptor.buildUri( null, null, "" ), buildUriMessage );
+		assertIllegalArgumentException( () -> FileDescriptor.buildUri( null, null, "my-file.txt" ), buildUriMessage );
+		assertIllegalArgumentException( () -> FileDescriptor.buildUri( "", null, "" ), buildUriMessage );
+	}
+
+	private void assertIllegalArgumentException( ThrowableAssert.ThrowingCallable callable, String msg ) {
+		assertThatThrownBy( callable ).isInstanceOf( IllegalArgumentException.class )
+		                              .hasMessage( msg );
 	}
 
 	private FileDescriptor parse( String uri ) {

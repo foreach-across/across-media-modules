@@ -21,18 +21,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * Event DTO used for modifying a newly created {@link FileReference} as well as configuring additional properties through {@link FileReferenceProperties}.
+ *
  * @author Steven Gentens
+ * @see FileReferenceService
  * @since 1.3.0
  */
 @Getter
 @Setter
-public class FileReferenceEvent
+public class FileReferenceCreationEvent
 {
 	private FileReference fileReference;
 	private FileReferenceProperties fileReferenceProperties;
 
-	public FileReferenceEvent( FileReference fileReference,
-	                           FileReferenceProperties fileReferenceProperties ) {
+	public FileReferenceCreationEvent( FileReference fileReference,
+	                                   FileReferenceProperties fileReferenceProperties ) {
 		this.fileReference = fileReference;
 		this.fileReferenceProperties = fileReferenceProperties;
 	}
