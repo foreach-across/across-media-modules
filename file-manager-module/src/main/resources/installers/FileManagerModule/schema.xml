@@ -48,13 +48,13 @@
 			<column name="id" type="java.sql.Types.BIGINT">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pf_fmm_file_reference"/>
 			</column>
-			<column name="uuid" type="java.sql.Types.NVARCHAR(255)">
+			<column name="uuid" type="java.sql.Types.VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="name" type="java.sql.Types.NVARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="file_descriptor" type="java.sql.Types.NVARCHAR(255)">
+			<column name="file_descriptor" type="java.sql.Types.VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="file_size" type="java.sql.Types.BIGINT"/>

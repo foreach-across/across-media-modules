@@ -31,7 +31,7 @@ public class FileDescriptor
 	private final String uri;
 
 	/**
-	 * @deprecated in favour of {@link FileDescriptor#of(String)}. Will be removed in a future version.
+	 * @deprecated in favour of {@link FileDescriptor#of(String)}. Will be removed in 2.0.0.
 	 */
 	@Deprecated
 	public FileDescriptor( String uri ) {
@@ -54,7 +54,7 @@ public class FileDescriptor
 	}
 
 	/**
-	 * @deprecated in favour of {@link FileDescriptor#of(String, String)}. Will be removed in a future version.
+	 * @deprecated in favour of {@link FileDescriptor#of(String, String)}. Will be removed in 2.0.0.
 	 */
 	@Deprecated
 	public FileDescriptor( String repositoryId, String fileId ) {
@@ -68,6 +68,10 @@ public class FileDescriptor
 	 * @return the descriptor
 	 */
 	public static FileDescriptor of( String uri ) {
+		if ( StringUtils.isBlank( uri ) ) {
+			throw new IllegalArgumentException( "uri may not be blank" );
+		}
+
 		String[] parts = StringUtils.split( uri, ":" );
 
 		Assert.isTrue( parts.length == 2 || parts.length == 3 );
@@ -109,7 +113,7 @@ public class FileDescriptor
 	}
 
 	/**
-	 * @deprecated in favour of {@link FileDescriptor#of(String, String, String)}. Will be removed in a future version.
+	 * @deprecated in favour of {@link FileDescriptor#of(String, String, String)}. Will be removed in 2.0.0.
 	 */
 	@Deprecated
 	public FileDescriptor( String repositoryId, String folderId, String fileId ) {
@@ -147,8 +151,6 @@ public class FileDescriptor
 	public String getFolderId() {
 		return folderId;
 	}
-
-
 
 	@Override
 	public String toString() {

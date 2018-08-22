@@ -19,14 +19,18 @@ package com.foreach.across.modules.filemanager.business.reference;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.UUID;
 
@@ -50,14 +54,15 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 			name = "seq_fmm_file_ref_id",
 			strategy = AcrossSequenceGenerator.STRATEGY,
 			parameters = {
-					@org.hibernate.annotations.Parameter(name = "sequenceName", value = "seq_fmm_file_ref_id"),
-					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "1")
+					@Parameter(name = "sequenceName", value = "seq_fmm_file_ref_id"),
+					@Parameter(name = "allocationSize", value = "1")
 			}
 	)
 	private Long id;
 
 	@NotBlank
 	@Column(name = "uuid")
+	@Pattern(regexp = "^\\p{ASCII}*$")
 	private String uuid;
 
 	@Size(max = 255)
@@ -67,6 +72,7 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 
 	@NotNull
 	@Column(name = "file_descriptor")
+	@Type(type = "com.foreach.across.modules.filemanager.business.FileDescriptorType")
 	private FileDescriptor fileDescriptor;
 
 	@Column(name = "file_size")
@@ -82,6 +88,7 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 		setUuid( "" );
 	}
 
+	@Builder(toBuilder = true)
 	public FileReference( Long id, String uuid, String name, FileDescriptor fileDescriptor, Long fileSize, String mimeType, String hash ) {
 		this.id = id;
 		this.name = name;

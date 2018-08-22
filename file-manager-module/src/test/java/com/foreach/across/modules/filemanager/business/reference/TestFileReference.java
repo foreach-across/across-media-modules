@@ -27,7 +27,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TestFileReference
 {
 	@Test
-	public void idIsSetIfNotPresent() {
+	public void builder() {
+		FileReference fileReference = FileReference.builder().build();
+		assertThat( fileReference.getUuid() ).isNotBlank();
+
+		FileDescriptor fileDescriptor = FileDescriptor.of( "test:some-file.txt" );
+		fileReference = FileReference.builder()
+		                             .fileSize( 4324L )
+		                             .mimeType( "text" )
+		                             .fileDescriptor( fileDescriptor )
+		                             .build();
+
+		assertThat( fileReference ).hasFieldOrPropertyWithValue( "fileSize", 4324L )
+		                           .hasFieldOrPropertyWithValue( "mimeType", "text" )
+		                           .hasFieldOrPropertyWithValue( "fileDescriptor", fileDescriptor );
+		assertThat( fileReference.getUuid() ).isNotBlank();
+
+		fileReference = FileReference.builder()
+		                             .fileDescriptor( fileDescriptor )
+		                             .name( "some-file.txt" )
+		                             .uuid( "my:personal-uuid" )
+		                             .build();
+		assertThat( fileReference ).hasFieldOrPropertyWithValue( "fileDescriptor", fileDescriptor )
+		                           .hasFieldOrPropertyWithValue( "name", "some-file.txt" )
+		                           .hasFieldOrPropertyWithValue( "uuid", "my:personal-uuid" );
+	}
+
+	@Test
+	public void uuidIsSetIfNotPresent() {
 		FileReference fileReference = new FileReference();
 		assertThat( fileReference.getUuid() ).isNotBlank();
 	}
