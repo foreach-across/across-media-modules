@@ -50,8 +50,8 @@ public class FileManagerModule extends AcrossModule
 		List<String> modules = contextConfig.getModules()
 		                                    .stream().map( ModuleBootstrapConfig::getModuleName )
 		                                    .collect( Collectors.toList() );
-		if ( modules.contains( AcrossHibernateJpaModule.NAME ) ) {
-			if ( !modules.contains( PropertiesModule.NAME ) ) {
+		if ( contextConfig.hasModule( AcrossHibernateJpaModule.NAME ) ) {
+			if ( !contextConfig.hasModule( PropertiesModule.NAME ) ) {
 				throw new AcrossConfigurationException( NAME + " requires " + PropertiesModule.NAME
 						                                        + " to be present when " + AcrossHibernateJpaModule.NAME + " is configured." );
 			}

@@ -16,6 +16,6 @@
 
 package com.foreach.across.modules.filemanager.business;
 
-public interface DomainMarker
+public interface FileManagerDomain
 {
 }

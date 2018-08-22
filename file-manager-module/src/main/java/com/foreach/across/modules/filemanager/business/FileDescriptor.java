@@ -30,6 +30,10 @@ public class FileDescriptor
 
 	private final String uri;
 
+	/**
+	 * @deprecated in favour of {@link FileDescriptor#of(String)}. Will be removed in a future version.
+	 */
+	@Deprecated
 	public FileDescriptor( String uri ) {
 		this.uri = uri;
 
@@ -49,10 +53,65 @@ public class FileDescriptor
 		}
 	}
 
+	/**
+	 * @deprecated in favour of {@link FileDescriptor#of(String, String)}. Will be removed in a future version.
+	 */
+	@Deprecated
 	public FileDescriptor( String repositoryId, String fileId ) {
 		this( repositoryId, null, fileId );
 	}
 
+	/**
+	 * Creates a {@link FileDescriptor} based on a uri.
+	 *
+	 * @param uri of the file
+	 * @return the descriptor
+	 */
+	public static FileDescriptor of( String uri ) {
+		String[] parts = StringUtils.split( uri, ":" );
+
+		Assert.isTrue( parts.length == 2 || parts.length == 3 );
+
+		String repositoryId = parts[0];
+		String folderId = null;
+		String fileId;
+		if ( parts.length == 2 ) {
+			fileId = parts[1];
+		}
+		else {
+			folderId = parts[1];
+			fileId = parts[2];
+		}
+		return FileDescriptor.of( repositoryId, folderId, fileId );
+	}
+
+	/**
+	 * Creates a {@link FileDescriptor} for a specific repository.
+	 *
+	 * @param repositoryId in which the file should be stored
+	 * @param fileId       identifier of the file
+	 * @return the descriptor
+	 */
+	public static FileDescriptor of( String repositoryId, String fileId ) {
+		return FileDescriptor.of( repositoryId, null, fileId );
+	}
+
+	/**
+	 * Creates a {@link FileDescriptor} for a specific folder in a repository.
+	 *
+	 * @param repositoryId in which the file should be stored
+	 * @param folderId     in the repository
+	 * @param fileId       identifier of the file
+	 * @return the descriptor
+	 */
+	public static FileDescriptor of( String repositoryId, String folderId, String fileId ) {
+		return new FileDescriptor( repositoryId, folderId, fileId );
+	}
+
+	/**
+	 * @deprecated in favour of {@link FileDescriptor#of(String, String, String)}. Will be removed in a future version.
+	 */
+	@Deprecated
 	public FileDescriptor( String repositoryId, String folderId, String fileId ) {
 		this.repositoryId = repositoryId;
 		this.fileId = fileId;
@@ -88,6 +147,8 @@ public class FileDescriptor
 	public String getFolderId() {
 		return folderId;
 	}
+
+
 
 	@Override
 	public String toString() {

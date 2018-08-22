@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.business.file.reference;
+package com.foreach.across.modules.filemanager.business.reference.properties;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
@@ -30,15 +30,15 @@ import com.foreach.common.spring.properties.PropertyTypeRegistry;
  * @since 1.3.0
  */
 @ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
-public class FileReferencePropertiesServiceImpl extends AbstractEntityPropertiesService<FileReferenceProperties, String> implements FileReferencePropertiesService
+public class FileReferencePropertiesServiceImpl extends AbstractEntityPropertiesService<FileReferenceProperties, Long> implements FileReferencePropertiesService
 {
 	public FileReferencePropertiesServiceImpl( EntityPropertiesRegistry entityPropertiesRegistry,
-	                                           EntityPropertiesRepository<String> entityPropertiesRepository ) {
+	                                           EntityPropertiesRepository<Long> entityPropertiesRepository ) {
 		super( entityPropertiesRegistry, entityPropertiesRepository );
 	}
 
 	@Override
-	protected FileReferenceProperties createEntityProperties( String entityId,
+	protected FileReferenceProperties createEntityProperties( Long entityId,
 	                                                          PropertyTypeRegistry<String> propertyTypeRegistry,
 	                                                          StringPropertiesSource source ) {
 		return new FileReferenceProperties( entityId, propertyTypeRegistry, source );

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.business.file.reference;
+package com.foreach.across.modules.filemanager.business.reference.properties;
 
 import com.foreach.across.modules.properties.services.EntityPropertiesService;
 
@@ -22,6 +22,6 @@ import com.foreach.across.modules.properties.services.EntityPropertiesService;
  * @author Steven Gentens
  * @since 1.3.0
  */
-public interface FileReferencePropertiesService extends EntityPropertiesService<FileReferenceProperties, String>
+public interface FileReferencePropertiesService extends EntityPropertiesService<FileReferenceProperties, Long>
 {
 }

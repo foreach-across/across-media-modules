@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.business.file.reference;
+package com.foreach.across.modules.filemanager.business.reference;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,7 +58,7 @@ public class FileReferenceService
 	 * @param file to save
 	 * @return {@link FileReference} to the file
 	 */
-	public FileReference save( MultipartFile file ) {
+	public FileReference save( @NotNull MultipartFile file ) {
 		return save( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ), file );
 	}
 
@@ -68,10 +69,7 @@ public class FileReferenceService
 	 * @param file           to save
 	 * @return {@link FileReference} to the file
 	 */
-	public FileReference save( FileRepository fileRepository, MultipartFile file ) {
-		if ( file == null ) {
-			return null;
-		}
+	public FileReference save( @NotNull FileRepository fileRepository, @NotNull MultipartFile file ) {
 
 		FileDescriptor savedFile;
 		FileReference fileReference = new FileReference();

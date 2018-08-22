@@ -18,7 +18,7 @@ package com.foreach.across.modules.filemanager.extensions;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.core.annotations.ModuleConfiguration;
-import com.foreach.across.modules.filemanager.business.DomainMarker;
+import com.foreach.across.modules.filemanager.business.FileManagerDomain;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.hibernate.provider.HibernatePackageConfigurer;
 import com.foreach.across.modules.hibernate.provider.HibernatePackageRegistry;
@@ -29,6 +29,6 @@ public class EntityScanConfiguration implements HibernatePackageConfigurer
 {
 	@Override
 	public void configureHibernatePackage( HibernatePackageRegistry hibernatePackageRegistry ) {
-		hibernatePackageRegistry.addPackageToScan( DomainMarker.class );
+		hibernatePackageRegistry.addPackageToScan( FileManagerDomain.class );
 	}
 }

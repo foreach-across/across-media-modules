@@ -18,7 +18,7 @@ package com.foreach.across.modules.filemanager.config;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.filemanager.FileManagerModule;
-import com.foreach.across.modules.filemanager.business.file.reference.*;
+import com.foreach.across.modules.filemanager.business.reference.properties.*;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.properties.config.AbstractEntityPropertiesConfiguration;

@@ -1,7 +1,7 @@
 package com.foreach.across.samples.filemanager.application.web;
 
-import com.foreach.across.modules.filemanager.business.file.reference.FileReference;
-import com.foreach.across.modules.filemanager.business.file.reference.FileReferenceService;
+import com.foreach.across.modules.filemanager.business.reference.FileReference;
+import com.foreach.across.modules.filemanager.business.reference.FileReferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

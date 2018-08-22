@@ -19,7 +19,7 @@ package it;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.business.file.reference.FileReferenceRepository;
+import com.foreach.across.modules.filemanager.business.reference.FileReferenceRepository;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;

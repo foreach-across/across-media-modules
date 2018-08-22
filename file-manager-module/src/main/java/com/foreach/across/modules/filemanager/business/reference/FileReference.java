@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.business.file.reference;
+package com.foreach.across.modules.filemanager.business.reference;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.hibernate.business.SettableIdAuditableEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.UUID;
 
@@ -66,11 +65,9 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 	@Column(name = "name")
 	private String name;
 
-	@NonNull
+	@NotNull
 	@Column(name = "file_descriptor")
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private String fileDescriptor;
+	private FileDescriptor fileDescriptor;
 
 	@Column(name = "file_size")
 	private Long fileSize;
@@ -88,7 +85,7 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 	public FileReference( Long id, String uuid, String name, FileDescriptor fileDescriptor, Long fileSize, String mimeType, String hash ) {
 		this.id = id;
 		this.name = name;
-		setFileDescriptor( fileDescriptor );
+		this.fileDescriptor = fileDescriptor;
 		setUuid( uuid );
 		this.fileSize = fileSize;
 		this.mimeType = mimeType;
@@ -99,11 +96,4 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 		this.uuid = StringUtils.isNotEmpty( uuid ) ? uuid : UUID.randomUUID().toString();
 	}
 
-	public FileDescriptor getFileDescriptor() {
-		return new FileDescriptor( fileDescriptor );
-	}
-
-	public void setFileDescriptor( FileDescriptor fileDescriptor ) {
-		this.fileDescriptor = fileDescriptor.getUri();
-	}
 }

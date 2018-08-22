@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.business.file.reference;
+package com.foreach.across.modules.filemanager.business.reference.properties;
 
 import com.foreach.across.modules.properties.business.EntityProperties;
 import com.foreach.common.spring.properties.PropertiesSource;
@@ -24,11 +24,11 @@ import com.foreach.common.spring.properties.PropertyTypeRegistry;
  * @author Steven Gentens
  * @since 1.3.0
  */
-public class FileReferenceProperties extends EntityProperties<String>
+public class FileReferenceProperties extends EntityProperties<Long>
 {
-	private final String fileReferenceId;
+	private final long fileReferenceId;
 
-	public FileReferenceProperties( String fileReferenceId,
+	public FileReferenceProperties( long fileReferenceId,
 	                                PropertyTypeRegistry<String> propertyTypeRegistry,
 	                                PropertiesSource source ) {
 		super( propertyTypeRegistry, source );
@@ -36,7 +36,7 @@ public class FileReferenceProperties extends EntityProperties<String>
 	}
 
 	@Override
-	public String getId() {
+	public Long getId() {
 		return fileReferenceId;
 	}
 }

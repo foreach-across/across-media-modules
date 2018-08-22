@@ -18,7 +18,7 @@ package com.foreach.across.modules.filemanager.installers;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.core.annotations.Installer;
-import com.foreach.across.modules.filemanager.business.file.reference.FileReference;
+import com.foreach.across.modules.filemanager.business.reference.FileReference;
 import com.foreach.across.modules.hibernate.installers.AuditableSchemaInstaller;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import org.springframework.core.annotation.Order;

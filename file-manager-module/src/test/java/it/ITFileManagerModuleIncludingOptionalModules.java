@@ -18,7 +18,7 @@ package it;
 
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
-import com.foreach.across.modules.filemanager.business.file.reference.FileReferenceRepository;
+import com.foreach.across.modules.filemanager.business.reference.FileReferenceRepository;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestConfiguration;

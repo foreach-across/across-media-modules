@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.business.file.reference;
+package com.foreach.across.modules.filemanager.business.reference;
 
-import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import com.foreach.across.modules.filemanager.business.reference.properties.FileReferenceProperties;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
-@Exposed
-public interface FileReferenceRepository extends IdBasedEntityJpaRepository<FileReference>, QueryDslPredicateExecutor<FileReference>
+@Getter
+@Setter
+public class FileReferenceEvent
 {
+	private FileReference fileReference;
+	private FileReferenceProperties fileReferenceProperties;
+
+	public FileReferenceEvent( FileReference fileReference,
+	                           FileReferenceProperties fileReferenceProperties ) {
+		this.fileReference = fileReference;
+		this.fileReferenceProperties = fileReferenceProperties;
+	}
 }

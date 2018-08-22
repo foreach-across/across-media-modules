@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.filemanager.business.file.reference;
+package com.foreach.across.modules.filemanager.business.reference.properties;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.properties.config.EntityPropertiesDescriptor;
-import com.foreach.across.modules.properties.repositories.EntityPropertiesRepository;
-import org.springframework.stereotype.Repository;
+import com.foreach.across.modules.properties.registries.EntityPropertiesRegistry;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
+@Service
 @ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
-@Repository
-public class FileReferencePropertiesRepository extends EntityPropertiesRepository<String>
+public class FileReferencePropertiesRegistry extends EntityPropertiesRegistry
 {
-	public FileReferencePropertiesRepository( EntityPropertiesDescriptor configuration ) {
-		super( configuration );
+
+	public FileReferencePropertiesRegistry( EntityPropertiesDescriptor descriptor ) {
+		super( descriptor );
 	}
 }
