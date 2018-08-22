@@ -18,6 +18,7 @@ package it;
 
 import com.foreach.across.core.AcrossConfigurationException;
 import com.foreach.across.modules.filemanager.FileManagerModule;
+import com.foreach.across.modules.filemanager.business.reference.FileReferenceService;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestContext;
@@ -37,6 +38,8 @@ public class ITFileManageModuleBootstrap
 		try (AcrossTestContext ctx = web().modules( FileManagerModule.NAME )
 		                                  .build()) {
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
+			assertThat( ctx.contextInfo().getModuleInfo( FileManagerModule.NAME ).getApplicationContext().getBeansOfType( FileReferenceService.class ) )
+					.isEmpty();
 		}
 	}
 
@@ -45,6 +48,8 @@ public class ITFileManageModuleBootstrap
 		try (AcrossTestContext ctx = web().modules( FileManagerModule.NAME, PropertiesModule.NAME )
 		                                  .build()) {
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
+			assertThat( ctx.contextInfo().getModuleInfo( FileManagerModule.NAME ).getApplicationContext().getBeansOfType( FileReferenceService.class ) )
+					.isEmpty();
 		}
 	}
 
@@ -65,6 +70,8 @@ public class ITFileManageModuleBootstrap
 		try (AcrossTestContext ctx = web().modules( FileManagerModule.NAME, AcrossHibernateJpaModule.NAME, PropertiesModule.NAME )
 		                                  .build()) {
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
+			assertThat( ctx.contextInfo().getModuleInfo( FileManagerModule.NAME ).getApplicationContext().getBeansOfType( FileReferenceService.class ) )
+					.hasSize( 1 );
 		}
 	}
 }

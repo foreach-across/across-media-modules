@@ -29,8 +29,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ITFileManager extends AbstractFileManagerModuleIT
 {
@@ -44,6 +43,21 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 
 	@Autowired
 	private FileRepositoryRegistry fileRepositoryRegistry;
+
+	@Test
+	public void bothTestAndDefaultRepositoryShouldBeAvailable() {
+		assertNotNull( fileManager );
+		assertNotNull( fileManager.getRepository( FileManager.TEMP_REPOSITORY ) );
+		assertNotNull( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ) );
+	}
+
+	@Test
+	public void fileCanBeStoredInDefaultRepository() throws IOException {
+		FileDescriptor file = fileManager.save( RES_TEXTFILE.getInputStream() );
+
+		assertNotNull( file );
+		assertTrue( fileManager.exists( file ) );
+	}
 
 	@Test
 	public void moveFile() throws IOException {
