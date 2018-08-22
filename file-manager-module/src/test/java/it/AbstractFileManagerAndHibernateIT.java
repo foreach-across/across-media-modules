@@ -25,10 +25,7 @@ import com.foreach.across.test.AcrossWebAppConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.sql.DataSource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @AcrossWebAppConfiguration
@@ -36,7 +33,7 @@ public abstract class AbstractFileManagerAndHibernateIT
 {
 
 	@Configuration
-	@AcrossTestConfiguration(modules = { PropertiesModule.NAME })
+	@AcrossTestConfiguration(modules = { PropertiesModule.NAME, AcrossHibernateJpaModule.NAME })
 	protected static class Config
 	{
 		@Bean
@@ -46,18 +43,6 @@ public abstract class AbstractFileManagerAndHibernateIT
 					FileManagerModuleSettings.LOCAL_REPOSITORIES_ROOT,
 					System.getProperty( "java.io.tmpdir" )
 			);
-			return module;
-		}
-
-		@Bean
-		public DataSource acrossDataSource() {
-			return new EmbeddedDatabaseBuilder().build();
-		}
-
-		@Bean
-		public AcrossHibernateJpaModule acrossHibernateJpaModule() {
-			AcrossHibernateJpaModule module = new AcrossHibernateJpaModule();
-			module.setHibernateProperty( "hibernate.hbm2ddl.auto", "create-drop" );
 			return module;
 		}
 	}

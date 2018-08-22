@@ -6,6 +6,7 @@ import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Steven Gentens
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
+@Component
 public class FileReferenceInterceptor extends EntityInterceptorAdapter<FileReference>
 {
 	private final FileReferencePropertiesService fileReferencePropertiesService;
@@ -24,6 +26,8 @@ public class FileReferenceInterceptor extends EntityInterceptorAdapter<FileRefer
 
 	@Override
 	public void beforeDelete( FileReference entity ) {
-		fileReferencePropertiesService.deleteProperties( entity.getId() );
+		if ( !fileReferencePropertiesService.getProperties( entity.getId() ).isEmpty() ) {
+			fileReferencePropertiesService.deleteProperties( entity.getId() );
+		}
 	}
 }

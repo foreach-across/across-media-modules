@@ -53,8 +53,9 @@ public class ITFileReferenceService extends AbstractFileManagerAndHibernateIT
 
 	@After
 	public void cleanUp() {
-		fileReferencePropertiesService.deleteProperties( fileReference.getId() );
-		fileReferenceRepository.delete( fileReference );
+		if ( fileReferenceRepository.findOne( fileReference.getId() ) != null ) {
+			fileReferenceRepository.delete( fileReference );
+		}
 	}
 
 	@Test
@@ -65,7 +66,6 @@ public class ITFileReferenceService extends AbstractFileManagerAndHibernateIT
 
 		fileReferenceService.delete( fileReference, true );
 
-		fileReferenceRepository.flush();
 		assertThat( fileReferencePropertiesService.getProperties( id ) ).isEmpty();
 		assertThat( fileReferenceRepository.findOne( id ) ).isNull();
 		assertThat( fileManager.exists( descriptor ) ).isFalse();

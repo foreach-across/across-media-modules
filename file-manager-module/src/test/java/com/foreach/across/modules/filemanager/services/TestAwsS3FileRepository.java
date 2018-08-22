@@ -23,23 +23,39 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@TestPropertySource("${user.home}/dev-configs/across-test.properties")
 public class TestAwsS3FileRepository extends BaseFileRepositoryTest
 {
-
-	public static final String AWS_REGION = "eu-central-1";
+	public static final String AWS_REGION = "eu-west-1";
 	private static String bucketName;
 	private AWSCredentials credentials;
 
 	/**
-	 * To create a {@Code AwsS3FileRepository}, get credentials using {@code DefaultAWSCrednetialsProviderChain} as described
+	 * Load the properties defined in {@code across-test.properties} so that they can be picked up by the {@link DefaultAWSCredentialsProviderChain}
+	 * The provider chain looks for the following credentials:
+	 * - aws.accessKeyId
+	 * - aws.secretKey
+	 * - aws.sessionToken (optional)
+	 */
+	@BeforeClass
+	public static void setUp() throws IOException {
+		System.getProperties().load( new FileReader( new File( System.getProperty( "user.home" ) + "/dev-configs/across-test.properties" ) ) );
+	}
+
+	/**
+	 * To create a {@code AwsS3FileRepository}, get credentials using {@code DefaultAWSCrednetialsProviderChain} as described
 	 * on http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html
 	 */
 	public void createRepository() {

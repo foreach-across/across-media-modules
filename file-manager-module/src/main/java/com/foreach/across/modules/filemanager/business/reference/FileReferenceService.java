@@ -138,6 +138,7 @@ public class FileReferenceService
 	 */
 	@Transactional
 	public void delete( FileReference fileReference, boolean deletePhysicalFile ) {
+		fileReferenceRepository.delete( fileReference.getId() );
 		if ( deletePhysicalFile ) {
 			TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronizationAdapter()
 			{
@@ -147,6 +148,5 @@ public class FileReferenceService
 				}
 			} );
 		}
-		fileReferenceRepository.delete( fileReference.getId() );
 	}
 }
