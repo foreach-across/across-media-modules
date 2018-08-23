@@ -30,11 +30,11 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.jdo.annotations.Transactional;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.UUID;
@@ -138,7 +138,8 @@ public class FileReferenceService
 	 */
 	@Transactional
 	public void delete( FileReference fileReference, boolean deletePhysicalFile ) {
-		fileReferenceRepository.delete( fileReference.getId() );
+		fileReferenceRepository.delete( fileReference );
+
 		if ( deletePhysicalFile ) {
 			TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronizationAdapter()
 			{

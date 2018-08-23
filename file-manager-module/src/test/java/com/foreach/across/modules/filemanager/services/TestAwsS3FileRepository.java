@@ -24,7 +24,6 @@ import com.amazonaws.services.s3.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.FileReader;
@@ -35,7 +34,6 @@ import java.util.UUID;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@TestPropertySource("${user.home}/dev-configs/across-test.properties")
 public class TestAwsS3FileRepository extends BaseFileRepositoryTest
 {
 	public static final String AWS_REGION = "eu-west-1";
@@ -55,7 +53,7 @@ public class TestAwsS3FileRepository extends BaseFileRepositoryTest
 	}
 
 	/**
-	 * To create a {@code AwsS3FileRepository}, get credentials using {@code DefaultAWSCrednetialsProviderChain} as described
+	 * To create a {@code AwsS3FileRepository}, get credentials using {@code DefaultAWSCredentialsProviderChain} as described
 	 * on http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html
 	 */
 	public void createRepository() {

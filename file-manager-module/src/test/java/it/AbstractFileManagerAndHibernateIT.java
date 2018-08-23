@@ -31,7 +31,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @AcrossWebAppConfiguration
 public abstract class AbstractFileManagerAndHibernateIT
 {
-
 	@Configuration
 	@AcrossTestConfiguration(modules = { PropertiesModule.NAME, AcrossHibernateJpaModule.NAME })
 	protected static class Config

@@ -26,8 +26,6 @@ public class FileReferenceInterceptor extends EntityInterceptorAdapter<FileRefer
 
 	@Override
 	public void beforeDelete( FileReference entity ) {
-		if ( !fileReferencePropertiesService.getProperties( entity.getId() ).isEmpty() ) {
-			fileReferencePropertiesService.deleteProperties( entity.getId() );
-		}
+		fileReferencePropertiesService.deleteProperties( entity.getId() );
 	}
 }
