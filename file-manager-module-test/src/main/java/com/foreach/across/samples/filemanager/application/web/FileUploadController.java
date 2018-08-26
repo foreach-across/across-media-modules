@@ -1,6 +1,7 @@
 package com.foreach.across.samples.filemanager.application.web;
 
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
+import com.foreach.across.modules.filemanager.business.reference.FileReferenceRepository;
 import com.foreach.across.modules.filemanager.business.reference.FileReferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileUploadController {
 
     private final FileReferenceService fileReferenceService;
+    private final FileReferenceRepository fileReferenceRepository;
 
     @GetMapping("/upload")
     public String renderForm() {
@@ -26,6 +28,7 @@ public class FileUploadController {
     @PostMapping("/uploadFile")
     public String processFile(@RequestParam(name = "file") MultipartFile file) {
         FileReference reference = fileReferenceService.save(file);
+        FileReference saved = fileReferenceRepository.findOne( reference.getId() );
         return "redirect:/upload";
     }
 }

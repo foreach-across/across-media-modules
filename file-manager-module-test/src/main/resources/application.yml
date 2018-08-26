@@ -9,7 +9,11 @@ spring:
 across:
   development:
     active: true
-
+adminWebModule:
+  title: Admin FMM
+  login:
+    rememberMe:
+      key: filemanagermodule
 server:
   port: 8080
   error:
@@ -22,3 +26,7 @@ security:
 
 fileManagerModule:
   localRepositoriesRoot: "${user.home}/fmm-test-files"
+
+acrossHibernate:
+  hibernate-properties:
+    hibernate.hbm2ddl.auto: update
