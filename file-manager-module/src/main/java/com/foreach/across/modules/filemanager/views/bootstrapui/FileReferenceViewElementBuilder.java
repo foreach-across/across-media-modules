@@ -3,6 +3,7 @@ package com.foreach.across.modules.filemanager.views.bootstrapui;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.builder.FileUploadFormElementBuilder;
+import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
@@ -32,11 +33,11 @@ public class FileReferenceViewElementBuilder extends ViewElementBuilderSupport
 
 	@Override
 	protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
-		FileReference fileReference = EntityViewElementUtils.currentPropertyValue( builderContext, FileReference.class );
-
 		NodeViewElementBuilder wrapper = div();
-		EntityPropertyDescriptor entityPropertyDescriptor = EntityViewElementUtils.currentPropertyDescriptor( builderContext );
-		FileUploadFormElementBuilder fileUploadBuilder = file().controlName( "entity." + entityPropertyDescriptor.getName() );
+		EntityPropertyDescriptor descriptor = EntityViewElementUtils.currentPropertyDescriptor( builderContext );
+		FileUploadFormElementBuilder fileUploadBuilder = file().controlName( EntityAttributes.controlName( descriptor ) );
+
+		FileReference fileReference = EntityViewElementUtils.currentPropertyValue( builderContext, FileReference.class );
 		if ( fileReference != null ) {
 			fileUploadBuilder.css( "hidden" );
 			wrapper.add( selectedFileBuilder( fileReference.getName() ) );
@@ -61,4 +62,5 @@ public class FileReferenceViewElementBuilder extends ViewElementBuilderSupport
 		                          .add( BootstrapUiBuilders.button().link()
 		                                                   .iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) ) );
 	}
+
 }

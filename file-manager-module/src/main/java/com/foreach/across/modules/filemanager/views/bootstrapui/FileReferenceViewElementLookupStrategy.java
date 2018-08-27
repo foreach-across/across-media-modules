@@ -20,10 +20,9 @@ public class FileReferenceViewElementLookupStrategy implements ViewElementTypeLo
 {
 	@Override
 	public String findElementType( EntityPropertyDescriptor entityPropertyDescriptor, ViewElementMode viewElementMode ) {
-		ViewElementMode singleMode = viewElementMode.forSingle();
 		Class<?> propertyType = entityPropertyDescriptor.getPropertyType();
 		if ( propertyType != null && FileReference.class.isAssignableFrom( propertyType ) ) {
-			if ( ViewElementMode.CONTROL.equals( singleMode ) ) {
+			if ( !viewElementMode.isForMultiple() && ViewElementMode.CONTROL.equals( viewElementMode ) ) {
 				return FileReferenceViewElementFactory.FILE_REFERENCE_CONTROL;
 			}
 		}

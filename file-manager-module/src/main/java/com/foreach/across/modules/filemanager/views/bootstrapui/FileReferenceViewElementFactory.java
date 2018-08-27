@@ -4,6 +4,7 @@ import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderFactory;
 import com.foreach.across.modules.entity.views.ViewElementMode;
+import com.foreach.across.modules.entity.views.bootstrapui.processors.element.EntityPropertyControlNamePostProcessor;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class FileReferenceViewElementFactory implements EntityViewElementBuilder
 	}
 
 	@Override
-	public ViewElementBuilder createBuilder( EntityPropertyDescriptor entityPropertyDescriptor, ViewElementMode viewElementMode, String s ) {
-		return new FileReferenceViewElementBuilder();
+	public ViewElementBuilder createBuilder( EntityPropertyDescriptor entityPropertyDescriptor, ViewElementMode viewElementMode, String viewElementType ) {
+		return new FileReferenceViewElementBuilder().postProcessor( new EntityPropertyControlNamePostProcessor() );
 	}
 }
