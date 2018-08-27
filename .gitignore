@@ -4,5 +4,6 @@ target
 .idea/excludeFromValidation
 *.iml
 
+file-manager-module/src/main/frontend/node
 file-manager-module/src/main/resources/views/static/fileManagerModule/js
 file-manager-module/src/main/resources/views/static/fileManagerModule/css

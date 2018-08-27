@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * Registers a {@link FileReferenceViewElementBuilder} for {@link FileReference} properties.
  *
  * @author Steven Gentens
- * @see FileReferenceViewElementFactory
+ * @see FileReferenceViewElementBuilderFactory
  * @since 1.3.0
  */
 @Component
@@ -23,7 +23,7 @@ public class FileReferenceViewElementLookupStrategy implements ViewElementTypeLo
 		Class<?> propertyType = entityPropertyDescriptor.getPropertyType();
 		if ( propertyType != null && FileReference.class.isAssignableFrom( propertyType ) ) {
 			if ( !viewElementMode.isForMultiple() && ViewElementMode.CONTROL.equals( viewElementMode ) ) {
-				return FileReferenceViewElementFactory.FILE_REFERENCE_CONTROL;
+				return FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL;
 			}
 		}
 		return null;

@@ -6,16 +6,16 @@ import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import org.junit.Test;
 
-import static com.foreach.across.modules.filemanager.views.bootstrapui.FileReferenceViewElementFactory.FILE_REFERENCE_CONTROL;
+import static com.foreach.across.modules.filemanager.views.bootstrapui.FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
-public class TestFileReferenceViewElementFactory
+public class TestFileReferenceViewElementBuilderFactory
 {
-	private FileReferenceViewElementFactory factory = new FileReferenceViewElementFactory();
+	private FileReferenceViewElementBuilderFactory factory = new FileReferenceViewElementBuilderFactory();
 
 	@Test
 	public void supports() {

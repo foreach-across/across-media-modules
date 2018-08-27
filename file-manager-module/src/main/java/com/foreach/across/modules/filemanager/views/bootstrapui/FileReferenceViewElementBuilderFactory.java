@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnBootstrapUI
 @Component
-public class FileReferenceViewElementFactory implements EntityViewElementBuilderFactory
+public class FileReferenceViewElementBuilderFactory implements EntityViewElementBuilderFactory
 {
-	public final static String FILE_REFERENCE_CONTROL = FileReferenceViewElementFactory.class.getName() + ".fileReferenceControl";
+	public final static String FILE_REFERENCE_CONTROL = FileReferenceViewElementBuilderFactory.class.getName() + ".fileReferenceControl";
 
 	@Override
 	public boolean supports( String viewElementType ) {
