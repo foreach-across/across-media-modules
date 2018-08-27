@@ -22,7 +22,6 @@ import com.foreach.across.modules.filemanager.business.reference.properties.File
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -115,16 +114,5 @@ public class TestFileReferenceService
 		assertThat( save.getMimeType() ).isEqualTo( file.getContentType() );
 		assertThat( save.getFileSize() ).isEqualTo( file.getSize() );
 		assertThat( save.getFileDescriptor() ).isEqualTo( argumentCaptor.getValue() );
-	}
-
-	@Test
-	@Ignore
-	public void delete() {
-		FileReference fileReference = new FileReference();
-		FileDescriptor fileDescriptor = new FileDescriptor( "some-repository", "my-file.txt" );
-		fileReference.setFileDescriptor( fileDescriptor );
-
-		fileReferenceService.delete( fileReference, true );
-		verify( fileManager, times( 1 ) ).delete( fileDescriptor );
 	}
 }
