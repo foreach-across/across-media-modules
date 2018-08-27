@@ -15,20 +15,21 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Controller
 @RequiredArgsConstructor
-public class FileUploadController {
+public class FileUploadController
+{
 
-    private final FileReferenceService fileReferenceService;
-    private final FileReferenceRepository fileReferenceRepository;
+	private final FileReferenceService fileReferenceService;
+	private final FileReferenceRepository fileReferenceRepository;
 
-    @GetMapping("/upload")
-    public String renderForm() {
-        return "th/fileManagerTest/file-upload";
-    }
+	@GetMapping("/upload")
+	public String renderForm() {
+		return "th/fileManagerTest/file-upload";
+	}
 
-    @PostMapping("/uploadFile")
-    public String processFile(@RequestParam(name = "file") MultipartFile file) {
-        FileReference reference = fileReferenceService.save(file);
-        FileReference saved = fileReferenceRepository.findOne( reference.getId() );
-        return "redirect:/upload";
-    }
+	@PostMapping("/uploadFile")
+	public String processFile( @RequestParam(name = "file") MultipartFile file ) {
+		FileReference reference = fileReferenceService.save( file );
+		FileReference saved = fileReferenceRepository.findOne( reference.getId() );
+		return "redirect:/upload";
+	}
 }
