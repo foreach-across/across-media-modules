@@ -28,17 +28,16 @@ public class TestFileReferenceViewElementLookupStrategy
 	}
 
 	@Test
-	public void strategyOnlySupportsControlMode() {
-		assertThat( lookup( FileReference.class, ViewElementMode.CONTROL ) )
-				.isEqualTo( FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL );
-		assertThat( lookup( FileReference.class, ViewElementMode.FILTER_CONTROL ) ).isNull();
+	public void supportsControlAndValueModes() {
 		assertThat( lookup( FileReference.class, ViewElementMode.FORM_READ ) ).isNull();
 		assertThat( lookup( FileReference.class, ViewElementMode.FORM_WRITE ) ).isNull();
 		assertThat( lookup( FileReference.class, ViewElementMode.LABEL ) ).isNull();
-		assertThat( lookup( FileReference.class, ViewElementMode.LIST_CONTROL ) ).isNull();
 		assertThat( lookup( FileReference.class, ViewElementMode.LIST_LABEL ) ).isNull();
-		assertThat( lookup( FileReference.class, ViewElementMode.LIST_VALUE ) ).isNull();
-		assertThat( lookup( FileReference.class, ViewElementMode.VALUE ) ).isNull();
+		assertThat( lookup( FileReference.class, ViewElementMode.FILTER_CONTROL ) ).isNull();
+		assertThat( lookup( FileReference.class, ViewElementMode.CONTROL ) ).isEqualTo( FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL );
+		assertThat( lookup( FileReference.class, ViewElementMode.LIST_CONTROL ) ).isEqualTo( FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL );
+		assertThat( lookup( FileReference.class, ViewElementMode.LIST_VALUE ) ).isEqualTo( FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL );
+		assertThat( lookup( FileReference.class, ViewElementMode.VALUE ) ).isEqualTo( FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL );
 	}
 
 	@Test

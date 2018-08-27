@@ -26,9 +26,7 @@ import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @AcrossDepends(optional = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
 public class FileManagerModule extends AcrossModule
@@ -47,9 +45,6 @@ public class FileManagerModule extends AcrossModule
 
 	@Override
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
-		List<String> modules = contextConfig.getModules()
-		                                    .stream().map( ModuleBootstrapConfig::getModuleName )
-		                                    .collect( Collectors.toList() );
 		if ( contextConfig.hasModule( AcrossHibernateJpaModule.NAME ) ) {
 			if ( !contextConfig.hasModule( PropertiesModule.NAME ) ) {
 				throw new AcrossConfigurationException( NAME + " requires " + PropertiesModule.NAME

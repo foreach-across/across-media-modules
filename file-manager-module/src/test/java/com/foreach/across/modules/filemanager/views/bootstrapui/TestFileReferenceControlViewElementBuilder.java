@@ -20,29 +20,30 @@ import static org.mockito.Mockito.when;
  * @since 1.3.0
  */
 @ContextConfiguration
-public class TestFileReferenceViewElementBuilder extends AbstractViewElementTemplateTest
+public class TestFileReferenceControlViewElementBuilder extends AbstractViewElementTemplateTest
 {
 	private DefaultViewElementBuilderContext builderContext;
-	private FileReferenceViewElementBuilder builder;
+	private FileReferenceControlViewElementBuilder builder;
 	private EntityPropertyDescriptor descriptor;
 	private Object entity;
 
+	private final static String UUID = "some-uuid";
 	private final static String PROPERTY_NAME = "my-property";
 	private final static String FILE_NAME = "my-file.txt";
-	private final static String SELECTED_ITEM = "<div>replaceByName" +
-			"<a role='button' href='#' class='btn btn-link'>" +
-			"<span aria-hidden='true' class='glyphicon glyphicon-remove'></span></a></div>";
-	private final static String TEMPLATE = "<script type='text/html' data-role='selected-item-template'>" + SELECTED_ITEM + "</script>";
+	private final static String TEMPLATE = "<script type='text/html' data-role='selected-item-template'>" +
+			"<div>replaceByName<a role='button' href='#' class='remove-file btn btn-link'>" +
+			"<span aria-hidden='true' class='glyphicon glyphicon-remove'></span></a></div></script>";
 	private final static String PRE_SELECTED = "<div class='js-file-reference-control'>" + TEMPLATE +
 			"<input type='file' name='" + PROPERTY_NAME + "' id='" + PROPERTY_NAME + "' class='hidden' />" +
-			SELECTED_ITEM.replace( "replaceByName", FILE_NAME ) + "</div>";
+			"<div><a href='/reference/" + UUID + "'>" + FILE_NAME + "</a><a role='button' href='#' class='remove-file btn btn-link'>" +
+			"<span aria-hidden='true' class='glyphicon glyphicon-remove'></span></a></div>" + "</div>";
 	private final static String NOT_SELECTED = "<div class='js-file-reference-control'>" + TEMPLATE +
 			"<input type='file' name='" + PROPERTY_NAME + "' id='" + PROPERTY_NAME + "' /></div>";
 
 	@Before
 	@SuppressWarnings("unchecked")
 	public void setUp() {
-		builder = new FileReferenceViewElementBuilder();
+		builder = new FileReferenceControlViewElementBuilder();
 
 		descriptor = mock( EntityPropertyDescriptor.class );
 		when( descriptor.getPropertyType() ).thenReturn( (Class) FileReference.class );
@@ -62,7 +63,7 @@ public class TestFileReferenceViewElementBuilder extends AbstractViewElementTemp
 
 	@Test
 	public void fileReferenceExists() {
-		when( descriptor.getPropertyValue( entity ) ).thenReturn( FileReference.builder().name( FILE_NAME ).build() );
+		when( descriptor.getPropertyValue( entity ) ).thenReturn( FileReference.builder().name( FILE_NAME ).uuid( UUID ).build() );
 		renderAndExpect( builder.createElement( builderContext ), PRE_SELECTED );
 	}
 

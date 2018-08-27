@@ -24,7 +24,7 @@ const onSelect = function( selector, html ) {
 
 onRemove = function( selector, html ) {
     const self = $( selector );
-    self.find( "a" )
+    self.find( "a.remove-file" )
             .click( ( event ) => {
                 self.empty();
                 self.append( html );

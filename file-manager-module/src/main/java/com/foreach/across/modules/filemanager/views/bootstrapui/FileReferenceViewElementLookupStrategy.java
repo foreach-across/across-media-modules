@@ -1,14 +1,18 @@
 package com.foreach.across.modules.filemanager.views.bootstrapui;
 
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
+import com.foreach.across.modules.entity.EntityModule;
+import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.ViewElementTypeLookupStrategy;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
+import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Registers a {@link FileReferenceViewElementBuilder} for {@link FileReference} properties.
+ * Registers a {@link FileReferenceControlViewElementBuilder} for {@link FileReference} properties.
  *
  * @author Steven Gentens
  * @see FileReferenceViewElementBuilderFactory
@@ -16,16 +20,23 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Order(1)
+@ConditionalOnBootstrapUI
+@ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, EntityModule.NAME })
 public class FileReferenceViewElementLookupStrategy implements ViewElementTypeLookupStrategy
 {
 	@Override
 	public String findElementType( EntityPropertyDescriptor entityPropertyDescriptor, ViewElementMode viewElementMode ) {
 		Class<?> propertyType = entityPropertyDescriptor.getPropertyType();
 		if ( propertyType != null && FileReference.class.isAssignableFrom( propertyType ) ) {
-			if ( !viewElementMode.isForMultiple() && ViewElementMode.CONTROL.equals( viewElementMode ) ) {
+			if ( !viewElementMode.isForMultiple() && ( ViewElementMode.isValue( viewElementMode ) || isNonFilterControl( viewElementMode ) ) ) {
 				return FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL;
 			}
 		}
 		return null;
+	}
+
+	private boolean isNonFilterControl( ViewElementMode viewElementMode ) {
+		ViewElementMode single = viewElementMode.forSingle();
+		return ViewElementMode.CONTROL.equals( single ) || ViewElementMode.LIST_CONTROL.equals( single );
 	}
 }

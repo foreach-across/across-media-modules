@@ -27,7 +27,7 @@ public class TestFileReferenceViewElementBuilderFactory
 		ViewElementBuilder builder = factory.createBuilder( new SimpleEntityPropertyDescriptor( "my-descriptor" ), ViewElementMode.CONTROL,
 		                                                    FILE_REFERENCE_CONTROL );
 		assertThat( builder )
-				.isInstanceOf( FileReferenceViewElementBuilder.class );
+				.isInstanceOf( FileReferenceControlViewElementBuilder.class );
 		assertThat( ( (ViewElementBuilderSupport) builder ) ).extracting( "postProcessors" )
 		                                                     .isNotEmpty();
 		// TODO fix checking by type
