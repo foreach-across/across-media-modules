@@ -6,6 +6,7 @@ import com.foreach.across.modules.filemanager.business.reference.FileReferenceRe
 import com.foreach.across.modules.filemanager.business.reference.QFileReference;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.web.AcrossWebModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -17,15 +18,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
+ * Provides an API to serve {@link FileReference}s.
+ *
  * @author Steven Gentens
  * @since 1.3.0
  */
 @Controller
 @RequiredArgsConstructor
-@ConditionalOnAcrossModule(allOf = AcrossHibernateJpaModule.NAME)
+@ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, AcrossWebModule.NAME })
 public class FileReferenceController
 {
-	public static final String BASE_PATH = "/reference";
+	public static final String BASE_PATH = "/api/fmm/reference";
 	private final FileReferenceRepository fileReferenceRepository;
 	private final FileManager fileManager;
 

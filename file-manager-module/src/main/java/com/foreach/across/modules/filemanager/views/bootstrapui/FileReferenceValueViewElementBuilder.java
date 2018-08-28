@@ -27,8 +27,9 @@ public class FileReferenceValueViewElementBuilder extends ViewElementBuilderSupp
 		LinkViewElementBuilder link = BootstrapUiBuilders.link();
 		if ( fileReference != null ) {
 			link.text( fileReference.getName() )
-			    .url( FileReferenceUtils.getDownloadUrl( fileReference ) );
+			    .url( builderContext.buildLink( FileReferenceUtils.getDownloadUrl( fileReference ) ) );
 		}
 		return link.build( builderContext );
 	}
+
 }

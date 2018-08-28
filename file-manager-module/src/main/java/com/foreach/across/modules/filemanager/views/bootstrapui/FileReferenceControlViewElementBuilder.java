@@ -47,7 +47,7 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 		FileReference fileReference = EntityViewElementUtils.currentPropertyValue( builderContext, FileReference.class );
 		if ( fileReference != null ) {
 			fileUploadBuilder.css( "hidden" );
-			wrapper.add( selectedFileBuilder( fileReference.getName(), FileReferenceUtils.getDownloadUrl( fileReference ) ) );
+			wrapper.add( selectedFileBuilder( fileReference.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( fileReference ) ) ) );
 		}
 		wrapper.add( fileUploadBuilder );
 		wrapper.addFirst( getTemplate() );
