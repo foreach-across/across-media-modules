@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -53,6 +54,7 @@ public class TestFileReferenceService
 	private MultipartFile file;
 	private InputStream inputStream;
 	private FileDescriptor fileDescriptor;
+	private FileDescriptor newDescriptor;
 
 	@Before
 	public void setUp() throws IOException {
@@ -76,6 +78,9 @@ public class TestFileReferenceService
 
 		fileDescriptor = new FileDescriptor( FileManager.TEMP_REPOSITORY, "my-unique-file-name" );
 		when( fileManager.save( fileDescriptor.getRepositoryId(), inputStream ) ).thenReturn( fileDescriptor );
+
+		newDescriptor = new FileDescriptor( FileManager.DEFAULT_REPOSITORY, UUID.randomUUID().toString() );
+		when( fileRepository.createFile() ).thenReturn( newDescriptor );
 
 		FileReferenceProperties fileReferenceProperties = mock( FileReferenceProperties.class );
 		when( fileReferencePropertiesService.getProperties( any() ) ).thenReturn( fileReferenceProperties );
@@ -107,7 +112,7 @@ public class TestFileReferenceService
 		ArgumentCaptor<FileDescriptor> argumentCaptor = ArgumentCaptor.forClass( FileDescriptor.class );
 
 		verify( fileManager, times( 1 ) ).move( eq( fileDescriptor ), argumentCaptor.capture() );
-		assertThat( argumentCaptor.getValue().getFileId() ).endsWith( ".txt" );
+		assertThat( argumentCaptor.getValue() ).isEqualTo( newDescriptor );
 		assertThat( argumentCaptor.getValue().getRepositoryId() ).isEqualTo( FileManager.DEFAULT_REPOSITORY );
 
 		assertThat( save ).hasNoNullFieldsOrPropertiesExcept( "newEntityId" );

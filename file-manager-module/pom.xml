@@ -199,6 +199,7 @@
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>properties-module</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
@@ -213,6 +214,7 @@
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>bootstrap-ui-module</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across</groupId>

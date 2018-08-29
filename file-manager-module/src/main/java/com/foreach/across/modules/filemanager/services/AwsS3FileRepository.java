@@ -45,6 +45,7 @@ public class AwsS3FileRepository implements FileRepository
 
 	public static final String DEFAULT_REGION = "eu-central-1";
 
+	private final String repositoryId;
 	private final String bucketName; //bucketName
 	private final AmazonS3 amazonS3Client;
 	private final Optional<PathGenerator> pathGenerator;
@@ -64,6 +65,17 @@ public class AwsS3FileRepository implements FileRepository
 	                            FileManager fileManager,
 	                            String region,
 	                            PathGenerator pathGenerator ) {
+		this( bucketName, bucketName, accessKey, accessSecret, fileManager, region, pathGenerator );
+	}
+
+	public AwsS3FileRepository( String repositoryId,
+	                            String bucketName,
+	                            String accessKey,
+	                            String accessSecret,
+	                            FileManager fileManager,
+	                            String region,
+	                            PathGenerator pathGenerator ) {
+		this.repositoryId = repositoryId;
 		this.bucketName = bucketName;
 		this.pathGenerator = Optional.ofNullable( pathGenerator );
 		this.fileManager = fileManager;
@@ -75,7 +87,7 @@ public class AwsS3FileRepository implements FileRepository
 
 	@Override
 	public String getRepositoryId() {
-		return bucketName;
+		return repositoryId;
 	}
 
 	@Override
@@ -229,14 +241,14 @@ public class AwsS3FileRepository implements FileRepository
 
 		String path = pathGenerator.map( PathGenerator::generatePath ).orElse( null );
 
-		return new FileDescriptor( bucketName, path, fileName );
+		return new FileDescriptor( repositoryId, path, fileName );
 	}
 
 	private void assertValidDescriptor( FileDescriptor descriptor ) {
-		if ( !StringUtils.equals( bucketName, descriptor.getRepositoryId() ) ) {
+		if ( !StringUtils.equals( getRepositoryId(), descriptor.getRepositoryId() ) ) {
 			throw new FileStorageException( String.format(
 					"Attempt to use a FileDescriptor of repository %s on repository %s", descriptor.getRepositoryId(),
-					bucketName ) );
+					getRepositoryId() ) );
 		}
 	}
 

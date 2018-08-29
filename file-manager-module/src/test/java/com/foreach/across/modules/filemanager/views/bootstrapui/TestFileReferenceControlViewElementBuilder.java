@@ -35,7 +35,7 @@ public class TestFileReferenceControlViewElementBuilder extends AbstractViewElem
 			"<span aria-hidden='true' class='glyphicon glyphicon-remove'></span></a></div></script>";
 	private final static String PRE_SELECTED = "<div class='js-file-reference-control'>" + TEMPLATE +
 			"<input type='file' name='" + PROPERTY_NAME + "' id='" + PROPERTY_NAME + "' class='hidden' />" +
-			"<div><a href='/reference/" + UUID + "'>" + FILE_NAME + "</a><a role='button' href='#' class='remove-file btn btn-link'>" +
+			"<div><a href='@fileReference:/" + UUID + "'>" + FILE_NAME + "</a><a role='button' href='#' class='remove-file btn btn-link'>" +
 			"<span aria-hidden='true' class='glyphicon glyphicon-remove'></span></a></div>" + "</div>";
 	private final static String NOT_SELECTED = "<div class='js-file-reference-control'>" + TEMPLATE +
 			"<input type='file' name='" + PROPERTY_NAME + "' id='" + PROPERTY_NAME + "' /></div>";

@@ -27,7 +27,6 @@ import com.foreach.across.modules.properties.PropertiesModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.UUID;
 
 /**
  * Central point for working with {@link FileReference}s.
@@ -87,7 +85,7 @@ public class FileReferenceService
 			LOG.error( "Unable to read file {}", file.getOriginalFilename(), e );
 			return null;
 		}
-		FileDescriptor targetDescriptor = createTargetDescriptor( fileRepository, file );
+		FileDescriptor targetDescriptor = fileRepository.createFile();
 		fileManager.move( savedFile, targetDescriptor );
 		fileReference.setFileDescriptor( targetDescriptor );
 
@@ -107,17 +105,6 @@ public class FileReferenceService
 	}
 
 	/**
-	 * Creates a {@link FileDescriptor} for the {@link FileRepository} in which the file should be saved.
-	 *
-	 * @param fileRepository where the file should be stored
-	 * @param file           to store
-	 * @return location where the file should be stored.
-	 */
-	private FileDescriptor createTargetDescriptor( FileRepository fileRepository, MultipartFile file ) {
-		return new FileDescriptor( fileRepository.getRepositoryId(), UUID.randomUUID() + "." + FilenameUtils.getExtension( file.getOriginalFilename() ) );
-	}
-
-	/**
 	 * Sends out a {@link FileReferenceCreationEvent} for a given {@link FileReference} that can be used to modify the properties upon creation.
 	 *
 	 * @param fileReference that is to be created
@@ -133,7 +120,7 @@ public class FileReferenceService
 	/**
 	 * Removes a {@link FileReference}. Optionally deletes the physical file if the {@link FileReference} has been deleted.
 	 *
-	 * @param fileReference to remove
+	 * @param fileReference      to remove
 	 * @param deletePhysicalFile whether the physical file should be removed
 	 */
 	@Transactional
