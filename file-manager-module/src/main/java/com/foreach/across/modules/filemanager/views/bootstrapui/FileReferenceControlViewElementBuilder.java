@@ -51,10 +51,14 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 		Object value = EntityViewElementUtils.currentPropertyValue( builderContext );
 		boolean isForMultiple = descriptor.getPropertyTypeDescriptor().isCollection();
 		if ( isForMultiple ) {
-			addMultiValueControl( wrapper, controlName, value != null ? (List<FileReference>) value : null, builderContext );
+			if ( value != null ) {
+				addMultipleSelectedElements( wrapper, controlName, (List<FileReference>) value, builderContext );
+			}
 		}
 		else {
-			addSingleValueControl( wrapper, value != null ? (FileReference) value : null, builderContext );
+			if ( value != null ) {
+				addSingleSelectedElement( wrapper, (FileReference) value, builderContext );
+			}
 		}
 
 		FileUploadFormElementBuilder fileUploadBuilder = file().multiple( isForMultiple ).css( "js-file-control" )
@@ -70,15 +74,15 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 				.build( builderContext );
 	}
 
-	private void addSingleValueControl( NodeViewElementBuilder wrapper, FileReference file, ViewElementBuilderContext builderContext ) {
+	private void addSingleSelectedElement( NodeViewElementBuilder wrapper, FileReference file, ViewElementBuilderContext builderContext ) {
 		wrapper.add( selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) )
 		);
 	}
 
-	private void addMultiValueControl( NodeViewElementBuilder wrapper,
-	                                   String controlName,
-	                                   List<FileReference> files,
-	                                   ViewElementBuilderContext builderContext ) {
+	private void addMultipleSelectedElements( NodeViewElementBuilder wrapper,
+	                                          String controlName,
+	                                          List<FileReference> files,
+	                                          ViewElementBuilderContext builderContext ) {
 		files.stream().filter( Objects::nonNull ).forEach(
 				file -> wrapper.add( selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) )
 						                     .add( hidden().controlName( controlName ).value( file.getId() ) ) )

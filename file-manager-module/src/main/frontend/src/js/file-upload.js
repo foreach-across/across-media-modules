@@ -26,15 +26,12 @@ const onSelect = function ( rootElement, html ) {
 const onMultiSelect = function ( rootElement, html, element ) {
     const root = $( rootElement );
     const self = $( element );
-    console.log( '=== onMultiselect ===' );
     self.on( 'change', ( event ) => {
         const fileInput = $( event.target );
         const newFiles = fileInput[0].files;
-        console.log( newFiles );
         if ( newFiles.length > 0 ) {
             for ( let i = 0; i < newFiles.length; i++ ) {
                 const file = newFiles[i];
-                console.log( file );
                 const newFile = $( selectedTemplate.replace( "replaceByName", file.name ) );
                 root.append( newFile );
                 onRemove( self, html, $( newFile ).find( "a.remove-file" ), true );
@@ -50,8 +47,6 @@ const onMultiSelect = function ( rootElement, html, element ) {
 onRemove = function ( rootElement, html, element, forMultiple = false ) {
     const root = $( rootElement );
     const self = $( element );
-    console.log( '=== onRemove ===' );
-    console.log( self );
     self.on( 'click', ( event ) => {
         console.log( `isForMultiple: ${forMultiple}` );
         if ( !forMultiple ) {
