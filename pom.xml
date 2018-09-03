@@ -115,8 +115,8 @@
 					<execution>
 						<id>make-assembly</id>
 						<!-- this is used for inheritance merges -->
-						<phase>package</phase>
-						<!-- bind to the packaging phase -->
+						<!--<phase>package</phase>-->
+						<!--&lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
 						<goals>
 							<goal>single</goal>
 						</goals>
