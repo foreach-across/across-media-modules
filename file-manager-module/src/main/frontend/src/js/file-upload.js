@@ -7,8 +7,9 @@ function getElementHtml( fileInput ) {
 }
 
 let onRemove = "";
-const onSelect = function( selector, html ) {
-    const self = $( selector );
+const onSelect = function ( rootElement, html ) {
+    const self = $( rootElement );
+    console.log( '=== onSelect ===' );
     self.find( "input[type=file]" )
             .on( 'change', ( event ) => {
                 const fileInput = $( event.target );
@@ -17,38 +18,86 @@ const onSelect = function( selector, html ) {
                     const file = files[0];
                     fileInput.addClass( "hidden" );
                     self.append( selectedTemplate.replace( "replaceByName", file.name ) );
-                    onRemove( self, html );
+                    onRemove( self, html, $( self ).find( "a.remove-file" ) );
                 }
             } );
 };
 
-onRemove = function( selector, html ) {
-    const self = $( selector );
-    self.find( "a.remove-file" )
-            .click( ( event ) => {
-                self.empty();
-                self.append( html );
-                onSelect( selector, html );
-            } );
+const onMultiSelect = function ( rootElement, html, element ) {
+    const root = $( rootElement );
+    const self = $( element );
+    console.log( '=== onMultiselect ===' );
+    self.on( 'change', ( event ) => {
+        const fileInput = $( event.target );
+        const newFiles = fileInput[0].files;
+        console.log( newFiles );
+        if ( newFiles.length > 0 ) {
+            for ( let i = 0; i < newFiles.length; i++ ) {
+                const file = newFiles[i];
+                console.log( file );
+                const newFile = $( selectedTemplate.replace( "replaceByName", file.name ) );
+                root.append( newFile );
+                onRemove( self, html, $( newFile ).find( "a.remove-file" ), true );
+            }
+            fileInput.addClass( 'hidden' );
+            const newFileInput = $( html );
+            root.prepend( newFileInput );
+            onMultiSelect( root, html, newFileInput );
+        }
+    } );
+};
+
+onRemove = function ( rootElement, html, element, forMultiple = false ) {
+    const root = $( rootElement );
+    const self = $( element );
+    console.log( '=== onRemove ===' );
+    console.log( self );
+    self.on( 'click', ( event ) => {
+        console.log( `isForMultiple: ${forMultiple}` );
+        if ( !forMultiple ) {
+            root.empty();
+            root.prepend( html );
+            onSelect( rootElement, html );
+        }
+        else {
+            const parent = $( event.target ).closest( ".file-reference-control-item" );
+            parent.remove();
+        }
+    } );
 };
 
 EntityModule.registerInitializer( ( node ) => {
     $( ".js-file-reference-control" ).each(
             ( index, value ) => {
                 const self = $( value );
-                const fileInput = self.children( "input[type=file]" );
+                const fileInput = self.children( ".js-file-control" );
+
                 const script = self.find( "script" );
                 selectedTemplate = script.html();
                 script.remove();
+
                 let html = getElementHtml( fileInput );
-                if ( fileInput.hasClass( "hidden" ) ) {
-                    fileInput.removeClass( "hidden" );
+                const existingFiles = self.find( "a.remove-file" );
+
+                if ( $( fileInput[0] ).prop( "multiple" ) ) {
                     html = getElementHtml( fileInput );
-                    fileInput.remove();
-                    onRemove( value, html );
+                    $( existingFiles ).each( ( ix, file ) => {
+                        onRemove( value, html, file, true );
+                    } );
+                    onMultiSelect( value, html, fileInput );
                 }
                 else {
-                    onSelect( value, html );
+                    if ( fileInput.hasClass( "hidden" ) ) {
+                        fileInput.removeClass( "hidden" );
+                        html = getElementHtml( fileInput );
+                        fileInput.remove();
+                        $( existingFiles ).each( ( ix, item ) => {
+                            onRemove( value, html, item );
+                        } );
+                    }
+                    else {
+                        onSelect( value, html, fileInput );
+                    }
                 }
             }
     );

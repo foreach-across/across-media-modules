@@ -7,6 +7,9 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Steven Gentens
@@ -39,4 +42,18 @@ public class Car extends SettableIdBasedEntity<Car>
 	@ManyToOne
 	@JoinColumn(name = "manual_id", referencedColumnName = "id")
 	private FileReference manual;
+
+	@OrderColumn
+	@ManyToMany
+	@Setter(AccessLevel.NONE)
+	@JoinTable(
+			name = "test_fileref_car",
+			joinColumns = @JoinColumn(name = "fr_car_car_id"),
+			inverseJoinColumns = @JoinColumn(name = "fr_car_fr_id")
+	)
+	private List<FileReference> attachments;
+
+	public void setAttachments( List<FileReference> attachments ) {
+		this.attachments = attachments.stream().filter( Objects::nonNull ).collect( Collectors.toList() );
+	}
 }

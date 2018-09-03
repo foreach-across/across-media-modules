@@ -9,6 +9,7 @@ import com.foreach.across.modules.entity.views.ViewElementTypeLookupStrategy;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,10 +26,11 @@ import org.springframework.stereotype.Component;
 public class FileReferenceViewElementLookupStrategy implements ViewElementTypeLookupStrategy
 {
 	@Override
-	public String findElementType( EntityPropertyDescriptor entityPropertyDescriptor, ViewElementMode viewElementMode ) {
-		Class<?> propertyType = entityPropertyDescriptor.getPropertyType();
-		if ( propertyType != null && FileReference.class.isAssignableFrom( propertyType ) ) {
-			if ( !viewElementMode.isForMultiple() && ( ViewElementMode.isValue( viewElementMode ) || isNonFilterControl( viewElementMode ) ) ) {
+	public String findElementType( EntityPropertyDescriptor descriptor, ViewElementMode viewElementMode ) {
+		TypeDescriptor propertyType = descriptor.getPropertyTypeDescriptor();
+		Class type = propertyType.isCollection() ? propertyType.getElementTypeDescriptor().getType() : propertyType.getType();
+		if ( type != null && FileReference.class.isAssignableFrom( type ) ) {
+			if ( ViewElementMode.isValue( viewElementMode ) || isNonFilterControl( viewElementMode ) ) {
 				return FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL;
 			}
 		}

@@ -33,13 +33,11 @@ public class FileReferenceViewElementBuilderFactory implements EntityViewElement
 	@Override
 	@SuppressWarnings("unchecked")
 	public ViewElementBuilder createBuilder( EntityPropertyDescriptor entityPropertyDescriptor, ViewElementMode viewElementMode, String viewElementType ) {
-		if ( !viewElementMode.isForMultiple() ) {
-			if ( ViewElementMode.CONTROL.equals( viewElementMode ) || ViewElementMode.FORM_WRITE.equals( viewElementMode ) ) {
-				return new FileReferenceControlViewElementBuilder().postProcessor( new EntityPropertyControlNamePostProcessor() );
-			}
-			return new FileReferenceValueViewElementBuilder();
+		ViewElementMode single = viewElementMode.forSingle();
+		if ( ViewElementMode.CONTROL.equals( single ) || ViewElementMode.FORM_WRITE.equals( single ) ) {
+			return new FileReferenceControlViewElementBuilder().postProcessor( new EntityPropertyControlNamePostProcessor() );
 		}
-		return null;
+		return new FileReferenceValueViewElementBuilder();
 	}
 
 }
