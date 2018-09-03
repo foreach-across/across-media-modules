@@ -7,7 +7,7 @@ function getElementHtml( fileInput ) {
 }
 
 let onRemove = "";
-const onSelect = function ( rootElement, html ) {
+const onSelect = function( rootElement, html ) {
     const self = $( rootElement );
     console.log( '=== onSelect ===' );
     self.find( "input[type=file]" )
@@ -23,7 +23,7 @@ const onSelect = function ( rootElement, html ) {
             } );
 };
 
-const onMultiSelect = function ( rootElement, html, element ) {
+const onMultiSelect = function( rootElement, html, element ) {
     const root = $( rootElement );
     const self = $( element );
     self.on( 'change', ( event ) => {
@@ -44,7 +44,7 @@ const onMultiSelect = function ( rootElement, html, element ) {
     } );
 };
 
-onRemove = function ( rootElement, html, element, forMultiple = false ) {
+onRemove = function( rootElement, html, element, forMultiple = false ) {
     const root = $( rootElement );
     const self = $( element );
     self.on( 'click', ( event ) => {
