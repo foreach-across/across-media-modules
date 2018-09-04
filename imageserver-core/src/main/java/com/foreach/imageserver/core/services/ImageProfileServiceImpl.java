@@ -21,7 +21,7 @@ public class ImageProfileServiceImpl implements ImageProfileService
 
 	@Override
 	public ImageProfile getById( long id ) {
-		return imageProfileRepository.findOne( id );
+        return imageProfileRepository.findById(id).orElse(null);
 	}
 
 	@Transactional

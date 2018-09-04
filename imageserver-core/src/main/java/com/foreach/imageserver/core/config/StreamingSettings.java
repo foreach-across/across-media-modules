@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("imageServerCore.streaming")
+@ConfigurationProperties("image-server-core.streaming")
 @Getter
 @Setter
 public class StreamingSettings

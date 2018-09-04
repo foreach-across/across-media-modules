@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.File;
 
-@ConfigurationProperties("imageServerCore.store")
+@ConfigurationProperties("image-server-core.store")
 @Getter
 @Setter
 public class StoreSettings

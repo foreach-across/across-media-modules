@@ -21,7 +21,7 @@ public class ImageContextRepositoryTest extends AbstractIntegrationTest
 		context.setCode( "the_application_code" );
 		contextRepository.save( context );
 
-		ImageContext contextFromDb = contextRepository.findOne( fixedId );
+        ImageContext contextFromDb = contextRepository.findById(fixedId).orElse(null);
 
 		assertEquals( fixedId, contextFromDb.getId() );
 		assertEquals( "the_application_code", contextFromDb.getCode() );

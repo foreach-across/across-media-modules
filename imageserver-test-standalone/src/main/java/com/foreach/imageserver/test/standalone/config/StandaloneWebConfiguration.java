@@ -10,7 +10,7 @@ import com.foreach.imageserver.admin.ImageServerAdminWebModuleSettings;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.test.standalone.module.StandaloneWebModule;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -27,13 +27,10 @@ public class StandaloneWebConfiguration implements AcrossContextConfigurer
 {
 	@Bean
 	public DataSource acrossDataSource() {
-		BasicDataSource dataSource = new BasicDataSource();
-		dataSource.setDriverClassName( "org.hsqldb.jdbc.JDBCDriver" );
-		dataSource.setUrl( "jdbc:hsqldb:mem:/hsql/standaloneImageServer" );
-		dataSource.setUsername( "sa" );
-		dataSource.setPassword( "" );
-
-		return dataSource;
+		return DataSourceBuilder.create().driverClassName("org.hsqldb.jdbc.JDBCDriver")
+				.url("jdbc:hsqldb:mem:/hsql/standaloneImageServer")
+				.username("sa")
+				.password("").build();
 	}
 
 	@Override

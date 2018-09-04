@@ -87,10 +87,9 @@ public class WebConfiguration
 	@Primary
 	@ConditionalOnExpression("!${" + ImageServerCoreModuleSettings.STRICT_MODE + ":false} && '${" + ImageServerCoreModuleSettings.MD5_HASH_TOKEN + ":}'.length() > 0")
 	public ImageRequestHashBuilder serverImageRequestHashBuilder() {
-		return ImageRequestHashBuilder.md5(
-				environment.getRequiredProperty( ImageServerCoreModuleSettings.MD5_HASH_TOKEN )
-		);
+		return ImageRequestHashBuilder.md5(settings.getMd5HashToken());
 	}
+
 	private String accessToken() {
 		return settings.getAccessToken();
 	}

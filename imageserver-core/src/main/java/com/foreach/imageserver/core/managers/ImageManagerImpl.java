@@ -22,7 +22,7 @@ public class ImageManagerImpl implements ImageManager
 	@Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#imageId)",
 			unless = "#result == null")
 	public Image getById( long imageId ) {
-		return imageRepository.findOne( imageId );
+        return imageRepository.findById(imageId).orElse(null);
 	}
 
 	@Override

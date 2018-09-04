@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 public class ImageRepositoryTest extends AbstractIntegrationTest
 {
-
 	@Autowired
 	private ImageRepository imageRepository;
 	@Autowired
@@ -37,7 +36,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest
 		writtenImage.setImageProfileId( imageProfile.getId() );
 		imageRepository.create( writtenImage );
 
-		Image readImage = imageRepository.findOne( writtenImage.getId() );
+		Image readImage = imageRepository.findById(writtenImage.getId()).orElse(null);
 		assertEquals( writtenImage.getId(), readImage.getId() );
 		assertEquals( writtenImage.getExternalId(), readImage.getExternalId() );
 		assertTrue( DateUtils.truncatedEquals( writtenImage.getDateCreated(), readImage.getDateCreated(),

@@ -22,7 +22,7 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "'byId-'+#resolutionId")
 	public ImageResolution getById( long resolutionId ) {
-		return imageResolutionRepository.findOne( resolutionId );
+        return imageResolutionRepository.findById(resolutionId).orElse(null);
 	}
 
 	@Override

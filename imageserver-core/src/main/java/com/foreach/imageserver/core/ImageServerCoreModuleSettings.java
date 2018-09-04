@@ -12,32 +12,32 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Getter
 @Setter
-@ConfigurationProperties("imageServerCore")
+@ConfigurationProperties("image-server-core")
 public class ImageServerCoreModuleSettings
 {
-	public static final String ROOT_PATH = "imageServerCore.rootPath";
-	public static final String IMAGE_SERVER_URL = "imageServerCore.imageServerUrl";
-	public static final String STRICT_MODE = "imageServerCore.strictMode";
-	public static final String ACCESS_TOKEN = "imageServerCore.accessToken";
-	public static final String MD5_HASH_TOKEN = "imageServerCore.md5HashToken";
-	public static final String CREATE_LOCAL_CLIENT = "imageServerCore.createLocalClient";
+	public static final String ROOT_PATH = "image-server-core.root-path";
+	public static final String IMAGE_SERVER_URL = "image-server-core.image-server-url";
+	public static final String STRICT_MODE = "image-server-core.strict-mode";
+	public static final String ACCESS_TOKEN = "image-server-core.access-token";
+	public static final String MD5_HASH_TOKEN = "image-server-core.md5-hash-token";
+	public static final String CREATE_LOCAL_CLIENT = "image-server-core.create-local-client";
 
-	public static final String PROVIDE_STACKTRACE = "imageServerCore.streaming.provideStackTrace";
-	public static final String MAX_BROWSER_CACHE_SECONDS = "imageServerCore.streaming.maxBrowserCacheSeconds";
-	public static final String AKAMAI_CACHE_MAX_AGE = "imageServerCore.streaming.akamaiCacheMaxAge";
-	public static final String IMAGE_NOT_FOUND_IMAGEKEY = "imageServerCore.streaming.imageNotFoundKey";
+	public static final String PROVIDE_STACKTRACE = "image-server-core.streaming.provide-stack-trace";
+	public static final String MAX_BROWSER_CACHE_SECONDS = "image-server-core.streaming.max-browser-cache-seconds";
+	public static final String AKAMAI_CACHE_MAX_AGE = "image-server-core.streaming.akamai-cache-max-age";
+	public static final String IMAGE_NOT_FOUND_IMAGEKEY = "image-server-core.streaming.image-not-found-key";
 
-	public static final String IMAGE_STORE_FOLDER = "imageServerCore.store.folder";
-	public static final String IMAGE_STORE_FOLDER_PERMISSIONS = "imageServerCore.store.folderPermissions";
-	public static final String IMAGE_STORE_FILE_PERMISSIONS = "imageServerCore.store.filePermissions";
+	public static final String IMAGE_STORE_FOLDER = "image-server-core.store.folder";
+	public static final String IMAGE_STORE_FOLDER_PERMISSIONS = "image-server-core.store.folder-permissions";
+	public static final String IMAGE_STORE_FILE_PERMISSIONS = "image-server-core.store.file-permissions";
 
-	public static final String TRANSFORMERS_CONCURRENT_LIMIT = "imageServerCore.transformers.concurrentLimit";
+	public static final String TRANSFORMERS_CONCURRENT_LIMIT = "image-server-core.transformers.concurrent-limit";
 
-	public static final String IMAGEMAGICK_ENABLED = "imageServerCore.transformers.imageMagickEnabled";
-	public static final String IMAGEMAGICK_PRIORITY = "imageServerCore.transformers.imageMagickPriority";
-	public static final String IMAGEMAGICK_USE_GRAPHICSMAGICK = "imageServerCore.transformers.useGraphicsMagick";
-	public static final String IMAGEMAGICK_USE_GHOSTSCRIPT = "imageServerCore.transformers.imageMagick.useGhostScript";
-	public static final String IMAGEMAGICK_PATH = "imageServerCore.transformers.imageMagickPath";
+	public static final String IMAGEMAGICK_ENABLED = "image-server-core.transformers.image-magick-enabled";
+	public static final String IMAGEMAGICK_PRIORITY = "image-server-core.transformers.image-magick-priority";
+	public static final String IMAGEMAGICK_USE_GRAPHICSMAGICK = "image-server-core.transformers.use-graphics-magick";
+	public static final String IMAGEMAGICK_USE_GHOSTSCRIPT = "image-server-core.transformers.imageMagick.use-ghost-script";
+	public static final String IMAGEMAGICK_PATH = "image-server-core.transformers.image-magick-path";
 
 	/**
 	 * Base path for all controllers.

@@ -27,7 +27,7 @@ import java.util.concurrent.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -71,10 +71,10 @@ public class ImageServiceGetVariantSynchronizationTest
 
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getFirstOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
+				anyInt(), eq(ImageType.PNG), isNull());
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getSecondOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
+				anyInt(), eq(ImageType.PNG), isNull());
 
 		for ( Future<StreamImageSource> future : testResults.getFirstImageFutures() ) {
 			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
@@ -104,10 +104,10 @@ public class ImageServiceGetVariantSynchronizationTest
 
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getFirstOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
+				anyInt(), eq(ImageType.PNG), isNull());
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getSecondOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
+				anyInt(), eq(ImageType.PNG), isNull());
 
 		for ( Future<StreamImageSource> future : testResults.getFirstImageFutures() ) {
 			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
@@ -143,10 +143,10 @@ public class ImageServiceGetVariantSynchronizationTest
 
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getFirstOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
+				anyInt(), eq(ImageType.PNG), isNull());
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getSecondOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
+				anyInt(), eq(ImageType.PNG), isNull());
 
 		for ( Future<StreamImageSource> future : testResults.getFirstImageFutures() ) {
 			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
@@ -195,11 +195,11 @@ public class ImageServiceGetVariantSynchronizationTest
 
 		when( imageTransformService.modify( eq( firstOriginalImageSource ), anyInt(), anyInt(), anyInt(), anyInt(),
 		                                    anyInt(), anyInt(), anyInt(), anyInt(), eq( ImageType.PNG ),
-		                                    any( Dimensions.class ) ) ).thenAnswer(
+				eq(null))).thenAnswer(
 				firstImageAnswer );
 		when( imageTransformService.modify( eq( secondOriginalImageSource ), anyInt(), anyInt(), anyInt(), anyInt(),
 		                                    anyInt(), anyInt(), anyInt(), anyInt(), eq( ImageType.PNG ),
-		                                    any( Dimensions.class ) ) ).thenAnswer(
+				eq(null))).thenAnswer(
 				secondImageAnswer );
 
 		List<Future<StreamImageSource>> firstImageFutures = new ArrayList<>();

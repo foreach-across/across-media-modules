@@ -1,11 +1,11 @@
 package com.foreach.imageserver.core.config.conditional;
 
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
+import com.foreach.imageserver.core.config.TransformersSettings;
 import com.foreach.imageserver.core.transformers.ImageMagickImageTransformer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
 
 /**
  * @author Arne Vandamme
@@ -14,17 +14,16 @@ import org.springframework.core.env.Environment;
 @RequiredArgsConstructor
 public class ImageMagickTransformerConfiguration
 {
-	private final Environment environment;
+	private final ImageServerCoreModuleSettings settings;
 
 	@Bean
 	public ImageMagickImageTransformer imageMagickImageTransformer() {
+		TransformersSettings transformersSettings = settings.getTransformers();
 		return new ImageMagickImageTransformer(
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PRIORITY, Integer.class, 1 ),
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PATH, "/usr/bin/" ),
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GHOSTSCRIPT, Boolean.class,
-				                         false ),
-				environment.getProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GRAPHICSMAGICK, Boolean.class,
-				                         false )
+				transformersSettings.getImageMagickPriority(),
+				transformersSettings.getImageMagickPath(),
+				transformersSettings.getUseGhostScript(),
+				transformersSettings.getUseGraphicsMagick()
 		);
 	}
 }

@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.hibernate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.StringType;
 import org.hibernate.usertype.UserType;
 
@@ -40,20 +40,13 @@ public class TagsUserType implements UserType
 	}
 
 	@Override
-	public Object nullSafeGet( ResultSet rs,
-	                           String[] names,
-	                           SessionImplementor session,
-	                           Object owner ) throws HibernateException, SQLException {
+	public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
 		String value = (String) TYPE.get( rs, names[0], session );
 		return new HashSet<>( Arrays.asList( StringUtils.split( StringUtils.defaultString( value ), "," ) ) );
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void nullSafeSet( PreparedStatement st,
-	                         Object value,
-	                         int index,
-	                         SessionImplementor session ) throws HibernateException, SQLException {
+	public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
 		try {
 			Set<String> tags = new HashSet<>();
 
