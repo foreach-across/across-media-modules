@@ -26,12 +26,12 @@ import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
@@ -79,7 +79,7 @@ public class FileReferenceService
 		try {
 			savedFile = fileManager.save( FileManager.TEMP_REPOSITORY, file.getInputStream() );
 			fileReference.setFileDescriptor( savedFile );
-			fileReference.setHash( DigestUtils.md5Hex( file.getBytes() ) );
+			fileReference.setHash( DigestUtils.md5DigestAsHex( file.getBytes() ) );
 		}
 		catch ( IOException e ) {
 			LOG.error( "Unable to read file {}", file.getOriginalFilename(), e );
