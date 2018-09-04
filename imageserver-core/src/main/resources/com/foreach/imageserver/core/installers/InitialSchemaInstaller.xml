@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <!-- Default table names -->
-    <property name="table.context" value="img_context"/>
-    <property name="table.image" value="img_image"/>
-    <property name="table.image_resolution" value="img_image_resolution"/>
-    <property name="table.context_image_resolution" value="img_context_image_resolution"/>
-    <property name="table.image_modification" value="img_image_modification"/>
-    <property name="table.image_profile" value="img_image_profile"/>
-    <property name="table.image_profile_modification" value="img_image_profile_modification"/>
+	<!-- Default table names -->
+	<property name="table.context" value="img_context"/>
+	<property name="table.image" value="img_image"/>
+	<property name="table.image_resolution" value="img_image_resolution"/>
+	<property name="table.context_image_resolution" value="img_context_image_resolution"/>
+	<property name="table.image_modification" value="img_image_modification"/>
+	<property name="table.image_profile" value="img_image_profile"/>
+	<property name="table.image_profile_modification" value="img_image_profile_modification"/>
 
 	<changeSet id="201408071550" author="arne" runAlways="true" dbms="oracle">
 		<sql>
@@ -20,21 +20,21 @@
 		</sql>
 	</changeSet>
 
-    <changeSet id="201408071551" author="marc">
-	    <preConditions onFail="MARK_RAN">
-		    <not>
-			    <tableExists tableName="${table.context}"/>
-		    </not>
-	    </preConditions>
-        <createTable tableName="${table.context}">
-            <column name="id" type="java.sql.Types.BIGINT">
-                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_context"/>
-            </column>
-            <column name="code" type="java.sql.Types.VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+	<changeSet id="201408071551" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.context}"/>
+			</not>
+		</preConditions>
+		<createTable tableName="${table.context}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_context"/>
+			</column>
+			<column name="code" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
 
 	<changeSet id="201408071552" author="marc">
 		<preConditions onFail="MARK_RAN">
@@ -42,117 +42,118 @@
 				<indexExists tableName="${table.context}" columnNames="code"/>
 			</not>
 		</preConditions>
-        <createIndex indexName="idx_img_context_code" tableName="${table.context}" unique="true">
-            <column name="code"/>
-        </createIndex>
-    </changeSet>
+		<createIndex indexName="idx_img_context_code" tableName="${table.context}" unique="true">
+			<column name="code"/>
+		</createIndex>
+	</changeSet>
 
-    <changeSet id="201408071553" author="marc">
-	    <preConditions onFail="MARK_RAN">
-		    <not>
-			    <tableExists tableName="${table.image_profile}"/>
-		    </not>
-	    </preConditions>
-        <comment>Install ImageProfile table and assign default profile to images</comment>
-        <createTable tableName="${table.image_profile}">
-            <column name="id" type="java.sql.Types.BIGINT">
-                <constraints primaryKey="true" primaryKeyName="pk_img_image_profile" nullable="false"/>
-            </column>
-            <column name="name" type="java.sql.Types.VARCHAR(50)">
-                <constraints nullable="false" unique="true"/>
-            </column>
-        </createTable>
-    </changeSet>
+	<changeSet id="201408071553" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.image_profile}"/>
+			</not>
+		</preConditions>
+		<comment>Install ImageProfile table and assign default profile to images</comment>
+		<createTable tableName="${table.image_profile}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints primaryKey="true" primaryKeyName="pk_img_image_profile" nullable="false"/>
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(50)">
+				<constraints nullable="false" unique="true"/>
+			</column>
+		</createTable>
+	</changeSet>
 
-    <changeSet id="201408071554" author="marc">
-	    <preConditions onFail="MARK_RAN">
-		    <not>
-			    <tableExists tableName="${table.image}"/>
-		    </not>
-	    </preConditions>
-        <createTable tableName="${table.image}">
-            <column name="id" type="java.sql.Types.BIGINT">
-                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_image"/>
-            </column>
-            <column name="external_id" type="java.sql.Types.VARCHAR(190)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="profile_id" type="java.sql.Types.BIGINT" defaultValue="1">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created" type="java.sql.Types.TIMESTAMP" >
-                <constraints nullable="false"/>
-            </column>
-            <column name="width" type="java.sql.Types.INTEGER">
-                <constraints nullable="false"/>
-            </column>
-            <column name="height" type="java.sql.Types.INTEGER">
-                <constraints nullable="false"/>
-            </column>
-            <column name="image_type_id" type="java.sql.Types.INTEGER">
-                <constraints nullable="false"/>
-            </column>
-	        <column name="file_size" type="java.sql.Types.BIGINT">
-		        <constraints nullable="false"/>
-	        </column>
-	        <column name="original_path" type="java.sql.Types.VARCHAR(250)">
-		        <constraints nullable="false"/>
-	        </column>
-	        <column name="variant_path" type="java.sql.Types.VARCHAR(250)">
-		        <constraints nullable="false"/>
-	        </column>
-        </createTable>
-    </changeSet>
+	<changeSet id="201408071554" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.image}"/>
+			</not>
+		</preConditions>
+		<createTable tableName="${table.image}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_image"/>
+			</column>
+			<column name="external_id" type="java.sql.Types.VARCHAR(190)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="profile_id" type="java.sql.Types.BIGINT" defaultValue="1">
+				<constraints nullable="false"/>
+			</column>
+			<column name="created" type="java.sql.Types.TIMESTAMP">
+				<constraints nullable="false"/>
+			</column>
+			<column name="width" type="java.sql.Types.INTEGER">
+				<constraints nullable="false"/>
+			</column>
+			<column name="height" type="java.sql.Types.INTEGER">
+				<constraints nullable="false"/>
+			</column>
+			<column name="image_type_id" type="java.sql.Types.INTEGER">
+				<constraints nullable="false"/>
+			</column>
+			<column name="file_size" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="original_path" type="java.sql.Types.VARCHAR(250)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="variant_path" type="java.sql.Types.VARCHAR(250)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
 	<changeSet id="201408071555" author="marc">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<indexExists tableName="${table.image}" columnNames="external_id"/>
 			</not>
 		</preConditions>
-        <createIndex tableName="${table.image}" indexName="ix_img_image_externalid" unique="true">
-            <column name="external_id"/>
-        </createIndex>
+		<createIndex tableName="${table.image}" indexName="ix_img_image_externalid" unique="true">
+			<column name="external_id"/>
+		</createIndex>
 
-        <addForeignKeyConstraint baseTableName="${table.image}" baseColumnNames="profile_id"
-                                 constraintName="fk_img_pi_ii"
-                                 referencedTableName="${table.image_profile}"
-                                 referencedColumnNames="id"/>
-    </changeSet>
+		<addForeignKeyConstraint baseTableName="${table.image}" baseColumnNames="profile_id"
+		                         constraintName="fk_img_pi_ii"
+		                         referencedTableName="${table.image_profile}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
 
-    <changeSet id="201408071556" author="marc">
-	    <preConditions onFail="MARK_RAN">
-		    <not>
-			    <tableExists tableName="${table.image_resolution}"/>
-		    </not>
-	    </preConditions>
-        <createTable tableName="${table.image_resolution}">
-            <column name="id" type="java.sql.Types.BIGINT">
-                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_image_resolution"/>
-            </column>
-            <column name="width" type="java.sql.Types.INTEGER">
-                <constraints nullable="false"/>
-            </column>
-            <column name="height" type="java.sql.Types.INTEGER">
-                <constraints nullable="false"/>
-            </column>
-            <column name="configurable" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-	        <column name="pregenerate" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="name" type="java.sql.Types.VARCHAR(250)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="tags" type="java.sql.Types.VARCHAR(500)">
-                <constraints nullable="true"/>
-            </column>
-	        <column name="output_types" type="java.sql.Types.INTEGER">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+	<changeSet id="201408071556" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.image_resolution}"/>
+			</not>
+		</preConditions>
+		<createTable tableName="${table.image_resolution}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_image_resolution"/>
+			</column>
+			<column name="width" type="java.sql.Types.INTEGER">
+				<constraints nullable="false"/>
+			</column>
+			<column name="height" type="java.sql.Types.INTEGER">
+				<constraints nullable="false"/>
+			</column>
+			<column name="configurable" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+			<column name="pregenerate" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(250)">
+				<constraints nullable="true"/>
+			</column>
+			<column name="tags" type="java.sql.Types.VARCHAR(500)">
+				<constraints nullable="true"/>
+			</column>
+			<column name="output_types" type="java.sql.Types.INTEGER">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
 
-        <addUniqueConstraint tableName="${table.image_resolution}" constraintName="ix_img_ir_wh" columnNames="width, height" />
+		<addUniqueConstraint tableName="${table.image_resolution}" constraintName="ix_img_ir_wh"
+		                     columnNames="width, height"/>
 	</changeSet>
 	<changeSet id="201408071557" author="marc">
 		<preConditions onFail="MARK_RAN">
@@ -160,25 +161,25 @@
 				<tableExists tableName="${table.context_image_resolution}"/>
 			</not>
 		</preConditions>
-        <createTable tableName="${table.context_image_resolution}">
-            <column name="context_id" type="java.sql.Types.BIGINT">
-                <constraints nullable="false" />
-            </column>
-            <column name="image_resolution_id" type="java.sql.Types.BIGINT">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addForeignKeyConstraint baseTableName="${table.context_image_resolution}"
-                                 baseColumnNames="context_id"
-                                 constraintName="fk_img_cir_ci"
-                                 referencedTableName="${table.context}"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="${table.context_image_resolution}"
-                                 baseColumnNames="image_resolution_id"
-                                 constraintName="fk_img_cir_iri"
-                                 referencedTableName="${table.image_resolution}"
-                                 referencedColumnNames="id"/>
-    </changeSet>
+		<createTable tableName="${table.context_image_resolution}">
+			<column name="context_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="image_resolution_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<addForeignKeyConstraint baseTableName="${table.context_image_resolution}"
+		                         baseColumnNames="context_id"
+		                         constraintName="fk_img_cir_ci"
+		                         referencedTableName="${table.context}"
+		                         referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="${table.context_image_resolution}"
+		                         baseColumnNames="image_resolution_id"
+		                         constraintName="fk_img_cir_iri"
+		                         referencedTableName="${table.image_resolution}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
 	<changeSet id="201408071558" author="marc">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -200,63 +201,62 @@
 		</createIndex>
 	</changeSet>
 
-    <changeSet id="201408071600" author="marc">
-	    <preConditions onFail="MARK_RAN">
-		    <not>
-			    <tableExists tableName="${table.image_modification}"/>
-		    </not>
-	    </preConditions>
-        <createTable tableName="${table.image_modification}">
-            <column name="image_id" type="java.sql.Types.BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="context_id" type="java.sql.Types.BIGINT">
-                <constraints  nullable="false"/>
-            </column>
-            <column name="resolution_id" type="java.sql.Types.BIGINT">
-                <constraints  nullable="false"/>
-            </column>
-            <column name="densityWidth" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="densityHeight" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropX" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropY" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropWidth" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropHeight" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addPrimaryKey tableName="${table.image_modification}"
-                       columnNames="image_id, context_id, resolution_id"
-                       constraintName="pk_image_modification"/>
+	<changeSet id="201408071600" author="marc">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.image_modification}"/>
+			</not>
+		</preConditions>
+		<createTable tableName="${table.image_modification}">
+			<column name="image_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="context_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="resolution_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="densityWidth" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="densityHeight" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropX" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropY" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropWidth" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropHeight" type="java.sql.Types.INTEGER" defaultValueNumeric="0">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<addPrimaryKey tableName="${table.image_modification}"
+		               columnNames="image_id, context_id, resolution_id"
+		               constraintName="pk_image_modification"/>
 
 
-
-        <addForeignKeyConstraint baseTableName="${table.image_modification}"
-                                 baseColumnNames="image_id"
-                                 constraintName="fk_img_imii_ii"
-                                 referencedTableName="${table.image}"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="${table.image_modification}"
-                                 baseColumnNames="context_id"
-                                 constraintName="fk_img_imci_ci"
-                                 referencedTableName="${table.context}"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="${table.image_modification}"
-                                 baseColumnNames="resolution_id"
-                                 constraintName="fk_img_imri_ri"
-                                 referencedTableName="${table.image_resolution}"
-                                 referencedColumnNames="id"/>
-    </changeSet>
+		<addForeignKeyConstraint baseTableName="${table.image_modification}"
+		                         baseColumnNames="image_id"
+		                         constraintName="fk_img_imii_ii"
+		                         referencedTableName="${table.image}"
+		                         referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="${table.image_modification}"
+		                         baseColumnNames="context_id"
+		                         constraintName="fk_img_imci_ci"
+		                         referencedTableName="${table.context}"
+		                         referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="${table.image_modification}"
+		                         baseColumnNames="resolution_id"
+		                         constraintName="fk_img_imri_ri"
+		                         referencedTableName="${table.image_resolution}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
 	<changeSet id="201408071601" author="marc">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -289,81 +289,131 @@
 	</changeSet>
 
 
-    <changeSet id="201408071604" author="arne">
-	    <preConditions onFail="MARK_RAN">
-		    <not>
-			    <tableExists tableName="${table.image_profile_modification}"/>
-		    </not>
-	    </preConditions>
-        <comment>Install ImageProfileModification table</comment>
-        <createTable tableName="${table.image_profile_modification}">
-            <column name="id" type="java.sql.Types.BIGINT">
-                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_pm_i"/>
-            </column>
-            <column name="resolution_id" type="java.sql.Types.BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="context_id" type="java.sql.Types.BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="profile_id" type="java.sql.Types.BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="width" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="height" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="boundariesWidth" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="boundariesHeight" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="densityX" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="densityY" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropX" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropY" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropWidth" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropHeight" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropSourceWidth" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropSourceHeight" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropBoxWidth" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cropBoxHeight" type="int" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addForeignKeyConstraint baseTableName="${table.image_profile_modification}" baseColumnNames="profile_id"
-                                 constraintName="fk_img_ipm_pi"
-                                 referencedTableName="${table.image_profile}"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="${table.image_profile_modification}" baseColumnNames="resolution_id"
-                                 constraintName="fk_img_ipm_ri"
-                                 referencedTableName="${table.image_resolution}"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="${table.image_profile_modification}" baseColumnNames="context_id"
-                                 constraintName="fk_img_ipm_ci"
-                                 referencedTableName="${table.context}"
-                                 referencedColumnNames="id"/>
-    </changeSet>
+	<changeSet id="201408071604" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.image_profile_modification}"/>
+			</not>
+		</preConditions>
+		<comment>Install ImageProfileModification table</comment>
+		<createTable tableName="${table.image_profile_modification}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="pk_img_pm_i"/>
+			</column>
+			<column name="resolution_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="context_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="profile_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="width" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="height" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="boundariesWidth" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="boundariesHeight" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="densityX" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="densityY" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropX" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropY" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropWidth" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropHeight" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropSourceWidth" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropSourceHeight" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropBoxWidth" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="cropBoxHeight" type="int" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+		<addForeignKeyConstraint baseTableName="${table.image_profile_modification}" baseColumnNames="profile_id"
+		                         constraintName="fk_img_ipm_pi"
+		                         referencedTableName="${table.image_profile}"
+		                         referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="${table.image_profile_modification}" baseColumnNames="resolution_id"
+		                         constraintName="fk_img_ipm_ri"
+		                         referencedTableName="${table.image_resolution}"
+		                         referencedColumnNames="id"/>
+		<addForeignKeyConstraint baseTableName="${table.image_profile_modification}" baseColumnNames="context_id"
+		                         constraintName="fk_img_ipm_ci"
+		                         referencedTableName="${table.context}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+
+	<changeSet author="marc" id="201809041340">
+		<preConditions onFail="MARK_RAN">
+			<columnExists columnName="densityWidth" tableName="${table.image_modification}"/>
+		</preConditions>
+		<renameColumn columnDataType="java.sql.Types.INTEGER" newColumnName="density_width" oldColumnName="densityWidth"
+		              tableName="${table.image_modification}"/>
+	</changeSet>
+
+	<changeSet author="marc" id="201809041341">
+		<preConditions onFail="MARK_RAN">
+			<columnExists columnName="densityHeight" tableName="${table.image_modification}"/>
+		</preConditions>
+		<renameColumn columnDataType="java.sql.Types.INTEGER" newColumnName="density_height"
+		              oldColumnName="densityHeight"
+		              tableName="${table.image_modification}"/>
+	</changeSet>
+
+	<changeSet author="marc" id="201809041342">
+		<preConditions onFail="MARK_RAN">
+			<columnExists columnName="cropX" tableName="${table.image_modification}"/>
+		</preConditions>
+		<renameColumn columnDataType="java.sql.Types.INTEGER" newColumnName="crop_x" oldColumnName="cropX"
+		              tableName="${table.image_modification}"/>
+	</changeSet>
+
+	<changeSet author="marc" id="201809041343">
+		<preConditions onFail="MARK_RAN">
+			<columnExists columnName="cropY" tableName="${table.image_modification}"/>
+		</preConditions>
+		<renameColumn columnDataType="java.sql.Types.INTEGER" newColumnName="crop_y" oldColumnName="cropY"
+		              tableName="${table.image_modification}"/>
+	</changeSet>
+
+	<changeSet author="marc" id="201809041344">
+		<preConditions onFail="MARK_RAN">
+			<columnExists columnName="cropWidth" tableName="${table.image_modification}"/>
+		</preConditions>
+		<renameColumn columnDataType="java.sql.Types.INTEGER" newColumnName="crop_width" oldColumnName="cropWidth"
+		              tableName="${table.image_modification}"/>
+	</changeSet>
+
+	<changeSet author="marc" id="201809041345">
+		<preConditions onFail="MARK_RAN">
+			<columnExists columnName="cropHeight" tableName="${table.image_modification}"/>
+		</preConditions>
+		<renameColumn columnDataType="java.sql.Types.INTEGER" newColumnName="crop_height" oldColumnName="cropHeight"
+		              tableName="${table.image_modification}"/>
+	</changeSet>
 
 </databaseChangeLog>
