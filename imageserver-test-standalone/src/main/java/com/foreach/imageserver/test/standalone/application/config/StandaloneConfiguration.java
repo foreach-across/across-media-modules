@@ -1,9 +1,9 @@
-package com.foreach.imageserver.test.standalone.module.config;
+package com.foreach.imageserver.test.standalone.application.config;
 
 import com.foreach.across.core.annotations.Module;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
-import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.common.web.logging.RequestLogInterceptor;
+import com.foreach.imageserver.core.ImageServerCoreModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

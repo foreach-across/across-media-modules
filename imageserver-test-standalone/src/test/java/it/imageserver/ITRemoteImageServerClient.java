@@ -1,14 +1,18 @@
-package com.foreach.imageserver.it;
+package it.imageserver;
 
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.*;
+import com.foreach.imageserver.test.standalone.StandaloneApplication;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,14 +27,18 @@ import static org.junit.Assert.*;
 /**
  * @author Arne Vandamme
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = StandaloneApplication.class)
 public class ITRemoteImageServerClient
 {
+	@Value("${local.server.port}")
+	private int port;
+
 	private ImageServerClient imageServerClient;
 
 	@Before
 	public void createClient() {
-		String url = "http://localhost:" + StringUtils.defaultIfEmpty( System.getProperty( "local.tomcat.port" ),
-		                                                               "8078" ) + "/resources/images";
+		String url = "http://localhost:" + port + "/resources/images";
 		String accessToken = "standalone-access-token";
 
 		imageServerClient = new RemoteImageServerClient( url, accessToken );
