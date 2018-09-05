@@ -23,8 +23,7 @@ import javax.sql.DataSource;
 @ContextConfiguration(classes = { AbstractIntegrationTest.Config.class })
 @EnableTransactionManagement
 @WebAppConfiguration
-@TestPropertySource(properties = { "spring.jpa.show-sql=true",
-                                   "acrossHibernate.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl" })
+@TestPropertySource(properties = { "spring.jpa.show-sql=true" })
 public abstract class AbstractIntegrationTest
 {
 	@AcrossTestConfiguration

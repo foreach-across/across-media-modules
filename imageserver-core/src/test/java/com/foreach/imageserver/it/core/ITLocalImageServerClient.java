@@ -44,8 +44,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration(classes = ITLocalImageServerClient.Config.class)
-@TestPropertySource(properties = { "spring.jpa.show-sql=true",
-                                   "acrossHibernate.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl" })
+@TestPropertySource(properties = { "spring.jpa.show-sql=true" })
 public class ITLocalImageServerClient
 {
 	@Autowired(required = false)

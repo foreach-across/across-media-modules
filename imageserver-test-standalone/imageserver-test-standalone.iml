@@ -31,6 +31,65 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.foreach.across:across-core:3.1.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:1.5.14.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.17" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-expression:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.11" level="project" />
+    <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.11" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across:across-web:3.1.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.javassist:javassist:3.21.0-GA" level="project" />
+    <orderEntry type="library" name="Maven: org.thymeleaf:thymeleaf-spring4:3.0.9.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-web:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.11" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:ehcache-module:1.0.1.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context-support:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:across-hibernate-module:3.0.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-jpa:1.11.13.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:1.13.13.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-aop:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-core:5.0.12.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.geronimo.specs:geronimo-jta_1.1_spec:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jboss:jandex:2.0.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-entitymanager:5.0.12.Final" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.11" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.11.2" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.5" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:admin-web-module:3.0.1.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:bootstrap-ui-module:2.1.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:user-module:3.0.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:properties-module:1.1.1.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:entity-module:3.1.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:5.3.6.Final" level="project" />
+    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.1.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: javax.el:javax.el-api:2.2.5" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:annotations:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:spring-security-module:3.0.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:4.2.7.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-web:4.2.7.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-config:4.2.7.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.hsqldb:hsqldb:2.3.6" level="project" />
+    <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
+    <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.6" level="project" />
+    <orderEntry type="library" name="Maven: com.foreach.across.modules:debug-web-module:2.0.0.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.foreach.across:across-test:3.1.0.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.zaxxer:HikariCP:2.5.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-core:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:1.5.14.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:1.5.14.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-orm:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-beans:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-tx:4.3.18.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: xmlunit:xmlunit:1.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:1.10.19" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:2.5.1" level="project" />
     <orderEntry type="module" module-name="imageserver-core" />
     <orderEntry type="module" module-name="imageserver-client" />
     <orderEntry type="library" name="Maven: com.foreach.across:across-core:4.0.0-SNAPSHOT" level="project" />
