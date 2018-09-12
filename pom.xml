@@ -29,7 +29,7 @@
 	<groupId>com.foreach.across.modules</groupId>
 	<artifactId>web-cms-module-project</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.5.RELEASE</version>
+	<version>0.0.6-SNAPSHOT</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>
@@ -79,7 +79,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>entity-module</artifactId>
-				<version>3.0.1.RELEASE</version>
+				<version>3.1.0.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>

@@ -47,6 +47,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -118,10 +119,11 @@ public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 
 			// redirect to list view filtered on uploaded image
 			entityView.setRedirectUrl(
-					linkBuilder.listView()
-					           .withQueryParam( "extensions[eqFilter]", "id = " + imageCreated.getId() )
-					           .withPartial( entityViewRequest.getPartialFragment() )
-					           .toUriString()
+					UriComponentsBuilder.fromUriString(
+							linkBuilder.listView()
+							           .withQueryParam( "extensions[eqFilter]", "id = " + imageCreated.getId() )
+							           .withPartial( entityViewRequest.getPartialFragment() )
+							           .toUriString() ).toUriString()
 			);
 		}
 	}
@@ -156,7 +158,9 @@ public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 
 		container.find( SingleEntityFormViewProcessor.RIGHT_COLUMN, ColumnViewElement.class )
 		         .ifPresent( column ->
-				                     container.removeAllFromTree( "formGroup-name", "formGroup-externalId", "formGroup-lastModified" )
+				                     container.removeAllFromTree(
+						                     "formGroup-name", "formGroup-source", "formGroup-description", "formGroup-keywords",
+						                     "formGroup-externalId", "formGroup-lastModified" )
 				                              .forEach( column::addChild )
 		         );
 	}

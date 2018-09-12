@@ -76,6 +76,25 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 	@Length(max = 255)
 	private String externalId;
 
+	/**
+	 * The source of the image. (e.g. press agency)
+	 */
+	@Column(name = "source")
+	@Length(max = 255)
+	private String source;
+
+	/**
+	 * Description of the image.
+	 */
+	@Column(name = "description")
+	private String description;
+
+	/**
+	 * Keywords of the image.
+	 */
+	@Column(name = "keywords")
+	private String keywords;
+
 	@Builder(toBuilder = true)
 	protected WebCmsImage( @Builder.ObtainVia(method = "getId") Long id,
 	                       @Builder.ObtainVia(method = "getNewEntityId") Long newEntityId,
@@ -89,10 +108,16 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 	                       @Builder.ObtainVia(method = "getPublicationDate") Date publicationDate,
 	                       @Builder.ObtainVia(method = "getSortIndex") int sortIndex,
 	                       String name,
-	                       String externalId ) {
+	                       String externalId,
+	                       String source,
+	                       String description,
+	                       String keywords) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate, sortIndex );
 		this.name = name;
 		this.externalId = externalId;
+		this.source = source;
+		this.description = description;
+		this.keywords = keywords;
 	}
 
 	@Override
