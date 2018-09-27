@@ -3,13 +3,14 @@ package com.foreach.across.modules.filemanager.views.bootstrapui;
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.builder.FileUploadFormElementBuilder;
-import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.EntityModule;
+import com.foreach.across.modules.entity.bind.EntityPropertyControlName;
 import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
 import com.foreach.across.modules.filemanager.utils.FileReferenceUtils;
+import com.foreach.across.modules.hibernate.business.IdBasedEntity;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
@@ -21,8 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.*;
+import static com.foreach.across.modules.entity.bind.EntityPropertyControlName.forProperty;
+import static com.foreach.across.modules.entity.views.util.EntityViewElementUtils.currentPropertyDescriptor;
 
 /**
  * Creates a file upload {@link com.foreach.across.modules.web.ui.ViewElement} for {@link FileReference} properties.
@@ -45,8 +49,8 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 	@SuppressWarnings("unchecked")
 	protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
 		NodeViewElementBuilder wrapper = div();
-		EntityPropertyDescriptor descriptor = EntityViewElementUtils.currentPropertyDescriptor( builderContext );
-		String controlName = EntityAttributes.controlName( descriptor );
+		EntityPropertyDescriptor descriptor = currentPropertyDescriptor( builderContext );
+		EntityPropertyControlName.ForProperty controlName = forProperty( descriptor, builderContext );
 
 		Object value = EntityViewElementUtils.currentPropertyValue( builderContext );
 		boolean isForMultiple = descriptor.getPropertyTypeDescriptor().isCollection();
@@ -61,10 +65,15 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 			}
 		}
 
-		FileUploadFormElementBuilder fileUploadBuilder = file().multiple( isForMultiple ).css( "js-file-control" )
-		                                                       .controlName( controlName );
+		FileUploadFormElementBuilder fileUploadBuilder = file().css( "js-file-control" );
 		if ( !isForMultiple && value != null ) {
-			fileUploadBuilder.css( "hidden" );
+			fileUploadBuilder.attribute( "data-id", ( (IdBasedEntity) value ).getId() )
+			                 .controlName( controlName.toString() );
+		}
+
+		if ( isForMultiple ) {
+			fileUploadBuilder.attribute( "data-multiple", "true" )
+			                 .controlName( controlName.asCollectionItem().withBinderItemKey( 0 ).asBinderItem().withValue().toString() );
 		}
 
 		wrapper.addFirst( fileUploadBuilder );
@@ -80,12 +89,20 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 	}
 
 	private void addMultipleSelectedElements( NodeViewElementBuilder wrapper,
-	                                          String controlName,
+	                                          EntityPropertyControlName.ForProperty controlName,
 	                                          List<FileReference> files,
 	                                          ViewElementBuilderContext builderContext ) {
+		AtomicInteger integer = new AtomicInteger( 1 );
 		files.stream().filter( Objects::nonNull ).forEach(
-				file -> wrapper.add( selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) )
-						                     .add( hidden().controlName( controlName ).value( file.getId() ) ) )
+				file -> {
+					int idx = integer.getAndIncrement();
+					EntityPropertyControlName.ForProperty.BinderProperty.BinderPropertyValue binderPropertyValue =
+							controlName.asCollectionItem().withBinderItemKey( idx ).asBinderItem().withValue();
+					wrapper.add( selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) )
+							             .add( hidden().attribute( "data-item-idx", idx ).controlName( binderPropertyValue.toString() )
+							                           .value( file.getId() ) ) );
+				}
+
 		);
 	}
 
@@ -103,5 +120,4 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 				                  : text( name ) )
 		            .add( button().link().css( "remove-file" ).iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) ) );
 	}
-
 }

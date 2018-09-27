@@ -25,7 +25,7 @@ security:
     enabled: false
 
 fileManagerModule:
-  localRepositoriesRoot: "${user.home}/fmm-test-files"
+  localRepositoriesRoot: "../local-data/fmm-test-files"
 
 acrossHibernate:
   hibernate-properties:

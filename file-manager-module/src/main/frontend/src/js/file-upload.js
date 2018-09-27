@@ -22,6 +22,18 @@ const registerSingleSelectHandler = function( rootElement, html ) {
             } );
 };
 
+const fetchLargestIndex = function ( rootElement ) {
+    const self = $( rootElement );
+    let largestIndex = 0;
+    self.find( "input[data-item-idx]" ).each( ( index, value ) => {
+        const idx = parseInt( $( value ).attr( 'data-item-idx' ), 10 );
+        if ( idx > largestIndex ) {
+            largestIndex = idx;
+        }
+    } );
+    return largestIndex + 1;
+};
+
 const registerMultiselectHandler = function( rootElement, html, element ) {
     const root = $( rootElement );
     const self = $( element );
@@ -36,6 +48,11 @@ const registerMultiselectHandler = function( rootElement, html, element ) {
                 registerRemoveFileHandler( self, html, $( newFile ).find( "a.remove-file" ), true );
             }
             fileInput.addClass( 'hidden' );
+            const idx = fetchLargestIndex( rootElement );
+            const name = fileInput.attr( 'name' ).replace( /\.items\[0\]\./g, `.items[${idx}].` );
+            fileInput.attr( 'data-item-idx', idx );
+            fileInput.attr( 'name', name );
+            fileInput.attr( 'id', name );
             const newFileInput = $( html );
             root.prepend( newFileInput );
             registerMultiselectHandler( root, html, newFileInput );
@@ -72,7 +89,7 @@ EntityModule.registerInitializer( ( node ) => {
                 let html = getHtmlForElement( fileInput );
                 const existingFiles = self.find( "a.remove-file" );
 
-                if ( $( fileInput[0] ).prop( "multiple" ) ) {
+                if ( $( fileInput[0] ).attr( "data-multiple" ) ) {
                     html = getHtmlForElement( fileInput );
                     $( existingFiles ).each( ( ix, file ) => {
                         registerRemoveFileHandler( value, html, file, true );
@@ -80,10 +97,10 @@ EntityModule.registerInitializer( ( node ) => {
                     registerMultiselectHandler( value, html, fileInput );
                 }
                 else {
-                    if ( fileInput.hasClass( "hidden" ) ) {
-                        fileInput.removeClass( "hidden" );
+                    if ( fileInput.attr( "data-id" ) ) {
                         html = getHtmlForElement( fileInput );
-                        fileInput.remove();
+                        fileInput.attr( 'type', 'hidden' );
+                        fileInput.attr( 'value', fileInput.attr( 'data-id' ) );
                         $( existingFiles ).each( ( ix, item ) => {
                             registerRemoveFileHandler( value, html, item );
                         } );
