@@ -99,7 +99,9 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	                       int sortIndex ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain );
 		setPublished( published );
-		setPublicationDate( publicationDate );
+		if ( publicationDate != null ) {
+			setPublicationDate( new Date( publicationDate.getTime() ) );
+		}
 		setSortIndex( sortIndex );
 	}
 
