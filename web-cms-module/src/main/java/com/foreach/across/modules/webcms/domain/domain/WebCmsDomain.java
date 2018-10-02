@@ -231,7 +231,7 @@ public class WebCmsDomain extends SettableIdAuditableEntity<WebCmsDomain> implem
 				'}';
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "findbugs:EI_EXPOSE_REP2" })
 	public static class WebCmsDomainBuilder
 	{
 		private boolean active = true;

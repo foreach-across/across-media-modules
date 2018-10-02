@@ -111,7 +111,7 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 	                       String externalId,
 	                       String source,
 	                       String description,
-	                       String keywords) {
+	                       String keywords ) {
 		super( id, newEntityId, objectId, createdBy, createdDate, lastModifiedBy, lastModifiedDate, domain, published, publicationDate, sortIndex );
 		this.name = name;
 		this.externalId = externalId;
@@ -149,6 +149,7 @@ public class WebCmsImage extends WebCmsAsset<WebCmsImage> implements ImageOwner
 		return Optional.ofNullable( externalId );
 	}
 
+	@SuppressWarnings("findbugs:EI_EXPOSE_REP2")
 	public static class WebCmsImageBuilder
 	{
 		private int sortIndex = 1000;
