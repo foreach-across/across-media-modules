@@ -1,5 +1,7 @@
 package com.foreach.across.samples.filemanager.application.config;
 
+import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
+import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.hibernate.jpa.repositories.config.EnableAcrossJpaRepositories;

@@ -7,6 +7,7 @@ import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.bind.EntityPropertyControlName;
 import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
+import com.foreach.across.modules.entity.registry.properties.EntityPropertyHandlingType;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
 import com.foreach.across.modules.filemanager.utils.FileReferenceUtils;
@@ -66,9 +67,11 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 		}
 
 		FileUploadFormElementBuilder fileUploadBuilder = file().css( "js-file-control" );
-		if ( !isForMultiple && value != null ) {
-			fileUploadBuilder.attribute( "data-id", ( (IdBasedEntity) value ).getId() )
-			                 .controlName( controlName.toString() );
+		if ( !isForMultiple ) {
+			fileUploadBuilder.controlName( controlName.forHandlingType( EntityPropertyHandlingType.forProperty( descriptor ) ).toString() );
+			if ( value != null ) {
+				fileUploadBuilder.attribute( "data-id", ( (IdBasedEntity) value ).getId() );
+			}
 		}
 
 		if ( isForMultiple ) {
