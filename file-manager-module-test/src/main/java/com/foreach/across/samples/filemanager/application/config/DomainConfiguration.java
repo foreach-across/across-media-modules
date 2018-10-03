@@ -39,7 +39,12 @@ public class DomainConfiguration implements EntityConfigurer
 				                                                      .findOne( user.getAvatarId().getFileReferenceId() ) : null )
 		                                                      .applyValueConsumer(
 				                                                      ( user, fileReference ) -> {
-					                                                      user.setAvatarId( new FileReferenceId( fileReference.getNewValue().getId() ) );
+					                                                      if ( fileReference.getNewValue() != null && !fileReference.isDeleted() ) {
+						                                                      user.setAvatarId( new FileReferenceId( fileReference.getNewValue().getId() ) );
+					                                                      }
+					                                                      else {
+						                                                      user.setAvatarId( null );
+					                                                      }
 				                                                      } )
 		                                   ).attribute( EntityAttributes.FORM_ENCTYPE, FormViewElement.ENCTYPE_MULTIPART )
 		        );
