@@ -47,7 +47,7 @@ public class Car extends SettableIdBasedEntity<Car>
 	@ManyToMany
 	@Setter(AccessLevel.NONE)
 	@JoinTable(
-			name = "test_fileref_car",
+			name = "car_attachments",
 			joinColumns = @JoinColumn(name = "fr_car_car_id"),
 			inverseJoinColumns = @JoinColumn(name = "fr_car_fr_id")
 	)
@@ -55,5 +55,19 @@ public class Car extends SettableIdBasedEntity<Car>
 
 	public void setAttachments( List<FileReference> attachments ) {
 		this.attachments = attachments.stream().filter( Objects::nonNull ).collect( Collectors.toList() );
+	}
+
+	@OrderColumn
+	@ManyToMany
+	@Setter(AccessLevel.NONE)
+	@JoinTable(
+			name = "car_other_attachments",
+			joinColumns = @JoinColumn(name = "fr_car_car_id"),
+			inverseJoinColumns = @JoinColumn(name = "fr_car_fr_id")
+	)
+	private List<FileReference> other;
+
+	public void setOther( List<FileReference> other ) {
+		this.other = other.stream().filter( Objects::nonNull ).collect( Collectors.toList() );
 	}
 }
