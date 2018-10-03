@@ -4,8 +4,12 @@ import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.filemanager.business.reference.FileReference;
+import com.foreach.across.modules.filemanager.business.reference.FileReferenceRepository;
 import com.foreach.across.modules.hibernate.jpa.repositories.config.EnableAcrossJpaRepositories;
 import com.foreach.across.samples.filemanager.application.domain.Car;
+import com.foreach.across.samples.filemanager.application.domain.FileReferenceId;
+import com.foreach.across.samples.filemanager.application.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,9 +22,27 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class DomainConfiguration implements EntityConfigurer
 {
+	private final FileReferenceRepository fileReferenceRepository;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.withType( User.class )
+		        .properties( props -> props.property( "avatarId" ).hidden( true )
+		                                   .and().property( "avatar" )
+		                                   .propertyType( FileReference.class )
+		                                   .displayName( "Avatar" )
+		                                   .readable( true )
+		                                   .writable( true )
+		                                   .hidden( false )
+		                                   .controller( c -> c.withTarget( User.class, FileReference.class )
+		                                                      .valueFetcher( user -> user.getAvatarId() != null ? fileReferenceRepository
+				                                                      .findOne( user.getAvatarId().getFileReferenceId() ) : null )
+		                                                      .applyValueConsumer(
+				                                                      ( user, fileReference ) -> {
+					                                                      user.setAvatarId( new FileReferenceId( fileReference.getNewValue().getId() ) );
+				                                                      } )
+		                                   ).attribute( EntityAttributes.FORM_ENCTYPE, FormViewElement.ENCTYPE_MULTIPART )
+		        );
 	}
 
 }
