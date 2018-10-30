@@ -20,6 +20,7 @@ import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
+import com.foreach.across.modules.entity.bind.EntityPropertyControlName;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertySelector;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
@@ -37,8 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static com.foreach.across.modules.bootstrapui.utils.BootstrapElementUtils.prefixControlNames;
 
 /**
  * Central API for building the administration UI for editing components.
@@ -91,6 +90,7 @@ public final class WebCmsComponentModelAdminRenderService
 		generalSettingsBuilder.setViewElementMode( ViewElementMode.FORM_WRITE );
 		generalSettingsBuilder.setBuilderHints( builderHints );
 		generalSettingsBuilder.setEntity( componentModel.getComponent() );
+		generalSettingsBuilder.setAttribute( EntityPropertyControlName.class, EntityPropertyControlName.root( controlNamePrefix + ".component" ) );
 
 		val messageCodeResolver = generalSettingsBuilder.getAttribute( EntityMessageCodeResolver.class );
 		generalSettingsBuilder.setAttribute(
@@ -114,7 +114,6 @@ public final class WebCmsComponentModelAdminRenderService
 				                                             .add( formGroups.get( "componentType" ) )
 				                                             .add( formGroups.get( "lastModified" ) )
 		                          )
-		                          .postProcessor( prefixControlNames( controlNamePrefix + ".component" ) )
 		                          .postProcessor( ( builderContext, container ) -> {
 			                          if ( ownerContainer != null ) {
 				                          container.find( "formGroup-title", FormGroupElement.class )
