@@ -79,7 +79,7 @@ public class ITFileReferenceService extends AbstractFileManagerAndHibernateIT
 
 	private FileReference createFileReference( String fileName ) throws IOException {
 		MultipartFile multipartFile = new MockMultipartFile( "file", fileName + ".txt", "text/plain", RES_TEXTFILE.getInputStream() );
-		FileReference fileReference = fileReferenceService.save( multipartFile );
+		FileReference fileReference = fileReferenceService.save( multipartFile, "default" );
 		FileReferenceProperties properties = fileReferencePropertiesService.getProperties( fileReference.getId() );
 		properties.put( "test-property", "my-property" );
 		fileReferencePropertiesService.saveProperties( properties );

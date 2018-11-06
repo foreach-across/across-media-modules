@@ -6,12 +6,15 @@ import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
 import com.foreach.across.modules.filemanager.business.reference.FileReferenceRepository;
+import com.foreach.across.modules.filemanager.business.reference.FileReferenceService;
 import com.foreach.across.modules.hibernate.jpa.repositories.config.EnableAcrossJpaRepositories;
 import com.foreach.across.samples.filemanager.application.domain.Car;
 import com.foreach.across.samples.filemanager.application.domain.FileReferenceId;
 import com.foreach.across.samples.filemanager.application.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * @author Steven Gentens
@@ -23,9 +26,12 @@ import org.springframework.context.annotation.Configuration;
 public class DomainConfiguration implements EntityConfigurer
 {
 	private final FileReferenceRepository fileReferenceRepository;
+	private final FileReferenceService fileReferenceService;
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.withType( FileReference.class ).show();
+
 		entities.withType( User.class )
 		        .properties( props -> props.property( "avatarId" ).hidden( true )
 		                                   .and().property( "avatar" )
@@ -46,7 +52,22 @@ public class DomainConfiguration implements EntityConfigurer
 						                                                      user.setAvatarId( null );
 					                                                      }
 				                                                      } )
-		                                   ).attribute( EntityAttributes.FORM_ENCTYPE, FormViewElement.ENCTYPE_MULTIPART )
+		                                   )
+		                                   .attribute( EntityAttributes.FORM_ENCTYPE, FormViewElement.ENCTYPE_MULTIPART )
+		        );
+
+		// migrate the files attached under "other" to a different repository
+		entities.withType( Car.class )
+		        .properties(
+				        props -> props
+						        .property( "other" )
+						        .controller( ctl -> ctl
+								        .<List<FileReference>>withBindingContext( List.class )
+								        .saveConsumer(
+										        ( ctx, files ) -> fileReferenceService
+												        .changeFileRepository( files.getNewValue(), "permanent", true )
+								        )
+						        )
 		        );
 	}
 

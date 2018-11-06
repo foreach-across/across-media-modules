@@ -21,6 +21,7 @@ import com.foreach.across.modules.filemanager.business.reference.properties.File
 import com.foreach.across.modules.filemanager.business.reference.properties.FileReferencePropertiesService;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
+import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -75,12 +77,14 @@ public class TestFileReferenceService
 		when( file.getSize() ).thenReturn( 5L );
 		inputStream = mock( InputStream.class );
 		when( file.getInputStream() ).thenReturn( inputStream );
-
-		fileDescriptor = new FileDescriptor( FileManager.TEMP_REPOSITORY, "my-unique-file-name" );
+		when( inputStream.read() ).thenReturn( -1 );
+		when( inputStream.available() ).thenReturn( -1 );
+		when( inputStream.read( any() ) ).thenReturn( -1 );
+		fileDescriptor = FileDescriptor.of( FileManager.TEMP_REPOSITORY, "my-unique-file-name" );
 		when( fileManager.save( fileDescriptor.getRepositoryId(), inputStream ) ).thenReturn( fileDescriptor );
 
-		newDescriptor = new FileDescriptor( FileManager.DEFAULT_REPOSITORY, UUID.randomUUID().toString() );
-		when( fileRepository.createFile() ).thenReturn( newDescriptor );
+		newDescriptor = FileDescriptor.of( FileManager.DEFAULT_REPOSITORY, UUID.randomUUID().toString() );
+		when( fileRepository.moveInto( any() )).thenReturn( newDescriptor );
 
 		FileReferenceProperties fileReferenceProperties = mock( FileReferenceProperties.class );
 		when( fileReferencePropertiesService.getProperties( any() ) ).thenReturn( fileReferenceProperties );
@@ -100,24 +104,17 @@ public class TestFileReferenceService
 	}
 
 	@Test
-	public void noRepositoryDefinedSavesToDefaultRepository() {
-		fileReferenceService.save( file );
-		verify( fileManager, times( 1 ) ).save( FileManager.TEMP_REPOSITORY, inputStream );
-	}
-
-	@Test
+	@SneakyThrows
 	public void save() {
-		FileReference save = fileReferenceService.save( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ), file );
-		verify( fileManager, times( 1 ) ).save( FileManager.TEMP_REPOSITORY, inputStream );
-		ArgumentCaptor<FileDescriptor> argumentCaptor = ArgumentCaptor.forClass( FileDescriptor.class );
+		FileReference save = fileReferenceService.save( file, FileManager.DEFAULT_REPOSITORY );
 
-		verify( fileManager, times( 1 ) ).move( eq( fileDescriptor ), argumentCaptor.capture() );
-		assertThat( argumentCaptor.getValue() ).isEqualTo( newDescriptor );
-		assertThat( argumentCaptor.getValue().getRepositoryId() ).isEqualTo( FileManager.DEFAULT_REPOSITORY );
+		ArgumentCaptor<File> tempFile = ArgumentCaptor.forClass( File.class );
+		verify( file ).transferTo( tempFile.capture() );
+		verify( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ), times( 1 ) ).moveInto( tempFile.getValue() );
 
 		assertThat( save ).hasNoNullFieldsOrPropertiesExcept( "newEntityId" );
 		assertThat( save.getMimeType() ).isEqualTo( file.getContentType() );
 		assertThat( save.getFileSize() ).isEqualTo( file.getSize() );
-		assertThat( save.getFileDescriptor() ).isEqualTo( argumentCaptor.getValue() );
+		assertThat( save.getFileDescriptor() ).isEqualTo( newDescriptor );
 	}
 }

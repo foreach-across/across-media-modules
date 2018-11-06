@@ -2,9 +2,11 @@ package com.foreach.across.modules.filemanager.business.reference;
 
 import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
 import com.foreach.across.modules.entity.EntityAttributes;
-import com.foreach.across.modules.entity.registry.properties.MutableEntityPropertyDescriptor;
-import com.foreach.across.modules.entity.registry.properties.registrars.AbstractEntityPropertyDescriptorEnhancer;
+import com.foreach.across.modules.entity.registry.properties.*;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 /**
  * Registers a {@link EntityAttributes#FORM_ENCTYPE} attribute if the property is a {@link FileReference} to support {@link org.springframework.web.multipart.MultipartFile}s.
@@ -14,13 +16,34 @@ import org.springframework.stereotype.Component;
  * @since 1.3.0
  */
 @Component
-public class FileReferencePropertyDescriptorEnhancer extends AbstractEntityPropertyDescriptorEnhancer
+public class FileReferencePropertyDescriptorEnhancer implements DefaultEntityPropertyRegistryProvider.PropertiesRegistrar
 {
 	@Override
-	protected void enhance( Class<?> entityType, MutableEntityPropertyDescriptor descriptor ) {
-		Class<?> propertyType = descriptor.getPropertyType();
-		if ( propertyType != null && FileReference.class.isAssignableFrom( propertyType ) ) {
-			descriptor.setAttribute( EntityAttributes.FORM_ENCTYPE, FormViewElement.ENCTYPE_MULTIPART );
+	public final void accept( Class<?> entityType, MutableEntityPropertyRegistry registry ) {
+		for ( EntityPropertyDescriptor descriptor : new ArrayList<>( registry.getRegisteredDescriptors() ) ) {
+			MutableEntityPropertyDescriptor property = registry.getProperty( descriptor.getName() );
+
+			enhance( registry, property );
+		}
+	}
+
+	private void enhance( MutableEntityPropertyRegistry registry, MutableEntityPropertyDescriptor descriptor ) {
+		TypeDescriptor propertyTypeDescriptor = descriptor.getPropertyTypeDescriptor();
+
+		if ( propertyTypeDescriptor != null ) {
+			if ( FileReference.class.isAssignableFrom( propertyTypeDescriptor.getObjectType() ) ) {
+				descriptor.setAttribute( EntityAttributes.FORM_ENCTYPE, FormViewElement.ENCTYPE_MULTIPART );
+			}
+			else if ( propertyTypeDescriptor.isCollection() ) {
+				MutableEntityPropertyDescriptor member = registry.getProperty( descriptor.getName() + EntityPropertyRegistry.INDEXER );
+
+				if ( member != null ) {
+					enhance( registry, member );
+					if ( member.hasAttribute( EntityAttributes.FORM_ENCTYPE ) ) {
+						descriptor.setAttribute( EntityAttributes.FORM_ENCTYPE, FormViewElement.ENCTYPE_MULTIPART );
+					}
+				}
+			}
 		}
 	}
 }

@@ -38,8 +38,7 @@ public class FileReferenceController
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType( MediaType.valueOf( fileReference.getMimeType() ) );
-		headers.set( HttpHeaders.CONTENT_DISPOSITION,
-		             "attachment; filename=" + fileReference.getName() );
+		headers.set( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileReference.getName() );
 		headers.setContentLength( fileReference.getFileSize() );
 
 		return new ResponseEntity<>( new InputStreamResource( fileManager.getInputStream( fileReference.getFileDescriptor() ) ),

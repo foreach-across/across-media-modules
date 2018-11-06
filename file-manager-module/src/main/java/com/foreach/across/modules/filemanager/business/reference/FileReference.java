@@ -25,13 +25,12 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.UUID;
 
 /**
@@ -60,19 +59,19 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 	)
 	private Long id;
 
+	@Length(max = 255)
 	@NotBlank
 	@Column(name = "uuid")
 	@Pattern(regexp = "^\\p{ASCII}*$")
 	private String uuid;
 
-	@Size(max = 255)
+	@Length(max = 255)
 	@NotBlank
 	@Column(name = "name")
 	private String name;
 
 	@NotNull
 	@Column(name = "file_descriptor")
-	@Type(type = "FileDescriptorType")
 	private FileDescriptor fileDescriptor;
 
 	@Column(name = "file_size")
@@ -81,6 +80,7 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 	@Column(name = "mime_type")
 	private String mimeType;
 
+	@Length(max = 255)
 	@Column(name = "hash")
 	private String hash;
 

@@ -2,31 +2,30 @@ package com.foreach.across.modules.filemanager.views.bootstrapui;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
+import com.foreach.across.modules.bootstrapui.elements.HiddenFormElement;
 import com.foreach.across.modules.bootstrapui.elements.builder.FileUploadFormElementBuilder;
 import com.foreach.across.modules.entity.EntityModule;
+import com.foreach.across.modules.entity.bind.EntityPropertyBinder;
 import com.foreach.across.modules.entity.bind.EntityPropertyControlName;
+import com.foreach.across.modules.entity.bind.ListEntityPropertyBinder;
 import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyHandlingType;
-import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
 import com.foreach.across.modules.filemanager.utils.FileReferenceUtils;
-import com.foreach.across.modules.hibernate.business.IdBasedEntity;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.MutableViewElement;
+import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.*;
 import static com.foreach.across.modules.entity.bind.EntityPropertyControlName.forProperty;
+import static com.foreach.across.modules.entity.views.util.EntityViewElementUtils.currentPropertyBinder;
 import static com.foreach.across.modules.entity.views.util.EntityViewElementUtils.currentPropertyDescriptor;
 
 /**
@@ -42,7 +41,7 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 	@Override
 	protected void registerWebResources( WebResourceRegistry webResourceRegistry ) {
 		webResourceRegistry.add( new WebResource( WebResource.JAVASCRIPT_PAGE_END, "file-reference-control",
-		                                          "/static/fileManagerModule/js/file-upload.js",
+		                                          "/static/FileManagerModule/js/file-upload.js",
 		                                          WebResource.VIEWS ) );
 	}
 
@@ -50,63 +49,74 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 	@SuppressWarnings("unchecked")
 	protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
 		NodeViewElementBuilder wrapper = div();
+
+		EntityPropertyBinder propertyBinder = currentPropertyBinder( builderContext );
 		EntityPropertyDescriptor descriptor = currentPropertyDescriptor( builderContext );
 		EntityPropertyControlName.ForProperty controlName = forProperty( descriptor, builderContext );
 
-		Object value = EntityViewElementUtils.currentPropertyValue( builderContext );
-		boolean isForMultiple = descriptor.getPropertyTypeDescriptor().isCollection();
-		if ( isForMultiple ) {
-			if ( value != null ) {
-				addMultipleSelectedElements( wrapper, controlName, (List<FileReference>) value, builderContext );
-			}
-		}
-		else {
-			if ( value != null ) {
-				addSingleSelectedElement( wrapper, (FileReference) value, builderContext );
-			}
-		}
+		boolean isForMultiple = propertyBinder instanceof ListEntityPropertyBinder;
 
 		FileUploadFormElementBuilder fileUploadBuilder = file().css( "js-file-control" );
-		if ( !isForMultiple ) {
-			fileUploadBuilder.controlName( controlName.forHandlingType( EntityPropertyHandlingType.forProperty( descriptor ) ).toString() );
-			if ( value != null ) {
-				fileUploadBuilder.attribute( "data-id", ( (IdBasedEntity) value ).getId() );
-			}
-		}
 
 		if ( isForMultiple ) {
-			fileUploadBuilder.attribute( "data-multiple", "true" )
-			                 .controlName( controlName.asCollectionItem().withBinderItemKey( 0 ).asBinderItem().withValue().toString() );
-		}
+			addMultipleSelectedElements( wrapper, controlName, (ListEntityPropertyBinder) propertyBinder, builderContext );
 
-		wrapper.addFirst( fileUploadBuilder );
-		wrapper.addFirst( getTemplate() );
+			wrapper.data( "multiple", true );
+
+			fileUploadBuilder.data( "role", "file-upload-template" )
+			                 .data( "control-name", controlName.asCollectionItem().withBinderItemKey( "{{key}}" ).asBinderItem().withValue().toString() );
+
+			wrapper.add( boundIndicator( controlName ) );
+		}
+		else {
+			fileUploadBuilder.controlName( controlName.forHandlingType( EntityPropertyHandlingType.forProperty( descriptor ) ).toString() );
+
+			FileReference value = (FileReference) propertyBinder.getValue();
+
+			if ( value != null ) {
+				addSingleSelectedElement( wrapper, value, builderContext );
+				fileUploadBuilder.data( "id", value.getId() );
+			}
+		}
 		return wrapper
 				.css( "js-file-reference-control" )
+				.add( fileUploadBuilder )
+				.add( getTemplate() )
 				.build( builderContext );
 	}
 
+	private ViewElement boundIndicator( EntityPropertyControlName.ForProperty controlName ) {
+		HiddenFormElement hidden = new HiddenFormElement();
+		hidden.setControlName( controlName.asBinderItem().toBound() );
+		hidden.setValue( "1" );
+		return hidden;
+	}
+
 	private void addSingleSelectedElement( NodeViewElementBuilder wrapper, FileReference file, ViewElementBuilderContext builderContext ) {
-		wrapper.add( selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) )
-		);
+		wrapper.add( selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) ) );
 	}
 
 	private void addMultipleSelectedElements( NodeViewElementBuilder wrapper,
 	                                          EntityPropertyControlName.ForProperty controlName,
-	                                          List<FileReference> files,
+	                                          ListEntityPropertyBinder propertyBinder,
 	                                          ViewElementBuilderContext builderContext ) {
-		AtomicInteger integer = new AtomicInteger( 1 );
-		files.stream().filter( Objects::nonNull ).forEach(
-				file -> {
-					int idx = integer.getAndIncrement();
-					EntityPropertyControlName.ForProperty.BinderProperty.BinderPropertyValue binderPropertyValue =
-							controlName.asCollectionItem().withBinderItemKey( idx ).asBinderItem().withValue();
-					wrapper.add( selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) )
-							             .add( hidden().attribute( "data-item-idx", idx ).controlName( binderPropertyValue.toString() )
-							                           .value( file.getId() ) ) );
-				}
+		propertyBinder.getItemList()
+		              .forEach(
+				              item -> {
+					              FileReference file = (FileReference) item.getValue();
+					              EntityPropertyControlName.ForProperty.BinderProperty.BinderPropertyValue binderPropertyValue =
+							              controlName.asCollectionItem().withBinderItemKey( item.getSortIndex() ).asBinderItem().withValue();
 
-		);
+					              wrapper.add(
+							              selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) )
+									              .add( hidden().attribute( "data-item-idx", item.getSortIndex() )
+									                            .controlName( binderPropertyValue.toString() )
+									                            .value( file.getId() )
+									              )
+					              );
+				              }
+
+		              );
 	}
 
 	private NodeViewElementBuilder getTemplate() {

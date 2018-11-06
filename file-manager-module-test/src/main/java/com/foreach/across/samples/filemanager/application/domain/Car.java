@@ -5,6 +5,8 @@ import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import java.util.List;
@@ -36,6 +38,8 @@ public class Car extends SettableIdBasedEntity<Car>
 	)
 	private Long id;
 
+	@NotBlank
+	@Length(max = 200)
 	@Column(name = "name")
 	private String name;
 

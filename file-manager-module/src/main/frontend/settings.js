@@ -7,7 +7,7 @@ import path from 'path';
  * Global variables - base output directory.
  * Relative directories are relative to working directory, usually the directory containing this config.js.
  */
-const outputDir = '../resources/views/static/fileManagerModule';
+const outputDir = '../resources/views/static/FileManagerModule';
 
 /**
  * Export global configuration.

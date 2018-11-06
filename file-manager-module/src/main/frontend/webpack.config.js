@@ -26,7 +26,7 @@ export default {
     "entry": {/* determined by settings.js */},
     "output": {
         "path": config.js.dest,
-        "publicPath": "/across/resources/static/fileManagerModule/js/",
+        "publicPath": "/across/resources/static/FileManagerModule/js/",
         "filename": "[name].js",
         "chunkFilename": "[name].chunk.[chunkhash].js"
     },

@@ -1,6 +1,9 @@
+/* global BootstrapUiModule */
 import $ from 'jquery';
 
 let selectedTemplate;
+
+let fileIndex = 1;
 
 function getHtmlForElement( fileInput ) {
     return $( fileInput ).get( 0 ).outerHTML;
@@ -22,7 +25,7 @@ const registerSingleSelectHandler = function( rootElement, html ) {
             } );
 };
 
-const fetchLargestIndex = function ( rootElement ) {
+const fetchLargestIndex = function( rootElement ) {
     const self = $( rootElement );
     let largestIndex = 0;
     self.find( "input[data-item-idx]" ).each( ( index, value ) => {
@@ -48,13 +51,12 @@ const registerMultiselectHandler = function( rootElement, html, element ) {
                 registerRemoveFileHandler( self, html, $( newFile ).find( "a.remove-file" ), true );
             }
             fileInput.addClass( 'hidden' );
-            const idx = fetchLargestIndex( rootElement );
-            const name = fileInput.attr( 'name' ).replace( /\.items\[0\]\./g, `.items[${idx}].` );
-            fileInput.attr( 'data-item-idx', idx );
+            const name = fileInput.data( 'control-name' ).replace( /{{key}}/g, `item-${fileIndex++}` );
+            fileInput.removeData( 'control-name' );
+            fileInput.removeData( 'role' );
             fileInput.attr( 'name', name );
-            fileInput.attr( 'id', name );
             const newFileInput = $( html );
-            root.prepend( newFileInput );
+            root.append( newFileInput );
             registerMultiselectHandler( root, html, newFileInput );
         }
     } );
@@ -64,6 +66,7 @@ registerRemoveFileHandler = function( rootElement, html, element, forMultiple = 
     const root = $( rootElement );
     const self = $( element );
     self.on( 'click', ( event ) => {
+        event.preventDefault();
         if ( !forMultiple ) {
             root.empty();
             root.prepend( html );
@@ -80,16 +83,19 @@ EntityModule.registerInitializer( ( node ) => {
     $( ".js-file-reference-control" ).each(
             ( index, value ) => {
                 const self = $( value );
-                const fileInput = self.children( ".js-file-control" );
 
-                const script = self.find( "script" );
+                const script = $( BootstrapUiModule.refTarget( self.find( '[data-role=selected-item-template]' ) ) );
                 selectedTemplate = script.html();
                 script.remove();
 
-                let html = getHtmlForElement( fileInput );
                 const existingFiles = self.find( "a.remove-file" );
 
-                if ( $( fileInput[0] ).attr( "data-multiple" ) ) {
+                const isForMultiple = self.data( "multiple" );
+
+                const fileInput = isForMultiple ? self.find( '[data-role=file-upload-template]' ) : self.children( '.js-file-control' ).get( 0 );
+                let html = getHtmlForElement( fileInput );
+
+                if ( isForMultiple ) {
                     html = getHtmlForElement( fileInput );
                     $( existingFiles ).each( ( ix, file ) => {
                         registerRemoveFileHandler( value, html, file, true );
@@ -97,6 +103,8 @@ EntityModule.registerInitializer( ( node ) => {
                     registerMultiselectHandler( value, html, fileInput );
                 }
                 else {
+                    const fileInput = self.children( ".js-file-control" );
+
                     if ( fileInput.attr( "data-id" ) ) {
                         html = getHtmlForElement( fileInput );
                         fileInput.attr( 'type', 'hidden' );

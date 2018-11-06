@@ -6,7 +6,7 @@ import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderFactory;
 import com.foreach.across.modules.entity.views.ViewElementMode;
-import com.foreach.across.modules.entity.views.bootstrapui.processors.element.EntityPropertyControlNamePostProcessor;
+import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +35,7 @@ public class FileReferenceViewElementBuilderFactory implements EntityViewElement
 	public ViewElementBuilder createBuilder( EntityPropertyDescriptor entityPropertyDescriptor, ViewElementMode viewElementMode, String viewElementType ) {
 		ViewElementMode single = viewElementMode.forSingle();
 		if ( ViewElementMode.CONTROL.equals( single ) || ViewElementMode.FORM_WRITE.equals( single ) ) {
-			return new FileReferenceControlViewElementBuilder().postProcessor( new EntityPropertyControlNamePostProcessor() );
+			return new FileReferenceControlViewElementBuilder().postProcessor( EntityViewElementUtils.controlNamePostProcessor( entityPropertyDescriptor ) );
 		}
 		return new FileReferenceValueViewElementBuilder();
 	}

@@ -24,8 +24,10 @@ import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -61,40 +64,39 @@ public class FileReferenceService
 	 * @param file to save
 	 * @return {@link FileReference} to the file
 	 */
-	public FileReference save( @NotNull MultipartFile file ) {
-		return save( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ), file );
+	public FileReference save( @NotNull MultipartFile file, @NotNull String repositoryId ) {
+		return save( file, fileManager.getRepository( repositoryId ) );
 	}
 
 	/**
 	 * Saves a given {@link MultipartFile} to a specific {@link FileRepository}.
 	 *
-	 * @param fileRepository to save the file to
 	 * @param file           to save
+	 * @param fileRepository to save the file to
 	 * @return {@link FileReference} to the file
 	 */
-	public FileReference save( @NotNull FileRepository fileRepository, @NotNull MultipartFile file ) {
-
-		FileDescriptor savedFile;
+	public FileReference save( @NotNull MultipartFile file, @NotNull FileRepository fileRepository ) {
+		File tempFile;
 		FileReference fileReference = new FileReference();
+
 		try {
-			savedFile = fileManager.save( FileManager.TEMP_REPOSITORY, file.getInputStream() );
-			fileReference.setFileDescriptor( savedFile );
-			fileReference.setHash( DigestUtils.md5DigestAsHex( file.getBytes() ) );
+			fileReference.setHash( DigestUtils.md5DigestAsHex( file.getInputStream() ) );
+			tempFile = fileManager.createTempFile();
+			file.transferTo( tempFile );
 		}
 		catch ( IOException e ) {
 			LOG.error( "Unable to read file {}", file.getOriginalFilename(), e );
-			return null;
+			throw new IllegalArgumentException( e );
 		}
-		FileDescriptor targetDescriptor = fileRepository.createFile();
-		fileManager.move( savedFile, targetDescriptor );
-		fileReference.setFileDescriptor( targetDescriptor );
 
+		fileReference.setFileDescriptor( fileRepository.moveInto( tempFile ) );
 		fileReference.setName( file.getOriginalFilename() );
 		fileReference.setFileSize( file.getSize() );
 		fileReference.setMimeType( file.getContentType() );
 		FileReferenceCreationEvent fileReferenceCreationEvent = modifyFileReference( fileReference );
 		fileReference = fileReferenceRepository.save( fileReferenceCreationEvent.getFileReference() );
 		saveFileReferenceProperties( fileReference, fileReferenceCreationEvent.getFileReferenceProperties() );
+
 		return fileReference;
 	}
 
@@ -102,6 +104,61 @@ public class FileReferenceService
 		FileReferenceProperties properties = fileReferencePropertiesService.getProperties( fileReference.getId() );
 		properties.putAll( fileReferenceProperties );
 		fileReferencePropertiesService.saveProperties( properties );
+	}
+
+	/**
+	 * Changes the repositories of the physical files of a collection of references.
+	 *
+	 * @param fileReferences  collection of references whose descriptors should be updated
+	 * @param repositoryId    name of the target repository
+	 * @param deleteOriginals true if original files should be deleted after move
+	 */
+	@Transactional
+	public void changeFileRepository( @NonNull Iterable<FileReference> fileReferences, @NonNull String repositoryId, boolean deleteOriginals ) {
+		fileReferences.forEach( fr -> changeFileRepository( fr, repositoryId, deleteOriginals ) );
+	}
+
+	/**
+	 * Changes the repository where the actual physical file of a reference is stored. This will update and save the file reference.
+	 * If the physical file is already in that repository, nothing will be done.
+	 * <p/>
+	 * Note that this wil copy the original file into the new repository, but will not remove the original file when done.
+	 * Use {@link #changeFileRepository(FileReference, String, boolean)} if you want to delete the original file.
+	 *
+	 * @param fileReference to update
+	 * @param repositoryId  name of the target repository
+	 */
+	@Transactional
+	public void changeFileRepository( @NonNull FileReference fileReference, @NonNull String repositoryId ) {
+		changeFileRepository( fileReference, repositoryId, false );
+	}
+
+	/**
+	 * Changes the repository where the actual physical file of a reference is stored. This will update and save the file reference.
+	 * If the physical file is already in that repository, nothing will be done.
+	 * <p/>
+	 * Depending on {@code removeOriginal} the original file will be removed after a new one has been uploaded.
+	 * Only delete original file descriptors if you are sure they are no longer referenced anywhere.
+	 *
+	 * @param fileReference to update
+	 * @param repositoryId  name of the target repository
+	 */
+	@Transactional
+	public void changeFileRepository( @NonNull FileReference fileReference, @NonNull String repositoryId, boolean removeOriginal ) {
+		FileDescriptor fileDescriptor = fileReference.getFileDescriptor();
+
+		if ( fileDescriptor != null && !StringUtils.equals( repositoryId, fileDescriptor.getRepositoryId() ) ) {
+			LOG.debug( "Moving file '{}' to repository {}", fileDescriptor, repositoryId );
+			FileDescriptor newDescriptor = fileManager.save( repositoryId, fileManager.getInputStream( fileDescriptor ) );
+			LOG.debug( "New file descriptor for file '{}': '{}'", fileDescriptor, newDescriptor );
+
+			fileReference.setFileDescriptor( newDescriptor );
+			fileReferenceRepository.save( fileReference );
+
+			if ( removeOriginal ) {
+				transactionalDeletePhysicalFile( fileDescriptor );
+			}
+		}
 	}
 
 	/**
@@ -125,16 +182,28 @@ public class FileReferenceService
 	 */
 	@Transactional
 	public void delete( FileReference fileReference, boolean deletePhysicalFile ) {
+		FileDescriptor descriptor = fileReference.getFileDescriptor();
 		fileReferenceRepository.delete( fileReference );
 
 		if ( deletePhysicalFile ) {
-			TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronizationAdapter()
-			{
-				@Override
-				public void afterCommit() {
-					fileManager.delete( fileReference.getFileDescriptor() );
-				}
-			} );
+			transactionalDeletePhysicalFile( descriptor );
 		}
+	}
+
+	private void transactionalDeletePhysicalFile( FileDescriptor fileDescriptor ) {
+		TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronizationAdapter()
+		{
+			@Override
+			public void afterCommit() {
+				try {
+					if ( !fileManager.delete( fileDescriptor ) ) {
+						LOG.warn( "Was asked to delete file {} but was possibly not deleted.", fileDescriptor );
+					}
+				}
+				catch ( Exception e ) {
+					LOG.warn( "Was asked to delete file {} but was an exception occurred and file was most likely not deleted.", fileDescriptor, e );
+				}
+			}
+		} );
 	}
 }

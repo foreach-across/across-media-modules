@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 @ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
 public class FileReferencePropertiesRegistry extends EntityPropertiesRegistry
 {
-
 	public FileReferencePropertiesRegistry( EntityPropertiesDescriptor descriptor ) {
 		super( descriptor );
 	}

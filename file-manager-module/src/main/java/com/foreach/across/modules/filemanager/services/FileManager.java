@@ -26,7 +26,7 @@ import java.io.InputStream;
  * have any type of implementation (local storage, remote storage, database backed).
  * <p/>
  * This interface also implements the {@link com.foreach.across.modules.filemanager.services.FileRepository}
- * and will considerd repository methods to run either against the default file repository or (in case of
+ * and will considered repository methods to run either against the default file repository or (in case of
  * using a FileDescriptor) against the repository specified in the FileDescriptor.
  */
 public interface FileManager extends FileRepository
