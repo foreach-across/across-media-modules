@@ -33,7 +33,7 @@ public class FileReferenceController
 	private final FileManager fileManager;
 
 	@GetMapping(BASE_PATH + "/{uuid}")
-	public ResponseEntity<InputStreamResource> getFileReference( @PathVariable("uuid") String uuid ) {
+	public ResponseEntity<InputStreamResource> downloadFile( @PathVariable("uuid") String uuid ) {
 		FileReference fileReference = fileReferenceRepository.findOne( QFileReference.fileReference.uuid.eq( uuid ) );
 
 		HttpHeaders headers = new HttpHeaders();

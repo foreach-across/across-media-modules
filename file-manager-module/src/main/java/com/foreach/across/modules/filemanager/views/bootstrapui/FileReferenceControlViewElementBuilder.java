@@ -80,6 +80,7 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 		}
 		return wrapper
 				.css( "js-file-reference-control" )
+				.data( "next-item-id", System.currentTimeMillis() )
 				.add( fileUploadBuilder )
 				.add( getTemplate() )
 				.build( builderContext );
@@ -104,15 +105,14 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 		              .forEach(
 				              item -> {
 					              FileReference file = (FileReference) item.getValue();
-					              EntityPropertyControlName.ForProperty.BinderProperty.BinderPropertyValue binderPropertyValue =
-							              controlName.asCollectionItem().withBinderItemKey( item.getSortIndex() ).asBinderItem().withValue();
+					              EntityPropertyControlName.ForProperty.BinderProperty binderProperty = controlName.asCollectionItem()
+					                                                                                               .withBinderItemKey( item.getItemKey() )
+					                                                                                               .asBinderItem();
 
 					              wrapper.add(
 							              selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) )
-									              .add( hidden().attribute( "data-item-idx", item.getSortIndex() )
-									                            .controlName( binderPropertyValue.toString() )
-									                            .value( file.getId() )
-									              )
+									              .add( hidden().controlName( binderProperty.withValue().toString() ).value( file.getId() ) )
+									              .add( hidden().controlName( binderProperty.toSortIndex() ).value( item.getSortIndex() ) )
 					              );
 				              }
 
@@ -123,7 +123,7 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 		return node( "script" )
 				.attribute( "type", "text/html" )
 				.attribute( "data-role", "selected-item-template" )
-				.add( selectedFileBuilder( "replaceByName", null ) );
+				.add( selectedFileBuilder( "{{fileName}}", null ) );
 	}
 
 	private NodeViewElementBuilder selectedFileBuilder( String name, String url ) {
