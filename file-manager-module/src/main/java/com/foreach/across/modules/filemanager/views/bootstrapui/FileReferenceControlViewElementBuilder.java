@@ -4,6 +4,8 @@ import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.HiddenFormElement;
 import com.foreach.across.modules.bootstrapui.elements.builder.FileUploadFormElementBuilder;
+import com.foreach.across.modules.bootstrapui.elements.builder.ScriptViewElementBuilder;
+import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.bind.EntityPropertyBinder;
 import com.foreach.across.modules.entity.bind.EntityPropertyControlName;
@@ -22,6 +24,7 @@ import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
 
 import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.*;
 import static com.foreach.across.modules.entity.bind.EntityPropertyControlName.forProperty;
@@ -51,25 +54,27 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 		NodeViewElementBuilder wrapper = div();
 
 		EntityPropertyBinder propertyBinder = currentPropertyBinder( builderContext );
-		EntityPropertyDescriptor descriptor = currentPropertyDescriptor( builderContext );
-		EntityPropertyControlName.ForProperty controlName = forProperty( descriptor, builderContext );
+		EntityPropertyDescriptor propertyDescriptor = currentPropertyDescriptor( builderContext );
+		EntityPropertyControlName.ForProperty controlName = forProperty( propertyDescriptor, builderContext );
 
 		boolean isForMultiple = propertyBinder instanceof ListEntityPropertyBinder;
 
-		FileUploadFormElementBuilder fileUploadBuilder = file().css( "js-file-control" );
+		FileUploadFormElementBuilder fileUploadBuilder = file().css( "js-file-control" ).required( EntityAttributes.isRequired( propertyDescriptor ) );
 
 		if ( isForMultiple ) {
 			addMultipleSelectedElements( wrapper, controlName, (ListEntityPropertyBinder) propertyBinder, builderContext );
 
 			wrapper.data( "multiple", true );
 
-			fileUploadBuilder.data( "role", "file-upload-template" )
-			                 .data( "control-name", controlName.asCollectionItem().withBinderItemKey( "{{key}}" ).asBinderItem().withValue().toString() );
+			fileUploadBuilder
+					.data( "role", "file-upload-template" )
+					.data( "control-name", controlName.asCollectionItem().withBinderItemKey( "{{key}}" ).asBinderItem().withValue().toString() );
 
-			wrapper.add( boundIndicator( controlName ) );
+			wrapper.add( boundIndicator( controlName ) )
+			       .add( collectionErrorHolder( controlName ) );
 		}
 		else {
-			fileUploadBuilder.controlName( controlName.forHandlingType( EntityPropertyHandlingType.forProperty( descriptor ) ).toString() );
+			fileUploadBuilder.controlName( controlName.forHandlingType( EntityPropertyHandlingType.forProperty( propertyDescriptor ) ).toString() );
 
 			FileReference value = (FileReference) propertyBinder.getValue();
 
@@ -82,8 +87,15 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 				.css( "js-file-reference-control" )
 				.data( "next-item-id", System.currentTimeMillis() )
 				.add( fileUploadBuilder )
-				.add( getTemplate() )
+				.add( selectedItemTemplate() )
 				.build( builderContext );
+	}
+
+	private ViewElement collectionErrorHolder( EntityPropertyControlName controlName ) {
+		HiddenFormElement hidden = new HiddenFormElement();
+		hidden.setControlName( controlName.toString() );
+		hidden.setDisabled( true );
+		return hidden.toFormControl();
 	}
 
 	private ViewElement boundIndicator( EntityPropertyControlName.ForProperty controlName ) {
@@ -119,9 +131,8 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 		              );
 	}
 
-	private NodeViewElementBuilder getTemplate() {
-		return node( "script" )
-				.attribute( "type", "text/html" )
+	private ScriptViewElementBuilder selectedItemTemplate() {
+		return script( MediaType.TEXT_HTML )
 				.attribute( "data-role", "selected-item-template" )
 				.add( selectedFileBuilder( "{{fileName}}", null ) );
 	}

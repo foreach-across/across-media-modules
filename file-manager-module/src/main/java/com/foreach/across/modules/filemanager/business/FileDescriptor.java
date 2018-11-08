@@ -19,13 +19,16 @@ package com.foreach.across.modules.filemanager.business;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Represents a single file in a FileRepository.
  */
-public class FileDescriptor
+public class FileDescriptor implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+
 	private final String repositoryId, fileId, folderId;
 
 	private final String uri;
@@ -74,7 +77,7 @@ public class FileDescriptor
 
 		String[] parts = StringUtils.split( uri, ":" );
 
-		Assert.isTrue( parts.length == 2 || parts.length == 3 );
+		Assert.isTrue( parts.length == 2 || parts.length == 3, "FileDescriptor URI must contain either 2 or 3 segments separated with :" );
 
 		String repositoryId = parts[0];
 		String folderId = null;

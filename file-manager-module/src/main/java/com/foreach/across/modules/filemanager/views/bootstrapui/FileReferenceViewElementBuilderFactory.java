@@ -37,7 +37,7 @@ public class FileReferenceViewElementBuilderFactory implements EntityViewElement
 		if ( ViewElementMode.CONTROL.equals( single ) || ViewElementMode.FORM_WRITE.equals( single ) ) {
 			return new FileReferenceControlViewElementBuilder().postProcessor( EntityViewElementUtils.controlNamePostProcessor( entityPropertyDescriptor ) );
 		}
-		return new FileReferenceValueViewElementBuilder();
+		return new FileReferenceValueViewElementBuilder( viewElementMode );
 	}
 
 }

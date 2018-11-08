@@ -1,35 +1,90 @@
 package com.foreach.across.modules.filemanager.views.bootstrapui;
 
-import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
-import com.foreach.across.modules.bootstrapui.elements.builder.LinkViewElementBuilder;
-import com.foreach.across.modules.entity.EntityModule;
-import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
+import com.foreach.across.modules.bootstrapui.elements.LinkViewElement;
+import com.foreach.across.modules.bootstrapui.elements.StaticFormElement;
+import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
 import com.foreach.across.modules.filemanager.utils.FileReferenceUtils;
-import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
-import com.foreach.across.modules.web.ui.MutableViewElement;
-import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
-import com.foreach.across.modules.web.ui.ViewElementBuilderSupport;
+import com.foreach.across.modules.web.ui.*;
+import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.*;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
-@ConditionalOnBootstrapUI
-@ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, EntityModule.NAME })
 public class FileReferenceValueViewElementBuilder extends ViewElementBuilderSupport
 {
-	@Override
-	protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
-		FileReference fileReference = EntityViewElementUtils.currentPropertyValue( builderContext, FileReference.class );
-		LinkViewElementBuilder link = BootstrapUiBuilders.link();
-		if ( fileReference != null ) {
-			link.text( fileReference.getName() )
-			    .url( builderContext.buildLink( FileReferenceUtils.getDownloadUrl( fileReference ) ) );
-		}
-		return link.build( builderContext );
+	private final boolean listValue;
+
+	public FileReferenceValueViewElementBuilder( ViewElementMode viewElementMode ) {
+		listValue = ViewElementMode.LIST_VALUE.equals( viewElementMode.forSingle() );
 	}
 
+	@Override
+	protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
+		List<ViewElementBuilder> links = buildLinks( EntityViewElementUtils.currentPropertyValue( builderContext ), builderContext );
+
+		ContainerViewElementBuilderSupport container = listValue ? container() : div();
+
+		int last = links.size() - 1;
+		for ( int i = 0; i < links.size(); i++ ) {
+			container.add( links.get( i ) );
+
+			if ( i < last && listValue ) {
+				container.add( text( ", " ) );
+			}
+		}
+
+		return container.build( builderContext );
+	}
+
+	private List<ViewElementBuilder> buildLinks( Object value, ViewElementBuilderContext builderContext ) {
+		return fileReferenceStream( value )
+				.map( fr -> buildDownloadLink( builderContext, fr ) )
+				.collect( Collectors.toList() );
+	}
+
+	@SuppressWarnings("unchecked")
+	private Stream<FileReference> fileReferenceStream( Object value ) {
+		if ( value instanceof FileReference ) {
+			return Stream.of( (FileReference) value );
+		}
+
+		if ( value instanceof FileReference[] ) {
+			return Arrays.stream( (FileReference[]) value );
+		}
+
+		if ( value instanceof Collection ) {
+			return ( (Collection<FileReference>) value ).stream();
+		}
+
+		return Stream.empty();
+	}
+
+	private ViewElementBuilder buildDownloadLink( ViewElementBuilderContext builderContext, FileReference fileReference ) {
+		return BootstrapUiBuilders.link()
+		                          .text( fileReference.getName() )
+		                          .url( builderContext.buildLink( FileReferenceUtils.getDownloadUrl( fileReference ) ) )
+		                          .map( this::wrapAsStaticControl );
+	}
+
+	private ViewElement wrapAsStaticControl( LinkViewElement link ) {
+		if ( !listValue ) {
+			StaticFormElement staticControl = new StaticFormElement();
+			staticControl.addChild( link );
+			return staticControl;
+		}
+
+		return link;
+	}
 }

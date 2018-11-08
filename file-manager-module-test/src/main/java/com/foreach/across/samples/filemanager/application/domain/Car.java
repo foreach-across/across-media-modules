@@ -7,9 +7,11 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -44,10 +46,12 @@ public class Car extends SettableIdBasedEntity<Car>
 	@Column(name = "name")
 	private String name;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "manual_id", referencedColumnName = "id")
 	private FileReference manual;
 
+	@NotEmpty
 	@OrderColumn
 	@ManyToMany
 	@Setter(AccessLevel.NONE)
@@ -74,5 +78,23 @@ public class Car extends SettableIdBasedEntity<Car>
 
 	public void setOther( List<FileReference> other ) {
 		this.other = other.stream().filter( Objects::nonNull ).collect( Collectors.toList() );
+	}
+
+	@Lob
+	@ElementCollection(targetClass = Document.class)
+	@CollectionTable(name = "documents", joinColumns = @JoinColumn(name = "car_id"))
+	@Column(name = "documents")
+	@Builder.Default
+	private List<Document> documents = new ArrayList<>();
+
+	@Embeddable
+	@Data
+	public static class Document
+	{
+		@NotNull
+		@ManyToOne
+		private FileReference file;
+
+		private String description;
 	}
 }

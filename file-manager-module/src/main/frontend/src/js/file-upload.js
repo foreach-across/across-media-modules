@@ -21,8 +21,10 @@ function registerSingleFileUploadControl( control ) {
             e.preventDefault();
             $( e.target ).closest( '.file-reference-control-item' ).remove();
             fileInput.removeAttr( 'data-id' );
+            fileInput.attr( 'type', 'hidden' );
             fileInput.removeAttr( 'value' );
             fileInput.attr( 'type', 'file' );
+            fileInput.removeClass( 'hidden' );
         } );
     }
 
