@@ -1,6 +1,7 @@
 package com.foreach.across.modules.filemanager.views.bootstrapui;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
+import com.foreach.across.modules.bootstrapui.elements.FormControlElement;
 import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.HiddenFormElement;
 import com.foreach.across.modules.bootstrapui.elements.builder.FileUploadFormElementBuilder;
@@ -59,7 +60,7 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 
 		boolean isForMultiple = propertyBinder instanceof ListEntityPropertyBinder;
 
-		FileUploadFormElementBuilder fileUploadBuilder = file().css( "js-file-control" ).required( EntityAttributes.isRequired( propertyDescriptor ) );
+		FileUploadFormElementBuilder fileUploadBuilder = file().css( "js-file-control" );
 
 		if ( isForMultiple ) {
 			addMultipleSelectedElements( wrapper, controlName, (ListEntityPropertyBinder) propertyBinder, builderContext );
@@ -71,10 +72,11 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 					.data( "control-name", controlName.asCollectionItem().withBinderItemKey( "{{key}}" ).asBinderItem().withValue().toString() );
 
 			wrapper.add( boundIndicator( controlName ) )
-			       .add( collectionErrorHolder( controlName ) );
+			       .add( formGroupControl( controlName, EntityAttributes.isRequired( propertyDescriptor ) ) );
 		}
 		else {
-			fileUploadBuilder.controlName( controlName.forHandlingType( EntityPropertyHandlingType.forProperty( propertyDescriptor ) ).toString() );
+			fileUploadBuilder.controlName( controlName.forHandlingType( EntityPropertyHandlingType.forProperty( propertyDescriptor ) ).toString() )
+			                 .required( EntityAttributes.isRequired( propertyDescriptor ) );
 
 			FileReference value = (FileReference) propertyBinder.getValue();
 
@@ -91,11 +93,15 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 				.build( builderContext );
 	}
 
-	private ViewElement collectionErrorHolder( EntityPropertyControlName controlName ) {
+	private ViewElement formGroupControl( EntityPropertyControlName controlName, boolean required ) {
 		HiddenFormElement hidden = new HiddenFormElement();
 		hidden.setControlName( controlName.toString() );
 		hidden.setDisabled( true );
-		return hidden.toFormControl();
+
+		FormControlElement control = hidden.toFormControl();
+		control.setRequired( required );
+
+		return control;
 	}
 
 	private ViewElement boundIndicator( EntityPropertyControlName.ForProperty controlName ) {

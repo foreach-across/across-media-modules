@@ -51,6 +51,7 @@ public class Car extends SettableIdBasedEntity<Car>
 	@JoinColumn(name = "manual_id", referencedColumnName = "id")
 	private FileReference manual;
 
+	@NotNull
 	@NotEmpty
 	@OrderColumn
 	@ManyToMany

@@ -14,8 +14,6 @@ import com.foreach.across.samples.filemanager.application.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-
 /**
  * @author Steven Gentens
  * @since 1.3.0
@@ -60,12 +58,12 @@ public class DomainConfiguration implements EntityConfigurer
 		entities.withType( Car.class )
 		        .properties(
 				        props -> props
-						        .property( "other" )
+						        .property( "other[]" )
 						        .controller( ctl -> ctl
-								        .<List<FileReference>>withBindingContext( List.class )
+								        .withBindingContext( FileReference.class )
 								        .saveConsumer(
-										        ( ctx, files ) -> fileReferenceService
-												        .changeFileRepository( files.getNewValue(), "permanent", true )
+										        ( ctx, fr ) -> fileReferenceService
+												        .changeFileRepository( fr.getNewValue(), "permanent", true )
 								        )
 						        )
 		        );
