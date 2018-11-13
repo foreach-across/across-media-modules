@@ -57,7 +57,7 @@ class AdminUiConfiguration implements EntityConfigurer
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		entities.withType( WebCmsDomain.class ).show();
 		entities.withType( WebCmsImage.class ).attribute( WebCmsEntityAttributes.ALLOW_PER_DOMAIN, true )
-		.listView( lvb -> lvb.pageSize( 5 ) );
+		        .listView( lvb -> lvb.pageSize( 5 ).entityQueryFilter( filter -> filter.showProperties( "text" ) ) );
 		entities.withType( WebCmsPublicationType.class ).show();
 		entities.withType( WebCmsTypeSpecifierLink.class ).show();
 

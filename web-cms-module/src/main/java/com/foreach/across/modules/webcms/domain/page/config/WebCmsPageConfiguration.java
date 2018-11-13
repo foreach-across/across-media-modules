@@ -188,7 +188,7 @@ public class WebCmsPageConfiguration
 														                      BootstrapUiBuilders.button()
 														                                         .link( previewUrl )
 														                                         .attribute( "target", "_blank" )
-														                                         .iconOnly( new GlyphIcon( GlyphIcon.EYE_OPEN ) )
+														                                         .iconOnly( new FaIcon( FaIcon.WebApp.FILE_IMAGE_O ) )
 														                                         .text( entityMessages.withNameSingular( "actions.open" ) )
 														                                         .build( ctx ) );
 											                      } )

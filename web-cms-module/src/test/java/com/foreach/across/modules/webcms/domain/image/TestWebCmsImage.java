@@ -59,6 +59,9 @@ public class TestWebCmsImage
 		WebCmsImage image = WebCmsImage.builder()
 		                               .newEntityId( 123L )
 		                               .name( "my-publication" )
+		                               .source( "Associated Press" )
+		                               .description( "this is a description" )
+		                               .keywords( "image word" )
 		                               .externalId( "abc123def456ghi789" )
 		                               .createdBy( "john" )
 		                               .createdDate( timestamp )
@@ -69,6 +72,9 @@ public class TestWebCmsImage
 		assertEquals( Long.valueOf( 123L ), image.getNewEntityId() );
 		assertEquals( "abc123def456ghi789", image.getExternalId() );
 		assertEquals( "my-publication", image.getName() );
+		assertEquals( "Associated Press", image.getSource() );
+		assertEquals( "this is a description", image.getDescription() );
+		assertEquals( "image word", image.getKeywords() );
 		assertEquals( "john", image.getCreatedBy() );
 		assertEquals( timestamp, image.getCreatedDate() );
 		assertEquals( "josh", image.getLastModifiedBy() );
@@ -85,8 +91,6 @@ public class TestWebCmsImage
 		assertNull( other.getNewEntityId() );
 		assertEquals( Long.valueOf( 333L ), other.getId() );
 		assertEquals( "wcm:asset:image:my-asset", other.getObjectId() );
-		assertEquals( "abc123def456ghi789", image.getExternalId() );
-		assertEquals( "my-publication", image.getName() );
 		assertEquals( "john", other.getCreatedBy() );
 		assertEquals( timestamp, other.getCreatedDate() );
 		assertEquals( "josh", other.getLastModifiedBy() );

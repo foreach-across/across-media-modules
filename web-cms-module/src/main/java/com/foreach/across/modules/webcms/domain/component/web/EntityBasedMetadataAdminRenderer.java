@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.web;
 
+import com.foreach.across.modules.entity.bind.EntityPropertyControlName;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
@@ -32,7 +33,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
-import static com.foreach.across.modules.bootstrapui.utils.BootstrapElementUtils.prefixControlNames;
 import static com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelFormElementBuilder.COMPONENT_MESSAGE_CODE_PREFIX;
 
 /**
@@ -61,6 +61,7 @@ class EntityBasedMetadataAdminRenderer implements WebCmsComponentModelMetadataAd
 		return builderContext -> {
 			EntityViewElementBatch<Object> formBuilder = builderHelper.createBatchForEntity( metadata );
 			formBuilder.setViewElementMode( ViewElementMode.FORM_WRITE );
+			formBuilder.setAttribute( EntityPropertyControlName.class, EntityPropertyControlName.root( controlNamePrefix + ".metadata" ) );
 
 			String messageCodePrefix = StringUtils.defaultString( builderContext.getAttribute( COMPONENT_MESSAGE_CODE_PREFIX, String.class ) );
 
@@ -75,7 +76,6 @@ class EntityBasedMetadataAdminRenderer implements WebCmsComponentModelMetadataAd
 
 			ContainerViewElement container = new ContainerViewElement();
 			formBuilder.build().forEach( ( name, element ) -> container.addChild( element ) );
-			container.apply( prefixControlNames( controlNamePrefix + ".metadata" ) );
 
 			return container;
 		};

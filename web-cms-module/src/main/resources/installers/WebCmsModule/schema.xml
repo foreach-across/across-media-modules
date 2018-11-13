@@ -972,4 +972,5 @@
 	</changeSet>
 
 	<include file="installers/WebCmsModule/schema-0.0.3.xml" />
+	<include file="installers/WebCmsModule/schema-0.0.6.xml" />
 </databaseChangeLog>

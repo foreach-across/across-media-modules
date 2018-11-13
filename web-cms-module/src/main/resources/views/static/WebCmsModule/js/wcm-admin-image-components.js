@@ -99,11 +99,13 @@ WebCmsModule.imageSelector = (function ( $ ) {
                 var useFormData = ("" + $( this ).attr( 'enctype' )).toLowerCase().indexOf( 'form-data' ) > 0;
 
                 var formConfig = {};
+                var tabUrl = baseUrl;
 
                 $( this ).append( '<input type="hidden" name="imageSelector" value="true" />' );
 
                 if ( useFormData ) {
                     var data = new FormData( $( this )[0] );
+                    tabUrl = adminPrefix + '/entities/webCmsImage?_partial=content';
 
                     formConfig = {
                         type: $( this ).attr( 'method' ),
@@ -125,7 +127,7 @@ WebCmsModule.imageSelector = (function ( $ ) {
                         function ( data ) {
                             var body = dialog.find( '.bootbox-body' );
                             body.html( data );
-                            ajaxify( body, baseUrl );
+                            ajaxify( body, tabUrl );
                         }
                 );
             } );

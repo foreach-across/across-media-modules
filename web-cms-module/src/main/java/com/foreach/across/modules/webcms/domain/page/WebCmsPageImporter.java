@@ -20,7 +20,6 @@ import com.foreach.across.modules.webcms.data.WebCmsDataAction;
 import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.domain.asset.AbstractWebCmsAssetImporter;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.page.config.WebCmsPageConfiguration;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import com.foreach.across.modules.webcms.domain.page.validators.WebCmsPageValidator;
@@ -40,7 +39,6 @@ public final class WebCmsPageImporter extends AbstractWebCmsAssetImporter<WebCms
 {
 	private WebCmsPageValidator pageValidator;
 	private WebCmsPageService pageService;
-	private WebCmsMultiDomainService multiDomainService;
 
 	public WebCmsPageImporter() {
 		super( "page", WebCmsPage.class );
@@ -121,8 +119,4 @@ public final class WebCmsPageImporter extends AbstractWebCmsAssetImporter<WebCms
 		this.pageValidator = pageValidator;
 	}
 
-	@Autowired
-	void setMultiDomainService( WebCmsMultiDomainService multiDomainService ) {
-		this.multiDomainService = multiDomainService;
-	}
 }

@@ -39,7 +39,10 @@ public class ImageWebCmsComponentAdminResources extends SimpleWebResourcePackage
 
 		setWebResources(
 				new WebResource( WebResource.CSS, NAME, "/static/WebCmsModule/css/wcm-admin-image-component-styles.css", WebResource.VIEWS ),
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, NAME, "/static/WebCmsModule/js/wcm-admin-image-components.js", WebResource.VIEWS )
+				new WebResource( WebResource.JAVASCRIPT_PAGE_END, NAME, "/static/WebCmsModule/js/wcm-admin-image-components.js", WebResource.VIEWS ),
+				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "entityQueryFilterForm", "/static/entity/js/entity-query.js", WebResource.VIEWS ),
+				new WebResource( WebResource.JAVASCRIPT, "lodash", "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js",
+				                 WebResource.EXTERNAL )
 		);
 	}
 }
