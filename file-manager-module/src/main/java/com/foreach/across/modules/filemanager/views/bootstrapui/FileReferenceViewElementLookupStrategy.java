@@ -28,6 +28,11 @@ public class FileReferenceViewElementLookupStrategy implements ViewElementTypeLo
 	@Override
 	public String findElementType( EntityPropertyDescriptor descriptor, ViewElementMode viewElementMode ) {
 		TypeDescriptor propertyType = descriptor.getPropertyTypeDescriptor();
+
+		if ( propertyType == null ) {
+			return null;
+		}
+
 		Class type = propertyType.isCollection() ? propertyType.getElementTypeDescriptor().getType() : propertyType.getType();
 		if ( type != null && FileReference.class.isAssignableFrom( type ) ) {
 			if ( ViewElementMode.isValue( viewElementMode ) || isNonFilterControl( viewElementMode ) ) {
