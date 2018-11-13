@@ -1,0 +1,40 @@
+spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:../local-data/db/file-manager-module
+    username: sa
+  http:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+across:
+  development:
+    active: true
+adminWebModule:
+  title: Admin FMM
+  login:
+    rememberMe:
+      key: filemanagermodule
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: always
+security:
+  basic:
+    enabled: false
+
+acrossModule:
+  FileManagerModule:
+    resources: ../file-manager-module/src/main/resources
+
+fileManagerModule:
+  localRepositoriesRoot: "../local-data/storage"
+
+acrossHibernate:
+  hibernate-properties:
+    hibernate.hbm2ddl.auto: update
