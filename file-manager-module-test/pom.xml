@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>file-manager-module-project</artifactId>
 		<groupId>com.foreach.across.modules</groupId>
-		<version>1.3.0-SNAPSHOT</version>
+		<version>1.3.0.RELEASE</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
