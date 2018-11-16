@@ -21,14 +21,15 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>standard-module-bom</artifactId>
-		<version>4.0.0.M1</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.foreach.across.modules</groupId>
-	<artifactId>file-manager-module</artifactId>
-	<version>2.0.0.M1</version>
+	<artifactId>file-manager-module-project</artifactId>
+	<packaging>pom</packaging>
+	<version>2.0.0-SNAPSHOT</version>
 
 	<repositories>
 		<repository>
@@ -64,8 +65,40 @@
 		</developer>
 	</developers>
 
+	<modules>
+		<module>file-manager-module</module>
+		<module>file-manager-module-test</module>
+	</modules>
+
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>1.8</source>
+					<target>1.8</target>
+					<annotationProcessors>
+						<annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor
+						</annotationProcessor>
+						<annotationProcessor>com.querydsl.apt.jpa.JPAAnnotationProcessor</annotationProcessor>
+					</annotationProcessors>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.querydsl</groupId>
+						<artifactId>querydsl-apt</artifactId>
+						<version>${querydsl.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.hibernate.javax.persistence</groupId>
+						<artifactId>hibernate-jpa-2.1-api</artifactId>
+						<version>1.0.0.Final</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.5.5</version>
@@ -79,9 +112,6 @@
 				<executions>
 					<execution>
 						<id>make-assembly</id>
-						<!-- this is used for inheritance merges -->
-						<phase>package</phase>
-						<!-- bind to the packaging phase -->
 						<goals>
 							<goal>single</goal>
 						</goals>
@@ -100,43 +130,39 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.foreach.across.modules</groupId>
+				<artifactId>across-hibernate-module</artifactId>
+				<version>3.0.0.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.across.modules</groupId>
+				<artifactId>properties-module</artifactId>
+				<version>1.1.0.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.across.modules</groupId>
+				<artifactId>entity-module</artifactId>
+				<version>3.2.0.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.across.modules</groupId>
+				<artifactId>bootstrap-ui-module</artifactId>
+				<version>2.1.1.RELEASE</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.foreach.across</groupId>
-			<artifactId>across-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.foreach.across</groupId>
-			<artifactId>across-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.10</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
@@ -145,22 +171,4 @@
 		<developerConnection>scm:git:https://bitbucket.org/beforeach/file-manager-module.git</developerConnection>
 		<url>https://bitbucket.org/beforeach/file-manager-module</url>
 	</scm>
-
-	<profiles>
-		<profile>
-			<id>foreach</id>
-			<distributionManagement>
-				<repository>
-					<id>foreach-nexus</id>
-					<name>Foreach nexus</name>
-					<url>http://repository.foreach.be/nexus/repository/releases</url>
-				</repository>
-				<snapshotRepository>
-					<id>foreach-nexus</id>
-					<name>Foreach nexus</name>
-					<url>http://repository.foreach.be/nexus/repository/snapshots</url>
-				</snapshotRepository>
-			</distributionManagement>
-		</profile>
-	</profiles>
 </project>
