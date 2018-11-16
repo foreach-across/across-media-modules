@@ -50,7 +50,7 @@ public class ITFileReferenceService extends AbstractFileManagerAndHibernateIT
 		checkIfObjectsExist( fileReference );
 		fileReferenceService.delete( fileReference, true );
 		assertThat( fileReferencePropertiesService.getProperties( fileReference.getId() ) ).isEmpty();
-		assertThat( fileReferenceRepository.findOne( fileReference.getId() ) ).isNull();
+		assertThat( fileReferenceRepository.findById( fileReference.getId() ) ).isEmpty();
 		assertThat( fileManager.exists( fileReference.getFileDescriptor() ) ).isFalse();
 	}
 
@@ -60,7 +60,7 @@ public class ITFileReferenceService extends AbstractFileManagerAndHibernateIT
 		checkIfObjectsExist( fileReference );
 		fileReferenceService.delete( fileReference, false );
 		assertThat( fileReferencePropertiesService.getProperties( fileReference.getId() ) ).isEmpty();
-		assertThat( fileReferenceRepository.findOne( fileReference.getId() ) ).isNull();
+		assertThat( fileReferenceRepository.findById( fileReference.getId() ) ).isEmpty();
 		assertThat( fileManager.exists( fileReference.getFileDescriptor() ) ).isTrue();
 	}
 
@@ -88,7 +88,7 @@ public class ITFileReferenceService extends AbstractFileManagerAndHibernateIT
 
 	private void checkIfObjectsExist( FileReference fileReference ) {
 		assertThat( fileReferencePropertiesService.getProperties( fileReference.getId() ) ).isNotEmpty();
-		assertThat( fileReferenceRepository.findOne( fileReference.getId() ) ).isNotNull();
+		assertThat( fileReferenceRepository.findById( fileReference.getId() ) ).isNotEmpty();
 		assertThat( fileManager.exists( fileReference.getFileDescriptor() ) ).isTrue();
 	}
 

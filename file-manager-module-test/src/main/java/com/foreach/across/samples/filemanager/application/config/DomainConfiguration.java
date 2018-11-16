@@ -40,7 +40,7 @@ public class DomainConfiguration implements EntityConfigurer
 		                                   .hidden( false )
 		                                   .controller( c -> c.withTarget( User.class, FileReference.class )
 		                                                      .valueFetcher( user -> user.getAvatarId() != null ? fileReferenceRepository
-				                                                      .findOne( user.getAvatarId().getFileReferenceId() ) : null )
+				                                                      .findById( user.getAvatarId().getFileReferenceId() ).orElse( null ) : null )
 		                                                      .applyValueConsumer(
 				                                                      ( user, fileReference ) -> {
 					                                                      if ( fileReference.getNewValue() != null && !fileReference.isDeleted() ) {

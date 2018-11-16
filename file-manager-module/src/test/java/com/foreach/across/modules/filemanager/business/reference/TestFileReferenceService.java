@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,23 +68,18 @@ public class TestFileReferenceService
 
 		FileRepository fileRepository = mock( FileRepository.class );
 		when( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ) ).thenReturn( fileRepository );
-		when( fileRepository.getRepositoryId() ).thenReturn( FileManager.DEFAULT_REPOSITORY );
 
 		file = mock( MultipartFile.class );
-		when( file.getBytes() ).thenReturn( new byte[5] );
 		when( file.getOriginalFilename() ).thenReturn( "my-file.txt" );
 		when( file.getContentType() ).thenReturn( "text/pdf" );
 		when( file.getSize() ).thenReturn( 5L );
 		inputStream = mock( InputStream.class );
 		when( file.getInputStream() ).thenReturn( inputStream );
-		when( inputStream.read() ).thenReturn( -1 );
-		when( inputStream.available() ).thenReturn( -1 );
 		when( inputStream.read( any() ) ).thenReturn( -1 );
 		fileDescriptor = FileDescriptor.of( FileManager.TEMP_REPOSITORY, "my-unique-file-name" );
-		when( fileManager.save( fileDescriptor.getRepositoryId(), inputStream ) ).thenReturn( fileDescriptor );
 
 		newDescriptor = FileDescriptor.of( FileManager.DEFAULT_REPOSITORY, UUID.randomUUID().toString() );
-		when( fileRepository.moveInto( any() )).thenReturn( newDescriptor );
+		when( fileRepository.moveInto( any() ) ).thenReturn( newDescriptor );
 
 		FileReferenceProperties fileReferenceProperties = mock( FileReferenceProperties.class );
 		when( fileReferencePropertiesService.getProperties( any() ) ).thenReturn( fileReferenceProperties );

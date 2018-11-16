@@ -34,7 +34,8 @@ public class FileReferenceController
 
 	@GetMapping(BASE_PATH + "/{uuid}")
 	public ResponseEntity<InputStreamResource> downloadFile( @PathVariable("uuid") String uuid ) {
-		FileReference fileReference = fileReferenceRepository.findOne( QFileReference.fileReference.uuid.eq( uuid ) );
+		FileReference fileReference = fileReferenceRepository.findOne( QFileReference.fileReference.uuid.eq( uuid ) )
+		                                                     .orElseThrow( () -> new IllegalArgumentException( "No such file reference: " + uuid ) );
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType( MediaType.valueOf( fileReference.getMimeType() ) );

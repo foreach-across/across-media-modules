@@ -32,7 +32,7 @@ public class SecurityConfiguration
 	@Autowired
 	public void configureGlobal( AuthenticationManagerBuilder auth ) throws Exception {
 		auth.inMemoryAuthentication()
-		    .withUser( "admin" ).password( "admin" )
+		    .withUser( "admin" ).password( "{noop}admin" )
 		    .authorities( "access administration" );
 	}
 }

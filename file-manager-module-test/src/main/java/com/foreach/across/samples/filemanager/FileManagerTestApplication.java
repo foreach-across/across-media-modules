@@ -20,7 +20,7 @@ public class FileManagerTestApplication
 {
 	public static void main( String[] args ) {
 		SpringApplication springApplication = new SpringApplication( FileManagerTestApplication.class );
-		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.location", "${user.home}/dev-configs/fmm-test-application.yml" ) );
+		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.additional-location", "${user.home}/dev-configs/fmm-test-application.yml" ) );
 		springApplication.run( args );
 	}
 
