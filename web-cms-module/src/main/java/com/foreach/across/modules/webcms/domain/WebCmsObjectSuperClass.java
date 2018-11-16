@@ -81,9 +81,13 @@ public abstract class WebCmsObjectSuperClass<T extends WebCmsObjectSuperClass<T>
 		setNewEntityId( newEntityId );
 		setId( id );
 		setCreatedBy( createdBy );
-		setCreatedDate( createdDate );
+		if ( createdDate != null ) {
+			setCreatedDate( new Date( createdDate.getTime() ) );
+		}
 		setLastModifiedBy( lastModifiedBy );
-		setLastModifiedDate( lastModifiedDate );
+		if ( lastModifiedDate != null ) {
+			setLastModifiedDate( new Date( lastModifiedDate.getTime() ) );
+		}
 
 		setObjectId( StringUtils.isNotEmpty( objectId ) ? objectId : UUID.randomUUID().toString() );
 		setDomain( domain );

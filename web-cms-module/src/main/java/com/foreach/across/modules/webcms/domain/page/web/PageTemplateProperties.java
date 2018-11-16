@@ -17,7 +17,9 @@
 package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -47,10 +49,15 @@ public class PageTemplateProperties
 	 * If the template starts with any of these prefixes, it will be considered absolute and will
 	 * not be prefixed.
 	 */
+	@Setter(AccessLevel.NONE)
 	private String[] templatePrefixToIgnore = new String[] { "th/" };
 
 	/**
 	 * Suffix to be removed if present.
 	 */
 	private String templateSuffixToRemove = ".html";
+
+	public void setTemplatePrefixToIgnore( String[] templatePrefixToIgnore ) {
+		this.templatePrefixToIgnore = templatePrefixToIgnore.clone();
+	}
 }

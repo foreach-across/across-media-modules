@@ -31,6 +31,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**
  * Converts a string to a {@link WebCmsImage} instance and optionally creates and persists a new {@link WebCmsImage}.
@@ -107,7 +108,8 @@ final class StringToWebCmsImageConverter implements Converter<String, WebCmsImag
 	}
 
 	private String generateImageObjectId( String source ) {
-		return WebCmsUtils.prefixObjectIdForCollection( "import-" + DigestUtils.md5DigestAsHex( source.getBytes() ), WebCmsImage.COLLECTION_ID );
+		return WebCmsUtils.prefixObjectIdForCollection( "import-" + DigestUtils.md5DigestAsHex( source.getBytes( Charset.forName( "UTF-8" ) ) ),
+		                                                WebCmsImage.COLLECTION_ID );
 
 	}
 

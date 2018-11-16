@@ -20,6 +20,7 @@ import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectInheritanceSuperClass;
 import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetType;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -77,6 +78,7 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	 */
 	@Column(name = "publication_date")
 	@Temporal(TemporalType.TIMESTAMP)
+	@Setter(AccessLevel.NONE)
 	private Date publicationDate;
 
 	@Column(name = "sort_index")
@@ -111,6 +113,12 @@ public abstract class WebCmsAsset<T extends WebCmsAsset<T>> extends WebCmsObject
 	@Override
 	public void setId( Long id ) {
 		this.id = id;
+	}
+
+	public void setPublicationDate( Date publicationDate ) {
+		if ( publicationDate != null ) {
+			this.publicationDate = new Date( publicationDate.getTime() );
+		}
 	}
 
 	public abstract String getName();

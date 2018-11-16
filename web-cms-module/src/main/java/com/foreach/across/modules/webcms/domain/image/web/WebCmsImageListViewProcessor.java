@@ -75,10 +75,10 @@ public class WebCmsImageListViewProcessor extends EntityViewProcessorAdapter
 	                           EntityView entityView,
 	                           ContainerViewElement container,
 	                           ViewElementBuilderContext builderContext ) {
-		Function<WebCmsImage, String> urlGenerator = ( image ) -> imageConnector.buildImageUrl( image, 188, 154 );
+		Function<WebCmsImage, String> urlGenerator = image -> imageConnector.buildImageUrl( image, 188, 154 );
 		entityView.addAttribute( "imageUrlBuilder", urlGenerator );
 
 		ContainerViewElementUtils.find( container, "itemsTable-table", TableViewElement.class )
-		                         .ifPresent( table -> table.setCustomTemplate( "th/webCmsModule/test-admin-images :: content" ) );
+		                         .ifPresent( table -> table.setCustomTemplate( "th/webCmsModule/admin-images :: content" ) );
 	}
 }

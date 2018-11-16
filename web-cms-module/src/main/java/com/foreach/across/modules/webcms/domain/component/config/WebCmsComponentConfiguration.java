@@ -111,10 +111,12 @@ class WebCmsComponentConfiguration
 					                  .defaultSort( "title" )
 			        )
 			        .createFormView(
-					        fvb -> fvb.postProcess(
-							        DefaultValidationViewProcessor.class,
-							        processor -> processor.setValidationHints( Default.class, WebCmsComponent.SharedComponentValidation.class )
-					        )
+					        fvb -> fvb
+							        .messagePrefix( "views[createShared]", "views[createView]" )
+							        .postProcess(
+									        DefaultValidationViewProcessor.class,
+									        processor -> processor.setValidationHints( Default.class, WebCmsComponent.SharedComponentValidation.class )
+							        )
 			        )
 			        .formView(
 					        "createMember",

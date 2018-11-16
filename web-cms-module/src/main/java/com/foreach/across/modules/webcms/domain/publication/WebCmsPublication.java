@@ -135,6 +135,7 @@ public class WebCmsPublication extends WebCmsAsset<WebCmsPublication>
 		return publicationType;
 	}
 
+	@SuppressWarnings("findbugs:EI_EXPOSE_REP2")
 	public static class WebCmsPublicationBuilder
 	{
 		private int sortIndex = 1000;

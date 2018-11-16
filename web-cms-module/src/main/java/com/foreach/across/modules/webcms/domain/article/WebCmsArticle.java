@@ -149,6 +149,7 @@ public class WebCmsArticle extends WebCmsAsset<WebCmsArticle>
 		return getArticleType();
 	}
 
+	@SuppressWarnings("findbugs:EI_EXPOSE_REP2")
 	public static class WebCmsArticleBuilder
 	{
 		private int sortIndex = 1000;

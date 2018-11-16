@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 class WebCmsObjectDeserializers extends SimpleDeserializers
 {
+	private static final long serialVersionUID = -4288206696145096280L;
 	private final transient WebCmsDataConversionService dataConversionService;
 
 	@SuppressWarnings( "unchecked" )

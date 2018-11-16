@@ -79,7 +79,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>admin-web-module</artifactId>
-				<version>4.0.0-SNAPSHOT</version>
+				<version>4.0.0.M1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
@@ -94,7 +94,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>across-hibernate-module</artifactId>
-				<version>4.0.0-SNAPSHOT</version>
+				<version>4.0.0.M1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
@@ -104,7 +104,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>debug-web-module</artifactId>
-				<version>3.0.0-SNAPSHOT</version>
+				<version>3.0.0.M1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.imageserver</groupId>
@@ -124,7 +124,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>ehcache-module</artifactId>
-				<version>2.0.0-SNAPSHOT</version>
+				<version>2.0.0.M1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.cloudinary</groupId>

@@ -17,8 +17,8 @@
 package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
+import com.foreach.across.modules.bootstrapui.elements.FaIcon;
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
-import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.LinkViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.menu.EntityAdminMenuEvent;
@@ -79,7 +79,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 						openLink.setAttribute( "target", "_blank" );
 						openLink.setUrl( previewUrl );
 						openLink.setTitle( event.getEntityViewContext().getEntityMessages().withNameSingular( "actions.open" ) );
-						openLink.addChild( new GlyphIcon( GlyphIcon.EYE_OPEN ) );
+						openLink.addChild( new FaIcon( FaIcon.WebApp.FILE_IMAGE_O ) );
 
 						PageContentStructure adminPage = event.getPageContentStructure();
 						adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );

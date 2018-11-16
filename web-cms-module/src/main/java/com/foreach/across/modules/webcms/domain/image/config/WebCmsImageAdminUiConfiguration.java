@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.image.config;
 
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.entity.query.EntityQueryConditionTranslator;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.processors.ListFormViewProcessor;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
@@ -27,6 +28,7 @@ import com.foreach.across.modules.webcms.domain.image.web.WebCmsImageFormViewPro
 import com.foreach.across.modules.webcms.domain.image.web.WebCmsImageListViewProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.data.domain.Sort;
 
 /**
@@ -54,7 +56,19 @@ class WebCmsImageAdminUiConfiguration implements EntityConfigurer
 				                      .hidden( true )
 				                      .writable( true )
 				                      .readable( false )
-				                      .viewElementBuilder( ViewElementMode.CONTROL, thumbnailViewElementBuilder )
+				                      .viewElementBuilder( ViewElementMode.CONTROL, thumbnailViewElementBuilder ).and()
+				                      .property( "name" )
+				                      .attribute( EntityQueryConditionTranslator.class, EntityQueryConditionTranslator.ignoreCase() ).and()
+				                      .property( "description" )
+				                      .attribute( EntityQueryConditionTranslator.class, EntityQueryConditionTranslator.ignoreCase() ).and()
+				                      .property( "source" )
+				                      .attribute( EntityQueryConditionTranslator.class, EntityQueryConditionTranslator.ignoreCase() ).and()
+				                      .property( "keywords" )
+				                      .attribute( EntityQueryConditionTranslator.class, EntityQueryConditionTranslator.ignoreCase() ).and()
+				                      .property( "text" )
+				                      .propertyType( TypeDescriptor.valueOf( String.class ) )
+				                      .attribute( EntityQueryConditionTranslator.class,
+				                                  EntityQueryConditionTranslator.expandingOr( "name", "description", "source", "keywords" ) )
 		        )
 		        .createOrUpdateFormView(
 				        fvb -> fvb.showProperties( ".", "image-asset" )
@@ -65,7 +79,7 @@ class WebCmsImageAdminUiConfiguration implements EntityConfigurer
 		        )
 		        .listView(
 				        lvb -> lvb.viewProcessor( listViewProcessor )
-				                  .entityQueryFilter( true )
+				                  .entityQueryFilter( eq -> eq.basicMode( true ).showProperties( "text" ) )
 				                  .defaultSort( new Sort( Sort.Direction.DESC, "publicationDate" ) )
 				                  .postProcess( ListFormViewProcessor.class,
 				                                listFormViewProcessor -> listFormViewProcessor.setAddDefaultButtons( false ) )
