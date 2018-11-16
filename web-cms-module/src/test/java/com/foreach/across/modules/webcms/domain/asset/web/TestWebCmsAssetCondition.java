@@ -148,7 +148,7 @@ public class TestWebCmsAssetCondition
 		values.put( "objectId", objectId );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getAnnotation( WebCmsAssetMapping.class ) )
+		when( annotatedElement.getDeclaredAnnotation( WebCmsAssetMapping.class ) )
 				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsAssetMapping.class, null ) );
 		condition.setAnnotatedElement( annotatedElement );
 

@@ -198,7 +198,7 @@ public class TestWebCmsArticleCondition
 		values.put( "publication", publications );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getAnnotation( WebCmsArticleMapping.class ) )
+		when( annotatedElement.getDeclaredAnnotation( WebCmsArticleMapping.class ) )
 				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsArticleMapping.class, null ) );
 		condition.setAnnotatedElement( annotatedElement );
 

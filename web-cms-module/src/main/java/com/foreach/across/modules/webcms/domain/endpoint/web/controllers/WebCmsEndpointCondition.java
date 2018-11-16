@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.AnnotatedElement;
@@ -61,6 +62,7 @@ public class WebCmsEndpointCondition extends AbstractCustomRequestCondition<WebC
 	@Override
 	public void setAnnotatedElement( AnnotatedElement annotatedElement ) {
 		WebCmsEndpointMapping endpointMapping = AnnotatedElementUtils.findMergedAnnotation( annotatedElement, WebCmsEndpointMapping.class );
+		Assert.notNull( endpointMapping, "no WebCmsEndpointMapping foundon the annotated element" );
 
 		endpointType = endpointMapping.value();
 		statuses = endpointMapping.status();

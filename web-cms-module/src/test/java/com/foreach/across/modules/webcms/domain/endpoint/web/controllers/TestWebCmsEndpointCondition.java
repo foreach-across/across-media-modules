@@ -294,7 +294,7 @@ public class TestWebCmsEndpointCondition
 		values.put( "series", series );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getAnnotation( WebCmsEndpointMapping.class ) )
+		when( annotatedElement.getDeclaredAnnotation( WebCmsEndpointMapping.class ) )
 				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsEndpointMapping.class, null ) );
 		condition.setAnnotatedElement( annotatedElement );
 
