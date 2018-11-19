@@ -1,4 +1,9 @@
 target
 .idea/workspace.xml
 .idea/libraries
+.idea/excludeFromValidation
 .idea/dataSources.local.xml
+*.iml
+db
+local-data
+.DS_Store
