@@ -28,16 +28,16 @@ public class ImageModification implements Persistable<ImageModificationId>, Seri
 	private ImageModificationId id = new ImageModificationId();
 
 	@AttributeOverrides({
-			@AttributeOverride(name = "x", column = @Column(name = "cropX")),
-			@AttributeOverride(name = "y", column = @Column(name = "cropY")),
-			@AttributeOverride(name = "width", column = @Column(name = "cropWidth")),
-			@AttributeOverride(name = "height", column = @Column(name = "cropHeight"))
+			@AttributeOverride(name = "x", column = @Column(name = "crop_x")),
+			@AttributeOverride(name = "y", column = @Column(name = "crop_y")),
+			@AttributeOverride(name = "width", column = @Column(name = "crop_width")),
+			@AttributeOverride(name = "height", column = @Column(name = "crop_height"))
 	})
 	private Crop crop;
 
 	@AttributeOverrides({
-			@AttributeOverride(name = "width", column = @Column(name = "densityWidth")),
-			@AttributeOverride(name = "height", column = @Column(name = "densityHeight"))
+			@AttributeOverride(name = "width", column = @Column(name = "density_width")),
+			@AttributeOverride(name = "height", column = @Column(name = "density_height"))
 	})
 	private Dimensions density;
 

@@ -21,7 +21,7 @@ public class TestMd5ImageRequestHashBuilder
 		hashBuilder = new Md5ImageRequestHashBuilder( "test" );
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void nonNullTokenIsRequired() {
 		hashBuilder = new Md5ImageRequestHashBuilder( null );
 	}
