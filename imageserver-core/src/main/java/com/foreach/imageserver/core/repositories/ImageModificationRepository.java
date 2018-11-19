@@ -1,17 +1,29 @@
 package com.foreach.imageserver.core.repositories;
 
-import com.foreach.across.modules.hibernate.repositories.BasicRepository;
 import com.foreach.imageserver.core.business.ImageModification;
+import com.foreach.imageserver.core.business.ImageModificationId;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ImageModificationRepository extends BasicRepository<ImageModification>
+public interface ImageModificationRepository extends JpaRepository<ImageModification, ImageModificationId>
 {
-	ImageModification getById( long imageId, long contextId, long imageResolutionId );
+	@Query("select i from ImageModification i where i.id.imageId = :imageId and i.id.contextId = :contextId and i.id.resolutionId = :imageResolutionId")
+	ImageModification getById( @Param("imageId") long imageId,
+	                           @Param("contextId") long contextId,
+	                           @Param("imageResolutionId") long imageResolutionId );
 
-	List<ImageModification> getModifications( long imageId, long contextId );
+	@Query("select i from ImageModification i where i.id.imageId = :imageId and i.id.contextId = :contextId")
+	List<ImageModification> getModifications( @Param("imageId") long imageId, @Param("contextId") long contextId );
 
-	List<ImageModification> getAllModifications( long imageId );
+	@Query("select i from ImageModification i where i.id.imageId = :imageId")
+	List<ImageModification> getAllModifications( @Param("imageId") long imageId );
 
-	boolean hasModification( long imageId );
+	default boolean hasModification( long imageId ) {
+		return countImageModificationsByIdImageId( imageId ) > 0;
+	}
+
+	Long countImageModificationsByIdImageId( @Param("imageId") long imageId );
 }

@@ -1,9 +1,9 @@
 = ImageServer
 Arne Vandamme, Marc Vanbrabant, Peter Tibackx, Andy Somers, Alain Van Hout, Olivier Verhoogen, Niels Doucet
-4.0.0.RELEASE
+5.0.0-SNAPSHOT
 :toc: left
 :sectanchors:
-:module-version: 4.0.0.RELEASE
+:module-version: 5.0.0-SNAPSHOT
 :module-url: https://confluence.projects.foreach.be/display/IS
 
 [copyright,verbatim]
@@ -70,6 +70,12 @@ The following artifacts are available for the different <<components>>:
 
 == What's new in this version?
 :numbered!:
+
+=== 5.0.0-SNAPSHOT
+
+* Upgrade to Across Platform 2.1.1
+
+
 === 4.0.0.RELEASE
 
 * introduced <<strict-mode,strict mode>> and the <<url-hash-support,`ImageRequestHashBuilder` API>>

@@ -1,7 +1,12 @@
 package com.foreach.imageserver.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
+@Getter
+@Setter
 public class DimensionsDto
 {
 	private int width;
@@ -17,22 +22,6 @@ public class DimensionsDto
 
 	public DimensionsDto( int width, int height ) {
 		this.width = width;
-		this.height = height;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth( int width ) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight( int height ) {
 		this.height = height;
 	}
 

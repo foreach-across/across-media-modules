@@ -1,6 +1,5 @@
 package com.foreach.imageserver.core.annotations;
 
-import com.foreach.across.core.annotations.AcrossEventHandler;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
@@ -15,7 +14,6 @@ import java.lang.annotation.*;
 @Documented
 @Component
 @Inherited
-@AcrossEventHandler
 public @interface ImageServerController
 {
 }

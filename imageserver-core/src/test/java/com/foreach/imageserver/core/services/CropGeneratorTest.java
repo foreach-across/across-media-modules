@@ -57,11 +57,11 @@ public class CropGeneratorTest
 		imageResolutionService.setImageResolutionManager( imageResolutionManager );
 
 		image = new Image();
-		image.setId( 1 );
+		image.setId( 1L );
 		image.setDimensions( new Dimensions( 4000, 2000 ) );
 
 		context = new ImageContext();
-		context.setId( 1 );
+		context.setId( 1L );
 
 		modification = null;
 		resolutionIdCounter = 1;
@@ -212,7 +212,7 @@ public class CropGeneratorTest
 
 	private void requestModification( int width, int height ) {
 		ImageResolution resolution = new ImageResolution();
-		resolution.setId( 1 );
+		resolution.setId( 1L );
 		resolution.setWidth( width );
 		resolution.setHeight( height );
 
@@ -222,7 +222,7 @@ public class CropGeneratorTest
 	private ImageModification createModification( int width, int height, int x, int y, int cropWidth, int cropHeight ) {
 		ImageModification modification = new ImageModification();
 		ImageResolution resolution = new ImageResolution();
-		resolution.setId( resolutionIdCounter++ );
+		resolution.setId( (long) resolutionIdCounter++ );
 		resolution.setWidth( width );
 		resolution.setHeight( height );
 

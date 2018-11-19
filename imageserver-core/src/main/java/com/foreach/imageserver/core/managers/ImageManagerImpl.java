@@ -3,28 +3,26 @@ package com.foreach.imageserver.core.managers;
 import com.foreach.across.modules.hibernate.services.HibernateSessionHolder;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.repositories.ImageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class ImageManagerImpl implements ImageManager
 {
 	private static final String CACHE_NAME = "images";
 
-	@Autowired
-	private ImageRepository imageRepository;
-
-	@Autowired
-	private HibernateSessionHolder hibernateSessionHolder;
+	private final ImageRepository imageRepository;
+	private final HibernateSessionHolder hibernateSessionHolder;
 
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#imageId)",
 			unless = "#result == null")
 	public Image getById( long imageId ) {
-		return imageRepository.getById( imageId );
+		return imageRepository.findOne( imageId );
 	}
 
 	@Override

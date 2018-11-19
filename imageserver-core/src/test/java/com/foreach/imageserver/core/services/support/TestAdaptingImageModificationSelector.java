@@ -21,16 +21,16 @@ public class TestAdaptingImageModificationSelector extends AbstractImageModficat
 
 	@Test
 	public void extendedCropGoesOutsideBox() {
-		modification( resolution( 2, 800, 400 ), new Crop( 0, 0, 800, 400 ) );
-		modification( resolution( 3, 800, 560 ), new Crop( 0, 0, 800, 560 ) );
+		modification( resolution( 2L, 800, 400 ), new Crop( 0, 0, 800, 400 ) );
+		modification( resolution( 3L, 800, 560 ), new Crop( 0, 0, 800, 560 ) );
 
 		assertSelected( null );
 	}
 
 	@Test
 	public void extendCrop() {
-		modification( resolution( 2, 800, 400 ), new Crop( 0, 0, 800, 400 ) );
-		modification( resolution( 3, 800, 560 ), new Crop( 0, 100, 800, 560 ) );
+		modification( resolution( 2L, 800, 400 ), new Crop( 0, 0, 800, 400 ) );
+		modification( resolution( 3L, 800, 560 ), new Crop( 0, 100, 800, 560 ) );
 
 		ImageModification expected = new ImageModification();
 		expected.setResolutionId( 3 );
@@ -41,8 +41,8 @@ public class TestAdaptingImageModificationSelector extends AbstractImageModficat
 
 	@Test
 	public void shrinkCrop() {
-		modification( resolution( 2, 800, 900 ), new Crop( 0, 0, 800, 900 ) );
-		modification( resolution( 3, 800, 640 ), new Crop( 0, 0, 800, 640 ) );
+		modification( resolution( 2L, 800, 900 ), new Crop( 0, 0, 800, 900 ) );
+		modification( resolution( 3L, 800, 640 ), new Crop( 0, 0, 800, 640 ) );
 
 		ImageModification expected = new ImageModification();
 		expected.setResolutionId( 3 );
@@ -53,8 +53,8 @@ public class TestAdaptingImageModificationSelector extends AbstractImageModficat
 
 	@Test
 	public void smallerCropDoesNotHaveEnoughDatapoints() {
-		modification( resolution( 2, 800, 900 ), new Crop( 0, 0, 400, 450 ) );
-		modification( resolution( 3, 800, 640 ), new Crop( 0, 0, 400, 320 ) );
+		modification( resolution( 2L, 800, 900 ), new Crop( 0, 0, 400, 450 ) );
+		modification( resolution( 3L, 800, 640 ), new Crop( 0, 0, 400, 320 ) );
 
 		assertSelected( null );
 	}

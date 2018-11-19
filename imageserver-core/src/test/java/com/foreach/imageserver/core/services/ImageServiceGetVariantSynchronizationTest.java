@@ -7,7 +7,6 @@ import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
-import com.foreach.common.test.MockedLoader;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,8 +31,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { ImageServiceGetVariantSynchronizationTest.TestConfig.class },
-                      loader = MockedLoader.class)
+@ContextConfiguration(classes = ImageServiceGetVariantSynchronizationTest.TestConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ImageServiceGetVariantSynchronizationTest
 {
@@ -73,10 +71,10 @@ public class ImageServiceGetVariantSynchronizationTest
 
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getFirstOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any(Dimensions.class) );
+		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getSecondOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any(Dimensions.class) );
+		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
 
 		for ( Future<StreamImageSource> future : testResults.getFirstImageFutures() ) {
 			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
@@ -106,10 +104,10 @@ public class ImageServiceGetVariantSynchronizationTest
 
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getFirstOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any(Dimensions.class) );
+		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getSecondOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any(Dimensions.class) );
+		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
 
 		for ( Future<StreamImageSource> future : testResults.getFirstImageFutures() ) {
 			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
@@ -145,10 +143,10 @@ public class ImageServiceGetVariantSynchronizationTest
 
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getFirstOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any(Dimensions.class) );
+		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
 		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getSecondOriginalImageSource() ), anyInt(),
 		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any(Dimensions.class) );
+		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
 
 		for ( Future<StreamImageSource> future : testResults.getFirstImageFutures() ) {
 			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
@@ -168,10 +166,10 @@ public class ImageServiceGetVariantSynchronizationTest
 	private TestResults runTest( int threadsPerImage,
 	                             Answer<InMemoryImageSource> firstImageAnswer,
 	                             Answer<InMemoryImageSource> secondImageAnswer ) throws InterruptedException {
-		Image firstImage = image( 1 );
-		Image secondImage = image( 2 );
-		ImageContext context = context( 10 );
-		ImageResolution imageResolution = imageResolution( 20 );
+		Image firstImage = image( 1L );
+		Image secondImage = image( 2L );
+		ImageContext context = context( 10L );
+		ImageResolution imageResolution = imageResolution( 20L );
 		ImageVariant imageVariant = imageVariant( ImageType.PNG );
 
 		ImageModificationDto modificationDto = new ImageModificationDto();
@@ -196,10 +194,12 @@ public class ImageServiceGetVariantSynchronizationTest
 		when( imageStoreService.getOriginalImage( secondImage ) ).thenReturn( secondOriginalImageSource );
 
 		when( imageTransformService.modify( eq( firstOriginalImageSource ), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                    anyInt(), anyInt(), anyInt(), anyInt(), eq( ImageType.PNG ), any(Dimensions.class) ) ).thenAnswer(
+		                                    anyInt(), anyInt(), anyInt(), anyInt(), eq( ImageType.PNG ),
+		                                    any( Dimensions.class ) ) ).thenAnswer(
 				firstImageAnswer );
 		when( imageTransformService.modify( eq( secondOriginalImageSource ), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                    anyInt(), anyInt(), anyInt(), anyInt(), eq( ImageType.PNG ), any(Dimensions.class) ) ).thenAnswer(
+		                                    anyInt(), anyInt(), anyInt(), anyInt(), eq( ImageType.PNG ),
+		                                    any( Dimensions.class ) ) ).thenAnswer(
 				secondImageAnswer );
 
 		List<Future<StreamImageSource>> firstImageFutures = new ArrayList<>();
@@ -218,7 +218,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		                        secondOriginalImageSource );
 	}
 
-	private Image image( int id ) {
+	private Image image( Long id ) {
 		Dimensions dimensions = new Dimensions();
 		dimensions.setWidth( 100 );
 		dimensions.setHeight( 100 );
@@ -229,13 +229,13 @@ public class ImageServiceGetVariantSynchronizationTest
 		return image;
 	}
 
-	private ImageContext context( int id ) {
+	private ImageContext context( Long id ) {
 		ImageContext context = new ImageContext();
 		context.setId( id );
 		return context;
 	}
 
-	private ImageResolution imageResolution( int id ) {
+	private ImageResolution imageResolution( Long id ) {
 		ImageResolution imageResolution = new ImageResolution();
 		imageResolution.setId( id );
 		imageResolution.setWidth( 100 );
@@ -436,6 +436,16 @@ public class ImageServiceGetVariantSynchronizationTest
 		@Bean
 		public ImageResolutionManager imageResolutionManager() {
 			return mock( ImageResolutionManager.class );
+		}
+
+		@Bean
+		public CropGeneratorUtil cropGeneratorUtil() {
+			return mock( CropGeneratorUtil.class );
+		}
+
+		@Bean
+		public ImageProfileService imageProfileService() {
+			return mock( ImageProfileService.class );
 		}
 
 	}

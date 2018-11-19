@@ -26,16 +26,16 @@ public class ImageResolutionRepositoryTest extends AbstractIntegrationTest
 	@Test
 	public void getById() {
 		ImageResolution imageResolution = new ImageResolution();
-		imageResolution.setId( 101010 );
+		imageResolution.setId( 101010L );
 		imageResolution.setWidth( 222 );
 		imageResolution.setHeight( 333 );
 		imageResolution.getTags().add( "one" );
 		imageResolution.getTags().add( "two" );
-		imageResolutionRepository.create( imageResolution );
+		imageResolutionRepository.save( imageResolution );
 
-		ImageResolution imageResolutionFromDb = imageResolutionRepository.getById( 101010 );
+		ImageResolution imageResolutionFromDb = imageResolutionRepository.findOne( 101010L );
 		assertNotNull( imageResolutionFromDb );
-		assertEquals( 101010, imageResolutionFromDb.getId() );
+		assertEquals( 101010L, imageResolutionFromDb.getId().longValue() );
 		assertEquals( 222, imageResolutionFromDb.getWidth() );
 		assertEquals( 333, imageResolutionFromDb.getHeight() );
 		assertEquals( 2, imageResolutionFromDb.getTags().size() );
@@ -45,32 +45,32 @@ public class ImageResolutionRepositoryTest extends AbstractIntegrationTest
 	public void getForContext() {
 
 		ImageContext context10 = new ImageContext();
-		context10.setId( -10 );
+		context10.setId( -10L );
 		context10.setCode( "application_code" );
-		contextRepository.create( context10 );
+		contextRepository.save( context10 );
 
 		ImageContext context11 = new ImageContext();
-		context11.setId( -11 );
+		context11.setId( -11L );
 		context11.setCode( "the_other_application_code" );
-		contextRepository.create( context11 );
+		contextRepository.save( context11 );
 
-		imageResolutionRepository.create( createImageResolution( 10, 111, 222, Sets.newSet( context10 ) ) );
-		imageResolutionRepository.create( createImageResolution( 11, 1111, 2222, Sets.newSet( context10 ) ) );
-		imageResolutionRepository.create( createImageResolution( 12, 11111, 22222, Sets.newSet( context10 ) ) );
-		imageResolutionRepository.create( createImageResolution( 14, 555, 666, Sets.newSet( context11 ) ) );
+		imageResolutionRepository.save( createImageResolution( 10, 111, 222, Sets.newSet( context10 ) ) );
+		imageResolutionRepository.save( createImageResolution( 11, 1111, 2222, Sets.newSet( context10 ) ) );
+		imageResolutionRepository.save( createImageResolution( 12, 11111, 22222, Sets.newSet( context10 ) ) );
+		imageResolutionRepository.save( createImageResolution( 14, 555, 666, Sets.newSet( context11 ) ) );
 
 		List<ImageResolution> imageResolutions10 = imageResolutionRepository.getForContext( -10 );
 		assertEquals( 3, imageResolutions10.size() );
 
-		assertEquals( 10, imageResolutions10.get( 0 ).getId() );
+		assertEquals( 10L, imageResolutions10.get( 0 ).getId().longValue() );
 		assertEquals( 111, imageResolutions10.get( 0 ).getWidth() );
 		assertEquals( 222, imageResolutions10.get( 0 ).getHeight() );
 
-		assertEquals( 11, imageResolutions10.get( 1 ).getId() );
+		assertEquals( 11L, imageResolutions10.get( 1 ).getId().longValue() );
 		assertEquals( 1111, imageResolutions10.get( 1 ).getWidth() );
 		assertEquals( 2222, imageResolutions10.get( 1 ).getHeight() );
 
-		assertEquals( 12, imageResolutions10.get( 2 ).getId() );
+		assertEquals( 12L, imageResolutions10.get( 2 ).getId().longValue() );
 		assertEquals( 11111, imageResolutions10.get( 2 ).getWidth() );
 		assertEquals( 22222, imageResolutions10.get( 2 ).getHeight() );
 

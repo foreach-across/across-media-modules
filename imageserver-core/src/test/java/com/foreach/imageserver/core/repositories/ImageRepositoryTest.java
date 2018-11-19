@@ -27,7 +27,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest
 	public void insertAndGetById() {
 		ImageProfile imageProfile = new ImageProfile();
 		imageProfile.setName( "dummy_profile" );
-		imageProfileRepository.create( imageProfile );
+		imageProfileRepository.save( imageProfile );
 
 		Image writtenImage = new Image();
 		writtenImage.setExternalId( "external_id" );
@@ -37,7 +37,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest
 		writtenImage.setImageProfileId( imageProfile.getId() );
 		imageRepository.create( writtenImage );
 
-		Image readImage = imageRepository.getById( writtenImage.getId() );
+		Image readImage = imageRepository.findOne( writtenImage.getId() );
 		assertEquals( writtenImage.getId(), readImage.getId() );
 		assertEquals( writtenImage.getExternalId(), readImage.getExternalId() );
 		assertTrue( DateUtils.truncatedEquals( writtenImage.getDateCreated(), readImage.getDateCreated(),
@@ -51,7 +51,7 @@ public class ImageRepositoryTest extends AbstractIntegrationTest
 	public void insertAndGetByExternalId() {
 		ImageProfile imageProfile = new ImageProfile();
 		imageProfile.setName( "dummy_profile 2" );
-		imageProfileRepository.create( imageProfile );
+		imageProfileRepository.save( imageProfile );
 
 		Image writtenImage = new Image();
 		writtenImage.setExternalId( "external_id2" );

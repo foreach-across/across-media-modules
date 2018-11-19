@@ -152,8 +152,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	@Override
-	public void removeVariants( long imageId ) {
-		if ( imageId == 0 ) {
+	public void removeVariants( Long imageId ) {
+		if ( imageId == null || imageId == 0 ) {
 			LOG.warn( "Null parameters not allowed - ImageStoreServiceImpl#removeVariants: imageId={}", imageId );
 		}
 

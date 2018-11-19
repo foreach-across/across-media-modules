@@ -105,36 +105,32 @@ public class ImageRestServiceImpl implements ImageRestService
 				response.setImageResolutions( DtoUtil.toDto( pregenerateList ) );
 
 				// TODO: offload this as set of tasks to generation service (with a threadpool)
-				Runnable runnable = new Runnable()
-				{
-					@Override
-					public void run() {
-						LOG.debug( "Start pregeneration of {} resolutions for {}", pregenerateList.size(), image );
-						for ( final ImageResolution resolution : pregenerateList ) {
-							List<ImageType> allowedTypes = Collections.singletonList( ImageType.JPEG );
-							for ( ImageType outputType : allowedTypes ) {
-								ImageVariant variant = new ImageVariant();
-								variant.setOutputType( outputType );
+				Runnable runnable = () -> {
+					LOG.debug( "Start pregeneration of {} resolutions for {}", pregenerateList.size(), image );
+					for ( final ImageResolution resolution : pregenerateList ) {
+						List<ImageType> allowedTypes = Collections.singletonList( ImageType.JPEG );
+						for ( ImageType outputType : allowedTypes ) {
+							ImageVariant variant = new ImageVariant();
+							variant.setOutputType( outputType );
 
-								for ( ImageContext context : resolution.getContexts() ) {
-									try {
-										imageService.getVariantImage( image, context, resolution, variant );
+							for ( ImageContext context : resolution.getContexts() ) {
+								try {
+									imageService.getVariantImage( image, context, resolution, variant );
 
-										LOG.info(
-												"Finished pregenerating resolution {} for {}: context {} - imageType {}",
-												resolution, image, context.getCode(), outputType );
-									}
-									catch ( Exception e ) {
-										LOG.warn(
-												"Problem pregenerating resolution {} for {}: context {} - imageType {}",
-												resolution, image, context.getCode(), outputType, e );
-									}
+									LOG.info(
+											"Finished pregenerating resolution {} for {}: context {} - imageType {}",
+											resolution, image, context.getCode(), outputType );
+								}
+								catch ( Exception e ) {
+									LOG.warn(
+											"Problem pregenerating resolution {} for {}: context {} - imageType {}",
+											resolution, image, context.getCode(), outputType, e );
 								}
 							}
 						}
-
-						LOG.info( "Finished pregenerating {} resolutions for {}", pregenerateList.size(), image );
 					}
+
+					LOG.info( "Finished pregenerating {} resolutions for {}", pregenerateList.size(), image );
 				};
 
 				new Thread( runnable ).start();

@@ -1,12 +1,17 @@
 package com.foreach.imageserver.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@Setter
 public class ImageResolutionDto
 {
-	private long id;
+	private Long id;
 	private boolean configurable, pregenerateVariants;
 	private String name;
 	private int width;
@@ -25,70 +30,6 @@ public class ImageResolutionDto
 	public ImageResolutionDto( int width, int height ) {
 		this.width = width;
 		this.height = height;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth( int width ) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight( int height ) {
-		this.height = height;
-	}
-
-	public boolean isConfigurable() {
-		return configurable;
-	}
-
-	public void setConfigurable( boolean configurable ) {
-		this.configurable = configurable;
-	}
-
-	public boolean isPregenerateVariants() {
-		return pregenerateVariants;
-	}
-
-	public void setPregenerateVariants( boolean pregenerateVariants ) {
-		this.pregenerateVariants = pregenerateVariants;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName( String name ) {
-		this.name = name;
-	}
-
-	public Set<String> getTags() {
-		return tags;
-	}
-
-	public void setTags( Set<String> tags ) {
-		this.tags = tags;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId( long id ) {
-		this.id = id;
-	}
-
-	public Set<ImageTypeDto> getAllowedOutputTypes() {
-		return allowedOutputTypes;
-	}
-
-	public void setAllowedOutputTypes( Set<ImageTypeDto> allowedOutputTypes ) {
-		this.allowedOutputTypes = allowedOutputTypes;
 	}
 
 	/**

@@ -1,5 +1,8 @@
 package com.foreach.imageserver.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
 /**
@@ -8,6 +11,8 @@ import java.util.Objects;
  * box is defined.  In the latter case the box will be used to scale down the original and then use those coordinates
  * as source.
  */
+@Getter
+@Setter
 public class CropDto
 {
 	private int x;
@@ -40,54 +45,6 @@ public class CropDto
 		this.y = y;
 		this.width = width;
 		this.height = height;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public void setX( int x ) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY( int y ) {
-		this.y = y;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth( int width ) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight( int height ) {
-		this.height = height;
-	}
-
-	public DimensionsDto getSource() {
-		return source;
-	}
-
-	public void setSource( DimensionsDto source ) {
-		this.source = source;
-	}
-
-	public DimensionsDto getBox() {
-		return box;
-	}
-
-	public void setBox( DimensionsDto box ) {
-		this.box = box;
 	}
 
 	public boolean hasBox() {

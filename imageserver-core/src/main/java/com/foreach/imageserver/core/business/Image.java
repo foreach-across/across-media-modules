@@ -1,8 +1,12 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import com.foreach.imageserver.core.hibernate.ImageTypeUserType;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -13,7 +17,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE)
-public class Image
+@Getter
+@Setter
+public class Image extends SettableIdBasedEntity<Image>
 {
 	@Id
 	@GeneratedValue(generator = "seq_img_image_id")
@@ -25,7 +31,7 @@ public class Image
 					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "10")
 			}
 	)
-	private long id;
+	private Long id;
 
 	@Column(name = "profile_id")
 	private long imageProfileId;
@@ -34,6 +40,7 @@ public class Image
 	private String externalId;
 
 	@Column(name = "created")
+	@Setter(AccessLevel.NONE)
 	private Date dateCreated = new Date();
 
 	@Column(name = "image_type_id")
@@ -41,9 +48,9 @@ public class Image
 	private ImageType imageType;
 
 	@AttributeOverrides({
-			                    @AttributeOverride(name = "width", column = @Column(name = "width")),
-			                    @AttributeOverride(name = "height", column = @Column(name = "height"))
-	                    })
+			@AttributeOverride(name = "width", column = @Column(name = "width")),
+			@AttributeOverride(name = "height", column = @Column(name = "height"))
+	})
 	private Dimensions dimensions;
 
 	@Column(name = "file_size")
@@ -58,26 +65,6 @@ public class Image
 	@Transient
 	private boolean temporaryImage;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId( long id ) {
-		this.id = id;
-	}
-
-	public String getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId( String externalId ) {
-		this.externalId = externalId;
-	}
-
-	public Date getDateCreated() {
-		return dateCreated;
-	}
-
 	public void setDateCreated( Date dateCreated ) {
 		this.dateCreated = dateCreated;
 
@@ -85,62 +72,6 @@ public class Image
 			Calendar cal = Calendar.getInstance();
 			cal.setTime( dateCreated );
 		}
-	}
-
-	public Dimensions getDimensions() {
-		return dimensions;
-	}
-
-	public void setDimensions( Dimensions dimensions ) {
-		this.dimensions = dimensions;
-	}
-
-	public ImageType getImageType() {
-		return imageType;
-	}
-
-	public void setImageType( ImageType imageType ) {
-		this.imageType = imageType;
-	}
-
-	public long getImageProfileId() {
-		return imageProfileId;
-	}
-
-	public void setImageProfileId( long imageProfileId ) {
-		this.imageProfileId = imageProfileId;
-	}
-
-	public long getFileSize() {
-		return fileSize;
-	}
-
-	public void setFileSize( long fileSize ) {
-		this.fileSize = fileSize;
-	}
-
-	public String getOriginalPath() {
-		return originalPath;
-	}
-
-	public void setOriginalPath( String originalPath ) {
-		this.originalPath = originalPath;
-	}
-
-	public String getVariantPath() {
-		return variantPath;
-	}
-
-	public void setVariantPath( String variantPath ) {
-		this.variantPath = variantPath;
-	}
-
-	public boolean isTemporaryImage() {
-		return temporaryImage;
-	}
-
-	public void setTemporaryImage( boolean temporaryImage ) {
-		this.temporaryImage = temporaryImage;
 	}
 
 	@Override
@@ -154,7 +85,9 @@ public class Image
 
 		Image image = (Image) o;
 
-		return temporaryImage ? Objects.equals( this.externalId, image.externalId ) : Objects.equals( this.id, image.id );
+		return temporaryImage
+				? Objects.equals( this.externalId, image.externalId )
+				: Objects.equals( this.id, image.id );
 	}
 
 	@Override

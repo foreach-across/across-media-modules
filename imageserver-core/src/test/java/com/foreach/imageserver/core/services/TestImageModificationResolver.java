@@ -54,11 +54,11 @@ public class TestImageModificationResolver
 		resolver = r;
 
 		image = new Image();
-		image.setId( 1 );
+		image.setId( 1L );
 		image.setDimensions( new Dimensions( 4000, 2000 ) );
 
 		context = new ImageContext();
-		context.setId( 1 );
+		context.setId( 1L );
 
 		modification = null;
 	}
@@ -83,7 +83,7 @@ public class TestImageModificationResolver
 
 	private void requestModification( int width, int height ) {
 		ImageResolution resolution = new ImageResolution();
-		resolution.setId( 1 );
+		resolution.setId( 1L );
 		resolution.setWidth( width );
 		resolution.setHeight( height );
 

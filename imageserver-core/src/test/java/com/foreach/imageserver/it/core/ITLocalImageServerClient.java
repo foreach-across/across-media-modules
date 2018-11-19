@@ -3,8 +3,7 @@ package com.foreach.imageserver.it.core;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
-import com.foreach.across.test.AcrossTestWebConfiguration;
+import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
@@ -27,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -44,6 +44,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration(classes = ITLocalImageServerClient.Config.class)
+@TestPropertySource(properties = { "spring.jpa.show-sql=true" })
 public class ITLocalImageServerClient
 {
 	@Autowired(required = false)
@@ -261,7 +262,7 @@ public class ITLocalImageServerClient
 	}
 
 	@Configuration
-	@AcrossTestWebConfiguration
+	@AcrossTestConfiguration
 	@PropertySource("classpath:integrationtests.properties")
 	protected static class Config implements AcrossContextConfigurer
 	{
@@ -272,7 +273,6 @@ public class ITLocalImageServerClient
 		@Override
 		public void configure( AcrossContext context ) {
 			context.addModule( imageServerCoreModule() );
-			context.addModule( new AcrossHibernateJpaModule() );
 		}
 
 		private ImageServerCoreModule imageServerCoreModule() {

@@ -5,7 +5,7 @@ import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.template.ClearTemplate;
-import net.engio.mbassy.listener.Handler;
+import org.springframework.context.event.EventListener;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +22,7 @@ public class AdminWebAppController
 		this.imageServerUrl = imageServerUrl;
 	}
 
-	@Handler
+	@EventListener
 	public void registerMenu( AdminMenuEvent adminMenuEvent ) {
 		adminMenuEvent.builder().item( "/image-server", "Image server" );
 	}

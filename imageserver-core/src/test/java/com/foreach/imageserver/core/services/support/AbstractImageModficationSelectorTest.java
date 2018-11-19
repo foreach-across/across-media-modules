@@ -41,7 +41,7 @@ abstract class AbstractImageModficationSelectorTest
 		              selector.selectImageModification( image, candidates, requested ) );
 	}
 
-	protected ImageResolutionDto resolution( int resolutionId, int width, int height ) {
+	protected ImageResolutionDto resolution( Long resolutionId, int width, int height ) {
 		ImageResolutionDto r = new ImageResolutionDto();
 		r.setWidth( width );
 		r.setHeight( height );

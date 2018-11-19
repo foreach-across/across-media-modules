@@ -5,13 +5,14 @@ import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
-import com.foreach.across.test.AcrossTestWebConfiguration;
+import com.foreach.across.test.AcrossTestConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -22,9 +23,10 @@ import javax.sql.DataSource;
 @ContextConfiguration(classes = { AbstractIntegrationTest.Config.class })
 @EnableTransactionManagement
 @WebAppConfiguration
+@TestPropertySource(properties = { "spring.jpa.show-sql=true" })
 public abstract class AbstractIntegrationTest
 {
-	@AcrossTestWebConfiguration
+	@AcrossTestConfiguration
 	@Configuration
 	public static class Config implements AcrossContextConfigurer
 	{

@@ -24,9 +24,9 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 
 	@Test
 	public void insertAndGetById() {
-		createContext( 1010, "the_application_code_1010" );
+		createContext( 1010L, "the_application_code_1010" );
 		createImage( 9998, "externalId", new Dimensions( 100, 100 ), ImageType.PNG );
-		createImageResolution( -8, 8888, 1616 );
+		createImageResolution( -8L, 8888, 1616 );
 
 		Crop writtenCrop = new Crop();
 		writtenCrop.setX( 100 );
@@ -45,7 +45,7 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		writtenImageModification.setCrop( writtenCrop );
 		writtenImageModification.setDensity( writtenDensity );
 
-		imageModificationRepository.create( writtenImageModification );
+		imageModificationRepository.save( writtenImageModification );
 
 		ImageModification readImageModification = imageModificationRepository.getById( 9998, 1010, -8 );
 		assertEquals( writtenImageModification.getImageId(), readImageModification.getImageId() );
@@ -60,30 +60,30 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		              readImageModification.getDensity().getHeight() );
 	}
 
-	private void createContext( int id, String code ) {
+	private void createContext( Long id, String code ) {
 		ImageContext context = new ImageContext();
 		context.setId( id );
 		context.setCode( code );
-		contextRepository.create( context );
+		contextRepository.save( context );
 	}
 
 	@Test
 	public void getModifications() {
-		createContext( 8010, "the_application_code_8010" );
-		createContext( 8011, "the_application_code_8011" );
+		createContext( 8010L, "the_application_code_8010" );
+		createContext( 8011L, "the_application_code_8011" );
 
 		createImage( 19998, "externalId19998", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImage( 19999, "externalId19999", new Dimensions( 100, 100 ), ImageType.PNG );
 
-		createImageResolution( -88, 1211, 2222 );
-		createImageResolution( -99, 1311, 2222 );
-		createImageResolution( -100, 1411, 2222 );
-		createImageResolution( -101, 1511, 2222 );
+		createImageResolution( -88L, 1211, 2222 );
+		createImageResolution( -99L, 1311, 2222 );
+		createImageResolution( -100L, 1411, 2222 );
+		createImageResolution( -101L, 1511, 2222 );
 
-		imageModificationRepository.create( someModification( 8010, 19998, -88 ) );
-		imageModificationRepository.create( someModification( 8010, 19998, -99 ) );
-		imageModificationRepository.create( someModification( 8011, 19998, -88 ) );
-		imageModificationRepository.create( someModification( 8010, 19999, -88 ) );
+		imageModificationRepository.save( someModification( 8010, 19998, -88 ) );
+		imageModificationRepository.save( someModification( 8010, 19998, -99 ) );
+		imageModificationRepository.save( someModification( 8011, 19998, -88 ) );
+		imageModificationRepository.save( someModification( 8010, 19999, -88 ) );
 
 		List<ImageModification> modifications = imageModificationRepository.getModifications( 19998, 8010 );
 		assertEquals( 2, modifications.size() );
@@ -97,29 +97,29 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 		assertEquals( -88, modifications.get( 1 ).getResolutionId() );
 	}
 
-	private void createImageResolution( int id, int width, int height ) {
+	private void createImageResolution( Long id, int width, int height ) {
 		ImageResolution imageResolution = new ImageResolution();
 		imageResolution.setId( id );
 		imageResolution.setWidth( width );
 		imageResolution.setHeight( height );
-		imageResolutionRepository.create( imageResolution );
+		imageResolutionRepository.save( imageResolution );
 	}
 
 	@Test
 	public void getAllModifications() {
-		createContext( 7010, "the_application_code_7010" );
-		createContext( 7011, "the_application_code_7011" );
+		createContext( 7010L, "the_application_code_7010" );
+		createContext( 7011L, "the_application_code_7011" );
 
 		createImage( 29998, "externalId_29998", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImage( 29999, "externalId_29999", new Dimensions( 100, 100 ), ImageType.PNG );
 
-		createImageResolution( -288, 1211, 2242 );
-		createImageResolution( -299, 1311, 2242 );
+		createImageResolution( -288L, 1211, 2242 );
+		createImageResolution( -299L, 1311, 2242 );
 
-		imageModificationRepository.create( someModification( 7010, 29998, -288 ) );
-		imageModificationRepository.create( someModification( 7010, 29998, -299 ) );
-		imageModificationRepository.create( someModification( 7011, 29998, -288 ) );
-		imageModificationRepository.create( someModification( 7010, 29999, -288 ) );
+		imageModificationRepository.save( someModification( 7010, 29998, -288 ) );
+		imageModificationRepository.save( someModification( 7010, 29998, -299 ) );
+		imageModificationRepository.save( someModification( 7011, 29998, -288 ) );
+		imageModificationRepository.save( someModification( 7010, 29999, -288 ) );
 
 		List<ImageModification> modifications = imageModificationRepository.getAllModifications( 29998 );
 		assertEquals( 3, modifications.size() );
@@ -154,14 +154,14 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 
 	@Test
 	public void updateAndGetById() {
-		createContext( 6666, "code" );
+		createContext( 6666L, "code" );
 		createImage( 78878, "externalId_78878", new Dimensions( 100, 100 ), ImageType.PNG );
-		createImageResolution( 99994, 934, 9843 );
+		createImageResolution( 99994L, 934, 9843 );
 
 		ImageModification imageModification = modification( 78878, 6666, 99994, 0, 1, 2, 3, 4, 5 );
-		imageModificationRepository.create( imageModification );
+		imageModificationRepository.save( imageModification );
 
-		imageModificationRepository.update( modification( 78878, 6666, 99994, 10, 11, 12, 13, 14, 15 ) );
+		imageModificationRepository.save( modification( 78878, 6666, 99994, 10, 11, 12, 13, 14, 15 ) );
 
 		ImageModification readImageModification = imageModificationRepository.getById( 78878, 6666, 99994 );
 		assertEquals( 78878, readImageModification.getImageId() );
@@ -178,16 +178,16 @@ public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 	@Test
 	public void hasModification() {
 		ImageContext context6010 = new ImageContext();
-		context6010.setId( 6010 );
+		context6010.setId( 6010L );
 		context6010.setCode( "the_application_code_6010" );
-		contextRepository.create( context6010 );
+		contextRepository.save( context6010 );
 
 		createImage( 39998, "externalId_39998", new Dimensions( 100, 100 ), ImageType.PNG );
 		createImage( 49998, "externalId_49998", new Dimensions( 100, 100 ), ImageType.PNG );
 
-		createImageResolution( 766, 8473, 4398 );
+		createImageResolution( 766L, 8473, 4398 );
 
-		imageModificationRepository.create( someModification( 6010, 39998, 766 ) );
+		imageModificationRepository.save( someModification( 6010, 39998, 766 ) );
 
 		assertTrue( imageModificationRepository.hasModification( 39998 ) );
 		assertFalse( imageModificationRepository.hasModification( 49998 ) );

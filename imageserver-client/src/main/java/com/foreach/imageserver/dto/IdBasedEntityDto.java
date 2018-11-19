@@ -4,15 +4,19 @@ import java.util.Objects;
 
 public class IdBasedEntityDto
 {
-	private long id;
+	private Long id;
 	private Boolean newEntity;
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId( long id ) {
+	public void setId( Long id ) {
 		this.id = id;
+	}
+
+	public boolean isNew() {
+		return getId() == null || getId() == 0;
 	}
 
 	public boolean isNewEntity() {

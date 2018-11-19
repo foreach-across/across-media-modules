@@ -1,6 +1,5 @@
 package com.foreach.imageserver.core.controllers;
 
-import com.foreach.common.test.MockedLoader;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.JsonResponse;
 import org.junit.Before;
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = MockedLoader.class, classes = TestImageDeleteController.Config.class)
+@ContextConfiguration(classes = TestImageDeleteController.Config.class)
 public class TestImageDeleteController
 {
 	@Autowired
@@ -72,6 +71,11 @@ public class TestImageDeleteController
 		@Bean
 		public ImageDeleteController imageDeleteController() {
 			return new ImageDeleteController( "token" );
+		}
+
+		@Bean
+		public ImageService imageService() {
+			return mock( ImageService.class );
 		}
 	}
 }

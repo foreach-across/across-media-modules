@@ -1,10 +1,10 @@
 package com.foreach.imageserver.core.controllers;
 
-import com.foreach.common.test.MockedLoader;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.ViewImageResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
+import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
@@ -24,7 +24,7 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-@ContextConfiguration(loader = MockedLoader.class, classes = TestImageStreamingController.Config.class)
+@ContextConfiguration(classes = TestImageStreamingController.Config.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TestImageStreamingController
 {
@@ -77,6 +77,16 @@ public class TestImageStreamingController
 		@Bean
 		public ImageStreamingController imageStreamingController() {
 			return new ImageStreamingController( "abc", false );
+		}
+
+		@Bean
+		public ImageService imageService() {
+			return mock( ImageService.class );
+		}
+
+		@Bean
+		public ImageRestService imageRestService() {
+			return mock( ImageRestService.class );
 		}
 	}
 }

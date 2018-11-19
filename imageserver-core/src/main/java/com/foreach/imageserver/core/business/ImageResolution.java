@@ -1,9 +1,13 @@
 package com.foreach.imageserver.core.business;
 
+import com.foreach.across.modules.hibernate.business.SettableIdBasedEntity;
 import com.foreach.across.modules.hibernate.id.AcrossSequenceGenerator;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import com.foreach.imageserver.core.hibernate.ImageTypeSetUserType;
 import com.foreach.imageserver.core.hibernate.TagsUserType;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
@@ -29,7 +33,9 @@ import java.util.*;
  */
 @Entity
 @Table(name = ImageSchemaConfiguration.TABLE_IMAGE_RESOLUTION)
-public class ImageResolution
+@Getter
+@Setter
+public class ImageResolution extends SettableIdBasedEntity<ImageResolution>
 {
 	@Id
 	@GeneratedValue(generator = "seq_img_image_resolution_id")
@@ -41,7 +47,7 @@ public class ImageResolution
 					@org.hibernate.annotations.Parameter(name = "allocationSize", value = "10")
 			}
 	)
-	private long id;
+	private Long id;
 
 	@Column(name = "width")
 	private int width;
@@ -64,6 +70,7 @@ public class ImageResolution
 	private boolean pregenerateVariants;
 
 	@Column(name = "name")
+	@Getter(AccessLevel.NONE)
 	private String name;
 
 	@Column(name = "tags")
@@ -74,48 +81,8 @@ public class ImageResolution
 	@Type(type = ImageTypeSetUserType.CLASS_NAME)
 	private Set<ImageType> allowedOutputTypes = EnumSet.noneOf( ImageType.class );
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId( long id ) {
-		this.id = id;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth( int width ) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight( int height ) {
-		this.height = height;
-	}
-
 	public Dimensions getDimensions() {
 		return new Dimensions( getWidth(), getHeight() );
-	}
-
-	public boolean isConfigurable() {
-		return configurable;
-	}
-
-	public void setConfigurable( boolean configurable ) {
-		this.configurable = configurable;
-	}
-
-	public Set<ImageType> getAllowedOutputTypes() {
-		return allowedOutputTypes;
-	}
-
-	public void setAllowedOutputTypes( Set<ImageType> allowedOutputTypes ) {
-		this.allowedOutputTypes = allowedOutputTypes;
 	}
 
 	public String getName() {
@@ -140,34 +107,6 @@ public class ImageResolution
 
 	public boolean isAllowedOutputType( ImageType imageType ) {
 		return getAllowedOutputTypes().contains( imageType );
-	}
-
-	public boolean isPregenerateVariants() {
-		return pregenerateVariants;
-	}
-
-	public void setPregenerateVariants( boolean pregenerateVariants ) {
-		this.pregenerateVariants = pregenerateVariants;
-	}
-
-	public void setName( String name ) {
-		this.name = name;
-	}
-
-	public Set<String> getTags() {
-		return tags;
-	}
-
-	public void setTags( Set<String> tags ) {
-		this.tags = tags;
-	}
-
-	public Collection<ImageContext> getContexts() {
-		return contexts;
-	}
-
-	public void setContexts( Collection<ImageContext> contexts ) {
-		this.contexts = contexts;
 	}
 
 	@Override

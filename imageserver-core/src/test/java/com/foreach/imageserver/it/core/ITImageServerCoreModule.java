@@ -3,9 +3,9 @@ package com.foreach.imageserver.it.core;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
-import com.foreach.across.test.AcrossTestWebConfiguration;
+import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.core.ImageServerCoreModule;
 import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,19 +36,20 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = ITImageServerCoreModule.Config.class)
 public class ITImageServerCoreModule
 {
-	@Autowired(required = false)
+	@Autowired
 	private ImageService imageService;
 
-	@Autowired(required = false)
+	@Autowired
 	private ImageContextService contextService;
 
-	@Autowired(required = false)
+	@Autowired
 	private ImageTransformService imageTransformService;
 
-	@Autowired(required = false)
+	@Autowired
 	private MultipartResolver multipartResolver;
 
-	@Autowired(required = false)
+	@Autowired
+	@Qualifier("imageServerHandlerMapping")
 	private PrefixingRequestMappingHandlerMapping imageServerHandlerMapping;
 
 	@Autowired(required = false)
@@ -87,13 +89,12 @@ public class ITImageServerCoreModule
 	}
 
 	@Configuration
-	@AcrossTestWebConfiguration
+	@AcrossTestConfiguration(modules = { AcrossWebModule.NAME })
 	protected static class Config implements AcrossContextConfigurer
 	{
 		@Override
 		public void configure( AcrossContext context ) {
 			context.addModule( imageServerCoreModule() );
-			context.addModule( new AcrossHibernateJpaModule() );
 		}
 
 		private ImageServerCoreModule imageServerCoreModule() {

@@ -1,17 +1,27 @@
 package com.foreach.imageserver.core.repositories;
 
-import com.foreach.across.modules.hibernate.repositories.BasicRepository;
+import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface ImageResolutionRepository extends BasicRepository<ImageResolution>
+public interface ImageResolutionRepository extends IdBasedEntityJpaRepository<ImageResolution>
 {
-	List<ImageResolution> getForContext( long contextId );
+	@Query("select distinct r from ImageResolution r join r.contexts c where c.id = :contextId order by r.id")
+	List<ImageResolution> getForContext( @Param("contextId") long contextId );
 
-	ImageResolution getByDimensions( int width, int height );
+	@Query("select i from ImageResolution i where i.width = :width and i.height = :height")
+	ImageResolution getByDimensions( @Param("width") int width, @Param("height") int height );
 
-	void updateContextsForResolution( long resolutionId, Collection<ImageContext> contexts );
+	@Transactional
+	default void updateContextsForResolution( long resolutionId, Collection<ImageContext> contexts ) {
+		ImageResolution imageResolution = findOne( resolutionId );
+		imageResolution.setContexts( contexts );
+		save( imageResolution );
+	}
 }
