@@ -18,13 +18,19 @@ package com.foreach.across.modules.filemanager.config;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.filemanager.business.FileManagerDomain;
+import com.foreach.across.modules.filemanager.business.reference.properties.FileReferencePropertiesServiceImpl;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.hibernate.jpa.repositories.config.EnableAcrossJpaRepositories;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 
 @ConditionalOnAcrossModule(allOf = AcrossHibernateJpaModule.NAME)
 @Configuration
-@EnableAcrossJpaRepositories(basePackageClasses = FileManagerDomain.class)
+@EnableAcrossJpaRepositories(basePackageClasses = FileManagerDomain.class, excludeFilters = {
+		// exclude the FileReferencePropertieServiceImpl from repository scanning (impl postfix)
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = FileReferencePropertiesServiceImpl.class)
+})
 public class DomainConfiguration
 {
 }
