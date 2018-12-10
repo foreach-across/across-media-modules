@@ -19,6 +19,7 @@ import com.foreach.across.modules.filemanager.business.reference.FileReferenceIn
 import com.foreach.across.modules.filemanager.business.reference.MultipartFileToFileReferenceConverter;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.test.AcrossTestContext;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
@@ -38,6 +39,7 @@ public class TestBootstrapWithoutHibernateModuleClassPath
 	}
 
 	@Test
+	@Ignore("Conditional annotations are currently not applied to installers")
 	public void emptyBootstrap() {
 		try (AcrossTestContext context = web( false )
 				.modules( FileManagerModule.NAME )
