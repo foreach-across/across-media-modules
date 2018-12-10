@@ -58,6 +58,8 @@
 		<module>imageserver-core</module>
 		<module>imageserver-admin</module>
 		<module>imageserver-test-standalone</module>
+		<module>imageserver-test-embedded</module>
+		<module>imageserver-test-embedded</module>
 	</modules>
 
 	<dependencyManagement>

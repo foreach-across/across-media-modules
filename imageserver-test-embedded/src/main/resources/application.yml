@@ -1,0 +1,63 @@
+acrossHibernate:
+  applicationId: 
+  applicationName: Imageserver test embedded
+  hibernate-properties:
+    hibernate.format_sql: false
+    hibernate.use_sql_comments: false
+    hibernate.show_sql: false
+
+applicationInfo:
+  environmentId: development
+  applicationId: ImageServer
+  applicationName: ImageServer
+
+adminWebModule:
+  login:
+    rememberMe:
+      key: imageserver-test-embedded-changeme
+  root-path: /admin
+
+debugWebModule:
+  root-path: /debug
+  security:
+    password: imageserver-test-embedded-changeme
+
+logging:
+  request-response:
+    enabled: true
+
+across:
+  development:
+    active: true
+
+server:
+  error:
+    includeStacktrace: ALWAYS
+  port: 8080
+
+spring:
+  mvc:
+    static-path-pattern:
+  datasource:
+    url: "jdbc:h2:./local-data/db/imageserver-test-embedded-db"
+    username: sa
+
+imageServerCore:
+  rootPath: /resources/images
+  accessToken: imageServerDemo-imgserver-changeme
+  createLocalClient: true
+  imageServerUrl: "http://localhost:${server.port}/resources/images"
+  md5HashToken: sample-hash-imgserver
+  store:
+    folder: local-data/images
+  streaming:
+    provideStackTrace: true
+  transformers:
+    imageMagick:
+      enabled: true
+      useGraphicsMagick: true
+      path: /usr/local/bin/
+
+imageServerAdmin:
+  accessToken: imageServerDemo-imgserver-changeme
+  imageServerUrl: /resources/images
