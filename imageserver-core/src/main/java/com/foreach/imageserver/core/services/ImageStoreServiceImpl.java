@@ -178,7 +178,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	                                                  ImageResolution imageResolution, ImageVariant imageVariant ) {
 		String fileName = constructFileName( image, imageResolution, imageVariant );
 		String targetPath = getFolderName( image, context );
-		return new FileDescriptor( VARIANTS_REPOSITORY, targetPath, fileName );
+		return FileDescriptor.of( VARIANTS_REPOSITORY, targetPath, fileName );
 	}
 
 	//TODO refactor to use FileManagerModule?
