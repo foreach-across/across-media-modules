@@ -1,12 +1,8 @@
 package com.foreach.imageserver.core.config;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.Data;
 
-@ConfigurationProperties("imageServerCore.streaming")
-@Getter
-@Setter
+@Data
 public class StreamingSettings
 {
 	/**

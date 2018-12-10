@@ -1,14 +1,10 @@
 package com.foreach.imageserver.core.config;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.Data;
 
 import java.io.File;
 
-@ConfigurationProperties("imageServerCore.store")
-@Getter
-@Setter
+@Data
 public class StoreSettings
 {
 	/**

@@ -6,6 +6,7 @@ import com.foreach.imageserver.core.config.TransformersSettings;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * @author Arne Vandamme
@@ -33,11 +34,11 @@ public class ImageServerCoreModuleSettings
 
 	public static final String TRANSFORMERS_CONCURRENT_LIMIT = "imageServerCore.transformers.concurrentLimit";
 
-	public static final String IMAGEMAGICK_ENABLED = "imageServerCore.transformers.imageMagickEnabled";
-	public static final String IMAGEMAGICK_PRIORITY = "imageServerCore.transformers.imageMagickPriority";
-	public static final String IMAGEMAGICK_USE_GRAPHICSMAGICK = "imageServerCore.transformers.useGraphicsMagick";
+	public static final String IMAGEMAGICK_ENABLED = "imageServerCore.transformers.imageMagick.enabled";
+	public static final String IMAGEMAGICK_PRIORITY = "imageServerCore.transformers.imageMagick.priority";
+	public static final String IMAGEMAGICK_USE_GRAPHICSMAGICK = "imageServerCore.transformers.imageMagick.useGraphicsMagick";
 	public static final String IMAGEMAGICK_USE_GHOSTSCRIPT = "imageServerCore.transformers.imageMagick.useGhostScript";
-	public static final String IMAGEMAGICK_PATH = "imageServerCore.transformers.imageMagickPath";
+	public static final String IMAGEMAGICK_PATH = "imageServerCore.transformers.imageMagick.path";
 
 	/**
 	 * Base path for all controllers.
