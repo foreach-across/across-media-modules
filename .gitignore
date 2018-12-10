@@ -3,6 +3,7 @@ target
 .idea/libraries
 .idea/excludeFromValidation
 .idea/dataSources.local.xml
+.idea/template/
 *.iml
 db
 local-data

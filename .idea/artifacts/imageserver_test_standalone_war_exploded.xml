@@ -1,6 +1,13 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="imageserver-test-standalone:war exploded">
     <output-path>$PROJECT_DIR$/imageserver-test-standalone/target/imageserver-test-standalone-5.0.0-SNAPSHOT</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <exploded>true</exploded>
+        <module>imageserver-test-standalone</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
@@ -10,6 +17,7 @@
           <element id="archive" name="imageserver-core-5.0.0-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-core" />
           </element>
+          <element id="library" level="project" name="Maven: com.foreach.across.modules:properties-module:1.1.1.RELEASE" />
           <element id="archive" name="imageserver-client-5.0.0-SNAPSHOT.jar">
             <element id="module-output" name="imageserver-client" />
           </element>
@@ -71,7 +79,6 @@
           <element id="library" level="project" name="Maven: com.foreach.across.modules:bootstrap-ui-module:2.1.1.RELEASE" />
           <element id="library" level="project" name="Maven: org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.4.RELEASE" />
           <element id="library" level="project" name="Maven: com.foreach.across.modules:user-module:3.1.0.RELEASE" />
-          <element id="library" level="project" name="Maven: com.foreach.across.modules:properties-module:1.1.1.RELEASE" />
           <element id="library" level="project" name="Maven: com.foreach.across.modules:entity-module:3.2.0.RELEASE" />
           <element id="library" level="project" name="Maven: org.atteo:evo-inflector:1.2.2" />
           <element id="library" level="project" name="Maven: javax.el:javax.el-api:2.2.5" />
