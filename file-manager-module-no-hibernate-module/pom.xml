@@ -9,32 +9,13 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>file-manager-module-test</artifactId>
-	<packaging>jar</packaging>
-
-	<properties>
-		<sonar.skip>true</sonar.skip>
-	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.foreach.across.modules</groupId>
-				<artifactId>admin-web-module</artifactId>
-				<version>3.0.1.RELEASE</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+	<artifactId>file-manager-module-no-hibernate-module</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>file-manager-module</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.foreach.across.modules</groupId>
-			<artifactId>properties-module</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across</groupId>
@@ -45,14 +26,6 @@
 			<artifactId>across-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.foreach.across.modules</groupId>
-			<artifactId>entity-module</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.foreach.across.modules</groupId>
-			<artifactId>admin-web-module</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
@@ -60,10 +33,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.foreach.across.modules</groupId>
-			<artifactId>across-hibernate-module</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -76,6 +45,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.across</groupId>
+			<artifactId>across-test</artifactId>
 		</dependency>
 	</dependencies>
 
