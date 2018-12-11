@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;
 
 import java.util.Optional;
@@ -29,7 +28,6 @@ public class WebConfiguration
 {
 	public static final String IMAGE_REQUEST_HASH_BUILDER = "serverImageRequestHashBuilder";
 
-	private final Environment environment;
 	private final ImageServerCoreModuleSettings settings;
 
 	/**
@@ -87,9 +85,7 @@ public class WebConfiguration
 	@Primary
 	@ConditionalOnExpression("!${" + ImageServerCoreModuleSettings.STRICT_MODE + ":false} && '${" + ImageServerCoreModuleSettings.MD5_HASH_TOKEN + ":}'.length() > 0")
 	public ImageRequestHashBuilder serverImageRequestHashBuilder() {
-		return ImageRequestHashBuilder.md5(
-				environment.getRequiredProperty( ImageServerCoreModuleSettings.MD5_HASH_TOKEN )
-		);
+		return ImageRequestHashBuilder.md5( settings.getMd5HashToken() );
 	}
 
 	private String accessToken() {
