@@ -86,7 +86,7 @@ public class ImageServerCoreModuleSettings
 	private Boolean createLocalClient = false;
 
 	private StreamingSettings streaming = new StreamingSettings();
-	private StoreSettings storeSettings = new StoreSettings();
+	private StoreSettings store = new StoreSettings();
 	private TransformersSettings transformers = new TransformersSettings();
 
 	public boolean isStrictMode() {

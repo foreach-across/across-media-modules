@@ -91,6 +91,7 @@ public class WebConfiguration
 				environment.getRequiredProperty( ImageServerCoreModuleSettings.MD5_HASH_TOKEN )
 		);
 	}
+
 	private String accessToken() {
 		return settings.getAccessToken();
 	}
