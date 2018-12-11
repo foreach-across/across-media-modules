@@ -1,9 +1,10 @@
 package com.foreach.imageserver.core.config;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
+@ConfigurationProperties("imageServerCore.transformers")
 public class TransformersSettings
 {
 	/**

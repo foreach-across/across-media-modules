@@ -94,8 +94,8 @@ public class ServicesConfiguration
 		return new ImageStoreServiceImpl(
 				environment.getRequiredProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
 				                                 File.class ).toPath(),
-				settings.getStoreSettings().getFolderPermissions(),
-				settings.getStoreSettings().getFilePermissions() );
+				settings.getStore().getFolderPermissions(),
+				settings.getStore().getFilePermissions() );
 	}
 
 	private void registerFileRepositories() {

@@ -1,19 +1,24 @@
 package com.foreach.imageserver.admin;
 
-/**
- * @author Arne Vandamme
- */
-public interface ImageServerAdminWebModuleSettings
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@Data
+@ConfigurationProperties("imageServerAdmin")
+public class ImageServerAdminWebModuleSettings
 {
+	public static final String IMAGE_SERVER_URL = "imageServerAdmin.imageServerUrl";
+	public static final String ACCESS_TOKEN = "imageServerAdmin.accessToken";
+
 	/**
 	 * URL or base path for the ImageServer instance this admin should manage.
 	 */
-	String IMAGE_SERVER_URL = "imageServerAdmin.imageServerUrl";
+	private String imageServerUrl;
 
 	/**
 	 * Access token required for secured services.
 	 * <p/>
 	 * Type: string
 	 */
-	String ACCESS_TOKEN = "imageServerAdmin.accessToken";
+	private String accessToken;
 }
