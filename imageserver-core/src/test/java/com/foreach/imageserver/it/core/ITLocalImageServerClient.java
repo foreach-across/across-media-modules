@@ -3,6 +3,8 @@ package com.foreach.imageserver.it.core;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.modules.filemanager.FileManagerModule;
+import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.core.ImageServerCoreModule;
@@ -262,7 +264,7 @@ public class ITLocalImageServerClient
 	}
 
 	@Configuration
-	@AcrossTestConfiguration
+	@AcrossTestConfiguration(modules = { FileManagerModule.NAME, PropertiesModule.NAME })
 	@PropertySource("classpath:integrationtests.properties")
 	protected static class Config implements AcrossContextConfigurer
 	{

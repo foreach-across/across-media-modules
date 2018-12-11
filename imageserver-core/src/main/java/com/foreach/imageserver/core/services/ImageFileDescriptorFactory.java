@@ -7,6 +7,7 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.logging.LogHelper;
 import lombok.NonNull;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**

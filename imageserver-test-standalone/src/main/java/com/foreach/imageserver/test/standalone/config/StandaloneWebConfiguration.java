@@ -5,6 +5,7 @@ import com.foreach.across.config.EnableAcrossContext;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.filemanager.FileManagerModule;
+import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.user.UserModule;
 import com.foreach.imageserver.admin.ImageServerAdminWebModule;
 import com.foreach.imageserver.admin.ImageServerAdminWebModuleSettings;
@@ -22,7 +23,7 @@ import java.io.File;
 import java.util.UUID;
 
 @Configuration
-@EnableAcrossContext(modules = { DebugWebModule.NAME, UserModule.NAME, FileManagerModule.NAME })
+@EnableAcrossContext(modules = { DebugWebModule.NAME, UserModule.NAME, FileManagerModule.NAME, PropertiesModule.NAME })
 @PropertySource("classpath:application.properties")
 public class StandaloneWebConfiguration implements AcrossContextConfigurer
 {

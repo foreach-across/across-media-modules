@@ -3,6 +3,8 @@ package com.foreach.imageserver.it.core;
 import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
+import com.foreach.across.modules.filemanager.FileManagerModule;
+import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestConfiguration;
@@ -89,7 +91,7 @@ public class ITImageServerCoreModule
 	}
 
 	@Configuration
-	@AcrossTestConfiguration(modules = { AcrossWebModule.NAME })
+	@AcrossTestConfiguration(modules = { AcrossWebModule.NAME, PropertiesModule.NAME, FileManagerModule.NAME })
 	protected static class Config implements AcrossContextConfigurer
 	{
 		@Override
