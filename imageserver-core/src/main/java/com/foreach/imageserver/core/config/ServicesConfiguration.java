@@ -8,10 +8,10 @@ import com.foreach.imageserver.core.rest.services.ImageRestServiceImpl;
 import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,15 +25,15 @@ import java.nio.file.Path;
 )
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class ServicesConfiguration
 {
-	public static final String TEMP_REPOSITORY = "temp";
-	public static final String ORIGINALS_REPOSITORY = "originals";
-	public static final String VARIANTS_REPOSITORY = "variants";
+	public static final String IMAGESERVER_TEMP = "imageserver-temp";
+	public static final String IMAGESERVER_ORIGINALS = "imageserver-originals";
+	public static final String IMAGESERVER_VARIANTS = "imageserver-variants";
 
 	private final static PathGenerator PATH_GENERATOR = new DateFormatPathGenerator( "yyyy/MM/dd/HH" );
 
-	private final Environment environment;
 	private final ImageServerCoreModuleSettings settings;
 	private final FileRepositoryRegistry fileRepositoryRegistry;
 
@@ -84,7 +84,7 @@ public class ServicesConfiguration
 	}
 
 	@Bean
-	public DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory(){
+	public DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory() {
 		return new DefaultImageFileDescriptorFactory();
 	}
 
@@ -92,27 +92,36 @@ public class ServicesConfiguration
 	public ImageStoreService imageStoreService() throws IOException {
 		registerFileRepositories();
 		return new ImageStoreServiceImpl(
-				environment.getRequiredProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
-				                                 File.class ).toPath(),
 				settings.getStore().getFolderPermissions(),
 				settings.getStore().getFilePermissions() );
 	}
 
 	private void registerFileRepositories() {
-		Path rootFolder = environment.getRequiredProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
-		                                                   File.class ).toPath();
-		fileRepositoryRegistry.registerRepository( createFileRepository( TEMP_REPOSITORY, rootFolder, false ) );
-		fileRepositoryRegistry.registerRepository( createFileRepository( ORIGINALS_REPOSITORY, rootFolder, true ) );
-		fileRepositoryRegistry.registerRepository( createFileRepository( VARIANTS_REPOSITORY, rootFolder, true ) );
+		File folder = settings.getStore().getFolder();
+		Path rootFolder = folder != null ? folder.toPath() : null;
+		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_TEMP, rootFolder, false );
+		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_ORIGINALS, rootFolder, true );
+		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_VARIANTS, rootFolder, true );
 	}
 
-	private FileRepository createFileRepository( String repositoryId, Path rootFolder, boolean withPathGenerator ) {
-		LocalFileRepository repo =
-				new LocalFileRepository( repositoryId, rootFolder.resolve( repositoryId ).toString() );
-		if ( withPathGenerator ) {
-			repo.setPathGenerator( PATH_GENERATOR );
+	private FileRepository createAndRegisterFileRepositoryIfNecessary( String repositoryId, Path rootFolder, boolean withPathGenerator ) {
+		if ( !fileRepositoryRegistry.repositoryExists( repositoryId ) ) {
+			if ( rootFolder == null ) {
+				LOG.warn( "File repository {} has not been initialized as no root folder has been provided.", repositoryId );
+				return null;
+			}
+			LOG.info( "File repository '{}' does not exist. Creating a new local file repository for location '{}'.", repositoryId,
+			          rootFolder + "/" + repositoryId );
+			LocalFileRepository repo =
+					new LocalFileRepository( repositoryId, rootFolder.resolve( repositoryId ).toString() );
+			if ( withPathGenerator ) {
+				repo.setPathGenerator( PATH_GENERATOR );
+			}
+			return fileRepositoryRegistry.registerRepository( repo );
 		}
-		return repo;
+
+		LOG.info( "Not creating a file repository for id '{}' as it already exists.", repositoryId );
+		return fileRepositoryRegistry.getRepository( repositoryId );
 	}
 
 	@Bean

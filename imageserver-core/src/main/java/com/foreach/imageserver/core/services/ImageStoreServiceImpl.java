@@ -7,7 +7,6 @@ import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +17,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import static com.foreach.imageserver.core.config.ServicesConfiguration.*;
+import static com.foreach.imageserver.core.config.ServicesConfiguration.IMAGESERVER_TEMP;
 
 /**
  * Still to verify and/or implement:
@@ -44,31 +39,18 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private static final Logger LOG = LoggerFactory.getLogger( ImageStoreServiceImpl.class );
 
 	@Autowired
-	private ImageContextService imageContextService;
-	@Autowired
-	private ImageService imageService;
-	@Autowired
 	private FileManager fileManager;
 	@Autowired
 	private DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory;
 
-	private final Path tempFolder;
-	private final Path originalsFolder;
-	private final Path variantsFolder;
 
 	private final Set<PosixFilePermission> folderPermissions;
 	private final Set<PosixFilePermission> filePermissions;
 
-	public ImageStoreServiceImpl( Path imageStoreFolder,
-	                              String folderPermissions,
-	                              String filePermissions ) throws IOException {
+	public ImageStoreServiceImpl( String folderPermissions,
+	                              String filePermissions ) {
 		this.folderPermissions = toPermissions( folderPermissions );
 		this.filePermissions = toPermissions( filePermissions );
-
-		tempFolder = imageStoreFolder.resolve( "temp" );
-		originalsFolder = imageStoreFolder.resolve( "originals" );
-		variantsFolder = imageStoreFolder.resolve( "variants" );
-
 	}
 
 	@Override
@@ -172,85 +154,14 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		return defaultImageFileDescriptorFactory.createForVariant( image,context,imageResolution,imageVariant );
 	}
 
-	//TODO refactor to use FileManagerModule?
+	//TODO currently not supported as it is not supported by FileManagerModule
 	@Override
 	public void removeVariants( Long imageId ) {
-		if ( imageId == null || imageId == 0 ) {
-			LOG.warn( "Null parameters not allowed - ImageStoreServiceImpl#removeVariants: imageId={}", imageId );
-		}
-
-		final String variantFileNamePrefix = variantFileNamePrefix( imageId );
-
-		/**
-		 * Experiments have revealed that removing the same set of files from different threads
-		 * concurrently should work, provided that we ignore all IOExceptions. I could not quickly
-		 * find a good way around this; Files::walkFileTree and Files::deleteIfExists both raise
-		 * exceptions when the file they are trying to consider is suddenly missing.
-		 *
-		 * This was also tested on a linux server on an NFS mount.
-		 */
-		try {
-			StopWatch stopWatch = new StopWatch();
-			stopWatch.start();
-
-			Image image = imageService.getById( imageId );
-
-			Collection<ImageContext> contexts = imageContextService.getAllContexts();
-			for ( ImageContext context : contexts ) {
-				// only need to walk the specific variant folder of this image (within this context)
-				Path imageSpecificVariantsFolder =
-						variantsFolder.resolve( context.getCode() ).resolve( image.getVariantPath() );
-				Files.walkFileTree( imageSpecificVariantsFolder, new SimpleFileVisitor<Path>()
-				{
-					@Override
-					public FileVisitResult visitFile( Path file, BasicFileAttributes attrs ) throws IOException {
-						if ( file.getFileName().toString().startsWith( variantFileNamePrefix ) ) {
-							try {
-								Files.deleteIfExists( file );
-							}
-							catch ( IOException e ) {
-								// Unfortunately, we need to ignore this error. (See comment above)
-							}
-						}
-						return FileVisitResult.CONTINUE;
-					}
-
-					@Override
-					public FileVisitResult visitFileFailed( Path file, IOException exc ) throws IOException {
-						// Unfortunately, we need to ignore this error. (See comment above)
-						return FileVisitResult.CONTINUE;
-					}
-				} );
-			}
-
-			stopWatch.stop();
-			LOG.debug( "Variant cleanup for imageId {} completed in {} ms", imageId, stopWatch.getTime() );
-		}
-		catch ( IOException e ) {
-			// I'm not really sure whether this will ever happen, given that the above implementation catches all
-			// io exceptions.
-			LOG.error( "Encountered failure while removing variants - ImageStoreServiceImpl#removeVariants: imageId={}",
-			           imageId, e );
-			throw new ImageStoreException( e );
-		}
-	}
-
-	private String getFolderName( Image image ) {
-		return image.isTemporaryImage() ? "" : image.getOriginalPath();
-	}
-
-	private String getFolderName( Image image,
-	                              ImageContext context ) {
-		return context.getCode() + "/" + image.getVariantPath();
-	}
-
-	private String variantFileNamePrefix( long imageId ) {
-		return String.valueOf( imageId ) + '-';
 	}
 
 	private void writeSafely( InputStream inputStream, FileDescriptor target ) {
 		try {
-			FileDescriptor temp = fileManager.save( TEMP_REPOSITORY, inputStream );
+			FileDescriptor temp = fileManager.save( IMAGESERVER_TEMP, inputStream );
 			fileManager.move( temp, target );
 			File file = fileManager.getAsFile( target );
 			setFilePermissionsWithoutFailing( file.toPath() );

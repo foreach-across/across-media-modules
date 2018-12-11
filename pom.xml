@@ -155,6 +155,12 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+					<annotationProcessors>
+						<annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor
+						</annotationProcessor>
+						<annotationProcessor>org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor</annotationProcessor>
+						<!--<annotationProcessor>com.querydsl.apt.jpa.JPAAnnotationProcessor</annotationProcessor>-->
+					</annotationProcessors>
 				</configuration>
 			</plugin>
 			<plugin>

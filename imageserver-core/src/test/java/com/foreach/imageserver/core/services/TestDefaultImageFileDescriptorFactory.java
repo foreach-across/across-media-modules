@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DefaultImageFileDescriptorFactoryTest
+public class TestDefaultImageFileDescriptorFactory
 {
 	private DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory;
 	private Image image;
