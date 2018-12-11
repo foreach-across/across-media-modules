@@ -5,10 +5,7 @@ import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
-import com.foreach.imageserver.logging.LogHelper;
 import lombok.NonNull;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Arne Vandamme
@@ -36,10 +33,10 @@ public interface ImageFileDescriptorFactory
 	 * Default implementation for generating only the file name aspect of a descriptor, based
 	 * on the variant of an image being requested.
 	 *
-	 * @param image for which the file name should be generated
-	 * @param context that is being requested
+	 * @param image           for which the file name should be generated
+	 * @param context         that is being requested
 	 * @param imageResolution resolution being requested
-	 * @param imageVariant variant being requested
+	 * @param imageVariant    variant being requested
 	 * @return file name
 	 */
 	default String generateFileName( @NonNull Image image, ImageContext context, ImageResolution imageResolution, ImageVariant imageVariant ) {

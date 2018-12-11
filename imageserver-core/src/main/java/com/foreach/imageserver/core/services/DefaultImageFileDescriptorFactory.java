@@ -5,17 +5,10 @@ import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
-import com.foreach.imageserver.logging.LogHelper;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import static com.foreach.imageserver.core.config.ServicesConfiguration.ORIGINALS_REPOSITORY;
-import static com.foreach.imageserver.core.config.ServicesConfiguration.TEMP_REPOSITORY;
-import static com.foreach.imageserver.core.config.ServicesConfiguration.VARIANTS_REPOSITORY;
+import static com.foreach.imageserver.core.config.ServicesConfiguration.*;
 
-@Slf4j
 public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFactory
 {
 	@Override

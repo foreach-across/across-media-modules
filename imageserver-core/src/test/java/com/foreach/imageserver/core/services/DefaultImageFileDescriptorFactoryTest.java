@@ -6,8 +6,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.foreach.imageserver.core.config.ServicesConfiguration.ORIGINALS_REPOSITORY;
-
 public class DefaultImageFileDescriptorFactoryTest
 {
 	private DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory;
@@ -23,7 +21,7 @@ public class DefaultImageFileDescriptorFactoryTest
 		defaultImageFileDescriptorFactory = new DefaultImageFileDescriptorFactory();
 
 		image = new Image();
-		image.setId( 650071L);
+		image.setId( 650071L );
 		image.setExternalId( "650071" );
 		image.setOriginalPath( originalPath );
 		image.setVariantPath( variantPath );
@@ -31,7 +29,7 @@ public class DefaultImageFileDescriptorFactoryTest
 		image.setImageType( ImageType.PNG );
 
 		variantImage = new ImageVariant();
-		variantImage.setOutputType(ImageType.JPEG   );
+		variantImage.setOutputType( ImageType.JPEG );
 
 		customRepository = "s3-files";
 	}
@@ -56,7 +54,6 @@ public class DefaultImageFileDescriptorFactoryTest
 		Assert.assertEquals( "s3-files:2018/12/11/09:650071.png", fileDescriptor.getUri() );
 		Assert.assertEquals( "650071.png", fileDescriptor.getFileId() );
 	}
-
 
 	@Test
 	public void oldImageVariantPathGivesRightFileDescriptor() {
@@ -95,7 +92,6 @@ public class DefaultImageFileDescriptorFactoryTest
 		Assert.assertEquals( "s3-files:ONLINE/2018/12/11/09:650071-w300-h200.jpeg", fileDescriptor.getUri() );
 		Assert.assertEquals( "650071-w300-h200.jpeg", fileDescriptor.getFileId() );
 	}
-
 
 	@Test
 	public void politiek() {
