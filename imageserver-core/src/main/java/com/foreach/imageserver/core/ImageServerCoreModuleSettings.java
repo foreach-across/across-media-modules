@@ -3,16 +3,13 @@ package com.foreach.imageserver.core;
 import com.foreach.imageserver.core.config.StoreSettings;
 import com.foreach.imageserver.core.config.StreamingSettings;
 import com.foreach.imageserver.core.config.TransformersSettings;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * @author Arne Vandamme
  */
-@Getter
-@Setter
+@Data
 @ConfigurationProperties("imageServerCore")
 public class ImageServerCoreModuleSettings
 {
