@@ -59,10 +59,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
-			<artifactId>debug-web-module</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>file-manager-module</artifactId>
 		</dependency>
 		<dependency>
@@ -76,10 +72,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.foreach.across.modules</groupId>
-			<artifactId>application-info-module</artifactId>
 		</dependency>
 	</dependencies>
 
