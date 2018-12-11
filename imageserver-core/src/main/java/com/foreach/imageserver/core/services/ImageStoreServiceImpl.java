@@ -49,6 +49,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private ImageService imageService;
 	@Autowired
 	private FileManager fileManager;
+	@Autowired
+	private DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory;
 
 	private final Path tempFolder;
 	private final Path originalsFolder;
@@ -112,16 +114,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	private FileDescriptor getOriginalFileDescriptor( Image image ) {
-		String fileName = constructFileName( image );
-		String targetPath = getFolderName( image );
-		FileDescriptor fileDescriptor;
-		if ( image.isTemporaryImage() ) {
-			fileDescriptor = new FileDescriptor( TEMP_REPOSITORY, fileName );
-		}
-		else {
-			fileDescriptor = new FileDescriptor( ORIGINALS_REPOSITORY, targetPath, fileName );
-		}
-		return fileDescriptor;
+		return defaultImageFileDescriptorFactory.createForOriginal( image );
 	}
 
 	@Override
@@ -176,9 +169,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private FileDescriptor getVariantsFileDescriptor( Image image,
 	                                                  ImageContext context,
 	                                                  ImageResolution imageResolution, ImageVariant imageVariant ) {
-		String fileName = constructFileName( image, imageResolution, imageVariant );
-		String targetPath = getFolderName( image, context );
-		return FileDescriptor.of( VARIANTS_REPOSITORY, targetPath, fileName );
+		return defaultImageFileDescriptorFactory.createForVariant( image,context,imageResolution,imageVariant );
 	}
 
 	//TODO refactor to use FileManagerModule?
@@ -251,44 +242,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private String getFolderName( Image image,
 	                              ImageContext context ) {
 		return context.getCode() + "/" + image.getVariantPath();
-	}
-
-	private String constructFileName( Image image, ImageResolution imageResolution, ImageVariant imageVariant ) {
-		if ( image == null || imageResolution == null || imageVariant == null ) {
-			LOG.warn(
-					"Null parameters not allowed - ImageStoreServiceImpl#constructFileName: image={}, modification={}, imageVariant={}",
-					LogHelper.flatten( image, imageResolution, imageVariant ) );
-		}
-
-		StringBuilder fileNameBuilder = new StringBuilder();
-		fileNameBuilder.append( variantFileNamePrefix( image.getId() ) );
-		//if (imageResolution.getWidth() != null) {
-		fileNameBuilder.append( 'w' );
-		fileNameBuilder.append( imageResolution.getWidth() );
-		fileNameBuilder.append( '-' );
-		//}
-		//if (imageResolution.getHeight() != null) {
-		fileNameBuilder.append( 'h' );
-		fileNameBuilder.append( imageResolution.getHeight() );
-		//}
-		if ( imageVariant.getBoundaries() != null ) {
-			fileNameBuilder.append( '-' );
-			fileNameBuilder.append( "bw" );
-			fileNameBuilder.append( imageVariant.getBoundaries().getWidth() );
-			fileNameBuilder.append( '-' );
-			fileNameBuilder.append( "bh" );
-			fileNameBuilder.append( imageVariant.getBoundaries().getHeight() );
-		}
-
-		fileNameBuilder.append( '.' );
-		fileNameBuilder.append( imageVariant.getOutputType().getExtension() );
-
-		return fileNameBuilder.toString();
-	}
-
-	private String constructFileName( Image image ) {
-		String name = image.isTemporaryImage() ? image.getExternalId() : String.valueOf( image.getId() );
-		return name + '.' + image.getImageType().getExtension();
 	}
 
 	private String variantFileNamePrefix( long imageId ) {
