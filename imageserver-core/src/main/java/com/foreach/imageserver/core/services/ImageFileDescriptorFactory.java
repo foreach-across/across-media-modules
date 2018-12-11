@@ -1,12 +1,11 @@
 package com.foreach.imageserver.core.services;
 
+import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
 import lombok.NonNull;
-
-import java.io.FileDescriptor;
 
 /**
  * @author Arne Vandamme

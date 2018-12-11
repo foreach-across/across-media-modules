@@ -12,7 +12,6 @@ import com.foreach.across.core.installers.AcrossSequencesInstaller;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.hibernate.provider.*;
-import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.imageserver.core.config.ImageSchemaConfiguration;
 import com.foreach.imageserver.core.config.RepositoriesConfiguration;
@@ -27,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
 
-@AcrossDepends(required = { AcrossWebModule.NAME, AcrossHibernateJpaModule.NAME, PropertiesModule.NAME, FileManagerModule.NAME })
+@AcrossDepends(required = { AcrossWebModule.NAME, AcrossHibernateJpaModule.NAME, FileManagerModule.NAME })
 public class ImageServerCoreModule extends AcrossModule implements HibernatePackageConfigurer, HasSchemaConfiguration
 {
 	public static final String NAME = "ImageServerCoreModule";

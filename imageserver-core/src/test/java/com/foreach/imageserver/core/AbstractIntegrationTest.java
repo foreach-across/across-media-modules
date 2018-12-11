@@ -4,7 +4,9 @@ import com.foreach.across.config.AcrossContextConfigurer;
 import com.foreach.across.core.AcrossContext;
 import com.foreach.across.core.AcrossModule;
 import com.foreach.across.core.filters.PackageBeanFilter;
+import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +28,7 @@ import javax.sql.DataSource;
 @TestPropertySource(properties = { "spring.jpa.show-sql=true" })
 public abstract class AbstractIntegrationTest
 {
-	@AcrossTestConfiguration
+	@AcrossTestConfiguration(modules = { PropertiesModule.NAME, FileManagerModule.NAME })
 	@Configuration
 	public static class Config implements AcrossContextConfigurer
 	{
