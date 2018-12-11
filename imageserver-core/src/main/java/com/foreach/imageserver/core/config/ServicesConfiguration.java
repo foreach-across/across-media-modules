@@ -84,6 +84,11 @@ public class ServicesConfiguration
 	}
 
 	@Bean
+	public DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory(){
+		return new DefaultImageFileDescriptorFactory();
+	}
+
+	@Bean
 	public ImageStoreService imageStoreService() throws IOException {
 		registerFileRepositories();
 		return new ImageStoreServiceImpl(
