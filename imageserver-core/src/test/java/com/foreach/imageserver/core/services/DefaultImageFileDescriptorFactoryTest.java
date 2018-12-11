@@ -1,8 +1,7 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.imageserver.core.business.Image;
-import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.business.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,11 +12,11 @@ public class DefaultImageFileDescriptorFactoryTest
 {
 	private DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory;
 	private Image image;
-	private Image variantImage;
+	private ImageVariant variantImage;
 	private String customRepository;
 
-	private String originalPath = "/appl/shared/imageserver_img/originals/2018/12/11/09/";
-	private String variantPath = "/appl/shared/imageserver_img/variants/ONLINE/2018/12/11/09/";
+	private String originalPath = "2018/12/11/09";
+	private String variantPath = "2018/12/11/09";
 
 	@Before
 	public void setup() {
@@ -27,15 +26,12 @@ public class DefaultImageFileDescriptorFactoryTest
 		image.setId( 650071L);
 		image.setExternalId( "650071" );
 		image.setOriginalPath( originalPath );
+		image.setVariantPath( variantPath );
 		image.setTemporaryImage( false );
 		image.setImageType( ImageType.PNG );
 
-		variantImage = new Image();
-		variantImage.setId( 650071L );
-		variantImage.setExternalId( "650071-w300-h200" );
-		variantImage.setVariantPath( variantPath );
-		variantImage.setTemporaryImage( false );
-		variantImage.setImageType( ImageType.JPEG );
+		variantImage = new ImageVariant();
+		variantImage.setOutputType(ImageType.JPEG   );
 
 		customRepository = "s3-files";
 	}
@@ -45,8 +41,8 @@ public class DefaultImageFileDescriptorFactoryTest
 		FileDescriptor fileDescriptor = defaultImageFileDescriptorFactory.createForOriginal( image );
 
 		Assert.assertEquals( "originals", fileDescriptor.getRepositoryId() );
-		Assert.assertEquals( "/appl/shared/imageserver_img/originals/2018/12/11/09/", fileDescriptor.getFolderId() );
-		Assert.assertEquals( "originals:/appl/shared/imageserver_img/originals/2018/12/11/09/:650071.png", fileDescriptor.getUri() );
+		Assert.assertEquals( "2018/12/11/09", fileDescriptor.getFolderId() );
+		Assert.assertEquals( "originals:2018/12/11/09:650071.png", fileDescriptor.getUri() );
 		Assert.assertEquals( "650071.png", fileDescriptor.getFileId() );
 	}
 
@@ -56,9 +52,69 @@ public class DefaultImageFileDescriptorFactoryTest
 		FileDescriptor fileDescriptor = defaultImageFileDescriptorFactory.createForOriginal( image );
 
 		Assert.assertEquals( "s3-files", fileDescriptor.getRepositoryId() );
-		Assert.assertEquals( "/appl/shared/imageserver_img/originals/2018/12/11/09/", fileDescriptor.getFolderId() );
-		Assert.assertEquals( "s3-files:/appl/shared/imageserver_img/originals/2018/12/11/09/:650071.png", fileDescriptor.getUri() );
+		Assert.assertEquals( "2018/12/11/09", fileDescriptor.getFolderId() );
+		Assert.assertEquals( "s3-files:2018/12/11/09:650071.png", fileDescriptor.getUri() );
 		Assert.assertEquals( "650071.png", fileDescriptor.getFileId() );
+	}
+
+
+	@Test
+	public void oldImageVariantPathGivesRightFileDescriptor() {
+		ImageContext imageContext = new ImageContext();
+		imageContext.setId( 650071L );
+		imageContext.setCode( "ONLINE" );
+
+		ImageResolution imageResolution = new ImageResolution();
+		imageResolution.setWidth( 300 );
+		imageResolution.setHeight( 200 );
+
+		FileDescriptor fileDescriptor = defaultImageFileDescriptorFactory.createForVariant( image, imageContext, imageResolution, variantImage );
+
+		Assert.assertEquals( "variants", fileDescriptor.getRepositoryId() );
+		Assert.assertEquals( "ONLINE/2018/12/11/09", fileDescriptor.getFolderId() );
+		Assert.assertEquals( "variants:ONLINE/2018/12/11/09:650071-w300-h200.jpeg", fileDescriptor.getUri() );
+		Assert.assertEquals( "650071-w300-h200.jpeg", fileDescriptor.getFileId() );
+	}
+
+	@Test
+	public void newImageVariantPathGivesRightFileDescriptor() {
+		image.setVariantPath( customRepository + ":" + originalPath );
+
+		ImageContext imageContext = new ImageContext();
+		imageContext.setId( 650071L );
+		imageContext.setCode( "ONLINE" );
+
+		ImageResolution imageResolution = new ImageResolution();
+		imageResolution.setWidth( 300 );
+		imageResolution.setHeight( 200 );
+
+		FileDescriptor fileDescriptor = defaultImageFileDescriptorFactory.createForVariant( image, imageContext, imageResolution, variantImage );
+
+		Assert.assertEquals( "s3-files", fileDescriptor.getRepositoryId() );
+		Assert.assertEquals( "ONLINE/2018/12/11/09", fileDescriptor.getFolderId() );
+		Assert.assertEquals( "s3-files:ONLINE/2018/12/11/09:650071-w300-h200.jpeg", fileDescriptor.getUri() );
+		Assert.assertEquals( "650071-w300-h200.jpeg", fileDescriptor.getFileId() );
+	}
+
+
+	@Test
+	public void politiek() {
+		image.setVariantPath( customRepository + ":" + originalPath );
+
+		ImageContext imageContext = new ImageContext();
+		imageContext.setId( 650071L );
+		imageContext.setCode( "ONLINE/politiek" );
+
+		ImageResolution imageResolution = new ImageResolution();
+		imageResolution.setWidth( 300 );
+		imageResolution.setHeight( 200 );
+
+		FileDescriptor fileDescriptor = defaultImageFileDescriptorFactory.createForVariant( image, imageContext, imageResolution, variantImage );
+
+		Assert.assertEquals( "s3-files", fileDescriptor.getRepositoryId() );
+		Assert.assertEquals( "ONLINE/politiek/2018/12/11/09", fileDescriptor.getFolderId() );
+		Assert.assertEquals( "s3-files:ONLINE/politiek/2018/12/11/09:650071-w300-h200.jpeg", fileDescriptor.getUri() );
+		Assert.assertEquals( "650071-w300-h200.jpeg", fileDescriptor.getFileId() );
 	}
 
 }

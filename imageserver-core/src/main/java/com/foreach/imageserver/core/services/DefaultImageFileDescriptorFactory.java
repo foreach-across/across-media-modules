@@ -7,6 +7,7 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
 import com.foreach.imageserver.logging.LogHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -28,22 +29,21 @@ public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFac
 			defaultTargetRepository = TEMP_REPOSITORY;
 		}
 
-		return composeFileDescriptor( image, fileName, targetPath, defaultTargetRepository );
+		return composeFileDescriptor( image, fileName, targetPath, defaultTargetRepository, null );
 	}
 
 	@Override
 	public FileDescriptor createForVariant( Image image, ImageContext context, ImageResolution imageResolution, ImageVariant imageVariant ) {
-		String fileName = constructFileName( image, imageResolution, imageVariant );
+		String fileName = generateFileName( image, context, imageResolution, imageVariant );
 		String targetPath = getFolderName( image, context );
 
-		return composeFileDescriptor( image, fileName, targetPath, VARIANTS_REPOSITORY );
+		return composeFileDescriptor( image, fileName, targetPath, VARIANTS_REPOSITORY, context );
 	}
 
-	private FileDescriptor composeFileDescriptor( Image image, String fileName, String targetPath, String defaultTargetRepository ) {
+	private FileDescriptor composeFileDescriptor( Image image, String fileName, String targetPath, String defaultTargetRepository, ImageContext context ) {
 		FileDescriptor fileDescriptor;
 		String[] targetPathParts = targetPath.split( ":" );
 		boolean isFileDescriptor = targetPathParts.length > 1;
-
 
 		// When we are not dealing with a fileDescriptor (Legacy) --> Create one
 		if ( isFileDescriptor ) {
@@ -59,39 +59,6 @@ public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFac
 		return fileDescriptor;
 	}
 
-	private String constructFileName( Image image, ImageResolution imageResolution, ImageVariant imageVariant ) {
-		if ( image == null || imageResolution == null || imageVariant == null ) {
-			LOG.warn(
-					"Null parameters not allowed - ImageStoreServiceImpl#constructFileName: image={}, modification={}, imageVariant={}",
-					LogHelper.flatten( image, imageResolution, imageVariant ) );
-		}
-
-		StringBuilder fileNameBuilder = new StringBuilder();
-		fileNameBuilder.append( variantFileNamePrefix( image.getId() ) );
-		//if (imageResolution.getWidth() != null) {
-		fileNameBuilder.append( 'w' );
-		fileNameBuilder.append( imageResolution.getWidth() );
-		fileNameBuilder.append( '-' );
-		//}
-		//if (imageResolution.getHeight() != null) {
-		fileNameBuilder.append( 'h' );
-		fileNameBuilder.append( imageResolution.getHeight() );
-		//}
-		if ( imageVariant.getBoundaries() != null ) {
-			fileNameBuilder.append( '-' );
-			fileNameBuilder.append( "bw" );
-			fileNameBuilder.append( imageVariant.getBoundaries().getWidth() );
-			fileNameBuilder.append( '-' );
-			fileNameBuilder.append( "bh" );
-			fileNameBuilder.append( imageVariant.getBoundaries().getHeight() );
-		}
-
-		fileNameBuilder.append( '.' );
-		fileNameBuilder.append( imageVariant.getOutputType().getExtension() );
-
-		return fileNameBuilder.toString();
-	}
-
 	private String constructFileName( Image image ) {
 		String name = image.isTemporaryImage() ? image.getExternalId() : String.valueOf( image.getId() );
 		return name + '.' + image.getImageType().getExtension();
@@ -103,6 +70,11 @@ public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFac
 
 	private String getFolderName( Image image,
 	                              ImageContext context ) {
+
+		if ( image.getVariantPath().contains( ":" ) ) {
+			return image.getVariantPath().replace( ":", StringUtils.join( ":", context.getCode(), "/" ) );
+		}
+
 		return context.getCode() + "/" + image.getVariantPath();
 	}
 
