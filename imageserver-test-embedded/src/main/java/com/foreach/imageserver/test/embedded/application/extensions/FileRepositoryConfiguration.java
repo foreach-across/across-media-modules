@@ -19,7 +19,7 @@ public class FileRepositoryConfiguration
 {
 	@Autowired
 	public void registerFileRepository( FileRepositoryRegistry fileRepositoryRegistry ) {
-		LocalFileRepository fileRepository = new LocalFileRepository( ServicesConfiguration.IMAGESERVER_VARIANTS, "local/image-variants" );
+		LocalFileRepository fileRepository = new LocalFileRepository( ServicesConfiguration.IMAGESERVER_VARIANTS_REPOSITORY, "local-data/image-variants" );
 		fileRepositoryRegistry.registerRepository( fileRepository );
 	}
 }

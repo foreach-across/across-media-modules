@@ -28,9 +28,9 @@ import java.nio.file.Path;
 @Slf4j
 public class ServicesConfiguration
 {
-	public static final String IMAGESERVER_TEMP = "imageserver-temp";
-	public static final String IMAGESERVER_ORIGINALS = "imageserver-originals";
-	public static final String IMAGESERVER_VARIANTS = "imageserver-variants";
+	public static final String IMAGESERVER_TEMP_REPOSITORY = "imageserver-temp";
+	public static final String IMAGESERVER_ORIGINALS_REPOSITORY = "imageserver-originals";
+	public static final String IMAGESERVER_VARIANTS_REPOSITORY = "imageserver-variants";
 
 	private final static PathGenerator PATH_GENERATOR = new DateFormatPathGenerator( "yyyy/MM/dd/HH" );
 
@@ -99,12 +99,15 @@ public class ServicesConfiguration
 	private void registerFileRepositories() {
 		File folder = settings.getStore().getFolder();
 		Path rootFolder = folder != null ? folder.toPath() : null;
-		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_TEMP, rootFolder, false );
-		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_ORIGINALS, rootFolder, true );
-		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_VARIANTS, rootFolder, true );
+		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_TEMP_REPOSITORY, "temp", rootFolder, false );
+		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_ORIGINALS_REPOSITORY, "originals", rootFolder, true );
+		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_VARIANTS_REPOSITORY, "variants", rootFolder, true );
 	}
 
-	private FileRepository createAndRegisterFileRepositoryIfNecessary( String repositoryId, Path rootFolder, boolean withPathGenerator ) {
+	private FileRepository createAndRegisterFileRepositoryIfNecessary( String repositoryId,
+	                                                                   String folderName,
+	                                                                   Path rootFolder,
+	                                                                   boolean withPathGenerator ) {
 		if ( !fileRepositoryRegistry.repositoryExists( repositoryId ) ) {
 			if ( rootFolder == null ) {
 				LOG.warn( "File repository {} has not been initialized as no root folder has been provided.", repositoryId );
@@ -113,7 +116,7 @@ public class ServicesConfiguration
 			LOG.info( "File repository '{}' does not exist. Creating a new local file repository for location '{}'.", repositoryId,
 			          rootFolder + "/" + repositoryId );
 			LocalFileRepository repo =
-					new LocalFileRepository( repositoryId, rootFolder.resolve( repositoryId ).toString() );
+					new LocalFileRepository( repositoryId, rootFolder.resolve( folderName ).toString() );
 			if ( withPathGenerator ) {
 				repo.setPathGenerator( PATH_GENERATOR );
 			}

@@ -15,10 +15,10 @@ public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFac
 	public FileDescriptor createForOriginal( Image image ) {
 		String fileName = constructFileName( image );
 		String targetPath = getFolderName( image );
-		String defaultTargetRepository = IMAGESERVER_ORIGINALS;
+		String defaultTargetRepository = IMAGESERVER_ORIGINALS_REPOSITORY;
 
 		if ( image.isTemporaryImage() ) {
-			defaultTargetRepository = IMAGESERVER_TEMP;
+			defaultTargetRepository = IMAGESERVER_TEMP_REPOSITORY;
 		}
 
 		return composeFileDescriptor( image, fileName, targetPath, defaultTargetRepository, null );
@@ -29,7 +29,7 @@ public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFac
 		String fileName = generateFileName( image, context, imageResolution, imageVariant );
 		String targetPath = getFolderName( image, context );
 
-		return composeFileDescriptor( image, fileName, targetPath, IMAGESERVER_VARIANTS, context );
+		return composeFileDescriptor( image, fileName, targetPath, IMAGESERVER_VARIANTS_REPOSITORY, context );
 	}
 
 	private FileDescriptor composeFileDescriptor( Image image, String fileName, String targetPath, String defaultTargetRepository, ImageContext context ) {

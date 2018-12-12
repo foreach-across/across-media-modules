@@ -24,7 +24,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collections;
 import java.util.Set;
 
-import static com.foreach.imageserver.core.config.ServicesConfiguration.IMAGESERVER_TEMP;
+import static com.foreach.imageserver.core.config.ServicesConfiguration.IMAGESERVER_TEMP_REPOSITORY;
 
 /**
  * Still to verify and/or implement:
@@ -161,7 +161,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	private void writeSafely( InputStream inputStream, FileDescriptor target ) {
 		try {
-			FileDescriptor temp = fileManager.save( IMAGESERVER_TEMP, inputStream );
+			FileDescriptor temp = fileManager.save( IMAGESERVER_TEMP_REPOSITORY, inputStream );
 			fileManager.move( temp, target );
 			File file = fileManager.getAsFile( target );
 			setFilePermissionsWithoutFailing( file.toPath() );
