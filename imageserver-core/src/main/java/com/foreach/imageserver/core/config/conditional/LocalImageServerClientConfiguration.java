@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 /**
  * @author Arne Vandamme
@@ -18,9 +17,6 @@ import org.springframework.core.env.Environment;
 @Configuration
 public class LocalImageServerClientConfiguration
 {
-	@Autowired
-	private Environment environment;
-
 	@Autowired(required = false)
 	private ImageRequestHashBuilder serverImageRequestHashBuilder;
 
@@ -30,9 +26,7 @@ public class LocalImageServerClientConfiguration
 	@Bean
 	@Exposed
 	public ImageServerClient localImageServerClient() {
-		LocalImageServerClient client = new LocalImageServerClient(
-				environment.getRequiredProperty( ImageServerCoreModuleSettings.IMAGE_SERVER_URL )
-		);
+		LocalImageServerClient client = new LocalImageServerClient( settings.getImageServerUrl() );
 		if ( !settings.isStrictMode() && serverImageRequestHashBuilder != null ) {
 			client.setImageRequestHashBuilder( serverImageRequestHashBuilder );
 		}
