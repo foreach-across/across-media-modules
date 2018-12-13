@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.imageserver.core.business.*;
+import com.foreach.imageserver.core.config.ServicesConfiguration;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class TestDefaultImageFileDescriptorFactory
 	public void oldImageOriginalPathGivesRightFileDescriptor() {
 		FileDescriptor fileDescriptor = defaultImageFileDescriptorFactory.createForOriginal( image );
 
-		Assert.assertEquals( "originals", fileDescriptor.getRepositoryId() );
+		Assert.assertEquals( ServicesConfiguration.IMAGESERVER_ORIGINALS_REPOSITORY, fileDescriptor.getRepositoryId() );
 		Assert.assertEquals( "2018/12/11/09", fileDescriptor.getFolderId() );
 		Assert.assertEquals( "originals:2018/12/11/09:650071.png", fileDescriptor.getUri() );
 		Assert.assertEquals( "650071.png", fileDescriptor.getFileId() );
@@ -67,7 +68,7 @@ public class TestDefaultImageFileDescriptorFactory
 
 		FileDescriptor fileDescriptor = defaultImageFileDescriptorFactory.createForVariant( image, imageContext, imageResolution, variantImage );
 
-		Assert.assertEquals( "variants", fileDescriptor.getRepositoryId() );
+		Assert.assertEquals( ServicesConfiguration.IMAGESERVER_VARIANTS_REPOSITORY, fileDescriptor.getRepositoryId() );
 		Assert.assertEquals( "ONLINE/2018/12/11/09", fileDescriptor.getFolderId() );
 		Assert.assertEquals( "variants:ONLINE/2018/12/11/09:650071-w300-h200.jpeg", fileDescriptor.getUri() );
 		Assert.assertEquals( "650071-w300-h200.jpeg", fileDescriptor.getFileId() );
