@@ -85,6 +85,11 @@
 				<artifactId>imageserver-core</artifactId>
 				<version>${pom.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.foreach.across.modules</groupId>
+				<artifactId>file-manager-module</artifactId>
+				<version>1.3.1-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

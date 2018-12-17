@@ -123,9 +123,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
 		FileDescriptor fileDescriptor = getVariantsFileDescriptor( image, context, imageResolution, imageVariant );
-		return fileManager.exists( fileDescriptor )
-				? read( fileDescriptor, imageVariant.getOutputType() )
-				: null;
+		return read( fileDescriptor, imageVariant.getOutputType() );
 	}
 
 	@Override
@@ -175,9 +173,11 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	private StreamImageSource read( FileDescriptor fileDescriptor, ImageType imageType ) {
-		InputStream imageStream = fileManager.getInputStream( fileDescriptor );
-		if ( imageStream != null ) {
-			return new StreamImageSource( imageType, imageStream );
+		if ( fileManager.exists( fileDescriptor ) ) {
+			InputStream imageStream = fileManager.getInputStream( fileDescriptor );
+			if ( imageStream != null ) {
+				return new StreamImageSource( imageType, imageStream );
+			}
 		}
 		return null;
 	}
