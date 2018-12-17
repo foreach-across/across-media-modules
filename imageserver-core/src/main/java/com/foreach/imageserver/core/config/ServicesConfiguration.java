@@ -114,7 +114,7 @@ public class ServicesConfiguration
 				return null;
 			}
 			LOG.info( "File repository '{}' does not exist. Creating a new local file repository for location '{}'.", repositoryId,
-			          rootFolder + "/" + repositoryId );
+			          rootFolder + "/" + folderName );
 			LocalFileRepository repo =
 					new LocalFileRepository( repositoryId, rootFolder.resolve( folderName ).toString() );
 			if ( withPathGenerator ) {

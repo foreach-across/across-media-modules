@@ -43,7 +43,6 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	@Autowired
 	private DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory;
 
-
 	private final Set<PosixFilePermission> folderPermissions;
 	private final Set<PosixFilePermission> filePermissions;
 
@@ -124,7 +123,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
 		FileDescriptor fileDescriptor = getVariantsFileDescriptor( image, context, imageResolution, imageVariant );
-		return read( fileDescriptor, imageVariant.getOutputType() );
+		return fileManager.exists( fileDescriptor )
+				? read( fileDescriptor, imageVariant.getOutputType() )
+				: null;
 	}
 
 	@Override
@@ -151,7 +152,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	private FileDescriptor getVariantsFileDescriptor( Image image,
 	                                                  ImageContext context,
 	                                                  ImageResolution imageResolution, ImageVariant imageVariant ) {
-		return defaultImageFileDescriptorFactory.createForVariant( image,context,imageResolution,imageVariant );
+		return defaultImageFileDescriptorFactory.createForVariant( image, context, imageResolution, imageVariant );
 	}
 
 	//TODO currently not supported as it is not supported by FileManagerModule
