@@ -21,16 +21,20 @@ import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
+import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.UUID;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -71,6 +75,24 @@ public class TestAwsS3FileRepository extends BaseFileRepositoryTest
 		                                          fileManager,
 		                                          AWS_REGION,
 		                                          DateFormatPathGenerator.YEAR_MONTH_DAY );
+	}
+
+	@Test
+	@Override
+	public void savingWithTargetFileDescriptorOverwritesExistingFile() throws IOException {
+		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
+		FileDescriptor saved = fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
+
+		assertTrue( fileRepository.exists( target ) );
+
+		File one = fileRepository.getAsFile( target );
+		File two = fileRepository.getAsFile( saved );
+		assertEquals( target, saved );
+		assertNotEquals( one, two );
+		assertArrayEquals( Files.readAllBytes( one.toPath() ), Files.readAllBytes( two.toPath() ) );
+
+		fileRepository.delete( saved );
+		assertFalse( fileRepository.exists( target ) );
 	}
 
 	@AfterClass

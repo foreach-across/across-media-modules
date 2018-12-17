@@ -196,9 +196,19 @@ public class LocalFileRepository implements FileRepository
 	@Override
 	public FileDescriptor save( InputStream inputStream ) {
 		FileDescriptor descriptor = buildNewDescriptor( null, null );
+		return save( descriptor, inputStream, true );
+	}
+
+	@Override
+	public FileDescriptor save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
+		if ( !StringUtils.equals( repositoryId, target.getRepositoryId() ) ) {
+			throw new IllegalArgumentException(
+					"Invalid file descriptor. File repository " + target.getRepositoryId() +
+							" can not persist a file for the provided descriptor: " + target.getUri() );
+		}
 
 		try {
-			File newFile = getAsFile( descriptor );
+			File newFile = getAsFile( target );
 
 			if ( !newFile.exists() ) {
 				FileUtils.forceMkdir( newFile.getParentFile() );
@@ -207,14 +217,16 @@ public class LocalFileRepository implements FileRepository
 					throw new FileStorageException( "Unable to create new file " + newFile );
 				}
 			}
+			else if ( !overwriteExisting ) {
+				throw new IllegalArgumentException( "Unable to save file to the given descriptor: " + target.getUri() + ". File already exists." );
+			}
 
 			FileManagerUtils.fastCopy( inputStream, newFile );
 		}
 		catch ( IOException ioe ) {
 			throw new FileStorageException( ioe );
 		}
-
-		return descriptor;
+		return target;
 	}
 
 	/**

@@ -73,6 +73,19 @@ public interface FileRepository
 	FileDescriptor save( InputStream inputStream );
 
 	/**
+	 * Stores a file for a specified {@link FileDescriptor} in the repository.
+	 * The repository defined in the file descriptor should match the {@link FileRepository} the method is executed for.
+	 * <p/>
+	 * If the file may not be replaced and a file exists, an exception will be thrown.
+	 *
+	 * @param target            FileDescriptor that should be used for the file.
+	 * @param inputStream       InputStream of the file content.
+	 * @param overwriteExisting Whether an existing file at the same location should be replaced.
+	 * @return FileDescriptor instance.
+	 */
+	FileDescriptor save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting );
+
+	/**
 	 * Deletes a file from the repository.
 	 *
 	 * @param descriptor FileDescriptor instance.

@@ -140,13 +140,10 @@ public class TestFileManager
 		when( one.getAsFile( renameA ) ).thenReturn( mockFile );
 		InputStream streamA = mock( InputStream.class );
 		when( one.getInputStream( renameA ) ).thenReturn( streamA );
-		FileDescriptor tempDescriptor = new FileDescriptor( "two", null, "temp" );
-		when( two.save( streamA ) ).thenReturn( tempDescriptor );
-		when( two.move( tempDescriptor, renameC ) ).thenReturn( true );
+		when( two.save( renameC, streamA, true ) ).thenReturn( renameC );
 		when( one.delete( renameA ) ).thenReturn( true );
 		fileManager.move( renameA, renameC );
-		verify( two ).save( streamA );
-		verify( two ).move( tempDescriptor, renameC );
+		verify( two ).save( renameC, streamA, true );
 		verify( one ).delete( renameA );
 	}
 

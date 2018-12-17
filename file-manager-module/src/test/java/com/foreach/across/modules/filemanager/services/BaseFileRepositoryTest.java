@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  */
 public abstract class BaseFileRepositoryTest
 {
-	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
+	protected static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 
 	protected static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
 	protected static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
@@ -126,6 +126,36 @@ public abstract class BaseFileRepositoryTest
 		assertFalse( fileRepository.exists( descriptorOne ) );
 		assertTrue( fileRepository.exists( descriptorTwo ) );
 
+	}
+
+	@Test
+	public void savingWithTargetFileDescriptorOverwritesExistingFile() throws IOException {
+		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
+		FileDescriptor saved = fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
+
+		assertTrue( fileRepository.exists( target ) );
+
+		File one = fileRepository.getAsFile( target );
+		File two = fileRepository.getAsFile( saved );
+		assertEquals( target, saved );
+		assertEquals( one, two );
+
+		fileRepository.delete( saved );
+		assertFalse( fileRepository.exists( target ) );
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void savingWithTargetFileDescriptorForADifferentRepositoryThrowsAnError() throws IOException {
+		FileDescriptor target = FileDescriptor.of( "non-existing-repository-id", UUID.randomUUID().toString() );
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void savingWithTargetFileDescriptorWithoutOverwritingThrowsExceptionIfFileExists() throws IOException {
+		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
+
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
 	}
 
 	@Test
