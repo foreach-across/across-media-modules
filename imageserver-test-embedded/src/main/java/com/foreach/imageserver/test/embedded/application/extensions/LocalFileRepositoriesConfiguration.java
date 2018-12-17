@@ -15,11 +15,11 @@ import org.springframework.core.Ordered;
  */
 @ModuleConfiguration(FileManagerModule.NAME)
 @OrderInModule(Ordered.HIGHEST_PRECEDENCE)
-public class FileRepositoryConfiguration
+public class LocalFileRepositoriesConfiguration
 {
 	@Autowired
 	public void registerFileRepository( FileRepositoryRegistry fileRepositoryRegistry ) {
-		LocalFileRepository fileRepository = new LocalFileRepository( ServicesConfiguration.IMAGESERVER_VARIANTS_REPOSITORY, "local-data/image-variants" );
+		LocalFileRepository fileRepository = new LocalFileRepository( ServicesConfiguration.IMAGESERVER_ORIGINALS_REPOSITORY, "local-data/image-originals" );
 		fileRepositoryRegistry.registerRepository( fileRepository );
 	}
 }
