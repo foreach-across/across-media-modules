@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
 import org.springframework.web.multipart.MultipartResolver;
 
 import java.util.Optional;
@@ -36,10 +37,12 @@ public class WebConfiguration
 	@Bean
 	@Exposed
 	public PrefixingRequestMappingHandlerMapping imageServerHandlerMapping() {
-		return new PrefixingRequestMappingHandlerMapping(
+		PrefixingRequestMappingHandlerMapping mapping = new PrefixingRequestMappingHandlerMapping(
 				settings.getRootPath(),
 				new AnnotationClassFilter( ImageServerController.class, true )
 		);
+		mapping.setOrder( Ordered.HIGHEST_PRECEDENCE );
+		return mapping;
 	}
 
 	@Bean

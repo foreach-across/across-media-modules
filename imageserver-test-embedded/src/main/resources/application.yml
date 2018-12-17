@@ -33,18 +33,16 @@ across:
 server:
   error:
     includeStacktrace: ALWAYS
-  port: 8080
+  port: 8078
 
 spring:
-  mvc:
-    static-path-pattern:
   datasource:
     url: "jdbc:h2:./local-data/db/imageserver-test-embedded-db"
     username: sa
 
 imageServerCore:
   rootPath: /resources/images
-  accessToken: imageServerDemo-imgserver-changeme
+  accessToken: standalone-access-token
   createLocalClient: true
   imageServerUrl: "http://localhost:${server.port}/resources/images"
   md5HashToken: sample-hash-imgserver
@@ -56,8 +54,7 @@ imageServerCore:
     imageMagick:
       enabled: true
       useGraphicsMagick: true
-      path: /usr/local/bin/
 
 imageServerAdmin:
-  accessToken: imageServerDemo-imgserver-changeme
+  accessToken: standalone-access-token
   imageServerUrl: /resources/images
