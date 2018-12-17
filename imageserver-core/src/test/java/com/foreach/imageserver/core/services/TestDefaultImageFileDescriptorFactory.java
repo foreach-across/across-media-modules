@@ -41,7 +41,7 @@ public class TestDefaultImageFileDescriptorFactory
 
 		Assert.assertEquals( ServicesConfiguration.IMAGESERVER_ORIGINALS_REPOSITORY, fileDescriptor.getRepositoryId() );
 		Assert.assertEquals( "2018/12/11/09", fileDescriptor.getFolderId() );
-		Assert.assertEquals( "originals:2018/12/11/09:650071.png", fileDescriptor.getUri() );
+		Assert.assertEquals( "imageserver-originals:2018/12/11/09:650071.png", fileDescriptor.getUri() );
 		Assert.assertEquals( "650071.png", fileDescriptor.getFileId() );
 	}
 
@@ -70,7 +70,7 @@ public class TestDefaultImageFileDescriptorFactory
 
 		Assert.assertEquals( ServicesConfiguration.IMAGESERVER_VARIANTS_REPOSITORY, fileDescriptor.getRepositoryId() );
 		Assert.assertEquals( "ONLINE/2018/12/11/09", fileDescriptor.getFolderId() );
-		Assert.assertEquals( "variants:ONLINE/2018/12/11/09:650071-w300-h200.jpeg", fileDescriptor.getUri() );
+		Assert.assertEquals( "imageserver-variants:ONLINE/2018/12/11/09:650071-w300-h200.jpeg", fileDescriptor.getUri() );
 		Assert.assertEquals( "650071-w300-h200.jpeg", fileDescriptor.getFileId() );
 	}
 
