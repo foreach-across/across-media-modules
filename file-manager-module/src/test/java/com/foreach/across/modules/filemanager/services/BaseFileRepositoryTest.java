@@ -26,6 +26,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
@@ -131,16 +132,17 @@ public abstract class BaseFileRepositoryTest
 	@Test
 	public void savingWithTargetFileDescriptorOverwritesExistingFile() throws IOException {
 		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
-		FileDescriptor saved = fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
 
 		assertTrue( fileRepository.exists( target ) );
 
-		File one = fileRepository.getAsFile( target );
-		File two = fileRepository.getAsFile( saved );
-		assertEquals( target, saved );
-		assertEquals( one, two );
+		File saved = fileRepository.getAsFile( target );
+		File original = RES_TEXTFILE.getFile();
+		assertArrayEquals( Files.readAllBytes( saved.toPath() ), Files.readAllBytes( original.toPath() ) );
 
-		fileRepository.delete( saved );
+		// execute save again to verify no error is thrown
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
+		fileRepository.delete( target );
 		assertFalse( fileRepository.exists( target ) );
 	}
 

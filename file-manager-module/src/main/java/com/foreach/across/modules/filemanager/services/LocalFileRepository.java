@@ -196,11 +196,12 @@ public class LocalFileRepository implements FileRepository
 	@Override
 	public FileDescriptor save( InputStream inputStream ) {
 		FileDescriptor descriptor = buildNewDescriptor( null, null );
-		return save( descriptor, inputStream, true );
+		save( descriptor, inputStream, true );
+		return descriptor;
 	}
 
 	@Override
-	public FileDescriptor save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
+	public void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
 		if ( !StringUtils.equals( repositoryId, target.getRepositoryId() ) ) {
 			throw new IllegalArgumentException(
 					"Invalid file descriptor. File repository " + target.getRepositoryId() +
@@ -226,7 +227,6 @@ public class LocalFileRepository implements FileRepository
 		catch ( IOException ioe ) {
 			throw new FileStorageException( ioe );
 		}
-		return target;
 	}
 
 	/**

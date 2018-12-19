@@ -80,8 +80,8 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	}
 
 	@Override
-	public FileDescriptor save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
-		return requireRepository( target.getRepositoryId() ).save( target, inputStream, true );
+	public void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
+		requireRepository( target.getRepositoryId() ).save( target, inputStream, true );
 	}
 
 	@Override
@@ -126,7 +126,8 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 			return sourceRep.move( source, target );
 		}
 		else {
-			return save( target, sourceRep.getInputStream( source ), true ) != null && delete( source );
+			save( target, sourceRep.getInputStream( source ), true );
+			return delete( source );
 		}
 	}
 

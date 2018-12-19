@@ -43,6 +43,6 @@ public class S3OutputStream extends ByteArrayOutputStream
 	 */
 	@Override
 	public void flush() throws IOException, FileStorageException {
-		awsS3FileRepository.save( new ByteArrayInputStream( toByteArray() ), fileDescriptor );
+		awsS3FileRepository.save( fileDescriptor, new ByteArrayInputStream( toByteArray() ), true );
 	}
 }

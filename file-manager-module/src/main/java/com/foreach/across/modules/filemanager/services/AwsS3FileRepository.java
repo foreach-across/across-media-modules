@@ -137,15 +137,12 @@ public class AwsS3FileRepository implements FileRepository
 	@Override
 	public FileDescriptor save( InputStream inputStream ) {
 		FileDescriptor descriptor = buildNewDescriptor( null );
-		return save( descriptor, inputStream, true );
-	}
-
-	public FileDescriptor save( InputStream inputStream, FileDescriptor descriptor ) {
-		return save( descriptor, inputStream, true );
+		save( descriptor, inputStream, true );
+		return descriptor;
 	}
 
 	@Override
-	public FileDescriptor save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
+	public void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
 		if ( !StringUtils.equals( repositoryId, target.getRepositoryId() ) ) {
 			throw new IllegalArgumentException(
 					"Invalid file descriptor. File repository " + target.getRepositoryId() +
@@ -168,7 +165,6 @@ public class AwsS3FileRepository implements FileRepository
 			LOG.error( "Unable to save file on Amazon", e );
 			throw new FileStorageException( e );
 		}
-		return target;
 	}
 
 	@Override

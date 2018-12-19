@@ -140,7 +140,6 @@ public class TestFileManager
 		when( one.getAsFile( renameA ) ).thenReturn( mockFile );
 		InputStream streamA = mock( InputStream.class );
 		when( one.getInputStream( renameA ) ).thenReturn( streamA );
-		when( two.save( renameC, streamA, true ) ).thenReturn( renameC );
 		when( one.delete( renameA ) ).thenReturn( true );
 		fileManager.move( renameA, renameC );
 		verify( two ).save( renameC, streamA, true );
