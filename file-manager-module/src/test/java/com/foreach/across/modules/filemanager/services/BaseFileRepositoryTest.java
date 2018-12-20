@@ -26,6 +26,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
@@ -36,7 +37,7 @@ import static org.junit.Assert.*;
  */
 public abstract class BaseFileRepositoryTest
 {
-	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
+	protected static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 
 	protected static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
 	protected static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
@@ -126,6 +127,37 @@ public abstract class BaseFileRepositoryTest
 		assertFalse( fileRepository.exists( descriptorOne ) );
 		assertTrue( fileRepository.exists( descriptorTwo ) );
 
+	}
+
+	@Test
+	public void savingWithTargetFileDescriptorOverwritesExistingFile() throws IOException {
+		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
+
+		assertTrue( fileRepository.exists( target ) );
+
+		File saved = fileRepository.getAsFile( target );
+		File original = RES_TEXTFILE.getFile();
+		assertArrayEquals( Files.readAllBytes( saved.toPath() ), Files.readAllBytes( original.toPath() ) );
+
+		// execute save again to verify no error is thrown
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
+		fileRepository.delete( target );
+		assertFalse( fileRepository.exists( target ) );
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void savingWithTargetFileDescriptorForADifferentRepositoryThrowsAnError() throws IOException {
+		FileDescriptor target = FileDescriptor.of( "non-existing-repository-id", UUID.randomUUID().toString() );
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void savingWithTargetFileDescriptorWithoutOverwritingThrowsExceptionIfFileExists() throws IOException {
+		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
+
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
 	}
 
 	@Test

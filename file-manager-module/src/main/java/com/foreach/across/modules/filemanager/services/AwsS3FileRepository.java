@@ -137,15 +137,27 @@ public class AwsS3FileRepository implements FileRepository
 	@Override
 	public FileDescriptor save( InputStream inputStream ) {
 		FileDescriptor descriptor = buildNewDescriptor( null );
-		return save( inputStream, descriptor );
+		save( descriptor, inputStream, true );
+		return descriptor;
 	}
 
-	public FileDescriptor save( InputStream inputStream, FileDescriptor descriptor ) {
+	@Override
+	public void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
+		if ( !StringUtils.equals( repositoryId, target.getRepositoryId() ) ) {
+			throw new IllegalArgumentException(
+					"Invalid file descriptor. File repository " + target.getRepositoryId() +
+							" can not persist a file for the provided descriptor: " + target.getUri() );
+		}
+
+		if ( !overwriteExisting && exists( target ) ) {
+			throw new IllegalArgumentException( "Unable to save file to the given descriptor: " + target.getUri() + ". File already exists." );
+		}
+
 		try {
 			PutObjectRequest putObjectRequest =
-					new PutObjectRequest( bucketName, buildAwsPath( descriptor ), inputStream, new ObjectMetadata() );
-			if ( descriptor.getFolderId() != null ) {
-				createFolder( descriptor.getFolderId() );
+					new PutObjectRequest( bucketName, buildAwsPath( target ), inputStream, new ObjectMetadata() );
+			if ( target.getFolderId() != null ) {
+				createFolder( target.getFolderId() );
 			}
 			amazonS3Client.putObject( putObjectRequest );
 		}
@@ -153,7 +165,6 @@ public class AwsS3FileRepository implements FileRepository
 			LOG.error( "Unable to save file on Amazon", e );
 			throw new FileStorageException( e );
 		}
-		return descriptor;
 	}
 
 	@Override

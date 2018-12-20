@@ -65,8 +65,23 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	}
 
 	@Override
+	public FileDescriptor save( String repositoryId, File file ) {
+		return requireRepository( repositoryId ).save( file );
+	}
+
+	@Override
 	public FileDescriptor save( InputStream inputStream ) {
 		return save( DEFAULT_REPOSITORY, inputStream );
+	}
+
+	@Override
+	public FileDescriptor save( String repositoryId, InputStream inputStream ) {
+		return requireRepository( repositoryId ).save( inputStream );
+	}
+
+	@Override
+	public void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
+		requireRepository( target.getRepositoryId() ).save( target, inputStream, true );
 	}
 
 	@Override
@@ -77,16 +92,6 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	@Override
 	public FileDescriptor moveInto( String repositoryId, File file ) {
 		return requireRepository( repositoryId ).moveInto( file );
-	}
-
-	@Override
-	public FileDescriptor save( String repositoryId, File file ) {
-		return requireRepository( repositoryId ).save( file );
-	}
-
-	@Override
-	public FileDescriptor save( String repositoryId, InputStream inputStream ) {
-		return requireRepository( repositoryId ).save( inputStream );
 	}
 
 	@Override
@@ -121,9 +126,8 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 			return sourceRep.move( source, target );
 		}
 		else {
-			FileRepository targetRep = requireRepository( target.getRepositoryId() );
-			FileDescriptor temp = save( targetRep.getRepositoryId(), sourceRep.getInputStream( source ) );
-			return move( temp, target ) && delete( source );
+			save( target, sourceRep.getInputStream( source ), true );
+			return delete( source );
 		}
 	}
 
