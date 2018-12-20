@@ -80,7 +80,7 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	}
 
 	@Override
-	public void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
+	public void save( FileDescriptor target, InputStream inputStream, boolean replaceExisting ) {
 		requireRepository( target.getRepositoryId() ).save( target, inputStream, true );
 	}
 

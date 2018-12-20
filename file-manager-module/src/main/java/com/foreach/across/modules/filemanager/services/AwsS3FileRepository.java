@@ -142,14 +142,14 @@ public class AwsS3FileRepository implements FileRepository
 	}
 
 	@Override
-	public void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
+	public void save( FileDescriptor target, InputStream inputStream, boolean replaceExisting ) {
 		if ( !StringUtils.equals( repositoryId, target.getRepositoryId() ) ) {
 			throw new IllegalArgumentException(
 					"Invalid file descriptor. File repository " + target.getRepositoryId() +
 							" can not persist a file for the provided descriptor: " + target.getUri() );
 		}
 
-		if ( !overwriteExisting && exists( target ) ) {
+		if ( !replaceExisting && exists( target ) ) {
 			throw new IllegalArgumentException( "Unable to save file to the given descriptor: " + target.getUri() + ". File already exists." );
 		}
 

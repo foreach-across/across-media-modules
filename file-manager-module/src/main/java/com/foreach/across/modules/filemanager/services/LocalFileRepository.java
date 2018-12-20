@@ -201,7 +201,7 @@ public class LocalFileRepository implements FileRepository
 	}
 
 	@Override
-	public void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
+	public void save( FileDescriptor target, InputStream inputStream, boolean replaceExisting ) {
 		if ( !StringUtils.equals( repositoryId, target.getRepositoryId() ) ) {
 			throw new IllegalArgumentException(
 					"Invalid file descriptor. File repository " + target.getRepositoryId() +
@@ -218,7 +218,7 @@ public class LocalFileRepository implements FileRepository
 					throw new FileStorageException( "Unable to create new file " + newFile );
 				}
 			}
-			else if ( !overwriteExisting ) {
+			else if ( !replaceExisting ) {
 				throw new IllegalArgumentException( "Unable to save file to the given descriptor: " + target.getUri() + ". File already exists." );
 			}
 

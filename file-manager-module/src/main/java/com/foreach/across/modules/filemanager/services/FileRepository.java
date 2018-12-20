@@ -80,10 +80,10 @@ public interface FileRepository
 	 *
 	 * @param target            FileDescriptor that should be used for the file.
 	 * @param inputStream       InputStream of the file content.
-	 * @param overwriteExisting Whether an existing file at the same location should be replaced.
+	 * @param replaceExisting Whether an existing file at the same location should be replaced.
 	 * @return FileDescriptor instance.
 	 */
-	void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting );
+	void save( FileDescriptor target, InputStream inputStream, boolean replaceExisting );
 
 	/**
 	 * Deletes a file from the repository.

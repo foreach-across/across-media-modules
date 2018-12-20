@@ -67,8 +67,8 @@ public class FileRepositoryDelegate implements FileRepository
 	}
 
 	@Override
-	public void save( FileDescriptor target, InputStream inputStream, boolean overwriteExisting ) {
-		repository().save( target, inputStream, overwriteExisting );
+	public void save( FileDescriptor target, InputStream inputStream, boolean replaceExisting ) {
+		repository().save( target, inputStream, replaceExisting );
 	}
 
 	@Override
