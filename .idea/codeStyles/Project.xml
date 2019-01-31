@@ -249,7 +249,6 @@
     <codeStyleSettings language="ruby">
       <option name="KEEP_LINE_BREAKS" value="false" />
       <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
-      <option name="PARENT_SETTINGS_INSTALLED" value="true" />
     </codeStyleSettings>
   </code_scheme>
 </component>
