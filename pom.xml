@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>standard-module-bom</artifactId>
-		<version>3.1.1.RELEASE</version>
+		<version>3.2.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.foreach.across.modules</groupId>
@@ -74,7 +74,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>admin-web-module</artifactId>
-				<version>3.0.1.RELEASE</version>
+				<version>3.1.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>

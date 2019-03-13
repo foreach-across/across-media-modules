@@ -27,8 +27,7 @@
             return true;
         } );
 
-
-        $( '[data-wcm-component-id]' ).each(
+        $( '[data-wcm-component-id]', node ).each(
                 function () {
                     var component = $( this );
                     var firstLink = component.find( '> .pull-right > ul.wcm-component-tabs a[data-wcm-component-tab]' ).first();
