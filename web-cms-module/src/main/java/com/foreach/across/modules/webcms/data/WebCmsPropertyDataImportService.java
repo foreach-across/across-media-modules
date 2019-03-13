@@ -74,7 +74,7 @@ public final class WebCmsPropertyDataImportService
 	}
 
 	@Autowired
-	void setPropertyDataImporters( @RefreshableCollection(includeModuleInternals = true) Collection<WebCmsPropertyDataImporter> propertyDataImporters ) {
+	void setPropertyDataImporters( @RefreshableCollection(includeModuleInternals = true, incremental = true) Collection<WebCmsPropertyDataImporter> propertyDataImporters ) {
 		this.propertyDataImporters = propertyDataImporters;
 	}
 }
