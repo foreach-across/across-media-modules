@@ -16,12 +16,15 @@
 
 package it;
 
+import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import modules.test.CmsTestModule;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * Base class for all integration tests using the same application context with a same backing db.
@@ -39,6 +42,11 @@ public abstract class AbstractCmsApplicationWithTestDataIT extends AbstractMockM
 		@Bean
 		CmsTestModule cmsTestModule() {
 			return new CmsTestModule();
+		}
+
+		@Bean
+		WebCmsImageConnector webCmsImageConnector() {
+			return mock( WebCmsImageConnector.class );
 		}
 	}
 }

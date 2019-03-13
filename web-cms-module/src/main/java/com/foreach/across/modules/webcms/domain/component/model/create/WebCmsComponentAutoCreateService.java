@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.model.create;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.modules.entity.util.EntityUtils;
+import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
@@ -47,6 +48,7 @@ import java.util.Optional;
 public class WebCmsComponentAutoCreateService
 {
 	private final WebCmsComponentModelService componentModelService;
+	private final WebCmsDataConversionService dataConversionService;
 
 	private Collection<WebCmsComponentAutoCreateStrategy> createStrategies = Collections.emptyList();
 
@@ -122,6 +124,13 @@ public class WebCmsComponentAutoCreateService
 				                .findFirst()
 				                .orElseThrow( () -> new IllegalStateException( "No valid auto-create strategy for " + componentType ) )
 				                .buildComponentModel( this, component, task );
+
+				if ( component.hasMetadata() ) {
+					dataConversionService.convertToPropertyValues( task.getMetadata(), component.getMetadata() );
+				}
+				else if ( !task.getMetadata().isEmpty() ) {
+					LOG.warn( "Ignoring metadata for component {}: {}", component.getName(), task.getMetadata() );
+				}
 
 				return component;
 			}

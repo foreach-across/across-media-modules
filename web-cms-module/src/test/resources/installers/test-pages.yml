@@ -119,3 +119,14 @@ assets:
       pathSegment: auto-create-complex-container-components
       published: true
       pageType: default
+
+    #
+    # Page with a custom template for automatically creating components with metadata attributes.
+    #
+    - objectId: "wcm:asset:page:auto-create-metadata"
+      title: Auto create metadata
+      template: th/test/pages/auto-create/metadata-components
+      pathSegmentGenerated: false
+      pathSegment: auto-create-metadata
+      published: true
+      pageType: default

@@ -23,9 +23,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Represents a task for creating components.
@@ -52,6 +50,9 @@ public class WebCmsComponentAutoCreateTask
 
 	private final Deque<WebCmsComponentAutoCreateTask> children = new ArrayDeque<>();
 
+	@Getter
+	private final Map<String, Object> metadata = new LinkedHashMap<>();
+
 	private int sortIndex;
 	private WebCmsObject owner;
 	private WebCmsDomain domain;
@@ -61,6 +62,10 @@ public class WebCmsComponentAutoCreateTask
 	public void addChild( WebCmsComponentAutoCreateTask task ) {
 		task.sortIndex = children.size() + 1;
 		children.add( task );
+	}
+
+	public void addMetadata( String key, Object value ) {
+		metadata.put( key, value );
 	}
 
 	public boolean hasChildren() {

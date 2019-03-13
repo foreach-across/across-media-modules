@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.IEngineContext;
@@ -69,6 +70,7 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	static final String ATTR_AUTO_CREATE = PREFIX + ":auto-create";
 	static final String ATTR_SCOPE = PREFIX + ":scope";
 	static final String ATTR_PARENT_CREATE_INCLUDE = PREFIX + ":parent-create-include";
+	static final String ATTR_META_PREFIX = PREFIX + ":meta-";
 
 	// used as a value for wcm:scope to ensure a component does not get auto created
 	static final String SCOPE_PLACEHOLDER_CREATE = "_placeholder";
@@ -245,6 +247,19 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 				              modelFactory.createProcessingInstruction( PlaceholderTemplatePostProcessor.STOP_PARSE_PLACEHOLDERS, "" ) );
 			}
 		}
+
+		attachMetadata( task, elementTag );
+	}
+
+	private void attachMetadata( WebCmsComponentAutoCreateTask task, IProcessableElementTag elementTag ) {
+		for ( IAttribute attr : elementTag.getAllAttributes() ) {
+			if ( attr.getAttributeCompleteName().startsWith( ATTR_META_PREFIX ) ) {
+				String metadataPropertyName = StringUtils.removeStart( attr.getAttributeCompleteName(), ATTR_META_PREFIX );
+				if ( StringUtils.isNotEmpty( metadataPropertyName ) ) {
+					task.addMetadata( metadataPropertyName, attr.getValue() );
+				}
+			}
+		}
 	}
 
 	private ITemplateEvent createContainerComponentRenderInstruction( IModelFactory modelFactory, WebCmsComponentAutoCreateTask task ) {
@@ -407,6 +422,12 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 
 		for ( String attributeToRemove : ATTRIBUTES_TO_REMOVE ) {
 			newFirstEvent = modelFactory.removeAttribute( newFirstEvent, attributeToRemove );
+		}
+
+		for ( IAttribute attr : elementTag.getAllAttributes() ) {
+			if ( attr.getAttributeCompleteName().startsWith( ATTR_META_PREFIX ) ) {
+				newFirstEvent = modelFactory.removeAttribute( newFirstEvent, attr.getAttributeCompleteName() );
+			}
 		}
 
 		if ( newFirstEvent != elementTag ) {
