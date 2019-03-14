@@ -56,16 +56,16 @@ public class TextWebCmsComponentAdminResources implements WebResourcePackage
 						.toBucket( JAVASCRIPT_PAGE_END ),
 
 				// CodeMirror
-				add( WebResource.css( "@webjars:/codemirror-minified/5.44.0/lib/codemirror.css" ) )
+				add( WebResource.css( "@webjars:org.webjars.npm/codemirror-minified/5.44.0/lib/codemirror.css" ) )
 		                   .withKey( "codemirror-css" )
 		                   .toBucket( CSS ),
-				add( WebResource.javascript( "@webjars:/codemirror-minified/5.44.0/lib/codemirror.js" ) )
+				add( WebResource.javascript( "@webjars:org.webjars.npm/codemirror-minified/5.44.0/lib/codemirror.js" ) )
 		                   .withKey( "codemirror" )
 		                   .toBucket( JAVASCRIPT_PAGE_END ),
-				add( WebResource.javascript( "@webjars:/codemirror-minified/5.44.0/mode/htmlmixed/htmlmixed.js" ) )
+				add( WebResource.javascript( "@webjars:org.webjars.npm/codemirror-minified/5.44.0/mode/htmlmixed/htmlmixed.js" ) )
 		                   .withKey( "codemirror-htmlmixed" )
 		                   .toBucket( JAVASCRIPT_PAGE_END ),
-				add( WebResource.javascript( "@webjars:/codemirror-minified/5.44.0/mode/xml/xml.js" ) )
+				add( WebResource.javascript( "@webjars:org.webjars.npm/codemirror-minified/5.44.0/mode/xml/xml.js" ) )
 		                   .withKey( "codemirror-xml" )
 		                   .toBucket( JAVASCRIPT_PAGE_END ),
 

@@ -2,8 +2,8 @@
 <head>
     <title th:text="${asset.title}">Page title</title>
 
-    <link rel="stylesheet" type="text/css" th:each="css : ${webResourceRegistry.getResources('css')}"
-          th:href="@{${css.data}}"/>
+    <across:web-resources bucket="css" />
+    <across:web-resources bucket="javascript" />
 </head>
 <body>
 <!--
@@ -20,7 +20,6 @@
     </div>
 </div>
 
-<script th:each="javascript : ${webResourceRegistry.getResources('javascript-page-end')}" th:src="@{${javascript.data}}"
-        th:if="${javascript.location != 'inline'}"></script>
+<across:web-resources bucket="javascript-page-end" />
 </body>
 </html>
