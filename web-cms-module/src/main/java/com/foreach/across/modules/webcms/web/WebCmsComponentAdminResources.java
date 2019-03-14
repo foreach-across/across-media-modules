@@ -48,11 +48,11 @@ public class WebCmsComponentAdminResources implements WebResourcePackage
 	@Override
 	public void install( WebResourceRegistry webResourceRegistry ) {
 		webResourceRegistry.apply(
-				add( WebResource.javascript( "https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" ) )
+				add( WebResource.javascript( "@webjars:/jquery-ui/1.12.1/jquery-ui.min.js" ) )
 						.withKey( "jquery-ui" )
 						.toBucket( JAVASCRIPT_PAGE_END )
 						.before( BootstrapUiWebResources.NAME ),
-				add( WebResource.javascript( "https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js" ) )
+				add( WebResource.javascript( "@webjars:/bootbox/4.4.0/bootbox.js" ) )
 						.withKey( "bootbox" )
 						.toBucket( JAVASCRIPT_PAGE_END ),
 				add( WebResource.javascript( "@static:/WebCmsModule/js/wcm-admin-components.js" ) )

@@ -123,6 +123,34 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Webjars -->
+		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>codemirror-minified</artifactId>
+			<version>5.44.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>lodash</artifactId>
+			<version>4.17.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootbox</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery-ui</artifactId>
+			<version>1.12.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.webjars</groupId>
+					<artifactId>jquery</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 
 	<build>

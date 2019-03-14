@@ -16,11 +16,17 @@
 
 package com.foreach.across.modules.webcms.web;
 
-import com.foreach.across.modules.web.resource.SimpleWebResourcePackage;
 import com.foreach.across.modules.web.resource.WebResource;
+import com.foreach.across.modules.web.resource.WebResourcePackage;
 import com.foreach.across.modules.web.resource.WebResourcePackageManager;
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.web.resource.WebResource.CSS;
+import static com.foreach.across.modules.web.resource.WebResource.JAVASCRIPT_PAGE_END;
+import static com.foreach.across.modules.web.resource.WebResourceRule.add;
+import static com.foreach.across.modules.web.resource.WebResourceRule.addPackage;
 
 /**
  * @author Arne Vandamme
@@ -28,38 +34,44 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnAdminUI
 @Component
-public class TextWebCmsComponentAdminResources extends SimpleWebResourcePackage
+public class TextWebCmsComponentAdminResources implements WebResourcePackage
 {
 	public static final String NAME = "wcm-text-components-admin";
 
 	public TextWebCmsComponentAdminResources( WebResourcePackageManager adminWebResourcePackageManager ) {
 		adminWebResourcePackageManager.register( NAME, this );
+	}
 
-		setDependencies( ImageWebCmsComponentAdminResources.NAME );
-
-		setWebResources(
-				new WebResource( WebResource.CSS, NAME, "/static/WebCmsModule/css/wcm-admin-text-component-styles.css", WebResource.VIEWS ),
-
-				// ckeditor
-				//new WebResource( WebResource.JAVASCRIPT_PAGE_END, "ckeditor", "https://cdn.ckeditor.com/4.6.2/standard/ckeditor.js", WebResource.EXTERNAL ),
+	@Override
+	public void install( WebResourceRegistry webResourceRegistry ) {
+		webResourceRegistry.apply(
+				addPackage( ImageWebCmsComponentAdminResources.NAME ),
 
 				// TinyMCE
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "tinymce", "/static/WebCmsModule/js/tinymce/tinymce.min.js", WebResource.VIEWS ),
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "sticky", "/static/WebCmsModule/js/jquery.sticky.js", WebResource.VIEWS ),
+				add( WebResource.javascript( "@static:/WebCmsModule/js/tinymce/tinymce.min.js" ) )
+						.withKey( "tinymce" )
+						.toBucket( JAVASCRIPT_PAGE_END ),
+				add( WebResource.javascript( "@static:/WebCmsModule/js/jquery.sticky.js" ) )
+						.withKey( "sticky" )
+						.toBucket( JAVASCRIPT_PAGE_END ),
 
-				// codemirror
-				new WebResource( WebResource.CSS, "codemirror-css", "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css",
-				                 WebResource.EXTERNAL ),
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "codemirror", "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js",
-				                 WebResource.EXTERNAL ),
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "codemirror-htmlmixed",
-				                 "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/htmlmixed/htmlmixed.min.js",
-				                 WebResource.EXTERNAL ),
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "codemirror-xml",
-				                 "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js",
-				                 WebResource.EXTERNAL ),
+				// CodeMirror
+				add( WebResource.css( "@webjars:/codemirror-minified/5.44.0/lib/codemirror.css" ) )
+		                   .withKey( "codemirror-css" )
+		                   .toBucket( CSS ),
+				add( WebResource.javascript( "@webjars:/codemirror-minified/5.44.0/lib/codemirror.js" ) )
+		                   .withKey( "codemirror" )
+		                   .toBucket( JAVASCRIPT_PAGE_END ),
+				add( WebResource.javascript( "@webjars:/codemirror-minified/5.44.0/mode/htmlmixed/htmlmixed.js" ) )
+		                   .withKey( "codemirror-htmlmixed" )
+		                   .toBucket( JAVASCRIPT_PAGE_END ),
+				add( WebResource.javascript( "@webjars:/codemirror-minified/5.44.0/mode/xml/xml.js" ) )
+		                   .withKey( "codemirror-xml" )
+		                   .toBucket( JAVASCRIPT_PAGE_END ),
 
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, NAME, "/static/WebCmsModule/js/wcm-admin-text-components.js", WebResource.VIEWS )
+				// WebCmsModule specific
+				add( WebResource.css( "@static:/WebCmsModule/css/wcm-admin-text-component-styles.css" ) ).withKey( NAME ).toBucket( CSS ),
+				add( WebResource.javascript( "@static:/WebCmsModule/js/wcm-admin-text-components.js" ) ).withKey( NAME ).toBucket( JAVASCRIPT_PAGE_END )
 		);
 	}
 }

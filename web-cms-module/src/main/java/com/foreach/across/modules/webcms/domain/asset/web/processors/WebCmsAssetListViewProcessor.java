@@ -26,6 +26,7 @@ import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.resource.WebResourceRule;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 
 import java.util.Date;
@@ -69,6 +70,10 @@ public class WebCmsAssetListViewProcessor extends EntityViewProcessorAdapter
 
 	@Override
 	protected void registerWebResources( EntityViewRequest entityViewRequest, EntityView entityView, WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.addWithKey( WebResource.CSS, "wcm-styles", "/static/WebCmsModule/css/wcm-admin-styles.css", WebResource.VIEWS );
+		webResourceRegistry.apply(
+				WebResourceRule.add( WebResource.css( "@static:/WebCmsModule/css/wcm-admin-styles.css" ) )
+				               .withKey( "wcm-styles" )
+				               .toBucket( WebResource.CSS )
+		);
 	}
 }
