@@ -18,6 +18,8 @@ package com.foreach.across.modules.webcms.domain.image;
 
 import com.foreach.across.modules.webcms.data.WebCmsDataConversionService;
 import com.foreach.across.modules.webcms.domain.WebCmsObjectNotFoundException;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +59,7 @@ final class StringToWebCmsImageConverter implements Converter<String, WebCmsImag
 	private final ApplicationContext applicationContext;
 	private final WebCmsImageConnector imageConnector;
 	private final WebCmsImageRepository imageRepository;
+	private final WebCmsMultiDomainService multiDomainService;
 
 	@Override
 	public WebCmsImage convert( String source ) {
@@ -88,7 +91,8 @@ final class StringToWebCmsImageConverter implements Converter<String, WebCmsImag
 			return imageRepository.findOneByObjectId( source );
 		}
 
-		String objectId = generateImageObjectId( source );
+		WebCmsDomain currentDomain = multiDomainService.getCurrentDomainForType( WebCmsImage.class );
+		String objectId = generateImageObjectId( source, currentDomain );
 		WebCmsImage image = imageRepository.findOneByObjectId( objectId );
 
 		if ( image == null ) {
@@ -97,7 +101,12 @@ final class StringToWebCmsImageConverter implements Converter<String, WebCmsImag
 				throw new IllegalArgumentException( "Image resource does not exist: " + source );
 			}
 
-			image = WebCmsImage.builder().objectId( objectId ).name( imageResource.getFilename() ).published( true ).build();
+			image = WebCmsImage.builder()
+			                   .objectId( objectId )
+			                   .domain( currentDomain )
+			                   .name( imageResource.getFilename() )
+			                   .published( true )
+			                   .build();
 			byte[] imageData = StreamUtils.copyToByteArray( imageResource.getInputStream() );
 
 			imageConnector.saveImageData( image, imageData );
@@ -107,10 +116,14 @@ final class StringToWebCmsImageConverter implements Converter<String, WebCmsImag
 		return image;
 	}
 
-	private String generateImageObjectId( String source ) {
-		return WebCmsUtils.prefixObjectIdForCollection( "import-" + DigestUtils.md5DigestAsHex( source.getBytes( Charset.forName( "UTF-8" ) ) ),
-		                                                WebCmsImage.COLLECTION_ID );
+	private String generateImageObjectId( String source, WebCmsDomain domain ) {
+		String suffix = "import-" + DigestUtils.md5DigestAsHex( source.getBytes( Charset.forName( "UTF-8" ) ) );
 
+		if ( !WebCmsDomain.isNoDomain( domain ) ) {
+			suffix += "-" + DigestUtils.md5DigestAsHex( domain.getObjectId().getBytes() );
+		}
+
+		return WebCmsUtils.prefixObjectIdForCollection( suffix, WebCmsImage.COLLECTION_ID );
 	}
 
 	@Autowired
