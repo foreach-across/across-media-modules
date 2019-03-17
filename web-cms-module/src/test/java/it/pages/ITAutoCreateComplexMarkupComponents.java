@@ -22,8 +22,8 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationWithTestDataIT
+class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
@@ -43,8 +43,8 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	private static Html html;
 	private static WebCmsPage page;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		if ( html == null ) {
 			page = pageService.findByCanonicalPath( "/auto-create-complex-markup-components" )
 			                  .orElse( null );
@@ -53,7 +53,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 		}
 	}
 
-	public void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
+	void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
 		assertNotNull( page );
 
 		assertEquals( "wcm:asset:page:auto-create-complex-markup-components", page.getObjectId() );
@@ -70,7 +70,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	}
 
 	@Test
-	public void placeholdersInsideMarkupResultInPlaceholderMarkers() {
+	void placeholdersInsideMarkupResultInPlaceholderMarkers() {
 		html.assertElementHasHTML( "Default markup <span>one</span> with two content", "#markup-with-placeholders" );
 
 		val markup = componentModelService.getComponentModelByName( "markup-with-placeholders", page, TextWebCmsComponentModel.class );
@@ -78,7 +78,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	}
 
 	@Test
-	public void placeholdersInsideMarkupAreRenderedIfTheyHaveAnIncludeValue() {
+	void placeholdersInsideMarkupAreRenderedIfTheyHaveAnIncludeValue() {
 		html.assertElementHasHTML( "Default markup <span>one</span> with two content", "#markup-with-included-placeholders" );
 
 		val markup = componentModelService.getComponentModelByName( "markup-with-included-placeholders", page, TextWebCmsComponentModel.class );
@@ -86,7 +86,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	}
 
 	@Test
-	public void componentsInsideMarkupResultInComponentMarkers() {
+	void componentsInsideMarkupResultInComponentMarkers() {
 		html.assertElementHasHTML( "Markup with Global component: footer and content Global component: content and not found: <div></div>",
 		                           "#markup-with-components" );
 
@@ -99,7 +99,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	}
 
 	@Test
-	public void componentsInsideMarkupAreRenderedIfTheyHaveAnIncludeValue() {
+	void componentsInsideMarkupAreRenderedIfTheyHaveAnIncludeValue() {
 		html.assertElementHasHTML(
 				"Markup with Global component: footer and content Global component: content and not found: <div>not found</div>",
 				"#markup-with-included-components"
@@ -112,7 +112,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	}
 
 	@Test
-	public void componentsInsideMarkupCanBeCreatedAutomaticallyAsWell() {
+	void componentsInsideMarkupCanBeCreatedAutomaticallyAsWell() {
 		val globalCreated = componentModelService.getComponentModelByName( "auto-created-for-include", null, TextWebCmsComponentModel.class );
 		assertEquals( "Global component: auto-created for include", globalCreated.getContent() );
 
@@ -130,7 +130,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	}
 
 	@Test
-	public void componentsAndPlaceholdersCanBeCombinedInMarkup() {
+	void componentsAndPlaceholdersCanBeCombinedInMarkup() {
 		val markup = componentModelService.getComponentModelByName( "markup-with-placeholder-and-component", page, TextWebCmsComponentModel.class );
 		assertEqualsIgnoreWhitespace( "Markup with @@wcm:component(footer,default,true)@@ and @@wcm:placeholder(two)@@", markup.getContent() );
 
@@ -138,7 +138,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	}
 
 	@Test
-	public void componentsAndPlaceholdersCanBeNested() {
+	void componentsAndPlaceholdersCanBeNested() {
 		val componentTwo = componentModelService.getComponentModelByName( "component-two", page, TextWebCmsComponentModel.class );
 		assertEqualsIgnoreWhitespace( "Component two: Placeholder two", componentTwo.getContent() );
 
@@ -155,7 +155,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	}
 
 	@Test
-	public void componentsInsidePlaceholdersAreAutoCreatedAndRendered() {
+	void componentsInsidePlaceholdersAreAutoCreatedAndRendered() {
 		val headerText = componentModelService.getComponentModelByName( "header-text-in-placeholder", page, TextWebCmsComponentModel.class );
 		assertEqualsIgnoreWhitespace( "new component", headerText.getContent() );
 
@@ -172,7 +172,7 @@ public class ITAutoCreateComplexMarkupComponents extends AbstractCmsApplicationW
 	}
 
 	@Test
-	public void secondRenderYieldsSameOutput() {
+	void secondRenderYieldsSameOutput() {
 		Html secondRender = html( "/auto-create-complex-markup-components" );
 		secondRender.assertElementHasHTML( "Default markup <span>one</span> with two content", "#markup-with-placeholders" );
 		secondRender.assertElementHasHTML( "Default markup <span>one</span> with two content", "#markup-with-included-placeholders" );

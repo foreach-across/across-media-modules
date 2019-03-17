@@ -23,8 +23,8 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDataIT
+class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
@@ -44,8 +44,8 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	private static Html html;
 	private static WebCmsPage page;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		if ( html == null ) {
 			page = pageService.findByCanonicalPath( "/auto-create-creation-scope" )
 			                  .orElse( null );
@@ -54,7 +54,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 		}
 	}
 
-	public void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
+	void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
 		assertNotNull( page );
 
 		assertEquals( "wcm:asset:page:auto-create-creation-scope", page.getObjectId() );
@@ -70,7 +70,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	}
 
 	@Test
-	public void componentIsCreatedOnLowestLevelAndAsMarkupTypeByDefault() {
+	void componentIsCreatedOnLowestLevelAndAsMarkupTypeByDefault() {
 		html.assertElementHasText( "Page markup: Auto create creation scope", "#no-scope-or-type-specified" );
 
 		val text = componentModelService.getComponentModelByName( "page-markup", page, TextWebCmsComponentModel.class );
@@ -82,7 +82,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	}
 
 	@Test
-	public void creationScopeIsTakenIntoAccount() {
+	void creationScopeIsTakenIntoAccount() {
 		html.assertElementHasText( "Global markup: Auto create creation scope", "#creation-scope-specified" );
 
 		assertNull( componentModelService.getComponentModelByName( "global-markup", page ) );
@@ -96,7 +96,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	}
 
 	@Test
-	public void componentScopeIsUsedAsCreationScope() {
+	void componentScopeIsUsedAsCreationScope() {
 		html.assertElementHasText( "Global markup2: Auto create creation scope", "#component-scope-specified" );
 
 		assertNull( componentModelService.getComponentModelByName( "global-markup2", page ) );
@@ -110,7 +110,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	}
 
 	@Test
-	public void assetScopeCreationLinksToTheAsset() {
+	void assetScopeCreationLinksToTheAsset() {
 		html.assertElementHasText( "Asset markup: Auto create creation scope", "#component-scope-specified-asset" );
 
 		val text = componentModelService.getComponentModelByName( "asset-markup", page, TextWebCmsComponentModel.class );
@@ -122,7 +122,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	}
 
 	@Test
-	public void domainScopeCreationDefaultsToGlobal() {
+	void domainScopeCreationDefaultsToGlobal() {
 		html.assertElementHasText( "Domain markup: Auto create creation scope", "#component-scope-specified-domain" );
 
 		assertNull( componentModelService.getComponentModelByName( "domain-markup", page ) );
@@ -136,7 +136,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	}
 
 	@Test
-	public void componentIsCreatedWithTypeSpecified() {
+	void componentIsCreatedWithTypeSpecified() {
 		html.assertElementHasText( "Page rich-text: Auto create creation scope", "#type-specified" );
 
 		val text = componentModelService.getComponentModelByName( "page-rich-text", page, TextWebCmsComponentModel.class );
@@ -148,7 +148,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	}
 
 	@Test
-	public void defaultTypeIsContainerIfChildComponentsGetCreated() {
+	void defaultTypeIsContainerIfChildComponentsGetCreated() {
 		html.assertElementHasHTML( "container titlecontainer body", "#default-container-type" );
 
 		val container = componentModelService.getComponentModelByName( "page-container", page, ContainerWebCmsComponentModel.class );
@@ -171,7 +171,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	}
 
 	@Test
-	public void nestedStructureIsReflectedInContainers() {
+	void nestedStructureIsReflectedInContainers() {
 		html.assertElementHasHTML( "container titlecontainer sub titlecontainer footer text", "#nested-containers" );
 
 		val container = componentModelService.getComponentModelByName( "page-nested-container", page, ContainerWebCmsComponentModel.class );
@@ -210,7 +210,7 @@ public class ITAutoCreateCreationScope extends AbstractCmsApplicationWithTestDat
 	}
 
 	@Test
-	public void secondRenderYieldsSameOutput() {
+	void secondRenderYieldsSameOutput() {
 		Html secondRender = html( "/auto-create-creation-scope" );
 		secondRender.assertElementHasText( "Page markup: Auto create creation scope", "#no-scope-or-type-specified" );
 		secondRender.assertElementHasText( "Global markup: Auto create creation scope", "#creation-scope-specified" );

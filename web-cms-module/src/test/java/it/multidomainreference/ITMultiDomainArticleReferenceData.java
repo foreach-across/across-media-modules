@@ -26,14 +26,14 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationRepository;
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class ITMultiDomainArticleReferenceData extends AbstractMultiDomainCmsApplicationWithTestDataIT
+class ITMultiDomainArticleReferenceData extends AbstractMultiDomainCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsArticleRepository articleRepository;
@@ -51,13 +51,13 @@ public class ITMultiDomainArticleReferenceData extends AbstractMultiDomainCmsApp
 	private WebCmsComponentRepository componentRepository;
 
 	@Test
-	public void devTalksNlShouldHaveBeenDeleted() {
+	void devTalksNlShouldHaveBeenDeleted() {
 		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:devtalks-nl" );
 		assertNull( article );
 	}
 
 	@Test
-	public void devTalksDeShouldHaveBeenImported() {
+	void devTalksDeShouldHaveBeenImported() {
 		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:devtalks-de" );
 		assertNotNull( article );
 		assertEquals( "DevTalks Maart (DE)", article.getTitle() );
@@ -68,7 +68,7 @@ public class ITMultiDomainArticleReferenceData extends AbstractMultiDomainCmsApp
 	}
 
 	@Test
-	public void devTalksBeShouldHaveBeenImportedAndExtended() {
+	void devTalksBeShouldHaveBeenImportedAndExtended() {
 		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:devtalks-be" );
 		assertNotNull( article );
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
@@ -80,14 +80,14 @@ public class ITMultiDomainArticleReferenceData extends AbstractMultiDomainCmsApp
 	}
 
 	@Test
-	public void bigArticleArticleTypeShouldHaveBeenImportedAndExtended() {
+	void bigArticleArticleTypeShouldHaveBeenImportedAndExtended() {
 		WebCmsArticleType bigArticle = articleTypeRepository.findOneByObjectId( "wcm:type:article:big-article" );
 		assertNotNull( bigArticle );
 		assertEquals( domainRepository.findOneByDomainKey( "be-foreach" ), bigArticle.getDomain() );
 	}
 
 	@Test
-	public void webCmsMultiDomArticleShouldHaveBeenImported() {
+	void webCmsMultiDomArticleShouldHaveBeenImported() {
 		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:webcms-multi-dom" );
 		assertNotNull( article );
 		List<WebCmsComponent> components = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( article.getObjectId(), article.getDomain() );
@@ -96,7 +96,7 @@ public class ITMultiDomainArticleReferenceData extends AbstractMultiDomainCmsApp
 	}
 
 	@Test
-	public void webCmsMultiDomBeArticleShouldHaveBeenImported() {
+	void webCmsMultiDomBeArticleShouldHaveBeenImported() {
 		WebCmsArticle article = articleRepository.findOneByObjectId( "wcm:asset:article:webcms-multi-dom-be" );
 		assertNotNull( article );
 		List<WebCmsComponent> components = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( article.getObjectId(), article.getDomain() );

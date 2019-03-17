@@ -24,7 +24,7 @@ import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainC
 import com.foreach.across.modules.webcms.domain.domain.web.AbstractWebCmsDomainContextFilter;
 import com.foreach.across.test.AcrossTestContext;
 import com.foreach.across.test.AcrossTestWebContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.junit.Assert.*;
@@ -33,10 +33,10 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITWebCmsModule
+class ITWebCmsModule
 {
 	@Test
-	public void noAdminWebModule() {
+	void noAdminWebModule() {
 		try (AcrossTestWebContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME )
 		                                     .build()) {
 			assertTrue( ctx.contextInfo().hasModule( WebCmsModule.NAME ) );
@@ -53,7 +53,7 @@ public class ITWebCmsModule
 	}
 
 	@Test
-	public void adminWebWithoutEntityModule() {
+	void adminWebWithoutEntityModule() {
 		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME,
 		                                            AdminWebModule.NAME )
 		                                  .build()
@@ -63,7 +63,7 @@ public class ITWebCmsModule
 	}
 
 	@Test
-	public void entityAndAdminWebModule() {
+	void entityAndAdminWebModule() {
 		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME,
 		                                            AdminWebModule.NAME, EntityModule.NAME )
 		                                  .build()

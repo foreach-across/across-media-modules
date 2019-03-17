@@ -22,7 +22,7 @@ import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpointRepository;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ public class ITMultiDomainRedirectReferenceData extends AbstractMultiDomainCmsAp
 
 	@Test
 	@Transactional
-	public void googleRedirectShouldHaveBeenImported() {
+	void googleRedirectShouldHaveBeenImported() {
 		WebCmsRemoteEndpoint endpoint = remoteEndpointRepository.findOneByTargetUrlAndDomain( "https://google.com", WebCmsDomain.NONE );
 		assertNotNull( endpoint );
 		Collection<WebCmsUrl> urls = endpoint.getUrls();
@@ -56,7 +56,7 @@ public class ITMultiDomainRedirectReferenceData extends AbstractMultiDomainCmsAp
 
 	@Test
 	@Transactional
-	public void googleBeRedirectShouldHaveBeenImported() {
+	void googleBeRedirectShouldHaveBeenImported() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
 		WebCmsRemoteEndpoint endpoint = remoteEndpointRepository.findOneByTargetUrlAndDomain( "https://google.be", domain );
 		assertNotNull( endpoint );
@@ -72,7 +72,7 @@ public class ITMultiDomainRedirectReferenceData extends AbstractMultiDomainCmsAp
 
 	@Test
 	@Transactional
-	public void outlookRedirectShouldHaveBeenImportedAndExtended() {
+	void outlookRedirectShouldHaveBeenImportedAndExtended() {
 		WebCmsRemoteEndpoint endpoint = remoteEndpointRepository.findOneByTargetUrlAndDomain( "http://outlook.com", WebCmsDomain.NONE );
 		assertNotNull( endpoint );
 		Collection<WebCmsUrl> urls = endpoint.getUrls();
@@ -86,7 +86,7 @@ public class ITMultiDomainRedirectReferenceData extends AbstractMultiDomainCmsAp
 
 	@Test
 	@Transactional
-	public void outlookBeRedirectShouldHaveBeenImportedAndExtended() {
+	void outlookBeRedirectShouldHaveBeenImportedAndExtended() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
 		WebCmsRemoteEndpoint endpoint = remoteEndpointRepository.findOneByTargetUrlAndDomain( "http://outlook.be", domain );
 		assertNotNull( endpoint );

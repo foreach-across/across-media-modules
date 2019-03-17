@@ -26,8 +26,8 @@ import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
 import modules.test.metadata.ImageWithAltMetadata;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.7
  */
-public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
+class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
@@ -47,8 +47,8 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 	private static Html html;
 	private static WebCmsPage page;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		if ( html == null ) {
 			page = pageService.findByCanonicalPath( "/auto-create-metadata" )
 			                  .orElse( null );
@@ -57,7 +57,7 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 		}
 	}
 
-	public void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
+	void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
 		assertNotNull( page );
 
 		assertEquals( "wcm:asset:page:auto-create-metadata", page.getObjectId() );
@@ -73,7 +73,7 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void componentWithMetadataIsCreated() {
+	void componentWithMetadataIsCreated() {
 		html.assertElementHasText( "", "#simple-metadata" );
 
 		val text = componentModelService.getComponentModelByName( "simple-metadata", page, ContainerWebCmsComponentModel.class );
@@ -91,7 +91,7 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void componentWithAttributesIsCreated() {
+	void componentWithAttributesIsCreated() {
 		html.assertElementHasText( "", "#attributes" );
 
 		val text = componentModelService.getComponentModelByName( "attributes", page, ContainerWebCmsComponentModel.class );
@@ -109,7 +109,7 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void expressionValuesAreProcessed() {
+	void expressionValuesAreProcessed() {
 		html.assertElementHasText( "", "#expression-values" );
 
 		val text = componentModelService.getComponentModelByName( "expression-values", page, ContainerWebCmsComponentModel.class );
@@ -125,7 +125,7 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void attributesAreAppliedAfterBody() {
+	void attributesAreAppliedAfterBody() {
 		html.assertElementHasText( "123456", "#properties-after-body" );
 
 		val text = componentModelService.getComponentModelByName( "properties-after-body", page, TextWebCmsComponentModel.class );
@@ -136,7 +136,7 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void componentElementAllowsShortHandAttributes() {
+	void componentElementAllowsShortHandAttributes() {
 		html.assertElementHasText( "This is the text...", "#component-element" );
 
 		val image1 = componentModelService.getComponentModelByName( "image-element", page, ContainerWebCmsComponentModel.class );
@@ -167,7 +167,7 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void attributesCanBeSpecifiedAsElements() {
+	void attributesCanBeSpecifiedAsElements() {
 		html.assertElementHasText( "", "#attribute-elements" );
 
 		val text = componentModelService.getComponentModelByName( "attribute-elements", page, ContainerWebCmsComponentModel.class );
@@ -182,7 +182,7 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void thymeleafFragmentCanBeInsertedInMetadata() {
+	void thymeleafFragmentCanBeInsertedInMetadata() {
 		html.assertElementHasText( "The number is 456.", "#fragment-via-element" );
 
 		val text = componentModelService.getComponentModelByName( "fragment-via-element", page, TextWebCmsComponentModel.class );

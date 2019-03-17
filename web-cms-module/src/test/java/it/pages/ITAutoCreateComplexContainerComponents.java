@@ -26,8 +26,8 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicationWithTestDataIT
+class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
@@ -47,8 +47,8 @@ public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicati
 	private static Html html;
 	private static WebCmsPage page;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		if ( html == null ) {
 			page = pageService.findByCanonicalPath( "/auto-create-complex-container-components" )
 			                  .orElse( null );
@@ -57,7 +57,7 @@ public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicati
 		}
 	}
 
-	public void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
+	void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
 		assertNotNull( page );
 
 		assertEquals( "wcm:asset:page:auto-create-complex-container-components", page.getObjectId() );
@@ -73,7 +73,7 @@ public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicati
 	}
 
 	@Test
-	public void placeholderInsideContainerResultsInPlaceholderMember() {
+	void placeholderInsideContainerResultsInPlaceholderMember() {
 		val container = componentModelService.getComponentModelByName( "container-single-placeholder", page, ContainerWebCmsComponentModel.class );
 		assertEquals( 1, container.size() );
 
@@ -88,7 +88,7 @@ public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicati
 	}
 
 	@Test
-	public void nestedPlaceholdersAllResultInMembersOnTheRightLevel() {
+	void nestedPlaceholdersAllResultInMembersOnTheRightLevel() {
 		val container = componentModelService.getComponentModelByName( "container-nested-placeholders", page, ContainerWebCmsComponentModel.class );
 		assertNotNull( container );
 		assertEquals( 3, container.size() );
@@ -135,7 +135,7 @@ public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicati
 	}
 
 	@Test
-	public void componentsInsidePlaceholdersInsideContainerShouldNotBeContainerMembers() {
+	void componentsInsidePlaceholdersInsideContainerShouldNotBeContainerMembers() {
 		val container = componentModelService.getComponentModelByName( "component-in-placeholders", page, ContainerWebCmsComponentModel.class );
 		assertNotNull( container );
 		assertEquals( 2, container.size() );
@@ -164,7 +164,7 @@ public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicati
 	}
 
 	@Test
-	public void scopedComponentResultsInProxyComponent() {
+	void scopedComponentResultsInProxyComponent() {
 		val container = componentModelService.getComponentModelByName( "proxy-component-in-container", page, ContainerWebCmsComponentModel.class );
 		assertEquals( 1, container.size() );
 
@@ -181,7 +181,7 @@ public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicati
 	}
 
 	@Test
-	public void autoCreationOfScopedComponentsAlsoResultsInProxyComponent() {
+	void autoCreationOfScopedComponentsAlsoResultsInProxyComponent() {
 		val footer = componentModelService.getComponentModelByName( "auto-create-proxy-footer", page, TextWebCmsComponentModel.class );
 		assertNotNull( footer );
 		assertEqualsIgnoreWhitespace( "auto-created on asset", footer.getContent() );
@@ -208,7 +208,7 @@ public class ITAutoCreateComplexContainerComponents extends AbstractCmsApplicati
 	}
 
 	@Test
-	public void secondRenderYieldsSameOutput() {
+	void secondRenderYieldsSameOutput() {
 		Html secondRender = html( "/auto-create-complex-container-components" );
 		secondRender.assertElementHasHTML( "<div>single placeholder content</div>", "#container-single-placeholder" );
 		secondRender.assertElementHasHTML( "container titlecontainer sub titlebefore text placeholder<div>footer text placeholder</div>",

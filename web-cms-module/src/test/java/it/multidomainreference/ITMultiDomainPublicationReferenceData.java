@@ -22,7 +22,7 @@ import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepo
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationRepository;
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
@@ -39,14 +39,14 @@ public class ITMultiDomainPublicationReferenceData extends AbstractMultiDomainCm
 	private WebCmsPageRepository pageRepository;
 
 	@Test
-	public void musicNlPublicationShouldHaveBeenDeleted() {
+	void musicNlPublicationShouldHaveBeenDeleted() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
 		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "music", domain );
 		assertNull( publication );
 	}
 
 	@Test
-	public void musicBePublicationShouldHaveBeenImportedAndExtended() {
+	void musicBePublicationShouldHaveBeenImportedAndExtended() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
 		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "music", domain );
 		assertNotNull( publication );
@@ -56,7 +56,7 @@ public class ITMultiDomainPublicationReferenceData extends AbstractMultiDomainCm
 	}
 
 	@Test
-	public void musicDePublicationShouldHaveBeenImported() {
+	void musicDePublicationShouldHaveBeenImported() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
 		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "music", domain );
 		assertNotNull( publication );
@@ -66,7 +66,7 @@ public class ITMultiDomainPublicationReferenceData extends AbstractMultiDomainCm
 	}
 
 	@Test
-	public void moviesNlShouldHaveBeenImported() {
+	void moviesNlShouldHaveBeenImported() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
 		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "movies", domain );
 		assertNotNull( publication );
@@ -75,7 +75,7 @@ public class ITMultiDomainPublicationReferenceData extends AbstractMultiDomainCm
 	}
 
 	@Test
-	public void moviesDeShouldHaveBeenImportedAndExtended() {
+	void moviesDeShouldHaveBeenImportedAndExtended() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
 		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "movies", domain );
 		assertNotNull( publication );
@@ -84,7 +84,7 @@ public class ITMultiDomainPublicationReferenceData extends AbstractMultiDomainCm
 	}
 
 	@Test
-	public void moviesBeShouldHaveBeenDeleted() {
+	void moviesBeShouldHaveBeenDeleted() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
 		WebCmsPublication publication = publicationRepository.findOneByPublicationKeyAndDomain( "movies", domain );
 		assertNull( publication );

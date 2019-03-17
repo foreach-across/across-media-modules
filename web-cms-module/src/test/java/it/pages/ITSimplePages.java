@@ -22,7 +22,7 @@ import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsCompone
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITSimplePages extends AbstractCmsApplicationWithTestDataIT
+class ITSimplePages extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
@@ -40,7 +40,7 @@ public class ITSimplePages extends AbstractCmsApplicationWithTestDataIT
 	private WebCmsComponentModelService componentModelService;
 
 	@Test
-	public void customPageIsImported() {
+	void customPageIsImported() {
 		val page = pageService.findByCanonicalPath( "/custom-page" )
 		                      .orElse( null );
 		assertNotNull( page );
@@ -56,14 +56,14 @@ public class ITSimplePages extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void customPageRendersTheCustomTemplate() {
+	void customPageRendersTheCustomTemplate() {
 		Html doc = html( "/custom-page" );
 		doc.assertElementHasText( "Custom page", "title" );
 		doc.assertElementHasText( "Fully custom page.", "body" );
 	}
 
 	@Test
-	public void sharedContentComponentShouldExist() {
+	void sharedContentComponentShouldExist() {
 		val componentModel = componentModelService.getComponentModelByName( "content", null );
 		assertNotNull( componentModel );
 		assertTrue( componentModel instanceof TextWebCmsComponentModel );
@@ -76,7 +76,7 @@ public class ITSimplePages extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void pageWithDefaultTemplateButNoContent() {
+	void pageWithDefaultTemplateButNoContent() {
 		val page = pageService.findByCanonicalPath( "/default-template-no-content" )
 		                      .orElse( null );
 		assertNotNull( page );
@@ -92,7 +92,7 @@ public class ITSimplePages extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void pageWithDefaultTemplateAndSimpleContentComponent() {
+	void pageWithDefaultTemplateAndSimpleContentComponent() {
 		val page = pageService.findByCanonicalPath( "/default-template-with-content" )
 		                      .orElse( null );
 		assertNotNull( page );
@@ -121,7 +121,7 @@ public class ITSimplePages extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void pageWithDefaultTemplateRendersOnlyTheContentComponentOnTheAsset() {
+	void pageWithDefaultTemplateRendersOnlyTheContentComponentOnTheAsset() {
 		Html doc = html( "/default-template-no-content" );
 		doc.assertElementHasText( "Default template without content", "title" );
 		doc.assertElementIsEmpty( "body" );

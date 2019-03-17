@@ -43,7 +43,7 @@ public abstract class AbstractMockMvcTest
 		return html( get( path ) );
 	}
 
-	protected Html html( RequestBuilder requestBuilder ) {
+	private Html html( RequestBuilder requestBuilder ) {
 		try {
 			return new Html( Jsoup.parse( mockMvc.perform( requestBuilder )
 			                                     .andExpect( status().isOk() )

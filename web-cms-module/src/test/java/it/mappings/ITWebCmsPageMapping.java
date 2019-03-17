@@ -17,16 +17,16 @@
 package it.mappings;
 
 import it.AbstractCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Raf Ceuls
  * @since 0.0.2
  */
-public class ITWebCmsPageMapping extends AbstractCmsApplicationWithTestDataIT
+class ITWebCmsPageMapping extends AbstractCmsApplicationWithTestDataIT
 {
 	@Test
-	public void methodLevelPageTypeMapping() {
+	void methodLevelPageTypeMapping() {
 		//page six has template 'template'
 		getAndExpect( "/mappings/page/six", "methodPageTypeMapping: Mappings: Page Six" );
 		//page three has template 'default'
@@ -36,7 +36,7 @@ public class ITWebCmsPageMapping extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void methodLevelCanonicalPathMapping() {
+	void methodLevelCanonicalPathMapping() {
 		getAndExpect( "/mappings/page/six", "methodPageTypeMapping: Mappings: Page Six" );
 		getAndExpect( "/mappings/page/five", "methodCanonicalPathAndTypeMapping: Mappings: Page Five" );
 	}

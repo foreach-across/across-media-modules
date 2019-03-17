@@ -17,22 +17,18 @@
 package it;
 
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
-import com.foreach.across.modules.webcms.domain.article.WebCmsArticleType;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
-import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
-import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import modules.multidomaintest.CmsMultiDomainTestModule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Base class for all multi-domain integration tests using the same application context with a same backing db.
@@ -40,7 +36,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Steven Gentens
  * @since 0.0.3
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @AcrossWebAppConfiguration(classes = AbstractMultiDomainCmsApplicationWithTestDataIT.Config.class)
 public abstract class AbstractMultiDomainCmsApplicationWithTestDataIT extends AbstractMockMvcTest
 {

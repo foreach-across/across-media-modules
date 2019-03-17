@@ -21,7 +21,7 @@ import com.foreach.across.modules.webcms.domain.component.container.ContainerWeb
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import it.AbstractCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
@@ -46,7 +46,7 @@ public class ITComponentImportAndCreation extends AbstractCmsApplicationWithTest
 	private WebCmsComponentModelService componentModelService;
 
 	@Test
-	public void changingComponentTypeResetsTheProperties() {
+	void changingComponentTypeResetsTheProperties() {
 		importComponent( "plain-text" );
 
 		TextWebCmsComponentModel componentModel = componentModelService.getComponentModelByName( componentName, null, TextWebCmsComponentModel.class );
@@ -67,7 +67,7 @@ public class ITComponentImportAndCreation extends AbstractCmsApplicationWithTest
 	}
 
 	@Test
-	public void updatingWithoutChangingComponentTypeKeepsProperties() {
+	void updatingWithoutChangingComponentTypeKeepsProperties() {
 		importComponent( "plain-text" );
 
 		TextWebCmsComponentModel componentModel = componentModelService.getComponentModelByName( componentName, null, TextWebCmsComponentModel.class );
@@ -98,7 +98,7 @@ public class ITComponentImportAndCreation extends AbstractCmsApplicationWithTest
 	}
 
 	@Test
-	public void updatingContainerKeepsOnlyAddedMembers() {
+	void updatingContainerKeepsOnlyAddedMembers() {
 		ContainerWebCmsComponentModel container = componentModelService.createComponentModel( ContainerWebCmsComponentModel.TYPE_DYNAMIC,
 		                                                                                      ContainerWebCmsComponentModel.class );
 		container.setName( UUID.randomUUID().toString() );
@@ -134,7 +134,7 @@ public class ITComponentImportAndCreation extends AbstractCmsApplicationWithTest
 	}
 
 	@Test
-	public void creatingComponentOfTypeCreatesTheDifferentMembers() {
+	void creatingComponentOfTypeCreatesTheDifferentMembers() {
 		ContainerWebCmsComponentModel container = componentModelService.createComponentModel( "teaser", ContainerWebCmsComponentModel.class );
 		assertNotNull( container );
 		assertEquals( "Teaser title", container.getMember( "title", TextWebCmsComponentModel.class ).getContent() );
@@ -152,7 +152,7 @@ public class ITComponentImportAndCreation extends AbstractCmsApplicationWithTest
 	}
 
 	@Test
-	public void updatedComponentOfSpecificType() {
+	void updatedComponentOfSpecificType() {
 		ContainerWebCmsComponentModel container = componentModelService.getComponentModelByName( "test-teaser", null, ContainerWebCmsComponentModel.class );
 		assertNotNull( container );
 		assertEquals( "Teaser title", container.getMember( "title", TextWebCmsComponentModel.class ).getContent() );

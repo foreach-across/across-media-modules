@@ -21,19 +21,18 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import com.foreach.across.modules.webcms.domain.page.WebCmsPageTypeRepository;
 import com.foreach.across.modules.webcms.domain.page.repositories.WebCmsPageRepository;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -44,9 +43,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Sander Van Loock
  * @since 0.0.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @AcrossWebAppConfiguration
-public class ITEndpointLogic
+class ITEndpointLogic
 {
 	@Autowired
 	private MockMvc mockMvc;
@@ -66,8 +65,8 @@ public class ITEndpointLogic
 	private WebCmsPage page;
 	private WebCmsAssetEndpoint endpoint;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		page = WebCmsPage.builder()
 		                 .id( 1000L )
 		                 .pathSegment( "about" )
@@ -82,7 +81,7 @@ public class ITEndpointLogic
 	}
 
 	@Test
-	public void twoUrlsWithSameEndpointWhereOneRedirectsShouldRender() throws Exception {
+	void twoUrlsWithSameEndpointWhereOneRedirectsShouldRender() throws Exception {
 		WebCmsUrl redirectUrl = WebCmsUrl.builder()
 		                                 .path( "/previous-a" )
 		                                 .primary( false )

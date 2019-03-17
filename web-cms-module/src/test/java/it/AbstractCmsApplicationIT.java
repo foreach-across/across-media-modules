@@ -20,8 +20,8 @@ import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Bootstraps simple application with WebCmsModule.
@@ -29,9 +29,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @AcrossWebAppConfiguration(classes = { AbstractCmsApplicationIT.Config.class })
-public abstract class AbstractCmsApplicationIT
+abstract class AbstractCmsApplicationIT
 {
 	@AcrossTestConfiguration(modules = { WebCmsModule.NAME, AcrossHibernateJpaModule.NAME })
 	protected static class Config extends DynamicDataSourceConfigurer

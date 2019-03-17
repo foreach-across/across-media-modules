@@ -20,7 +20,7 @@ import com.foreach.across.modules.webcms.data.WebCmsDataEntry;
 import com.foreach.across.modules.webcms.data.WebCmsDataImportException;
 import com.foreach.across.modules.webcms.data.WebCmsDataImportService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class ITDataImportExceptions extends AbstractCmsApplicationIT
 	private WebCmsDataImportService dataImportService;
 
 	@Test
-	public void exceptionToString() {
+	void exceptionToString() {
 		WebCmsDataEntry data = WebCmsDataEntry.builder()
 		                                      .identifier( "my-data" )
 		                                      .key( "mykey" )
@@ -54,7 +54,7 @@ public class ITDataImportExceptions extends AbstractCmsApplicationIT
 	}
 
 	@Test
-	public void unableToImportDataWithKey() {
+	void unableToImportDataWithKey() {
 		WebCmsDataImportException e = importData(
 				"bad-data",
 				map( "unknown-data-key", list( map( "one", "two" ) ) )
@@ -70,7 +70,7 @@ public class ITDataImportExceptions extends AbstractCmsApplicationIT
 	}
 
 	@Test
-	public void invalidObjectIdException() {
+	void invalidObjectIdException() {
 		WebCmsDataImportException e = importData(
 				"invalidObjectIdException",
 				map( "assets", map( "article", list( map( "objectId", "badObjectId" ) ) ) )
@@ -86,15 +86,15 @@ public class ITDataImportExceptions extends AbstractCmsApplicationIT
 	}
 
 	@Test
-	public void validationFailedException() {
-		WebCmsDataImportException e = importData(
+	void validationFailedException() {
+		importData(
 				"validation-fails",
 				map( "types", map( "article", list( map( "description", "Invalid article type..." ) ) ) )
 		);
 	}
 
 	@Test
-	public void invalidPropertyConversionException() {
+	void invalidPropertyConversionException() {
 		WebCmsDataImportException e = importData(
 				"invalid-property-value",
 				map( "assets", map( "article", list( map( "articleType", "this-type-does-not-exist" ) ) ) )

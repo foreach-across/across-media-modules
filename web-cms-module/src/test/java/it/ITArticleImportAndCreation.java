@@ -27,7 +27,7 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.yaml.snakeyaml.Yaml;
@@ -85,7 +85,7 @@ public class ITArticleImportAndCreation extends AbstractCmsApplicationIT
 	}
 
 	@Test
-	public void creatingArticleSetsComponentsAttachedToTheArticleType() throws Exception {
+	void creatingArticleSetsComponentsAttachedToTheArticleType() {
 		WebCmsArticle blog = WebCmsArticle.builder()
 		                                  .articleType( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ) )
 		                                  .publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ) )
