@@ -57,7 +57,7 @@ import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREF
  * @see PlaceholderTemplatePostProcessor
  * @see 0.0.2
  */
-final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
+final class ComponentAttributeProcessor extends AbstractAttributeModelProcessor
 {
 	private static final AtomicInteger COUNTER = new AtomicInteger();
 
@@ -70,7 +70,9 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	static final String ATTR_AUTO_CREATE = PREFIX + ":auto-create";
 	static final String ATTR_SCOPE = PREFIX + ":scope";
 	static final String ATTR_PARENT_CREATE_INCLUDE = PREFIX + ":parent-create-include";
-	static final String ATTR_META_PREFIX = PREFIX + ":meta-";
+	static final String ATTR_META_PREFIX = PREFIX + ":meta";
+	static final String ATTR_PROP_PREFIX = PREFIX + ":prop";
+	static final String ATTR_ATTR_PREFIX = PREFIX + ":attr";
 
 	// used as a value for wcm:scope to ensure a component does not get auto created
 	static final String SCOPE_PLACEHOLDER_CREATE = "_placeholder";
@@ -81,12 +83,12 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	// used to indicate that all component attributes should in fact be ignored - set in the context of placeholders being parsed
 	static final String ATTR_NEVER_REPLACE = PREFIX + ":never-replace";
 
-	private static final Collection<String> ATTRIBUTES_TO_REMOVE = Arrays.asList(
+	private static final Collection<String> FIXED_ATTRIBUTES_TO_REMOVE = Arrays.asList(
 			ATTR_COMPONENT, ATTR_SCOPE, ATTR_SEARCH_PARENTS, ATTR_AUTO_CREATE, ATTR_TYPE, ATTR_ALWAYS_REPLACE, ATTR_PARSE_PLACEHOLDERS, ATTR_NEVER_REPLACE,
 			ATTR_PARENT_CREATE_INCLUDE, ATTR_PLACEHOLDER_AS_PARENT
 	);
 
-	ComponentAttributesProcessor() {
+	ComponentAttributeProcessor() {
 		super(
 				TemplateMode.HTML,  // This processor will apply only to HTML mode
 				PREFIX,             // Prefix to be applied to name for matching
@@ -107,6 +109,8 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	                          IElementModelStructureHandler structureHandler ) {
 		if ( model.size() > 0 && model.get( 0 ) instanceof IProcessableElementTag ) {
 			WebEngineContext context = (WebEngineContext) templateContext;
+
+			ExpressionParser expressionParser = ExpressionParser.create( templateContext );
 
 			IProcessableElementTag elementTag = (IProcessableElementTag) model.get( 0 );
 			boolean isStandaloneTag = elementTag instanceof IStandaloneElementTag;
@@ -148,7 +152,7 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 						createProxy &= !CONTAINER_MEMBER_SCOPE.equals( creationScope );
 						autoCreateComponent(
 								model, attributeValue, elementTag, isStandaloneTag, modelFactory, parsePlaceholders, creationQueue,
-								creationScope, shouldRenderComponentDuringCreation, createProxy
+								creationScope, shouldRenderComponentDuringCreation, createProxy, expressionParser
 						);
 					}
 					else if ( elementTag.hasAttribute( ATTR_ALWAYS_REPLACE ) || !shouldRenderComponentDuringCreation ) {
@@ -188,7 +192,8 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	                                  WebCmsComponentAutoCreateQueue queue,
 	                                  String creationScope,
 	                                  boolean shouldRenderComponent,
-	                                  boolean createProxy ) {
+	                                  boolean createProxy,
+	                                  ExpressionParser expressionParser ) {
 		String componentType = elementTag.getAttributeValue( ATTR_TYPE );
 		WebCmsComponentAutoCreateTask task = queue.schedule( attributeValue, creationScope, componentType );
 
@@ -248,18 +253,50 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 			}
 		}
 
-		attachMetadata( task, elementTag );
+		attachAttributeValues( task, elementTag, expressionParser );
 	}
 
-	private void attachMetadata( WebCmsComponentAutoCreateTask task, IProcessableElementTag elementTag ) {
+	private void attachAttributeValues( WebCmsComponentAutoCreateTask task,
+	                                    IProcessableElementTag elementTag,
+	                                    ExpressionParser expressionParser ) {
 		for ( IAttribute attr : elementTag.getAllAttributes() ) {
-			if ( attr.getAttributeCompleteName().startsWith( ATTR_META_PREFIX ) ) {
-				String metadataPropertyName = StringUtils.removeStart( attr.getAttributeCompleteName(), ATTR_META_PREFIX );
-				if ( StringUtils.isNotEmpty( metadataPropertyName ) ) {
-					task.addMetadata( metadataPropertyName, attr.getValue() );
+			String prefix = determinePrefix( attr.getAttributeCompleteName() );
+
+			if ( prefix != null ) {
+				String propertyName = StringUtils.removeStart( attr.getAttributeCompleteName(), prefix );
+				int colon = propertyName.indexOf( ':' );
+				if ( colon >= 0 ) {
+					propertyName = StringUtils.substring( propertyName, colon + 1 );
+					Object attributeValue = expressionParser.parse( attr.getValue() );
+					if ( StringUtils.isNotEmpty( propertyName ) ) {
+						switch ( prefix ) {
+							case ATTR_META_PREFIX:
+								task.addMetadataValue( propertyName, attributeValue );
+								break;
+							case ATTR_PROP_PREFIX:
+								task.addPropertyValue( propertyName, attributeValue );
+								break;
+							default:
+								task.addAttributeValue( propertyName, attributeValue );
+						}
+					}
 				}
 			}
 		}
+	}
+
+	private String determinePrefix( String attributeName ) {
+		if ( attributeName.startsWith( ATTR_META_PREFIX ) ) {
+			return ATTR_META_PREFIX;
+		}
+		else if ( attributeName.startsWith( ATTR_PROP_PREFIX ) ) {
+			return ATTR_PROP_PREFIX;
+		}
+		else if ( attributeName.startsWith( ATTR_ATTR_PREFIX ) ) {
+			return ATTR_ATTR_PREFIX;
+		}
+
+		return null;
 	}
 
 	private ITemplateEvent createContainerComponentRenderInstruction( IModelFactory modelFactory, WebCmsComponentAutoCreateTask task ) {
@@ -420,12 +457,12 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	private void removeProcessedAttributesFromTag( IModel model, IProcessableElementTag elementTag, IModelFactory modelFactory ) {
 		IProcessableElementTag newFirstEvent = elementTag;
 
-		for ( String attributeToRemove : ATTRIBUTES_TO_REMOVE ) {
+		for ( String attributeToRemove : FIXED_ATTRIBUTES_TO_REMOVE ) {
 			newFirstEvent = modelFactory.removeAttribute( newFirstEvent, attributeToRemove );
 		}
 
 		for ( IAttribute attr : elementTag.getAllAttributes() ) {
-			if ( attr.getAttributeCompleteName().startsWith( ATTR_META_PREFIX ) ) {
+			if ( StringUtils.startsWithAny( attr.getAttributeCompleteName(), ATTR_META_PREFIX, ATTR_PROP_PREFIX, ATTR_ATTR_PREFIX ) ) {
 				newFirstEvent = modelFactory.removeAttribute( newFirstEvent, attr.getAttributeCompleteName() );
 			}
 		}

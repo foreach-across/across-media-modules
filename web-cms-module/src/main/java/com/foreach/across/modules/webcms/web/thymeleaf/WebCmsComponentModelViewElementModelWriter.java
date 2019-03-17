@@ -37,7 +37,7 @@ import java.util.Collection;
  */
 @ConditionalOnBean(ViewElementModelWriterRegistry.class)
 @Component
-class WebComponentModelViewElementModelWriter implements ViewElementModelWriter<WebCmsComponentModel>
+class WebCmsComponentModelViewElementModelWriter implements ViewElementModelWriter<WebCmsComponentModel>
 {
 	private Collection<WebCmsComponentModelRenderer> renderers;
 

@@ -21,7 +21,7 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 
 /**
  * API for rendering a {@link WebCmsComponentModel} in a Thymeleaf template.
- * The {@link WebComponentModelViewElementModelWriter} will retrieve all {@link WebCmsComponentModelRenderer}
+ * The {@link WebCmsComponentModelViewElementModelWriter} will retrieve all {@link WebCmsComponentModelRenderer}
  * beans and find the appropriate one when rendering a particular component model.
  * <p/>
  * Implementations can be ordered as the first renderer that supports a component model

@@ -24,7 +24,7 @@ import org.thymeleaf.processor.element.AbstractAttributeModelProcessor;
 import org.thymeleaf.processor.element.IElementModelStructureHandler;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import static com.foreach.across.modules.webcms.web.thymeleaf.ComponentAttributesProcessor.*;
+import static com.foreach.across.modules.webcms.web.thymeleaf.ComponentAttributeProcessor.*;
 import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREFIX;
 
 /**

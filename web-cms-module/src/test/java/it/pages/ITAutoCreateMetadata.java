@@ -18,12 +18,14 @@ package it.pages;
 
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
+import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
 import modules.test.metadata.ImageWithAltMetadata;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +79,8 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 		val text = componentModelService.getComponentModelByName( "simple-metadata", page, ContainerWebCmsComponentModel.class );
 		assertNotNull( text );
 		assertEquals( "simple-metadata", text.getName() );
-		assertEquals( "Simple metadata", text.getTitle() );
+		assertEquals( "Simple metadata example", text.getTitle() );
+		assertEquals( 10, text.getSortIndex() );
 
 		ImageWithAltMetadata metadata = text.getMetadata( ImageWithAltMetadata.class );
 		assertNotNull( metadata );
@@ -85,5 +88,107 @@ public class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 		WebCmsImage image = metadata.getImage();
 		assertNotNull( image );
 		assertEquals( "deer.jpg", image.getName() );
+	}
+
+	@Test
+	public void componentWithAttributesIsCreated() {
+		html.assertElementHasText( "", "#attributes" );
+
+		val text = componentModelService.getComponentModelByName( "attributes", page, ContainerWebCmsComponentModel.class );
+		assertNotNull( text );
+		assertEquals( "attributes", text.getName() );
+		assertEquals( "Attributes example", text.getTitle() );
+		assertEquals( 10, text.getSortIndex() );
+
+		ImageWithAltMetadata metadata = text.getMetadata( ImageWithAltMetadata.class );
+		assertNotNull( metadata );
+		assertEquals( "hello", metadata.getAltText() );
+		WebCmsImage image = metadata.getImage();
+		assertNotNull( image );
+		assertEquals( "deer.jpg", image.getName() );
+	}
+
+	@Test
+	public void expressionValuesAreProcessed() {
+		html.assertElementHasText( "", "#expression-values" );
+
+		val text = componentModelService.getComponentModelByName( "expression-values", page, ContainerWebCmsComponentModel.class );
+		assertNotNull( text );
+		assertEquals( "expression-values", text.getName() );
+		assertEquals( "my.title", text.getTitle() );
+		assertEquals( 9, text.getSortIndex() );
+
+		ImageWithAltMetadata metadata = text.getMetadata( ImageWithAltMetadata.class );
+		assertNotNull( metadata );
+		assertEquals( "/hello", metadata.getAltText() );
+		assertNull( metadata.getImage() );
+	}
+
+	@Test
+	public void attributesAreAppliedAfterBody() {
+		html.assertElementHasText( "123456", "#properties-after-body" );
+
+		val text = componentModelService.getComponentModelByName( "properties-after-body", page, TextWebCmsComponentModel.class );
+		assertNotNull( text );
+		assertEquals( "properties-after-body", text.getName() );
+		assertEquals( "number 123", text.getTitle() );
+		assertEquals( "123456", text.getContent() );
+	}
+
+	@Test
+	public void componentElementAllowsShortHandAttributes() {
+		html.assertElementHasText( "This is the text...", "#component-element" );
+
+		val image1 = componentModelService.getComponentModelByName( "image-element", page, ContainerWebCmsComponentModel.class );
+		assertNotNull( image1 );
+		assertEquals( "image-element", image1.getName() );
+		assertEquals( "Via element", image1.getTitle() );
+		assertEquals( 5, image1.getSortIndex() );
+
+		ImageWithAltMetadata metadata = image1.getMetadata( ImageWithAltMetadata.class );
+		assertNotNull( metadata );
+		assertEquals( "image alt text", metadata.getAltText() );
+
+		val image2 = componentModelService.getComponentModelByName( "image-element2", page, ContainerWebCmsComponentModel.class );
+		assertNotNull( image2 );
+		assertEquals( "image-element2", image2.getName() );
+		assertEquals( "Via element 2", image2.getTitle() );
+		assertEquals( 3, image2.getSortIndex() );
+
+		metadata = image2.getMetadata( ImageWithAltMetadata.class );
+		assertNotNull( metadata );
+		assertEquals( "image \"alt\" text 2", metadata.getAltText() );
+
+		val text = componentModelService.getComponentModelByName( "text-element", page, TextWebCmsComponentModel.class );
+		assertNotNull( text );
+		assertEquals( "text-element", text.getName() );
+		assertEquals( "Text element", text.getTitle() );
+		assertEquals( "This is the text...", text.getContent() );
+	}
+
+	@Test
+	public void attributesCanBeSpecifiedAsElements() {
+		html.assertElementHasText( "", "#attribute-elements" );
+
+		val text = componentModelService.getComponentModelByName( "attribute-elements", page, ContainerWebCmsComponentModel.class );
+		assertNotNull( text );
+		assertEquals( "attribute-elements", text.getName() );
+		assertEquals( 12, text.getSortIndex() );
+		assertEquals( "Updated component title", text.getTitle() );
+
+		ImageWithAltMetadata metadata = text.getMetadata( ImageWithAltMetadata.class );
+		assertNotNull( metadata );
+		assertEquals( "<strong>11</strong> numbers", metadata.getAltText() );
+	}
+
+	@Test
+	public void thymeleafFragmentCanBeInsertedInMetadata() {
+		html.assertElementHasText( "The number is 456.", "#fragment-via-element" );
+
+		val text = componentModelService.getComponentModelByName( "fragment-via-element", page, TextWebCmsComponentModel.class );
+		assertNotNull( text );
+		assertEquals( "fragment-via-element", text.getName() );
+		assertEquals( "A fixed number", text.getTitle() );
+		assertEquals( "The number is 456.", StringUtils.trim( text.getContent() ) );
 	}
 }

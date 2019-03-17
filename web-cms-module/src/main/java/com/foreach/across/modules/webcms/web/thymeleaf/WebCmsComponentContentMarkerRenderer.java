@@ -23,7 +23,7 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 /**
  * API for rendering a content marker to the output.
  *
- * The {@link WebComponentModelViewElementModelWriter} will retrieve all {@link WebCmsComponentContentMarkerRenderer}
+ * The {@link WebCmsComponentModelViewElementModelWriter} will retrieve all {@link WebCmsComponentContentMarkerRenderer}
  * beans and find the appropriate one when rendering a particular component model.
  * <p/>
  * Implementations can be ordered as the first renderer that supports a particular marker will be used to render it.

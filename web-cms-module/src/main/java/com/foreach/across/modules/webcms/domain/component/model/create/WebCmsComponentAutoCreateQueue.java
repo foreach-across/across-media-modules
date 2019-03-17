@@ -124,7 +124,7 @@ public class WebCmsComponentAutoCreateQueue
 	}
 
 	/**
-	 * Single a placeholder block has just been rendered.
+	 * Signal a placeholder block has just been rendered.
 	 * If a component is being created, the placeholder should be added to that component.
 	 *
 	 * @param placeholderName name of the placeholder

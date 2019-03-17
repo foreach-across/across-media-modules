@@ -35,7 +35,7 @@ import java.util.ArrayDeque;
  *
  * @author Arne Vandamme
  * @see PlaceholderAttributeProcessor
- * @see ComponentAttributesProcessor
+ * @see ComponentAttributeProcessor
  * @see PlaceholderTemplatePostProcessor
  * @since 0.0.2
  */

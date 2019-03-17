@@ -1,11 +1,54 @@
-<html xmlns:wcm="http://www.w3.org/1999/xhtml">
+<html xmlns:wcm="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <title>Auto create components with metadata</title>
 </head>
 <body>
 
 <div id="simple-metadata" wcm:component="simple-metadata" wcm:type="image-with-alt" wcm:auto-create
-     wcm:meta-altText="hello" wcm:meta-image="classpath:installers/deer.jpg">body</div>
+     wcm:prop:sortIndex="10" wcm:property:title="Simple metadata example"
+     wcm:meta:altText="hello" wcm:metadata:image="classpath:installers/deer.jpg">body
+</div>
+
+<div id="attributes" wcm:component="attributes" wcm:type="image-with-alt" wcm:auto-create
+     wcm:attr:sortIndex="10" wcm:attribute:title="Attributes example"
+     wcm:attr:altText="hello" wcm:attribute:image="classpath:installers/deer.jpg">body
+</div>
+
+<div id="expression-values" wcm:component="expression-values" wcm:type="image-with-alt" wcm:auto-create
+     wcm:prop:sortIndex="${5+4}" wcm:attr:title="#{my.title}" wcm:meta:altText="@{/hello}" wcm:meta:image="${null}">
+</div>
+
+<div id="properties-after-body" wcm:component="properties-after-body" wcm:type="plain-text" wcm:auto-create
+     wcm:prop:content="123456" wcm:prop:title="|number ${123}|">
+    This content should never show...
+</div>
+
+<div id="component-element">
+    <wcm:component name="image-element" type="image-with-alt" auto-create sortIndex="5" title="Via element" altText="image alt text"/>
+    <wcm:component name="image-element2" type="image-with-alt" auto-create
+                   wcm:prop:sortIndex="3" wcm:attr:title="Via element 2" wcm:meta:altText='image "alt" text 2'>
+        Should not see me...
+    </wcm:component>
+    <wcm:component name="text-element" type="plain-text" auto-create>This is the text...</wcm:component>
+</div>
+
+<div id="attribute-elements" wcm:component="attribute-elements" wcm:type="image-with-alt" wcm:auto-create>
+    <wcm:component-attribute name="sortIndex" value="12"/>
+    <wcm:component-attribute th:if="${false}" name="sortIndex" value="13"/>
+    <wcm:component-property name="title" th:text="'Updated component title'">Component title</wcm:component-property>
+    <wcm:component-metadata name="altText"><strong th:text="${5+6}"></strong> [[${'numbers'}]]</wcm:component-metadata>
+    This content should never show...
+</div>
+
+<div id="fragment-via-element" wcm:component="fragment-via-element" wcm:type="html" wcm:auto-create th:with="val=456" wcm:prop:title="A fixed number">
+    <wcm:component-property name="content">
+        <th:block th:insert="~{::custom(${val})}"></th:block>
+    </wcm:component-property>
+</div>
+
+<div th:fragment="custom(value)" th:remove="tag">
+    The number is [[${value}]].
+</div>
 
 </body>
 </html>

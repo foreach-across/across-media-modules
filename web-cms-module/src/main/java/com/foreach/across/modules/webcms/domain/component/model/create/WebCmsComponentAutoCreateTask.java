@@ -22,6 +22,7 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.*;
 
@@ -53,6 +54,9 @@ public class WebCmsComponentAutoCreateTask
 	@Getter
 	private final Map<String, Object> metadata = new LinkedHashMap<>();
 
+	@Getter
+	private final List<AttributeValue> attributeValues = new ArrayList<>();
+
 	private int sortIndex;
 	private WebCmsObject owner;
 	private WebCmsDomain domain;
@@ -64,11 +68,51 @@ public class WebCmsComponentAutoCreateTask
 		children.add( task );
 	}
 
-	public void addMetadata( String key, Object value ) {
-		metadata.put( key, value );
+	/**
+	 * Add an attribute value to the component: this will first attempt to set
+	 * the property directly on the component model, and if the property does
+	 * not exist there, will attempt to set it on the metadata.
+	 */
+	public void addAttributeValue( String key, Object value ) {
+		attributeValues.add( new AttributeValue( Attribute.ANY, key, value ) );
+	}
+
+	public void addAttributeValue( Attribute attributeType, String key, Object value ) {
+		attributeValues.add( new AttributeValue( attributeType, key, value ) );
+	}
+
+	/**
+	 * Add a value for a direct property of the component model.
+	 */
+	public void addPropertyValue( String key, Object value ) {
+		attributeValues.add( new AttributeValue( Attribute.PROPERTY, key, value ) );
+	}
+
+	/**
+	 * Add a value for a metadata property.
+	 */
+	public void addMetadataValue( String key, Object value ) {
+		attributeValues.add( new AttributeValue( Attribute.METADATA, key, value ) );
 	}
 
 	public boolean hasChildren() {
 		return !children.isEmpty();
+	}
+
+	public enum Attribute
+	{
+		ANY,
+		METADATA,
+		PROPERTY
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	@ToString(of = { "key", "value" })
+	static class AttributeValue
+	{
+		private final Attribute attribute;
+		private final String key;
+		private final Object value;
 	}
 }
