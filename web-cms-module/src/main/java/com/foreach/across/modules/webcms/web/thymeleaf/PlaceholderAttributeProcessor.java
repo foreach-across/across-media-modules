@@ -16,15 +16,16 @@
 
 package com.foreach.across.modules.webcms.web.thymeleaf;
 
-import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateQueue;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AttributeName;
-import org.thymeleaf.model.*;
+import org.thymeleaf.model.IModel;
+import org.thymeleaf.model.IModelFactory;
+import org.thymeleaf.model.IProcessableElementTag;
 import org.thymeleaf.processor.element.AbstractAttributeModelProcessor;
 import org.thymeleaf.processor.element.IElementModelStructureHandler;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import static com.foreach.across.modules.webcms.web.thymeleaf.ComponentAttributeProcessor.*;
+import static com.foreach.across.modules.webcms.web.thymeleaf.ComponentAttributeProcessor.ATTR_PARENT_CREATE_INCLUDE;
 import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREFIX;
 
 /**
@@ -56,10 +57,9 @@ final class PlaceholderAttributeProcessor extends AbstractAttributeModelProcesso
 			IModelFactory modelFactory = context.getModelFactory();
 
 			if ( placeholderName != null ) {
-				enableDisabledComponentBlocks( model, modelFactory );
+				ModelProcessingState modelProcessingState = ModelProcessingState.retrieve( context );
 
-				boolean shouldRenderToPlaceholder = !elementTag.hasAttribute( ATTR_PARENT_CREATE_INCLUDE );
-
+				boolean shouldRenderToPlaceholder = !shouldIncludeInOutputDirectly( elementTag, modelProcessingState );
 				removeProcessedAttributes( model, attributeName, modelFactory );
 
 				if ( shouldRenderToPlaceholder ) {
@@ -71,6 +71,10 @@ final class PlaceholderAttributeProcessor extends AbstractAttributeModelProcesso
 		}
 	}
 
+	private boolean shouldIncludeInOutputDirectly( IProcessableElementTag tag, ModelProcessingState modelProcessingState ) {
+		return !modelProcessingState.isParsePlaceholdersOnly() && tag.hasAttribute( ATTR_PARENT_CREATE_INCLUDE );
+	}
+
 	private void removeProcessedAttributes( IModel model, AttributeName attributeName, IModelFactory modelFactory ) {
 		IProcessableElementTag elementTag = (IProcessableElementTag) model.get( 0 );
 		IProcessableElementTag newFirstEvent = modelFactory.removeAttribute( elementTag, attributeName );
@@ -79,37 +83,5 @@ final class PlaceholderAttributeProcessor extends AbstractAttributeModelProcesso
 		if ( newFirstEvent != elementTag ) {
 			model.replace( 0, newFirstEvent );
 		}
-	}
-
-	private void enableDisabledComponentBlocks( IModel model, IModelFactory modelFactory ) {
-		for ( int i = 0; i < model.size(); i++ ) {
-			ITemplateEvent event = model.get( i );
-			if ( event instanceof IOpenElementTag || event instanceof IStandaloneElementTag ) {
-				IProcessableElementTag original = (IProcessableElementTag) event;
-				IProcessableElementTag openElementTag = original;
-				// all components inside (or on) the placeholder should be rendered - even if the ComponentAttributeProcessor had put them hidden
-				if ( openElementTag.hasAttribute( ATTR_NEVER_REPLACE ) ) {
-					openElementTag = modelFactory.removeAttribute( openElementTag, ATTR_NEVER_REPLACE );
-				}
-
-				if ( openElementTag.hasAttribute( ATTR_COMPONENT ) ) {
-					// if a wcm:component has container creation scope set, remove it
-					if ( WebCmsComponentAutoCreateQueue.CONTAINER_MEMBER_SCOPE.equals( openElementTag.getAttributeValue( ATTR_SCOPE ) ) ) {
-						openElementTag = modelFactory.removeAttribute( openElementTag, ATTR_SCOPE );
-					}
-					// if a wcm:component has no wcm:auto-create - ensure it is disabled (otherwise the container creation will trigger it)
-					if ( !openElementTag.hasAttribute( ATTR_AUTO_CREATE ) ) {
-						openElementTag = modelFactory.setAttribute( openElementTag, ATTR_AUTO_CREATE, SCOPE_PLACEHOLDER_CREATE,
-						                                            AttributeValueQuotes.DOUBLE );
-					}
-					openElementTag = modelFactory.setAttribute( openElementTag, ATTR_PLACEHOLDER_AS_PARENT, "true", AttributeValueQuotes.DOUBLE );
-				}
-
-				if ( original != openElementTag ) {
-					model.replace( i, openElementTag );
-				}
-			}
-		}
-
 	}
 }

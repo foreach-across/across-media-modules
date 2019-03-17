@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ITMultiDomainRedirectReferenceData extends AbstractMultiDomainCmsApplicationWithTestDataIT
 {

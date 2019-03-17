@@ -39,8 +39,7 @@ import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREF
 final class ComponentElementProcessor extends AbstractElementModelProcessor
 {
 	private static String[] ATTRIBUTES_TO_PREFIX = new String[] {
-			"search-parent-scopes", "type", "always-replace", "parse-placeholders", "auto-create", "scope", "parent-create-include",
-			"auto-create-placeholder-parent", "never-replace"
+			"search-parent-scopes", "type", "always-replace", "parse-placeholders", "auto-create", "scope", "parent-create-include"
 	};
 
 	ComponentElementProcessor() {
@@ -65,7 +64,8 @@ final class ComponentElementProcessor extends AbstractElementModelProcessor
 		Map<String, String> convertedAttributes = convertAttributes( openTag.getAttributeMap() );
 
 		IProcessableElementTag replacementTag = selfClosing
-				? modelFactory.createStandaloneElementTag( "th:block", convertedAttributes, AttributeValueQuotes.DOUBLE, false, false )
+				? modelFactory.createStandaloneElementTag( "th:block", convertedAttributes, AttributeValueQuotes.DOUBLE, false,
+				                                           ( (IStandaloneElementTag) openTag ).isMinimized() )
 				: modelFactory.createOpenElementTag( "th:block", convertedAttributes, AttributeValueQuotes.DOUBLE, false );
 
 		model.replace( 0, replacementTag );
@@ -75,8 +75,9 @@ final class ComponentElementProcessor extends AbstractElementModelProcessor
 		}
 	}
 
-	private Map<String, String> convertAttributes( Map<String, String> attributeMap ) {
+	private static Map<String, String> convertAttributes( Map<String, String> attributeMap ) {
 		Map<String, String> converted = new HashMap<>( attributeMap.size() );
+
 		attributeMap.forEach( ( name, value ) -> {
 			if ( name.contains( ":" ) ) {
 				converted.put( name, value );

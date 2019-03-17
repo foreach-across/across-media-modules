@@ -26,7 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -96,6 +97,10 @@ public abstract class AbstractMockMvcTest
 		public void assertElementIsEmpty( String selector ) {
 			val element = document.select( selector ).get( 0 );
 			assertEquals( "", element.html().trim() );
+		}
+
+		public void assertNoElement( String selector ) {
+			assertTrue( document.select( selector ).isEmpty() );
 		}
 	}
 }

@@ -20,10 +20,7 @@ import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsCom
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateTask;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.engine.ITemplateHandler;
 import org.thymeleaf.engine.OutputTemplateHandler;
 import org.thymeleaf.model.*;
@@ -68,6 +65,7 @@ final class ComponentAttributeTemplatePostProcessor implements IPostProcessor
 		private AttributeValue attributeValue;
 		private final ArrayDeque<AttributeValue> tree = new ArrayDeque<>();
 
+		private ModelProcessingState modelProcessingState;
 		private WebCmsComponentAutoCreateQueue autoCreateQueue;
 
 		private int level = 0;
@@ -80,8 +78,8 @@ final class ComponentAttributeTemplatePostProcessor implements IPostProcessor
 
 		@Override
 		public void setContext( ITemplateContext context ) {
-			ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-			autoCreateQueue = appCtx.getBean( WebCmsComponentAutoCreateQueue.class );
+			modelProcessingState = ModelProcessingState.retrieve( context );
+			autoCreateQueue = modelProcessingState.getAutoCreateQueue();
 		}
 
 		@Override
@@ -136,14 +134,14 @@ final class ComponentAttributeTemplatePostProcessor implements IPostProcessor
 
 		@Override
 		public void handleProcessingInstruction( IProcessingInstruction processingInstruction ) {
-			if ( START_ATTRIBUTE.equals( processingInstruction.getTarget() ) /*&& parsing()*/ ) {
+			if ( START_ATTRIBUTE.equals( processingInstruction.getTarget() ) ) {
 				this.attributeValue = AttributeValue.from( processingInstruction.getContent() );
 				tree.push( this.attributeValue );
 
 				buildingAttribute = true;
 				next = attributeValue.handler;
 			}
-			else if ( STOP_ATTRIBUTE.equals( processingInstruction.getTarget() ) /*&& parsing()*/ ) {
+			else if ( STOP_ATTRIBUTE.equals( processingInstruction.getTarget() ) ) {
 				AttributeValue attributeValue = tree.pop();
 				applyAttributeValue( autoCreateQueue, attributeValue );
 
@@ -161,10 +159,6 @@ final class ComponentAttributeTemplatePostProcessor implements IPostProcessor
 			if ( currentTask != null ) {
 				currentTask.addAttributeValue( attributeValue.attributeType, attributeValue.attributeName, attributeValue.buffer.toString() );
 			}
-		}
-
-		private boolean parsing() {
-			return level > 0;
 		}
 
 		@RequiredArgsConstructor

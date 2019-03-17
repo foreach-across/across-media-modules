@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ITMultiDomainMenuReferenceData extends AbstractMultiDomainCmsApplicationWithTestDataIT
 {

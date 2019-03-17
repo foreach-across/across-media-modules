@@ -130,3 +130,14 @@ assets:
       pathSegment: auto-create-metadata
       published: true
       pageType: default
+
+    #
+    # Page with a custom template for automatically creating components and Thymeleaf tags interop.
+    #
+    - objectId: "wcm:asset:page:auto-create-thymeleaf-interop"
+      title: Auto create and Thymeleaf interop
+      template: th/test/pages/auto-create/thymeleaf-interop
+      pathSegmentGenerated: false
+      pathSegment: auto-create-thymeleaf-interop
+      published: true
+      pageType: default

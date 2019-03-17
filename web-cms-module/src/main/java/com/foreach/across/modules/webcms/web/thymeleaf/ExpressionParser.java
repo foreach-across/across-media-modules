@@ -18,10 +18,10 @@ package com.foreach.across.modules.webcms.web.thymeleaf;
 
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.standard.expression.FragmentExpression;
-import org.thymeleaf.standard.expression.IStandardExpression;
-import org.thymeleaf.standard.expression.IStandardExpressionParser;
-import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.standard.expression.*;
+import org.thymeleaf.util.FastStringWriter;
+
+import static org.thymeleaf.standard.expression.FragmentExpression.*;
 
 /**
  * Helper for parsing attribute values to Thymeleaf expressions
@@ -34,7 +34,8 @@ interface ExpressionParser
 {
 	/**
 	 * If the value corresponds with an expression, parse and execute it.
-	 * Else simply return the original value.
+	 * Else simply return the original value. Will attempts to render-aside
+	 * any fragment expression.
 	 *
 	 * @param original value - possibly an expression
 	 * @return result
@@ -51,7 +52,12 @@ interface ExpressionParser
 				IStandardExpression expression = parser.parseExpression( context, original );
 
 				if ( expression instanceof FragmentExpression ) {
-					throw new UnsupportedOperationException( "fragment expressions are currently not supported as attribute values." );
+					ExecutedFragmentExpression executedFragmentExpression = createExecutedFragmentExpression( context, (FragmentExpression) expression );
+					Fragment fragment = resolveExecutedFragmentExpression( context, executedFragmentExpression, true );
+
+					FastStringWriter sw = new FastStringWriter( 200 );
+					context.getConfiguration().getTemplateManager().process( fragment.getTemplateModel(), context, sw );
+					return sw.toString();
 				}
 
 				return expression.execute( context );

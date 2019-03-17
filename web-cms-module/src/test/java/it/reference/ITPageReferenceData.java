@@ -33,7 +33,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme

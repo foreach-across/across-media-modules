@@ -46,7 +46,7 @@ import static com.foreach.across.modules.webcms.domain.article.QWebCmsArticleTyp
 import static com.foreach.across.modules.webcms.domain.component.QWebCmsComponentType.webCmsComponentType;
 import static com.foreach.across.modules.webcms.domain.publication.QWebCmsPublicationType.webCmsPublicationType;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme

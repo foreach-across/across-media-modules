@@ -27,15 +27,17 @@ import lombok.val;
 import modules.test.metadata.ImageWithAltMetadata;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.7
  */
+@DisplayName("AXWCM-53 - metadata when auto-creating components")
 class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
@@ -57,7 +59,7 @@ class ITAutoCreateMetadata extends AbstractCmsApplicationWithTestDataIT
 		}
 	}
 
-	void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
+	private void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
 		assertNotNull( page );
 
 		assertEquals( "wcm:asset:page:auto-create-metadata", page.getObjectId() );

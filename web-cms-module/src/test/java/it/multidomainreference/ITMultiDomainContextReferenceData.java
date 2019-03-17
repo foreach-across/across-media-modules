@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ITMultiDomainContextReferenceData extends AbstractMultiDomainCmsApplicationWithTestDataIT
 {

@@ -22,7 +22,7 @@ import it.AbstractCmsApplicationWithTestDataIT;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ITDomainReferenceData extends AbstractCmsApplicationWithTestDataIT
 {

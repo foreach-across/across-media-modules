@@ -18,10 +18,7 @@ package com.foreach.across.modules.webcms.web.thymeleaf;
 
 import com.foreach.across.modules.webcms.domain.component.placeholder.WebCmsPlaceholderContentModel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.engine.AbstractTemplateHandler;
 import org.thymeleaf.engine.ITemplateHandler;
 import org.thymeleaf.engine.OutputTemplateHandler;
@@ -39,9 +36,9 @@ import java.util.ArrayDeque;
  * instead of being sent to the template output.
  *
  * @author Arne Vandamme
- * @since 0.0.2
  * @see PlaceholderAttributeProcessor
  * @see ComponentTemplatePostProcessor
+ * @since 0.0.2
  */
 final class PlaceholderTemplatePostProcessor implements IPostProcessor
 {
@@ -92,6 +89,7 @@ final class PlaceholderTemplatePostProcessor implements IPostProcessor
 		private PlaceholderContent placeholderContent;
 		private final ArrayDeque<PlaceholderContent> tree = new ArrayDeque<>();
 
+		private ModelProcessingState modelProcessingState;
 		private WebCmsPlaceholderContentModel placeholderContentModel;
 
 		private int level = 0;
@@ -105,8 +103,8 @@ final class PlaceholderTemplatePostProcessor implements IPostProcessor
 
 		@Override
 		public void setContext( ITemplateContext context ) {
-			ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-			placeholderContentModel = appCtx.getBean( WebCmsPlaceholderContentModel.class );
+			modelProcessingState = ModelProcessingState.retrieve( context );
+			placeholderContentModel = modelProcessingState.getPlaceholderContentModel();
 		}
 
 		@Override
@@ -164,6 +162,7 @@ final class PlaceholderTemplatePostProcessor implements IPostProcessor
 			if ( START_PLACEHOLDER.equals( processingInstruction.getTarget() ) && parsing() ) {
 				this.placeholderContent = new PlaceholderContent( processingInstruction.getContent() );
 				tree.push( this.placeholderContent );
+				modelProcessingState.push( ModelProcessingState.Change.placeholder() );
 
 				buildingPlaceholderContent = true;
 				next = placeholderContent.handler;
@@ -174,15 +173,18 @@ final class PlaceholderTemplatePostProcessor implements IPostProcessor
 
 				this.placeholderContent = tree.peek();
 				buildingPlaceholderContent = this.placeholderContent != null;
+				modelProcessingState.pop();
 				next = buildingPlaceholderContent ? placeholderContent.handler : ( allowNonPlaceholderOutput() ? outputHandler : trashHandler );
 			}
 			else if ( START_PARSE_PLACEHOLDERS.equals( processingInstruction.getTarget() ) ) {
 				level++;
 				placeholderContentModel.increaseLevel();
+				modelProcessingState.push( ModelProcessingState.Change.parsePlaceholders() );
 			}
 			else if ( STOP_PARSE_PLACEHOLDERS.equals( processingInstruction.getTarget() ) ) {
 				level = Math.max( level - 1, 0 );
 				placeholderContentModel.decreaseLevel();
+				modelProcessingState.pop();
 			}
 			else if ( START_IGNORE_NON_PLACEHOLDERS.equals( processingInstruction.getTarget() ) ) {
 				trashLevel++;
