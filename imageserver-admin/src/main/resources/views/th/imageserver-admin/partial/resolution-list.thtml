@@ -1,9 +1,11 @@
 <h3>Manage resolutions</h3>
-<nav class="navbar navbar-default">
-    <select ng-model="selectedContext" ng-options="context for context in contexts"
-            ng-change="selectContext(selectedContext)">
-    </select>
-    <a class="btn navbar-btn" ng-href="#/manage/resolutions/create">Create a resolution</a>
+<nav class="navbar navbar-default" role="navigation">
+	<div class="container-fluid">
+    	<select ng-model="selectedContext" ng-options="context for context in contexts"
+        	    ng-change="selectContext(selectedContext)">
+    	</select>
+    	<a class="btn navbar-btn" ng-href="#/manage/resolutions/create">Create a resolution</a>
+    </div>
 </nav>
 
 {{resolutions.length}} results
