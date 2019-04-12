@@ -11,6 +11,8 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import static com.foreach.imageserver.core.controllers.ImageLoadController.IMAGE_INFO_PATH;
+
 /**
  * @author Gunther Van Geetsom
  * @since 5.0.0
@@ -18,8 +20,6 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 @ImageServerController
 public class ImageInfoController extends BaseImageAPIController
 {
-
-	public static final String IMAGE_INFO_PATH = "/api/image/details";
 
 	@Autowired
 	private ImageService imageService;
