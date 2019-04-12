@@ -4,6 +4,7 @@ import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,14 @@ public interface ImageService
 	 * @return image
 	 */
 	Image createImage( byte[] imageBytes );
+
+	/**
+	 * Load data for given image data.
+	 *
+	 * @param imageBytes the image
+	 * @return image
+	 */
+	Image loadImageData( @NonNull byte[] imageBytes );
 
 	/**
 	 * Save a new image modification for an image.
