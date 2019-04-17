@@ -244,6 +244,16 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	@Override
+	public ImageInfoDto imageInfo( byte[] imageBytes ) {
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+
+		MultiValueMap<String, Object> bodyParts = getImageDataAsBody( imageBytes );
+
+		return httpPost( ENDPOINT_IMAGE_INFO, queryParams, bodyParts, ResponseTypes.IMAGE_INFO );
+	}
+
+	@Override
 	public List<ImageResolutionDto> pregenerateResolutions( String imageId ) {
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "token", imageServerAccessToken );

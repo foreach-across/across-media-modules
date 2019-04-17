@@ -8,7 +8,6 @@ import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.dto.ImageInfoDto;
 import com.foreach.imageserver.dto.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -24,7 +23,6 @@ import java.util.List;
 public class ImageLoadController extends BaseImageAPIController
 {
 	public static final String LOAD_IMAGE_PATH = "/api/image/load";
-	public static final String IMAGE_INFO_PATH = "/api/image/details";
 	public static final String CONTEXT_LIST = "/api/context/list";
 	public static final String IMAGE_PREGENERATE = "/api/image/pregenerate";
 
@@ -82,28 +80,6 @@ public class ImageLoadController extends BaseImageAPIController
 		}
 		catch ( RuntimeException ise ) {
 			return error( ise.getMessage() );
-		}
-	}
-
-	@RequestMapping(value = IMAGE_INFO_PATH, method = RequestMethod.GET)
-	@ResponseBody
-	public JsonResponse info( @RequestParam(value = "token", required = true) String accessToken,
-	                          @RequestParam(value = "iid", required = true) String externalId ) {
-		if ( !this.accessToken.equals( accessToken ) ) {
-			return error( "Access denied." );
-		}
-
-		Image image = imageService.getByExternalId( externalId );
-
-		if ( image != null ) {
-			return success( DtoUtil.toDto( image ) );
-		}
-		else {
-			ImageInfoDto notExisting = new ImageInfoDto();
-			notExisting.setExternalId( externalId );
-			notExisting.setExisting( false );
-
-			return success( notExisting );
 		}
 	}
 

@@ -106,6 +106,14 @@ public interface ImageServerClient
 	ImageInfoDto imageInfo( String imageId );
 
 	/**
+	 * Get info about image without saving the image.
+	 *
+	 * @param imageBytes imageBytes
+	 * @return imageInfoDto
+	 */
+	ImageInfoDto imageInfo( byte[] imageBytes );
+
+	/**
 	 * Will create the variants for all pregenerate resolutions of the image.
 	 *
 	 * @param imageId External id of the image.

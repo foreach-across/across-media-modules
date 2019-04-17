@@ -65,6 +65,11 @@ public class WebConfiguration
 	}
 
 	@Bean
+	public ImageInfoController imageInfoController() {
+		return new ImageInfoController( accessToken() );
+	}
+
+	@Bean
 	public ImageModificationController imageModificationController() {
 		return new ImageModificationController( accessToken() );
 	}

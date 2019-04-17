@@ -244,4 +244,15 @@ public class ITRemoteImageServerClient
 		assertEquals( new DimensionsDto( 100, 100 ), modifiedUpload.getDimensionsDto() );
 		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
 	}
+
+	@Test
+	public void imageInfoForGivenImage() throws IOException {
+		byte[] imageData =
+				IOUtils.toByteArray(
+						getClass().getClassLoader().getResourceAsStream( "poppy_flower_nature.jpg" ) );
+
+		ImageInfoDto imageInfoDto = imageServerClient.imageInfo( imageData );
+		assertEquals( new DimensionsDto( 1920, 1080 ), imageInfoDto.getDimensionsDto() );
+		assertEquals( ImageTypeDto.JPEG, imageInfoDto.getImageType() );
+	}
 }

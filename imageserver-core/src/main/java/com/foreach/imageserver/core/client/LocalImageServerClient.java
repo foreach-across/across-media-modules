@@ -167,6 +167,12 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	}
 
 	@Override
+	public ImageInfoDto imageInfo( byte[] imageBytes ) {
+		Image image = imageService.loadImageData( imageBytes );
+		return DtoUtil.toDto( image );
+	}
+
+	@Override
 	public List<ImageResolutionDto> pregenerateResolutions( String imageId ) {
 		PregenerateResolutionsResponse response = imageRestService.pregenerateResolutions( imageId );
 

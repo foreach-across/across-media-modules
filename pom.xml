@@ -5,7 +5,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<across.version>2.1.2.RELEASE</across.version>
+		<across.version>2.1.3.RELEASE</across.version>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
 		<sonar.exclusions>deploy/**,target/generated-sources/**</sonar.exclusions>
