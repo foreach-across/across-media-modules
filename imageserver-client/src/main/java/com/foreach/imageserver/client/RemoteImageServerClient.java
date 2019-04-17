@@ -250,7 +250,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 		MultiValueMap<String, Object> bodyParts = getImageDataAsBody( imageBytes );
 
-		return httpPost( ENDPOINT_IMAGE_LOAD, queryParams, bodyParts, ResponseTypes.IMAGE_INFO );
+		return httpPost( ENDPOINT_IMAGE_INFO, queryParams, bodyParts, ResponseTypes.IMAGE_INFO );
 	}
 
 	@Override

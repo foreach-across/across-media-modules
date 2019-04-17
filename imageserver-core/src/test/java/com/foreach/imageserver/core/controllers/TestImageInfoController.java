@@ -47,7 +47,7 @@ public class TestImageInfoController
 		when( imageService.loadImageData( any() ) ).thenReturn( mockImage );
 
 		// Act
-		JsonResponse response = imageInfoController.imageInfo( "token", new byte[] { 1 } );
+		JsonResponse response = imageInfoController.infoForUploadedImage( "token", new byte[] { 1 } );
 
 		// Assert
 		assertTrue( response.isSuccess() );

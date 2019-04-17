@@ -135,6 +135,7 @@ public class ImageServiceImpl implements ImageService
 		return image;
 	}
 
+	@Override
 	public Image loadImageData( @NonNull byte[] imageBytes ) {
 		ImageAttributes imageAttributes = imageTransformService.getAttributes( new ByteArrayInputStream( imageBytes ) );
 
