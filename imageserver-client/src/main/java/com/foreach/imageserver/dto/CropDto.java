@@ -1,7 +1,6 @@
 package com.foreach.imageserver.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -13,6 +12,8 @@ import java.util.Objects;
  */
 @Getter
 @Setter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
 public class CropDto
 {
 	private int x;
@@ -110,5 +111,13 @@ public class CropDto
 				", source=" + source +
 				", box=" + box +
 				'}';
+	}
+
+	// not using @Builder.Default to stay compatible
+	@SuppressWarnings("unused")
+	public static class CropDtoBuilder
+	{
+		private DimensionsDto source = new DimensionsDto();
+		private DimensionsDto box = new DimensionsDto();
 	}
 }

@@ -20,4 +20,13 @@ public enum ImageTypeDto
 	public String getExtension() {
 		return extension;
 	}
+
+	public static ImageTypeDto forExtension( String extension ) {
+		for ( ImageTypeDto value : values() ) {
+			if ( value.getExtension().equals( extension ) ) {
+				return value;
+			}
+		}
+		return null;
+	}
 }
