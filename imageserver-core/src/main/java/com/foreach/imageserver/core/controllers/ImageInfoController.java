@@ -11,15 +11,18 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
-import static com.foreach.imageserver.core.controllers.ImageLoadController.IMAGE_INFO_PATH;
+import static com.foreach.imageserver.core.controllers.ImageInfoController.IMAGE_INFO_PATH;
 
 /**
  * @author Gunther Van Geetsom
  * @since 5.0.0
  */
 @ImageServerController
+@RequestMapping(value = IMAGE_INFO_PATH)
 public class ImageInfoController extends BaseImageAPIController
 {
+
+	public static final String IMAGE_INFO_PATH = "/api/image/details";
 
 	@Autowired
 	private ImageService imageService;
@@ -33,10 +36,32 @@ public class ImageInfoController extends BaseImageAPIController
 		binder.registerCustomEditor( byte[].class, new ByteArrayMultipartFileEditor() );
 	}
 
-	@RequestMapping(value = IMAGE_INFO_PATH, method = RequestMethod.POST)
+	@GetMapping
 	@ResponseBody
-	public JsonResponse imageInfo( @RequestParam(value = "token", required = true) String accessToken,
-	                               @RequestParam(value = "imageData", required = true) byte[] imageData ) {
+	public JsonResponse info( @RequestParam(value = "token", required = true) String accessToken,
+	                          @RequestParam(value = "iid", required = true) String externalId ) {
+		if ( !this.accessToken.equals( accessToken ) ) {
+			return error( "Access denied." );
+		}
+
+		Image image = imageService.getByExternalId( externalId );
+
+		if ( image != null ) {
+			return success( DtoUtil.toDto( image ) );
+		}
+		else {
+			ImageInfoDto notExisting = new ImageInfoDto();
+			notExisting.setExternalId( externalId );
+			notExisting.setExisting( false );
+
+			return success( notExisting );
+		}
+	}
+
+	@PostMapping
+	@ResponseBody
+	public JsonResponse infoForUploadedImage( @RequestParam(value = "token", required = true) String accessToken,
+	                                          @RequestParam(value = "imageData", required = true) byte[] imageData ) {
 
 		if ( !this.accessToken.equals( accessToken ) ) {
 			return error( "Access denied." );
@@ -45,6 +70,7 @@ public class ImageInfoController extends BaseImageAPIController
 		Image image = imageService.loadImageData( imageData );
 		ImageInfoDto imageInfoDto = DtoUtil.toDto( image );
 		imageInfoDto.setExisting( false );
+
 		return success( imageInfoDto );
 	}
 }
