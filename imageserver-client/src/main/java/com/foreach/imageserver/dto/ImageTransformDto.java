@@ -17,6 +17,7 @@ import java.util.stream.Stream;
  * <p/>
  * The following parameters are supported:
  * <ul>
+ * <li><strong>scene</strong>: {@link #setScene(Integer)}</li>
  * <li><strong>w</strong>: {@link #setWidth(Integer)}</li>
  * <li><strong>h</strong>: {@link #setHeight(Integer)}</li>
  * <li><strong>ar</strong>: {@link #setAspectRatio(AspectRatio)}</li>
@@ -46,6 +47,13 @@ import java.util.stream.Stream;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ImageTransformDto
 {
+	/**
+	 * The specific scene of the source image that should be transformed.
+	 * Only relevant for multi-scene formats like PDF where a scene corresponds to a page in the PDF.
+	 * If not specified, the output type will determine if either the entire original image or a specific scene will be used.
+	 */
+	private Integer scene;
+
 	/**
 	 * The width in pixels of the resulting image.
 	 * If both width and height are not specified, the original image width will be assumed.
@@ -145,6 +153,9 @@ public class ImageTransformDto
 			      else if ( "h".equals( param.key ) ) {
 				      dto.height = param.intValue();
 			      }
+			      else if ( "scene".equals( param.key ) ) {
+				      dto.scene = param.intValue();
+			      }
 			      else if ( "maxw".equals( param.key ) ) {
 				      dto.maximumWidth = param.intValue();
 			      }
@@ -205,6 +216,7 @@ public class ImageTransformDto
 	@Override
 	public String toString() {
 		List<StringParam> parameters = new ArrayList<>();
+		parameters.add( new StringParam( "scene", scene ) );
 		parameters.add( new StringParam( "w", width ) );
 		parameters.add( new StringParam( "h", height ) );
 		parameters.add( new StringParam( "maxw", maximumWidth ) );

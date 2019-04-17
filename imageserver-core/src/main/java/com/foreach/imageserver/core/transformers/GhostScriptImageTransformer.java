@@ -2,6 +2,7 @@ package com.foreach.imageserver.core.transformers;
 
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.dto.ImageTransformDto;
 import lombok.SneakyThrows;
 import org.ghost4j.document.PDFDocument;
 import org.ghost4j.renderer.SimpleRenderer;
@@ -40,7 +41,6 @@ public class GhostScriptImageTransformer implements ImageTransformer
 		PDFDocument pdfDocument = new PDFDocument();
 		pdfDocument.load( action.getImageSource().getImageStream() );
 
-
 		return null;
 	}
 
@@ -63,6 +63,11 @@ public class GhostScriptImageTransformer implements ImageTransformer
 		ImageIO.write( (RenderedImage) images.get( 0 ), "png", bos );
 
 		return new InMemoryImageSource( ImageType.PNG, bos.toByteArray() );
+	}
+
+	@Override
+	public ImageSource transform( ImageSource original, ImageTransformDto transformDto ) {
+		throw new UnsupportedOperationException( "Not yet supported" );
 	}
 
 	@Override

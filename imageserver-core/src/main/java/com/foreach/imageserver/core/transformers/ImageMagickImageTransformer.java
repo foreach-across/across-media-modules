@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.transformers;
 import com.foreach.imageserver.core.business.Crop;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.dto.ImageTransformDto;
 import com.foreach.imageserver.logging.LogHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.im4java.core.ConvertCmd;
@@ -138,7 +139,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 			Info info = new Info( "-", stream, false );
 			imageType = toImageType( info );
 			dimensions = new Dimensions( info.getImageWidth(), info.getImageHeight() );
-			return new ImageAttributes( imageType, dimensions );
+			return new ImageAttributes( imageType, dimensions, info.getSceneCount() );
 		}
 		catch ( Exception e ) {
 			LOG.error(
@@ -211,6 +212,11 @@ public class ImageMagickImageTransformer implements ImageTransformer
 					LogHelper.flatten( action ), LogHelper.flatten( appliedDensity ), LogHelper.flatten( crop ), e );
 			throw new ImageModificationException( e );
 		}
+	}
+
+	@Override
+	public ImageSource transform( ImageSource original, ImageTransformDto transformDto ) {
+		throw new UnsupportedOperationException( "Not yet supported" );
 	}
 
 	@Override

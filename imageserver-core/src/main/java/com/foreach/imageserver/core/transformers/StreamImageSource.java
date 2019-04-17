@@ -5,7 +5,7 @@ import com.foreach.imageserver.core.business.ImageType;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-public class StreamImageSource
+public class StreamImageSource implements ImageSource
 {
 	private final ImageType imageType;
 	private final InputStream imageStream;
@@ -20,10 +20,12 @@ public class StreamImageSource
 		this.imageStream = new ByteArrayInputStream( imageBytes );
 	}
 
+	@Override
 	public ImageType getImageType() {
 		return imageType;
 	}
 
+	@Override
 	public InputStream getImageStream() {
 		return imageStream;
 	}

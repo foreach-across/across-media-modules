@@ -26,6 +26,11 @@ public class TestImageTransformDto
 	}
 
 	@Test
+	public void scene() {
+		assertTransformString( builder().scene( 1 ), "scene_1" );
+	}
+
+	@Test
 	public void dpi() {
 		assertTransformString( builder().dpi( 300 ), "dpi_300" );
 	}
@@ -73,6 +78,25 @@ public class TestImageTransformDto
 		assertTransformString( builder().maximumWidth( 100 ), "maxw_100" );
 		assertTransformString( builder().maximumHeight( 50 ), "maxh_50" );
 		assertTransformString( builder().maximumHeight( 50 ).maximumWidth( 100 ), "maxw_100,maxh_50" );
+	}
+
+	@Test
+	public void parameterOrderForHashing() {
+		assertTransformString(
+				builder().scene( 7 ).width( 100 ).height( 50 ).maximumWidth( 200 ).maximumHeight( 0 ).aspectRatio( new AspectRatio( "16/9" ) )
+				         .crop(
+						         CropDto.builder().y( 5 ).width( 300 ).height( 400 )
+						                .source( new DimensionsDto( 800, 600 ) )
+						                .box( new DimensionsDto( 640, 480 ) )
+						                .build()
+				         )
+				         .dpi( 600 )
+				         .quality( 50 )
+				         .colorSpace( ColorSpaceDto.CMYK )
+				         .background( "666" )
+				,
+				"scene_7,w_100,h_50,maxw_200,maxh_0,ar_16:9,cx_0,cy_5,cw_300,ch_400,csw_800,csh_600,cbw_640,cbh_480,color_cmyk,bg_666,dpi_600,q_50"
+		);
 	}
 
 	private void assertTransformString( ImageTransformDto.ImageTransformDtoBuilder builder, String output ) {

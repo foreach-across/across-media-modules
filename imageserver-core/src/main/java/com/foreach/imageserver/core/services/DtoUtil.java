@@ -113,6 +113,7 @@ public final class DtoUtil
 		dto.setDimensionsDto( toDto( image.getDimensions() ) );
 		dto.setImageType( ImageTypeDto.valueOf( image.getImageType().name() ) );
 		dto.setImageFileSize( image.getFileSize() );
+		dto.setSceneCount( image.getSceneCount() );
 
 		return dto;
 	}

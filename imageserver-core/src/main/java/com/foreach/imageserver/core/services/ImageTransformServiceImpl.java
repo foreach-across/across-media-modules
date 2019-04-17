@@ -3,11 +3,15 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.*;
+import com.foreach.imageserver.dto.ImageTransformDto;
 import com.foreach.imageserver.logging.LogHelper;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.concurrent.Semaphore;
 
 @Service
@@ -162,6 +166,40 @@ public class ImageTransformServiceImpl implements ImageTransformService
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public ImageSource transform( @NonNull ImageSource imageSource,
+	                              @NonNull ImageAttributes sourceAttributes,
+	                              @NonNull Collection<ImageTransformDto> transforms ) {
+		if ( transforms.isEmpty() ) {
+			return imageSource;
+		}
+
+		ArrayDeque<ImageTransformDto> queue = new ArrayDeque<>( transforms );
+		ImageSource source = imageSource;
+		ImageAttributes attributes = sourceAttributes;
+
+		do {
+			ImageTransformDto transform = queue.removeFirst();
+
+			if ( attributes == null ) {
+				attributes = getAttributes( source.getImageStream() );
+			}
+
+			source = transform( source, attributes, transform );
+
+			attributes = null;
+		}
+		while ( !queue.isEmpty() );
+
+		return source;
+	}
+
+	private ImageSource transform( ImageSource imageSource, ImageAttributes attributes, ImageTransformDto transformDto ) {
+		// simplify the transform dto using the attributes
+		// delegate to actual transformer
+		return null;
 	}
 
 	private ImageTransformer findAbleTransformer( CanExecute canExecute ) {

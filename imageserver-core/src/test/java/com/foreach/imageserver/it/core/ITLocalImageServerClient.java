@@ -16,6 +16,7 @@ import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.dto.*;
+import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
@@ -98,8 +99,7 @@ public class ITLocalImageServerClient
 	public void uploadingKnownResourceImage() throws Exception {
 		String externalId = UUID.randomUUID().toString();
 		byte[] imageData =
-				IOUtils.toByteArray(
-						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+				image( "images/poppy_flower_nature.jpg" );
 		Date date = DateUtils.parseDate( "2013-05-14 13:33:22", "yyyy-MM-dd HH:mm:ss" );
 
 		ImageInfoDto fetchedInfo = imageServerClient.imageInfo( externalId );
@@ -147,11 +147,9 @@ public class ITLocalImageServerClient
 	public void replacingImage() throws Exception {
 		String externalId = UUID.randomUUID().toString();
 		byte[] imageOne =
-				IOUtils.toByteArray(
-						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+				image( "images/poppy_flower_nature.jpg" );
 		byte[] imageTwo =
-				IOUtils.toByteArray(
-						getClass().getClassLoader().getResourceAsStream( "images/transparentPngToPng.png" ) );
+				image( "images/transparentPngToPng.png" );
 
 		ImageInfoDto createdInfo = imageServerClient.loadImage( externalId, imageOne );
 		assertTrue( createdInfo.isExisting() );
@@ -189,8 +187,7 @@ public class ITLocalImageServerClient
 	public void registerModification() throws ParseException, IOException {
 		String externalId = UUID.randomUUID().toString();
 		byte[] imageData =
-				IOUtils.toByteArray(
-						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+				image( "images/poppy_flower_nature.jpg" );
 
 		ImageInfoDto uploaded = imageServerClient.loadImage( externalId, imageData );
 		assertTrue( uploaded.isExisting() );
@@ -213,12 +210,16 @@ public class ITLocalImageServerClient
 		assertEquals( dtoWithSource, modifications.iterator().next() );
 	}
 
+	private byte[] image( String s ) throws IOException {
+		return IOUtils.toByteArray(
+				getClass().getClassLoader().getResourceAsStream( s ) );
+	}
+
 	@Test
 	public void registerModifications() throws ParseException, IOException {
 		String externalId = UUID.randomUUID().toString();
 		byte[] imageData =
-				IOUtils.toByteArray(
-						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+				image( "images/poppy_flower_nature.jpg" );
 
 		ImageInfoDto uploaded = imageServerClient.loadImage( externalId, imageData );
 		assertTrue( uploaded.isExisting() );
@@ -249,9 +250,7 @@ public class ITLocalImageServerClient
 
 	@Test
 	public void renderProvidedImage() throws IOException {
-		byte[] imageData =
-				IOUtils.toByteArray(
-						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+		byte[] imageData = image( "images/poppy_flower_nature.jpg" );
 
 		InputStream renderedImage = imageServerClient.imageStream( imageData, new ImageModificationDto( 100, 100 ),
 		                                                           new ImageVariantDto( ImageTypeDto.PNG ) );
@@ -264,14 +263,49 @@ public class ITLocalImageServerClient
 	}
 
 	@Test
-	public void imageInfoForGivenImage() throws IOException {
-		byte[] imageData =
-				IOUtils.toByteArray(
-						getClass().getClassLoader().getResourceAsStream( "images/poppy_flower_nature.jpg" ) );
+	public void imageInfoForJpeg() throws IOException {
+		byte[] imageData = image( "images/poppy_flower_nature.jpg" );
 
 		ImageInfoDto imageInfoDto = imageServerClient.imageInfo( imageData );
+		assertEquals( 1, imageInfoDto.getSceneCount() );
 		assertEquals( new DimensionsDto( 1920, 1080 ), imageInfoDto.getDimensionsDto() );
 		assertEquals( ImageTypeDto.JPEG, imageInfoDto.getImageType() );
+	}
+
+	@Test
+	@SneakyThrows
+	public void imageInfoForPdf() {
+		byte[] pdfData = image( "images/sample-pdf.pdf" );
+
+		ImageInfoDto imageInfoDto = imageServerClient.imageInfo( pdfData );
+		assertEquals( 5, imageInfoDto.getSceneCount() );
+		assertEquals( new DimensionsDto( 612, 792 ), imageInfoDto.getDimensionsDto() );
+		assertEquals( ImageTypeDto.PDF, imageInfoDto.getImageType() );
+	}
+
+	@Test
+	@SneakyThrows
+	public void sceneCountIsPersisted() {
+		String externalId = UUID.randomUUID().toString();
+		byte[] imageData = image( "images/sample-pdf.pdf" );
+
+		ImageInfoDto fetchedInfo = imageServerClient.imageInfo( externalId );
+		assertFalse( fetchedInfo.isExisting() );
+		assertEquals( 0, fetchedInfo.getSceneCount() );
+		assertEquals( externalId, fetchedInfo.getExternalId() );
+
+		ImageInfoDto createdInfo = imageServerClient.loadImage( externalId, imageData );
+
+		assertTrue( createdInfo.isExisting() );
+		assertEquals( externalId, createdInfo.getExternalId() );
+		assertEquals( 5, createdInfo.getSceneCount() );
+		assertEquals( new DimensionsDto( 612, 792 ), createdInfo.getDimensionsDto() );
+		assertEquals( ImageTypeDto.PDF, createdInfo.getImageType() );
+
+		fetchedInfo = imageServerClient.imageInfo( externalId );
+		assertEquals( new DimensionsDto( 612, 792 ), fetchedInfo.getDimensionsDto() );
+		assertEquals( createdInfo.getSceneCount(), fetchedInfo.getSceneCount() );
+		assertEquals( ImageTypeDto.PDF, createdInfo.getImageType() );
 	}
 
 	@Configuration

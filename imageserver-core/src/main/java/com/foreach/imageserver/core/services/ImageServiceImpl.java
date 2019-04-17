@@ -144,6 +144,7 @@ public class ImageServiceImpl implements ImageService
 		image.setDimensions( imageAttributes.getDimensions() );
 		image.setImageType( imageAttributes.getType() );
 		image.setFileSize( imageBytes.length );
+		image.setSceneCount( imageAttributes.getSceneCount() );
 		return image;
 	}
 
@@ -399,7 +400,7 @@ public class ImageServiceImpl implements ImageService
 		// TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
 		if ( storeImage ) {
 			imageStoreService.storeVariantImage( image, context, requestedResolution, imageVariant,
-			                                     variantImageSource.byteStream() );
+			                                     variantImageSource.getImageStream() );
 		}
 
 		return variantImageSource;

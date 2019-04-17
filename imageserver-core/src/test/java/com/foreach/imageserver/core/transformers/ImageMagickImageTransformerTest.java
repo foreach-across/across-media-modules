@@ -60,6 +60,7 @@ public class ImageMagickImageTransformerTest
 	public void getImageAttributesJpeg() {
 		ImageAttributes attributes =
 				imageTransformer.execute( getImageAttributesAction( "images/cropCorrectness.jpeg" ) );
+		assertEquals( 1, attributes.getSceneCount() );
 		assertEquals( ImageType.JPEG, attributes.getType() );
 		assertEquals( 2000, attributes.getDimensions().getWidth() );
 		assertEquals( 1000, attributes.getDimensions().getHeight() );
@@ -69,6 +70,7 @@ public class ImageMagickImageTransformerTest
 	public void getImageAttributesPng() {
 		ImageAttributes attributes =
 				imageTransformer.execute( getImageAttributesAction( "images/cropCorrectness.png" ) );
+		assertEquals( 1, attributes.getSceneCount() );
 		assertEquals( ImageType.PNG, attributes.getType() );
 		assertEquals( 2000, attributes.getDimensions().getWidth() );
 		assertEquals( 1000, attributes.getDimensions().getHeight() );
@@ -77,6 +79,7 @@ public class ImageMagickImageTransformerTest
 	@Test
 	public void getImageAttributesGif() {
 		ImageAttributes attributes = imageTransformer.execute( getImageAttributesAction( "images/getAttributes.gif" ) );
+		assertEquals( 1, attributes.getSceneCount() );
 		assertEquals( ImageType.GIF, attributes.getType() );
 		assertEquals( 640, attributes.getDimensions().getWidth() );
 		assertEquals( 125, attributes.getDimensions().getHeight() );
@@ -85,6 +88,7 @@ public class ImageMagickImageTransformerTest
 	@Test
 	public void getImageAttributesSvg() {
 		ImageAttributes attributes = imageTransformer.execute( getImageAttributesAction( "images/getAttributes.svg" ) );
+		assertEquals( 1, attributes.getSceneCount() );
 		assertEquals( ImageType.SVG, attributes.getType() );
 		assertEquals( 600, attributes.getDimensions().getWidth() );
 		assertEquals( 600, attributes.getDimensions().getHeight() );
@@ -93,6 +97,7 @@ public class ImageMagickImageTransformerTest
 	@Test
 	public void getImageAttributesEps() {
 		ImageAttributes attributes = imageTransformer.execute( getImageAttributesAction( "images/getAttributes.eps" ) );
+		assertEquals( 1, attributes.getSceneCount() );
 		assertEquals( ImageType.EPS, attributes.getType() );
 		assertEquals( 641, attributes.getDimensions().getWidth() );
 		assertEquals( 126, attributes.getDimensions().getHeight() );
@@ -100,16 +105,18 @@ public class ImageMagickImageTransformerTest
 
 	@Test
 	public void getImageAttributesPdf() {
-		ImageAttributes attributes = imageTransformer.execute( getImageAttributesAction( "images/getAttributes.pdf" ) );
+		ImageAttributes attributes = imageTransformer.execute( getImageAttributesAction( "images/sample-pdf.pdf" ) );
+		assertEquals( 5, attributes.getSceneCount() );
 		assertEquals( ImageType.PDF, attributes.getType() );
-		assertEquals( 640, attributes.getDimensions().getWidth() );
-		assertEquals( 125, attributes.getDimensions().getHeight() );
+		assertEquals( 612, attributes.getDimensions().getWidth() );
+		assertEquals( 792, attributes.getDimensions().getHeight() );
 	}
 
 	@Test
 	public void getImageAttributesTiff() {
 		ImageAttributes attributes =
 				imageTransformer.execute( getImageAttributesAction( "images/getAttributes.tiff" ) );
+		assertEquals( 1, attributes.getSceneCount() );
 		assertEquals( ImageType.TIFF, attributes.getType() );
 		assertEquals( 640, attributes.getDimensions().getWidth() );
 		assertEquals( 125, attributes.getDimensions().getHeight() );

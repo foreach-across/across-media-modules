@@ -5,7 +5,7 @@ import com.foreach.imageserver.core.business.ImageType;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-public class InMemoryImageSource
+public class InMemoryImageSource implements ImageSource
 {
 	private final ImageType imageType;
 	private final byte[] imageBytes;
@@ -15,6 +15,7 @@ public class InMemoryImageSource
 		this.imageBytes = imageBytes;
 	}
 
+	@Override
 	public ImageType getImageType() {
 		return imageType;
 	}
@@ -23,11 +24,13 @@ public class InMemoryImageSource
 		return imageBytes;
 	}
 
+	@Deprecated
 	public StreamImageSource stream() {
 		return new StreamImageSource( imageType, new ByteArrayInputStream( imageBytes ) );
 	}
 
-	public InputStream byteStream() {
+	@Override
+	public InputStream getImageStream() {
 		return new ByteArrayInputStream( imageBytes );
 	}
 }
