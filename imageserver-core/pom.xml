@@ -80,6 +80,10 @@
 			<artifactId>jna</artifactId>
 			<version>4.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+		</dependency>
 		<!-- Left these in for future implementations -->
 		<dependency>
 			<groupId>foreach-custom</groupId>

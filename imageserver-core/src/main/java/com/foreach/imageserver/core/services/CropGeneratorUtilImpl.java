@@ -10,7 +10,9 @@ import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.math.AspectRatio;
 import com.foreach.imageserver.math.ImageServerConversionUtils;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CropGeneratorUtilImpl implements CropGeneratorUtil
 {
 	/**

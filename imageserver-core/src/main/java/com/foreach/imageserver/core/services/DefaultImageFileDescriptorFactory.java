@@ -6,9 +6,11 @@ import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import static com.foreach.imageserver.core.config.ServicesConfiguration.*;
 
+@Component
 public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFactory
 {
 	@Override

@@ -8,6 +8,8 @@ import com.foreach.imageserver.dto.ImageModificationDto;
 
 /**
  * Created by marc on 7/08/2014.
+ *
+ * @see com.foreach.imageserver.core.transformers.ImageTransformUtils
  */
 public interface CropGeneratorUtil
 {

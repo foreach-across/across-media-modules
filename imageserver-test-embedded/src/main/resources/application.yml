@@ -1,5 +1,5 @@
 acrossHibernate:
-  applicationId: 
+  applicationId:
   applicationName: Imageserver test embedded
   hibernate-properties:
     hibernate.format_sql: false
@@ -59,6 +59,8 @@ imageServerCore:
       enabled: true
       useGraphicsMagick: true
       use-ghost-script: true
+    ghostscript:
+      enabled: true
 
 imageServerAdmin:
   accessToken: standalone-access-token

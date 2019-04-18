@@ -7,16 +7,12 @@ import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageTransformDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Collection;
 
 public interface ImageTransformService
 {
-	Logger LOG = LoggerFactory.getLogger( ImageTransformService.class );
-
 	Dimensions computeDimensions( StreamImageSource imageSource );
 
 	ImageAttributes getAttributes( InputStream imageStream );

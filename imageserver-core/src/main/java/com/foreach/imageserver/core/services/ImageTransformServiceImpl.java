@@ -1,28 +1,36 @@
 package com.foreach.imageserver.core.services;
 
+import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.config.TransformersSettings;
 import com.foreach.imageserver.core.transformers.*;
 import com.foreach.imageserver.dto.ImageTransformDto;
 import com.foreach.imageserver.logging.LogHelper;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.Semaphore;
 
+@Slf4j
 @Service
+@EnableConfigurationProperties(TransformersSettings.class)
 public class ImageTransformServiceImpl implements ImageTransformService
 {
-	@Autowired
-	private ImageTransformerRegistry imageTransformerRegistry;
-
 	private Semaphore semaphore;
 
-	public ImageTransformServiceImpl( int concurrentTransformLimit ) {
+	@Deprecated
+	private Collection<ImageTransformer> imageTransformers = Collections.emptyList();
+	private Collection<ImageCommandExecutor> commandExecutors = Collections.emptyList();
+
+	public ImageTransformServiceImpl( TransformersSettings transformersSettings ) {
 		/**
 		 * Right now, we have only one ImageTransformer implementation and it runs on the local machine. In theory,
 		 * however, we could have implementations that off-load the actual computations to other machines. Should this
@@ -30,7 +38,17 @@ public class ImageTransformServiceImpl implements ImageTransformService
 		 * transformations. For now, a single limit will suffice.
 		 */
 
-		this.semaphore = new Semaphore( concurrentTransformLimit, true );
+		this.semaphore = new Semaphore( transformersSettings.getConcurrentLimit(), true );
+	}
+
+	@Autowired
+	public void setImageTransformers( @RefreshableCollection(includeModuleInternals = true) Collection<ImageTransformer> imageTransformers ) {
+		this.imageTransformers = imageTransformers;
+	}
+
+	@Autowired
+	public void setCommandExecutors( @RefreshableCollection(includeModuleInternals = true) Collection<ImageCommandExecutor> commandExecutors ) {
+		this.commandExecutors = commandExecutors;
 	}
 
 	@Override
@@ -197,15 +215,61 @@ public class ImageTransformServiceImpl implements ImageTransformService
 	}
 
 	private ImageSource transform( ImageSource imageSource, ImageAttributes attributes, ImageTransformDto transformDto ) {
-		// simplify the transform dto using the attributes
-		// delegate to actual transformer
-		return null;
+		ImageTransformCommand command = ImageTransformCommand.builder()
+		                                                     .originalImage( imageSource )
+		                                                     .originalImageAttributes( attributes )
+		                                                     .transform( transformDto )
+		                                                     .build();
+
+		ImageCommandExecutor executor = findCommandExecutor( command );
+
+		if ( executor != null ) {
+			executeCommand( executor, command );
+		}
+		else {
+			LOG.error( "No valid executor found for {} and transform: {}", attributes, transformDto );
+			throw new IllegalArgumentException(
+					String.format( "No executor available for transform '%s' on image with attributes '%s'", transformDto, attributes )
+			);
+		}
+
+		return command.getExecutionResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	private ImageCommandExecutor findCommandExecutor( ImageCommand commandToExecute ) {
+		ImageCommandExecutor fallback = null;
+
+		for ( ImageCommandExecutor candidate : commandExecutors ) {
+			if ( candidate.handles( commandExecutors.getClass() ) ) {
+				ImageTransformerPriority priority = candidate.canExecute( commandToExecute );
+				if ( priority == ImageTransformerPriority.PREFERRED ) {
+					return candidate;
+				}
+				else if ( priority == ImageTransformerPriority.FALLBACK && fallback == null ) {
+					fallback = candidate;
+				}
+			}
+		}
+
+		return fallback;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void executeCommand( ImageCommandExecutor executor, ImageTransformCommand command ) {
+		semaphore.acquireUninterruptibly();
+		try {
+			executor.execute( command );
+		}
+		finally {
+			semaphore.release();
+		}
 	}
 
 	private ImageTransformer findAbleTransformer( CanExecute canExecute ) {
 		ImageTransformer firstFallback = null;
 
-		for ( ImageTransformer imageTransformer : imageTransformerRegistry ) {
+		for ( ImageTransformer imageTransformer : imageTransformers ) {
 			ImageTransformerPriority priority = canExecute.consider( imageTransformer );
 			if ( priority == ImageTransformerPriority.PREFERRED ) {
 				return imageTransformer;

@@ -6,11 +6,9 @@ import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.rest.services.ImageRestServiceImpl;
 import com.foreach.imageserver.core.services.*;
-import com.foreach.imageserver.core.transformers.ImageTransformerRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
@@ -20,9 +18,6 @@ import java.nio.file.Path;
 /**
  * @author Arne Vandamme
  */
-@ComponentScan(
-		basePackages = { "com.foreach.imageserver.core.managers" }
-)
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
@@ -38,11 +33,6 @@ public class ServicesConfiguration
 	private final FileRepositoryRegistry fileRepositoryRegistry;
 
 	@Bean
-	public ImageTransformerRegistry imageTransformerRegistry() {
-		return new ImageTransformerRegistry();
-	}
-
-	@Bean
 	public ImageRepositoryRegistry imageRepositoryRegistry() {
 		return new ImageRepositoryRegistry();
 	}
@@ -53,6 +43,7 @@ public class ServicesConfiguration
 	}
 
 	@Bean
+	@Exposed
 	public ImageRestService imageRestService() {
 		ImageRestServiceImpl imageRestService = new ImageRestServiceImpl();
 		imageRestService.setFallbackImageKey( settings.getStreaming().getImageNotFoundKey() );
@@ -61,34 +52,6 @@ public class ServicesConfiguration
 
 	@Bean
 	@Exposed
-	public ImageService imageService() {
-		return new ImageServiceImpl();
-	}
-
-	@Bean
-	@Exposed
-	public ImageProfileService imageProfileService() {
-		return new ImageProfileServiceImpl();
-	}
-
-	@Bean
-	@Exposed
-	public ImageTransformService imageTransformService() {
-		return new ImageTransformServiceImpl( settings.getTransformers().getConcurrentLimit() );
-	}
-
-	@Bean
-	@Exposed
-	public ImageContextService contextService() {
-		return new ImageContextServiceImpl();
-	}
-
-	@Bean
-	public DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory() {
-		return new DefaultImageFileDescriptorFactory();
-	}
-
-	@Bean
 	public ImageStoreService imageStoreService() throws IOException {
 		registerFileRepositories();
 		return new ImageStoreServiceImpl(
@@ -125,15 +88,5 @@ public class ServicesConfiguration
 
 		LOG.info( "Not creating a file repository for id '{}' as it already exists.", repositoryId );
 		return fileRepositoryRegistry.getRepository( repositoryId );
-	}
-
-	@Bean
-	public CropGenerator cropGenerator() {
-		return new CropGeneratorImpl();
-	}
-
-	@Bean
-	public ImageResolutionService imageResolutionService() {
-		return new ImageResolutionServiceImpl();
 	}
 }
