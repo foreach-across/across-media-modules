@@ -33,6 +33,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -98,8 +99,7 @@ public class ITLocalImageServerClient
 	@Test
 	public void uploadingKnownResourceImage() throws Exception {
 		String externalId = UUID.randomUUID().toString();
-		byte[] imageData =
-				image( "images/poppy_flower_nature.jpg" );
+		byte[] imageData = image( "images/poppy_flower_nature.jpg" );
 		Date date = DateUtils.parseDate( "2013-05-14 13:33:22", "yyyy-MM-dd HH:mm:ss" );
 
 		ImageInfoDto fetchedInfo = imageServerClient.imageInfo( externalId );
@@ -117,8 +117,7 @@ public class ITLocalImageServerClient
 		fetchedInfo = imageServerClient.imageInfo( externalId );
 		assertEquals( createdInfo, fetchedInfo );
 
-		InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(),
-		                                                         new ImageVariantDto( ImageTypeDto.JPEG ) );
+		InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(), new ImageVariantDto( ImageTypeDto.JPEG ) );
 		byte[] originalSizeData = IOUtils.toByteArray( inputStream );
 
 		ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), originalSizeData );
@@ -325,7 +324,7 @@ public class ITLocalImageServerClient
 		private ImageServerCoreModule imageServerCoreModule() {
 			ImageServerCoreModule imageServerCoreModule = new ImageServerCoreModule();
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
-			                                   System.getProperty( "java.io.tmpdir" ) );
+			                                   new File( System.getProperty( "java.io.tmpdir" ), UUID.randomUUID().toString() ) );
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/imgsrvr" );
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.PROVIDE_STACKTRACE, true );
 			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_ENABLED, true );

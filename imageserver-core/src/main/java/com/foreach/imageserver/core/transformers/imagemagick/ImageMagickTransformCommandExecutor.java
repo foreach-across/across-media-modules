@@ -47,6 +47,10 @@ public class ImageMagickTransformCommandExecutor extends AbstractOrderedImageCom
 		ImageTransformDto transform = command.getTransform();
 		ImageType outputType = DtoUtil.toBusiness( transform.getOutput() );
 
+		if ( outputType == null ) {
+			outputType = imageAttributes.getType();
+		}
+
 		ConvertCmd cmd = new ConvertCmd();
 		IMOperation op = new IMOperation();
 		Dimensions appliedPPI = applyPixelsPerInch( op, imageAttributes.getType(), transform.getDpi() );

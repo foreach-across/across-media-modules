@@ -1,6 +1,7 @@
-package com.foreach.imageserver.core.controllers;
+package test.controllers;
 
 import com.foreach.imageserver.core.business.ImageType;
+import com.foreach.imageserver.core.controllers.ImageStreamingController;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.ViewImageResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;

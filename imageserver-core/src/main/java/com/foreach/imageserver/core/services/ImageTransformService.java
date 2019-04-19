@@ -17,7 +17,8 @@ public interface ImageTransformService
 
 	ImageAttributes getAttributes( InputStream imageStream );
 
-	InMemoryImageSource modify( StreamImageSource imageSource,
+	@Deprecated
+	InMemoryImageSource modify( ImageSource imageSource,
 	                            int outputWidth,
 	                            int outputHeight,
 	                            int cropX,
@@ -28,7 +29,8 @@ public interface ImageTransformService
 	                            int densityHeight,
 	                            ImageType outputType );
 
-	InMemoryImageSource modify( StreamImageSource imageSource,
+	@Deprecated
+	InMemoryImageSource modify( ImageSource imageSource,
 	                            int outputWidth,
 	                            int outputHeight,
 	                            int cropX,

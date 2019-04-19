@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 5.0.0
  */
 @Data
-@ConfigurationProperties(prefix = "image-server-core.transformers.ghostscript")
+@ConfigurationProperties(prefix = "imageServerCore.transformers.ghostscript")
 @SuppressWarnings("WeakerAccess")
 public class GhostscriptSettings
 {

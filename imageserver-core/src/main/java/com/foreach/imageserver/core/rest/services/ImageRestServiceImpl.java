@@ -11,7 +11,7 @@ import com.foreach.imageserver.core.services.DtoUtil;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class ImageRestServiceImpl implements ImageRestService
 			response.setImageDoesNotExist( true );
 		}
 		else {
-			StreamImageSource imageSource = imageService.generateModification(
+			ImageSource imageSource = imageService.generateModification(
 					image,
 					request.getImageModificationDto(),
 					imageVariant( image, request.getImageVariantDto() )
@@ -254,9 +254,8 @@ public class ImageRestServiceImpl implements ImageRestService
 			response.setOutputTypeNotAllowed( true );
 			return response;
 		}
-		StreamImageSource imageSource = imageService.getVariantImage(
-				image, context, imageResolution, variant
-		);
+
+		ImageSource imageSource = imageService.getVariantImage( image, context, imageResolution, variant );
 
 		if ( imageSource == null ) {
 			response.setFailed( true );

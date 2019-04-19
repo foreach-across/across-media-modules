@@ -2,7 +2,7 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import lombok.NonNull;
 import org.slf4j.Logger;
@@ -20,8 +20,7 @@ public interface ImageService
 
 	Image getByExternalId( String externalId );
 
-	Image saveImage( String externalId, byte[] imageBytes, Date imageDate,
-	                 boolean replaceExisting ) throws ImageStoreException;
+	Image saveImage( String externalId, byte[] imageBytes, Date imageDate, boolean replaceExisting ) throws ImageStoreException;
 
 	/**
 	 * Creates a temporary Image object containing ImageAttributes and the image data.
@@ -59,14 +58,14 @@ public interface ImageService
 	 */
 	void saveImageModifications( List<ImageModification> modifications, Image image );
 
-	StreamImageSource generateModification( Image image,
-	                                        ImageModificationDto modificationDto,
-	                                        ImageVariant imageVariant );
+	ImageSource generateModification( Image image,
+	                                  ImageModificationDto modificationDto,
+	                                  ImageVariant imageVariant );
 
-	StreamImageSource getVariantImage( Image image,
-	                                   ImageContext context,
-	                                   ImageResolution imageResolution,
-	                                   ImageVariant imageVariant );
+	ImageSource getVariantImage( Image image,
+	                             ImageContext context,
+	                             ImageResolution imageResolution,
+	                             ImageVariant imageVariant );
 
 	boolean hasModification( int imageId );
 

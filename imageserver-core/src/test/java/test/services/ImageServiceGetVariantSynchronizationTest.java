@@ -5,6 +5,7 @@ import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.services.*;
+import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.core.transformers.InMemoryImageSource;
 import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
@@ -70,18 +71,14 @@ public class ImageServiceGetVariantSynchronizationTest
 			lock.notifyAll();
 		}
 
-		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getFirstOriginalImageSource() ), anyInt(),
-		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
-		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getSecondOriginalImageSource() ), anyInt(),
-		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
+		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getFirstOriginalImageSource() ), any(), any() );
+		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getSecondOriginalImageSource() ), any(), any() );
 
-		for ( Future<StreamImageSource> future : testResults.getFirstImageFutures() ) {
+		for ( Future<ImageSource> future : testResults.getFirstImageFutures() ) {
 			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
 		}
 
-		for ( Future<StreamImageSource> future : testResults.getSecondImageFutures() ) {
+		for ( Future<ImageSource> future : testResults.getSecondImageFutures() ) {
 			assertEquals( "IMAGE2", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
 		}
 	}
@@ -103,18 +100,14 @@ public class ImageServiceGetVariantSynchronizationTest
 			lock.notifyAll();
 		}
 
-		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getFirstOriginalImageSource() ), anyInt(),
-		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
-		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getSecondOriginalImageSource() ), anyInt(),
-		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
+		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getFirstOriginalImageSource() ), any(), any() );
+		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getSecondOriginalImageSource() ), any(), any() );
 
-		for ( Future<StreamImageSource> future : testResults.getFirstImageFutures() ) {
+		for ( Future<ImageSource> future : testResults.getFirstImageFutures() ) {
 			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
 		}
 
-		for ( Future<StreamImageSource> future : testResults.getSecondImageFutures() ) {
+		for ( Future<ImageSource> future : testResults.getSecondImageFutures() ) {
 			try {
 				future.get();
 				assertTrue( false );
@@ -142,18 +135,14 @@ public class ImageServiceGetVariantSynchronizationTest
 			lock.notifyAll();
 		}
 
-		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getFirstOriginalImageSource() ), anyInt(),
-		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
-		verify( imageTransformService, times( 1 ) ).modify( eq( testResults.getSecondOriginalImageSource() ), anyInt(),
-		                                                    anyInt(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                                    anyInt(), eq( ImageType.PNG ), any( Dimensions.class ) );
+		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getFirstOriginalImageSource() ), any(), any() );
+		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getSecondOriginalImageSource() ), any(), any() );
 
-		for ( Future<StreamImageSource> future : testResults.getFirstImageFutures() ) {
+		for ( Future<ImageSource> future : testResults.getFirstImageFutures() ) {
 			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
 		}
 
-		for ( Future<StreamImageSource> future : testResults.getSecondImageFutures() ) {
+		for ( Future<ImageSource> future : testResults.getSecondImageFutures() ) {
 			try {
 				future.get();
 				assertTrue( false );
@@ -194,17 +183,11 @@ public class ImageServiceGetVariantSynchronizationTest
 		when( imageStoreService.getOriginalImage( firstImage ) ).thenReturn( firstOriginalImageSource );
 		when( imageStoreService.getOriginalImage( secondImage ) ).thenReturn( secondOriginalImageSource );
 
-		when( imageTransformService.modify( eq( firstOriginalImageSource ), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                    anyInt(), anyInt(), anyInt(), anyInt(), eq( ImageType.PNG ),
-		                                    any( Dimensions.class ) ) ).thenAnswer(
-				firstImageAnswer );
-		when( imageTransformService.modify( eq( secondOriginalImageSource ), anyInt(), anyInt(), anyInt(), anyInt(),
-		                                    anyInt(), anyInt(), anyInt(), anyInt(), eq( ImageType.PNG ),
-		                                    any( Dimensions.class ) ) ).thenAnswer(
-				secondImageAnswer );
+		when( imageTransformService.transform( eq( firstOriginalImageSource ), any(), any() ) ).thenAnswer( firstImageAnswer );
+		when( imageTransformService.transform( eq( secondOriginalImageSource ), any(), any() ) ).thenAnswer( secondImageAnswer );
 
-		List<Future<StreamImageSource>> firstImageFutures = new ArrayList<>();
-		List<Future<StreamImageSource>> secondImageFutures = new ArrayList<>();
+		List<Future<ImageSource>> firstImageFutures = new ArrayList<>();
+		List<Future<ImageSource>> secondImageFutures = new ArrayList<>();
 
 		ExecutorService executorService = Executors.newFixedThreadPool( threadsPerImage * 2 );
 		for ( int i = 0; i < threadsPerImage; ++i ) {
@@ -276,13 +259,13 @@ public class ImageServiceGetVariantSynchronizationTest
 
 	private static class TestResults
 	{
-		private final List<Future<StreamImageSource>> firstImageFutures;
-		private final List<Future<StreamImageSource>> secondImageFutures;
-		private final StreamImageSource firstOriginalImageSource;
-		private final StreamImageSource secondOriginalImageSource;
+		private final List<Future<ImageSource>> firstImageFutures;
+		private final List<Future<ImageSource>> secondImageFutures;
+		private final ImageSource firstOriginalImageSource;
+		private final ImageSource secondOriginalImageSource;
 
-		public TestResults( List<Future<StreamImageSource>> firstImageFutures,
-		                    List<Future<StreamImageSource>> secondImageFutures,
+		public TestResults( List<Future<ImageSource>> firstImageFutures,
+		                    List<Future<ImageSource>> secondImageFutures,
 		                    StreamImageSource firstOriginalImageSource,
 		                    StreamImageSource secondOriginalImageSource ) {
 			this.firstImageFutures = firstImageFutures;
@@ -291,24 +274,24 @@ public class ImageServiceGetVariantSynchronizationTest
 			this.secondOriginalImageSource = secondOriginalImageSource;
 		}
 
-		public List<Future<StreamImageSource>> getFirstImageFutures() {
+		public List<Future<ImageSource>> getFirstImageFutures() {
 			return firstImageFutures;
 		}
 
-		public List<Future<StreamImageSource>> getSecondImageFutures() {
+		public List<Future<ImageSource>> getSecondImageFutures() {
 			return secondImageFutures;
 		}
 
-		public StreamImageSource getFirstOriginalImageSource() {
+		public ImageSource getFirstOriginalImageSource() {
 			return firstOriginalImageSource;
 		}
 
-		public StreamImageSource getSecondOriginalImageSource() {
+		public ImageSource getSecondOriginalImageSource() {
 			return secondOriginalImageSource;
 		}
 	}
 
-	private static class GetVariantImageCallable implements Callable<StreamImageSource>
+	private static class GetVariantImageCallable implements Callable<ImageSource>
 	{
 		private final ImageService imageService;
 		private final Image image;
@@ -329,7 +312,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		}
 
 		@Override
-		public StreamImageSource call() {
+		public ImageSource call() {
 			return imageService.getVariantImage( image, context, imageResolution, imageVariant );
 		}
 	}

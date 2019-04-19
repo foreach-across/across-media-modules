@@ -134,8 +134,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate, boolean replaceExisting ) {
-		Image image = imageService.saveImage( imageId, imageBytes, imageDate != null ? imageDate : new Date(),
-		                                      replaceExisting );
+		Image image = imageService.saveImage( imageId, imageBytes, imageDate != null ? imageDate : new Date(), replaceExisting );
 		return DtoUtil.toDto( image );
 	}
 

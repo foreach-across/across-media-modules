@@ -122,7 +122,7 @@ public class ImageTransformServiceImpl implements ImageTransformService
 	}
 
 	@Override
-	public InMemoryImageSource modify( StreamImageSource imageSource,
+	public InMemoryImageSource modify( ImageSource imageSource,
 	                                   int outputWidth,
 	                                   int outputHeight,
 	                                   int cropX,
@@ -136,7 +136,7 @@ public class ImageTransformServiceImpl implements ImageTransformService
 	}
 
 	@Override
-	public InMemoryImageSource modify( StreamImageSource imageSource,
+	public InMemoryImageSource modify( ImageSource imageSource,
 	                                   int outputWidth,
 	                                   int outputHeight,
 	                                   int cropX,
@@ -241,7 +241,7 @@ public class ImageTransformServiceImpl implements ImageTransformService
 		ImageCommandExecutor fallback = null;
 
 		for ( ImageCommandExecutor candidate : commandExecutors ) {
-			if ( candidate.handles( commandExecutors.getClass() ) ) {
+			if ( candidate.handles( commandToExecute.getClass() ) ) {
 				ImageTransformerPriority priority = candidate.canExecute( commandToExecute );
 				if ( priority == ImageTransformerPriority.PREFERRED ) {
 					return candidate;

@@ -1,5 +1,6 @@
-package com.foreach.imageserver.core.controllers;
+package test.controllers;
 
+import com.foreach.imageserver.core.controllers.ImageDeleteController;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.JsonResponse;
 import org.junit.Before;

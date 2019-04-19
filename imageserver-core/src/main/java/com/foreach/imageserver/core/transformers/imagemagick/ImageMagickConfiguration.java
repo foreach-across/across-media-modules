@@ -14,7 +14,7 @@ import java.io.File;
  * @author Arne Vandamme
  */
 @Configuration
-@ConditionalOnProperty(value = "image-server-core.transformers.image-magick.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "imageServerCore.transformers.imageMagick.enabled", havingValue = "true")
 @EnableConfigurationProperties(ImageMagickSettings.class)
 class ImageMagickConfiguration
 {

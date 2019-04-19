@@ -1,8 +1,9 @@
-package com.foreach.imageserver.core.client;
+package test.client;
 
 import com.foreach.imageserver.client.ImageRequestHashBuilder;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.client.ImageServerException;
+import com.foreach.imageserver.core.client.LocalImageServerClient;
 import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.response.ListResolutionsResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;

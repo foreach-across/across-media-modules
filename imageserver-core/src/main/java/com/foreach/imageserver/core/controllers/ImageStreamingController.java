@@ -9,7 +9,7 @@ import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.ViewImageResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.dto.ImageAspectRatioDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
@@ -261,7 +261,7 @@ public class ImageStreamingController
 		}
 	}
 
-	private void renderImageSource( StreamImageSource imageSource, HttpServletResponse response ) {
+	private void renderImageSource( ImageSource imageSource, HttpServletResponse response ) {
 		response.setStatus( HttpStatus.OK.value() );
 		response.setContentType( imageSource.getImageType().getContentType() );
 
