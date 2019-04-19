@@ -75,15 +75,15 @@ public class TestImageTransformDto
 
 	@Test
 	public void maximumWidthAndHeight() {
-		assertTransformString( builder().maximumWidth( 100 ), "maxw_100" );
-		assertTransformString( builder().maximumHeight( 50 ), "maxh_50" );
-		assertTransformString( builder().maximumHeight( 50 ).maximumWidth( 100 ), "maxw_100,maxh_50" );
+		assertTransformString( builder().maxWidth( 100 ), "maxw_100" );
+		assertTransformString( builder().maxHeight( 50 ), "maxh_50" );
+		assertTransformString( builder().maxHeight( 50 ).maxWidth( 100 ), "maxw_100,maxh_50" );
 	}
 
 	@Test
 	public void parameterOrderForHashing() {
 		assertTransformString(
-				builder().scene( 7 ).width( 100 ).height( 50 ).maximumWidth( 200 ).maximumHeight( 0 ).aspectRatio( new AspectRatio( "16/9" ) )
+				builder().scene( 7 ).width( 100 ).height( 50 ).maxWidth( 200 ).maxHeight( 0 ).aspectRatio( new AspectRatio( "16/9" ) )
 				         .crop(
 						         CropDto.builder().y( 5 ).width( 300 ).height( 400 )
 						                .source( new DimensionsDto( 800, 600 ) )

@@ -72,8 +72,8 @@ public class ImageMagickTransformCommandExecutor extends AbstractOrderedImageCom
 		op.quality( 1d * ( transform.getQuality() != null ? transform.getQuality() : defaultQuality ) );
 
 		// only apply bounding box when available, and when the outputted image is larger than the bounding box
-		if ( transform.getMaximumWidth() != null ) {
-			Dimensions boundaries = new Dimensions( transform.getMaximumWidth(), transform.getMaximumHeight() );
+		if ( transform.getMaxWidth() != null ) {
+			Dimensions boundaries = new Dimensions( transform.getMaxWidth(), transform.getMaxHeight() );
 			if ( boundaries.getWidth() > 0 || boundaries.getHeight() > 0 ) {
 				Dimensions output = new Dimensions( transform.getWidth(), transform.getHeight() );
 				if ( boundaries.getHeight() < output.getHeight() || boundaries.getWidth() < output.getWidth() ) {

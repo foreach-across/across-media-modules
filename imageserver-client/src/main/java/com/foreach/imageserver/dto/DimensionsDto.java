@@ -27,6 +27,14 @@ public class DimensionsDto
 		this.height = height;
 	}
 
+	public boolean isEmpty() {
+		return width == 0 && height == 0;
+	}
+
+	public boolean hasUnspecifiedDimension() {
+		return width == 0 || height == 0;
+	}
+
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o ) {

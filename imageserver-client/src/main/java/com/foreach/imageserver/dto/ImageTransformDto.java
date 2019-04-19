@@ -21,8 +21,8 @@ import java.util.stream.Stream;
  * <li><strong>w</strong>: {@link #setWidth(Integer)}</li>
  * <li><strong>h</strong>: {@link #setHeight(Integer)}</li>
  * <li><strong>ar</strong>: {@link #setAspectRatio(AspectRatio)}</li>
- * <li><strong>maxw</strong>: {@link #setMaximumWidth(Integer)} </li>
- * <li><strong>maxh</strong>: {@link #setMaximumHeight(Integer)} </li>
+ * <li><strong>maxw</strong>: {@link #setMaxWidth(Integer)} </li>
+ * <li><strong>maxh</strong>: {@link #setMaxHeight(Integer)} </li>
  * <li><strong>dpi</strong>: {@link #setDpi(Integer)}</li>
  * <li><strong>cx</strong>: set crop x coordinate</li>
  * <li><strong>cy</strong>: set crop y coordinate</li>
@@ -76,7 +76,7 @@ public class ImageTransformDto
 	 * defined by maximum width and height (when specified).
 	 * Can be used to scale an image to fit inside this box without having to specify width or height.
 	 */
-	private Integer maximumWidth;
+	private Integer maxWidth;
 
 	/**
 	 * Maximum height of the resulting image.
@@ -84,14 +84,14 @@ public class ImageTransformDto
 	 * defined by maximum width and height (when specified).
 	 * Can be used to scale an image to fit inside this box without having to specify width or height.
 	 */
-	private Integer maximumHeight;
+	private Integer maxHeight;
 
 	/**
 	 * The aspect ratio that the resulting image should have.
 	 * If both width and height are specified, this parameter will be ignored.
 	 * If either width or height is specified, the aspect ratio will be used to calculate the other dimension accordingly.
 	 * If neither width and height is specified, the actual width and height will be calculated by looking at the original image
-	 * dimensions and using them to get the largets possible values matching the requested aspect ratio.
+	 * dimensions and using them to get the largest possible values matching the requested aspect ratio.
 	 */
 	private AspectRatio aspectRatio;
 
@@ -157,10 +157,10 @@ public class ImageTransformDto
 				      dto.scene = param.intValue();
 			      }
 			      else if ( "maxw".equals( param.key ) ) {
-				      dto.maximumWidth = param.intValue();
+				      dto.maxWidth = param.intValue();
 			      }
 			      else if ( "maxh".equals( param.key ) ) {
-				      dto.maximumHeight = param.intValue();
+				      dto.maxHeight = param.intValue();
 			      }
 			      else if ( "dpi".equals( param.key ) ) {
 				      dto.dpi = param.intValue();
@@ -219,8 +219,8 @@ public class ImageTransformDto
 		parameters.add( new StringParam( "scene", scene ) );
 		parameters.add( new StringParam( "w", width ) );
 		parameters.add( new StringParam( "h", height ) );
-		parameters.add( new StringParam( "maxw", maximumWidth ) );
-		parameters.add( new StringParam( "maxh", maximumHeight ) );
+		parameters.add( new StringParam( "maxw", maxWidth ) );
+		parameters.add( new StringParam( "maxh", maxHeight ) );
 
 		if ( aspectRatio != null ) {
 			parameters.add( new StringParam( "ar", aspectRatio.toString().replace( "/", ":" ) ) );
@@ -259,6 +259,10 @@ public class ImageTransformDto
 		                 .map( StringParam::toString )
 		                 .filter( Objects::nonNull )
 		                 .collect( Collectors.joining( "," ) );
+	}
+
+	public boolean isEmpty() {
+		return this.equals( new ImageTransformDto() );
 	}
 
 	@RequiredArgsConstructor
