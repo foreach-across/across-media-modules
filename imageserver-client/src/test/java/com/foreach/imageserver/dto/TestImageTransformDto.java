@@ -49,8 +49,8 @@ public class TestImageTransformDto
 	}
 
 	@Test
-	public void output() {
-		assertTransformString( builder().output( ImageTypeDto.JPEG ), "o_jpeg" );
+	public void outputType() {
+		assertTransformString( builder().outputType( ImageTypeDto.JPEG ), "o_jpeg" );
 	}
 
 	@Test
@@ -59,8 +59,13 @@ public class TestImageTransformDto
 	}
 
 	@Test
-	public void background() {
-		assertTransformString( builder().background( "336699" ), "bg_336699" );
+	public void backgroundColor() {
+		assertTransformString( builder().backgroundColor( "336699" ), "bg_336699" );
+	}
+
+	@Test
+	public void alphaColor() {
+		assertTransformString( builder().alphaColor( "336699" ), "alpha_336699" );
 	}
 
 	@Test
@@ -93,7 +98,7 @@ public class TestImageTransformDto
 				         .dpi( 600 )
 				         .quality( 50 )
 				         .colorSpace( ColorSpaceDto.CMYK )
-				         .background( "666" )
+				         .backgroundColor( "666" )
 				,
 				"scene_7,w_100,h_50,maxw_200,maxh_0,ar_16:9,cx_0,cy_5,cw_300,ch_400,csw_800,csh_600,cbw_640,cbh_480,color_cmyk,bg_666,dpi_600,q_50"
 		);

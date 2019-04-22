@@ -33,9 +33,10 @@ import java.util.stream.Stream;
  * <li><strong>cbw</strong>: set the width of the box that contained the source image for the crop coordinates</li>
  * <li><strong>cbh</strong>: set the height of the box that contained the source image for the crop coordinates</li>
  * <li><strong>color</strong>: {@link #setColorSpace(ColorSpaceDto)}</li>
- * <li><strong>bg</strong>: {@link #setBackground(String)}</li>
+ * <li><strong>bg</strong>: {@link #setBackgroundColor(String)}</li>
+ * <li><strong>alpha</strong>: {@link #setAlphaColor(String)}</li>
  * <li><strong>q</strong>: {@link #setQuality(Integer)}</li>
- * <li><strong>o</strong>: output type of the transform result, extension of supported {@link ImageTypeDto}, see {@link #setOutput(ImageTypeDto)}</li>
+ * <li><strong>o</strong>: output type of the transform result, extension of supported {@link ImageTypeDto}, see {@link #setOutputType(ImageTypeDto)}</li>
  * </ul>
  *
  * @author Arne Vandamme
@@ -117,11 +118,19 @@ public class ImageTransformDto
 
 	/**
 	 * Color specification for the background of the image, only hex value without the leading {@code #} is supported.
-	 * Any alpha channel will be changed to this color.
-	 * todo: update documentation once support is implemented,
-	 * switch to domain specific type instead of just assuming hex value
+	 * Any alpha channel will be changed to this color. If you want to replace an existing color instead, you can
+	 * combine with {@link #setAlphaColor(String)}.
+	 *
+	 * todo: update documentation once support is implemented, switch to domain specific type instead of just assuming hex value
 	 */
-	private String background;
+	private String backgroundColor;
+
+	/**
+	 * Color specification of a color that should be made transparent.  Only hex value without the leading {@code #} is supported.
+	 *
+	 * todo: use domain specific type instead of assuming hex value
+	 */
+	private String alphaColor;
 
 	/**
 	 * Color space for the resulting image, can for example be used to convert to grayscale.
@@ -131,7 +140,7 @@ public class ImageTransformDto
 	/**
 	 * The output type for this transform.
 	 */
-	private ImageTypeDto output;
+	private ImageTypeDto outputType;
 
 	/**
 	 * Parse a string into the transform it represents.
@@ -190,7 +199,10 @@ public class ImageTransformDto
 				      crop.getBox().setHeight( param.intValue() );
 			      }
 			      else if ( "bg".equals( param.key ) ) {
-				      dto.background = param.stringValue();
+				      dto.backgroundColor = param.stringValue();
+			      }
+			      else if ( "alpha".equals( param.key ) ) {
+				      dto.alphaColor = param.stringValue();
 			      }
 			      else if ( "color".equals( param.key ) ) {
 				      dto.colorSpace = ColorSpaceDto.valueOf( StringUtils.upperCase( param.stringValue() ) );
@@ -199,7 +211,7 @@ public class ImageTransformDto
 				      dto.quality = param.intValue();
 			      }
 			      else if ( "o".equals( param.key ) ) {
-				      dto.output = ImageTypeDto.forExtension( param.stringValue() );
+				      dto.outputType = ImageTypeDto.forExtension( param.stringValue() );
 			      }
 			      else if ( "ar".equals( param.key ) ) {
 				      dto.aspectRatio = new AspectRatio( StringUtils.replace( param.stringValue(), ":", "/" ) );
@@ -247,12 +259,13 @@ public class ImageTransformDto
 			parameters.add( new StringParam( "color", StringUtils.lowerCase( colorSpace.name() ) ) );
 		}
 
-		parameters.add( new StringParam( "bg", background ) );
+		parameters.add( new StringParam( "bg", backgroundColor ) );
+		parameters.add( new StringParam( "alpha", alphaColor ) );
 		parameters.add( new StringParam( "dpi", dpi ) );
 		parameters.add( new StringParam( "q", quality ) );
 
-		if ( output != null ) {
-			parameters.add( new StringParam( "o", output.getExtension() ) );
+		if ( outputType != null ) {
+			parameters.add( new StringParam( "o", outputType.getExtension() ) );
 		}
 
 		return parameters.stream()

@@ -10,5 +10,6 @@ public enum ColorSpaceDto
 {
 	RGB,
 	CMYK,
-	GRAYSCALE
+	GRAYSCALE,
+	MONOCHROME
 }

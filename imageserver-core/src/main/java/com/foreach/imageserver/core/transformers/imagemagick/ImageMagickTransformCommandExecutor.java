@@ -45,7 +45,7 @@ public class ImageMagickTransformCommandExecutor extends AbstractOrderedImageCom
 	public void execute( ImageTransformCommand command ) {
 		ImageAttributes imageAttributes = command.getOriginalImageAttributes();
 		ImageTransformDto transform = command.getTransform();
-		ImageType outputType = DtoUtil.toBusiness( transform.getOutput() );
+		ImageType outputType = DtoUtil.toBusiness( transform.getOutputType() );
 
 		if ( outputType == null ) {
 			outputType = imageAttributes.getType();

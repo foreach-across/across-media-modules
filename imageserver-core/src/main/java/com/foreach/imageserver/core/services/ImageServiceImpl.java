@@ -389,7 +389,7 @@ public class ImageServiceImpl implements ImageService
 
 		ImageTransformDto transformDto = modificationDto.asTransformDto();
 		if ( imageVariant.getOutputType() != null ) {
-			transformDto.setOutput( ImageTypeDto.forExtension( imageVariant.getOutputType().getExtension() ) );
+			transformDto.setOutputType( ImageTypeDto.forExtension( imageVariant.getOutputType().getExtension() ) );
 		}
 
 		ImageSource variantImageSource = imageTransformService.transform(

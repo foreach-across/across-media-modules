@@ -40,10 +40,34 @@ public class TestImageMagickTransformCommandExecutor
 	private ImageMagickTransformCommandExecutor executor;
 
 	@Test
+	public void transparentPngToTransparentGrayscalePng() {
+		//gm convert -colorspace gray transparency.png transparentPngToGrayscale.png
+		//transparentPngToGrayscale
+	}
+
+	@Test
+	public void transparentPngToFlattenedPng() {
+		// gm convert -flatten transparency.png transparentPngToPngFlat.png
+		// transparentPngToPngFlat
+	}
+
+	@Test
+	public void transparentPngBackgroundColorFill() {
+		// gm convert -background "#aabbff" -extent 0x0 +matte transparency.png transparentPngToPngBackground.png
+		// transparentPngToPngBackground
+	}
+
+	@Test
+	public void transparentPngBackgroundColorFillAndGrayscale() {
+		//gm convert -background "#aabbff" -extent 0x0 +matte -colorspace gray transparency.png transparentPngToPngBackgroundGrayscale.png
+		// transparentPngToPngBackgroundGrayscale
+	}
+
+	@Test
 	@SneakyThrows
 	public void cropPngToPng() {
 		ImageTransformDto transformDto = ImageTransformDto.builder()
-		                                                  .output( ImageTypeDto.PNG )
+		                                                  .outputType( ImageTypeDto.PNG )
 		                                                  .width( 270 )
 		                                                  .height( 580 )
 		                                                  .crop( CropDto.builder().x( 1000 ).y( 140 ).width( 270 ).height( 580 ).build() )
@@ -62,6 +86,14 @@ public class TestImageMagickTransformCommandExecutor
 
 		assertImage( "images/cropPngToPng.png", command.getExecutionResult() );
 	}
+
+	// smaller crop to larger image and fill transparent
+	// gm convert -crop 270x580+1000+140 -gravity center -background transparent -extent 400x700 cropCorrectness.png test.png
+
+	// smaller crop to larger image, fill with background and convert to grayscale
+	//gm convert -crop 270x580+1000+140 -gravity center -background blue -extent 400x700 -colorspace gray -resize 200x350 cropCorrectness.png test.png
+
+	// gm convert -transparent white -background blue -flatten -density 300x300 -resize 400x sample-pdf.pdf[0] test.png
 
 	@SneakyThrows
 	private void assertImage( String expected, ImageSource actual ) {
