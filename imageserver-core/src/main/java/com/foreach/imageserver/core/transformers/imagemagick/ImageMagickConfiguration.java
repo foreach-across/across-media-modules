@@ -40,6 +40,10 @@ class ImageMagickConfiguration
 	@Bean
 	ImageMagickTransformCommandExecutor imageMagickTransformCommandExecutor( ImageMagickSettings settings ) {
 		ImageMagickTransformCommandExecutor transformCommandExecutor = new ImageMagickTransformCommandExecutor();
+		transformCommandExecutor.setDefaultQuality( settings.getDefaultQuality() );
+		transformCommandExecutor.setDefaultDpi( settings.getDefaultDpi() );
+		transformCommandExecutor.setFilter( settings.getFilter() );
+		transformCommandExecutor.setUseThumbnail( settings.isUseThumbnail() );
 		transformCommandExecutor.setOrder( settings.getPriority() );
 		return transformCommandExecutor;
 	}

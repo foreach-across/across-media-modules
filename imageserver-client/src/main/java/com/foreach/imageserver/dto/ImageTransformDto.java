@@ -33,8 +33,8 @@ import java.util.stream.Stream;
  * <li><strong>cbw</strong>: set the width of the box that contained the source image for the crop coordinates</li>
  * <li><strong>cbh</strong>: set the height of the box that contained the source image for the crop coordinates</li>
  * <li><strong>color</strong>: {@link #setColorSpace(ColorSpaceDto)}</li>
- * <li><strong>bg</strong>: {@link #setBackgroundColor(String)}</li>
- * <li><strong>alpha</strong>: {@link #setAlphaColor(String)}</li>
+ * <li><strong>bg</strong>: {@link #setBackgroundColor(ColorDto)}</li>
+ * <li><strong>alpha</strong>: {@link #setAlphaColor(ColorDto)}</li>
  * <li><strong>q</strong>: {@link #setQuality(Integer)}</li>
  * <li><strong>o</strong>: output type of the transform result, extension of supported {@link ImageTypeDto}, see {@link #setOutputType(ImageTypeDto)}</li>
  * </ul>
@@ -117,20 +117,16 @@ public class ImageTransformDto
 	private Integer quality;
 
 	/**
-	 * Color specification for the background of the image, only hex value without the leading {@code #} is supported.
+	 * Color specification for the background of the image.
 	 * Any alpha channel will be changed to this color. If you want to replace an existing color instead, you can
-	 * combine with {@link #setAlphaColor(String)}.
-	 *
-	 * todo: update documentation once support is implemented, switch to domain specific type instead of just assuming hex value
+	 * combine with {@link #setAlphaColor(ColorDto)}.
 	 */
-	private String backgroundColor;
+	private ColorDto backgroundColor;
 
 	/**
 	 * Color specification of a color that should be made transparent.  Only hex value without the leading {@code #} is supported.
-	 *
-	 * todo: use domain specific type instead of assuming hex value
 	 */
-	private String alphaColor;
+	private ColorDto alphaColor;
 
 	/**
 	 * Color space for the resulting image, can for example be used to convert to grayscale.
@@ -199,10 +195,10 @@ public class ImageTransformDto
 				      crop.getBox().setHeight( param.intValue() );
 			      }
 			      else if ( "bg".equals( param.key ) ) {
-				      dto.backgroundColor = param.stringValue();
+				      dto.backgroundColor = ColorDto.from( param.stringValue() );
 			      }
 			      else if ( "alpha".equals( param.key ) ) {
-				      dto.alphaColor = param.stringValue();
+				      dto.alphaColor = ColorDto.from( param.stringValue() );
 			      }
 			      else if ( "color".equals( param.key ) ) {
 				      dto.colorSpace = ColorSpaceDto.valueOf( StringUtils.upperCase( param.stringValue() ) );

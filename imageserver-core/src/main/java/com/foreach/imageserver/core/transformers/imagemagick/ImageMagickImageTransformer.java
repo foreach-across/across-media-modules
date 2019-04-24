@@ -103,6 +103,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 	}
 
 	@Override
+	@Deprecated
 	public ImageTransformerPriority canExecute( ImageModifyAction action ) {
 		return canExecute( action.getSourceImageSource().getImageType() );
 	}
@@ -149,6 +150,7 @@ public class ImageMagickImageTransformer implements ImageTransformer
 	}
 
 	@Override
+	@Deprecated
 	public InMemoryImageSource execute( ImageModifyAction action ) {
 		if ( canExecute( action ) == ImageTransformerPriority.UNABLE ) {
 			throw new UnsupportedOperationException();

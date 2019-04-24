@@ -60,12 +60,12 @@ public class TestImageTransformDto
 
 	@Test
 	public void backgroundColor() {
-		assertTransformString( builder().backgroundColor( "336699" ), "bg_336699" );
+		assertTransformString( builder().backgroundColor( ColorDto.from( "#336699" ) ), "bg_hex:336699" );
 	}
 
 	@Test
 	public void alphaColor() {
-		assertTransformString( builder().alphaColor( "336699" ), "alpha_336699" );
+		assertTransformString( builder().alphaColor( ColorDto.from( "white" ) ), "alpha_white" );
 	}
 
 	@Test
@@ -98,9 +98,9 @@ public class TestImageTransformDto
 				         .dpi( 600 )
 				         .quality( 50 )
 				         .colorSpace( ColorSpaceDto.CMYK )
-				         .backgroundColor( "666" )
+				         .backgroundColor( ColorDto.from( "#666" ) )
 				,
-				"scene_7,w_100,h_50,maxw_200,maxh_0,ar_16:9,cx_0,cy_5,cw_300,ch_400,csw_800,csh_600,cbw_640,cbh_480,color_cmyk,bg_666,dpi_600,q_50"
+				"scene_7,w_100,h_50,maxw_200,maxh_0,ar_16:9,cx_0,cy_5,cw_300,ch_400,csw_800,csh_600,cbw_640,cbh_480,color_cmyk,bg_hex:666,dpi_600,q_50"
 		);
 	}
 

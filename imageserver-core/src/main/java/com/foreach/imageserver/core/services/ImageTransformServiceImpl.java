@@ -24,20 +24,20 @@ import java.util.concurrent.Semaphore;
 @EnableConfigurationProperties(TransformersSettings.class)
 public class ImageTransformServiceImpl implements ImageTransformService
 {
-	private Semaphore semaphore;
+	private final Semaphore semaphore;
+	private final ImageTransformUtils imageTransformUtils;
 
 	@Deprecated
 	private Collection<ImageTransformer> imageTransformers = Collections.emptyList();
 	private Collection<ImageCommandExecutor> commandExecutors = Collections.emptyList();
 
-	public ImageTransformServiceImpl( TransformersSettings transformersSettings ) {
-		/**
-		 * Right now, we have only one ImageTransformer implementation and it runs on the local machine. In theory,
-		 * however, we could have implementations that off-load the actual computations to other machines. Should this
-		 * ever get to be the case, we may want to provide more fine-grained control over the number of concurrent
-		 * transformations. For now, a single limit will suffice.
-		 */
+	public ImageTransformServiceImpl( TransformersSettings transformersSettings, ImageTransformUtils imageTransformUtils ) {
+		this.imageTransformUtils = imageTransformUtils;
 
+		// Right now, we have only one ImageTransformer implementation and it runs on the local machine. In theory,
+		// however, we could have implementations that off-load the actual computations to other machines. Should this
+		// ever get to be the case, we may want to provide more fine-grained control over the number of concurrent
+		// transformations. For now, a single limit will suffice.
 		this.semaphore = new Semaphore( transformersSettings.getConcurrentLimit(), true );
 	}
 
@@ -215,10 +215,11 @@ public class ImageTransformServiceImpl implements ImageTransformService
 	}
 
 	private ImageSource transform( ImageSource imageSource, ImageAttributes attributes, ImageTransformDto transformDto ) {
+		ImageTransformDto normalizedTransform = imageTransformUtils.normalize( transformDto, attributes );
 		ImageTransformCommand command = ImageTransformCommand.builder()
 		                                                     .originalImage( imageSource )
 		                                                     .originalImageAttributes( attributes )
-		                                                     .transform( transformDto )
+		                                                     .transform( normalizedTransform )
 		                                                     .build();
 
 		ImageCommandExecutor executor = findCommandExecutor( command );
