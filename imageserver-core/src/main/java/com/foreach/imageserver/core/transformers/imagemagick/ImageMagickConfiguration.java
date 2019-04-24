@@ -1,6 +1,5 @@
 package com.foreach.imageserver.core.transformers.imagemagick;
 
-import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import org.im4java.process.ProcessStarter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,16 +24,6 @@ class ImageMagickConfiguration
 		if ( settings.getUseGraphicsMagick() ) {
 			System.setProperty( "im4java.useGM", "true" );
 		}
-	}
-
-	@Bean
-	public ImageMagickImageTransformer imageMagickImageTransformer( ImageServerCoreModuleSettings settings ) {
-		return new ImageMagickImageTransformer(
-				settings.getTransformers().getImageMagick().getPriority(),
-				settings.getTransformers().getImageMagick().getPath(),
-				settings.getTransformers().getImageMagick().getUseGhostScript(),
-				settings.getTransformers().getImageMagick().getUseGraphicsMagick()
-		);
 	}
 
 	@Bean
