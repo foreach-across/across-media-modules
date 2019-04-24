@@ -60,7 +60,7 @@ imageServerCore:
       useGraphicsMagick: true
       use-ghost-script: true
     ghostscript:
-      enabled: true
+      enabled: false
 
 imageServerAdmin:
   accessToken: standalone-access-token

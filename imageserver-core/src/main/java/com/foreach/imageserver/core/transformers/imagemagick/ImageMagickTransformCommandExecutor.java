@@ -30,7 +30,6 @@ import java.util.Optional;
 public class ImageMagickTransformCommandExecutor extends AbstractOrderedImageCommandExecutor<ImageTransformCommand>
 {
 	private static final int MAX_DPI = 1200;
-	private static final int GS_DEFAULT_DENSITY = 72;
 	private static final int DPI_STEP = 300;
 
 	private static final String ALPHA_BACKGROUND = "white";
@@ -81,6 +80,8 @@ public class ImageMagickTransformCommandExecutor extends AbstractOrderedImageCom
 			try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 				cmd.setInputProvider( new Pipe( imageStream, null ) );
 				cmd.setOutputConsumer( new Pipe( null, os ) );
+
+				LOG.debug( "Executing IMOperation: {}", op.toString() );
 
 				cmd.run( op );
 

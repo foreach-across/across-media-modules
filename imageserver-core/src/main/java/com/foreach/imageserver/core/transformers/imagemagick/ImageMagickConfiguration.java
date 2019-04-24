@@ -47,4 +47,11 @@ class ImageMagickConfiguration
 		transformCommandExecutor.setOrder( settings.getPriority() );
 		return transformCommandExecutor;
 	}
+
+	@Bean
+	ImageMagickAttributesCommandExecutor imageMagickAttributesCommandExecutor( ImageMagickSettings settings ) {
+		ImageMagickAttributesCommandExecutor attributesCommandExecutor = new ImageMagickAttributesCommandExecutor();
+		attributesCommandExecutor.setOrder( settings.getPriority() );
+		return attributesCommandExecutor;
+	}
 }

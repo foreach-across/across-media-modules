@@ -1,12 +1,9 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
-import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.config.TransformersSettings;
 import com.foreach.imageserver.core.transformers.*;
 import com.foreach.imageserver.dto.ImageTransformDto;
-import com.foreach.imageserver.logging.LogHelper;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +24,9 @@ public class ImageTransformServiceImpl implements ImageTransformService
 	private final Semaphore semaphore;
 	private final ImageTransformUtils imageTransformUtils;
 
-	@Deprecated
-	private Collection<ImageTransformer> imageTransformers = Collections.emptyList();
 	private Collection<ImageCommandExecutor> commandExecutors = Collections.emptyList();
 
+	@SuppressWarnings("unused")
 	public ImageTransformServiceImpl( TransformersSettings transformersSettings, ImageTransformUtils imageTransformUtils ) {
 		this.imageTransformUtils = imageTransformUtils;
 
@@ -42,148 +38,23 @@ public class ImageTransformServiceImpl implements ImageTransformService
 	}
 
 	@Autowired
-	public void setImageTransformers( @RefreshableCollection(includeModuleInternals = true) Collection<ImageTransformer> imageTransformers ) {
-		this.imageTransformers = imageTransformers;
-	}
-
-	@Autowired
 	public void setCommandExecutors( @RefreshableCollection(includeModuleInternals = true) Collection<ImageCommandExecutor> commandExecutors ) {
 		this.commandExecutors = commandExecutors;
 	}
 
 	@Override
-	public Dimensions computeDimensions( StreamImageSource imageSource ) {
-		if ( imageSource == null ) {
-			LOG.warn( "Null parameters not allowed - ImageTransformServiceImpl#computeDimensions: imageSource=null" );
+	public ImageAttributes getAttributes( @NonNull InputStream imageStream ) {
+		ImageAttributesCommand attributesCommand = ImageAttributesCommand.builder().imageStream( imageStream ).build();
+
+		ImageCommandExecutor executor = findCommandExecutor( attributesCommand );
+
+		if ( executor != null ) {
+			executeCommand( executor, attributesCommand );
+
+			return attributesCommand.getExecutionResult();
 		}
 
-		final ImageCalculateDimensionsAction action = new ImageCalculateDimensionsAction( imageSource );
-
-		ImageTransformer imageTransformer = findAbleTransformer( new CanExecute()
-		{
-			@Override
-			public ImageTransformerPriority consider( ImageTransformer imageTransformer ) {
-				return imageTransformer.canExecute( action );
-			}
-		} );
-
-		// TODO I'm opting for returning null in case of failure now, maybe raise an exception instead?
-		Dimensions dimensions = null;
-		if ( imageTransformer != null ) {
-			semaphore.acquireUninterruptibly();
-			try {
-				dimensions = imageTransformer.execute( action );
-			}
-			catch ( Exception e ) {
-				LOG.error(
-						"Error while computing dimensions - ImageTransformServiceImpl#computeDimensions: imageSource={}",
-						LogHelper.flatten( imageSource ), e );
-			}
-			finally {
-				semaphore.release();
-			}
-		}
-		return dimensions;
-	}
-
-	@Override
-	public ImageAttributes getAttributes( InputStream imageStream ) {
-		if ( imageStream == null ) {
-			LOG.warn( "Null parameters not allowed - ImageTransformServiceImpl#getAttributes: imageStream=null" );
-		}
-
-		final GetImageAttributesAction action = new GetImageAttributesAction( imageStream );
-
-		ImageTransformer imageTransformer = findAbleTransformer( new CanExecute()
-		{
-			@Override
-			public ImageTransformerPriority consider( ImageTransformer imageTransformer ) {
-				return imageTransformer.canExecute( action );
-			}
-		} );
-
-		// TODO I'm opting for returning null in case of failure now, maybe raise an exception instead?
-		ImageAttributes imageAttributes = null;
-		if ( imageTransformer != null ) {
-			semaphore.acquireUninterruptibly();
-			try {
-				imageAttributes = imageTransformer.execute( action );
-			}
-			catch ( Exception e ) {
-				LOG.error(
-						"Encountered failure during image transform - ImageTransformServiceImpl#getAttributes: imageStream={}",
-						imageStream, e );
-			}
-			finally {
-				semaphore.release();
-			}
-		}
-		return imageAttributes;
-	}
-
-	@Override
-	public InMemoryImageSource modify( ImageSource imageSource,
-	                                   int outputWidth,
-	                                   int outputHeight,
-	                                   int cropX,
-	                                   int cropY,
-	                                   int cropWidth,
-	                                   int cropHeight,
-	                                   int densityWidth,
-	                                   int densityHeight,
-	                                   ImageType outputType ) {
-		return modify( imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight, densityWidth, densityHeight, outputType, null );
-	}
-
-	@Override
-	public InMemoryImageSource modify( ImageSource imageSource,
-	                                   int outputWidth,
-	                                   int outputHeight,
-	                                   int cropX,
-	                                   int cropY,
-	                                   int cropWidth,
-	                                   int cropHeight,
-	                                   int densityWidth,
-	                                   int densityHeight,
-	                                   ImageType outputType,
-	                                   Dimensions boundaries ) {
-		if ( imageSource == null ) {
-			LOG.warn(
-					"Null parameters not allowed - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}",
-					LogHelper.flatten( outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight,
-					                   densityWidth, densityHeight, outputType ) );
-		}
-
-		final ImageModifyAction action =
-				new ImageModifyAction( imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight,
-				                       densityWidth, densityHeight, outputType, boundaries );
-
-		ImageTransformer imageTransformer = findAbleTransformer( new CanExecute()
-		{
-			@Override
-			public ImageTransformerPriority consider( ImageTransformer imageTransformer ) {
-				return imageTransformer.canExecute( action );
-			}
-		} );
-
-		// TODO I'm opting for returning null in case of failure now, maybe raise an exception instead?
-		InMemoryImageSource result = null;
-		if ( imageTransformer != null ) {
-			semaphore.acquireUninterruptibly();
-			try {
-				result = imageTransformer.execute( action );
-			}
-			catch ( Exception e ) {
-				LOG.warn(
-						"Encountered error modifying file - ImageTransformServiceImpl#modify: imageSource, outputWidth={}, outputHeight={}, cropX={}, cropY={}, cropWidth={}, cropHeight={}, densityWidth={}, densityHeight={}, outputType={}",
-						LogHelper.flatten( imageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight,
-						                   densityWidth, densityHeight, outputType ) );
-			}
-			finally {
-				semaphore.release();
-			}
-		}
-		return result;
+		throw new IllegalArgumentException( "No executor available for determining image attributes" );
 	}
 
 	@Override
@@ -257,7 +128,7 @@ public class ImageTransformServiceImpl implements ImageTransformService
 	}
 
 	@SuppressWarnings("unchecked")
-	private void executeCommand( ImageCommandExecutor executor, ImageTransformCommand command ) {
+	private void executeCommand( ImageCommandExecutor executor, ImageCommand command ) {
 		semaphore.acquireUninterruptibly();
 		try {
 			executor.execute( command );
@@ -265,26 +136,5 @@ public class ImageTransformServiceImpl implements ImageTransformService
 		finally {
 			semaphore.release();
 		}
-	}
-
-	private ImageTransformer findAbleTransformer( CanExecute canExecute ) {
-		ImageTransformer firstFallback = null;
-
-		for ( ImageTransformer imageTransformer : imageTransformers ) {
-			ImageTransformerPriority priority = canExecute.consider( imageTransformer );
-			if ( priority == ImageTransformerPriority.PREFERRED ) {
-				return imageTransformer;
-			}
-			else if ( priority == ImageTransformerPriority.FALLBACK && firstFallback == null ) {
-				firstFallback = imageTransformer;
-			}
-		}
-
-		return firstFallback;
-	}
-
-	private interface CanExecute
-	{
-		ImageTransformerPriority consider( ImageTransformer imageTransformer );
 	}
 }

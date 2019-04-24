@@ -22,6 +22,7 @@ import java.util.Map;
 
 // TODO Support for vector formats using Ghostscript is untested.
 // todo: migrate to separate command executors
+@Deprecated
 public class ImageMagickImageTransformer implements ImageTransformer
 {
 	public static final int GS_MAX_DENSITY = 1200;
