@@ -342,6 +342,22 @@ public class ITLocalImageServerClient
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 	}
 
+	@Test
+	@SneakyThrows
+	public void convertSingleImage() {
+		ImageConvertResultTransformationDto result = imageServerClient.convertImage( image( "images/poppy_flower_nature.jpg" ),
+		                                                                             Collections.singletonList(
+				                                                                             ImageTransformDto.builder()
+				                                                                                              .dpi( 300 )
+				                                                                                              .colorSpace(
+						                                                                                              ColorSpaceDto.GRAYSCALE )
+				                                                                                              .outputType(
+						                                                                                              ImageTypeDto.PNG )
+				                                                                                              .build() ) );
+
+		assertEquals( ImageTypeDto.PNG, result.getFormat() );
+	}
+
 	@Configuration
 	@AcrossTestConfiguration(modules = { FileManagerModule.NAME, PropertiesModule.NAME })
 	@PropertySource("classpath:integrationtests.properties")

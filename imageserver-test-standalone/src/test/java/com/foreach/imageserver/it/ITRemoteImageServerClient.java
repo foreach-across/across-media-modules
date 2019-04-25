@@ -14,10 +14,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -323,6 +320,22 @@ public class ITRemoteImageServerClient
 		/*File targetFile = new File( "poppy_flower_nature_grayscale.png");
 		OutputStream outStream = new FileOutputStream( targetFile);
 		outStream.write(transformation.getImage());*/
+	}
+
+	@Test
+	@SneakyThrows
+	public void convertSingleImage() {
+		ImageConvertResultTransformationDto result = imageServerClient.convertImage( image( "images/poppy_flower_nature.jpg" ),
+		                                                                             Collections.singletonList(
+				                                                                             ImageTransformDto.builder()
+				                                                                                              .dpi( 300 )
+				                                                                                              .colorSpace(
+						                                                                                              ColorSpaceDto.GRAYSCALE )
+				                                                                                              .outputType(
+						                                                                                              ImageTypeDto.PNG )
+				                                                                                              .build() ) );
+
+		assertEquals( ImageTypeDto.PNG, result.getFormat() );
 	}
 
 	private byte[] image( String s ) throws IOException {
