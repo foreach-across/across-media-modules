@@ -11,5 +11,6 @@ public enum ColorSpaceDto
 	RGB,
 	CMYK,
 	GRAYSCALE,
-	MONOCHROME
+	MONOCHROME,
+	TRANSPARENT
 }

@@ -1,11 +1,7 @@
 package com.foreach.imageserver.core.services;
 
-import com.foreach.imageserver.core.business.Dimensions;
-import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.ImageSource;
-import com.foreach.imageserver.core.transformers.InMemoryImageSource;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.ImageTransformDto;
 
 import java.io.InputStream;
@@ -13,34 +9,13 @@ import java.util.Collection;
 
 public interface ImageTransformService
 {
-	Dimensions computeDimensions( StreamImageSource imageSource );
-
+	/**
+	 * Retrieve the attributes for an image.
+	 *
+	 * @param imageStream image data
+	 * @return attributes
+	 */
 	ImageAttributes getAttributes( InputStream imageStream );
-
-	@Deprecated
-	InMemoryImageSource modify( ImageSource imageSource,
-	                            int outputWidth,
-	                            int outputHeight,
-	                            int cropX,
-	                            int cropY,
-	                            int cropWidth,
-	                            int cropHeight,
-	                            int densityWidth,
-	                            int densityHeight,
-	                            ImageType outputType );
-
-	@Deprecated
-	InMemoryImageSource modify( ImageSource imageSource,
-	                            int outputWidth,
-	                            int outputHeight,
-	                            int cropX,
-	                            int cropY,
-	                            int cropWidth,
-	                            int cropHeight,
-	                            int densityWidth,
-	                            int densityHeight,
-	                            ImageType outputType,
-	                            Dimensions boundaries );
 
 	/**
 	 * Apply a set of transformations in order to a single image source.

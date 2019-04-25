@@ -233,8 +233,7 @@ public class ImageServiceImpl implements ImageService
 			 * ImageModification was not altered behind our back. Should this be the case we delete the variant from
 			 * disk; it will then be recreated during the next request.
 			 */
-			ImageModificationDto reviewModification =
-					cropGenerator.buildModificationDto( image, context, imageResolution );
+			ImageModificationDto reviewModification = cropGenerator.buildModificationDto( image, context, imageResolution );
 			if ( !modification.equals( reviewModification ) ) {
 				imageStoreService.removeVariantImage( image, context, imageResolution, imageVariant );
 			}
@@ -368,10 +367,6 @@ public class ImageServiceImpl implements ImageService
 		imageResolution.setWidth( modificationDto.getResolution().getWidth() );
 		imageResolution.setHeight( modificationDto.getResolution().getHeight() );
 
-		ImageResolutionDto outputDimensions = modificationDto.getResolution();
-		CropDto crop = modificationDto.getCrop();
-		DimensionsDto density = modificationDto.getDensity();
-
 		StreamImageSource originalImageSource = imageStoreService.getOriginalImage( image );
 		if ( originalImageSource == null ) {
 			String message = String.format(
@@ -381,14 +376,6 @@ public class ImageServiceImpl implements ImageService
 			LOG.error( message );
 			throw new ImageCouldNotBeRetrievedException( message );
 		}
-
-		/*
-		InMemoryImageSource variantImageSource =
-				imageTransformService.modify( originalImageSource, outputDimensions.getWidth(),
-				                              outputDimensions.getHeight(), crop.getX(), crop.getY(), crop.getWidth(),
-				                              crop.getHeight(), density.getWidth(), density.getHeight(),
-				                              imageVariant.getOutputType(), imageVariant.getBoundaries() );
-		*/
 
 		ImageTransformDto transformDto = modificationDto.asTransformDto();
 		if ( imageVariant.getOutputType() != null ) {
