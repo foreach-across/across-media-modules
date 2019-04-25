@@ -307,14 +307,17 @@ public class ITRemoteImageServerClient
 		assertEquals( 1, imageConvertResultDto.getTotal() );
 
 		assertEquals( 1, imageConvertResultDto.getKeys().size() );
-		assertEquals( "flower-1", imageConvertResultDto.getKeys().toArray()[0] );
+
+		String key = "flower-1";
+
+		assertEquals( key, imageConvertResultDto.getKeys().toArray()[0] );
 
 		assertEquals( 1, imageConvertResultDto.getPages().size() );
 		assertEquals( 1, imageConvertResultDto.getPages().toArray()[0] );
 
 		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
-		ImageConvertResultTransformationDto transformation = (ImageConvertResultTransformationDto) imageConvertResultDto.getTransforms().toArray()[0];
-		assertEquals( "flower-1", transformation.getKey() );
+		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( key );
+		assertEquals( key, transformation.getKey() );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 
 		/*File targetFile = new File( "poppy_flower_nature_grayscale.png");

@@ -474,21 +474,22 @@ public class ImageServiceImpl implements ImageService
 		ImageAttributes imageAttributes = imageTransformService.getAttributes( input );
 		StreamImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), imageConvertDto.getImage() );
 
+		HashMap<String, ImageConvertResultTransformationDto> transforms = new HashMap<>();
+		resultBuilder.transforms( transforms );
+
 		for ( ImageConvertTargetDto target : imageConvertDto.getTargets() ) {
 			for ( Integer page : pages ) {
 				String key = target.getKey().replace( "*", page.toString() );
 				keys.add( key );
 
-				target.getTransforms().forEach( t -> {
-					t.setScene( page );
-				} );
+				target.getTransforms().forEach( t -> t.setScene( page ) );
 				ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, target.getTransforms() );
 
-				resultBuilder.transform( ImageConvertResultTransformationDto.builder()
-				                                                            .key( key )
-				                                                            .image( IOUtils.toByteArray( resultImage.getImageStream() ) )
-				                                                            .format( DtoUtil.toDto( resultImage.getImageType() ) )
-				                                                            .build() );
+				transforms.put( key, ImageConvertResultTransformationDto.builder()
+				                                                        .key( key )
+				                                                        .image( IOUtils.toByteArray( resultImage.getImageStream() ) )
+				                                                        .format( DtoUtil.toDto( resultImage.getImageType() ) )
+				                                                        .build() );
 			}
 		}
 
