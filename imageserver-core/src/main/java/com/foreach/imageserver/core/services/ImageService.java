@@ -3,11 +3,14 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.ImageSource;
+import com.foreach.imageserver.dto.ImageConvertDto;
+import com.foreach.imageserver.dto.ImageConvertResultDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -88,4 +91,6 @@ public interface ImageService
 	 * @return true if image was deleted, false if not found
 	 */
 	boolean deleteImage( String externalId );
+
+	ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto ) throws IOException;
 }

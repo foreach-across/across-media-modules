@@ -22,6 +22,7 @@ public interface ImageServerClient
 	String ENDPOINT_MODIFICATION_LIST = "api/modification/list";
 	String ENDPOINT_MODIFICATION_REGISTER = "api/modification/register";
 	String ENDPOINT_MODIFICATION_REGISTER_LIST = "api/modification/registerlist";
+	String ENDPOINT_IMAGE_CONVERT = "api/image/convert";
 
 	String getImageServerUrl();
 
@@ -134,4 +135,6 @@ public interface ImageServerClient
 	List<ImageResolutionDto> listAllowedResolutions( String context );
 
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
+
+	ImageConvertResultDto convertImage( ImageConvertDto convertDto );
 }

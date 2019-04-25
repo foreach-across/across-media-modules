@@ -286,6 +286,42 @@ public class ITRemoteImageServerClient
 		assertEquals( ImageTypeDto.PDF, createdInfo.getImageType() );
 	}
 
+	@Test
+	@SneakyThrows
+	public void convertImage() {
+		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
+		                                                 .image( image( "poppy_flower_nature.jpg" ) )
+		                                                 .format( ImageTypeDto.JPEG )
+		                                                 .target( ImageConvertTargetDto.builder()
+		                                                                               .key( "flower-*" )
+		                                                                               .transform( ImageTransformDto.builder()
+		                                                                                                            .dpi( 300 )
+		                                                                                                            .colorSpace( ColorSpaceDto.GRAYSCALE )
+		                                                                                                            .outputType( ImageTypeDto.PNG )
+		                                                                                                            .build() )
+		                                                                               .build() )
+		                                                 .build();
+
+		ImageConvertResultDto imageConvertResultDto = imageServerClient.convertImage( imageConvertDto );
+
+		assertEquals( 1, imageConvertResultDto.getTotal() );
+
+		assertEquals( 1, imageConvertResultDto.getKeys().size() );
+		assertEquals( "flower-1", imageConvertResultDto.getKeys().toArray()[0] );
+
+		assertEquals( 1, imageConvertResultDto.getPages().size() );
+		assertEquals( 1, imageConvertResultDto.getPages().toArray()[0] );
+
+		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
+		ImageConvertResultTransformationDto transformation = (ImageConvertResultTransformationDto) imageConvertResultDto.getTransforms().toArray()[0];
+		assertEquals( "flower-1", transformation.getKey() );
+		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+
+		/*File targetFile = new File( "poppy_flower_nature_grayscale.png");
+		OutputStream outStream = new FileOutputStream( targetFile);
+		outStream.write(transformation.getImage());*/
+	}
+
 	private byte[] image( String s ) throws IOException {
 		return IOUtils.toByteArray( getClass().getClassLoader().getResourceAsStream( s ) );
 	}

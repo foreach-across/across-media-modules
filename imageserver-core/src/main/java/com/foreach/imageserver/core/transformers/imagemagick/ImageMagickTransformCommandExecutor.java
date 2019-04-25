@@ -65,8 +65,11 @@ public class ImageMagickTransformCommandExecutor extends AbstractOrderedImageCom
 			colorspace = "RGB";
 		}
 
-		Crop crop = applyPixelsPerInch( DtoUtil.toBusiness( transform.getCrop() ), appliedPPI );
-		op.crop( crop.getWidth(), crop.getHeight(), crop.getX(), crop.getY() );
+		Crop crop = null;
+		if ( transform.getCrop() != null ) {
+			crop = applyPixelsPerInch( DtoUtil.toBusiness( transform.getCrop() ), appliedPPI );
+			op.crop( crop.getWidth(), crop.getHeight(), crop.getX(), crop.getY() );
+		}
 
 		op.units( "PixelsPerInch" );
 

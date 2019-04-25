@@ -70,6 +70,11 @@ public class WebConfiguration
 	}
 
 	@Bean
+	public ImageConvertController imageConvertController() {
+		return new ImageConvertController( accessToken() );
+	}
+
+	@Bean
 	public ImageModificationController imageModificationController() {
 		return new ImageModificationController( accessToken() );
 	}

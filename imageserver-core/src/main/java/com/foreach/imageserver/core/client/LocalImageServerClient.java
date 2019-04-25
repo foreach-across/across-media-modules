@@ -16,6 +16,7 @@ import com.foreach.imageserver.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -209,6 +210,16 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		}
 
 		return response.getImageResolutions();
+	}
+
+	@Override
+	public ImageConvertResultDto convertImage( ImageConvertDto convertDto ) {
+		try {
+			return imageService.convertImageToTargets( convertDto );
+		}
+		catch ( IOException e ) {
+			throw new ImageServerException( e );
+		}
 	}
 
 	@Override

@@ -13,12 +13,15 @@ import com.foreach.imageserver.core.transformers.StreamImageSource;
 import com.foreach.imageserver.dto.*;
 import com.foreach.imageserver.logging.LogHelper;
 import lombok.NonNull;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -453,6 +456,68 @@ public class ImageServiceImpl implements ImageService
 		}
 
 		imageResolutionManager.saveResolution( resolution );
+	}
+
+	@Override
+	public ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto ) throws IOException {
+		ImageConvertResultDto.ImageConvertResultDtoBuilder resultBuilder = ImageConvertResultDto.builder();
+
+		Set<String> keys = new HashSet<>();
+		Set<Integer> pages = splitIntoPageNumbers( imageConvertDto.getPages() );
+		if ( pages.size() == 0 ) {
+			pages.add( 1 );
+		}
+		resultBuilder.pages( pages );
+		resultBuilder.keys( keys );
+
+		InputStream input = new ByteArrayInputStream( imageConvertDto.getImage() );
+		ImageAttributes imageAttributes = imageTransformService.getAttributes( input );
+		StreamImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), imageConvertDto.getImage() );
+
+		for ( ImageConvertTargetDto target : imageConvertDto.getTargets() ) {
+			for ( Integer page : pages ) {
+				String key = target.getKey().replace( "*", page.toString() );
+				keys.add( key );
+
+				target.getTransforms().forEach( t -> {
+					t.setScene( page );
+				} );
+				ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, target.getTransforms() );
+
+				resultBuilder.transform( ImageConvertResultTransformationDto.builder()
+				                                                            .key( key )
+				                                                            .image( IOUtils.toByteArray( resultImage.getImageStream() ) )
+				                                                            .format( DtoUtil.toDto( resultImage.getImageType() ) )
+				                                                            .build() );
+			}
+		}
+
+		resultBuilder.total( keys.size() );
+
+		return resultBuilder.build();
+	}
+
+	private Set<Integer> splitIntoPageNumbers( String pages ) {
+		Set<Integer> result = new HashSet<>();
+
+		if ( pages != null ) {
+			String[] parts = pages.split( "," );
+			for ( String p : parts ) {
+				if ( p.chars().allMatch( Character::isDigit ) ) {
+					result.add( Integer.parseInt( p ) );
+				}
+				else if ( p.contains( "-" ) ) {
+					String[] parts2 = p.split( "-" );
+					if ( parts2[0].chars().allMatch( Character::isDigit ) && parts2[1].chars().allMatch( Character::isDigit ) ) {
+						for ( int i = Integer.parseInt( parts2[0] ); i < Integer.parseInt( parts2[1] ); i++ ) {
+							result.add( i );
+						}
+					}
+				}
+			}
+		}
+
+		return result;
 	}
 
 	private static class VariantImageRequest
