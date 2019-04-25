@@ -1,2 +1,2 @@
 #!/bin/bash
-exec docker exec -i graphicsmagick-runner gm "$@"
+exec docker exec -i imageserver-container gm "$@"

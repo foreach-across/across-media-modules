@@ -2,9 +2,10 @@
   <configuration default="false" name="mavengm" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
     <deployment type="docker-compose.yml">
       <settings>
+        <option name="commandLineOptions" value="--build" />
         <option name="services">
           <list>
-            <option value="maven-gm" />
+            <option value="test" />
           </list>
         </option>
         <option name="sourceFilePath" value="docker-compose.yml" />
