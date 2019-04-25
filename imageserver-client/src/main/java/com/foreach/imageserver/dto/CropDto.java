@@ -113,7 +113,8 @@ public class CropDto
 				'}';
 	}
 
-	// not using @Builder.Default to stay compatible
+	// not using @Builder.Default deliberately to stay compatible, as @Builder.Default appears
+	// to only keep the default value when going through the builder
 	@SuppressWarnings("unused")
 	public static class CropDtoBuilder
 	{

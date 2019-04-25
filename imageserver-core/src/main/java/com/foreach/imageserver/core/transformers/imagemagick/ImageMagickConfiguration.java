@@ -1,6 +1,5 @@
 package com.foreach.imageserver.core.transformers.imagemagick;
 
-import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import org.im4java.process.ProcessStarter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,19 +27,20 @@ class ImageMagickConfiguration
 	}
 
 	@Bean
-	public ImageMagickImageTransformer imageMagickImageTransformer( ImageServerCoreModuleSettings settings ) {
-		return new ImageMagickImageTransformer(
-				settings.getTransformers().getImageMagick().getPriority(),
-				settings.getTransformers().getImageMagick().getPath(),
-				settings.getTransformers().getImageMagick().getUseGhostScript(),
-				settings.getTransformers().getImageMagick().getUseGraphicsMagick()
-		);
+	ImageMagickTransformCommandExecutor imageMagickTransformCommandExecutor( ImageMagickSettings settings ) {
+		ImageMagickTransformCommandExecutor transformCommandExecutor = new ImageMagickTransformCommandExecutor();
+		transformCommandExecutor.setDefaultQuality( settings.getDefaultQuality() );
+		transformCommandExecutor.setDefaultDpi( settings.getDefaultDpi() );
+		transformCommandExecutor.setFilter( settings.getFilter() );
+		transformCommandExecutor.setUseThumbnail( settings.isUseThumbnail() );
+		transformCommandExecutor.setOrder( settings.getPriority() );
+		return transformCommandExecutor;
 	}
 
 	@Bean
-	ImageMagickTransformCommandExecutor imageMagickTransformCommandExecutor( ImageMagickSettings settings ) {
-		ImageMagickTransformCommandExecutor transformCommandExecutor = new ImageMagickTransformCommandExecutor();
-		transformCommandExecutor.setOrder( settings.getPriority() );
-		return transformCommandExecutor;
+	ImageMagickAttributesCommandExecutor imageMagickAttributesCommandExecutor( ImageMagickSettings settings ) {
+		ImageMagickAttributesCommandExecutor attributesCommandExecutor = new ImageMagickAttributesCommandExecutor();
+		attributesCommandExecutor.setOrder( settings.getPriority() );
+		return attributesCommandExecutor;
 	}
 }

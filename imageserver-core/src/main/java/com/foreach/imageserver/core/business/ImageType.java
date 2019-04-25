@@ -12,7 +12,7 @@ public enum ImageType implements IdLookup<Integer>, BitFlag
 	SVG( 8, "image/svg+xml", "svg", true, true ),
 	EPS( 16, "application/postscript", "eps", true, true, "image/eps", "image/x-eps",
 	     "application/eps", "application/x-eps" ),
-	PDF( 32, "application/pdf", "pdf", false, false, "application/x-pdf" ),
+	PDF( 32, "application/pdf", "pdf", false, true, "application/x-pdf" ),
 	TIFF( 64, "image/tiff", "tif", false, false ),
 	BMP( 128, "image/bmp", "bmp", false, false, "image/x-windows-bmp" );
 
