@@ -288,7 +288,6 @@ public class ITRemoteImageServerClient
 	public void convertImage() {
 		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
 		                                                 .image( image( "poppy_flower_nature.jpg" ) )
-		                                                 .format( ImageTypeDto.JPEG )
 		                                                 .target( ImageConvertTargetDto.builder()
 		                                                                               .key( "flower-*" )
 		                                                                               .transform( ImageTransformDto.builder()
