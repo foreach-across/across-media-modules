@@ -3,7 +3,6 @@
   <component name="ProjectStartupSharedConfiguration">
     <configurations>
       <configuration id="Docker.imageserver-container" name="imageserver-container" />
-      <configuration id="Docker.mavengm" name="mavengm" />
     </configurations>
   </component>
 </project>
