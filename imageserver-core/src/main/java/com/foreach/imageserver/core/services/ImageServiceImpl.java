@@ -457,15 +457,17 @@ public class ImageServiceImpl implements ImageService
 		resultBuilder.pages( pages );
 		resultBuilder.keys( keys );
 
-		InputStream input = new ByteArrayInputStream( imageConvertDto.getImage() );
-		ImageAttributes imageAttributes = imageTransformService.getAttributes( input );
-		StreamImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), imageConvertDto.getImage() );
-
 		HashMap<String, ImageConvertResultTransformationDto> transforms = new HashMap<>();
 		resultBuilder.transforms( transforms );
 
+		InputStream input = new ByteArrayInputStream( imageConvertDto.getImage() );
+		ImageAttributes imageAttributes = imageTransformService.getAttributes( input );
+		input.reset();
+		StreamImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), input );
+
 		for ( ImageConvertTargetDto target : imageConvertDto.getTargets() ) {
 			for ( Integer page : pages ) {
+
 				String key = target.getKey().replace( "*", page.toString() );
 				keys.add( key );
 
@@ -477,6 +479,7 @@ public class ImageServiceImpl implements ImageService
 				                                                        .image( IOUtils.toByteArray( resultImage.getImageStream() ) )
 				                                                        .format( DtoUtil.toDto( resultImage.getImageType() ) )
 				                                                        .build() );
+				input.reset();
 			}
 		}
 

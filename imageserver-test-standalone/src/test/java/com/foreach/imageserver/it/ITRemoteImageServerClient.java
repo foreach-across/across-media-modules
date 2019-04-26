@@ -315,16 +315,63 @@ public class ITRemoteImageServerClient
 		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( key );
 		assertEquals( key, transformation.getKey() );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+	}
 
-		/*File targetFile = new File( "poppy_flower_nature_grayscale.png");
-		OutputStream outStream = new FileOutputStream( targetFile);
-		outStream.write(transformation.getImage());*/
+	@Test
+	@SneakyThrows
+	public void convertImagePdf() {
+		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
+		                                                 .image( image( "sample-pdf.pdf" ) )
+		                                                 .pages( "1,3-6" )
+		                                                 .target( ImageConvertTargetDto.builder()
+		                                                                               .key( "sample-*" )
+		                                                                               .transform( ImageTransformDto.builder()
+		                                                                                                            .dpi( 300 )
+		                                                                                                            .colorSpace( ColorSpaceDto.GRAYSCALE )
+		                                                                                                            .outputType( ImageTypeDto.PNG )
+		                                                                                                            .build() )
+		                                                                               .build() )
+		                                                 .build();
+
+		ImageConvertResultDto imageConvertResultDto = imageServerClient.convertImage( imageConvertDto );
+
+		assertEquals( 4, imageConvertResultDto.getTotal() );
+
+		assertEquals( 4, imageConvertResultDto.getKeys().size() );
+		assertTrue( imageConvertResultDto.getKeys().contains( "sample-1" ) );
+		assertTrue( imageConvertResultDto.getKeys().contains( "sample-3" ) );
+		assertTrue( imageConvertResultDto.getKeys().contains( "sample-4" ) );
+		assertTrue( imageConvertResultDto.getKeys().contains( "sample-5" ) );
+
+		assertEquals( 4, imageConvertResultDto.getPages().size() );
+		assertTrue( imageConvertResultDto.getPages().contains( 1 ) );
+		assertTrue( imageConvertResultDto.getPages().contains( 3 ) );
+		assertTrue( imageConvertResultDto.getPages().contains( 4 ) );
+		assertTrue( imageConvertResultDto.getPages().contains( 5 ) );
+
+		assertEquals( 4, imageConvertResultDto.getTransforms().size() );
+
+		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( "sample-1" );
+		assertEquals( "sample-1", transformation.getKey() );
+		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+
+		transformation = imageConvertResultDto.getTransforms().get( "sample-3" );
+		assertEquals( "sample-3", transformation.getKey() );
+		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+
+		transformation = imageConvertResultDto.getTransforms().get( "sample-4" );
+		assertEquals( "sample-4", transformation.getKey() );
+		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+
+		transformation = imageConvertResultDto.getTransforms().get( "sample-5" );
+		assertEquals( "sample-5", transformation.getKey() );
+		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 	}
 
 	@Test
 	@SneakyThrows
 	public void convertSingleImage() {
-		ImageConvertResultTransformationDto result = imageServerClient.convertImage( image( "images/poppy_flower_nature.jpg" ),
+		ImageConvertResultTransformationDto result = imageServerClient.convertImage( image( "poppy_flower_nature.jpg" ),
 		                                                                             Collections.singletonList(
 				                                                                             ImageTransformDto.builder()
 				                                                                                              .dpi( 300 )
