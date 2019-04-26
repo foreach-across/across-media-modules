@@ -122,7 +122,7 @@ public class TestImageMagickAttributesCommandExecutor
 	{
 		@Bean
 		public ImageMagickAttributesCommandExecutor imageMagickAttributesCommandExecutor( Environment environment ) {
-			ProcessStarter.setGlobalSearchPath( new File( environment.getProperty( "transformer.imagemagick.path" ) ).getAbsolutePath() );
+			ProcessStarter.setGlobalSearchPath( new File( environment.getProperty( "transformers.imageMagick.path" ) ).getAbsolutePath() );
 			System.setProperty( "im4java.useGM", "true" );
 
 			return new ImageMagickAttributesCommandExecutor();

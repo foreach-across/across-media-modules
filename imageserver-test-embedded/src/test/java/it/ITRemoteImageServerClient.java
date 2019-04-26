@@ -1,15 +1,20 @@
-package com.foreach.imageserver.it;
+package it;
 
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.client.ImageServerException;
 import com.foreach.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.*;
+import com.foreach.imageserver.test.embedded.ImageServerTestEmbeddedApplication;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,14 +29,19 @@ import static org.junit.Assert.*;
 /**
  * @author Arne Vandamme
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles("it")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = ImageServerTestEmbeddedApplication.class)
 public class ITRemoteImageServerClient
 {
 	private ImageServerClient imageServerClient;
 
+	@Value("${local.server.port}")
+	private int port;
+
 	@Before
 	public void createClient() {
-		String url = "http://localhost:" + StringUtils.defaultIfEmpty( System.getProperty( "local.tomcat.port" ),
-		                                                               "8078" ) + "/resources/images";
+		String url = "http://localhost:" + port + "/resources/images";
 		String accessToken = "standalone-access-token";
 
 		imageServerClient = new RemoteImageServerClient( url, accessToken );
@@ -40,8 +50,7 @@ public class ITRemoteImageServerClient
 	@Test
 	public void uploadKnownResourceImage() throws ParseException, IOException {
 		String externalId = UUID.randomUUID().toString();
-		byte[] imageData =
-				image( "poppy_flower_nature.jpg" );
+		byte[] imageData = image( "poppy_flower_nature.jpg" );
 		Date date = DateUtils.parseDate( "2013-05-14 13:33:22", "yyyy-MM-dd HH:mm:ss" );
 
 		ImageInfoDto fetchedInfo = imageServerClient.imageInfo( externalId );

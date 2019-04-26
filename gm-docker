@@ -1,0 +1,2 @@
+# Alias to ensure actual gm binary is used inside docker container
+/usr/bin/gm "$@"
