@@ -460,26 +460,27 @@ public class ImageServiceImpl implements ImageService
 		HashMap<String, ImageConvertResultTransformationDto> transforms = new HashMap<>();
 		resultBuilder.transforms( transforms );
 
-		InputStream input = new ByteArrayInputStream( imageConvertDto.getImage() );
-		ImageAttributes imageAttributes = imageTransformService.getAttributes( input );
-		input.reset();
-		StreamImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), input );
+		try (InputStream input = new ByteArrayInputStream( imageConvertDto.getImage() )) {
+			ImageAttributes imageAttributes = imageTransformService.getAttributes( input );
+			input.reset();
+			StreamImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), input );
 
-		for ( ImageConvertTargetDto target : imageConvertDto.getTargets() ) {
-			for ( Integer page : pages ) {
+			for ( ImageConvertTargetDto target : imageConvertDto.getTargets() ) {
+				for ( Integer page : pages ) {
 
-				String key = target.getKey().replace( "*", page.toString() );
-				keys.add( key );
+					String key = target.getKey().replace( "*", page.toString() );
+					keys.add( key );
 
-				target.getTransforms().forEach( t -> t.setScene( page ) );
-				ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, target.getTransforms() );
+					target.getTransforms().forEach( t -> t.setScene( page - 1 ) ); // do page minus 1, because graphicsmagick starts at page 0
+					ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, target.getTransforms() );
 
-				transforms.put( key, ImageConvertResultTransformationDto.builder()
-				                                                        .key( key )
-				                                                        .image( IOUtils.toByteArray( resultImage.getImageStream() ) )
-				                                                        .format( DtoUtil.toDto( resultImage.getImageType() ) )
-				                                                        .build() );
-				input.reset();
+					transforms.put( key, ImageConvertResultTransformationDto.builder()
+					                                                        .key( key )
+					                                                        .image( IOUtils.toByteArray( resultImage.getImageStream() ) )
+					                                                        .format( DtoUtil.toDto( resultImage.getImageType() ) )
+					                                                        .build() );
+					input.reset();
+				}
 			}
 		}
 

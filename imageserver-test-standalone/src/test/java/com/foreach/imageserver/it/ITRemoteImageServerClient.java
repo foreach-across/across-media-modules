@@ -11,6 +11,9 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -382,6 +385,23 @@ public class ITRemoteImageServerClient
 				                                                                                              .build() ) );
 
 		assertEquals( ImageTypeDto.PNG, result.getFormat() );
+	}
+
+	@Test
+	@SneakyThrows
+	public void convertResizeEpsRetina() {
+		ImageConvertResultTransformationDto result = imageServerClient.convertImage( image( "kaaimangrootkleur.eps" ),
+		                                                                             Collections.singletonList(
+				                                                                             ImageTransformDto.builder()
+				                                                                                              .height( 1536 )
+				                                                                                              .quality( 100 )
+				                                                                                              .outputType( ImageTypeDto.JPEG )
+				                                                                                              .build() ) );
+
+		try (InputStream i = new ByteArrayInputStream( result.getImage() )) {
+			BufferedImage bimg = ImageIO.read( i );
+			assertEquals( 1536, bimg.getHeight() );
+		}
 	}
 
 	private byte[] image( String s ) throws IOException {
