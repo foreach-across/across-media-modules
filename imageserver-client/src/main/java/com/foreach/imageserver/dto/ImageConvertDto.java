@@ -11,7 +11,6 @@ import java.util.Collection;
 public class ImageConvertDto
 {
 	private byte[] image;
-	private ImageTypeDto format;
 	private String pages;
 	@Singular
 	private Collection<ImageConvertTargetDto> targets;

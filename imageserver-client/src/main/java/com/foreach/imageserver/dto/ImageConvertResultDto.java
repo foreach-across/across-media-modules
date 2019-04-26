@@ -1,8 +1,12 @@
 package com.foreach.imageserver.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -13,6 +17,5 @@ public class ImageConvertResultDto
 	private int total;
 	private Collection<Integer> pages;
 	private Collection<String> keys;
-	@Singular
-	private Collection<ImageConvertResultTransformationDto> transforms;
+	private Map<String, ImageConvertResultTransformationDto> transforms;
 }

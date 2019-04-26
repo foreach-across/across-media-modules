@@ -14,10 +14,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -291,7 +288,6 @@ public class ITRemoteImageServerClient
 	public void convertImage() {
 		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
 		                                                 .image( image( "poppy_flower_nature.jpg" ) )
-		                                                 .format( ImageTypeDto.JPEG )
 		                                                 .target( ImageConvertTargetDto.builder()
 		                                                                               .key( "flower-*" )
 		                                                                               .transform( ImageTransformDto.builder()
@@ -307,19 +303,38 @@ public class ITRemoteImageServerClient
 		assertEquals( 1, imageConvertResultDto.getTotal() );
 
 		assertEquals( 1, imageConvertResultDto.getKeys().size() );
-		assertEquals( "flower-1", imageConvertResultDto.getKeys().toArray()[0] );
+
+		String key = "flower-1";
+
+		assertEquals( key, imageConvertResultDto.getKeys().toArray()[0] );
 
 		assertEquals( 1, imageConvertResultDto.getPages().size() );
 		assertEquals( 1, imageConvertResultDto.getPages().toArray()[0] );
 
 		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
-		ImageConvertResultTransformationDto transformation = (ImageConvertResultTransformationDto) imageConvertResultDto.getTransforms().toArray()[0];
-		assertEquals( "flower-1", transformation.getKey() );
+		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( key );
+		assertEquals( key, transformation.getKey() );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 
 		/*File targetFile = new File( "poppy_flower_nature_grayscale.png");
 		OutputStream outStream = new FileOutputStream( targetFile);
 		outStream.write(transformation.getImage());*/
+	}
+
+	@Test
+	@SneakyThrows
+	public void convertSingleImage() {
+		ImageConvertResultTransformationDto result = imageServerClient.convertImage( image( "images/poppy_flower_nature.jpg" ),
+		                                                                             Collections.singletonList(
+				                                                                             ImageTransformDto.builder()
+				                                                                                              .dpi( 300 )
+				                                                                                              .colorSpace(
+						                                                                                              ColorSpaceDto.GRAYSCALE )
+				                                                                                              .outputType(
+						                                                                                              ImageTypeDto.PNG )
+				                                                                                              .build() ) );
+
+		assertEquals( ImageTypeDto.PNG, result.getFormat() );
 	}
 
 	private byte[] image( String s ) throws IOException {

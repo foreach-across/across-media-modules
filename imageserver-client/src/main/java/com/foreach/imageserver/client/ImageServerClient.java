@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -137,4 +138,13 @@ public interface ImageServerClient
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
 
 	ImageConvertResultDto convertImage( ImageConvertDto convertDto );
+
+	/**
+	 * Convenience method to convert a single image with given transformations
+	 *
+	 * @param imageBytes given image
+	 * @param transforms transformations
+	 * @return transformed image
+	 */
+	ImageConvertResultTransformationDto convertImage( byte[] imageBytes, Collection<ImageTransformDto> transforms );
 }
