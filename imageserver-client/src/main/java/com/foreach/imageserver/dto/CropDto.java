@@ -22,11 +22,13 @@ public class CropDto
 	private int height;
 
 	// Source for the coordinates
+	@Builder.Default
 	private DimensionsDto source = new DimensionsDto();
 
 	// Box wrapping the original source
 	// If box and source are specified, source is used.  If only box is specified, then the source is calculated
 	// based on the box
+	@Builder.Default
 	private DimensionsDto box = new DimensionsDto();
 
 	public CropDto() {
