@@ -11,7 +11,9 @@ import lombok.*;
  * @since 5.0.0
  */
 @EqualsAndHashCode
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
+// TODO: mark from as JsonCreator and remove public constructors
 public class ColorDto
 {
 	public static final ColorDto TRANSPARENT = ColorDto.from( "transparent" );
@@ -19,7 +21,7 @@ public class ColorDto
 	public static final ColorDto BLACK = ColorDto.from( "#000000" );
 
 	@Getter
-	private final String value;
+	private String value;
 
 	@Override
 	public String toString() {
