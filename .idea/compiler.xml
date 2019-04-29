@@ -9,11 +9,10 @@
         <outputRelativeToContentRoot value="true" />
         <processor name="lombok.launch.AnnotationProcessorHider$AnnotationProcessor" />
         <processor name="org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor" />
-        <module name="imageserver-admin" />
-        <module name="imageserver-client" />
-        <module name="imageserver-core" />
         <module name="imageserver-test-embedded" />
-        <module name="imageserver-test-standalone" />
+        <module name="imageserver-admin" />
+        <module name="imageserver-core" />
+        <module name="imageserver-client" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

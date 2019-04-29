@@ -7,7 +7,6 @@
       <module fileurl="file://$PROJECT_DIR$/imageserver-core/imageserver-core.iml" filepath="$PROJECT_DIR$/imageserver-core/imageserver-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-platform.iml" filepath="$PROJECT_DIR$/imageserver-platform.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-test-embedded/imageserver-test-embedded.iml" filepath="$PROJECT_DIR$/imageserver-test-embedded/imageserver-test-embedded.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imageserver-test-standalone/imageserver-test-standalone.iml" filepath="$PROJECT_DIR$/imageserver-test-standalone/imageserver-test-standalone.iml" />
     </modules>
   </component>
 </project>

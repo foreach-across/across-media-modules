@@ -1,0 +1,6 @@
+imageServerCore:
+  store:
+    folder: "${java.io.tmpdir}/${random.uuid}/images"
+  transformers:
+    imageMagick:
+      path: ../

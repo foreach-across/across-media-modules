@@ -433,8 +433,7 @@ public class ITLocalImageServerClient
 	@PropertySource("classpath:integrationtests.properties")
 	protected static class Config implements AcrossContextConfigurer
 	{
-
-		@Value("${transformer.imagemagick.path}")
+		@Value("${transformers.imageMagick.path}")
 		String imageMagickPath;
 
 		@Override

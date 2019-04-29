@@ -10,13 +10,15 @@ services:
       context: .
       dockerfile: 'Dockerfile'
     working_dir: '${WORKING_DIR:-/usr/src/app}'
-    container_name: graphicsmagick-runner
+    container_name: imageserver-container
     volumes:
       - '.:/usr/src/app:delegated'
-      #- './docker-build-files/wait-for-it.sh:/root/wait-for-it.sh'
-      #- './docker-build-files/wait-for-datasource.jar:/root/wait-for-datasource.jar'
+      # remap the local gm bash script in docker to the actual gm binary
+      - './gm-docker:/usr/src/app/gm'
+      - './docker-build-files/wait-for-it.sh:/root/wait-for-it.sh'
+      - './docker-build-files/wait-for-datasource.jar:/root/wait-for-datasource.jar'
       # TODO: should we map the dev-configs volume or just include it in our repo?
-      #- './docker-build-files/dev-configs:/root/dev-configs'
+      - './docker-build-files/dev-configs:/root/dev-configs'
       # Reuse the maven repository from the host, we could omit it, but it would fetch at each build
       - '${HOME}/.m2:/root/.m2:delegated'
       # Reuse embedded mongo db downloads
