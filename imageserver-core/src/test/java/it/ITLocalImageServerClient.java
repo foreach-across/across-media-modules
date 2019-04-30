@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.util.*;
 
+import static com.foreach.imageserver.dto.ImageTypeDto.PNG;
 import static org.junit.Assert.*;
 
 /**
@@ -425,6 +426,47 @@ public class ITLocalImageServerClient
 		try (InputStream i = new ByteArrayInputStream( result.getImage() )) {
 			BufferedImage bimg = ImageIO.read( i );
 			assertEquals( 1536, bimg.getHeight() );
+		}
+	}
+
+	@Test
+	@SneakyThrows
+	public void convertImagePdfEchoBackgroundColor() {
+		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
+		                                                 .image( image( "images/55980.pdf" ) )
+		                                                 .pages( "1" )
+		                                                 .target( ImageConvertTargetDto.builder()
+		                                                                               .key( "echo-*" )
+		                                                                               .transform( ImageTransformDto.builder()
+		                                                                                                            .height( 560 )
+		                                                                                                            .backgroundColor(
+				                                                                                                            ColorDto.from( "#fff1e0" ) )
+		                                                                                                            .dpi( 300 )
+		                                                                                                            .quality( 100 )
+		                                                                                                            .outputType( PNG )
+		                                                                                                            .build() )
+		                                                                               .build() )
+		                                                 .build();
+
+		ImageConvertResultDto imageConvertResultDto = imageServerClient.convertImage( imageConvertDto );
+
+		assertEquals( 1, imageConvertResultDto.getTotal() );
+
+		assertEquals( 1, imageConvertResultDto.getKeys().size() );
+		assertTrue( imageConvertResultDto.getKeys().contains( "echo-1" ) );
+
+		assertEquals( 1, imageConvertResultDto.getPages().size() );
+		assertTrue( imageConvertResultDto.getPages().contains( 1 ) );
+
+		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
+
+		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( "echo-1" );
+		assertEquals( "echo-1", transformation.getKey() );
+		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+
+		try (InputStream i = new ByteArrayInputStream( transformation.getImage() )) {
+			BufferedImage bimg = ImageIO.read( i );
+			assertEquals( 560, bimg.getHeight() );
 		}
 	}
 
