@@ -9,14 +9,12 @@ A Docker image with Ghostscript and GraphicsMagick is preconfigured.
 ### GraphicsMagick docker
 All GraphicsMagick tasks (integration tests, test application) are executed inside the docker container called `imagemagick-container`.
 The configuration properties are set to use the `gm` script in the root of the repository for GraphicsMagick commands.
-This forwards to the Docker container.
+This forwards to the Docker container when called outside of the docker container.
+Inside the Docker container it forwards directly to the GraphicsMagick binary.
 
 > You should ensure that the container is running if you want to execute integration tests. 
 When using IntelliJ, this should be done automatically when opening the project.
 
-A script `gm-docker` is also present which does the reverse.
-This script is mounted inside the Docker container and ensures that within the container the GraphicsMagick binary is always used directly.
- 
 ### Maven command-line build
 
 You can run a Maven build of the entire project using the provided `docker-compose`:
