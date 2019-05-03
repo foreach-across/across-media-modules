@@ -9,8 +9,12 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
-import java.io.IOException;
-
+/**
+ * Controller that converts a supplied image using the given transformations that returns the generated image in real-time
+ *
+ * @author Wouter Van Hecke
+ * @since 5.0.0
+ */
 @ImageServerController
 @RequestMapping(ImageConvertController.CONVERT_IMAGE_PATH)
 public class ImageConvertController extends BaseImageAPIController
@@ -29,10 +33,17 @@ public class ImageConvertController extends BaseImageAPIController
 		binder.registerCustomEditor( byte[].class, new ByteArrayMultipartFileEditor() );
 	}
 
+	/**
+	 * Converts the supplied image using the given transformations and returns the results in real-time
+	 *
+	 * @param accessToken access token
+	 * @param convertDto  the source image and a list of targets + transformations
+	 * @return the generated images
+	 */
 	@PostMapping
 	@ResponseBody
 	public JsonResponse convertImage( @RequestParam(value = "token", required = true) String accessToken,
-	                                  @RequestBody ImageConvertDto convertDto ) throws IOException {
+	                                  @RequestBody ImageConvertDto convertDto ) {
 
 		if ( !this.accessToken.equals( accessToken ) ) {
 			return error( "Access denied." );

@@ -446,7 +446,7 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
-	public ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto ) throws IOException {
+	public ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto ) {
 		ImageConvertResultDto.ImageConvertResultDtoBuilder resultBuilder = ImageConvertResultDto.builder();
 
 		Set<String> keys = new HashSet<>();
@@ -463,7 +463,7 @@ public class ImageServiceImpl implements ImageService
 		try (InputStream input = new ByteArrayInputStream( imageConvertDto.getImage() )) {
 			ImageAttributes imageAttributes = imageTransformService.getAttributes( input );
 			input.reset();
-			StreamImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), input );
+			ImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), input );
 
 			for ( ImageConvertTargetDto target : imageConvertDto.getTargets() ) {
 				for ( Integer page : pages ) {
@@ -481,6 +481,9 @@ public class ImageServiceImpl implements ImageService
 					input.reset();
 				}
 			}
+		}
+		catch ( IOException e ) {
+			throw new RuntimeException( "An error occured while converting the image", e );
 		}
 
 		resultBuilder.total( keys.size() );

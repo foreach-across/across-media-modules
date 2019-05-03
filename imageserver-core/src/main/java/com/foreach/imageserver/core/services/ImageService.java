@@ -10,7 +10,6 @@ import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -92,5 +91,11 @@ public interface ImageService
 	 */
 	boolean deleteImage( String externalId );
 
-	ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto ) throws IOException;
+	/**
+	 * Convert the supplied image using the given transformations.
+	 *
+	 * @param imageConvertDto object that contains the source image + all the desired targets and which transformations to apply for each target
+	 * @return object containing all generated imaged
+	 */
+	ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto );
 }
