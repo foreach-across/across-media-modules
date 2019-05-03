@@ -339,16 +339,15 @@ public class ITLocalImageServerClient
 		assertEquals( 0, imageConvertResultDto.getPages().toArray()[0] );
 
 		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
-		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( key );
-		assertEquals( key, transformation.getKey() );
+		ImageDto transformation = imageConvertResultDto.getTransforms().get( key );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 	}
 
 	@Test
 	@SneakyThrows
 	public void convertSingleImage() {
-		ImageConvertResultTransformationDto result = imageServerClient.convertImage( image( "images/poppy_flower_nature.jpg" ),
-		                                                                             Collections.singletonList(
+		ImageDto result = imageServerClient.convertImage( image( "images/poppy_flower_nature.jpg" ),
+		                                                  Collections.singletonList(
 				                                                                             ImageTransformDto.builder()
 				                                                                                              .dpi( 300 )
 				                                                                                              .colorSpace(
@@ -393,28 +392,24 @@ public class ITLocalImageServerClient
 
 		assertEquals( 4, imageConvertResultDto.getTransforms().size() );
 
-		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( "sample-1" );
-		assertEquals( "sample-1", transformation.getKey() );
+		ImageDto transformation = imageConvertResultDto.getTransforms().get( "sample-1" );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 
 		transformation = imageConvertResultDto.getTransforms().get( "sample-3" );
-		assertEquals( "sample-3", transformation.getKey() );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 
 		transformation = imageConvertResultDto.getTransforms().get( "sample-4" );
-		assertEquals( "sample-4", transformation.getKey() );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 
 		transformation = imageConvertResultDto.getTransforms().get( "sample-5" );
-		assertEquals( "sample-5", transformation.getKey() );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 	}
 
 	@Test
 	@SneakyThrows
 	public void convertResizeEpsRetina() {
-		ImageConvertResultTransformationDto result = imageServerClient.convertImage( image( "images/kaaimangrootkleur.eps" ),
-		                                                                             Collections.singletonList(
+		ImageDto result = imageServerClient.convertImage( image( "images/kaaimangrootkleur.eps" ),
+		                                                  Collections.singletonList(
 				                                                                             ImageTransformDto.builder()
 				                                                                                              .height( 1536 )
 				                                                                                              .quality( 100 )
@@ -456,8 +451,7 @@ public class ITLocalImageServerClient
 
 		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
 
-		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( "echo-0" );
-		assertEquals( "echo-0", transformation.getKey() );
+		ImageDto transformation = imageConvertResultDto.getTransforms().get( "echo-0" );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 
 		try (InputStream i = new ByteArrayInputStream( transformation.getImage() )) {

@@ -218,7 +218,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	}
 
 	@Override
-	public ImageConvertResultTransformationDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
+	public ImageDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
 		String key = UUID.randomUUID().toString();
 
 		ImageConvertDto convertDto = ImageConvertDto.builder()

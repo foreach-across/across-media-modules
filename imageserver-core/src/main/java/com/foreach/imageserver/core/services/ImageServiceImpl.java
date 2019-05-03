@@ -457,7 +457,7 @@ public class ImageServiceImpl implements ImageService
 		resultBuilder.pages( pages );
 		resultBuilder.keys( keys );
 
-		Map<String, ImageConvertResultTransformationDto> transforms = new HashMap<>();
+		Map<String, ImageDto> transforms = new HashMap<>();
 		resultBuilder.transforms( transforms );
 
 		try (InputStream input = new ByteArrayInputStream( imageConvertDto.getImage() )) {
@@ -473,11 +473,10 @@ public class ImageServiceImpl implements ImageService
 
 					ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, entry.getValue() );
 
-					transforms.put( key, ImageConvertResultTransformationDto.builder()
-					                                                        .key( key )
-					                                                        .image( IOUtils.toByteArray( resultImage.getImageStream() ) )
-					                                                        .format( DtoUtil.toDto( resultImage.getImageType() ) )
-					                                                        .build() );
+					transforms.put( key, ImageDto.builder()
+					                             .image( IOUtils.toByteArray( resultImage.getImageStream() ) )
+					                             .format( DtoUtil.toDto( resultImage.getImageType() ) )
+					                             .build() );
 					input.reset();
 				}
 			}

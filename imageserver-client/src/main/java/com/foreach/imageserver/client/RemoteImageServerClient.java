@@ -302,7 +302,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	@Override
-	public ImageConvertResultTransformationDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
+	public ImageDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "token", imageServerAccessToken );
 
