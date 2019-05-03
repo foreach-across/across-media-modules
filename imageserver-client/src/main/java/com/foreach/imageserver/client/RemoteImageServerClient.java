@@ -17,7 +17,10 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.springframework.util.Assert.notNull;
 
@@ -299,7 +302,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 	}
 
 	@Override
-	public ImageConvertResultTransformationDto convertImage( byte[] imageBytes, Collection<ImageTransformDto> transforms ) {
+	public ImageConvertResultTransformationDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 		queryParams.set( "token", imageServerAccessToken );
 
@@ -307,10 +310,7 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 		ImageConvertDto convertDto = ImageConvertDto.builder()
 		                                            .image( imageBytes )
-		                                            .target( ImageConvertTargetDto.builder()
-		                                                                          .key( key )
-		                                                                          .transforms( transforms )
-		                                                                          .build() )
+		                                            .transformation( key, transforms )
 		                                            .build();
 
 		return httpPost( ENDPOINT_IMAGE_CONVERT, queryParams, new HttpEntity<>( convertDto ), ResponseTypes.IMAGE_CONVERT )

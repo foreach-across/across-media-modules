@@ -16,9 +16,7 @@ import com.foreach.imageserver.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -216,34 +214,21 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public ImageConvertResultDto convertImage( ImageConvertDto convertDto ) {
-		try {
-			return imageService.convertImageToTargets( convertDto );
-		}
-		catch ( IOException e ) {
-			throw new ImageServerException( e );
-		}
+		return imageService.convertImageToTargets( convertDto );
 	}
 
 	@Override
-	public ImageConvertResultTransformationDto convertImage( byte[] imageBytes, Collection<ImageTransformDto> transforms ) {
-		try {
-			String key = UUID.randomUUID().toString();
+	public ImageConvertResultTransformationDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
+		String key = UUID.randomUUID().toString();
 
-			ImageConvertDto convertDto = ImageConvertDto.builder()
-			                                            .image( imageBytes )
-			                                            .target( ImageConvertTargetDto.builder()
-			                                                                          .key( key )
-			                                                                          .transforms( transforms )
-			                                                                          .build() )
-			                                            .build();
+		ImageConvertDto convertDto = ImageConvertDto.builder()
+		                                            .image( imageBytes )
+		                                            .transformation( key, transforms )
+		                                            .build();
 
-			return imageService.convertImageToTargets( convertDto )
-			                   .getTransforms()
-			                   .get( key );
-		}
-		catch ( IOException e ) {
-			throw new ImageServerException( e );
-		}
+		return imageService.convertImageToTargets( convertDto )
+		                   .getTransforms()
+		                   .get( key );
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -146,5 +145,5 @@ public interface ImageServerClient
 	 * @param transforms transformations
 	 * @return transformed image
 	 */
-	ImageConvertResultTransformationDto convertImage( byte[] imageBytes, Collection<ImageTransformDto> transforms );
+	ImageConvertResultTransformationDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms );
 }

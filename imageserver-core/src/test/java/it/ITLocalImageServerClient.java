@@ -316,14 +316,13 @@ public class ITLocalImageServerClient
 	public void convertImage() {
 		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
 		                                                 .image( image( "images/poppy_flower_nature.jpg" ) )
-		                                                 .target( ImageConvertTargetDto.builder()
-		                                                                               .key( "flower-*" )
-		                                                                               .transform( ImageTransformDto.builder()
-		                                                                                                            .dpi( 300 )
-		                                                                                                            .colorSpace( ColorSpaceDto.GRAYSCALE )
-		                                                                                                            .outputType( ImageTypeDto.PNG )
-		                                                                                                            .build() )
-		                                                                               .build() )
+		                                                 .transformation( "flower-*", Collections.singletonList( ImageTransformDto.builder()
+		                                                                                                                          .dpi( 300 )
+		                                                                                                                          .colorSpace(
+				                                                                                                                          ColorSpaceDto.GRAYSCALE )
+		                                                                                                                          .outputType(
+				                                                                                                                          ImageTypeDto.PNG )
+		                                                                                                                          .build() ) )
 		                                                 .build();
 
 		ImageConvertResultDto imageConvertResultDto = imageServerClient.convertImage( imageConvertDto );
@@ -332,12 +331,12 @@ public class ITLocalImageServerClient
 
 		assertEquals( 1, imageConvertResultDto.getKeys().size() );
 
-		String key = "flower-1";
+		String key = "flower-0";
 
 		assertEquals( key, imageConvertResultDto.getKeys().toArray()[0] );
 
 		assertEquals( 1, imageConvertResultDto.getPages().size() );
-		assertEquals( 1, imageConvertResultDto.getPages().toArray()[0] );
+		assertEquals( 0, imageConvertResultDto.getPages().toArray()[0] );
 
 		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
 		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( key );
@@ -367,14 +366,13 @@ public class ITLocalImageServerClient
 		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
 		                                                 .image( image( "images/sample-pdf.pdf" ) )
 		                                                 .pages( "1,3-6" )
-		                                                 .target( ImageConvertTargetDto.builder()
-		                                                                               .key( "sample-*" )
-		                                                                               .transform( ImageTransformDto.builder()
-		                                                                                                            .dpi( 300 )
-		                                                                                                            .colorSpace( ColorSpaceDto.GRAYSCALE )
-		                                                                                                            .outputType( ImageTypeDto.PNG )
-		                                                                                                            .build() )
-		                                                                               .build() )
+		                                                 .transformation( "sample-*", Collections.singletonList( ImageTransformDto.builder()
+		                                                                                                                          .dpi( 300 )
+		                                                                                                                          .colorSpace(
+				                                                                                                                          ColorSpaceDto.GRAYSCALE )
+		                                                                                                                          .outputType(
+				                                                                                                                          ImageTypeDto.PNG )
+		                                                                                                                          .build() ) )
 		                                                 .build();
 
 		ImageConvertResultDto imageConvertResultDto = imageServerClient.convertImage( imageConvertDto );
@@ -434,18 +432,16 @@ public class ITLocalImageServerClient
 	public void convertImagePdfEchoBackgroundColor() {
 		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
 		                                                 .image( image( "images/55980.pdf" ) )
-		                                                 .pages( "1" )
-		                                                 .target( ImageConvertTargetDto.builder()
-		                                                                               .key( "echo-*" )
-		                                                                               .transform( ImageTransformDto.builder()
-		                                                                                                            .height( 560 )
-		                                                                                                            .backgroundColor(
-				                                                                                                            ColorDto.from( "#fff1e0" ) )
-		                                                                                                            .dpi( 300 )
-		                                                                                                            .quality( 100 )
-		                                                                                                            .outputType( PNG )
-		                                                                                                            .build() )
-		                                                                               .build() )
+		                                                 .pages( "0" )
+		                                                 .transformation( "echo-*", Collections.singletonList( ImageTransformDto.builder()
+		                                                                                                                        .height( 560 )
+		                                                                                                                        .backgroundColor(
+				                                                                                                                        ColorDto.from(
+						                                                                                                                        "#fff1e0" ) )
+		                                                                                                                        .dpi( 300 )
+		                                                                                                                        .quality( 100 )
+		                                                                                                                        .outputType( PNG )
+		                                                                                                                        .build() ) )
 		                                                 .build();
 
 		ImageConvertResultDto imageConvertResultDto = imageServerClient.convertImage( imageConvertDto );
@@ -453,15 +449,15 @@ public class ITLocalImageServerClient
 		assertEquals( 1, imageConvertResultDto.getTotal() );
 
 		assertEquals( 1, imageConvertResultDto.getKeys().size() );
-		assertTrue( imageConvertResultDto.getKeys().contains( "echo-1" ) );
+		assertTrue( imageConvertResultDto.getKeys().contains( "echo-0" ) );
 
 		assertEquals( 1, imageConvertResultDto.getPages().size() );
-		assertTrue( imageConvertResultDto.getPages().contains( 1 ) );
+		assertTrue( imageConvertResultDto.getPages().contains( 0 ) );
 
 		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
 
-		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( "echo-1" );
-		assertEquals( "echo-1", transformation.getKey() );
+		ImageConvertResultTransformationDto transformation = imageConvertResultDto.getTransforms().get( "echo-0" );
+		assertEquals( "echo-0", transformation.getKey() );
 		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
 
 		try (InputStream i = new ByteArrayInputStream( transformation.getImage() )) {

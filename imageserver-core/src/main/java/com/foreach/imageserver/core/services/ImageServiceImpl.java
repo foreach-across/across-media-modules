@@ -465,13 +465,13 @@ public class ImageServiceImpl implements ImageService
 			input.reset();
 			ImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), input );
 
-			for ( ImageConvertTargetDto target : imageConvertDto.getTargets() ) {
+			for ( Map.Entry<String, List<ImageTransformDto>> entry : imageConvertDto.getTransformations().entrySet() ) {
 				for ( Integer page : pages ) {
 
-					String key = target.getKey().replace( "*", page.toString() );
+					String key = entry.getKey().replace( "*", page.toString() );
 					keys.add( key );
 
-					ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, target.getTransforms() );
+					ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, entry.getValue() );
 
 					transforms.put( key, ImageConvertResultTransformationDto.builder()
 					                                                        .key( key )
