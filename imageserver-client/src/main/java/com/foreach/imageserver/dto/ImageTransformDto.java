@@ -52,6 +52,7 @@ public class ImageTransformDto
 	 * The specific scene of the source image that should be transformed.
 	 * Only relevant for multi-scene formats like PDF where a scene corresponds to a page in the PDF.
 	 * If not specified, the output type will determine if either the entire original image or a specific scene will be used.
+	 * 0-based.
 	 */
 	private Integer scene;
 

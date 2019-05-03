@@ -451,13 +451,13 @@ public class ImageServiceImpl implements ImageService
 
 		Set<String> keys = new HashSet<>();
 		Set<Integer> pages = splitIntoPageNumbers( imageConvertDto.getPages() );
-		if ( pages.size() == 0 ) {
-			pages.add( 1 );
+		if ( pages.isEmpty() ) {
+			pages.add( 0 );
 		}
 		resultBuilder.pages( pages );
 		resultBuilder.keys( keys );
 
-		HashMap<String, ImageConvertResultTransformationDto> transforms = new HashMap<>();
+		Map<String, ImageConvertResultTransformationDto> transforms = new HashMap<>();
 		resultBuilder.transforms( transforms );
 
 		try (InputStream input = new ByteArrayInputStream( imageConvertDto.getImage() )) {
@@ -471,7 +471,6 @@ public class ImageServiceImpl implements ImageService
 					String key = target.getKey().replace( "*", page.toString() );
 					keys.add( key );
 
-					target.getTransforms().forEach( t -> t.setScene( page - 1 ) ); // do page minus 1, because graphicsmagick starts at page 0
 					ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, target.getTransforms() );
 
 					transforms.put( key, ImageConvertResultTransformationDto.builder()
