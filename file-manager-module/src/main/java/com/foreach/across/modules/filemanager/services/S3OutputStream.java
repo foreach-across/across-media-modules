@@ -25,15 +25,15 @@ import java.io.IOException;
 
 /**
  * Because S3 does not support output streams, this class extends {@code ByteArrayOutputStream} and writes to
- * a {@code AwsS3FileRepository} when flush is invoked.
+ * a {@code AmazonS3FileRepository} when flush is invoked.
  */
 public class S3OutputStream extends ByteArrayOutputStream
 {
-	private AwsS3FileRepository awsS3FileRepository;
+	private AmazonS3FileRepository amazonS3FileRepository;
 	private FileDescriptor fileDescriptor;
 
-	public S3OutputStream( AwsS3FileRepository awsS3FileRepository, FileDescriptor fileDescriptor ) {
-		this.awsS3FileRepository = awsS3FileRepository;
+	public S3OutputStream( AmazonS3FileRepository amazonS3FileRepository, FileDescriptor fileDescriptor ) {
+		this.amazonS3FileRepository = amazonS3FileRepository;
 		this.fileDescriptor = fileDescriptor;
 	}
 
@@ -43,6 +43,6 @@ public class S3OutputStream extends ByteArrayOutputStream
 	 */
 	@Override
 	public void flush() throws IOException, FileStorageException {
-		awsS3FileRepository.save( fileDescriptor, new ByteArrayInputStream( toByteArray() ), true );
+		amazonS3FileRepository.save( fileDescriptor, new ByteArrayInputStream( toByteArray() ), true );
 	}
 }

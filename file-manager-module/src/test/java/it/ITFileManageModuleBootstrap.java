@@ -24,6 +24,7 @@ import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestContext;
 import org.junit.Test;
 
+import static com.foreach.across.test.support.AcrossTestBuilders.standard;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,8 +36,7 @@ public class ITFileManageModuleBootstrap
 {
 	@Test
 	public void fileManagerModule() {
-		try (AcrossTestContext ctx = web().modules( FileManagerModule.NAME )
-		                                  .build()) {
+		try (AcrossTestContext ctx = standard().modules( FileManagerModule.NAME ).build()) {
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
 			assertThat( ctx.contextInfo().getModuleInfo( FileManagerModule.NAME ).getApplicationContext().getBeansOfType( FileReferenceService.class ) )
 					.isEmpty();
@@ -74,4 +74,5 @@ public class ITFileManageModuleBootstrap
 					.hasSize( 1 );
 		}
 	}
+
 }

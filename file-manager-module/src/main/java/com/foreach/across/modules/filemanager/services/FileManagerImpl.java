@@ -168,6 +168,10 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 
 		delegate.setActualImplementation( fileRepository );
 
+		if ( fileRepository instanceof FileManagerAware ) {
+			( (FileManagerAware) fileRepository ).setFileManager( this );
+		}
+
 		return delegate;
 	}
 
@@ -190,6 +194,11 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	}
 
 	private FileRepository createAndRegister( String repositoryId ) {
+		if ( repositoryFactory == null ) {
+			throw new IllegalArgumentException(
+					String.format( "No FileRepository with id %s available and none could be created (no FileRepositoryFactory)", repositoryId ) );
+		}
+
 		FileRepository repository = repositoryFactory.create( repositoryId );
 
 		if ( repository != null ) {

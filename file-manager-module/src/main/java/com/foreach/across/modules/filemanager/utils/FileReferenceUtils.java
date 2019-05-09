@@ -16,7 +16,6 @@ public class FileReferenceUtils
 	 *
 	 * @param fileReference that references the file to download
 	 * @return a prefixed url.
-	 * @see com.foreach.across.modules.filemanager.config.UrlPrefixingConfiguration
 	 */
 	public static String getDownloadUrl( FileReference fileReference ) {
 		return "@fileReference:/" + fileReference.getUuid();

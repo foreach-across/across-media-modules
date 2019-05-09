@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -176,6 +177,14 @@ public class TestFileManager
 
 		assertNotNull( fetched );
 		assertSame( repository, delegate( "creatable" ) );
+	}
+
+	@Test
+	public void exceptionThrownIfRepositoryNotRegisteredAndCannotBeCreated() {
+		fileManager.setFileRepositoryFactory( null );
+
+		assertThatExceptionOfType( IllegalArgumentException.class )
+				.isThrownBy( () -> fileManager.getRepository( "non-existing-one" ) );
 	}
 
 	@Test

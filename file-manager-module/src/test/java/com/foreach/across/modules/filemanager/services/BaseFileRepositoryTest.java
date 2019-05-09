@@ -19,41 +19,43 @@ package com.foreach.across.modules.filemanager.services;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.*;
 
 /**
  * Base class with tests scenarios that should run on all implementations of FileRepository
  */
-public abstract class BaseFileRepositoryTest
+abstract class BaseFileRepositoryTest
 {
-	protected static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
+	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 
-	protected static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
-	protected static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
+	static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
+	static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
 
 	private static final File FILE_ONE = new File( TEMP_DIR, UUID.randomUUID().toString() );
 
-	protected FileRepository fileRepository;
+	FileRepository fileRepository;
 
-	@Before
-	public void create() throws IOException {
+	@BeforeEach
+	void create() throws IOException {
 		cleanup();
 
 		assertFalse( FILE_ONE.exists() );
 
 		try (FileWriter w = new FileWriter( FILE_ONE )) {
-			IOUtils.copy( RES_TEXTFILE.getInputStream(), w );
+			IOUtils.copy( RES_TEXTFILE.getInputStream(), w, Charset.defaultCharset() );
 			w.flush();
 		}
 		createRepository();
@@ -61,8 +63,8 @@ public abstract class BaseFileRepositoryTest
 
 	abstract void createRepository();
 
-	@After
-	public void cleanup() {
+	@AfterEach
+	void cleanup() {
 		try {
 			if ( FILE_ONE.exists() ) {
 				FILE_ONE.delete();
@@ -76,7 +78,7 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void moveIntoDeletesTheOriginalFile() {
+	void moveIntoDeletesTheOriginalFile() {
 		assertTrue( FILE_ONE.exists() );
 
 		FileDescriptor descriptor = fileRepository.moveInto( FILE_ONE );
@@ -90,7 +92,7 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void savingFileAlwaysCreatesANewFile() {
+	void savingFileAlwaysCreatesANewFile() {
 		FileDescriptor descriptorOne = fileRepository.save( FILE_ONE );
 		FileDescriptor descriptorTwo = fileRepository.save( FILE_ONE );
 
@@ -110,7 +112,7 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void savingInputStreamAlwaysCreatesANewFile() throws IOException {
+	void savingInputStreamAlwaysCreatesANewFile() throws IOException {
 		FileDescriptor descriptorOne = fileRepository.save( RES_TEXTFILE.getInputStream() );
 		FileDescriptor descriptorTwo = fileRepository.save( RES_TEXTFILE.getInputStream() );
 
@@ -130,7 +132,7 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void savingWithTargetFileDescriptorOverwritesExistingFile() throws IOException {
+	void savingWithTargetFileDescriptorOverwritesExistingFile() throws IOException {
 		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
 		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
 
@@ -146,29 +148,31 @@ public abstract class BaseFileRepositoryTest
 		assertFalse( fileRepository.exists( target ) );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void savingWithTargetFileDescriptorForADifferentRepositoryThrowsAnError() throws IOException {
+	@Test
+	void savingWithTargetFileDescriptorForADifferentRepositoryThrowsAnError() {
 		FileDescriptor target = FileDescriptor.of( "non-existing-repository-id", UUID.randomUUID().toString() );
-		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void savingWithTargetFileDescriptorWithoutOverwritingThrowsExceptionIfFileExists() throws IOException {
-		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
-		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
-
-		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
+		assertThatExceptionOfType( IllegalArgumentException.class )
+				.isThrownBy( () -> fileRepository.save( target, RES_TEXTFILE.getInputStream(), true ) );
 	}
 
 	@Test
-	public void readInputStream() throws IOException {
+	void savingWithTargetFileDescriptorWithoutOverwritingThrowsExceptionIfFileExists() throws IOException {
+		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
+
+		assertThatExceptionOfType( IllegalArgumentException.class )
+				.isThrownBy( () -> fileRepository.save( target, RES_TEXTFILE.getInputStream(), false ) );
+	}
+
+	@Test
+	void readInputStream() throws IOException {
 		FileDescriptor descriptor = fileRepository.save( RES_TEXTFILE.getInputStream() );
 
 		assertEquals( "some dummy text", read( descriptor ) );
 	}
 
 	@Test
-	public void writeToNewFile() throws IOException {
+	void writeToNewFile() throws IOException {
 		FileDescriptor descriptor = fileRepository.createFile();
 
 		try (InputStream is = fileRepository.getInputStream( descriptor )) {
@@ -187,7 +191,7 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void modifyExistingFile() throws IOException {
+	void modifyExistingFile() throws IOException {
 		FileDescriptor descriptor = fileRepository.save( FILE_ONE );
 
 		assertEquals( "some dummy text", read( descriptor ) );
@@ -204,10 +208,10 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void renameFileRenamesTheFile() {
+	void renameFileRenamesTheFile() {
 		FileDescriptor original = fileRepository.save( FILE_ONE );
 		String renamedName = UUID.randomUUID().toString();
-		FileDescriptor renamed = new FileDescriptor( fileRepository.getRepositoryId(), null, renamedName );
+		FileDescriptor renamed = FileDescriptor.of( fileRepository.getRepositoryId(), null, renamedName );
 
 		assertTrue( fileRepository.move( original, renamed ) );
 		assertTrue( fileRepository.exists( renamed ) );
@@ -215,25 +219,26 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void renameFileCreatesDirectoriesIfNecessary() {
+	void renameFileCreatesDirectoriesIfNecessary() {
 		FileDescriptor original = fileRepository.save( FILE_ONE );
 		String renamedName = UUID.randomUUID().toString();
 		String renamedDir = UUID.randomUUID().toString();
-		FileDescriptor renamed = new FileDescriptor( fileRepository.getRepositoryId(), renamedDir, renamedName );
+		FileDescriptor renamed = FileDescriptor.of( fileRepository.getRepositoryId(), renamedDir, renamedName );
 
 		assertTrue( fileRepository.move( original, renamed ) );
 		assertTrue( fileRepository.exists( renamed ) );
 		assertFalse( fileRepository.exists( original ) );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void renameFileToDifferentRepositoryThrowsIllegalArgument() {
+	@Test
+	void renameFileToDifferentRepositoryThrowsIllegalArgument() {
 		FileDescriptor original = fileRepository.save( FILE_ONE );
 		String renamedName = UUID.randomUUID().toString();
 		String renamedDir = UUID.randomUUID().toString();
-		FileDescriptor renamed = new FileDescriptor( "foo", renamedDir, renamedName );
+		FileDescriptor renamed = FileDescriptor.of( "foo", renamedDir, renamedName );
 
-		fileRepository.move( original, renamed );
+		assertThatExceptionOfType( IllegalArgumentException.class )
+				.isThrownBy( () -> fileRepository.move( original, renamed ) );
 	}
 
 	private String read( FileDescriptor descriptor ) throws IOException {

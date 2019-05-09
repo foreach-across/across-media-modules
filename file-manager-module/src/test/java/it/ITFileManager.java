@@ -26,8 +26,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -35,7 +33,6 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 	private static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
-	private static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
 
 	@Autowired
 	private FileManager fileManager;
@@ -61,8 +58,7 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 	@Test
 	public void moveFile() throws IOException {
 		FileDescriptor file = fileManager.save( RES_TEXTFILE.getInputStream() );
-		FileDescriptor firstMoved = new FileDescriptor( file.getRepositoryId(), file.getFolderId(),
-		                                                "renamed-" + file.getFileId() );
+		FileDescriptor firstMoved = FileDescriptor.of( file.getRepositoryId(), file.getFolderId(), "renamed-" + file.getFileId() );
 		fileManager.move( file, firstMoved );
 		fileManager.exists( firstMoved );
 		FileRepository defaultRep = fileManager.getRepository( file.getRepositoryId() );
@@ -70,8 +66,7 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 		assertFalse( defaultRep.getAsFile( file ).exists() );
 
 		FileRepository moveIt = fileRepositoryRegistry.getRepository( "move-it" );
-		FileDescriptor secondMoved = new FileDescriptor( moveIt.getRepositoryId(), file.getFolderId(),
-		                                                 firstMoved.getFileId() );
+		FileDescriptor secondMoved = FileDescriptor.of( moveIt.getRepositoryId(), file.getFolderId(), firstMoved.getFileId() );
 		fileManager.move( firstMoved, secondMoved );
 		fileManager.exists( secondMoved );
 		assertTrue( moveIt.getAsFile( secondMoved ).exists() );
