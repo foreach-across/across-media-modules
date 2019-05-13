@@ -16,9 +16,12 @@
 
 package com.foreach.across.modules.filemanager.business;
 
+import lombok.SneakyThrows;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 
+import static com.foreach.across.modules.filemanager.business.FileDescriptor.of;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -47,11 +50,18 @@ public class TestFileDescriptor
 	}
 
 	@Test
+	@SneakyThrows
+	public void toResourceUri() {
+		FileDescriptor descriptor = of( "my-repo", "my/folder", "test-file.txt" );
+		assertThat( descriptor.toResourceURI().toString() ).isEqualTo( "axfs://my-repo:my/folder:test-file.txt" );
+	}
+
+	@Test
 	public void uriMayNotBeNull() {
 		String emptyUri = "uri may not be null or empty";
-		assertIllegalArgumentException( () -> FileDescriptor.of( null ), emptyUri );
-		assertIllegalArgumentException( () -> FileDescriptor.of( "" ), emptyUri );
-		assertIllegalArgumentException( () -> FileDescriptor.of( null ), emptyUri );
+		assertIllegalArgumentException( () -> of( null ), emptyUri );
+		assertIllegalArgumentException( () -> of( "" ), emptyUri );
+		assertIllegalArgumentException( () -> of( null ), emptyUri );
 		String buildUriMessage = "both a repositoryId and a fileId are required to build a valid uri";
 		assertIllegalArgumentException( () -> FileDescriptor.buildUri( null, null, null ), buildUriMessage );
 		assertIllegalArgumentException( () -> FileDescriptor.buildUri( "", null, null ), buildUriMessage );

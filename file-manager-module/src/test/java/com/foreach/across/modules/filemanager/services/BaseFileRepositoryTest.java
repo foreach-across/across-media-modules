@@ -76,7 +76,7 @@ abstract class BaseFileRepositoryTest
 			System.err.println( "Unit test could not cleanup files nicely" );
 		}
 	}
-
+// create file creates an existing, empty file, which is writable
 	@Test
 	void moveIntoDeletesTheOriginalFile() {
 		assertTrue( FILE_ONE.exists() );

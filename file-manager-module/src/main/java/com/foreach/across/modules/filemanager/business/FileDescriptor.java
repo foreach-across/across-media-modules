@@ -16,10 +16,12 @@
 
 package com.foreach.across.modules.filemanager.business;
 
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -62,6 +64,80 @@ public class FileDescriptor implements Serializable
 	@Deprecated
 	public FileDescriptor( String repositoryId, String fileId ) {
 		this( repositoryId, null, fileId );
+	}
+
+	/**
+	 * @deprecated in favour of {@link FileDescriptor#of(String, String, String)}. Will be removed in 2.0.0.
+	 */
+	@Deprecated
+	public FileDescriptor( String repositoryId, String folderId, String fileId ) {
+		this.repositoryId = repositoryId;
+		this.fileId = fileId;
+		this.folderId = folderId;
+
+		uri = buildUri( repositoryId, folderId, fileId );
+	}
+
+	/**
+	 * @return Unique uri of the entire file.
+	 */
+	public String getUri() {
+		return uri;
+	}
+
+	/**
+	 * @return actual resource URI
+	 */
+	@SneakyThrows
+	public URI toResourceURI() {
+		return new URI( "axfs://" + uri );
+	}
+
+	/**
+	 * @return Unique id of the repository this file belongs to.
+	 */
+	public String getRepositoryId() {
+		return repositoryId;
+	}
+
+	/**
+	 * @return Unique id of the file within the folder.
+	 */
+	public String getFileId() {
+		return fileId;
+	}
+
+	/**
+	 * @return Path within the repository this file can be found, null if the file is considered in the root folder.
+	 */
+	public String getFolderId() {
+		return folderId;
+	}
+
+	@Override
+	public String toString() {
+		return uri;
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
+
+		FileDescriptor that = (FileDescriptor) o;
+
+		return Objects.equals( repositoryId, that.repositoryId )
+				&& Objects.equals( folderId, that.folderId )
+				&& Objects.equals( fileId, that.fileId );
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash( repositoryId, folderId, fileId );
 	}
 
 	/**
@@ -113,72 +189,6 @@ public class FileDescriptor implements Serializable
 	 */
 	public static FileDescriptor of( String repositoryId, String folderId, String fileId ) {
 		return new FileDescriptor( repositoryId, folderId, fileId );
-	}
-
-	/**
-	 * @deprecated in favour of {@link FileDescriptor#of(String, String, String)}. Will be removed in 2.0.0.
-	 */
-	@Deprecated
-	public FileDescriptor( String repositoryId, String folderId, String fileId ) {
-		this.repositoryId = repositoryId;
-		this.fileId = fileId;
-		this.folderId = folderId;
-
-		uri = buildUri( repositoryId, folderId, fileId );
-	}
-
-	/**
-	 * @return Unique uri of the entire file.
-	 */
-	public String getUri() {
-		return uri;
-	}
-
-	/**
-	 * @return Unique id of the repository this file belongs to.
-	 */
-	public String getRepositoryId() {
-		return repositoryId;
-	}
-
-	/**
-	 * @return Unique id of the file within the folder.
-	 */
-	public String getFileId() {
-		return fileId;
-	}
-
-	/**
-	 * @return Path within the repository this file can be found, null if the file is considered in the root folder.
-	 */
-	public String getFolderId() {
-		return folderId;
-	}
-
-	@Override
-	public String toString() {
-		return uri;
-	}
-
-	@Override
-	public boolean equals( Object o ) {
-		if ( this == o ) {
-			return true;
-		}
-		if ( o == null || getClass() != o.getClass() ) {
-			return false;
-		}
-
-		FileDescriptor that = (FileDescriptor) o;
-
-		return Objects.equals( repositoryId, that.repositoryId )
-				&& Objects.equals( folderId, that.folderId )
-				&& Objects.equals( fileId, that.fileId );
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash( repositoryId, folderId, fileId );
 	}
 
 	public static String buildUri( String repositoryId, String folderId, String fileId ) {
