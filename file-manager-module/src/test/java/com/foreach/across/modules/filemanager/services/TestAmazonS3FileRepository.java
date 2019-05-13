@@ -16,12 +16,12 @@
 
 package com.foreach.across.modules.filemanager.services;
 
-import cloud.localstack.DockerTestUtils;
-import cloud.localstack.docker.LocalstackDockerExtension;
-import cloud.localstack.docker.annotation.LocalstackDockerProperties;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
 import java.util.UUID;
@@ -29,8 +29,6 @@ import java.util.UUID;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(LocalstackDockerExtension.class)
-@LocalstackDockerProperties(randomizePorts = true, services = { "s3" })
 class TestAmazonS3FileRepository extends BaseFileRepositoryTest
 {
 	private static final String BUCKET_NAME = "ax-filemanager-test";
@@ -40,7 +38,11 @@ class TestAmazonS3FileRepository extends BaseFileRepositoryTest
 	@Override
 	void createRepository() {
 		if ( amazonS3 == null ) {
-			amazonS3 = DockerTestUtils.getClientS3();
+			amazonS3 = AmazonS3ClientBuilder.standard()
+			                                .withEndpointConfiguration( new AwsClientBuilder.EndpointConfiguration( "http://localhost:4572", "us-east-1" ) )
+			                                .withPathStyleAccessEnabled( true )
+			                                .withCredentials( new AWSStaticCredentialsProvider( new BasicAWSCredentials( "test", "test" ) ) )
+			                                .build();
 
 			if ( !amazonS3.doesBucketExist( BUCKET_NAME ) ) {
 				amazonS3.createBucket( BUCKET_NAME );
@@ -51,7 +53,7 @@ class TestAmazonS3FileRepository extends BaseFileRepositoryTest
 
 		AmazonS3FileRepository s3 = AmazonS3FileRepository.builder()
 		                                                  .repositoryId( "s3-repo" )
-		                                                  .amazonS3( DockerTestUtils.getClientS3() )
+		                                                  .amazonS3( amazonS3 )
 		                                                  .bucketName( BUCKET_NAME )
 		                                                  .build();
 		s3.setFileManager( fileManager );
