@@ -17,6 +17,8 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
+import lombok.NonNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -38,8 +40,41 @@ public interface FileRepository
 	 * implementation of the repository.
 	 *
 	 * @return FileDescriptor instance.
+	 * @deprecated since 1.4.0 - see {@link #createFileResource()}
 	 */
+	@Deprecated
 	FileDescriptor createFile();
+
+	/**
+	 * Create a new file in the repository.  This allocates the file instance, but
+	 * the content of the file is empty.  What exactly empty means depends on the
+	 * implementation of the repository.
+	 *
+	 * @return FileResource instance.
+	 */
+	default FileResource createFileResource() {
+		return null;
+	}
+
+	/**
+	 * Create a new file in the repository.  This allocates the file resource and
+	 * copies the data of the {@code file} parameter.
+	 * <p/>
+	 * If parameter {@code deleteOriginal} is {@code true}, the original {@code file}
+	 * will be deleted once the resource has been created. This is useful
+	 *
+	 * @param originalFile data to copy into the resource
+	 * @param deleteOriginal true if the original file should be delete when done
+	 * @return FileResource instance.
+	 */
+	default FileResource createFileResource( @NonNull File originalFile, boolean deleteOriginal ) {
+		return null;
+	}
+
+	default FileResource getFileResource( @NonNull FileDescriptor descriptor ) {
+		return null;
+	}
+
 
 	/**
 	 * Moves a File into the repository, once the file is fully available in the
@@ -78,8 +113,8 @@ public interface FileRepository
 	 * <p/>
 	 * If the file may not be replaced and a file exists, an exception will be thrown.
 	 *
-	 * @param target            FileDescriptor that should be used for the file.
-	 * @param inputStream       InputStream of the file content.
+	 * @param target          FileDescriptor that should be used for the file.
+	 * @param inputStream     InputStream of the file content.
 	 * @param replaceExisting Whether an existing file at the same location should be replaced.
 	 * @return FileDescriptor instance.
 	 */
