@@ -1,16 +1,23 @@
 package com.foreach.across.modules.filemanager.services;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.util.StreamUtils;
 
 import java.io.*;
@@ -24,33 +31,41 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * @author Arne Vandamme
  * @since 1.4.0
  */
-class TestLocalFileResource
+@ExtendWith(MockitoExtension.class)
+class TestAmazonS3FileResource
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
+	private static final String BUCKET_NAME = "ax-filemanager-test";
 
-	private File tempFile;
-	private File nonExistingFile;
+	private static AmazonS3 amazonS3;
+
 	private FileDescriptor descriptor;
 	private FileResource resource;
+	private String objectName;
 
 	@BeforeEach
 	@SneakyThrows
 	void createResource() {
-		descriptor = FileDescriptor.of( "my-repo", "123/456", "my.file" );
-		tempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
-		nonExistingFile = new File( UUID.randomUUID().toString() );
+		if ( amazonS3 == null ) {
+			amazonS3 = AmazonS3ClientBuilder.standard()
+			                                .withEndpointConfiguration( new AwsClientBuilder.EndpointConfiguration( "http://localhost:4572", "us-east-1" ) )
+			                                .withPathStyleAccessEnabled( true )
+			                                .withCredentials( new AWSStaticCredentialsProvider( new BasicAWSCredentials( "test", "test" ) ) )
+			                                .build();
 
-		resource = new LocalFileResource( descriptor, tempFile );
+			if ( !amazonS3.doesBucketExist( BUCKET_NAME ) ) {
+				amazonS3.createBucket( BUCKET_NAME );
+			}
+		}
+
+		descriptor = FileDescriptor.of( "my-repo", "123/456", "my.file" );
+		objectName = UUID.randomUUID().toString();
+		resource = new AmazonS3FileResource( descriptor, amazonS3, BUCKET_NAME, objectName, new SyncTaskExecutor() );
 	}
 
-	@AfterEach
-	@SuppressWarnings({ "ResultOfMethodCallIgnored" })
-	void tearDown() {
-		try {
-			tempFile.delete();
-		}
-		catch ( Exception ignore ) {
-		}
+	@AfterAll
+	static void tearDown() {
+		amazonS3 = null;
 	}
 
 	@Test
@@ -72,16 +87,14 @@ class TestLocalFileResource
 	@Test
 	void description() {
 		assertThat( resource.getDescription() )
-				.isEqualTo( "axfs [" + descriptor.toString() + "] -> " + new FileSystemResource( tempFile ).getDescription() );
+				.startsWith( "axfs [" + descriptor.toString() + "] -> Amazon s3 resource" );
 	}
 
 	@Test
 	void exists() {
-		assertThat( resource.exists() )
-				.isEqualTo( new FileSystemResource( tempFile ).exists() )
-				.isTrue();
-
-		assertThat( new LocalFileResource( descriptor, nonExistingFile ).exists() ).isFalse();
+		assertThat( resource.exists() ).isFalse();
+		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+		assertThat( resource.exists() ).isTrue();
 	}
 
 	@Test
@@ -92,34 +105,27 @@ class TestLocalFileResource
 	@Test
 	void isReadable() {
 		assertThat( resource.isReadable() ).isTrue();
-
-		assertThat( new LocalFileResource( descriptor, nonExistingFile ).isReadable() )
-				.isFalse()
-				.isEqualTo( new FileSystemResource( nonExistingFile ).isReadable() );
 	}
 
 	@Test
 	void isWritable() {
 		assertThat( resource.isWritable() ).isTrue();
-
-		assertThat( new LocalFileResource( descriptor, nonExistingFile ).isWritable() )
-				.isEqualTo( new FileSystemResource( nonExistingFile ).isWritable() )
-				.isFalse();
 	}
 
 	@Test
 	void isOpen() {
-		assertThat( resource.isOpen() )
-				.isFalse()
-				.isEqualTo( new FileSystemResource( tempFile ).isOpen() );
+		assertThat( resource.isOpen() ).isFalse();
 	}
 
 	@Test
 	void delete() {
+		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.delete() ).isTrue();
-		assertThat( resource.delete() ).isFalse();
 		assertThat( resource.exists() ).isFalse();
+
+		// delete always returns true
+		assertThat( resource.delete() ).isTrue();
 	}
 
 	@Test
@@ -131,7 +137,9 @@ class TestLocalFileResource
 	@Test
 	@SneakyThrows
 	void contentLengthAndLastModified() {
-		assertThat( resource.contentLength() ).isEqualTo( 0 );
+		assertThatExceptionOfType( FileNotFoundException.class )
+				.isThrownBy( () -> resource.contentLength() )
+				.withMessageContaining( resource.getFileDescriptor().toString() );
 
 		try (InputStream is = RES_TEXTFILE.getInputStream()) {
 			try (OutputStream os = resource.getOutputStream()) {
@@ -143,7 +151,6 @@ class TestLocalFileResource
 				.isEqualTo( RES_TEXTFILE.contentLength() )
 				.matches( l -> l > 0 );
 		assertThat( resource.lastModified() )
-				.isEqualTo( tempFile.lastModified() )
 				.matches( l -> l > 0 );
 
 		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
@@ -161,6 +168,27 @@ class TestLocalFileResource
 	@Test
 	void createRelative() {
 		assertThatExceptionOfType( UnsupportedOperationException.class ).isThrownBy( () -> resource.createRelative( "relative" ) );
+	}
+
+	@Test
+	@SneakyThrows
+	void outputStreamResetsMetadata() {
+		assertThat( resource.exists() ).isFalse();
+		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+		assertThat( resource.exists() ).isTrue();
+		assertThat( resource.contentLength() ).isEqualTo( 9 );
+
+		try (InputStream is = RES_TEXTFILE.getInputStream()) {
+			try (OutputStream os = resource.getOutputStream()) {
+				IOUtils.copy( is, os );
+			}
+		}
+
+		assertThat( resource.exists() ).isTrue();
+		assertThat( resource.contentLength() ).isNotEqualTo( 9 ).isEqualTo( RES_TEXTFILE.contentLength() );
+
+		assertThat( amazonS3.getObjectAsString( BUCKET_NAME, objectName ) )
+				.isEqualTo( "some dummy text" );
 	}
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")
@@ -189,14 +217,18 @@ class TestLocalFileResource
 			resource.copyFrom( is );
 		}
 
-		assertThat( resourceData() ).isEqualTo( "some dummy text" );
+		try (InputStream is = resource.getInputStream()) {
+			assertThat( StreamUtils.copyToString( is, Charset.defaultCharset() ) ).isEqualTo( "some dummy text" );
+		}
 	}
 
 	@Test
 	@SneakyThrows
 	void copyFromResource() {
 		resource.copyFrom( RES_TEXTFILE );
-		assertThat( resourceData() ).isEqualTo( "some dummy text" );
+		try (InputStream is = resource.getInputStream()) {
+			assertThat( StreamUtils.copyToString( is, Charset.defaultCharset() ) ).isEqualTo( "some dummy text" );
+		}
 	}
 
 	@Test
@@ -207,14 +239,33 @@ class TestLocalFileResource
 		other.copyFrom( RES_TEXTFILE );
 
 		resource.copyFrom( other, false );
-		assertThat( resourceData() ).isEqualTo( "some dummy text" );
+		try (InputStream is = resource.getInputStream()) {
+			assertThat( StreamUtils.copyToString( is, Charset.defaultCharset() ) ).isEqualTo( "some dummy text" );
+		}
 
 		assertThat( other.exists() ).isTrue();
 		FileUtils.writeStringToFile( otherTempFile, "hello file", "UTF-8" );
 
 		resource.copyFrom( other, true );
-		assertThat( resourceData() ).isEqualTo( "hello file" );
+		try (InputStream is = resource.getInputStream()) {
+			assertThat( StreamUtils.copyToString( is, Charset.defaultCharset() ) ).isEqualTo( "hello file" );
+		}
 		assertThat( other.exists() ).isFalse();
+	}
+
+	@SuppressWarnings("ResultOfMethodCallIgnored")
+	@Test
+	@SneakyThrows
+	void copyToFileResource() {
+		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+
+		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
+		FileResource other = new LocalFileResource( descriptor, otherTempFile );
+		resource.copyTo( other );
+
+		otherTempFile.deleteOnExit();
+		assertThat( FileUtils.readFileToString( otherTempFile, Charset.defaultCharset() ) ).isEqualTo( "some-data" );
+		otherTempFile.delete();
 	}
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")

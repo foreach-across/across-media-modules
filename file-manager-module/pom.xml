@@ -28,6 +28,7 @@
 	<artifactId>file-manager-module</artifactId>
 
 	<properties>
+		<spring.cloud.aws.version>2.1.0.RELEASE</spring.cloud.aws.version>
 		<frontend.dir>src/main/frontend</frontend.dir>
 		<frontend.node.version>v9.10.1</frontend.node.version>
 		<frontend.yarn.version>v1.3.2</frontend.yarn.version>
@@ -235,6 +236,12 @@
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-s3</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-aws-core</artifactId>
+			<version>${spring.cloud.aws.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

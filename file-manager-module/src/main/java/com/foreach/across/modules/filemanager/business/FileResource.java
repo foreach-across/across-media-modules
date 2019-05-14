@@ -16,31 +16,40 @@
 
 package com.foreach.across.modules.filemanager.business;
 
+import lombok.NonNull;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.WritableResource;
+
+import java.io.*;
 
 /**
  * Represents a single {@link com.foreach.across.modules.filemanager.services.FileRepository} file,
  * identified by a {@link FileDescriptor}. Can be used to read or manipulate the file (including update and delete).
+ *
+ * @author Arne Vandamme
+ * @since 1.4.0
  */
 public interface FileResource extends WritableResource
 {
-	/*OutputStream getOutputStream();
-
-	void copyFrom( File file );
-
-	void copyFrom( InputStream inputStream );
-
-	File getAsFile();
-
-	boolean exists();
-
-	boolean delete();
-	*/
-
 	/**
 	 * @return the descriptor to this file resource
 	 */
 	FileDescriptor getFileDescriptor();
+
+	/**
+	 * Method {@code getFile()} is extended from {@link Resource} but it's advised
+	 * not to implement it directly on {@link FileResource} to ensure better active
+	 * management of physical files. Use either {@link #getInputStream()} to get the
+	 * data of the resource, or {@link #copyTo(File)} if you require it as a physical file.
+	 *
+	 * @see #getInputStream()
+	 * @see #copyTo(File)
+	 */
+	default File getFile() {
+		throw new UnsupportedOperationException( "FileResource can not be resolved to java.io.File objects. Use getInputStream() or copyTo(File) instead." );
+	}
 
 	/**
 	 * Delete the actual file. The return code should give an indication if
@@ -53,12 +62,107 @@ public interface FileResource extends WritableResource
 	 */
 	boolean delete();
 
-	/**
-	 * @return the descriptor
-	 */
-//	default FolderDescriptor getFolderDescriptor() {
-//		return getFileDescriptor().getFolderId();
-//	}
 	@Override
 	FileResource createRelative( String relativePath );
+
+	/**
+	 * Copy the file data from a physical file into this resource.
+	 * Optionally deleting the physical file when done (useful for temporary files).
+	 *
+	 * @param originalFile   data to copy
+	 * @param deleteOriginal true if the original file should be deleted when copy is done
+	 * @throws IOException thrown in case of IO error or resource not found
+	 */
+	default void copyFrom( @NonNull File originalFile, boolean deleteOriginal ) throws IOException {
+		try (OutputStream os = getOutputStream()) {
+			try (InputStream is = new FileInputStream( originalFile )) {
+				IOUtils.copy( is, os );
+			}
+		}
+
+		if ( deleteOriginal ) {
+			FileUtils.deleteQuietly( originalFile );
+		}
+	}
+
+	/**
+	 * Copy the file data from another file resource into this resource.
+	 * Optionally deletes the original file resource when done (useful for temporary files).
+	 *
+	 * @param originalFileResource whose data to copy
+	 * @param deleteOriginal       true if the original file resources should be deleted when copy is done
+	 * @throws IOException thrown in case of IO error or resource not found
+	 */
+	default void copyFrom( @NonNull FileResource originalFileResource, boolean deleteOriginal ) throws IOException {
+		originalFileResource.copyTo( this );
+
+		if ( deleteOriginal ) {
+			originalFileResource.delete();
+		}
+	}
+
+	/**
+	 * Copy the data of any type of {@link Resource} into this file resource.
+	 *
+	 * @param resource whose data to copy
+	 * @throws IOException thrown in case of IO error or resource not found
+	 */
+	default void copyFrom( @NonNull Resource resource ) throws IOException {
+		try (InputStream is = resource.getInputStream()) {
+			copyFrom( is );
+		}
+	}
+
+	/**
+	 * Copy the data from the input stream into this resource.
+	 * The caller is responsible for correctly closing the input stream.
+	 *
+	 * @param inputStream data to copy
+	 * @throws IOException thrown in case of IO error or resource not found
+	 */
+	default void copyFrom( @NonNull InputStream inputStream ) throws IOException {
+		try (OutputStream os = getOutputStream()) {
+			IOUtils.copy( inputStream, os );
+		}
+	}
+
+	/**
+	 * Copy the data from this file resource to the physical file specified.
+	 * If the file already exists, it will be removed, and any subdirectories that
+	 * do not yet exist will be created.
+	 *
+	 * @param file to copy the data to
+	 * @throws IOException thrown in case of IO error or resource not found
+	 */
+	default void copyTo( @NonNull File file ) throws IOException {
+		FileUtils.forceMkdirParent( file );
+		try (OutputStream os = new FileOutputStream( file, false )) {
+			copyTo( os );
+		}
+	}
+
+	/**
+	 * Copy the data from this file resource to another.
+	 *
+	 * @param targetResource to copy the data to
+	 * @throws IOException thrown in case of IO error or resource not found
+	 */
+	default void copyTo( @NonNull WritableResource targetResource ) throws IOException {
+		try (OutputStream os = targetResource.getOutputStream()) {
+			copyTo( os );
+		}
+	}
+
+	/**
+	 * Copy the data from this file resource to the output stream specified.
+	 * Opening and closing the output stream is the responsibility of the caller.
+	 *
+	 * @param outputStream to copy the data to
+	 * @throws IOException thrown in case of IO error or resource not found
+	 */
+	default void copyTo( @NonNull OutputStream outputStream ) throws IOException {
+		try (InputStream is = getInputStream()) {
+			IOUtils.copy( is, outputStream );
+		}
+	}
 }
