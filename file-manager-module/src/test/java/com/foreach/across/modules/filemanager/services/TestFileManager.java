@@ -17,8 +17,15 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import org.junit.Before;
-import org.junit.Test;
+import com.foreach.across.modules.filemanager.business.FileResource;
+import lombok.SneakyThrows;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.InputStream;
@@ -28,24 +35,26 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class TestFileManager
+@ExtendWith(MockitoExtension.class)
+class TestFileManager
 {
-	private FileManagerImpl fileManager;
-
+	@Mock
 	private FileRepository repository;
+
+	@Mock
 	private FileRepositoryFactory factory;
 
-	@Before
-	public void reset() {
-		fileManager = new FileManagerImpl();
-		repository = mock( FileRepository.class );
-		factory = mock( FileRepositoryFactory.class );
+	@InjectMocks
+	private FileManagerImpl fileManager = new FileManagerImpl();
 
+	@BeforeEach
+	void reset() {
 		fileManager.setFileRepositoryFactory( factory );
 	}
 
 	@Test
-	public void defaultRepositoryIsUsedIfExists() {
+	@SneakyThrows
+	void defaultRepositoryIsUsedIfExists() {
 		when( repository.getRepositoryId() ).thenReturn( FileManager.DEFAULT_REPOSITORY );
 		fileManager.registerRepository( repository );
 
@@ -62,10 +71,27 @@ public class TestFileManager
 		InputStream inputStream = mock( InputStream.class );
 		fileManager.save( inputStream );
 		verify( repository ).save( inputStream );
+
+		repository.createFileResource();
+		verify( repository ).createFileResource();
+
+		fileManager.createFileResource( true );
+		verify( repository ).createFileResource( true );
+
+		InputStream is = mock( InputStream.class );
+		fileManager.createFileResource( is );
+		verify( repository ).createFileResource( is );
+
+		fileManager.createFileResource( file, true );
+		verify( repository ).createFileResource( file, true );
+
+		FileDescriptor fd = FileDescriptor.of( "1:2:3" );
+		when( repository.generateFileDescriptor() ).thenReturn( fd );
+		Assertions.assertThat( fileManager.generateFileDescriptor() ).isSameAs( fd );
 	}
 
 	@Test
-	public void correctRepositoryIsUsed() {
+	void correctRepositoryIsUsed() {
 		FileRepository one = mock( FileRepository.class );
 		when( one.getRepositoryId() ).thenReturn( "one" );
 
@@ -137,25 +163,28 @@ public class TestFileManager
 		verify( two ).move( descriptorTwo, renameB );
 
 		FileDescriptor renameC = new FileDescriptor( "two", null, "e" );
-		File mockFile = mock( File.class );
-		when( one.getAsFile( renameA ) ).thenReturn( mockFile );
 		InputStream streamA = mock( InputStream.class );
 		when( one.getInputStream( renameA ) ).thenReturn( streamA );
 		when( one.delete( renameA ) ).thenReturn( true );
 		fileManager.move( renameA, renameC );
 		verify( two ).save( renameC, streamA, true );
 		verify( one ).delete( renameA );
+
+		FileDescriptor fd = FileDescriptor.of( "one", "file" );
+		FileResource fr = mock( FileResource.class );
+		when( one.getFileResource( fd ) ).thenReturn( fr );
+		Assertions.assertThat( fileManager.getFileResource( fd ) ).isSameAs( fr );
 	}
 
 	@Test
-	public void factoryIsNotCalledForExistenceCheck() {
+	void factoryIsNotCalledForExistenceCheck() {
 		assertFalse( fileManager.repositoryExists( UUID.randomUUID().toString() ) );
 
 		verify( factory, never() ).create( anyString() );
 	}
 
 	@Test
-	public void repositoryExistsIfRegistered() {
+	void repositoryExistsIfRegistered() {
 		when( repository.getRepositoryId() ).thenReturn( "myrepo" );
 
 		fileManager.registerRepository( repository );
@@ -166,7 +195,7 @@ public class TestFileManager
 	}
 
 	@Test
-	public void factoryIsCalledIfRepositoryIsNotRegistered() {
+	void factoryIsCalledIfRepositoryIsNotRegistered() {
 		FileRepository fetched = fileManager.getRepository( "non-existing-one" );
 
 		assertNull( fetched );
@@ -180,7 +209,7 @@ public class TestFileManager
 	}
 
 	@Test
-	public void exceptionThrownIfRepositoryNotRegisteredAndCannotBeCreated() {
+	void exceptionThrownIfRepositoryNotRegisteredAndCannotBeCreated() {
 		fileManager.setFileRepositoryFactory( null );
 
 		assertThatExceptionOfType( IllegalArgumentException.class )
@@ -188,7 +217,7 @@ public class TestFileManager
 	}
 
 	@Test
-	public void updatingTheImplementationOfARepository() {
+	void updatingTheImplementationOfARepository() {
 		when( repository.getRepositoryId() ).thenReturn( "replace" );
 
 		FileRepository other = mock( FileRepository.class );

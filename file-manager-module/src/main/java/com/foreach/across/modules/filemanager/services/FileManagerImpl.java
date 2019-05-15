@@ -17,14 +17,17 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FileStorageException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Implementation of both FileManager and FileRepositoryRegistry.  The registry deals out
@@ -39,9 +42,65 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	private Map<String, FileRepositoryDelegate> repositories = new HashMap<>();
 
 	@Override
+	public FileResource createFileResource( String repositoryId ) {
+		return requireRepository( repositoryId ).createFileResource();
+	}
+
+	@Override
+	public FileResource createFileResource() {
+		return requireRepository( DEFAULT_REPOSITORY ).createFileResource();
+	}
+
+	@Override
+	public FileResource createFileResource( boolean allocateImmediately ) {
+		return requireRepository( DEFAULT_REPOSITORY ).createFileResource( allocateImmediately );
+	}
+
+	@Override
+	public FileResource createFileResource( File originalFile, boolean deleteOriginal ) throws IOException {
+		return requireRepository( DEFAULT_REPOSITORY ).createFileResource( originalFile, deleteOriginal );
+	}
+
+	@Override
+	public FileResource createFileResource( InputStream inputStream ) throws IOException {
+		return requireRepository( DEFAULT_REPOSITORY ).createFileResource( inputStream );
+	}
+
+	@Override
+	public FileResource getFileResource( FileDescriptor descriptor ) {
+		return requireRepository( descriptor.getRepositoryId() ).getFileResource( descriptor );
+	}
+
+	@Override
+	public FileDescriptor generateFileDescriptor() {
+		return requireRepository( DEFAULT_REPOSITORY ).generateFileDescriptor();
+	}
+
+	@Override
 	public File createTempFile() {
-		FileRepository tempRepository = requireRepository( TEMP_REPOSITORY );
-		return tempRepository.getAsFile( tempRepository.createFile() );
+		FileRepository repository = getRepository( TEMP_REPOSITORY );
+
+		if ( repository != null ) {
+			FileRepository tempRepository = requireRepository( TEMP_REPOSITORY );
+			FileResource tempFileResource = tempRepository.createFileResource( true );
+
+			if ( tempFileResource instanceof FileResource.TargetFile ) {
+				return ( (FileResource.TargetFile) tempFileResource ).getTargetFile();
+			}
+			else {
+				throw new FileStorageException(
+						String.format( "File repository '%s' registered, but does not provide FileResource.TargetFile implementations. " +
+								               "Any FileRepository used for temp files must return FileResource implementations that implement TargetFile.",
+						               TEMP_REPOSITORY ) );
+			}
+		}
+
+		try {
+			return File.createTempFile( UUID.randomUUID().toString(), "" );
+		}
+		catch ( IOException ioe ) {
+			throw new FileStorageException( ioe );
+		}
 	}
 
 	@Override

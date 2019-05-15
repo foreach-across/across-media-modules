@@ -85,7 +85,7 @@ public class AwsS3FileRepository extends AmazonS3FileRepository
 	                            AmazonS3 amazonS3Client,
 	                            Optional<PathGenerator> pathGenerator,
 	                            FileManager fileManager ) {
-		super( repositoryId, amazonS3Client, bucketName, pathGenerator != null ? pathGenerator.orElse( null ) : null );
+		super( repositoryId, amazonS3Client, bucketName, pathGenerator != null ? pathGenerator.orElse( null ) : null, null );
 		setFileManager( fileManager );
 	}
 }

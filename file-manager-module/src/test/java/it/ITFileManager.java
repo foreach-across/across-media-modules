@@ -17,17 +17,21 @@
 package it;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.modules.filemanager.services.FileRepositoryRegistry;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ITFileManager extends AbstractFileManagerModuleIT
 {
@@ -63,14 +67,23 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 		fileManager.exists( firstMoved );
 		FileRepository defaultRep = fileManager.getRepository( file.getRepositoryId() );
 		assertTrue( defaultRep.getAsFile( firstMoved ).exists() );
-		assertFalse( defaultRep.getAsFile( file ).exists() );
+
+		Assertions.assertThatExceptionOfType( FileStorageException.class )
+		          .isThrownBy( () -> defaultRep.getAsFile( file ) )
+		          .withCauseInstanceOf( FileNotFoundException.class );
 
 		FileRepository moveIt = fileRepositoryRegistry.getRepository( "move-it" );
 		FileDescriptor secondMoved = FileDescriptor.of( moveIt.getRepositoryId(), file.getFolderId(), firstMoved.getFileId() );
 		fileManager.move( firstMoved, secondMoved );
 		fileManager.exists( secondMoved );
 		assertTrue( moveIt.getAsFile( secondMoved ).exists() );
-		assertFalse( defaultRep.getAsFile( firstMoved ).exists() );
-		assertFalse( defaultRep.getAsFile( file ).exists() );
+
+		Assertions.assertThatExceptionOfType( FileStorageException.class )
+		          .isThrownBy( () -> defaultRep.getAsFile( firstMoved ) )
+		          .withCauseInstanceOf( FileNotFoundException.class );
+
+		Assertions.assertThatExceptionOfType( FileStorageException.class )
+		          .isThrownBy( () -> defaultRep.getAsFile( file ) )
+		          .withCauseInstanceOf( FileNotFoundException.class );
 	}
 }

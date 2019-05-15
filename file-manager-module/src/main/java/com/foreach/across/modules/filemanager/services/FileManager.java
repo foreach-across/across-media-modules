@@ -17,6 +17,8 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
+import lombok.NonNull;
 
 import java.io.File;
 import java.io.InputStream;
@@ -28,6 +30,9 @@ import java.io.InputStream;
  * This interface also implements the {@link com.foreach.across.modules.filemanager.services.FileRepository}
  * and will considered repository methods to run either against the default file repository or (in case of
  * using a FileDescriptor) against the repository specified in the FileDescriptor.
+ *
+ * @author Arne Vandamme
+ * @since 1.0.0
  */
 public interface FileManager extends FileRepository
 {
@@ -40,7 +45,7 @@ public interface FileManager extends FileRepository
 	 * @param repositoryId Id of the file repository.
 	 * @return FileRepository instance or null if none registered.
 	 */
-	FileRepository getRepository( String repositoryId );
+	FileRepository getRepository( @NonNull String repositoryId );
 
 	/**
 	 * Returns the FileRepository a given File belongs to.
@@ -48,7 +53,15 @@ public interface FileManager extends FileRepository
 	 * @param descriptor FileDescriptor instance.
 	 * @return FileRepository instance or null if none registered.
 	 */
-	FileRepository getRepository( FileDescriptor descriptor );
+	FileRepository getRepository( @NonNull FileDescriptor descriptor );
+
+	/**
+	 * Create a new writable file resource in the given repository.
+	 *
+	 * @param repositoryId repository
+	 * @return file resource
+	 */
+	FileResource createFileResource( @NonNull String repositoryId );
 
 	/**
 	 * Create a new file in the repository.  This allocates the file instance, but
@@ -57,7 +70,9 @@ public interface FileManager extends FileRepository
 	 *
 	 * @param repositoryId Id of the file repository.
 	 * @return FileDescriptor instance.
+	 * @deprecated since 1.4.0 - use {@link #createFileResource(String)} instead
 	 */
+	@Deprecated
 	FileDescriptor createFile( String repositoryId );
 
 	/**
@@ -71,7 +86,9 @@ public interface FileManager extends FileRepository
 	 * @param repositoryId Id of the file repository.
 	 * @param file         File instance to move into the repository.
 	 * @return FileDescriptor instance.
+	 * @deprecated since 1.4.0 - use {@link #createFileResource(String)} instead
 	 */
+	@Deprecated
 	FileDescriptor moveInto( String repositoryId, File file );
 
 	/**
@@ -82,7 +99,9 @@ public interface FileManager extends FileRepository
 	 * @param repositoryId Id of the file repository.
 	 * @param file         File instance to save in the repository.
 	 * @return FileDescriptor instance.
+	 * @deprecated since 1.4.0 - use {@link #createFileResource(String)} instead
 	 */
+	@Deprecated
 	FileDescriptor save( String repositoryId, File file );
 
 	/**
@@ -91,14 +110,15 @@ public interface FileManager extends FileRepository
 	 * @param repositoryId Id of the file repository.
 	 * @param inputStream  InputStream of the file content.
 	 * @return FileDescriptor instance.
+	 * @deprecated since 1.4.0 - use {@link #createFileResource(String)} instead
 	 */
+	@Deprecated
 	FileDescriptor save( String repositoryId, InputStream inputStream );
 
 	/**
 	 * Quick creates a physical file in the temporary FileRepository.
 	 * The file returned can safely be used for writing to and can afterwards be moved
-	 * to a particular FileRepository using
-	 * {@link com.foreach.across.modules.filemanager.services.FileRepository#moveInto(java.io.File)}.
+	 * into a specific file resource.
 	 *
 	 * @return A File instance to be used.
 	 */

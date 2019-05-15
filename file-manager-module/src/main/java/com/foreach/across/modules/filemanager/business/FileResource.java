@@ -165,4 +165,17 @@ public interface FileResource extends WritableResource
 			IOUtils.copy( is, outputStream );
 		}
 	}
+
+	/**
+	 * Additional interface that {@link FileResource} types can implement to provide
+	 * access to the underlying physical {@link File}. This allows them to be used
+	 * for temporary file storage.
+	 */
+	interface TargetFile
+	{
+		/**
+		 * @return physical file instance
+		 */
+		File getTargetFile();
+	}
 }

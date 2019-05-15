@@ -9,6 +9,7 @@ import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -22,7 +23,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * @author Arne Vandamme
  * @since 1.4.0
  */
-class LocalFileResource extends FileSystemResource implements FileResource
+class LocalFileResource extends FileSystemResource implements FileResource, FileResource.TargetFile
 {
 	@Getter
 	private final FileDescriptor fileDescriptor;
@@ -59,11 +60,16 @@ class LocalFileResource extends FileSystemResource implements FileResource
 
 	@Override
 	public boolean delete() {
-		return getFileForLastModifiedCheck().delete();
+		return getTargetFile().delete();
 	}
 
 	@Override
-	protected File getFileForLastModifiedCheck() {
+	protected File getFileForLastModifiedCheck() throws IOException {
+		return getTargetFile();
+	}
+
+	@Override
+	public File getTargetFile() {
 		return super.getFile();
 	}
 
@@ -73,9 +79,15 @@ class LocalFileResource extends FileSystemResource implements FileResource
 	}
 
 	@Override
+	public OutputStream getOutputStream() throws IOException {
+		FileUtils.forceMkdirParent( getTargetFile() );
+		return super.getOutputStream();
+	}
+
+	@Override
 	public void copyFrom( @NonNull File originalFile, boolean deleteOriginal ) throws IOException {
 		if ( !deleteOriginal ) {
-			FileUtils.copyFile( originalFile, getFileForLastModifiedCheck() );
+			FileUtils.copyFile( originalFile, getTargetFile() );
 		}
 		else {
 			if ( originalFile == null || originalFile.isDirectory() ) {
@@ -85,14 +97,14 @@ class LocalFileResource extends FileSystemResource implements FileResource
 			boolean fileMoved = true;
 
 			try {
-				Files.move( originalFile.toPath(), getFileForLastModifiedCheck().toPath(), ATOMIC_MOVE, REPLACE_EXISTING );
+				Files.move( originalFile.toPath(), getTargetFile().toPath(), ATOMIC_MOVE, REPLACE_EXISTING );
 			}
 			catch ( IOException ignore ) {
 				fileMoved = false;
 			}
 
 			if ( !fileMoved ) {
-				FileUtils.copyFile( originalFile, getFileForLastModifiedCheck() );
+				FileUtils.copyFile( originalFile, getTargetFile() );
 				FileUtils.deleteQuietly( originalFile );
 			}
 		}

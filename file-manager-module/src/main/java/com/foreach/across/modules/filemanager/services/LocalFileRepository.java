@@ -17,17 +17,15 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FileStorageException;
-import com.foreach.across.modules.filemanager.utils.FileManagerUtils;
-import org.apache.commons.io.FileExistsException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.nio.file.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
@@ -36,15 +34,15 @@ import java.util.UUID;
  *
  * @see com.foreach.across.modules.filemanager.services.PathGenerator
  */
-public class LocalFileRepository implements FileRepository
+@Slf4j
+public class LocalFileRepository extends AbstractFileRepository implements FileRepository
 {
-	private static final Logger LOG = LoggerFactory.getLogger( LocalFileRepository.class );
-
 	private String repositoryId;
 	private String rootFolder;
 	private PathGenerator pathGenerator;
 
 	public LocalFileRepository( String repositoryId, String rootFolder ) {
+		super( repositoryId );
 		this.repositoryId = repositoryId;
 		this.rootFolder = rootFolder;
 	}
@@ -72,24 +70,24 @@ public class LocalFileRepository implements FileRepository
 	 *
 	 * @return FileDescriptor instance.
 	 */
-	@Override
-	public FileDescriptor createFile() {
-		FileDescriptor descriptor = buildNewDescriptor( null, null );
-
-		try {
-			File file = getAsFile( descriptor );
-			FileUtils.forceMkdir( file.getParentFile() );
-
-			if ( !file.createNewFile() ) {
-				throw new FileStorageException( "Unable to create new file " + file );
-			}
-		}
-		catch ( IOException ioe ) {
-			throw new FileStorageException( ioe );
-		}
-
-		return descriptor;
-	}
+//	@Override
+//	public FileDescriptor createFile() {
+//		FileDescriptor descriptor = buildNewDescriptor( null, null );
+//
+//		try {
+//			File file = getAsFile( descriptor );
+//			FileUtils.forceMkdir( file.getParentFile() );
+//
+//			if ( !file.createNewFile() ) {
+//				throw new FileStorageException( "Unable to create new file " + file );
+//			}
+//		}
+//		catch ( IOException ioe ) {
+//			throw new FileStorageException( ioe );
+//		}
+//
+//		return descriptor;
+//	}
 
 	/**
 	 * Moves a File into the repository, once the file is fully available in the
@@ -102,58 +100,58 @@ public class LocalFileRepository implements FileRepository
 	 * @param file File instance to move into the repository.
 	 * @return FileDescriptor instance.
 	 */
-	@Override
-	public FileDescriptor moveInto( File file ) {
-		FileDescriptor descriptor = buildNewDescriptor( file.getName(), null );
-
-		try {
-			File newFile = getAsFile( descriptor );
-
-			if ( !newFile.exists() ) {
-				FileUtils.forceMkdir( newFile.getParentFile() );
-			}
-
-			moveFileIfPossible( file, newFile );
-		}
-		catch ( IOException ioe ) {
-			throw new FileStorageException( ioe );
-		}
-
-		return descriptor;
-	}
+//	@Override
+//	public FileDescriptor moveInto( File file ) {
+//		FileDescriptor descriptor = buildNewDescriptor( file.getName(), null );
+//
+//		try {
+//			File newFile = getAsFile( descriptor );
+//
+//			if ( !newFile.exists() ) {
+//				FileUtils.forceMkdir( newFile.getParentFile() );
+//			}
+//
+//			moveFileIfPossible( file, newFile );
+//		}
+//		catch ( IOException ioe ) {
+//			throw new FileStorageException( ioe );
+//		}
+//
+//		return descriptor;
+//	}
 
 	/**
 	 * Based on {@link FileUtils#moveFile(java.io.File, java.io.File)}.  Copies the file into
 	 * the repository and tries to delete the original.
 	 */
-	private void moveFileIfPossible( File srcFile, File destFile ) throws IOException {
-		if ( srcFile == null ) {
-			throw new NullPointerException( "Source must not be null" );
-		}
-		if ( destFile == null ) {
-			throw new NullPointerException( "Destination must not be null" );
-		}
-		if ( !srcFile.exists() ) {
-			throw new FileNotFoundException( "Source '" + srcFile + "' does not exist" );
-		}
-		if ( srcFile.isDirectory() ) {
-			throw new IOException( "Source '" + srcFile + "' is a directory" );
-		}
-		if ( destFile.exists() ) {
-			throw new FileExistsException( "Destination '" + destFile + "' already exists" );
-		}
-		if ( destFile.isDirectory() ) {
-			throw new IOException( "Destination '" + destFile + "' is a directory" );
-		}
-		boolean rename = srcFile.renameTo( destFile );
-		if ( !rename ) {
-			FileUtils.copyFile( srcFile, destFile );
-			if ( !srcFile.delete() ) {
-				LOG.warn( "File {} was copied into the LocalFileRepository but could not be deleted",
-				          srcFile );
-			}
-		}
-	}
+//	private void moveFileIfPossible( File srcFile, File destFile ) throws IOException {
+//		if ( srcFile == null ) {
+//			throw new NullPointerException( "Source must not be null" );
+//		}
+//		if ( destFile == null ) {
+//			throw new NullPointerException( "Destination must not be null" );
+//		}
+//		if ( !srcFile.exists() ) {
+//			throw new FileNotFoundException( "Source '" + srcFile + "' does not exist" );
+//		}
+//		if ( srcFile.isDirectory() ) {
+//			throw new IOException( "Source '" + srcFile + "' is a directory" );
+//		}
+//		if ( destFile.exists() ) {
+//			throw new FileExistsException( "Destination '" + destFile + "' already exists" );
+//		}
+//		if ( destFile.isDirectory() ) {
+//			throw new IOException( "Destination '" + destFile + "' is a directory" );
+//		}
+//		boolean rename = srcFile.renameTo( destFile );
+//		if ( !rename ) {
+//			FileUtils.copyFile( srcFile, destFile );
+//			if ( !srcFile.delete() ) {
+//				LOG.warn( "File {} was copied into the LocalFileRepository but could not be deleted",
+//				          srcFile );
+//			}
+//		}
+//	}
 
 	/**
 	 * Stores a file in the repository, but leaves the original file alone.
@@ -163,29 +161,29 @@ public class LocalFileRepository implements FileRepository
 	 * @param file File instance to save in the repository.
 	 * @return FileDescriptor instance.
 	 */
-	@Override
-	public FileDescriptor save( File file ) {
-		FileDescriptor descriptor = buildNewDescriptor( file.getName(), null );
-
-		try {
-			File newFile = getAsFile( descriptor );
-
-			if ( !newFile.exists() ) {
-				FileUtils.forceMkdir( newFile.getParentFile() );
-
-				if ( !newFile.createNewFile() ) {
-					throw new FileStorageException( "Unable to create new file " + newFile );
-				}
-			}
-
-			FileManagerUtils.fastCopy( file, newFile );
-		}
-		catch ( IOException ioe ) {
-			throw new FileStorageException( ioe );
-		}
-
-		return descriptor;
-	}
+//	@Override
+//	public FileDescriptor save( File file ) {
+//		FileDescriptor descriptor = buildNewDescriptor( file.getName(), null );
+//
+//		try {
+//			File newFile = getAsFile( descriptor );
+//
+//			if ( !newFile.exists() ) {
+//				FileUtils.forceMkdir( newFile.getParentFile() );
+//
+//				if ( !newFile.createNewFile() ) {
+//					throw new FileStorageException( "Unable to create new file " + newFile );
+//				}
+//			}
+//
+//			FileManagerUtils.fastCopy( file, newFile );
+//		}
+//		catch ( IOException ioe ) {
+//			throw new FileStorageException( ioe );
+//		}
+//
+//		return descriptor;
+//	}
 
 	/**
 	 * Stores an InputStream as a new file in the repository.
@@ -193,41 +191,41 @@ public class LocalFileRepository implements FileRepository
 	 * @param inputStream InputStream of the file content.
 	 * @return FileDescriptor instance.
 	 */
-	@Override
-	public FileDescriptor save( InputStream inputStream ) {
-		FileDescriptor descriptor = buildNewDescriptor( null, null );
-		save( descriptor, inputStream, true );
-		return descriptor;
-	}
+//	@Override
+//	public FileDescriptor save( InputStream inputStream ) {
+//		FileDescriptor descriptor = buildNewDescriptor( null, null );
+//		save( descriptor, inputStream, true );
+//		return descriptor;
+//	}
 
-	@Override
-	public void save( FileDescriptor target, InputStream inputStream, boolean replaceExisting ) {
-		if ( !StringUtils.equals( repositoryId, target.getRepositoryId() ) ) {
-			throw new IllegalArgumentException(
-					"Invalid file descriptor. File repository " + target.getRepositoryId() +
-							" can not persist a file for the provided descriptor: " + target.getUri() );
-		}
-
-		try {
-			File newFile = getAsFile( target );
-
-			if ( !newFile.exists() ) {
-				FileUtils.forceMkdir( newFile.getParentFile() );
-
-				if ( !newFile.createNewFile() ) {
-					throw new FileStorageException( "Unable to create new file " + newFile );
-				}
-			}
-			else if ( !replaceExisting ) {
-				throw new IllegalArgumentException( "Unable to save file to the given descriptor: " + target.getUri() + ". File already exists." );
-			}
-
-			FileManagerUtils.fastCopy( inputStream, newFile );
-		}
-		catch ( IOException ioe ) {
-			throw new FileStorageException( ioe );
-		}
-	}
+//	@Override
+//	public void save( FileDescriptor target, InputStream inputStream, boolean replaceExisting ) {
+//		if ( !StringUtils.equals( repositoryId, target.getRepositoryId() ) ) {
+//			throw new IllegalArgumentException(
+//					"Invalid file descriptor. File repository " + target.getRepositoryId() +
+//							" can not persist a file for the provided descriptor: " + target.getUri() );
+//		}
+//
+//		try {
+//			File newFile = getAsFile( target );
+//
+//			if ( !newFile.exists() ) {
+//				FileUtils.forceMkdir( newFile.getParentFile() );
+//
+//				if ( !newFile.createNewFile() ) {
+//					throw new FileStorageException( "Unable to create new file " + newFile );
+//				}
+//			}
+//			else if ( !replaceExisting ) {
+//				throw new IllegalArgumentException( "Unable to save file to the given descriptor: " + target.getUri() + ". File already exists." );
+//			}
+//
+//			FileManagerUtils.fastCopy( inputStream, newFile );
+//		}
+//		catch ( IOException ioe ) {
+//			throw new FileStorageException( ioe );
+//		}
+//	}
 
 	/**
 	 * Get an OutputStream that can be used to update the contents of the file.
@@ -239,19 +237,19 @@ public class LocalFileRepository implements FileRepository
 	 * @param descriptor FileDescriptor instance.
 	 * @return OutputStream that can be used to update the contents of the file.
 	 */
-	@Override
-	public OutputStream getOutputStream( FileDescriptor descriptor ) {
-		assertValidDescriptor( descriptor );
-
-		try {
-			return Files.newOutputStream( buildPath( descriptor ),
-			                              StandardOpenOption.CREATE, StandardOpenOption.WRITE,
-			                              StandardOpenOption.TRUNCATE_EXISTING );
-		}
-		catch ( IOException ioe ) {
-			throw new FileStorageException( ioe );
-		}
-	}
+//	@Override
+//	public OutputStream getOutputStream( FileDescriptor descriptor ) {
+//		assertValidDescriptor( descriptor );
+//
+//		try {
+//			return Files.newOutputStream( buildPath( descriptor ),
+//			                              StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+//			                              StandardOpenOption.TRUNCATE_EXISTING );
+//		}
+//		catch ( IOException ioe ) {
+//			throw new FileStorageException( ioe );
+//		}
+//	}
 
 	/**
 	 * Get an InputStream to read the contents of the file.
@@ -264,17 +262,17 @@ public class LocalFileRepository implements FileRepository
 	 * @param descriptor FileDescriptor instance.
 	 * @return InputStream for the contents of the file.
 	 */
-	@Override
-	public InputStream getInputStream( FileDescriptor descriptor ) {
-		assertValidDescriptor( descriptor );
-
-		try {
-			return new FileInputStream( getAsFile( descriptor ) );
-		}
-		catch ( FileNotFoundException fnfe ) {
-			return null;
-		}
-	}
+//	@Override
+//	public InputStream getInputStream( FileDescriptor descriptor ) {
+//		assertValidDescriptor( descriptor );
+//
+//		try {
+//			return new FileInputStream( getAsFile( descriptor ) );
+//		}
+//		catch ( FileNotFoundException fnfe ) {
+//			return null;
+//		}
+//	}
 
 	/**
 	 * Gets the file contents as a File instance.  This file *should not be used for writing*
@@ -285,12 +283,12 @@ public class LocalFileRepository implements FileRepository
 	 * @param descriptor FileDescriptor instance.
 	 * @return File instance.
 	 */
-	@Override
-	public File getAsFile( FileDescriptor descriptor ) {
-		assertValidDescriptor( descriptor );
-
-		return buildPath( descriptor ).toFile();
-	}
+//	@Override
+//	public File getAsFile( FileDescriptor descriptor ) {
+//		assertValidDescriptor( descriptor );
+//
+//		return buildPath( descriptor ).toFile();
+//	}
 
 	/**
 	 * Checks if a descriptor actually points to an existing file.
@@ -298,39 +296,39 @@ public class LocalFileRepository implements FileRepository
 	 * @param descriptor FileDescriptor instance.
 	 * @return True if the file exists.
 	 */
-	@Override
-	public boolean exists( FileDescriptor descriptor ) {
-		if ( !StringUtils.equals( repositoryId, descriptor.getRepositoryId() ) ) {
-			return false;
-		}
+//	@Override
+//	public boolean exists( FileDescriptor descriptor ) {
+//		if ( !StringUtils.equals( repositoryId, descriptor.getRepositoryId() ) ) {
+//			return false;
+//		}
+//
+//		return getAsFile( descriptor ).exists();
+//	}
 
-		return getAsFile( descriptor ).exists();
-	}
-
-	@Override
-	public boolean move( FileDescriptor source, FileDescriptor target ) {
-		String renamedRep = target.getRepositoryId();
-		String originalRep = source.getRepositoryId();
-		if ( !StringUtils.equals( originalRep, renamedRep ) ) {
-			throw new IllegalArgumentException( "Repository id of the target is different from the source." );
-		}
-
-		Path result;
-		Path renamedPath = buildPath( target );
-		try {
-			Path parent = renamedPath.getParent();
-			if ( parent != null && !Files.isDirectory( parent ) ) {
-				Files.createDirectories( parent );
-			}
-			result = Files.move( buildPath( source ), renamedPath, StandardCopyOption.ATOMIC_MOVE,
-			                     StandardCopyOption.REPLACE_EXISTING );
-		}
-		catch ( IOException e ) {
-			throw new FileStorageException( e );
-		}
-
-		return renamedPath.equals( result );
-	}
+//	@Override
+//	public boolean move( FileDescriptor source, FileDescriptor target ) {
+//		String renamedRep = target.getRepositoryId();
+//		String originalRep = source.getRepositoryId();
+//		if ( !StringUtils.equals( originalRep, renamedRep ) ) {
+//			throw new IllegalArgumentException( "Repository id of the target is different from the source." );
+//		}
+//
+//		Path result;
+//		Path renamedPath = buildPath( target );
+//		try {
+//			Path parent = renamedPath.getParent();
+//			if ( parent != null && !Files.isDirectory( parent ) ) {
+//				Files.createDirectories( parent );
+//			}
+//			result = Files.move( buildPath( source ), renamedPath, StandardCopyOption.ATOMIC_MOVE,
+//			                     StandardCopyOption.REPLACE_EXISTING );
+//		}
+//		catch ( IOException e ) {
+//			throw new FileStorageException( e );
+//		}
+//
+//		return renamedPath.equals( result );
+//	}
 
 	/**
 	 * Deletes a file from the repository.
@@ -338,11 +336,16 @@ public class LocalFileRepository implements FileRepository
 	 * @param descriptor FileDescriptor instance.
 	 * @return True if delete was successful, false if not (delete failed or file did not exist).
 	 */
-	@Override
-	public boolean delete( FileDescriptor descriptor ) {
-		assertValidDescriptor( descriptor );
+//	@Override
+//	public boolean delete( FileDescriptor descriptor ) {
+//		assertValidDescriptor( descriptor );
+//
+//		return getAsFile( descriptor ).delete();
+//	}
 
-		return getAsFile( descriptor ).delete();
+	@Override
+	protected FileResource buildFileResource( FileDescriptor descriptor ) {
+		return new LocalFileResource( descriptor, buildPath( descriptor ).toFile() );
 	}
 
 	private Path buildPath( FileDescriptor descriptor ) {

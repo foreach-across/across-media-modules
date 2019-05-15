@@ -17,8 +17,10 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -39,6 +41,36 @@ public class FileRepositoryDelegate implements FileRepository
 
 	public void setActualImplementation( FileRepository actualImplementation ) {
 		this.actualImplementation = actualImplementation;
+	}
+
+	@Override
+	public FileResource createFileResource( File originalFile, boolean deleteOriginal ) throws IOException {
+		return actualImplementation.createFileResource( originalFile, deleteOriginal );
+	}
+
+	@Override
+	public FileResource createFileResource( InputStream inputStream ) throws IOException {
+		return actualImplementation.createFileResource( inputStream );
+	}
+
+	@Override
+	public FileResource createFileResource() {
+		return actualImplementation.createFileResource();
+	}
+
+	@Override
+	public FileResource createFileResource( boolean allocateImmediately ) {
+		return actualImplementation.createFileResource( allocateImmediately );
+	}
+
+	@Override
+	public FileResource getFileResource( FileDescriptor descriptor ) {
+		return actualImplementation.getFileResource( descriptor );
+	}
+
+	@Override
+	public FileDescriptor generateFileDescriptor() {
+		return actualImplementation.generateFileDescriptor();
 	}
 
 	@Override

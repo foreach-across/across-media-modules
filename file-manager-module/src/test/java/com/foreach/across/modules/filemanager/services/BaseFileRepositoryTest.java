@@ -17,13 +17,17 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
+import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -76,7 +80,8 @@ abstract class BaseFileRepositoryTest
 			System.err.println( "Unit test could not cleanup files nicely" );
 		}
 	}
-// create file creates an existing, empty file, which is writable
+
+	// create file creates an existing, empty file, which is writable
 	@Test
 	void moveIntoDeletesTheOriginalFile() {
 		assertTrue( FILE_ONE.exists() );
@@ -169,6 +174,37 @@ abstract class BaseFileRepositoryTest
 		FileDescriptor descriptor = fileRepository.save( RES_TEXTFILE.getInputStream() );
 
 		assertEquals( "some dummy text", read( descriptor ) );
+	}
+
+	@Test
+	@SneakyThrows
+	void createFileResource() {
+		FileResource resource = fileRepository.createFileResource();
+		Assertions.assertThat( resource.exists() ).isFalse();
+		Assertions.assertThat( resource ).isNotNull();
+
+		resource.copyFrom( RES_TEXTFILE );
+
+		Assertions.assertThat( readResource( resource ) )
+		          .isEqualTo( "some dummy text" )
+		          .isEqualTo( readResource( fileRepository.getFileResource( resource.getFileDescriptor() ) ) );
+	}
+
+	@Test
+	@SneakyThrows
+	void createAndAllocateFileResource() {
+		FileResource resource = fileRepository.createFileResource( true );
+		Assertions.assertThat( resource.exists() ).isNotNull();
+		try (InputStream is = resource.getInputStream()) {
+			Assertions.assertThat( is ).isNotNull();
+		}
+	}
+
+	@SneakyThrows
+	private String readResource( FileResource resource ) {
+		try (InputStream is = resource.getInputStream()) {
+			return StreamUtils.copyToString( is, Charset.defaultCharset() );
+		}
 	}
 
 	@Test
