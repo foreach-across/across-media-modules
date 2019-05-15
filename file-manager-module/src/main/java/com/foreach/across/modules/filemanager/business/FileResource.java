@@ -74,8 +74,8 @@ public interface FileResource extends WritableResource
 	 * @throws IOException thrown in case of IO error or resource not found
 	 */
 	default void copyFrom( @NonNull File originalFile, boolean deleteOriginal ) throws IOException {
-		try (OutputStream os = getOutputStream()) {
-			try (InputStream is = new FileInputStream( originalFile )) {
+		try (InputStream is = new FileInputStream( originalFile )) {
+			try (OutputStream os = getOutputStream()) {
 				IOUtils.copy( is, os );
 			}
 		}

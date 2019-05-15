@@ -60,7 +60,7 @@ class LocalFileResource extends FileSystemResource implements FileResource, File
 
 	@Override
 	public boolean delete() {
-		return getTargetFile().delete();
+		return FileUtils.deleteQuietly( getTargetFile() );
 	}
 
 	@Override

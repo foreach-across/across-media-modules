@@ -1,0 +1,151 @@
+package com.foreach.across.modules.filemanager.services;
+
+import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.output.TeeOutputStream;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URL;
+
+/**
+ * Represents a caching wrapper around a target {@link FileResource}.
+ * Takes two file resources as parameter. One is the actual target, the
+ * other contains the cached data. If the latter exists it will be used
+ * instead of the target for access.
+ * <p/>
+ * Note that the {@link FileResource#exists()} will be called often on the
+ * {@code cache} resource, it can be any type of file resource, but you
+ * usually want it to come from a {@link LocalFileRepository}.
+ * <p/>
+ * The cache is primarily used for the actual data streams, other methods
+ * might forward directly to the target resource to ensure maximum consistency.
+ *
+ * @author Arne Vandamme
+ * @since 1.4.0
+ */
+@RequiredArgsConstructor
+public class CachedFileResource implements FileResource
+{
+	@NonNull
+	private final FileResource target;
+
+	@NonNull
+	private final FileResource cache;
+
+	/**
+	 * Timestamp when the input stream was last accessed.
+	 * Can be used to determine if the cached resource should be flushed.
+	 */
+	@Getter
+	private long lastAccessTime = System.currentTimeMillis();
+
+	@Override
+	public FileDescriptor getFileDescriptor() {
+		return target.getFileDescriptor();
+	}
+
+	@Override
+	public boolean delete() {
+		flushCache();
+		return target.delete();
+	}
+
+	@Override
+	public FileResource createRelative( String relativePath ) {
+		throw new UnsupportedOperationException( "creating relative path is not yet supported" );
+	}
+
+	@Override
+	public boolean isWritable() {
+		return target.isWritable();
+	}
+
+	@Override
+	public boolean exists() {
+		return cache.exists() || target.exists();
+	}
+
+	@Override
+	public boolean isReadable() {
+		return target.isReadable();
+	}
+
+	@Override
+	public boolean isOpen() {
+		return target.isOpen();
+	}
+
+	@Override
+	public URL getURL() throws IOException {
+		return target.getURL();
+	}
+
+	@Override
+	public URI getURI() throws IOException {
+		return target.getURI();
+	}
+
+	@Override
+	public long contentLength() throws IOException {
+		return cache.exists() ? cache.contentLength() : target.contentLength();
+	}
+
+	@Override
+	public long lastModified() throws IOException {
+		return target.lastModified();
+	}
+
+	@Override
+	public String getFilename() {
+		return target.getFilename();
+	}
+
+	@Override
+	public String getDescription() {
+		return "axfs cached resource (" + cache.getDescription() + " : " + target.getDescription() + ")";
+	}
+
+	@Override
+	public InputStream getInputStream() throws IOException {
+		lastAccessTime = System.currentTimeMillis();
+		if ( !cache.exists() ) {
+			synchronized ( this ) {
+				if ( !cache.exists() ) {
+					target.copyTo( cache );
+				}
+			}
+		}
+		return cache.getInputStream();
+	}
+
+	@Override
+	public OutputStream getOutputStream() throws IOException {
+		return new TeeOutputStream( target.getOutputStream(), cache.getOutputStream() );
+	}
+
+	@SuppressWarnings("WeakerAccess")
+	public boolean flushCache() {
+		if ( cache.exists() ) {
+			return cache.delete();
+		}
+		return false;
+	}
+
+	/**
+	 * @return timestamp when cache item was created (or 0 if there is no cache item)
+	 */
+	public long getCacheCreationTime() {
+		try {
+			return cache.exists() ? cache.lastModified() : 0;
+		}
+		catch ( IOException ignore ) {
+			return 0;
+		}
+	}
+}
