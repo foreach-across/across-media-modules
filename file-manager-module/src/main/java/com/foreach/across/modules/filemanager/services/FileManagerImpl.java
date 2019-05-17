@@ -25,9 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Implementation of both FileManager and FileRepositoryRegistry.  The registry deals out
@@ -78,10 +76,9 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 
 	@Override
 	public File createTempFile() {
-		FileRepository repository = getRepository( TEMP_REPOSITORY );
+		FileRepository tempRepository = repositories.get( TEMP_REPOSITORY );
 
-		if ( repository != null ) {
-			FileRepository tempRepository = requireRepository( TEMP_REPOSITORY );
+		if ( tempRepository != null ) {
 			FileResource tempFileResource = tempRepository.createFileResource( true );
 
 			if ( tempFileResource instanceof FileResource.TargetFile ) {
@@ -232,6 +229,11 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 		}
 
 		return delegate;
+	}
+
+	@Override
+	public Collection<FileRepository> listRepositories() {
+		return Collections.unmodifiableCollection( new ArrayList<>( repositories.values() ) );
 	}
 
 	private FileRepository requireRepository( String repositoryId ) {

@@ -133,6 +133,11 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-aws-core</artifactId>
+				<version>2.1.0.RELEASE</version>
+			</dependency>
+			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>across-hibernate-module</artifactId>
 				<version>3.0.0.RELEASE</version>
@@ -156,6 +161,11 @@
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
 				<version>2.27.0</version>
+			</dependency>
+			<dependency>
+				<groupId>cloud.localstack</groupId>
+				<artifactId>localstack-utils</artifactId>
+				<version>0.1.19</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

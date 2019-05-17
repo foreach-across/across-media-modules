@@ -10,6 +10,8 @@ import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.services.AmazonS3FileRepository;
+import com.foreach.across.modules.filemanager.services.CachingFileRepository;
+import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.web.AcrossWebModule;
@@ -35,16 +37,24 @@ public class FileManagerTestApplication
 	}
 
 	@Bean
-	public AmazonS3FileRepository fileRepository( AmazonS3 amazonS3 ) {
+	public FileRepository fileRepository( AmazonS3 amazonS3 ) {
 		if ( !amazonS3.doesBucketExist( "car-files" ) ) {
 			amazonS3.createBucket( "car-files" );
 		}
 
-		return AmazonS3FileRepository.builder()
-		                             .repositoryId( "permanent" )
-		                             .amazonS3( amazonS3 )
-		                             .bucketName( "car-files" )
-		                             .build();
+		return CachingFileRepository.withTranslatedFileDescriptor()
+		                            .removeCacheOnEvict( true )
+		                            .removeCacheOnShutdown( true )
+		                            .timeBasedRemoval( 10, 0 )
+		                            .targetFileRepository(
+				                            AmazonS3FileRepository.builder()
+				                                                  .repositoryId( "permanent" )
+				                                                  .amazonS3( amazonS3 )
+				                                                  .bucketName( "car-files" )
+				                                                  .build()
+		                            )
+		                            .cacheRepositoryId( "cache" )
+		                            .build();
 	}
 
 	public static void main( String[] args ) {

@@ -19,6 +19,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Arne Vandamme
@@ -215,6 +217,44 @@ class TestLocalFileResource
 		resource.copyFrom( other, true );
 		assertThat( resourceData() ).isEqualTo( "hello file" );
 		assertThat( other.exists() ).isFalse();
+	}
+
+	@Test
+	@SneakyThrows
+	void noFileCreatedIfExceptionOnInputStream() {
+		assertThat( tempFile.delete() ).isTrue();
+
+		InputStream inputStream = mock( InputStream.class );
+		when( inputStream.available() ).thenThrow( new IOException() );
+
+		assertThatExceptionOfType( IOException.class )
+				.isThrownBy( () -> resource.copyFrom( inputStream ) );
+		assertThat( tempFile.exists() ).isFalse();
+	}
+
+	@Test
+	@SneakyThrows
+	void noFileCreatedIfExceptionOnOtherFileResource() {
+		assertThat( tempFile.delete() ).isTrue();
+
+		FileResource other = mock( FileResource.class );
+		when( other.getInputStream() ).thenThrow( new IOException() );
+
+		assertThatExceptionOfType( IOException.class )
+				.isThrownBy( () -> resource.copyFrom( other ) );
+		assertThat( tempFile.exists() ).isFalse();
+	}
+
+	@Test
+	@SneakyThrows
+	void fileIsNeverWrittenIfExceptionOnInputStream() {
+		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
+		assertThat( otherTempFile.delete() ).isTrue();
+		assertThat( tempFile.delete() ).isTrue();
+
+		assertThatExceptionOfType( IOException.class )
+				.isThrownBy( () -> resource.copyTo( otherTempFile ) );
+		assertThat( otherTempFile.exists() ).isFalse();
 	}
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")

@@ -16,9 +16,15 @@
 
 package com.foreach.across.modules.filemanager;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("fileManagerModule")
+@Getter
+@Setter
+@EqualsAndHashCode
 public class FileManagerModuleSettings
 {
 	public static final String LOCAL_REPOSITORIES_ROOT = "fileManagerModule.localRepositoriesRoot";
@@ -34,19 +40,24 @@ public class FileManagerModuleSettings
 	 */
 	private String tempFolder = System.getProperty( "java.io.tmpdir" );
 
-	public String getLocalRepositoriesRoot() {
-		return localRepositoriesRoot;
-	}
+	/**
+	 * Cache cleanup task configuration properties.
+	 */
+	private CacheCleanupProperties cacheCleanup = new CacheCleanupProperties();
 
-	public void setLocalRepositoriesRoot( String localRepositoriesRoot ) {
-		this.localRepositoriesRoot = localRepositoriesRoot;
-	}
+	@Getter
+	@Setter
+	public static class CacheCleanupProperties
+	{
+		/**
+		 * Should the cache cleanup task be enabled (automatic cleanup
+		 * of {@link com.foreach.across.modules.filemanager.services.CachingFileRepository} implementations found).
+		 */
+		private boolean enabled;
 
-	public String getTempFolder() {
-		return tempFolder;
-	}
-
-	public void setTempFolder( String tempFolder ) {
-		this.tempFolder = tempFolder;
+		/**
+		 * Number of seconds delay between cleanup task executions.
+		 */
+		private int delaySeconds = 300;
 	}
 }

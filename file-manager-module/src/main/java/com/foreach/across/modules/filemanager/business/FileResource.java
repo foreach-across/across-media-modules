@@ -120,7 +120,10 @@ public interface FileResource extends WritableResource
 	 * @param inputStream data to copy
 	 * @throws IOException thrown in case of IO error or resource not found
 	 */
+	@SuppressWarnings("ResultOfMethodCallIgnored")
 	default void copyFrom( @NonNull InputStream inputStream ) throws IOException {
+		inputStream.available();
+
 		try (OutputStream os = getOutputStream()) {
 			IOUtils.copy( inputStream, os );
 		}
@@ -135,22 +138,27 @@ public interface FileResource extends WritableResource
 	 * @throws IOException thrown in case of IO error or resource not found
 	 */
 	default void copyTo( @NonNull File file ) throws IOException {
-		FileUtils.forceMkdirParent( file );
-		try (OutputStream os = new FileOutputStream( file, false )) {
-			copyTo( os );
+		try (InputStream is = getInputStream()) {
+			FileUtils.forceMkdirParent( file );
+			try (OutputStream os = new FileOutputStream( file, false )) {
+				IOUtils.copy( is, os );
+			}
 		}
 	}
 
 	/**
 	 * Copy the data from this file resource to another.
 	 *
-	 * @param targetResource to copy the data to
+	 * @param targetResource to copy the data toestLocalFile
 	 * @throws IOException thrown in case of IO error or resource not found
 	 */
 	default void copyTo( @NonNull WritableResource targetResource ) throws IOException {
-		try (OutputStream os = targetResource.getOutputStream()) {
-			copyTo( os );
+		try (InputStream is = getInputStream()) {
+			try (OutputStream os = targetResource.getOutputStream()) {
+				IOUtils.copy( is, os );
+			}
 		}
+
 	}
 
 	/**

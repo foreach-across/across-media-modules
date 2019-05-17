@@ -34,6 +34,9 @@ acrossModule:
 
 fileManagerModule:
   localRepositoriesRoot: "../local-data/storage"
+  cacheCleanup:
+    enabled: true
+    delay-seconds: 30
 
 acrossHibernate:
   hibernate-properties:

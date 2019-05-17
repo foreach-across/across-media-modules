@@ -26,6 +26,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Arne Vandamme
@@ -268,6 +270,32 @@ class TestAmazonS3FileResource
 		otherTempFile.delete();
 	}
 
+	@Test
+	@SneakyThrows
+	void noFileCreatedIfExceptionOnInputStream() {
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName )).isFalse();
+
+		InputStream inputStream = mock( InputStream.class );
+		when( inputStream.available() ).thenThrow( new IOException() );
+
+		assertThatExceptionOfType( IOException.class )
+				.isThrownBy( () -> resource.copyFrom( inputStream ) );
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName )).isFalse();
+	}
+
+	@Test
+	@SneakyThrows
+	void noFileCreatedIfExceptionOnOtherFileResource() {
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName )).isFalse();
+
+		FileResource other = mock( FileResource.class );
+		when( other.getInputStream() ).thenThrow( new IOException() );
+
+		assertThatExceptionOfType( IOException.class )
+				.isThrownBy( () -> resource.copyFrom( other ) );
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName )).isFalse();
+	}
+
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Test
 	@SneakyThrows
@@ -278,6 +306,17 @@ class TestAmazonS3FileResource
 		otherTempFile.deleteOnExit();
 		assertThat( resourceData() ).isEqualTo( "some dummy text" );
 		otherTempFile.delete();
+	}
+
+	@Test
+	@SneakyThrows
+	void fileIsNeverWrittenIfExceptionOnInputStream() {
+		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
+		assertThat( otherTempFile.delete() ).isTrue();
+
+		assertThatExceptionOfType( IOException.class )
+				.isThrownBy( () -> resource.copyTo( otherTempFile ) );
+		assertThat( otherTempFile.exists() ).isFalse();
 	}
 
 	@Test

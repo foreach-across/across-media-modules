@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  */
 abstract class BaseFileRepositoryTest
 {
-	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
+	static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 
 	static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
 	static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
@@ -201,7 +201,7 @@ abstract class BaseFileRepositoryTest
 	}
 
 	@SneakyThrows
-	private String readResource( FileResource resource ) {
+	String readResource( FileResource resource ) {
 		try (InputStream is = resource.getInputStream()) {
 			return StreamUtils.copyToString( is, Charset.defaultCharset() );
 		}

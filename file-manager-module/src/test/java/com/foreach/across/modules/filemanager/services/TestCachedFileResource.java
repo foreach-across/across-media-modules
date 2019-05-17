@@ -10,6 +10,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -229,5 +230,38 @@ class TestCachedFileResource
 		assertThat( resource.getCacheCreationTime() ).isEqualTo( 0 );
 		when( cache.exists() ).thenReturn( true );
 		assertThat( resource.getCacheCreationTime() ).isEqualTo( 123L );
+	}
+
+	@Test
+	@SneakyThrows
+	void lastAccessTimeUpdated() {
+		long accessTime = resource.getLastAccessTime();
+		Thread.sleep( 100 );
+		resource.exists();
+		assertThat( resource.getLastAccessTime() ).isGreaterThan( accessTime );
+		accessTime = resource.getLastAccessTime();
+
+		Thread.sleep( 100 );
+		resource.contentLength();
+		assertThat( resource.getLastAccessTime() ).isGreaterThan( accessTime );
+		accessTime = resource.getLastAccessTime();
+
+		Thread.sleep( 100 );
+		resource.lastModified();
+		assertThat( resource.getLastAccessTime() ).isGreaterThan( accessTime );
+	}
+
+	@Test
+	@SneakyThrows
+	void cacheIsRemovedIfExceptionDuringWrite() {
+		InputStream is = mock( InputStream.class );
+		when( is.read( any( byte[].class ) ) ).thenThrow( new IOException() );
+
+		when( cache.exists() ).thenReturn( true );
+
+		assertThatExceptionOfType( IOException.class )
+				.isThrownBy( () -> resource.copyFrom( is ) );
+
+		verify( cache ).delete();
 	}
 }

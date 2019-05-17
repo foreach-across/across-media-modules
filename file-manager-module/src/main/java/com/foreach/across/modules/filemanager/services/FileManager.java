@@ -32,6 +32,7 @@ import java.io.InputStream;
  * using a FileDescriptor) against the repository specified in the FileDescriptor.
  *
  * @author Arne Vandamme
+ * @see FileManagerImpl
  * @since 1.0.0
  */
 public interface FileManager extends FileRepository

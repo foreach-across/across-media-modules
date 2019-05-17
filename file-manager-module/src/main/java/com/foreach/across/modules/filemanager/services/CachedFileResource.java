@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.output.TeeOutputStream;
+import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,10 +34,18 @@ import java.net.URL;
 @RequiredArgsConstructor
 public class CachedFileResource implements FileResource
 {
+	/**
+	 * The actual target file resource which has a cache.
+	 */
 	@NonNull
+	@Getter
 	private final FileResource target;
 
+	/**
+	 * The underlying file resource which represents the local cache.
+	 */
 	@NonNull
+	@Getter
 	private final FileResource cache;
 
 	/**
@@ -68,6 +78,8 @@ public class CachedFileResource implements FileResource
 
 	@Override
 	public boolean exists() {
+		lastAccessTime = System.currentTimeMillis();
+
 		return cache.exists() || target.exists();
 	}
 
@@ -93,11 +105,13 @@ public class CachedFileResource implements FileResource
 
 	@Override
 	public long contentLength() throws IOException {
+		lastAccessTime = System.currentTimeMillis();
 		return cache.exists() ? cache.contentLength() : target.contentLength();
 	}
 
 	@Override
 	public long lastModified() throws IOException {
+		lastAccessTime = System.currentTimeMillis();
 		return target.lastModified();
 	}
 
@@ -131,10 +145,59 @@ public class CachedFileResource implements FileResource
 
 	@SuppressWarnings("WeakerAccess")
 	public boolean flushCache() {
-		if ( cache.exists() ) {
-			return cache.delete();
+		try {
+			if ( cache.exists() ) {
+				return cache.delete();
+			}
+		}
+		catch ( Exception ignore ) {
+			// ignore exceptions on flushing cache, simply return false
 		}
 		return false;
+	}
+
+	@Override
+	public void copyFrom( File originalFile, boolean deleteOriginal ) throws IOException {
+		try {
+			FileResource.super.copyFrom( originalFile, deleteOriginal );
+		}
+		catch ( IOException ioe ) {
+			flushCache();
+			throw ioe;
+		}
+	}
+
+	@Override
+	public void copyFrom( FileResource originalFileResource, boolean deleteOriginal ) throws IOException {
+		try {
+			FileResource.super.copyFrom( originalFileResource, deleteOriginal );
+		}
+		catch ( IOException ioe ) {
+			flushCache();
+			throw ioe;
+		}
+	}
+
+	@Override
+	public void copyFrom( Resource resource ) throws IOException {
+		try {
+			FileResource.super.copyFrom( resource );
+		}
+		catch ( IOException ioe ) {
+			flushCache();
+			throw ioe;
+		}
+	}
+
+	@Override
+	public void copyFrom( InputStream inputStream ) throws IOException {
+		try {
+			FileResource.super.copyFrom( inputStream );
+		}
+		catch ( IOException ioe ) {
+			flushCache();
+			throw ioe;
+		}
 	}
 
 	/**
