@@ -127,7 +127,7 @@ public class CachingFileRepository extends AbstractFileRepository
 			( (AbstractFileRepository) targetFileRepository ).setPathGenerator( pathGenerator );
 		}
 		else {
-			throw new UnsupportedOperationException( "Target file repository does not implement AbstractFileRepository: path generator is not supporte" );
+			throw new UnsupportedOperationException( "Target file repository does not implement AbstractFileRepository: path generator is not supported" );
 		}
 	}
 
@@ -162,6 +162,7 @@ public class CachingFileRepository extends AbstractFileRepository
 	/**
 	 * Runs all cached file resources through the removal strategy, and removes the stale items.
 	 **/
+	@SuppressWarnings("WeakerAccess")
 	public void cleanupCache() {
 		try {
 			LOG.trace( "Cleaning up cache for repository {}", getRepositoryId() );

@@ -203,6 +203,7 @@ public class CachedFileResource implements FileResource
 	/**
 	 * @return timestamp when cache item was created (or 0 if there is no cache item)
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public long getCacheCreationTime() {
 		try {
 			return cache.exists() ? cache.lastModified() : 0;
