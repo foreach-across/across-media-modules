@@ -5,7 +5,7 @@ import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.core.transformers.ImageTransformCommand;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.SimpleImageSource;
 import com.foreach.imageserver.core.transformers.imagemagick.ImageMagickTransformCommandExecutor;
 import com.foreach.imageserver.dto.*;
 import lombok.SneakyThrows;
@@ -22,7 +22,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -290,8 +289,7 @@ public class TestImageMagickTransformCommandExecutor
 	}
 
 	private ImageSource image( String path ) {
-		InputStream imageStream = getClass().getClassLoader().getResourceAsStream( path );
-		return new StreamImageSource( null, imageStream );
+		return new SimpleImageSource( null, () -> getClass().getClassLoader().getResourceAsStream( path ) );
 	}
 
 	@Configuration

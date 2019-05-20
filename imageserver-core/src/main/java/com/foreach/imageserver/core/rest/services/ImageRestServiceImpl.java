@@ -69,6 +69,8 @@ public class ImageRestServiceImpl implements ImageRestService
 			}
 		}
 
+		// todo: delete temporary images when done?
+
 		return response;
 	}
 

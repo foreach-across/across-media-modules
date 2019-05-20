@@ -6,7 +6,7 @@ import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.ViewImageResponse;
 import com.foreach.imageserver.core.rest.services.ImageRestService;
 import com.foreach.imageserver.core.services.ImageService;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.SimpleImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
 import org.junit.Before;
@@ -42,10 +42,10 @@ public class TestImageStreamingController
 	@Test
 	public void testThatIOExceptionWithoutMessageDoesNotNullPointer() throws Exception {
 		ViewImageResponse viewImageResponse = new ViewImageResponse(  );
-		StreamImageSource streamImageSource = new StreamImageSource( ImageType.JPEG, new byte[] {1} );
+		SimpleImageSource simpleImageSource = new SimpleImageSource( ImageType.JPEG, new byte[] { 1} );
 		HttpServletResponse response = mock( HttpServletResponse.class );
 		when( response.getOutputStream() ).thenThrow( new IOException() );
-		viewImageResponse.setImageSource( streamImageSource );
+		viewImageResponse.setImageSource( simpleImageSource );
 		when( imageRestService.renderImage( any( ViewImageRequest.class ) ) ).thenReturn( viewImageResponse );
 		      controller.render( "abc", "id", mock( ImageModificationDto.class ), mock(
 				      ImageVariantDto.class ), response );
@@ -58,9 +58,9 @@ public class TestImageStreamingController
 	@Test
 	public void testThatExpiresHeaderIsCorrect() throws Exception {
 		ViewImageResponse viewImageResponse = new ViewImageResponse(  );
-		StreamImageSource streamImageSource = new StreamImageSource( ImageType.JPEG, new byte[] {1} );
+		SimpleImageSource simpleImageSource = new SimpleImageSource( ImageType.JPEG, new byte[] { 1} );
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		viewImageResponse.setImageSource( streamImageSource );
+		viewImageResponse.setImageSource( simpleImageSource );
 		when( imageRestService.renderImage( any( ViewImageRequest.class ) ) ).thenReturn( viewImageResponse );
 		controller.render( "abc", "id", mock( ImageModificationDto.class ), mock(
 				ImageVariantDto.class ), response );

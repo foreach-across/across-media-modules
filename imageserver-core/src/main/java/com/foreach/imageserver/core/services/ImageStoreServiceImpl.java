@@ -1,54 +1,28 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.ImageSource;
+import com.foreach.imageserver.core.transformers.SimpleImageSource;
 import com.foreach.imageserver.logging.LogHelper;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.util.Collections;
-import java.util.Set;
 
-import static com.foreach.imageserver.core.config.ServicesConfiguration.IMAGESERVER_TEMP_REPOSITORY;
-
-/**
- * Still to verify and/or implement:
- * - Files.createTempPath needs to be atomic.
- * - Files.copy with option REPLACE_EXISTING should never cause the temp file to not exist.
- * <p>
- * TODO Resolve the above.
- */
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class ImageStoreServiceImpl implements ImageStoreService
 {
-	private static final Logger LOG = LoggerFactory.getLogger( ImageStoreServiceImpl.class );
-
-	@Autowired
-	private FileManager fileManager;
-	@Autowired
-	private DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory;
-
-	private final Set<PosixFilePermission> folderPermissions;
-	private final Set<PosixFilePermission> filePermissions;
-
-	public ImageStoreServiceImpl( String folderPermissions,
-	                              String filePermissions ) {
-		this.folderPermissions = toPermissions( folderPermissions );
-		this.filePermissions = toPermissions( filePermissions );
-	}
+	private final FileManager fileManager;
+	private final DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory;
 
 	@Override
 	public void storeOriginalImage( Image image, byte[] imageBytes ) {
@@ -69,11 +43,11 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	@Override
-	public StreamImageSource getOriginalImage( Image image ) {
+	public ImageSource getOriginalImage( Image image ) {
 		FileDescriptor fileDescriptor = getOriginalFileDescriptor( image );
 
 		if ( LOG.isDebugEnabled() ) {
-			LOG.debug( "Original image {} - expected location {}/{}", image.getId(), fileDescriptor );
+			LOG.debug( "Original image {} - expected location {}", image.getId(), fileDescriptor );
 		}
 
 		return read( fileDescriptor, image.getImageType() );
@@ -97,24 +71,27 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	}
 
 	@Override
+	@SneakyThrows
 	public void storeVariantImage( Image image,
 	                               ImageContext context,
 	                               ImageResolution imageResolution,
 	                               ImageVariant imageVariant,
-	                               InputStream imageStream ) {
-		if ( image == null || context == null || imageResolution == null || imageVariant == null || imageStream == null ) {
+	                               ImageSource imageSource ) {
+		if ( image == null || context == null || imageResolution == null || imageVariant == null || imageSource == null ) {
 			LOG.warn(
-					"Null parameters not allowed - ImageStoreServiceImpl#storeVariantImage: image={}, context={}, imageResolution={}, imageVariant={}, imageStream={}",
-					LogHelper.flatten( image, context, imageResolution, imageVariant, imageStream ) );
+					"Null parameters not allowed - ImageStoreServiceImpl#storeVariantImage: image={}, context={}, imageResolution={}, imageVariant={}, imageSource={}",
+					LogHelper.flatten( image, context, imageResolution, imageVariant, imageSource ) );
 		}
-		writeSafely( imageStream, getVariantsFileDescriptor( image, context, imageResolution, imageVariant ) );
+		try (InputStream is = imageSource.getImageStream()) {
+			writeSafely( is, getVariantsFileDescriptor( image, context, imageResolution, imageVariant ) );
+		}
 	}
 
 	@Override
-	public StreamImageSource getVariantImage( Image image,
-	                                          ImageContext context,
-	                                          ImageResolution imageResolution,
-	                                          ImageVariant imageVariant ) {
+	public ImageSource getVariantImage( Image image,
+	                                    ImageContext context,
+	                                    ImageResolution imageResolution,
+	                                    ImageVariant imageVariant ) {
 		if ( image == null || context == null || imageResolution == null || imageVariant == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageStoreServiceImpl#getVariantImage: image={}, context={}, imageResolution={}, imageVariant={}",
@@ -136,8 +113,10 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		}
 
 		FileDescriptor descriptor = getVariantsFileDescriptor( image, context, imageResolution, imageVariant );
-		if ( fileManager.exists( descriptor ) ) {
-			boolean deleted = fileManager.delete( descriptor );
+		FileResource fileResource = fileManager.getFileResource( descriptor );
+
+		if ( fileResource.exists() ) {
+			boolean deleted = fileResource.delete();
 			LOG.debug( "Original image file for {} was {} deleted", image, deleted ? "successfully" : "not" );
 		}
 		else {
@@ -158,53 +137,23 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	private void writeSafely( InputStream inputStream, FileDescriptor target ) {
 		try {
-			FileDescriptor temp = fileManager.save( IMAGESERVER_TEMP_REPOSITORY, inputStream );
-			fileManager.move( temp, target );
-			File file = fileManager.getAsFile( target );
-			setFilePermissionsWithoutFailing( file.toPath() );
+			FileResource fileResource = fileManager.getFileResource( target );
+			fileResource.copyFrom( inputStream );
 		}
 		catch ( Exception e ) {
-			LOG.error( "Error while creating folder - ImageStoreServiceImpl#writeSafely: targetPath={}", target,
+			LOG.error( "Error while creating file resource - ImageStoreServiceImpl#writeSafely: targetPath={}", target,
 			           e );
 			throw new ImageStoreException( e );
 		}
 	}
 
-	private StreamImageSource read( FileDescriptor fileDescriptor, ImageType imageType ) {
-		if ( fileManager.exists( fileDescriptor ) ) {
-			InputStream imageStream = fileManager.getInputStream( fileDescriptor );
-			if ( imageStream != null ) {
-				return new StreamImageSource( imageType, imageStream );
-			}
+	private ImageSource read( FileDescriptor fileDescriptor, ImageType imageType ) {
+		FileResource fileResource = fileManager.getFileResource( fileDescriptor );
+
+		if ( fileResource.exists() ) {
+			return new SimpleImageSource( imageType, fileResource );
 		}
+
 		return null;
 	}
-
-	private void setFilePermissionsWithoutFailing( Path path ) {
-		/**
-		 * The variant of Files::createTempFile that allows for setting the file permissions in one go doesn't seem
-		 * to work on an NFS volume. Fixing the permissions of the temp file before moving it to its final destination
-		 * also fails. As a last resort, we blindly try to fix the permissions on the target file. As it may have been
-		 * manipulated by external actors in the mean time, we ignore all errors.
-		 */
-
-		if ( !CollectionUtils.isEmpty( filePermissions ) ) {
-			try {
-				Files.setPosixFilePermissions( path, filePermissions );
-			}
-			catch ( IOException e ) {
-				// Must be ignored, see comment above.
-			}
-		}
-	}
-
-	private Set<PosixFilePermission> toPermissions( String permissionsString ) {
-		if ( StringUtils.isNotBlank( permissionsString ) ) {
-			return PosixFilePermissions.fromString( permissionsString );
-		}
-		else {
-			return Collections.emptySet();
-		}
-	}
-
 }

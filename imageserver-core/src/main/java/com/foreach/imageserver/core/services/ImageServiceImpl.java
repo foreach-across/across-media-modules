@@ -9,10 +9,12 @@ import com.foreach.imageserver.core.services.exceptions.ImageCouldNotBeRetrieved
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.ImageSource;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
-import com.foreach.imageserver.dto.*;
+import com.foreach.imageserver.dto.ImageModificationDto;
+import com.foreach.imageserver.dto.ImageTransformDto;
+import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.imageserver.logging.LogHelper;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -133,16 +135,19 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
+	@SneakyThrows
 	public Image loadImageData( @NonNull byte[] imageBytes ) {
-		ImageAttributes imageAttributes = imageTransformService.getAttributes( new ByteArrayInputStream( imageBytes ) );
+		try (ByteArrayInputStream inputStream = new ByteArrayInputStream( imageBytes )) {
+			ImageAttributes imageAttributes = imageTransformService.getAttributes( inputStream );
 
-		Image image = new Image();
-		image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
-		image.setDimensions( imageAttributes.getDimensions() );
-		image.setImageType( imageAttributes.getType() );
-		image.setFileSize( imageBytes.length );
-		image.setSceneCount( imageAttributes.getSceneCount() );
-		return image;
+			Image image = new Image();
+			image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
+			image.setDimensions( imageAttributes.getDimensions() );
+			image.setImageType( imageAttributes.getType() );
+			image.setFileSize( imageBytes.length );
+			image.setSceneCount( imageAttributes.getSceneCount() );
+			return image;
+		}
 	}
 
 	@Override
@@ -364,7 +369,7 @@ public class ImageServiceImpl implements ImageService
 		imageResolution.setWidth( modificationDto.getResolution().getWidth() );
 		imageResolution.setHeight( modificationDto.getResolution().getHeight() );
 
-		StreamImageSource originalImageSource = imageStoreService.getOriginalImage( image );
+		ImageSource originalImageSource = imageStoreService.getOriginalImage( image );
 		if ( originalImageSource == null ) {
 			String message = String.format(
 					"The original image is not available on disk. image=%s, context=%s, modificationDto=%s, requestedResolution=%s, imageVariant=%s,",
@@ -395,8 +400,7 @@ public class ImageServiceImpl implements ImageService
 
 		// TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
 		if ( storeImage ) {
-			imageStoreService.storeVariantImage( image, context, requestedResolution, imageVariant,
-			                                     variantImageSource.getImageStream() );
+			imageStoreService.storeVariantImage( image, context, requestedResolution, imageVariant, variantImageSource );
 		}
 
 		return variantImageSource;

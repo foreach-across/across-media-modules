@@ -8,6 +8,7 @@ import com.foreach.imageserver.core.rest.services.ImageRestServiceImpl;
 import com.foreach.imageserver.core.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -50,16 +51,8 @@ public class ServicesConfiguration
 		return imageRestService;
 	}
 
-	@Bean
-	@Exposed
-	public ImageStoreService imageStoreService() throws IOException {
-		registerFileRepositories();
-		return new ImageStoreServiceImpl(
-				settings.getStore().getFolderPermissions(),
-				settings.getStore().getFilePermissions() );
-	}
-
-	private void registerFileRepositories() {
+	@Autowired
+	public void autoRegisterFileRepositories() {
 		File folder = settings.getStore().getFolder();
 		Path rootFolder = folder != null ? folder.toPath() : null;
 		createAndRegisterFileRepositoryIfNecessary( IMAGESERVER_TEMP_REPOSITORY, "temp", rootFolder, false );

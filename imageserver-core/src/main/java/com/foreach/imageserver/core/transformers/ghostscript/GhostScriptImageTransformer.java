@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -40,7 +41,9 @@ public class GhostScriptImageTransformer implements ImageTransformer
 	@SneakyThrows
 	public Dimensions execute( ImageCalculateDimensionsAction action ) {
 		PDFDocument pdfDocument = new PDFDocument();
-		pdfDocument.load( action.getImageSource().getImageStream() );
+		try (InputStream is = action.getImageSource().getImageStream()) {
+			pdfDocument.load( is );
+		}
 
 		return null;
 	}
@@ -52,9 +55,11 @@ public class GhostScriptImageTransformer implements ImageTransformer
 
 	@Override
 	@SneakyThrows
-	public InMemoryImageSource execute( ImageModifyAction action ) {
+	public ImageSource execute( ImageModifyAction action ) {
 		PDFDocument pdfDocument = new PDFDocument();
-		pdfDocument.load( action.getSourceImageSource().getImageStream() );
+		try (InputStream is = action.getSourceImageSource().getImageStream()) {
+			pdfDocument.load( is );
+		}
 
 		SimpleRenderer renderer = new SimpleRenderer();
 		renderer.setResolution( 150 );
@@ -63,7 +68,7 @@ public class GhostScriptImageTransformer implements ImageTransformer
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ImageIO.write( (RenderedImage) images.get( 0 ), "png", bos );
 
-		return new InMemoryImageSource( ImageType.PNG, bos.toByteArray() );
+		return new SimpleImageSource( ImageType.PNG, bos.toByteArray() );
 	}
 
 	@Override

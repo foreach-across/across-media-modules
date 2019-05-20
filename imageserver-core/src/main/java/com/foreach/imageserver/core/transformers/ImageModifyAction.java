@@ -14,7 +14,7 @@ public class ImageModifyAction
 	private final ImageType outputType;
 
 
-	public ImageModifyAction( StreamImageSource sourceImageSource,
+	public ImageModifyAction( SimpleImageSource sourceImageSource,
 	                          int outputWidth,
 	                          int outputHeight,
 	                          int cropX,

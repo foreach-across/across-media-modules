@@ -87,7 +87,7 @@ public class ImageMagickTransformCommandExecutor extends AbstractOrderedImageCom
 
 				byte[] bytes = os.toByteArray();
 				ImageType outputType = determineOutputType( command.getTransform().getOutputType(), command.getOriginalImageAttributes().getType() );
-				command.setExecutionResult( new InMemoryImageSource( outputType, bytes ) );
+				command.setExecutionResult( new SimpleImageSource( outputType, bytes ) );
 			}
 
 		}
