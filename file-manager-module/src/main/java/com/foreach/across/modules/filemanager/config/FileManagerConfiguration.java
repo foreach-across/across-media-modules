@@ -65,8 +65,11 @@ class FileManagerConfiguration
 		if ( tempFolder != null ) {
 			LOG.info( "Creating file repository for temporary files in folder {}", tempFolder );
 
-			LocalFileRepository tempRepository = new LocalFileRepository( FileManager.TEMP_REPOSITORY, tempFolder );
-			tempRepository.setPathGenerator( DateFormatPathGenerator.YEAR_MONTH_DAY );
+			LocalFileRepository tempRepository = LocalFileRepository.builder()
+			                                                        .repositoryId( FileManager.TEMP_REPOSITORY )
+			                                                        .rootFolder( tempFolder )
+			                                                        .pathGenerator( DateFormatPathGenerator.YEAR_MONTH_DAY )
+			                                                        .build();
 
 			registry.registerRepository( tempRepository );
 		}

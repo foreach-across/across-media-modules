@@ -82,9 +82,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 			return super.contentLength();
 		}
 		catch ( FileNotFoundException fnfe ) {
-			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + fileDescriptor.toString() + "] not found!" );
-			exception.initCause( fnfe );
-			throw exception;
+			throw fileNotFound( fileDescriptor, fnfe );
 		}
 	}
 
@@ -94,9 +92,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 			return super.lastModified();
 		}
 		catch ( FileNotFoundException fnfe ) {
-			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + fileDescriptor.toString() + "] not found!" );
-			exception.initCause( fnfe );
-			throw exception;
+			throw fileNotFound( fileDescriptor, fnfe );
 		}
 	}
 
@@ -138,13 +134,17 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 		}
 		catch ( AmazonS3Exception s3e ) {
 			if ( s3e.getStatusCode() == 404 ) {
-				FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + fileDescriptor.toString() + "] not found!" );
-				exception.initCause( s3e );
-				throw exception;
+				throw fileNotFound( fileDescriptor, s3e );
 			}
 			else {
 				throw s3e;
 			}
 		}
+	}
+
+	private FileNotFoundException fileNotFound( FileDescriptor fileDescriptor, Throwable cause ) {
+		FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + fileDescriptor.toString() + "] not found!" );
+		exception.initCause( cause );
+		return exception;
 	}
 }

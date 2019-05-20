@@ -33,6 +33,7 @@ import java.util.*;
  *
  * @see com.foreach.across.modules.filemanager.services.FileRepositoryDelegate
  */
+@SuppressWarnings("deprecation")
 @Service
 public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 {

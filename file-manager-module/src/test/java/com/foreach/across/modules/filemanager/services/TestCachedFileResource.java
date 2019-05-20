@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Arne Vandamme
  * @since 1.4.0
  */
+@SuppressWarnings("squid:S2925")
 @ExtendWith(MockitoExtension.class)
 class TestCachedFileResource
 {

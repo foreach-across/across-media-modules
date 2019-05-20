@@ -42,11 +42,11 @@ public class AmazonS3FileRepository extends AbstractFileRepository implements Fi
 	private final TaskExecutor taskExecutor;
 
 	@Builder
-	public AmazonS3FileRepository( @NonNull String repositoryId,
-	                               @NonNull AmazonS3 amazonS3,
-	                               @NonNull String bucketName,
-	                               PathGenerator pathGenerator,
-	                               TaskExecutor taskExecutor ) {
+	AmazonS3FileRepository( @NonNull String repositoryId,
+	                        @NonNull AmazonS3 amazonS3,
+	                        @NonNull String bucketName,
+	                        PathGenerator pathGenerator,
+	                        TaskExecutor taskExecutor ) {
 		super( repositoryId );
 		setPathGenerator( pathGenerator );
 		this.amazonS3Client = amazonS3;

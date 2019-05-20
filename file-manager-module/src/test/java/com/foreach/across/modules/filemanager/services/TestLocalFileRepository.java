@@ -19,6 +19,6 @@ package com.foreach.across.modules.filemanager.services;
 public class TestLocalFileRepository extends BaseFileRepositoryTest
 {
 	public void createRepository() {
-		fileRepository = new LocalFileRepository( "default", ROOT_DIR );
+		fileRepository = LocalFileRepository.builder().repositoryId( "default" ).rootFolder( ROOT_DIR ).build();
 	}
 }

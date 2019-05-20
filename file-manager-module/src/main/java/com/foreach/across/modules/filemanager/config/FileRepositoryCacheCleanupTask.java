@@ -5,6 +5,7 @@ import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
 import com.foreach.across.modules.filemanager.services.CachingFileRepository;
 import com.foreach.across.modules.filemanager.services.FileRepositoryRegistry;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -56,6 +57,7 @@ public class FileRepositoryCacheCleanupTask
 	}
 
 	@PreDestroy
+	@SneakyThrows
 	void stop() {
 		monitorThread.shutdown();
 
@@ -64,6 +66,7 @@ public class FileRepositoryCacheCleanupTask
 		}
 		catch ( InterruptedException ie ) {
 			LOG.warn( "Failed to wait for clean shutdown of lock monitor for cache cleanup task" );
+			throw ie;
 		}
 	}
 }

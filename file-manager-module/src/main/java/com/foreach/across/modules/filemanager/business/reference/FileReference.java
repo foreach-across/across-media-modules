@@ -84,6 +84,7 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 	@Column(name = "hash")
 	private String hash;
 
+	@SuppressWarnings( "squid:S2637" )
 	public FileReference() {
 		setUuid( "" );
 	}

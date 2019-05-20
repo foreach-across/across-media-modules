@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, EntityModule.NAME })
 public class FileReferenceViewElementBuilderFactory implements EntityViewElementBuilderFactory
 {
-	public final static String FILE_REFERENCE_CONTROL = FileReferenceViewElementBuilderFactory.class.getName() + ".fileReferenceControl";
+	public static final String FILE_REFERENCE_CONTROL = FileReferenceViewElementBuilderFactory.class.getName() + ".fileReferenceControl";
 
 	@Override
 	public boolean supports( String viewElementType ) {

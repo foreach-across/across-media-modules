@@ -1,6 +1,7 @@
 package com.foreach.across.modules.filemanager.utils;
 
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
+import lombok.experimental.UtilityClass;
 
 /**
  * Provides shortcut utility methods for working with {@link FileReference}s.
@@ -8,6 +9,7 @@ import com.foreach.across.modules.filemanager.business.reference.FileReference;
  * @author Steven Gentens
  * @since 1.3.0
  */
+@UtilityClass
 public class FileReferenceUtils
 {
 	/**

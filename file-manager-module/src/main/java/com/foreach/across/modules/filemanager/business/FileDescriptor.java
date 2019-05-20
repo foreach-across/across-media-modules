@@ -31,7 +31,9 @@ public class FileDescriptor implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private final String repositoryId, fileId, folderId;
+	private final String repositoryId;
+	private final String fileId;
+	private final String folderId;
 
 	private final String uri;
 
@@ -187,6 +189,7 @@ public class FileDescriptor implements Serializable
 	 * @param fileId       identifier of the file
 	 * @return the descriptor
 	 */
+	@SuppressWarnings( "all" )
 	public static FileDescriptor of( String repositoryId, String folderId, String fileId ) {
 		return new FileDescriptor( repositoryId, folderId, fileId );
 	}

@@ -28,13 +28,13 @@ import java.util.function.Function;
  * <p/>
  * Internally this implementation uses a form of LRU map to evict items when the maximum size has been reached.
  * Additionally you can run {@link #cleanupCache()} to remove stale items from the cache. It might be best practice to
- * execute this method periodically.
+ * execute this method periodically. See also {@link com.foreach.across.modules.filemanager.FileManagerModuleSettings.CacheCleanupProperties}.
  * <p/>
  * If file resource updates happen only through the {@link FileManager}, keeping target and cache in sync should
  * not be much of a problem. Multi-instance applications can use a {@link #withTranslatedFileDescriptor()} strategy
  * to ensure optimal cache use (for example with shared network storage).
  * <p/>
- * NOTE: Developers should ensure only to register the caching version of the repository in their application.
+ * NOTE: Developers should only register the caching version of the repository in their application.
  *
  * @author Arne Vandamme
  * @see CachedFileResource
@@ -220,7 +220,7 @@ public class CachingFileRepository extends AbstractFileRepository
 
 	/**
 	 * Pre-configures a caching file repository which translates the target file descriptor into
-	 * a file descriptor in the cache repository. Both folder is and file name of the target file descriptor
+	 * a file descriptor in the cache repository. Both folder id and file name of the target file descriptor
 	 * will be kept. This means that the same target file descriptor will always result in the same cache file descriptor.
 	 * This builder is also preconfigured to <strong>NOT</strong> remove the actual cached files on shutdown or evictions.
 	 * It is assumed they will be reused whenever the target file descriptor is requested again.
@@ -281,7 +281,7 @@ public class CachingFileRepository extends AbstractFileRepository
 		}
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "squid:S1068" })
 	public static class CachingFileRepositoryBuilder
 	{
 		private String cacheRepositoryId = FileManager.TEMP_REPOSITORY;
@@ -290,7 +290,7 @@ public class CachingFileRepository extends AbstractFileRepository
 		private int maxCacheItems = 100;
 
 		public CachingFileRepositoryBuilder() {
-			timeBasedRemoval( 60 * 60 * 1000, 0 );
+			timeBasedRemoval( 60 * 60 * 1000L, 0 );
 		}
 
 		/**

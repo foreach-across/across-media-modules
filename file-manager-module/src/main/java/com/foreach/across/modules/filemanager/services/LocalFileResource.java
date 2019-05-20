@@ -90,7 +90,7 @@ class LocalFileResource extends FileSystemResource implements FileResource, File
 			FileUtils.copyFile( originalFile, getTargetFile() );
 		}
 		else {
-			if ( originalFile == null || originalFile.isDirectory() ) {
+			if ( originalFile.isDirectory() ) {
 				throw new IOException( "Original file '" + originalFile + "' is a directory" );
 			}
 

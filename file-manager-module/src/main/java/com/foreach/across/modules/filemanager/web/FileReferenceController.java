@@ -28,7 +28,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 @ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, AcrossWebModule.NAME })
 public class FileReferenceController
 {
+	@SuppressWarnings("squid:S1075")
 	public static final String BASE_PATH = "/api/fmm/reference";
+
 	private final FileReferenceRepository fileReferenceRepository;
 	private final FileManager fileManager;
 

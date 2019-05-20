@@ -69,7 +69,7 @@ class TestCachingFileRepositoryLocalAndS3 extends BaseFileRepositoryTest
 		                                                              .build();
 		repositoryToTest.setFileManager( fileManager );
 
-		cacheRepository = new LocalFileRepository( "cache", ROOT_DIR );
+		cacheRepository = LocalFileRepository.builder().repositoryId( "cache" ).rootFolder( ROOT_DIR ).build();
 		fileManager.registerRepository( cacheRepository );
 
 		this.fileRepository = repositoryToTest;

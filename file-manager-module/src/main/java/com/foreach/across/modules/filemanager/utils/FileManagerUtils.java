@@ -16,6 +16,8 @@
 
 package com.foreach.across.modules.filemanager.utils;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +29,7 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+@UtilityClass
 public class FileManagerUtils
 {
 	public static void fastCopy( InputStream original, File target ) throws IOException {

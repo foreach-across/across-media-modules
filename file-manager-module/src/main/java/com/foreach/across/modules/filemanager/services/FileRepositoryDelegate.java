@@ -31,6 +31,7 @@ import java.io.OutputStream;
  *
  * @see com.foreach.across.modules.filemanager.services.FileManagerImpl
  */
+@SuppressWarnings("deprecation")
 public class FileRepositoryDelegate implements FileRepository
 {
 	private FileRepository actualImplementation;
