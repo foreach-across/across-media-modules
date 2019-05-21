@@ -32,7 +32,7 @@ import java.net.URL;
  * @since 1.4.0
  */
 @RequiredArgsConstructor
-public class CachedFileResource implements FileResource
+public class CachedFileResource implements ExpiringFileResource
 {
 	/**
 	 * The actual target file resource which has a cache.
@@ -140,6 +140,7 @@ public class CachedFileResource implements FileResource
 
 	@Override
 	public OutputStream getOutputStream() throws IOException {
+		lastAccessTime = System.currentTimeMillis();
 		return new TeeOutputStream( target.getOutputStream(), cache.getOutputStream() );
 	}
 
@@ -159,7 +160,7 @@ public class CachedFileResource implements FileResource
 	@Override
 	public void copyFrom( File originalFile, boolean deleteOriginal ) throws IOException {
 		try {
-			FileResource.super.copyFrom( originalFile, deleteOriginal );
+			ExpiringFileResource.super.copyFrom( originalFile, deleteOriginal );
 		}
 		catch ( IOException ioe ) {
 			flushCache();
@@ -170,7 +171,7 @@ public class CachedFileResource implements FileResource
 	@Override
 	public void copyFrom( FileResource originalFileResource, boolean deleteOriginal ) throws IOException {
 		try {
-			FileResource.super.copyFrom( originalFileResource, deleteOriginal );
+			ExpiringFileResource.super.copyFrom( originalFileResource, deleteOriginal );
 		}
 		catch ( IOException ioe ) {
 			flushCache();
@@ -181,7 +182,7 @@ public class CachedFileResource implements FileResource
 	@Override
 	public void copyFrom( Resource resource ) throws IOException {
 		try {
-			FileResource.super.copyFrom( resource );
+			ExpiringFileResource.super.copyFrom( resource );
 		}
 		catch ( IOException ioe ) {
 			flushCache();
@@ -192,7 +193,7 @@ public class CachedFileResource implements FileResource
 	@Override
 	public void copyFrom( InputStream inputStream ) throws IOException {
 		try {
-			FileResource.super.copyFrom( inputStream );
+			ExpiringFileResource.super.copyFrom( inputStream );
 		}
 		catch ( IOException ioe ) {
 			flushCache();
@@ -203,8 +204,8 @@ public class CachedFileResource implements FileResource
 	/**
 	 * @return timestamp when cache item was created (or 0 if there is no cache item)
 	 */
-	@SuppressWarnings("WeakerAccess")
-	public long getCacheCreationTime() {
+	@Override
+	public long getCreationTime() {
 		try {
 			return cache.exists() ? cache.lastModified() : 0;
 		}

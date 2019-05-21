@@ -99,7 +99,7 @@ class TestCustomFileRepositoryConfiguration
 		@Bean
 		FileRepository remoteRepository( AmazonS3 amazonS3 ) {
 			return CachingFileRepository.withTranslatedFileDescriptor()
-			                            .removeCacheOnShutdown( true )
+			                            .expireOnShutdown( true )
 			                            .targetFileRepository(
 					                            AmazonS3FileRepository.builder()
 					                                                  .repositoryId( "s3" )

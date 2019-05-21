@@ -2,8 +2,6 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
-import com.foreach.across.modules.filemanager.services.CachingFileRepository.CachingFileRepositoryBuilder;
-import org.assertj.core.api.AbstractBooleanAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,7 +74,7 @@ class TestCachingFileRepository
 	@Test
 	void pathGeneratorForwardsToTargetIfAbstractFileRepository() {
 		AbstractFileRepository target = mock( AbstractFileRepository.class );
-		repository = repository.toBuilder().targetFileRepository( target ).build();
+		repository = CachingFileRepository.builder().targetFileRepository( target ).cacheFileResourceResolver( cacheResolver ).build();
 
 		PathGenerator pg = mock( PathGenerator.class );
 		repository.setPathGenerator( pg );
@@ -102,7 +100,7 @@ class TestCachingFileRepository
 		when( targetRepository.getFileResource( fd ) ).thenReturn( targetFileResource );
 		when( cacheResolver.apply( fd, cacheRepository ) ).thenReturn( cacheFileResource );
 
-		CachedFileResource fr = (CachedFileResource) repository.getFileResource( fd );
+		CachedFileResource fr = repository.getFileResource( fd );
 		assertThat( fr.getCache() ).isSameAs( cacheFileResource );
 		assertThat( fr.getTarget() ).isSameAs( targetFileResource );
 
@@ -122,7 +120,7 @@ class TestCachingFileRepository
 		when( targetRepository.getFileResource( fd ) ).thenReturn( targetFileResource );
 		when( cacheRepository.createFileResource() ).thenReturn( cacheFileResource );
 
-		CachedFileResource fr = (CachedFileResource) repository.getFileResource( fd );
+		CachedFileResource fr = repository.getFileResource( fd );
 		assertThat( fr.getCache() ).isSameAs( cacheFileResource );
 		assertThat( fr.getTarget() ).isSameAs( targetFileResource );
 
@@ -142,7 +140,7 @@ class TestCachingFileRepository
 		when( targetRepository.getFileResource( fd ) ).thenReturn( targetFileResource );
 		when( cacheRepository.getFileResource( FileDescriptor.of( "cache:2:3" ) ) ).thenReturn( cacheFileResource );
 
-		CachedFileResource fr = (CachedFileResource) repository.getFileResource( fd );
+		CachedFileResource fr = repository.getFileResource( fd );
 		assertThat( fr.getCache() ).isSameAs( cacheFileResource );
 		assertThat( fr.getTarget() ).isSameAs( targetFileResource );
 	}
@@ -153,8 +151,8 @@ class TestCachingFileRepository
 		                                  .targetFileRepository( targetRepository )
 		                                  .cacheRepositoryId( "cache" )
 		                                  .cacheFileResourceResolver( cacheResolver )
-		                                  .removeCacheOnEvict( false )
-		                                  .maxCacheItems( 0 )   // evict immediately
+		                                  .expireOnEvict( false )
+		                                  .maxItemsToTrack( 0 )   // evict immediately
 		                                  .build();
 		repository.setFileManager( fileManager );
 
@@ -167,19 +165,19 @@ class TestCachingFileRepository
 		when( targetRepository.getFileResource( fd ) ).thenReturn( targetFileResource );
 		when( cacheResolver.apply( fd, cacheRepository ) ).thenReturn( cacheFileResource );
 
-		CachedFileResource fr = (CachedFileResource) repository.getFileResource( fd );
+		CachedFileResource fr = repository.getFileResource( fd );
 
 		verifyZeroInteractions( cacheFileResource );
 		assertThat( repository.getFileResource( fd ) ).isNotSameAs( fr );
 	}
 
 	@Test
-	void removeCacheOnEvict() {
+	void expireOnEvict() {
 		repository = CachingFileRepository.builder()
 		                                  .targetFileRepository( targetRepository )
 		                                  .cacheRepositoryId( "cache" )
 		                                  .cacheFileResourceResolver( cacheResolver )
-		                                  .maxCacheItems( 0 )   // evict immediately
+		                                  .maxItemsToTrack( 0 )   // evict immediately
 		                                  .build();
 		repository.setFileManager( fileManager );
 
@@ -193,7 +191,7 @@ class TestCachingFileRepository
 		when( targetRepository.getFileResource( fd ) ).thenReturn( targetFileResource );
 		when( cacheResolver.apply( fd, cacheRepository ) ).thenReturn( cacheFileResource );
 
-		CachedFileResource fr = (CachedFileResource) repository.getFileResource( fd );
+		CachedFileResource fr = repository.getFileResource( fd );
 
 		verify( cacheFileResource ).delete();
 		assertThat( repository.getFileResource( fd ) ).isNotSameAs( fr );
@@ -211,7 +209,7 @@ class TestCachingFileRepository
 		when( targetRepository.getFileResource( fd ) ).thenReturn( targetFileResource );
 		when( cacheResolver.apply( fd, cacheRepository ) ).thenReturn( cacheFileResource );
 
-		CachedFileResource fr = (CachedFileResource) repository.getFileResource( fd );
+		CachedFileResource fr = repository.getFileResource( fd );
 
 		repository.shutdown();
 
@@ -225,7 +223,7 @@ class TestCachingFileRepository
 		                                  .targetFileRepository( targetRepository )
 		                                  .cacheRepositoryId( "cache" )
 		                                  .cacheFileResourceResolver( cacheResolver )
-		                                  .removeCacheOnShutdown( false )
+		                                  .expireOnShutdown( false )
 		                                  .build();
 		repository.setFileManager( fileManager );
 
@@ -238,7 +236,7 @@ class TestCachingFileRepository
 		when( targetRepository.getFileResource( fd ) ).thenReturn( targetFileResource );
 		when( cacheResolver.apply( fd, cacheRepository ) ).thenReturn( cacheFileResource );
 
-		CachedFileResource fr = (CachedFileResource) repository.getFileResource( fd );
+		CachedFileResource fr = repository.getFileResource( fd );
 
 		repository.shutdown();
 
@@ -249,12 +247,12 @@ class TestCachingFileRepository
 	@Test
 	@SuppressWarnings("unchecked")
 	void removedOnCleanupCache() {
-		Function<CachedFileResource, Boolean> removalStrategy = mock( Function.class );
+		Function<ExpiringFileResource, Boolean> expirationStrategy = mock( Function.class );
 		repository = CachingFileRepository.builder()
 		                                  .targetFileRepository( targetRepository )
 		                                  .cacheRepositoryId( "cache" )
 		                                  .cacheFileResourceResolver( cacheResolver )
-		                                  .removalStrategy( removalStrategy )
+		                                  .expirationStrategy( expirationStrategy )
 		                                  .build();
 		repository.setFileManager( fileManager );
 
@@ -268,61 +266,18 @@ class TestCachingFileRepository
 		when( targetRepository.getFileResource( fd ) ).thenReturn( targetFileResource );
 		when( cacheResolver.apply( fd, cacheRepository ) ).thenReturn( cacheFileResource );
 
-		CachedFileResource fr = (CachedFileResource) repository.getFileResource( fd );
+		CachedFileResource fr = repository.getFileResource( fd );
 
-		when( removalStrategy.apply( fr ) ).thenReturn( false );
-		repository.cleanupCache();
+		when( expirationStrategy.apply( fr ) ).thenReturn( false );
+		repository.expireTrackedItems();
 
 		verifyZeroInteractions( cacheFileResource );
 		assertThat( repository.getFileResource( fd ) ).isSameAs( fr );
 
-		when( removalStrategy.apply( fr ) ).thenReturn( true );
-		repository.cleanupCache();
+		when( expirationStrategy.apply( fr ) ).thenReturn( true );
+		repository.expireTrackedItems();
 
 		verify( cacheFileResource ).delete();
 		assertThat( repository.getFileResource( fd ) ).isNotSameAs( fr );
-	}
-
-	@Test
-	void timeBasedRemovalStrategy() {
-		assertCacheRemoved( 0, 0, -1000, -2000 ).isFalse();
-		assertCacheRemoved( 1000, 0, -2000, -2000 ).isTrue();
-		assertCacheRemoved( 1000, 0, -100, -2000 ).isFalse();
-
-		assertCacheRemoved( 0, 1000, -2000, -2000 ).isTrue();
-		assertCacheRemoved( 0, 1000, -2000, -100 ).isFalse();
-		assertCacheRemoved( 0, 1000, -2000, 0 ).isFalse();
-
-		assertCacheRemoved( 1000, 1000, -2000, -2000 ).isTrue();
-	}
-
-	@Test
-	void cleanupCachesInRegistry() {
-		FileManagerImpl fileManager = new FileManagerImpl();
-		CachingFileRepository cachingOne = mock( CachingFileRepository.class );
-		when( cachingOne.getRepositoryId() ).thenReturn( "one" );
-		CachingFileRepository cachingTwo = mock( CachingFileRepository.class );
-		when( cachingTwo.getRepositoryId() ).thenReturn( "two " );
-		FileRepository nonCaching = mock( FileRepository.class );
-		when( nonCaching.getRepositoryId() ).thenReturn( "three " );
-
-		fileManager.registerRepository( cachingOne );
-		fileManager.registerRepository( nonCaching );
-		fileManager.registerRepository( cachingTwo );
-
-		CachingFileRepository.cleanupCaches( fileManager );
-
-		verify( cachingOne ).cleanupCache();
-		verify( cachingTwo ).cleanupCache();
-	}
-
-	private AbstractBooleanAssert<?> assertCacheRemoved( long maxUnusedDuration, long maxAge, long lastAccessTime, long cacheCreationTime ) {
-		Function<CachedFileResource, Boolean> removalStrategy = CachingFileRepositoryBuilder.timeBasedRemovalStrategy( maxUnusedDuration, maxAge );
-
-		CachedFileResource resource = mock( CachedFileResource.class, withSettings().lenient() );
-		when( resource.getLastAccessTime() ).thenReturn( System.currentTimeMillis() + lastAccessTime );
-		when( resource.getCacheCreationTime() ).thenReturn( System.currentTimeMillis() + cacheCreationTime );
-
-		return assertThat( removalStrategy.apply( resource ) );
 	}
 }

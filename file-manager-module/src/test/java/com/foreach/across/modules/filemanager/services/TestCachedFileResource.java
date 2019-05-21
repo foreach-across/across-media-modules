@@ -228,9 +228,9 @@ class TestCachedFileResource
 	@SneakyThrows
 	void getCacheCreationTime() {
 		when( cache.lastModified() ).thenReturn( 123L );
-		assertThat( resource.getCacheCreationTime() ).isEqualTo( 0 );
+		assertThat( resource.getCreationTime() ).isEqualTo( 0 );
 		when( cache.exists() ).thenReturn( true );
-		assertThat( resource.getCacheCreationTime() ).isEqualTo( 123L );
+		assertThat( resource.getCreationTime() ).isEqualTo( 123L );
 	}
 
 	@Test

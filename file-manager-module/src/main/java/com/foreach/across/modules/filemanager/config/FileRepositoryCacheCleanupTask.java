@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @ConditionalOnProperty(value = "fileManagerModule.cacheCleanup.enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j
-@SuppressWarnings( "unused" )
+@SuppressWarnings("unused")
 public class FileRepositoryCacheCleanupTask
 {
 	private final FileManagerModuleSettings settings;
@@ -49,7 +49,7 @@ public class FileRepositoryCacheCleanupTask
 	private void cleanupCaches() {
 		try {
 			LOG.trace( "Scheduled execution of file repository cache cleanup" );
-			CachingFileRepository.cleanupCaches( fileRepositoryRegistry );
+			CachingFileRepository.expireTrackedItems( fileRepositoryRegistry );
 		}
 		catch ( Exception e ) {
 			LOG.error( "Exception during file repository cache cleanup", e );
