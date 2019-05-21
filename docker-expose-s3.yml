@@ -4,5 +4,4 @@ services:
   maven-base:
     network_mode: "host"
   sonar:
-    network_mode: "host"  sonar:
     network_mode: "host"
