@@ -43,9 +43,9 @@ public class FileManagerTestApplication
 		}
 
 		return CachingFileRepository.withTranslatedFileDescriptor()
-		                            .removeCacheOnEvict( true )
-		                            .removeCacheOnShutdown( true )
-		                            .timeBasedRemoval( 10000, 0 )
+		                            .expireOnEvict( true )
+		                            .expireOnShutdown( true )
+		                            .timeBasedExpiration( 10000, 0 )
 		                            .targetFileRepository(
 				                            AmazonS3FileRepository.builder()
 				                                                  .repositoryId( "permanent" )
