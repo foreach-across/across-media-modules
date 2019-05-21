@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   localstack:
-    image: localstack/localstack
+    image: 'localstack/localstack:0.9.3'
     ports:
       - "4567-4584:4567-4584"
       - "${PORT_WEB_UI-8099}:${PORT_WEB_UI-8099}"
