@@ -40,6 +40,7 @@ import java.util.function.Function;
  * @see CachedFileResource
  * @see #withGeneratedFileDescriptor()
  * @see #withTranslatedFileDescriptor()
+ * @see ExpiringFileRepository
  * @since 1.4.0
  */
 @Slf4j
