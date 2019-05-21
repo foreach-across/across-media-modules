@@ -34,7 +34,7 @@ import java.util.function.Function;
  * @since 1.4.0
  */
 @Slf4j
-public class ExpiringFileRepository extends AbstractExpiringFileRepository
+public class ExpiringFileRepository extends AbstractExpiringFileRepository<ExpiringFileRepository.TrackedResource>
 {
 	@Builder
 	private ExpiringFileRepository( @NonNull FileRepository targetFileRepository,
@@ -45,14 +45,14 @@ public class ExpiringFileRepository extends AbstractExpiringFileRepository
 		super( targetFileRepository, expireOnShutdown, expireOnEvict, maxItemsToTrack, expirationStrategy );
 	}
 
-	protected ExpiringFileResource createExpiringFileResource( FileDescriptor descriptor, FileResource targetFileResource ) {
+	protected ExpiringFileRepository.TrackedResource createExpiringFileResource( FileDescriptor descriptor, FileResource targetFileResource ) {
 		return new TrackedResource( targetFileResource );
 	}
 
-	protected void expire( ExpiringFileResource fileResource ) {
+	protected void expire( ExpiringFileRepository.TrackedResource fileResource ) {
 		try {
 			if ( fileResource.exists() ) {
-				( (TrackedResource) fileResource ).deleteInternal();
+				fileResource.deleteInternal();
 			}
 		}
 		catch ( Exception e ) {
@@ -61,14 +61,14 @@ public class ExpiringFileRepository extends AbstractExpiringFileRepository
 	}
 
 	@Override
-	protected void evicted( ExpiringFileResource fileResource, boolean expired ) {
+	protected void evicted( ExpiringFileRepository.TrackedResource fileResource, boolean expired ) {
 		if ( !expired ) {
-			( (TrackedResource) fileResource ).evictedNonExpired = true;
+			fileResource.evictedNonExpired = true;
 		}
 	}
 
 	@RequiredArgsConstructor
-	private class TrackedResource implements ExpiringFileResource
+	protected class TrackedResource implements ExpiringFileResource
 	{
 		@NonNull
 		private final FileResource target;

@@ -36,7 +36,7 @@ import java.util.function.Function;
  * @since 1.4.0
  */
 @Slf4j
-public abstract class AbstractExpiringFileRepository extends AbstractFileRepository
+public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResource> extends AbstractFileRepository
 {
 	/**
 	 * The target repository this implementation wraps.
@@ -69,7 +69,7 @@ public abstract class AbstractExpiringFileRepository extends AbstractFileReposit
 	@Getter
 	private final Function<ExpiringFileResource, Boolean> expirationStrategy;
 
-	private final Map<FileDescriptor, ExpiringFileResource> trackedResources = Collections.synchronizedMap( new FileResourceCache() );
+	private final Map<FileDescriptor, T> trackedResources = Collections.synchronizedMap( new FileResourceCache() );
 
 	protected AbstractExpiringFileRepository( @NonNull FileRepository targetFileRepository,
 	                                          boolean expireOnShutdown,
@@ -118,7 +118,7 @@ public abstract class AbstractExpiringFileRepository extends AbstractFileReposit
 		try {
 			LOG.trace( "Running file resource expiration for repository {}", getRepositoryId() );
 			new ArrayList<>( trackedResources.keySet() ).forEach( fd -> {
-				ExpiringFileResource fileResource = trackedResources.get( fd );
+				T fileResource = trackedResources.get( fd );
 				if ( fileResource != null && expirationStrategy.apply( fileResource ) ) {
 					stopTracking( fd );
 					expire( fileResource );
@@ -135,29 +135,34 @@ public abstract class AbstractExpiringFileRepository extends AbstractFileReposit
 		// expiring file repository performs no descriptor validation
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ExpiringFileResource createFileResource( boolean allocateImmediately ) {
-		return (ExpiringFileResource) super.createFileResource( allocateImmediately );
+	public T createFileResource( boolean allocateImmediately ) {
+		return (T) super.createFileResource( allocateImmediately );
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ExpiringFileResource getFileResource( FileDescriptor descriptor ) {
-		return (ExpiringFileResource) super.getFileResource( descriptor );
+	public T getFileResource( FileDescriptor descriptor ) {
+		return (T) super.getFileResource( descriptor );
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ExpiringFileResource createFileResource( File originalFile, boolean deleteOriginal ) throws IOException {
-		return (ExpiringFileResource) super.createFileResource( originalFile, deleteOriginal );
+	public T createFileResource( File originalFile, boolean deleteOriginal ) throws IOException {
+		return (T) super.createFileResource( originalFile, deleteOriginal );
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ExpiringFileResource createFileResource( InputStream inputStream ) throws IOException {
-		return (ExpiringFileResource) super.createFileResource( inputStream );
+	public T createFileResource( InputStream inputStream ) throws IOException {
+		return (T) super.createFileResource( inputStream );
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ExpiringFileResource createFileResource() {
-		return (ExpiringFileResource) super.createFileResource();
+	public T createFileResource() {
+		return (T) super.createFileResource();
 	}
 
 	/**
@@ -178,14 +183,14 @@ public abstract class AbstractExpiringFileRepository extends AbstractFileReposit
 	}
 
 	@Override
-	protected final ExpiringFileResource buildFileResource( FileDescriptor descriptor ) {
+	protected final T buildFileResource( FileDescriptor descriptor ) {
 		return trackedResources.computeIfAbsent( descriptor, fd -> {
 			FileResource targetFileResource = targetFileRepository.getFileResource( fd );
 			return createExpiringFileResource( fd, targetFileResource );
 		} );
 	}
 
-	protected abstract ExpiringFileResource createExpiringFileResource( FileDescriptor descriptor, FileResource targetFileResource );
+	protected abstract T createExpiringFileResource( FileDescriptor descriptor, FileResource targetFileResource );
 
 	/**
 	 * Eviction notice of a file resource. The second parameter indicates if the resource has expired in the process or not.
@@ -193,7 +198,7 @@ public abstract class AbstractExpiringFileRepository extends AbstractFileReposit
 	 * @param fileResource that has been evicted
 	 * @param expired      true if the resource has also been expired
 	 */
-	protected void evicted( ExpiringFileResource fileResource, boolean expired ) {
+	protected void evicted( T fileResource, boolean expired ) {
 	}
 
 	/**
@@ -201,7 +206,7 @@ public abstract class AbstractExpiringFileRepository extends AbstractFileReposit
 	 *
 	 * @param fileResource to expire
 	 */
-	protected abstract void expire( ExpiringFileResource fileResource );
+	protected abstract void expire( T fileResource );
 
 	/**
 	 * Remove this descriptor from the tracked resources. This does not expire the matching resource.
@@ -230,14 +235,14 @@ public abstract class AbstractExpiringFileRepository extends AbstractFileReposit
 		                      .forEach( AbstractExpiringFileRepository::expireTrackedItems );
 	}
 
-	private class FileResourceCache extends LinkedHashMap<FileDescriptor, ExpiringFileResource>
+	private class FileResourceCache extends LinkedHashMap<FileDescriptor, T>
 	{
 		FileResourceCache() {
 			super( maxItemsToTrack + 1, .75F, true );
 		}
 
 		@Override
-		protected boolean removeEldestEntry( Map.Entry<FileDescriptor, ExpiringFileResource> eldest ) {
+		protected boolean removeEldestEntry( Map.Entry<FileDescriptor, T> eldest ) {
 			boolean shouldEvict = size() > maxItemsToTrack;
 			if ( shouldEvict ) {
 				if ( expireOnEvict || expirationStrategy.apply( eldest.getValue() ) ) {
