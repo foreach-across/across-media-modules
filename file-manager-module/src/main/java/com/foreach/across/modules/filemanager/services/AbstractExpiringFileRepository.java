@@ -170,6 +170,7 @@ public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResou
 	 * Shutdown the repository. Depending on the value of {@link #expireOnShutdown} the tracked resources will be expired.
 	 */
 	@PreDestroy
+	@Override
 	public void shutdown() {
 		trackedResources.values()
 		                .forEach( fileResource -> {

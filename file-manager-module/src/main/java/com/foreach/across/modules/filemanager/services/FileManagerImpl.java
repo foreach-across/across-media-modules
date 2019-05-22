@@ -21,6 +21,7 @@ import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FileStorageException;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -235,6 +236,22 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	@Override
 	public Collection<FileRepository> listRepositories() {
 		return Collections.unmodifiableCollection( new ArrayList<>( repositories.values() ) );
+	}
+
+	/**
+	 * Signal shutdown of the file manager to all repositories.
+	 * This also removes all registered repositories, even though after a call
+	 * to shutdown the manager can be reused.
+	 */
+	@PreDestroy
+	public void shutdown() {
+		repositories.values()
+		            .stream()
+		            .map( FileRepositoryDelegate::getActualImplementation )
+		            .filter( FileManagerAware.class::isInstance )
+		            .map( FileManagerAware.class::cast )
+		            .forEach( FileManagerAware::shutdown );
+		repositories.clear();
 	}
 
 	private FileRepository requireRepository( String repositoryId ) {

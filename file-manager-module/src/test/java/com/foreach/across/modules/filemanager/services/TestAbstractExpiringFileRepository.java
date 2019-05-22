@@ -38,7 +38,6 @@ class TestAbstractExpiringFileRepository
 		return assertThat( expirationStrategy.apply( resource ) );
 	}
 
-
 	@Test
 	void expireTrackedItemsInRegistry() {
 		FileManagerImpl fileManager = new FileManagerImpl();

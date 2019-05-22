@@ -236,6 +236,21 @@ class TestFileManager
 		assertSame( other, delegate( fetched ) );
 	}
 
+	@Test
+	void fileManagerAwareMethods() {
+		AbstractFileRepository repository = mock( AbstractFileRepository.class );
+		when( repository.getRepositoryId() ).thenReturn( "123" );
+		fileManager.registerRepository( repository );
+		verify( repository ).setFileManager( fileManager );
+		verify( repository, never() ).shutdown();
+
+		fileManager.shutdown();
+		verify( repository ).shutdown();
+
+		Assertions.assertThat( fileManager.listRepositories() ).isEmpty();
+
+	}
+
 	private FileRepository delegate( String repositoryId ) {
 		return delegate( fileManager.getRepository( repositoryId ) );
 	}
