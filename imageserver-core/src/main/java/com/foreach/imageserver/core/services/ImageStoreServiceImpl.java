@@ -57,8 +57,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	public void removeOriginal( Image image ) {
 		LOG.info( "Deleting original image file for {}", image );
 		FileDescriptor descriptor = getOriginalFileDescriptor( image );
-		if ( fileManager.exists( descriptor ) ) {
-			boolean deleted = fileManager.delete( descriptor );
+		FileResource imageFile = fileManager.getFileResource( descriptor );
+		if ( imageFile.exists() ) {
+			boolean deleted = imageFile.delete();
 			LOG.debug( "Original image file for {} was {} deleted", image, deleted ? "successfully" : "not" );
 		}
 		else {
