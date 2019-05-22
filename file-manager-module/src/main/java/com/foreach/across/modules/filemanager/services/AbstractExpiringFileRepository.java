@@ -36,6 +36,7 @@ import java.util.function.Function;
  * @since 1.4.0
  */
 @Slf4j
+@SuppressWarnings("WeakerAccess")
 public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResource> extends AbstractFileRepository
 {
 	/**
@@ -255,11 +256,6 @@ public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResou
 			}
 
 			return shouldEvict;
-		}
-
-		@Override
-		public void clear() {
-			super.clear();
 		}
 	}
 

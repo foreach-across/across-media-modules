@@ -9,9 +9,7 @@ import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.filemanager.FileManagerModule;
-import com.foreach.across.modules.filemanager.services.AmazonS3FileRepository;
-import com.foreach.across.modules.filemanager.services.CachingFileRepository;
-import com.foreach.across.modules.filemanager.services.FileRepository;
+import com.foreach.across.modules.filemanager.services.*;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.web.AcrossWebModule;
@@ -34,6 +32,19 @@ public class FileManagerTestApplication
 		                            .withPathStyleAccessEnabled( true )
 		                            .withCredentials( new AWSStaticCredentialsProvider( new BasicAWSCredentials( "test", "test" ) ) )
 		                            .build();
+	}
+
+	@Bean
+	public FileRepository tempRepository() {
+		return ExpiringFileRepository.builder()
+		                             .targetFileRepository(
+				                             LocalFileRepository.builder().repositoryId( FileManager.TEMP_REPOSITORY )
+				                                                .rootFolder( "../local-data/storage/temp" )
+				                                                .build()
+		                             )
+		                             .expireOnEvict( true )
+		                             .expireOnShutdown( true )
+		                             .build();
 	}
 
 	@Bean

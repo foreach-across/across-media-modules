@@ -109,4 +109,9 @@ class LocalFileResource extends FileSystemResource implements FileResource, File
 			}
 		}
 	}
+
+	@Override
+	public boolean equals( Object obj ) {
+		return obj == this || ( obj instanceof FileResource && fileDescriptor.equals( ( (FileResource) obj ).getFileDescriptor() ) );
+	}
 }

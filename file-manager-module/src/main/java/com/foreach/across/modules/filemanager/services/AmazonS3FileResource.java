@@ -29,7 +29,7 @@ import java.net.URL;
  */
 class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 {
-	private final static Field metadataField;
+	private static final Field metadataField;
 
 	static {
 		// required for resetting object metadata
@@ -140,6 +140,11 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 				throw s3e;
 			}
 		}
+	}
+
+	@Override
+	public boolean equals( Object obj ) {
+		return obj == this || ( obj instanceof FileResource && fileDescriptor.equals( ( (FileResource) obj ).getFileDescriptor() ) );
 	}
 
 	private FileNotFoundException fileNotFound( FileDescriptor fileDescriptor, Throwable cause ) {

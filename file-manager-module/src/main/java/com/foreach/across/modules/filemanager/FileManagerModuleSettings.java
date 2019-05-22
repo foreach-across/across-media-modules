@@ -41,23 +41,24 @@ public class FileManagerModuleSettings
 	private String tempFolder = System.getProperty( "java.io.tmpdir" );
 
 	/**
-	 * Cache cleanup task configuration properties.
+	 * Expiration task configuration properties.
 	 */
-	private CacheCleanupProperties cacheCleanup = new CacheCleanupProperties();
+	private ExpirationProperties expiration = new ExpirationProperties();
 
 	@Getter
 	@Setter
-	public static class CacheCleanupProperties
+	@EqualsAndHashCode
+	public static class ExpirationProperties
 	{
 		/**
-		 * Should the cache cleanup task be enabled (automatic cleanup
-		 * of {@link com.foreach.across.modules.filemanager.services.CachingFileRepository} implementations found).
+		 * Should the expiration task be enabled (automatic expiry of tracked items in
+		 * {@link com.foreach.across.modules.filemanager.services.AbstractExpiringFileRepository} implementations found).
 		 */
 		private boolean enabled;
 
 		/**
-		 * Number of seconds delay between cleanup task executions.
+		 * Number of seconds delay between expiration task executions.
 		 */
-		private int delaySeconds = 300;
+		private int intervalSeconds = 300;
 	}
 }

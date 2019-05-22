@@ -169,8 +169,10 @@ public class ExpiringFileRepository extends AbstractExpiringFileRepository<Expir
 		}
 
 		@Override
+		@SuppressWarnings( "squid:ObjectFinalizeOverridenCheck" )
 		protected void finalize() {
 			try {
+				// fallback - attempt to remove the target resource on GC
 				if ( evictedNonExpired && target.exists() ) {
 					target.delete();
 				}

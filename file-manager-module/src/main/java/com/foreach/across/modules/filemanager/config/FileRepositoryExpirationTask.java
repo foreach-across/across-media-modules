@@ -2,7 +2,7 @@ package com.foreach.across.modules.filemanager.config;
 
 import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
-import com.foreach.across.modules.filemanager.services.CachingFileRepository;
+import com.foreach.across.modules.filemanager.services.AbstractExpiringFileRepository;
 import com.foreach.across.modules.filemanager.services.FileRepositoryRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -16,17 +16,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Task which executes periodically and calls {@link com.foreach.across.modules.filemanager.services.CachingFileRepository#cleanupCaches(FileRepositoryRegistry)}.
+ * Task which executes periodically and calls {@link AbstractExpiringFileRepository#expireTrackedItems(FileRepositoryRegistry)}.
  *
  * @author Arne Vandamme
  * @since 1.4.0
  */
 @Component
-@ConditionalOnProperty(value = "fileManagerModule.cacheCleanup.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "fileManagerModule.expiration.enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("unused")
-public class FileRepositoryCacheCleanupTask
+public class FileRepositoryExpirationTask
 {
 	private final FileManagerModuleSettings settings;
 	private final FileRepositoryRegistry fileRepositoryRegistry;
@@ -37,22 +37,22 @@ public class FileRepositoryCacheCleanupTask
 
 	@PostRefresh
 	void start() {
-		if ( !started && settings.getCacheCleanup().isEnabled() ) {
+		if ( !started && settings.getExpiration().isEnabled() ) {
 			started = true;
-			LOG.info( "Starting FileRepositoryCacheCleanupTask with {} seconds delay", settings.getCacheCleanup().getDelaySeconds() );
+			LOG.info( "Starting FileRepositoryExpirationTask with {} seconds delay", settings.getExpiration().getIntervalSeconds() );
 
-			monitorThread.scheduleWithFixedDelay( this::cleanupCaches, 0, settings.getCacheCleanup().getDelaySeconds(), TimeUnit.SECONDS );
+			monitorThread.scheduleWithFixedDelay( this::cleanupCaches, 0, settings.getExpiration().getIntervalSeconds(), TimeUnit.SECONDS );
 		}
 
 	}
 
 	private void cleanupCaches() {
 		try {
-			LOG.trace( "Scheduled execution of file repository cache cleanup" );
-			CachingFileRepository.expireTrackedItems( fileRepositoryRegistry );
+			LOG.trace( "Scheduled execution of file repository expiration" );
+			AbstractExpiringFileRepository.expireTrackedItems( fileRepositoryRegistry );
 		}
 		catch ( Exception e ) {
-			LOG.error( "Exception during file repository cache cleanup", e );
+			LOG.error( "Exception during file repository expiration", e );
 		}
 	}
 
@@ -65,7 +65,7 @@ public class FileRepositoryCacheCleanupTask
 			monitorThread.awaitTermination( 5, TimeUnit.SECONDS );
 		}
 		catch ( InterruptedException ie ) {
-			LOG.warn( "Failed to wait for clean shutdown of lock monitor for cache cleanup task" );
+			LOG.warn( "Failed to wait for clean shutdown of lock monitor for expiration task" );
 			throw ie;
 		}
 	}

@@ -33,7 +33,7 @@ import java.util.*;
  *
  * @see com.foreach.across.modules.filemanager.services.FileRepositoryDelegate
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "deprecation", "squid:CallToDeprecatedMethod" })
 @Service
 public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 {

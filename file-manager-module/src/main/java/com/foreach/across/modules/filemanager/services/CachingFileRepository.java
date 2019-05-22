@@ -1,5 +1,6 @@
 package com.foreach.across.modules.filemanager.services;
 
+import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import lombok.Builder;
@@ -21,9 +22,8 @@ import java.util.function.Function;
  * fetched, and the actual target repository is slow (usually a remote repository, for example {@link AmazonS3FileRepository}).
  * Using a fast {@link LocalFileRepository} as cache repository can gain significant performance improvement.
  * <p/>
- * Internally this implementation uses a form of LRU map to evict items when the maximum size has been reached.
- * Additionally you can run {@link #expireTrackedItems()} to remove stale items from the cache. It might be best practice to
- * execute this method periodically. See also {@link com.foreach.across.modules.filemanager.FileManagerModuleSettings.CacheCleanupProperties}.
+ * Internally this implementation builds on {@link AbstractExpiringFileRepository}, where the actual cached item is the
+ * one that expires (and is removed when it expires). See also {@link FileManagerModuleSettings#getExpiration()} for periodic expiration.
  * <p/>
  * If file resource updates happen only through the {@link FileManager}, keeping target and cache in sync should
  * not be much of a problem. Multi-instance applications can use a {@link #withTranslatedFileDescriptor()} strategy

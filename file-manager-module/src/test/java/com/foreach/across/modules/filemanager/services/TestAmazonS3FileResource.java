@@ -71,6 +71,15 @@ class TestAmazonS3FileResource
 	}
 
 	@Test
+	void equals() {
+		assertThat( resource )
+				.isEqualTo( resource )
+				.isNotEqualTo( mock( Resource.class ) )
+				.isEqualTo( new AmazonS3FileResource( resource.getFileDescriptor(), amazonS3, "other", "objectName", new SyncTaskExecutor() ) )
+				.isNotEqualTo( new AmazonS3FileResource( FileDescriptor.of( "1:2:3" ), amazonS3, BUCKET_NAME, objectName, new SyncTaskExecutor() ) );
+	}
+
+	@Test
 	void fileDescriptor() {
 		assertThat( resource.getFileDescriptor() ).isEqualTo( descriptor );
 	}
@@ -273,27 +282,27 @@ class TestAmazonS3FileResource
 	@Test
 	@SneakyThrows
 	void noFileCreatedIfExceptionOnInputStream() {
-		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName )).isFalse();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
 
 		InputStream inputStream = mock( InputStream.class );
 		when( inputStream.available() ).thenThrow( new IOException() );
 
 		assertThatExceptionOfType( IOException.class )
 				.isThrownBy( () -> resource.copyFrom( inputStream ) );
-		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName )).isFalse();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
 	}
 
 	@Test
 	@SneakyThrows
 	void noFileCreatedIfExceptionOnOtherFileResource() {
-		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName )).isFalse();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
 
 		FileResource other = mock( FileResource.class );
 		when( other.getInputStream() ).thenThrow( new IOException() );
 
 		assertThatExceptionOfType( IOException.class )
 				.isThrownBy( () -> resource.copyFrom( other ) );
-		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName )).isFalse();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
 	}
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")

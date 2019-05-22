@@ -35,6 +35,7 @@ import java.io.InputStream;
  * @see FileManagerImpl
  * @since 1.0.0
  */
+@SuppressWarnings("squid:S1214" /* constants in interface */)
 public interface FileManager extends FileRepository
 {
 	String DEFAULT_REPOSITORY = "default";

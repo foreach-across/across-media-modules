@@ -18,6 +18,7 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import lombok.Setter;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,17 +32,14 @@ import java.io.OutputStream;
  *
  * @see com.foreach.across.modules.filemanager.services.FileManagerImpl
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "deprecation", "squid:CallToDeprecatedMethod" })
 public class FileRepositoryDelegate implements FileRepository
 {
+	@Setter
 	private FileRepository actualImplementation;
 
 	public FileRepository getActualImplementation() {
 		return actualImplementation;
-	}
-
-	public void setActualImplementation( FileRepository actualImplementation ) {
-		this.actualImplementation = actualImplementation;
 	}
 
 	@Override

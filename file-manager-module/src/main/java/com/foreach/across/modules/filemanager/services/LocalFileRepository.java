@@ -41,8 +41,11 @@ public class LocalFileRepository extends AbstractFileRepository implements FileR
 	@Getter
 	private String rootFolder;
 
+	/**
+	 * @deprecated since 1.4.0 - use {@link #builder()} instead
+	 */
 	@Deprecated
-	@SuppressWarnings( "unused" )
+	@SuppressWarnings("unused")
 	public LocalFileRepository( String repositoryId, String rootFolder ) {
 		this( repositoryId, rootFolder, null );
 	}

@@ -16,6 +16,7 @@
         <outputRelativeToContentRoot value="true" />
         <processor name="com.querydsl.apt.jpa.JPAAnnotationProcessor" />
         <processor name="lombok.launch.AnnotationProcessorHider$AnnotationProcessor" />
+        <processor name="org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor" />
         <module name="file-manager-module" />
       </profile>
     </annotationProcessing>
