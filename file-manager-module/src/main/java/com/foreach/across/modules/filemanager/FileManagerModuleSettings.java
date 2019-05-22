@@ -51,8 +51,7 @@ public class FileManagerModuleSettings
 	public static class ExpirationProperties
 	{
 		/**
-		 * Should the expiration task be enabled (automatic expiry of tracked items in
-		 * {@link com.foreach.across.modules.filemanager.services.AbstractExpiringFileRepository} implementations found).
+		 * Should the expiration task be enabled (automatic expiry of tracked items in AbstractExpiringFileRepository implementations found.
 		 */
 		private boolean enabled;
 

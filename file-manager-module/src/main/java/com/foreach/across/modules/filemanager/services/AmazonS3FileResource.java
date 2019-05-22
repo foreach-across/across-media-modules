@@ -27,6 +27,7 @@ import java.net.URL;
  * @author Arne Vandamme
  * @since 1.4.0
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 {
 	private static final Field metadataField;
@@ -145,6 +146,11 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 	@Override
 	public boolean equals( Object obj ) {
 		return obj == this || ( obj instanceof FileResource && fileDescriptor.equals( ( (FileResource) obj ).getFileDescriptor() ) );
+	}
+
+	@Override
+	public int hashCode() {
+		return fileDescriptor.hashCode();
 	}
 
 	private FileNotFoundException fileNotFound( FileDescriptor fileDescriptor, Throwable cause ) {

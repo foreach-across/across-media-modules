@@ -16,16 +16,6 @@
 		<sonar.skip>true</sonar.skip>
 	</properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.foreach.across.modules</groupId>
-				<artifactId>admin-web-module</artifactId>
-				<version>3.0.1.RELEASE</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>

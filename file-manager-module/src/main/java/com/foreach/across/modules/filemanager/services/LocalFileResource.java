@@ -23,6 +23,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * @author Arne Vandamme
  * @since 1.4.0
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 class LocalFileResource extends FileSystemResource implements FileResource, FileResource.TargetFile
 {
 	@Getter
@@ -113,5 +114,10 @@ class LocalFileResource extends FileSystemResource implements FileResource, File
 	@Override
 	public boolean equals( Object obj ) {
 		return obj == this || ( obj instanceof FileResource && fileDescriptor.equals( ( (FileResource) obj ).getFileDescriptor() ) );
+	}
+
+	@Override
+	public int hashCode() {
+		return fileDescriptor.hashCode();
 	}
 }
