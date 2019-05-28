@@ -379,13 +379,13 @@ public class ITRemoteImageServerClient
 	public void convertSingleImage() {
 		ImageDto result = imageServerClient.convertImage( image( "poppy_flower_nature.jpg" ),
 		                                                  Collections.singletonList(
-				                                                                             ImageTransformDto.builder()
-				                                                                                              .dpi( 300 )
-				                                                                                              .colorSpace(
-						                                                                                              ColorSpaceDto.GRAYSCALE )
-				                                                                                              .outputType(
-						                                                                                              ImageTypeDto.PNG )
-				                                                                                              .build() ) );
+				                                                  ImageTransformDto.builder()
+				                                                                   .dpi( 300 )
+				                                                                   .colorSpace(
+						                                                                   ColorSpaceDto.GRAYSCALE )
+				                                                                   .outputType(
+						                                                                   ImageTypeDto.PNG )
+				                                                                   .build() ) );
 
 		assertEquals( ImageTypeDto.PNG, result.getFormat() );
 	}
@@ -395,11 +395,11 @@ public class ITRemoteImageServerClient
 	public void convertResizeEpsRetina() {
 		ImageDto result = imageServerClient.convertImage( image( "kaaimangrootkleur.eps" ),
 		                                                  Collections.singletonList(
-				                                                                             ImageTransformDto.builder()
-				                                                                                              .height( 1536 )
-				                                                                                              .quality( 100 )
-				                                                                                              .outputType( ImageTypeDto.PNG )
-				                                                                                              .build() ) );
+				                                                  ImageTransformDto.builder()
+				                                                                   .height( 1536 )
+				                                                                   .quality( 100 )
+				                                                                   .outputType( ImageTypeDto.PNG )
+				                                                                   .build() ) );
 
 		try (InputStream i = new ByteArrayInputStream( result.getImage() )) {
 			BufferedImage bimg = ImageIO.read( i );

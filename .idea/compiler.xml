@@ -21,6 +21,10 @@
         <outputRelativeToContentRoot value="true" />
         <processor name="lombok.launch.AnnotationProcessorHider$AnnotationProcessor" />
         <processor name="org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor" />
+        <module name="imageserver-client" />
+        <module name="imageserver-test-embedded" />
+        <module name="imageserver-admin" />
+        <module name="imageserver-core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

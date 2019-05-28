@@ -1,5 +1,7 @@
 package com.foreach.imageserver.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 /**
@@ -11,9 +13,7 @@ import lombok.*;
  * @since 5.0.0
  */
 @EqualsAndHashCode
-@AllArgsConstructor
-@NoArgsConstructor
-// TODO: mark from as JsonCreator and remove public constructors
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ColorDto
 {
 	public static final ColorDto TRANSPARENT = ColorDto.from( "transparent" );
@@ -21,14 +21,15 @@ public class ColorDto
 	public static final ColorDto BLACK = ColorDto.from( "#000000" );
 
 	@Getter
-	private String value;
+	private final String value;
 
 	@Override
 	public String toString() {
 		return value.startsWith( "#" ) ? "hex:" + value.substring( 1 ) : value;
 	}
 
-	public static ColorDto from( @NonNull String value ) {
+	@JsonCreator
+	public static ColorDto from( @JsonProperty("value") @NonNull String value ) {
 		String lowered = value.toLowerCase();
 		if ( lowered.startsWith( "hex:" ) ) {
 			lowered = "#" + lowered.substring( 4 );
