@@ -137,7 +137,8 @@ public interface ImageServerClient
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
 
 	/**
-	 * Method that converts the given ImageConvertDto using the asked transformations.
+	 * Convert given image using the given series of transformations.
+	 * The list of transformations contains of all the transformations you want to execute on the image. These will be executed in the supplied order.
 	 *
 	 * @param convertDto image and transformations
 	 * @return transformed images
@@ -145,7 +146,8 @@ public interface ImageServerClient
 	ImageConvertResultDto convertImage( ImageConvertDto convertDto );
 
 	/**
-	 * Convenience method to convert a single image with given transformations
+	 * Convenience method to convert a single image with given transformations.
+	 * The result will be converted image.
 	 *
 	 * @param imageBytes given image
 	 * @param transforms transformations
