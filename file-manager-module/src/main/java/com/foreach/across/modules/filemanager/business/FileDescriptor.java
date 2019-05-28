@@ -158,15 +158,20 @@ public class FileDescriptor implements Serializable
 		Assert.isTrue( parts.length == 2 || parts.length == 3, "FileDescriptor URI must contain either 2 or 3 segments separated with :" );
 
 		String repositoryId = parts[0];
-		String folderId = null;
+		String folderId;
 		String fileId;
+
 		if ( parts.length == 2 ) {
-			fileId = parts[1];
+			String cleaned = StringUtils.replace( parts[1], "\\", "/" );
+			int lastSeparator = StringUtils.lastIndexOf( cleaned, "/" );
+			folderId = lastSeparator >= 0 ? cleaned.substring( 0, lastSeparator ) : null;
+			fileId = lastSeparator >= 0 ? cleaned.substring( lastSeparator + 1 ) : cleaned;
 		}
 		else {
 			folderId = parts[1];
 			fileId = parts[2];
 		}
+
 		return FileDescriptor.of( repositoryId, folderId, fileId );
 	}
 

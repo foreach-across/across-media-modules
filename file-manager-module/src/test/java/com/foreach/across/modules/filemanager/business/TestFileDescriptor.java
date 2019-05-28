@@ -47,6 +47,13 @@ public class TestFileDescriptor
 		assertEquals( "amazon-s3", descriptor.getRepositoryId() );
 		assertEquals( "2014/15/06", descriptor.getFolderId() );
 		assertEquals( "123-456-798", descriptor.getFileId() );
+
+		assertEquals( of( "my-repository", null, "myfile" ), of( "my-repository:myfile" ) );
+		assertEquals( of( "my-repository", null, "myfile" ), of( "my-repository::myfile" ) );
+		assertEquals( of( "my-repository", "my/folder", "myfile" ), of( "my-repository:my/folder:myfile" ) );
+		assertEquals( of( "my-repository", "my/folder", "myfile" ), of( "my-repository:my/folder/myfile" ) );
+		assertEquals( of( "my-repository", "my/folder", "myfile" ), of( "my-repository:my\\folder\\myfile" ) );
+		assertEquals( of( "my-repository", "my/folder", "/folder/myfile" ), of( "my-repository:my/folder:/folder/myfile" ) );
 	}
 
 	@Test
