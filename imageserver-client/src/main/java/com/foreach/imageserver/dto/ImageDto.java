@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Object that respresents an image
+ * Object that represents an image
  *
  * @author Wouter Van Hecke
  * @since 5.0.0
