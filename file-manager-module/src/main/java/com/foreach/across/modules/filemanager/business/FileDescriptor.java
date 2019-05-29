@@ -16,48 +16,64 @@
 
 package com.foreach.across.modules.filemanager.business;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Objects;
 
 /**
- * Represents a single file in a FileRepository.
+ * Represents a single {@link FileResource} in a specific FileRepository.
  */
+@EqualsAndHashCode
 public class FileDescriptor implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private final String repositoryId;
+	/**
+	 * Unique id of the file within the folder.
+	 */
+	@Getter
 	private final String fileId;
-	private final String folderId;
 
-	private final String uri;
+	/**
+	 * The descriptor of the folder this file would belong to.
+	 */
+	@Getter
+	private final FolderDescriptor folderDescriptor;
 
 	/**
 	 * @deprecated in favour of {@link FileDescriptor#of(String)}. Will be removed in 2.0.0.
 	 */
 	@Deprecated
-	public FileDescriptor( String uri ) {
-		this.uri = uri;
+	public FileDescriptor( @NonNull String uri ) {
+		// todo: make private in 2.0.0
+		if ( StringUtils.isBlank( uri ) ) {
+			throw new IllegalArgumentException( "uri may not be null or empty" );
+		}
 
-		String[] parts = StringUtils.split( uri, ":" );
+		String[] parts = StringUtils.split( StringUtils.removeStart( uri, "axfs://" ), ":" );
 
-		Assert.isTrue( parts.length == 2 || parts.length == 3 );
+		Assert.isTrue( parts.length == 2 || parts.length == 3, "FileDescriptor URI must contain either 2 or 3 segments separated with :" );
 
-		this.repositoryId = parts[0];
+		String folderId;
 
 		if ( parts.length == 2 ) {
-			this.folderId = null;
-			this.fileId = parts[1];
+			String cleaned = StringUtils.replace( parts[1], "\\", "/" );
+			int lastSeparator = StringUtils.lastIndexOf( cleaned, "/" );
+			folderId = lastSeparator >= 0 ? cleaned.substring( 0, lastSeparator ) : null;
+			fileId = lastSeparator >= 0 ? cleaned.substring( lastSeparator + 1 ) : cleaned;
 		}
 		else {
-			this.folderId = parts[1];
-			this.fileId = parts[2];
+			folderId = parts[1];
+			fileId = parts[2];
 		}
+
+		folderDescriptor = FolderDescriptor.of( parts[0], folderId );
 	}
 
 	/**
@@ -72,19 +88,24 @@ public class FileDescriptor implements Serializable
 	 * @deprecated in favour of {@link FileDescriptor#of(String, String, String)}. Will be removed in 2.0.0.
 	 */
 	@Deprecated
-	public FileDescriptor( String repositoryId, String folderId, String fileId ) {
-		this.repositoryId = repositoryId;
+	public FileDescriptor( String repositoryId, String folderId, @NonNull String fileId ) {
+		folderDescriptor = FolderDescriptor.of( repositoryId, folderId );
 		this.fileId = fileId;
-		this.folderId = folderId;
-
-		uri = buildUri( repositoryId, folderId, fileId );
 	}
 
 	/**
 	 * @return Unique uri of the entire file.
 	 */
 	public String getUri() {
-		return uri;
+		StringBuilder uri = new StringBuilder( folderDescriptor.getRepositoryId() ).append( ":" );
+
+		if ( folderDescriptor.getFolderId() != null ) {
+			uri.append( folderDescriptor.getFolderId() ).append( ":" );
+		}
+
+		uri.append( fileId );
+
+		return uri.toString();
 	}
 
 	/**
@@ -92,54 +113,26 @@ public class FileDescriptor implements Serializable
 	 */
 	@SneakyThrows
 	public URI toResourceURI() {
-		return new URI( "axfs://" + uri );
+		return new URI( "axfs://" + getUri() );
 	}
 
 	/**
 	 * @return Unique id of the repository this file belongs to.
 	 */
 	public String getRepositoryId() {
-		return repositoryId;
-	}
-
-	/**
-	 * @return Unique id of the file within the folder.
-	 */
-	public String getFileId() {
-		return fileId;
+		return folderDescriptor.getRepositoryId();
 	}
 
 	/**
 	 * @return Path within the repository this file can be found, null if the file is considered in the root folder.
 	 */
 	public String getFolderId() {
-		return folderId;
+		return folderDescriptor.getFolderId();
 	}
 
 	@Override
 	public String toString() {
-		return uri;
-	}
-
-	@Override
-	public boolean equals( Object o ) {
-		if ( this == o ) {
-			return true;
-		}
-		if ( o == null || getClass() != o.getClass() ) {
-			return false;
-		}
-
-		FileDescriptor that = (FileDescriptor) o;
-
-		return Objects.equals( repositoryId, that.repositoryId )
-				&& Objects.equals( folderId, that.folderId )
-				&& Objects.equals( fileId, that.fileId );
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash( repositoryId, folderId, fileId );
+		return getUri();
 	}
 
 	/**
@@ -148,35 +141,13 @@ public class FileDescriptor implements Serializable
 	 * @param uri of the file
 	 * @return the descriptor
 	 */
-	public static FileDescriptor of( String uri ) {
-		if ( StringUtils.isBlank( uri ) ) {
-			throw new IllegalArgumentException( "uri may not be null or empty" );
-		}
-
-		String[] parts = StringUtils.split( uri, ":" );
-
-		Assert.isTrue( parts.length == 2 || parts.length == 3, "FileDescriptor URI must contain either 2 or 3 segments separated with :" );
-
-		String repositoryId = parts[0];
-		String folderId;
-		String fileId;
-
-		if ( parts.length == 2 ) {
-			String cleaned = StringUtils.replace( parts[1], "\\", "/" );
-			int lastSeparator = StringUtils.lastIndexOf( cleaned, "/" );
-			folderId = lastSeparator >= 0 ? cleaned.substring( 0, lastSeparator ) : null;
-			fileId = lastSeparator >= 0 ? cleaned.substring( lastSeparator + 1 ) : cleaned;
-		}
-		else {
-			folderId = parts[1];
-			fileId = parts[2];
-		}
-
-		return FileDescriptor.of( repositoryId, folderId, fileId );
+	@SuppressWarnings("deprecation")
+	public static FileDescriptor of( @NonNull String uri ) {
+		return new FileDescriptor( uri );
 	}
 
 	/**
-	 * Creates a {@link FileDescriptor} for a specific repository.
+	 * Creates a {@link FileDescriptor} in the root folder of a specific repository.
 	 *
 	 * @param repositoryId in which the file should be stored
 	 * @param fileId       identifier of the file
@@ -194,24 +165,8 @@ public class FileDescriptor implements Serializable
 	 * @param fileId       identifier of the file
 	 * @return the descriptor
 	 */
-	@SuppressWarnings( "all" )
+	@SuppressWarnings("all")
 	public static FileDescriptor of( String repositoryId, String folderId, String fileId ) {
 		return new FileDescriptor( repositoryId, folderId, fileId );
-	}
-
-	public static String buildUri( String repositoryId, String folderId, String fileId ) {
-		if ( StringUtils.isBlank( repositoryId ) || StringUtils.isBlank( fileId ) ) {
-			throw new IllegalArgumentException( "both a repositoryId and a fileId are required to build a valid uri" );
-		}
-
-		StringBuilder uri = new StringBuilder( repositoryId ).append( ":" );
-
-		if ( folderId != null ) {
-			uri.append( folderId ).append( ":" );
-		}
-
-		uri.append( fileId );
-
-		return uri.toString();
 	}
 }
