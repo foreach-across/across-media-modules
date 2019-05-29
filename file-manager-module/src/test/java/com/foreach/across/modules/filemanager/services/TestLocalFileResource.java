@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.util.StreamUtils;
 
 import java.io.*;
@@ -64,6 +63,7 @@ class TestLocalFileResource
 				.isEqualTo( new LocalFileResource( descriptor, tempFile ) )
 				.isNotEqualTo( new LocalFileResource( FileDescriptor.of( "1:2:3" ), tempFile ) );
 	}
+
 	@Test
 	void fileDescriptor() {
 		assertThat( resource.getFileDescriptor() ).isEqualTo( descriptor );

@@ -15,8 +15,11 @@ import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Collections;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author Steven Gentens
@@ -48,7 +51,16 @@ public class FileManagerTestApplication
 	}
 
 	@Bean
-	public FileRepository fileRepository( AmazonS3 amazonS3 ) {
+	public TaskExecutor taskExecutor() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.setMaxPoolSize( 10 );
+		taskExecutor.setQueueCapacity( 0 );
+		taskExecutor.setRejectedExecutionHandler( new ThreadPoolExecutor.CallerRunsPolicy() );
+		return taskExecutor;
+	}
+
+	@Bean
+	public FileRepository fileRepository( AmazonS3 amazonS3, TaskExecutor taskExecutor ) {
 		if ( !amazonS3.doesBucketExist( "car-files" ) ) {
 			amazonS3.createBucket( "car-files" );
 		}
@@ -56,12 +68,14 @@ public class FileManagerTestApplication
 		return CachingFileRepository.withTranslatedFileDescriptor()
 		                            .expireOnEvict( true )
 		                            .expireOnShutdown( true )
+
 		                            .timeBasedExpiration( 10000, 0 )
 		                            .targetFileRepository(
 				                            AmazonS3FileRepository.builder()
 				                                                  .repositoryId( "permanent" )
 				                                                  .amazonS3( amazonS3 )
 				                                                  .bucketName( "car-files" )
+				                                                  .taskExecutor( taskExecutor )
 				                                                  .build()
 		                            )
 		                            .cacheRepositoryId( "cache" )

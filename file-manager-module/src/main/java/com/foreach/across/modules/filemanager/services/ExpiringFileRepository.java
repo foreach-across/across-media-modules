@@ -25,7 +25,7 @@ import java.util.function.Function;
  * <p/>
  * This implementation is especially useful for temporary file resources where you want
  * the application itself to handle automatic cleanup (for example by wrapping a {@link LocalFileRepository}
- * as an {@code ExpiringFileRepository}). Temporary file resources usually have*a generated file descriptor.
+ * as an {@code ExpiringFileRepository}). Temporary file resources usually have a generated file descriptor.
  * <p/>
  * NOTE: Developers should only register the expiring version of the repository in their application.
  *

@@ -177,7 +177,7 @@ public interface FileResource extends WritableResource
 	/**
 	 * Additional interface that {@link FileResource} types can implement to provide
 	 * access to the underlying physical {@link File}. This allows them to be used
-	 * for temporary file storage.
+	 * for temporary file storage. It *must* be possible to write to the target file.
 	 */
 	interface TargetFile
 	{

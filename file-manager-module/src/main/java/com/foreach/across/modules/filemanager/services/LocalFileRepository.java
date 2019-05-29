@@ -36,7 +36,7 @@ import java.nio.file.Paths;
  * @since 1.0.0
  */
 @Slf4j
-public class LocalFileRepository extends AbstractFileRepository implements FileRepository
+public class LocalFileRepository extends AbstractFileRepository
 {
 	@Getter
 	private String rootFolder;

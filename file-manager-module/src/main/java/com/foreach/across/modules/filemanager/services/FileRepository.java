@@ -253,7 +253,7 @@ public interface FileRepository
 	 * WARNING: As of 1.4.0 this method has been deprecated and you should avoid using it altogether.
 	 * If you want to retrieve a resource as a file, use the {@link FileResource#copyTo(File)} instead and
 	 * explicitly provide the file instance where you would like the output. However, you should avoid
-	 * using {@code File} when you can work with the {@link InputStream} wherever possible.
+	 * using {@code File} and use the {@link InputStream} wherever possible.
 	 *
 	 * @param descriptor FileDescriptor instance.
 	 * @return File instance.
