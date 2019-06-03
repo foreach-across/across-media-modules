@@ -161,11 +161,11 @@ class TestCachingFileRepositoryLocalAndS3 extends BaseFileRepositoryTest
 		LocalFileResource cache = (LocalFileResource) resource.getCache();
 		AmazonS3FileResource target = (AmazonS3FileResource) resource.getTarget();
 
-		FileResource remote = remoteRepository.getFileResource( target.getFileDescriptor() );
+		FileResource remote = remoteRepository.getFileResource( target.getDescriptor() );
 		assertThat( remote.exists() ).isTrue();
 		assertThat( readResource( remote ) ).isEqualTo( readResource( target ) ).isEqualTo( "some dummy text" );
 
-		FileResource local = cacheRepository.getFileResource( cache.getFileDescriptor() );
+		FileResource local = cacheRepository.getFileResource( cache.getDescriptor() );
 		assertThat( local.exists() ).isTrue();
 		assertThat( readResource( local ) ).isEqualTo( readResource( cache ) ).isEqualTo( "some dummy text" );
 	}

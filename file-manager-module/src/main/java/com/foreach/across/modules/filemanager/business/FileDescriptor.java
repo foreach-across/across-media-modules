@@ -19,18 +19,14 @@ package com.foreach.across.modules.filemanager.business;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
-
-import java.io.Serializable;
-import java.net.URI;
 
 /**
  * Represents a single {@link FileResource} in a specific FileRepository.
  */
 @EqualsAndHashCode
-public class FileDescriptor implements Serializable
+public class FileDescriptor implements FileRepositoryResourceDescriptor
 {
 	private static final long serialVersionUID = 1L;
 
@@ -96,6 +92,7 @@ public class FileDescriptor implements Serializable
 	/**
 	 * @return Unique uri of the entire file.
 	 */
+	@Override
 	public String getUri() {
 		StringBuilder uri = new StringBuilder( folderDescriptor.getRepositoryId() ).append( ":" );
 
@@ -109,16 +106,9 @@ public class FileDescriptor implements Serializable
 	}
 
 	/**
-	 * @return actual resource URI
-	 */
-	@SneakyThrows
-	public URI toResourceURI() {
-		return new URI( "axfs://" + getUri() );
-	}
-
-	/**
 	 * @return Unique id of the repository this file belongs to.
 	 */
+	@Override
 	public String getRepositoryId() {
 		return folderDescriptor.getRepositoryId();
 	}

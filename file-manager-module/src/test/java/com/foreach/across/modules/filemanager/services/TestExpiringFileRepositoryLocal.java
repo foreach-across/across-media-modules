@@ -39,7 +39,7 @@ class TestExpiringFileRepositoryLocal extends BaseFileRepositoryTest
 		FileResource resource = fileRepository.createFileResource();
 		resource.copyFrom( RES_TEXTFILE );
 
-		FileResource target = cacheRepository.getFileResource( resource.getFileDescriptor() );
+		FileResource target = cacheRepository.getFileResource( resource.getDescriptor() );
 		assertThat( target.exists() ).isTrue();
 		assertThat( readResource( target ) ).isEqualTo( "some dummy text" );
 

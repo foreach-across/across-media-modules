@@ -56,8 +56,8 @@ public class CachedFileResource implements ExpiringFileResource
 	private long lastAccessTime = System.currentTimeMillis();
 
 	@Override
-	public FileDescriptor getFileDescriptor() {
-		return target.getFileDescriptor();
+	public FileDescriptor getDescriptor() {
+		return target.getDescriptor();
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class CachedFileResource implements ExpiringFileResource
 	}
 
 	@Override
-	public URI getURI() throws IOException {
+	public URI getURI() {
 		return target.getURI();
 	}
 

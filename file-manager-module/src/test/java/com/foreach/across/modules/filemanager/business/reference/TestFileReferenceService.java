@@ -93,7 +93,7 @@ class TestFileReferenceService
 		when( fileManager.createTempFile() ).thenReturn( tempFile );
 		FileResource fileResource = mock( FileResource.class );
 		when( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ).createFileResource( tempFile, true ) ).thenReturn( fileResource );
-		when( fileResource.getFileDescriptor() ).thenReturn( FileDescriptor.of( "1:2:3" ) );
+		when( fileResource.getDescriptor() ).thenReturn( FileDescriptor.of( "1:2:3" ) );
 
 		FileReference save = fileReferenceService.save( file, FileManager.DEFAULT_REPOSITORY );
 		verify( file ).transferTo( tempFile );

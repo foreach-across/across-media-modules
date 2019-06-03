@@ -27,21 +27,21 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 class LocalFileResource extends FileSystemResource implements FileResource, FileResource.TargetFile
 {
 	@Getter
-	private final FileDescriptor fileDescriptor;
+	private final FileDescriptor descriptor;
 
-	LocalFileResource( @NonNull FileDescriptor fileDescriptor, @NonNull File file ) {
+	LocalFileResource( @NonNull FileDescriptor descriptor, @NonNull File file ) {
 		super( file );
-		this.fileDescriptor = fileDescriptor;
+		this.descriptor = descriptor;
 	}
 
 	@Override
 	public String getFilename() {
-		return fileDescriptor.getFileId();
+		return descriptor.getFileId();
 	}
 
 	@Override
 	public URI getURI() {
-		return fileDescriptor.toResourceURI();
+		return descriptor.toResourceURI();
 	}
 
 	@Override
@@ -51,7 +51,7 @@ class LocalFileResource extends FileSystemResource implements FileResource, File
 
 	@Override
 	public String getDescription() {
-		return "axfs [" + fileDescriptor.toString() + "] -> " + super.getDescription();
+		return "axfs [" + descriptor.toString() + "] -> " + super.getDescription();
 	}
 
 	@Override
@@ -113,11 +113,11 @@ class LocalFileResource extends FileSystemResource implements FileResource, File
 
 	@Override
 	public boolean equals( Object obj ) {
-		return obj == this || ( obj instanceof FileResource && fileDescriptor.equals( ( (FileResource) obj ).getFileDescriptor() ) );
+		return obj == this || ( obj instanceof FileResource && descriptor.equals( ( (FileResource) obj ).getDescriptor() ) );
 	}
 
 	@Override
 	public int hashCode() {
-		return fileDescriptor.hashCode();
+		return descriptor.hashCode();
 	}
 }

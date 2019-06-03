@@ -23,6 +23,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.WritableResource;
 
 import java.io.*;
+import java.net.URI;
 
 /**
  * Represents a single {@link com.foreach.across.modules.filemanager.services.FileRepository} file,
@@ -31,12 +32,19 @@ import java.io.*;
  * @author Arne Vandamme
  * @since 1.4.0
  */
-public interface FileResource extends WritableResource
+public interface FileResource extends WritableResource, FileRepositoryResource
 {
+	/**
+	 * @return resource URI to this resource
+	 */
+	default URI getURI() {
+		return getDescriptor().toResourceURI();
+	}
+
 	/**
 	 * @return the descriptor to this file resource
 	 */
-	FileDescriptor getFileDescriptor();
+	FileDescriptor getDescriptor();
 
 	/**
 	 * Method {@code getFile()} is extended from {@link Resource} but it's advised

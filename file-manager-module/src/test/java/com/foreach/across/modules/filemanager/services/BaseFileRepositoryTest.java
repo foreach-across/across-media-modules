@@ -187,7 +187,7 @@ abstract class BaseFileRepositoryTest
 
 		Assertions.assertThat( readResource( resource ) )
 		          .isEqualTo( "some dummy text" )
-		          .isEqualTo( readResource( fileRepository.getFileResource( resource.getFileDescriptor() ) ) );
+		          .isEqualTo( readResource( fileRepository.getFileResource( resource.getDescriptor() ) ) );
 	}
 
 	@Test

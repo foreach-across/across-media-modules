@@ -259,8 +259,8 @@ class TestExpiringFileRepository
 		@Test
 		void fileDescriptor() {
 			FileDescriptor fd = FileDescriptor.of( "1:2:3" );
-			when( target.getFileDescriptor() ).thenReturn( fd );
-			assertThat( resource.getFileDescriptor() ).isSameAs( fd );
+			when( target.getDescriptor() ).thenReturn( fd );
+			assertThat( resource.getDescriptor() ).isSameAs( fd );
 			verifyNoMoreInteractions( target );
 		}
 
@@ -414,7 +414,7 @@ class TestExpiringFileRepository
 		@Test
 		void deletedIsNoLongerTracked() {
 			FileDescriptor fd = FileDescriptor.of( "1:2:3" );
-			when( resource.getFileDescriptor() ).thenReturn( fd );
+			when( resource.getDescriptor() ).thenReturn( fd );
 			ExpiringFileResource fr = repository.getFileResource( fd );
 			reset( targetRepository );
 

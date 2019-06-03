@@ -59,7 +59,7 @@ public abstract class AbstractFileRepository implements FileRepository, FileMana
 
 	@Override
 	public FileDescriptor createFile() {
-		return createFileResource( true ).getFileDescriptor();
+		return createFileResource( true ).getDescriptor();
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public abstract class AbstractFileRepository implements FileRepository, FileMana
 	@Override
 	public FileDescriptor moveInto( File file ) {
 		try {
-			return createFileResource( file, true ).getFileDescriptor();
+			return createFileResource( file, true ).getDescriptor();
 		}
 		catch ( IOException ioe ) {
 			throw new FileStorageException( ioe );
@@ -95,7 +95,7 @@ public abstract class AbstractFileRepository implements FileRepository, FileMana
 	@Override
 	public FileDescriptor save( File file ) {
 		try {
-			return createFileResource( file, false ).getFileDescriptor();
+			return createFileResource( file, false ).getDescriptor();
 		}
 		catch ( IOException ioe ) {
 			throw new FileStorageException( ioe );
@@ -105,7 +105,7 @@ public abstract class AbstractFileRepository implements FileRepository, FileMana
 	@Override
 	public FileDescriptor save( InputStream inputStream ) {
 		try {
-			return createFileResource( inputStream ).getFileDescriptor();
+			return createFileResource( inputStream ).getDescriptor();
 		}
 		catch ( IOException ioe ) {
 			throw new FileStorageException( ioe );

@@ -39,7 +39,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 	}
 
 	@Getter
-	private final FileDescriptor fileDescriptor;
+	private final FileDescriptor descriptor;
 
 	private final AmazonS3 amazonS3;
 	private final String bucketName;
@@ -51,7 +51,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 	                      @NonNull String objectName,
 	                      @NonNull TaskExecutor taskExecutor ) {
 		super( amazonS3, bucketName, objectName, taskExecutor );
-		this.fileDescriptor = fileDescriptor;
+		this.descriptor = fileDescriptor;
 		this.amazonS3 = amazonS3;
 		this.bucketName = bucketName;
 		this.objectName = objectName;
@@ -59,12 +59,12 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 
 	@Override
 	public String getFilename() {
-		return fileDescriptor.getFileId();
+		return descriptor.getFileId();
 	}
 
 	@Override
 	public URI getURI() {
-		return fileDescriptor.toResourceURI();
+		return descriptor.toResourceURI();
 	}
 
 	@Override
@@ -74,7 +74,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 
 	@Override
 	public String getDescription() {
-		return "axfs [" + fileDescriptor.toString() + "] -> " + super.getDescription();
+		return "axfs [" + descriptor.toString() + "] -> " + super.getDescription();
 	}
 
 	@Override
@@ -83,7 +83,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 			return super.contentLength();
 		}
 		catch ( FileNotFoundException fnfe ) {
-			throw fileNotFound( fileDescriptor, fnfe );
+			throw fileNotFound( descriptor, fnfe );
 		}
 	}
 
@@ -93,7 +93,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 			return super.lastModified();
 		}
 		catch ( FileNotFoundException fnfe ) {
-			throw fileNotFound( fileDescriptor, fnfe );
+			throw fileNotFound( descriptor, fnfe );
 		}
 	}
 
@@ -135,7 +135,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 		}
 		catch ( AmazonS3Exception s3e ) {
 			if ( s3e.getStatusCode() == 404 ) {
-				throw fileNotFound( fileDescriptor, s3e );
+				throw fileNotFound( descriptor, s3e );
 			}
 			else {
 				throw s3e;
@@ -145,12 +145,12 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 
 	@Override
 	public boolean equals( Object obj ) {
-		return obj == this || ( obj instanceof FileResource && fileDescriptor.equals( ( (FileResource) obj ).getFileDescriptor() ) );
+		return obj == this || ( obj instanceof FileResource && descriptor.equals( ( (FileResource) obj ).getDescriptor() ) );
 	}
 
 	@Override
 	public int hashCode() {
-		return fileDescriptor.hashCode();
+		return descriptor.hashCode();
 	}
 
 	private FileNotFoundException fileNotFound( FileDescriptor fileDescriptor, Throwable cause ) {

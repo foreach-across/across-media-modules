@@ -48,16 +48,16 @@ class TestCustomFileRepositoryConfiguration
 		FileResource myFile = fileManager.createFileResource( "s3" );
 		myFile.copyFrom( RES_TEXTFILE );
 
-		FileDescriptor tempFileDescriptor = FileDescriptor.of( FileManager.TEMP_REPOSITORY, myFile.getFileDescriptor().getFolderId(),
-		                                                       myFile.getFileDescriptor().getFileId() );
+		FileDescriptor tempFileDescriptor = FileDescriptor.of( FileManager.TEMP_REPOSITORY, myFile.getDescriptor().getFolderId(),
+		                                                       myFile.getDescriptor().getFileId() );
 		FileResource tempFile = fileManager.getFileResource( tempFileDescriptor );
 		assertThat( tempFile.exists() ).isTrue();
 
 		assertThat( readResource( myFile ) ).isEqualTo( "some dummy text" );
 		assertThat( readResource( tempFile ) ).isEqualTo( "some dummy text" );
 
-		assertThat( amazonS3.getObjectAsString( BUCKET_NAME, "12/34/56/" + myFile.getFileDescriptor().getFileId() ) ).isEqualTo( "some dummy text" );
-		amazonS3.putObject( BUCKET_NAME, "12/34/56/" + myFile.getFileDescriptor().getFileId(), "updated text" );
+		assertThat( amazonS3.getObjectAsString( BUCKET_NAME, "12/34/56/" + myFile.getDescriptor().getFileId() ) ).isEqualTo( "some dummy text" );
+		amazonS3.putObject( BUCKET_NAME, "12/34/56/" + myFile.getDescriptor().getFileId(), "updated text" );
 
 		tempFile.delete();
 		assertThat( tempFile.exists() ).isFalse();

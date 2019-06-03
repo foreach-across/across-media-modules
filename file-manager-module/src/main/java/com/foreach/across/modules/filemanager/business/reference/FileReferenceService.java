@@ -97,7 +97,7 @@ public class FileReferenceService
 
 		FileResource fileResource = fileRepository.createFileResource( tempFile, true );
 
-		fileReference.setFileDescriptor( fileResource.getFileDescriptor() );
+		fileReference.setFileDescriptor( fileResource.getDescriptor() );
 		fileReference.setName( file.getOriginalFilename() );
 		fileReference.setFileSize( file.getSize() );
 		fileReference.setMimeType( file.getContentType() );
@@ -165,9 +165,9 @@ public class FileReferenceService
 			FileResource newResource = fileManager.createFileResource( repositoryId );
 			newResource.copyFrom( originalResource );
 
-			LOG.debug( "New file descriptor for file '{}': '{}'", fileDescriptor, newResource.getFileDescriptor() );
+			LOG.debug( "New file descriptor for file '{}': '{}'", fileDescriptor, newResource.getDescriptor() );
 
-			fileReference.setFileDescriptor( newResource.getFileDescriptor() );
+			fileReference.setFileDescriptor( newResource.getDescriptor() );
 			fileReferenceRepository.save( fileReference );
 
 			if ( removeOriginal ) {

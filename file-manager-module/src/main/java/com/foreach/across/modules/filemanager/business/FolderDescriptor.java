@@ -20,8 +20,6 @@ import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
-import java.io.Serializable;
-import java.net.URI;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +35,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("WeakerAccess")
-public class FolderDescriptor implements Serializable
+public class FolderDescriptor implements FileRepositoryResourceDescriptor
 {
 	private static final long serialVersionUID = 1L;
 	private static final Pattern INVALID_FOLDER_ID = Pattern.compile( "(/?\\.{1,2}(/|$))|(^\\s+$)|:" );
@@ -72,16 +70,9 @@ public class FolderDescriptor implements Serializable
 	/**
 	 * @return Unique uri of the folder
 	 */
+	@Override
 	public String getUri() {
 		return repositoryId + ":" + ( folderId != null ? folderId + "/" : "/" );
-	}
-
-	/**
-	 * @return actual resource URI
-	 */
-	@SneakyThrows
-	public URI toResourceURI() {
-		return new URI( "axfs://" + getUri() );
 	}
 
 	@Override

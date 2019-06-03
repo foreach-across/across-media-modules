@@ -66,7 +66,7 @@ class TestLocalFileResource
 
 	@Test
 	void fileDescriptor() {
-		assertThat( resource.getFileDescriptor() ).isEqualTo( descriptor );
+		assertThat( resource.getDescriptor() ).isEqualTo( descriptor );
 	}
 
 	@Test

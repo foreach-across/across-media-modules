@@ -75,13 +75,13 @@ class TestAmazonS3FileResource
 		assertThat( resource )
 				.isEqualTo( resource )
 				.isNotEqualTo( mock( Resource.class ) )
-				.isEqualTo( new AmazonS3FileResource( resource.getFileDescriptor(), amazonS3, "other", "objectName", new SyncTaskExecutor() ) )
+				.isEqualTo( new AmazonS3FileResource( resource.getDescriptor(), amazonS3, "other", "objectName", new SyncTaskExecutor() ) )
 				.isNotEqualTo( new AmazonS3FileResource( FileDescriptor.of( "1:2:3" ), amazonS3, BUCKET_NAME, objectName, new SyncTaskExecutor() ) );
 	}
 
 	@Test
 	void fileDescriptor() {
-		assertThat( resource.getFileDescriptor() ).isEqualTo( descriptor );
+		assertThat( resource.getDescriptor() ).isEqualTo( descriptor );
 	}
 
 	@Test
@@ -150,7 +150,7 @@ class TestAmazonS3FileResource
 	void contentLengthAndLastModified() {
 		assertThatExceptionOfType( FileNotFoundException.class )
 				.isThrownBy( () -> resource.contentLength() )
-				.withMessageContaining( resource.getFileDescriptor().toString() );
+				.withMessageContaining( resource.getDescriptor().toString() );
 
 		try (InputStream is = RES_TEXTFILE.getInputStream()) {
 			try (OutputStream os = resource.getOutputStream()) {

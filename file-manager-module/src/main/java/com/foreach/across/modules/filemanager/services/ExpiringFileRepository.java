@@ -56,7 +56,7 @@ public class ExpiringFileRepository extends AbstractExpiringFileRepository<Expir
 			}
 		}
 		catch ( Exception e ) {
-			LOG.error( "Error not expiring file resource {}", fileResource.getFileDescriptor(), e );
+			LOG.error( "Error not expiring file resource {}", fileResource.getDescriptor(), e );
 		}
 	}
 
@@ -89,13 +89,13 @@ public class ExpiringFileRepository extends AbstractExpiringFileRepository<Expir
 		}
 
 		@Override
-		public FileDescriptor getFileDescriptor() {
-			return target().getFileDescriptor();
+		public FileDescriptor getDescriptor() {
+			return target().getDescriptor();
 		}
 
 		@Override
 		public boolean delete() {
-			ExpiringFileRepository.this.stopTracking( getFileDescriptor() );
+			ExpiringFileRepository.this.stopTracking( getDescriptor() );
 			return deleteInternal();
 		}
 
@@ -139,7 +139,7 @@ public class ExpiringFileRepository extends AbstractExpiringFileRepository<Expir
 		}
 
 		@Override
-		public URI getURI() throws IOException {
+		public URI getURI() {
 			return target().getURI();
 		}
 
@@ -169,7 +169,7 @@ public class ExpiringFileRepository extends AbstractExpiringFileRepository<Expir
 		}
 
 		@Override
-		@SuppressWarnings( "squid:ObjectFinalizeOverridenCheck" )
+		@SuppressWarnings("squid:ObjectFinalizeOverridenCheck")
 		protected void finalize() {
 			try {
 				// fallback - attempt to remove the target resource on GC
