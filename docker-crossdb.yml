@@ -1,0 +1,21 @@
+version: "2.1"
+services:
+  ### Cross database testing ########
+  #
+  # $ DATASOURCE=mysql docker-compose -f docker-compose.yml -f across-bamboo-specs/docker-dbs.yml -f docker-crossdb.yml up --exit-code-from maven-gm --abort-on-container-exit maven-gm mysql
+  # $ docker-compose -f docker-compose.yml -f across-bamboo-specs/docker-dbs.yml -f docker-crossdb.yml rm -s -f -v mysql crossdb-test-mysql
+  #
+  ####################
+  maven-gm:
+    # This will 'extend' the maven-gm service with additional commands and volumes, it also specifies on which database it depends
+    volumes:
+      - './across-bamboo-specs/docker-build-files/wait-for-it.sh:/root/wait-for-it.sh'
+      - './across-bamboo-specs/docker-build-files/wait-for-datasource.jar:/root/wait-for-datasource.jar'
+      - './across-bamboo-specs/docker-build-files/dev-configs:/root/dev-configs'
+    command: 'sh -c "java -Ddatasource=${DATASOURCE:?specify the DATASOURCE variable} -jar /root/wait-for-datasource.jar && mvn --batch-mode clean compile test-compile failsafe:integration-test failsafe:verify -DacrossTest.datasource=${DATASOURCE:?specify the DATASOURCE variable}"'
+    depends_on:
+      - ${DATASOURCE}
+  oracle:
+    # This will 'extend' the oracle service (from across-bamboo-specs/docker-dbs.yml), with a correct entry point
+    volumes:
+      - './across-bamboo-specs/docker-build-files/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d'
