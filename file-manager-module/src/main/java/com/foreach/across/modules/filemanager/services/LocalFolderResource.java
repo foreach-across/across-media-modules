@@ -70,9 +70,9 @@ class LocalFolderResource implements FolderResource
 			AntPathMatcher pathMatcher = new AntPathMatcher( "/" );
 			String p = StringUtils.startsWith( pattern, "/" ) ? pattern : "/" + pattern;
 			if ( pathMatcher.isPattern( p ) ) {
-				boolean directoryMatch = StringUtils.endsWith( p, "/" );
+				boolean matchOnlyDirectories = StringUtils.endsWith( p, "/" );
 
-				if ( directoryMatch ) {
+				if ( matchOnlyDirectories ) {
 					p = p.substring( 0, p.length() - 1 );
 				}
 
@@ -82,13 +82,14 @@ class LocalFolderResource implements FolderResource
 				String pathPrefix = StringUtils.replace( rootPath.toAbsolutePath().toString(), "\\", "/" );
 
 				final String antPattern = p;
+
 				Consumer<Path> processCandidate = candidate -> {
 					String candidatePath = StringUtils.replace( candidate.toAbsolutePath().toString(), "\\", "/" );
 					if ( candidatePath.length() > pathPrefix.length() ) {
 						String pathToMatch = StringUtils.substring( candidatePath, pathPrefix.length() );
 						if ( !shouldRecurse || pathMatcher.match( antPattern, pathToMatch ) ) {
 							File file = candidate.toFile();
-							if ( !directoryMatch || file.isDirectory() ) {
+							if ( !matchOnlyDirectories || file.isDirectory() ) {
 								resources.add( toFileRepositoryResource( file, pathToMatch ) );
 							}
 						}

@@ -5,7 +5,6 @@ import com.foreach.across.modules.filemanager.business.FileResource;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,8 +45,8 @@ class TestLocalFileResource
 	@BeforeEach
 	@SneakyThrows
 	void createResource() {
-		descriptor = FileDescriptor.of( "my-repo", "123/456", "my.file" );
 		tempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
+		descriptor = FileDescriptor.of( "my-repo", "123/456", "my.file" );
 		nonExistingFile = new File( UUID.randomUUID().toString() );
 
 		resource = new LocalFileResource( fileRepository, descriptor, tempFile );
@@ -73,8 +72,10 @@ class TestLocalFileResource
 	}
 
 	@Test
-	@Ignore
 	void folderResource() {
+		descriptor = FileDescriptor.of( "my-repo", "123/456", tempFile.getName() );
+		resource = new LocalFileResource( fileRepository, descriptor, tempFile );
+
 		assertThat( resource.getFolderResource() ).isNotNull();
 		assertThat( resource.getFolderResource().getDescriptor() ).isEqualTo( resource.getDescriptor().getFolderDescriptor() );
 		assertThat( resource.getFolderResource().listFiles() ).contains( resource );
