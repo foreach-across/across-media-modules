@@ -102,8 +102,16 @@ public interface ImageServerClient
 	 */
 	boolean deleteImage( String imageId );
 
+	/**
+	 * @param imageId external image id
+	 * @return true when the image, as referenced by the external image id, exists
+	 */
 	boolean imageExists( String imageId );
 
+	/**
+	 * @param imageId external image id
+	 * @return image information dto object for the image, referenced by the given external image id
+	 */
 	ImageInfoDto imageInfo( String imageId );
 
 	/**
@@ -137,7 +145,7 @@ public interface ImageServerClient
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
 
 	/**
-	 * Convert given image using the given series of transformations.
+	 * Convert given new or existing image using the given series of transformations.
 	 * The list of transformations contains of all the transformations you want to execute on the image. These will be executed in the supplied order.
 	 *
 	 * @param convertDto image and transformations

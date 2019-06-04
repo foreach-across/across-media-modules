@@ -146,9 +146,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public boolean imageExists( String imageId ) {
-		Image image = imageService.getByExternalId( imageId );
-
-		return image != null;
+		return imageService.getByExternalId( imageId ) != null;
 	}
 
 	@Override

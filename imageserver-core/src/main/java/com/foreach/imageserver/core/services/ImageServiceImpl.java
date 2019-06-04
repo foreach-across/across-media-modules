@@ -486,16 +486,30 @@ public class ImageServiceImpl implements ImageService
 		Map<String, ImageDto> transforms = new HashMap<>();
 		resultBuilder.transforms( transforms );
 
-		ImageAttributes imageAttributes = null;
-		try (InputStream is = new ByteArrayInputStream( imageConvertDto.getImage() )) {
-			imageAttributes = imageTransformService.getAttributes( is );
+		//
+		byte[] imageData = null;
+		if ( !ImageByIdConvertDto.class.isAssignableFrom( imageConvertDto.getClass() ) ) {
+			imageData = imageConvertDto.getImage();
 		}
-		catch ( IOException e ) {
-			LOG.error( e.getMessage(), e );
+		else {
+			ImageByIdConvertDto dto = (ImageByIdConvertDto) imageConvertDto;
+			Image image = getByExternalId( dto.getImageId() );
+			ImageSource imageSource = imageStoreService.getOriginalImage( image );
+			try (InputStream is = imageSource.getImageStream()) {
+				imageData = IOUtils.toByteArray( is );
+			}
+			catch ( IOException e ) {
+				LOG.error( e.getMessage(), e );
+			}
 		}
 
 		try {
-			ImageSource sourceImage = new SimpleImageSource( imageAttributes.getType(), imageConvertDto.getImage() );
+			ImageAttributes imageAttributes;
+			try (InputStream is = new ByteArrayInputStream( imageData )) {
+				imageAttributes = imageTransformService.getAttributes( is );
+			}
+
+			ImageSource sourceImage = new SimpleImageSource( imageAttributes.getType(), imageData );
 
 			for ( Map.Entry<String, List<ImageTransformDto>> entry : imageConvertDto.getTransformations().entrySet() ) {
 				for ( Integer page : pages ) {
@@ -504,7 +518,6 @@ public class ImageServiceImpl implements ImageService
 					keys.add( key );
 
 					ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, entry.getValue() );
-
 					try (InputStream is = resultImage.getImageStream()) {
 						transforms.put( key, ImageDto.builder()
 						                             .image( IOUtils.toByteArray( is ) )
