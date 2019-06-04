@@ -57,6 +57,7 @@
 		<module>imageserver-core</module>
 		<module>imageserver-admin</module>
 		<module>imageserver-test-embedded</module>
+		<module>bamboo-specs</module>
 	</modules>
 
 	<dependencyManagement>

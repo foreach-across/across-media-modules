@@ -9,13 +9,20 @@
         <outputRelativeToContentRoot value="true" />
         <processor name="lombok.launch.AnnotationProcessorHider$AnnotationProcessor" />
         <processor name="org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor" />
-        <module name="imageserver-test-embedded" />
-        <module name="imageserver-admin" />
-        <module name="imageserver-core" />
         <module name="imageserver-client" />
+        <module name="imageserver-test-embedded" />
+        <module name="imageserver-core" />
+        <module name="imageserver-admin" />
+      </profile>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="bamboo-specs" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="bamboo-specs" target="1.8" />
       <module name="imageserver-admin" target="1.8" />
       <module name="imageserver-client" target="1.8" />
       <module name="imageserver-core" target="1.8" />
