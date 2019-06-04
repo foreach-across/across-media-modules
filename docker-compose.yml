@@ -13,18 +13,8 @@ services:
     container_name: imageserver-container
     volumes:
       - '.:/usr/src/app:delegated'
-      # remap the local gm bash script in docker to the actual gm binary
-      - './gm-docker:/usr/src/app/gm'
-      - './docker-build-files/wait-for-it.sh:/root/wait-for-it.sh'
-      - './docker-build-files/wait-for-datasource.jar:/root/wait-for-datasource.jar'
-      # TODO: should we map the dev-configs volume or just include it in our repo?
-      - './docker-build-files/dev-configs:/root/dev-configs'
       # Reuse the maven repository from the host, we could omit it, but it would fetch at each build
       - '${HOME}/.m2:/root/.m2:delegated'
-      # Reuse embedded mongo db downloads
-      - '${HOME}/.embedmongo:/root/.embedmongo:delegated'
-    # WINDOWS USERS using cmd.exe:
-    #- '${USERPROFILE}/.m2:/root/.m2'
     stdin_open: true
     environment:
       # Specify the timezone - used by date tests

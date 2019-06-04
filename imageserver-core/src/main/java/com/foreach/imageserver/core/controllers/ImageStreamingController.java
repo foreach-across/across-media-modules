@@ -261,31 +261,7 @@ public class ImageStreamingController
 		}
 	}
 
-	private void renderImageSource( ImageSource imageSource, HttpServletResponse response ) {
-		response.setStatus( HttpStatus.OK.value() );
-		response.setContentType( imageSource.getImageType().getContentType() );
-
-		if ( maxCacheAgeInSeconds > 0 ) {
-			response.setHeader( "Cache-Control", String.format( "max-age=%d", maxCacheAgeInSeconds ) );
-			response.setHeader( "Expires",
-			                    fastDateFormat.format( DateUtils.addSeconds( new Date(), maxCacheAgeInSeconds ) ) );
-		}
-		if ( !"".equals( akamaiCacheMaxAge ) ) {
-			response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_CACHE_MAX_AGE + akamaiCacheMaxAge );
-		}
-
-		try (InputStream imageStream = imageSource.getImageStream()) {
-			try (OutputStream responseStream = response.getOutputStream()) {
-				IOUtils.copy( imageStream, responseStream );
-			}
-		}
-		catch ( IOException ioe ) {
-			LOG.error( "IOExeption in renderImageSource", ioe );
-			error( response, HttpStatus.INTERNAL_SERVER_ERROR, ioe.getMessage() );
-		}
-	}
-
-	private void error( HttpServletResponse response, HttpStatus status, String errorMessage ) {
+	private static void error( HttpServletResponse response, HttpStatus status, String errorMessage ) {
 		response.setStatus( status.value() );
 		response.setContentType( "text/plain" );
 		response.setHeader( "Cache-Control", "no-cache" );
@@ -298,6 +274,30 @@ public class ImageStreamingController
 			catch ( IOException e ) {
 				LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );
 			}
+		}
+	}
+
+	private void renderImageSource( ImageSource imageSource, HttpServletResponse response ) {
+		response.setStatus( HttpStatus.OK.value() );
+		response.setContentType( imageSource.getImageType().getContentType() );
+
+		if ( maxCacheAgeInSeconds > 0 ) {
+			response.setHeader( "Cache-Control", String.format( "max-age=%d", maxCacheAgeInSeconds ) );
+			response.setHeader( "Expires",
+			                    fastDateFormat.format( DateUtils.addSeconds( new Date(), maxCacheAgeInSeconds ) ) );
+		}
+		if ( akamaiCacheMaxAge != null && !akamaiCacheMaxAge.isEmpty() ) {
+			response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_CACHE_MAX_AGE + akamaiCacheMaxAge );
+		}
+
+		try (InputStream is = imageSource.getImageStream()) {
+			try (OutputStream responseStream = response.getOutputStream()) {
+				IOUtils.copy( is, responseStream );
+			}
+		}
+		catch ( IOException ioe ) {
+			LOG.error( "IOExeption in renderImageSource", ioe );
+			error( response, HttpStatus.INTERNAL_SERVER_ERROR, ioe.getMessage() );
 		}
 	}
 }

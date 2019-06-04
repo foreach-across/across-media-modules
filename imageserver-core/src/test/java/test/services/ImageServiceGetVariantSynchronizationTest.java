@@ -6,8 +6,7 @@ import com.foreach.imageserver.core.managers.ImageModificationManager;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.transformers.ImageSource;
-import com.foreach.imageserver.core.transformers.InMemoryImageSource;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.SimpleImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -27,8 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -57,10 +55,10 @@ public class ImageServiceGetVariantSynchronizationTest
 	public void successfulSimultaneousGeneration() throws InterruptedException, ExecutionException, IOException {
 		int threadsPerImage = 30;
 		Object lock = new Object();
-		Answer<InMemoryImageSource> firstImageAnswer =
-				new DelayedTransformResult( lock, inMemoryImageSource( "IMAGE1" ) );
-		Answer<InMemoryImageSource> secondImageAnswer =
-				new DelayedTransformResult( lock, inMemoryImageSource( "IMAGE2" ) );
+		Answer<ImageSource> firstImageAnswer =
+				new DelayedTransformResult( lock, imageSource( "IMAGE1" ) );
+		Answer<ImageSource> secondImageAnswer =
+				new DelayedTransformResult( lock, imageSource( "IMAGE2" ) );
 
 		TestResults testResults = runTest( threadsPerImage, firstImageAnswer, secondImageAnswer );
 
@@ -75,11 +73,15 @@ public class ImageServiceGetVariantSynchronizationTest
 		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getSecondOriginalImageSource() ), any(), any() );
 
 		for ( Future<ImageSource> future : testResults.getFirstImageFutures() ) {
-			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
+			try (InputStream is = future.get().getImageStream()) {
+				assertEquals( "IMAGE1", new String( IOUtils.toByteArray( is ) ) );
+			}
 		}
 
 		for ( Future<ImageSource> future : testResults.getSecondImageFutures() ) {
-			assertEquals( "IMAGE2", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
+			try (InputStream is = future.get().getImageStream()) {
+				assertEquals( "IMAGE2", new String( IOUtils.toByteArray( is ) ) );
+			}
 		}
 	}
 
@@ -87,9 +89,9 @@ public class ImageServiceGetVariantSynchronizationTest
 	public void simultaneousGenerationWithExceptions() throws InterruptedException, ExecutionException, IOException {
 		int threadsPerImage = 30;
 		Object lock = new Object();
-		Answer<InMemoryImageSource> firstImageAnswer =
-				new DelayedTransformResult( lock, inMemoryImageSource( "IMAGE1" ) );
-		Answer<InMemoryImageSource> secondImageAnswer = new DelayedTransformExceptionResult( lock );
+		Answer<ImageSource> firstImageAnswer =
+				new DelayedTransformResult( lock, imageSource( "IMAGE1" ) );
+		Answer<ImageSource> secondImageAnswer = new DelayedTransformExceptionResult( lock );
 
 		TestResults testResults = runTest( threadsPerImage, firstImageAnswer, secondImageAnswer );
 
@@ -104,7 +106,9 @@ public class ImageServiceGetVariantSynchronizationTest
 		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getSecondOriginalImageSource() ), any(), any() );
 
 		for ( Future<ImageSource> future : testResults.getFirstImageFutures() ) {
-			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
+			try (InputStream is = future.get().getImageStream()) {
+				assertEquals( "IMAGE1", new String( IOUtils.toByteArray( is ) ) );
+			}
 		}
 
 		for ( Future<ImageSource> future : testResults.getSecondImageFutures() ) {
@@ -122,9 +126,9 @@ public class ImageServiceGetVariantSynchronizationTest
 	public void simultaneousGenerationWithErrors() throws InterruptedException, ExecutionException, IOException {
 		int threadsPerImage = 30;
 		Object lock = new Object();
-		Answer<InMemoryImageSource> firstImageAnswer =
-				new DelayedTransformResult( lock, inMemoryImageSource( "IMAGE1" ) );
-		Answer<InMemoryImageSource> secondImageAnswer = new DelayedTransformErrorResult( lock );
+		Answer<ImageSource> firstImageAnswer =
+				new DelayedTransformResult( lock, imageSource( "IMAGE1" ) );
+		Answer<ImageSource> secondImageAnswer = new DelayedTransformErrorResult( lock );
 
 		TestResults testResults = runTest( threadsPerImage, firstImageAnswer, secondImageAnswer );
 
@@ -139,13 +143,15 @@ public class ImageServiceGetVariantSynchronizationTest
 		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getSecondOriginalImageSource() ), any(), any() );
 
 		for ( Future<ImageSource> future : testResults.getFirstImageFutures() ) {
-			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
+			try (InputStream is = future.get().getImageStream()) {
+				assertEquals( "IMAGE1", new String( IOUtils.toByteArray( is ) ) );
+			}
 		}
 
 		for ( Future<ImageSource> future : testResults.getSecondImageFutures() ) {
 			try {
 				future.get();
-				assertTrue( false );
+				fail();
 			}
 			catch ( ExecutionException e ) {
 				assertTrue( e.getCause() instanceof DelayedTransformError );
@@ -154,8 +160,8 @@ public class ImageServiceGetVariantSynchronizationTest
 	}
 
 	private TestResults runTest( int threadsPerImage,
-	                             Answer<InMemoryImageSource> firstImageAnswer,
-	                             Answer<InMemoryImageSource> secondImageAnswer ) throws InterruptedException {
+	                             Answer<ImageSource> firstImageAnswer,
+	                             Answer<ImageSource> secondImageAnswer ) throws InterruptedException {
 		Image firstImage = image( 1L );
 		Image secondImage = image( 2L );
 		ImageContext context = context( 10L );
@@ -178,8 +184,8 @@ public class ImageServiceGetVariantSynchronizationTest
 		when( imageModificationManager.getById( 1, 10, 20 ) ).thenReturn( imageModification() );
 		when( imageModificationManager.getById( 2, 10, 20 ) ).thenReturn( imageModification() );
 
-		StreamImageSource firstOriginalImageSource = new StreamImageSource( null, (InputStream) null );
-		StreamImageSource secondOriginalImageSource = new StreamImageSource( null, (InputStream) null );
+		SimpleImageSource firstOriginalImageSource = new SimpleImageSource( null, (byte[]) null );
+		SimpleImageSource secondOriginalImageSource = new SimpleImageSource( null, (byte[]) null );
 		when( imageStoreService.getOriginalImage( firstImage ) ).thenReturn( firstOriginalImageSource );
 		when( imageStoreService.getOriginalImage( secondImage ) ).thenReturn( secondOriginalImageSource );
 
@@ -253,8 +259,8 @@ public class ImageServiceGetVariantSynchronizationTest
 		return imageModification;
 	}
 
-	private InMemoryImageSource inMemoryImageSource( String byteStream ) {
-		return new InMemoryImageSource( null, byteStream.getBytes() );
+	private ImageSource imageSource( String byteStream ) {
+		return new SimpleImageSource( null, byteStream.getBytes() );
 	}
 
 	private static class TestResults
@@ -266,8 +272,8 @@ public class ImageServiceGetVariantSynchronizationTest
 
 		public TestResults( List<Future<ImageSource>> firstImageFutures,
 		                    List<Future<ImageSource>> secondImageFutures,
-		                    StreamImageSource firstOriginalImageSource,
-		                    StreamImageSource secondOriginalImageSource ) {
+		                    SimpleImageSource firstOriginalImageSource,
+		                    SimpleImageSource secondOriginalImageSource ) {
 			this.firstImageFutures = firstImageFutures;
 			this.secondImageFutures = secondImageFutures;
 			this.firstOriginalImageSource = firstOriginalImageSource;
@@ -317,18 +323,18 @@ public class ImageServiceGetVariantSynchronizationTest
 		}
 	}
 
-	private static class DelayedTransformResult implements Answer<InMemoryImageSource>
+	private static class DelayedTransformResult implements Answer<ImageSource>
 	{
 		private final Object lock;
-		private final InMemoryImageSource imageSource;
+		private final ImageSource imageSource;
 
-		public DelayedTransformResult( Object lock, InMemoryImageSource imageSource ) {
+		public DelayedTransformResult( Object lock, ImageSource imageSource ) {
 			this.lock = lock;
 			this.imageSource = imageSource;
 		}
 
 		@Override
-		public InMemoryImageSource answer( InvocationOnMock invocationOnMock ) throws Throwable {
+		public ImageSource answer( InvocationOnMock invocationOnMock ) throws Throwable {
 			synchronized ( lock ) {
 				lock.wait();
 			}
@@ -336,7 +342,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		}
 	}
 
-	private static class DelayedTransformExceptionResult implements Answer<InMemoryImageSource>
+	private static class DelayedTransformExceptionResult implements Answer<ImageSource>
 	{
 		private final Object lock;
 
@@ -345,7 +351,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		}
 
 		@Override
-		public InMemoryImageSource answer( InvocationOnMock invocationOnMock ) throws Throwable {
+		public ImageSource answer( InvocationOnMock invocationOnMock ) throws Throwable {
 			synchronized ( lock ) {
 				lock.wait();
 			}
@@ -353,7 +359,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		}
 	}
 
-	private static class DelayedTransformErrorResult implements Answer<InMemoryImageSource>
+	private static class DelayedTransformErrorResult implements Answer<ImageSource>
 	{
 		private final Object lock;
 
@@ -362,7 +368,7 @@ public class ImageServiceGetVariantSynchronizationTest
 		}
 
 		@Override
-		public InMemoryImageSource answer( InvocationOnMock invocationOnMock ) throws Throwable {
+		public ImageSource answer( InvocationOnMock invocationOnMock ) throws Throwable {
 			synchronized ( lock ) {
 				lock.wait();
 			}

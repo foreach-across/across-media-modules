@@ -6,10 +6,7 @@ import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.request.RegisterModificationRequest;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.*;
-import com.foreach.imageserver.core.services.CropGeneratorUtil;
-import com.foreach.imageserver.core.services.DtoUtil;
-import com.foreach.imageserver.core.services.ImageContextService;
-import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
 import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.dto.*;
@@ -39,6 +36,9 @@ public class ImageRestServiceImpl implements ImageRestService
 	@Autowired
 	private ImageService imageService;
 
+	@Autowired
+	private ImageStoreService imageStoreService;
+
 	private String fallbackImageKey;
 
 	public void setFallbackImageKey( String fallbackImageKey ) {
@@ -50,6 +50,7 @@ public class ImageRestServiceImpl implements ImageRestService
 		ViewImageResponse response = new ViewImageResponse( request );
 
 		Image image = getImage( request );
+		LOG.trace( "Rendering image {}", image );
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
@@ -66,6 +67,16 @@ public class ImageRestServiceImpl implements ImageRestService
 			}
 			else {
 				response.setImageSource( imageSource );
+			}
+
+			if ( image.isTemporaryImage() ) {
+				LOG.trace( "Deleting temporary image: {}", image );
+				try {
+					imageStoreService.removeOriginal( image );
+				}
+				catch ( Exception e ) {
+					LOG.warn( "Exception deleting temporary image {}", image, e );
+				}
 			}
 		}
 

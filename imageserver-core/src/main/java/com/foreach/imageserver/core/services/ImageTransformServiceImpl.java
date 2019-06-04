@@ -5,6 +5,7 @@ import com.foreach.imageserver.core.config.TransformersSettings;
 import com.foreach.imageserver.core.transformers.*;
 import com.foreach.imageserver.dto.ImageTransformDto;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -58,6 +59,7 @@ public class ImageTransformServiceImpl implements ImageTransformService
 	}
 
 	@Override
+	@SneakyThrows
 	public ImageSource transform( @NonNull ImageSource imageSource,
 	                              @NonNull ImageAttributes sourceAttributes,
 	                              @NonNull Collection<ImageTransformDto> transforms ) {
@@ -73,7 +75,9 @@ public class ImageTransformServiceImpl implements ImageTransformService
 			ImageTransformDto transform = queue.removeFirst();
 
 			if ( attributes == null ) {
-				attributes = getAttributes( source.getImageStream() );
+				try (InputStream is = source.getImageStream()) {
+					attributes = getAttributes( is );
+				}
 			}
 
 			source = transform( source, attributes, transform );

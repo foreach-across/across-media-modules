@@ -76,9 +76,9 @@ public class ImageMagickTransformCommandExecutor extends AbstractOrderedImageCom
 		ConvertCmd cmd = new ConvertCmd();
 		IMOperation op = createIMOperation( command );
 
-		try (InputStream imageStream = command.getOriginalImage().getImageStream()) {
+		try (InputStream is = command.getOriginalImage().getImageStream()) {
 			try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-				cmd.setInputProvider( new Pipe( imageStream, null ) );
+				cmd.setInputProvider( new Pipe( is, null ) );
 				cmd.setOutputConsumer( new Pipe( null, os ) );
 
 				LOG.debug( "Executing IMOperation: {}", op.toString() );
@@ -87,7 +87,7 @@ public class ImageMagickTransformCommandExecutor extends AbstractOrderedImageCom
 
 				byte[] bytes = os.toByteArray();
 				ImageType outputType = determineOutputType( command.getTransform().getOutputType(), command.getOriginalImageAttributes().getType() );
-				command.setExecutionResult( new InMemoryImageSource( outputType, bytes ) );
+				command.setExecutionResult( new SimpleImageSource( outputType, bytes ) );
 			}
 
 		}

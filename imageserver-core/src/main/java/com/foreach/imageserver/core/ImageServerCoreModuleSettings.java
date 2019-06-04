@@ -26,8 +26,6 @@ public class ImageServerCoreModuleSettings
 	public static final String IMAGE_NOT_FOUND_IMAGEKEY = "imageServerCore.streaming.imageNotFoundKey";
 
 	public static final String IMAGE_STORE_FOLDER = "imageServerCore.store.folder";
-	public static final String IMAGE_STORE_FOLDER_PERMISSIONS = "imageServerCore.store.folderPermissions";
-	public static final String IMAGE_STORE_FILE_PERMISSIONS = "imageServerCore.store.filePermissions";
 
 	public static final String TRANSFORMERS_CONCURRENT_LIMIT = "imageServerCore.transformers.concurrentLimit";
 

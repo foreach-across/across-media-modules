@@ -9,10 +9,11 @@ import com.foreach.imageserver.core.services.exceptions.ImageCouldNotBeRetrieved
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.ImageSource;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.SimpleImageSource;
 import com.foreach.imageserver.dto.*;
 import com.foreach.imageserver.logging.LogHelper;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,29 @@ public class ImageServiceImpl implements ImageService
 
 	// Used concurrently from multiple threads.
 	private Map<VariantImageRequest, FutureVariantImage> futureVariantImages = new ConcurrentHashMap<>();
+
+	private static Set<Integer> splitIntoPageNumbers( String pages ) {
+		Set<Integer> result = new HashSet<>();
+
+		if ( pages != null ) {
+			String[] parts = pages.split( "," );
+			for ( String p : parts ) {
+				if ( p.chars().allMatch( Character::isDigit ) ) {
+					result.add( Integer.parseInt( p ) );
+				}
+				else if ( p.contains( "-" ) ) {
+					String[] parts2 = p.split( "-" );
+					if ( parts2[0].chars().allMatch( Character::isDigit ) && parts2[1].chars().allMatch( Character::isDigit ) ) {
+						for ( int i = Integer.parseInt( parts2[0] ); i < Integer.parseInt( parts2[1] ); i++ ) {
+							result.add( i );
+						}
+					}
+				}
+			}
+		}
+
+		return result;
+	}
 
 	@Override
 	public Image getById( long imageId ) {
@@ -136,16 +160,19 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
+	@SneakyThrows
 	public Image loadImageData( @NonNull byte[] imageBytes ) {
-		ImageAttributes imageAttributes = imageTransformService.getAttributes( new ByteArrayInputStream( imageBytes ) );
+		try (ByteArrayInputStream inputStream = new ByteArrayInputStream( imageBytes )) {
+			ImageAttributes imageAttributes = imageTransformService.getAttributes( inputStream );
 
-		Image image = new Image();
-		image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
-		image.setDimensions( imageAttributes.getDimensions() );
-		image.setImageType( imageAttributes.getType() );
-		image.setFileSize( imageBytes.length );
-		image.setSceneCount( imageAttributes.getSceneCount() );
-		return image;
+			Image image = new Image();
+			image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
+			image.setDimensions( imageAttributes.getDimensions() );
+			image.setImageType( imageAttributes.getType() );
+			image.setFileSize( imageBytes.length );
+			image.setSceneCount( imageAttributes.getSceneCount() );
+			return image;
+		}
 	}
 
 	@Override
@@ -367,7 +394,7 @@ public class ImageServiceImpl implements ImageService
 		imageResolution.setWidth( modificationDto.getResolution().getWidth() );
 		imageResolution.setHeight( modificationDto.getResolution().getHeight() );
 
-		StreamImageSource originalImageSource = imageStoreService.getOriginalImage( image );
+		ImageSource originalImageSource = imageStoreService.getOriginalImage( image );
 		if ( originalImageSource == null ) {
 			String message = String.format(
 					"The original image is not available on disk. image=%s, context=%s, modificationDto=%s, requestedResolution=%s, imageVariant=%s,",
@@ -398,8 +425,7 @@ public class ImageServiceImpl implements ImageService
 
 		// TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
 		if ( storeImage ) {
-			imageStoreService.storeVariantImage( image, context, requestedResolution, imageVariant,
-			                                     variantImageSource.getImageStream() );
+			imageStoreService.storeVariantImage( image, context, requestedResolution, imageVariant, variantImageSource );
 		}
 
 		return variantImageSource;
@@ -449,7 +475,7 @@ public class ImageServiceImpl implements ImageService
 	public ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto ) {
 		ImageConvertResultDto.ImageConvertResultDtoBuilder resultBuilder = ImageConvertResultDto.builder();
 
-		Set<String> keys = new HashSet<>();
+		Collection<String> keys = new HashSet<>();
 		Set<Integer> pages = splitIntoPageNumbers( imageConvertDto.getPages() );
 		if ( pages.isEmpty() ) {
 			pages.add( 0 );
@@ -460,10 +486,16 @@ public class ImageServiceImpl implements ImageService
 		Map<String, ImageDto> transforms = new HashMap<>();
 		resultBuilder.transforms( transforms );
 
-		try (InputStream input = new ByteArrayInputStream( imageConvertDto.getImage() )) {
-			ImageAttributes imageAttributes = imageTransformService.getAttributes( input );
-			input.reset();
-			ImageSource sourceImage = new StreamImageSource( imageAttributes.getType(), input );
+		ImageAttributes imageAttributes = null;
+		try (InputStream is = new ByteArrayInputStream( imageConvertDto.getImage() )) {
+			imageAttributes = imageTransformService.getAttributes( is );
+		}
+		catch ( IOException e ) {
+			LOG.error( e.getMessage(), e );
+		}
+
+		try {
+			ImageSource sourceImage = new SimpleImageSource( imageAttributes.getType(), imageConvertDto.getImage() );
 
 			for ( Map.Entry<String, List<ImageTransformDto>> entry : imageConvertDto.getTransformations().entrySet() ) {
 				for ( Integer page : pages ) {
@@ -473,44 +505,22 @@ public class ImageServiceImpl implements ImageService
 
 					ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, entry.getValue() );
 
-					transforms.put( key, ImageDto.builder()
-					                             .image( IOUtils.toByteArray( resultImage.getImageStream() ) )
-					                             .format( DtoUtil.toDto( resultImage.getImageType() ) )
-					                             .build() );
-					input.reset();
+					try (InputStream is = resultImage.getImageStream()) {
+						transforms.put( key, ImageDto.builder()
+						                             .image( IOUtils.toByteArray( is ) )
+						                             .format( DtoUtil.toDto( resultImage.getImageType() ) )
+						                             .build() );
+					}
 				}
 			}
 		}
-		catch ( IOException e ) {
-			throw new RuntimeException( "An error occured while converting the image", e );
+		catch ( Exception e ) {
+			throw new RuntimeException( "An error occurred while converting the image", e );
 		}
 
 		resultBuilder.total( keys.size() );
 
 		return resultBuilder.build();
-	}
-
-	private Set<Integer> splitIntoPageNumbers( String pages ) {
-		Set<Integer> result = new HashSet<>();
-
-		if ( pages != null ) {
-			String[] parts = pages.split( "," );
-			for ( String p : parts ) {
-				if ( p.chars().allMatch( Character::isDigit ) ) {
-					result.add( Integer.parseInt( p ) );
-				}
-				else if ( p.contains( "-" ) ) {
-					String[] parts2 = p.split( "-" );
-					if ( parts2[0].chars().allMatch( Character::isDigit ) && parts2[1].chars().allMatch( Character::isDigit ) ) {
-						for ( int i = Integer.parseInt( parts2[0] ); i < Integer.parseInt( parts2[1] ); i++ ) {
-							result.add( i );
-						}
-					}
-				}
-			}
-		}
-
-		return result;
 	}
 
 	private static class VariantImageRequest

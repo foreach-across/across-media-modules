@@ -5,7 +5,7 @@ import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.core.transformers.ImageTransformCommand;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.SimpleImageSource;
 import com.foreach.imageserver.core.transformers.imagemagick.ImageMagickTransformCommandExecutor;
 import com.foreach.imageserver.dto.*;
 import lombok.SneakyThrows;
@@ -60,6 +60,20 @@ public class TestImageMagickTransformCommandExecutor
 
 	@Autowired
 	private ImageMagickTransformCommandExecutor executor;
+
+	private static ImageTransformCommand createTransformCommand( ImageSource image,
+	                                                             ImageAttributes attributes,
+	                                                             Consumer<ImageTransformDto.ImageTransformDtoBuilder> transformBuilder ) {
+		ImageTransformDto.ImageTransformDtoBuilder transformDtoBuilder = ImageTransformDto.builder();
+		transformBuilder.accept( transformDtoBuilder );
+
+		return ImageTransformCommand
+				.builder()
+				.originalImage( image )
+				.originalImageAttributes( attributes )
+				.transform( transformDtoBuilder.build() )
+				.build();
+	}
 
 	@Test
 	public void transparentPngToTransparentGrayscalePng() {
@@ -263,20 +277,6 @@ public class TestImageMagickTransformCommandExecutor
 		assertImage( "images/svgWithBackground.png", renderSvg );
 	}
 
-	private static ImageTransformCommand createTransformCommand( ImageSource image,
-	                                                             ImageAttributes attributes,
-	                                                             Consumer<ImageTransformDto.ImageTransformDtoBuilder> transformBuilder ) {
-		ImageTransformDto.ImageTransformDtoBuilder transformDtoBuilder = ImageTransformDto.builder();
-		transformBuilder.accept( transformDtoBuilder );
-
-		return ImageTransformCommand
-				.builder()
-				.originalImage( image )
-				.originalImageAttributes( attributes )
-				.transform( transformDtoBuilder.build() )
-				.build();
-	}
-
 	private void assertArguments( String expected, ImageTransformCommand command ) {
 		IMOperation operation = executor.createIMOperation( command );
 		assertThat( operation ).isNotNull();
@@ -286,12 +286,13 @@ public class TestImageMagickTransformCommandExecutor
 	@SneakyThrows
 	private void assertImage( String expected, ImageTransformCommand command ) {
 		executor.execute( command );
-		assertTrue( imagesAreEqual( bufferedImage( command.getExecutionResult().getImageStream() ), bufferedImageFromClassPath( expected ) ) );
+		try (InputStream is = command.getExecutionResult().getImageStream()) {
+			assertTrue( imagesAreEqual( bufferedImage( is ), bufferedImageFromClassPath( expected ) ) );
+		}
 	}
 
 	private ImageSource image( String path ) {
-		InputStream imageStream = getClass().getClassLoader().getResourceAsStream( path );
-		return new StreamImageSource( null, imageStream );
+		return new SimpleImageSource( null, () -> getClass().getClassLoader().getResourceAsStream( path ) );
 	}
 
 	@Configuration

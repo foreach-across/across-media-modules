@@ -1,2 +1,6 @@
 #!/bin/bash
-exec docker exec -i imageserver-container gm "$@"
+if [ -f /.dockerenv ]; then
+    /usr/bin/gm "$@"
+else
+    exec docker exec -i imageserver-container gm "$@"
+fi
