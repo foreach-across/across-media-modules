@@ -51,3 +51,5 @@ Authenticating against your aws account can be done by
     * AWS_SECRET_KEY
     * (AWS_SESSION_TOKEN)
 
+### deploy to nexus:
+mvn deploy -Pforeach
