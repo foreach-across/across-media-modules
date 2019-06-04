@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.UUID;
 
@@ -36,7 +35,7 @@ public class TestLocalFileRepositoryFactory
 	private LocalFileRepositoryFactory factory;
 
 	@Before
-	public void create() throws IOException {
+	public void create() {
 		cleanup();
 
 		factory = new LocalFileRepositoryFactory( ROOT_DIR, null );
@@ -66,8 +65,8 @@ public class TestLocalFileRepositoryFactory
 		assertTrue( Paths.get( ROOT_DIR, "default" ).toFile().exists() );
 		assertTrue( Paths.get( ROOT_DIR, "temp" ).toFile().exists() );
 		assertEquals( Paths.get( ROOT_DIR, "default" ).toFile().getAbsolutePath(),
-		              ( (LocalFileRepository) one ).getRootFolder() );
+		              ( (LocalFileRepository) one ).getRootFolderPath() );
 		assertEquals( Paths.get( ROOT_DIR, "temp" ).toFile().getAbsolutePath(),
-		              ( (LocalFileRepository) two ).getRootFolder() );
+		              ( (LocalFileRepository) two ).getRootFolderPath() );
 	}
 }

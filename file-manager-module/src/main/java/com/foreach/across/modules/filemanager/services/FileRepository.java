@@ -18,6 +18,8 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderDescriptor;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.NonNull;
 
 import java.io.File;
@@ -79,7 +81,7 @@ public interface FileRepository
 
 	/**
 	 * Create a new file resource in the repository. The resource returned is guaranteed not to exist
-	 * before the call to this method, and can be written to (can effectively be created).
+	 * before the call to this method, and can normally be written to (can effectively be created).
 	 * <p/>
 	 * This does not allocate the physical storage for the actual file, that should only happen when
 	 * actual data is written to the file resource. If you want to create a new file resource and immediately
@@ -95,7 +97,7 @@ public interface FileRepository
 
 	/**
 	 * Create a new file resource in the repository and and optionally allocate it immediately.
-	 * The resource returned is guaranteed not to exist before the call to this method, and can be written to after.
+	 * The resource returned is guaranteed not to exist before the call to this method, and can normally be written to after.
 	 * The call to {@link FileResource#exists()} should return {@code true} if parameter {@code allocateImmediately}
 	 * was {@code true}.
 	 * <p/>
@@ -119,6 +121,32 @@ public interface FileRepository
 	 * @return file resource
 	 */
 	FileResource getFileResource( @NonNull FileDescriptor descriptor );
+
+	/**
+	 * Get the {@link FolderResource} representing the root of this repository.
+	 *
+	 * @return root folder resources
+	 */
+	default FolderResource getRootFolderResource() {
+		return getFolderResource( FolderDescriptor.rootFolder( getRepositoryId() ) );
+	}
+
+	/**
+	 * Returns the {@link FolderResource} represented by the descriptors, should never be {@code null}.
+	 * An {@link IllegalArgumentException} will be thrown if the descriptor does not match the repository
+	 * or is illegal in any way.
+	 * <p/>
+	 * Note that this does not mean that the actual folder resource exists. Only a call to {@link FolderResource#exists()}
+	 * would verify that. The return value simply implies that a resource matching that descriptor could
+	 * exist or be created.
+	 *
+	 * @param descriptor to get the folder resource for
+	 * @return folder resource
+	 */
+	default FolderResource getFolderResource( @NonNull FolderDescriptor descriptor ) {
+		// todo: implement
+		return null;
+	}
 
 	/**
 	 * Quick check if a descriptor actually points to an existing file resource.

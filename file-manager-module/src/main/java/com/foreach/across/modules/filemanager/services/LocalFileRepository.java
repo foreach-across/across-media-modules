@@ -39,34 +39,34 @@ import java.nio.file.Paths;
 public class LocalFileRepository extends AbstractFileRepository
 {
 	@Getter
-	private String rootFolder;
+	private String rootFolderPath;
 
 	/**
 	 * @deprecated since 1.4.0 - use {@link #builder()} instead
 	 */
 	@Deprecated
 	@SuppressWarnings("unused")
-	public LocalFileRepository( String repositoryId, String rootFolder ) {
-		this( repositoryId, rootFolder, null );
+	public LocalFileRepository( String repositoryId, String rootFolderPath ) {
+		this( repositoryId, rootFolderPath, null );
 	}
 
 	@Builder
 	private LocalFileRepository( String repositoryId, @NonNull String rootFolder, PathGenerator pathGenerator ) {
 		super( repositoryId );
-		this.rootFolder = rootFolder;
+		this.rootFolderPath = rootFolder;
 		setPathGenerator( pathGenerator );
 	}
 
 	@Override
 	protected FileResource buildFileResource( FileDescriptor descriptor ) {
-		return new LocalFileResource( descriptor, buildPath( descriptor ).toFile() );
+		return new LocalFileResource( this, descriptor, buildPath( descriptor ).toFile() );
 	}
 
 	private Path buildPath( FileDescriptor descriptor ) {
 		if ( descriptor.getFolderId() != null ) {
-			return Paths.get( rootFolder, descriptor.getFolderId(), descriptor.getFileId() );
+			return Paths.get( rootFolderPath, descriptor.getFolderId(), descriptor.getFileId() );
 		}
 
-		return Paths.get( rootFolder, descriptor.getFileId() );
+		return Paths.get( rootFolderPath, descriptor.getFileId() );
 	}
 }

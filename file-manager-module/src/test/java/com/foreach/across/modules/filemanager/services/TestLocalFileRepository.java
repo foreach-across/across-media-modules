@@ -16,9 +16,21 @@
 
 package com.foreach.across.modules.filemanager.services;
 
+import org.junit.jupiter.api.Test;
+
 public class TestLocalFileRepository extends BaseFileRepositoryTest
 {
 	public void createRepository() {
 		fileRepository = LocalFileRepository.builder().repositoryId( "default" ).rootFolder( ROOT_DIR ).build();
+	}
+
+	@Test
+	void createFolderAndFilesInFolder() {
+
+	}
+
+	@Test
+	void fileInRootFolder() {
+
 	}
 }

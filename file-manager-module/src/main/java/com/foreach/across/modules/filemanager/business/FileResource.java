@@ -47,6 +47,14 @@ public interface FileResource extends WritableResource, FileRepositoryResource
 	FileDescriptor getDescriptor();
 
 	/**
+	 * @return the folder to which this file belongs
+	 */
+	default FolderResource getFolderResource() {
+		// todo: implement
+		return null;
+	}
+
+	/**
 	 * Method {@code getFile()} is extended from {@link Resource} but it's advised
 	 * not to implement it directly on {@link FileResource} to ensure better active
 	 * management of physical files. Use either {@link #getInputStream()} to get the

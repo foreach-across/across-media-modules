@@ -2,6 +2,7 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Getter;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
@@ -26,12 +27,22 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 class LocalFileResource extends FileSystemResource implements FileResource, FileResource.TargetFile
 {
+	private final LocalFileRepository fileRepository;
+
 	@Getter
 	private final FileDescriptor descriptor;
 
-	LocalFileResource( @NonNull FileDescriptor descriptor, @NonNull File file ) {
+	LocalFileResource( @NonNull LocalFileRepository fileRepository,
+	                   @NonNull FileDescriptor descriptor,
+	                   @NonNull File file ) {
 		super( file );
+		this.fileRepository = fileRepository;
 		this.descriptor = descriptor;
+	}
+
+	@Override
+	public FolderResource getFolderResource() {
+		return new LocalFolderResource( fileRepository, descriptor.getFolderDescriptor(), getTargetFile().getParentFile() );
 	}
 
 	@Override
@@ -60,13 +71,32 @@ class LocalFileResource extends FileSystemResource implements FileResource, File
 	}
 
 	@Override
-	public boolean delete() {
-		return FileUtils.deleteQuietly( getTargetFile() );
+	public boolean exists() {
+		File targetFile = getTargetFile();
+		return targetFile.exists() && !targetFile.isDirectory();
 	}
 
 	@Override
-	protected File getFileForLastModifiedCheck() throws IOException {
+	public boolean delete() {
+		File targetFile = getTargetFile();
+		return !targetFile.isDirectory() && FileUtils.deleteQuietly( targetFile );
+	}
+
+	@Override
+	protected File getFileForLastModifiedCheck() {
 		return getTargetFile();
+	}
+
+	@Override
+	public long lastModified() {
+		File targetFile = getTargetFile();
+		return !targetFile.isDirectory() ? targetFile.lastModified() : 0L;
+	}
+
+	@Override
+	public long contentLength() {
+		File targetFile = getTargetFile();
+		return !targetFile.isDirectory() ? targetFile.length() : 0L;
 	}
 
 	@Override

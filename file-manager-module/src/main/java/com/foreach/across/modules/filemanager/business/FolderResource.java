@@ -4,6 +4,8 @@ import lombok.NonNull;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Represents a single {@link com.foreach.across.modules.filemanager.services.FileRepository} folder,
@@ -27,25 +29,37 @@ public interface FolderResource extends FileRepositoryResource
 
 	/**
 	 * Get the folder resource identified by the relative path.
-	 * If the target is not a valid folder resource, an exception will be thrown.
+	 * If the target is not a valid folder resource, an exception should be thrown.
 	 *
 	 * @param relativePath to the folder
 	 * @return folder resource
 	 */
-	FolderResource getFolderResource( String relativePath );
+	default FolderResource getFolderResource( @NonNull String relativePath ) {
+		return Optional.ofNullable( getResource( relativePath.endsWith( "/" ) ? relativePath : relativePath + "/" ) )
+		               .filter( FolderResource.class::isInstance )
+		               .map( FolderResource.class::cast )
+		               .orElseThrow( () -> new IllegalArgumentException( "Relative path '" + relativePath + "' is not a valid folder resource" ) );
+	}
 
 	/**
 	 * Get the file resource identified by the relative path.
-	 * If the target is not a valid file resource, an exception will be thrown.
+	 * If the target is not a valid file resource, an exception should be thrown.
 	 *
 	 * @param relativePath to the file
 	 * @return file resource
 	 */
-	FileResource getFileResource( String relativePath );
+	default FileResource getFileResource( @NonNull String relativePath ) {
+		return Optional.ofNullable( getResource( relativePath ) )
+		               .filter( FileResource.class::isInstance )
+		               .map( FileResource.class::cast )
+		               .orElseThrow( () -> new IllegalArgumentException( "Relative path '" + relativePath + "' is not a valid file resource" ) );
+	}
 
 	/**
 	 * Get the resource identified by the relative path.
-	 * If the target is not a valid resource, an exception will be thrown.
+	 * If the target is not a valid resource, an exception should be thrown.
+	 * <p/>
+	 * A path ending with / indicates a folder resource, otherwise a file resource should be returned.
 	 *
 	 * @param relativePath to the resource
 	 * @return resource
@@ -57,7 +71,9 @@ public interface FolderResource extends FileRepositoryResource
 	 *
 	 * @return file resource
 	 */
-	FileResource createFileResource();
+	default FileResource createFileResource() {
+		return getFileResource( UUID.randomUUID().toString().replace( "-", "" ) );
+	}
 
 	/**
 	 * List the file resources that are direct children of this folder.
@@ -65,7 +81,9 @@ public interface FolderResource extends FileRepositoryResource
 	 *
 	 * @return collection of file resources
 	 */
-	Collection<FileResource> listFiles();
+	default Collection<FileResource> listFiles() {
+		return listChildren( false, FileResource.class );
+	}
 
 	/**
 	 * List the folder resources that are direct children of this folder.
@@ -73,7 +91,10 @@ public interface FolderResource extends FileRepositoryResource
 	 *
 	 * @return collection of folder resources
 	 */
-	Collection<FolderResource> listFolders();
+	default Collection<FolderResource> listFolders() {
+		return listChildren( false, FolderResource.class );
+
+	}
 
 	/**
 	 * List resources that are children of this folder.
@@ -86,7 +107,9 @@ public interface FolderResource extends FileRepositoryResource
 	 * @param resourceType   type of resources that should be returned
 	 * @return collection of resources
 	 */
-	<U extends FileRepositoryResource> Collection<U> listChildren( boolean recurseFolders, Class<U> resourceType );
+	default <U extends FileRepositoryResource> Collection<U> listChildren( boolean recurseFolders, Class<U> resourceType ) {
+		return findResources( recurseFolders ? "/**" : "/*", resourceType );
+	}
 
 	/**
 	 * List resources that are children of this folder.
@@ -98,7 +121,9 @@ public interface FolderResource extends FileRepositoryResource
 	 * @param recurseFolders true if child folders should be navigated as well
 	 * @return collection of resources
 	 */
-	Collection<FileRepositoryResource> listChildren( boolean recurseFolders );
+	default Collection<FileRepositoryResource> listChildren( boolean recurseFolders ) {
+		return findResources( recurseFolders ? "/**" : "/*" );
+	}
 
 	/**
 	 * Find all resources matching the given ANT pattern.
@@ -107,7 +132,13 @@ public interface FolderResource extends FileRepositoryResource
 	 * @param resourceType type of resources to return
 	 * @return resources
 	 */
-	<U extends FileRepositoryResource> Collection<U> findResources( @NonNull String pattern, Class<U> resourceType );
+	default <U extends FileRepositoryResource> Collection<U> findResources( @NonNull String pattern, Class<U> resourceType ) {
+		return findResources( pattern )
+				.stream()
+				.filter( resourceType::isInstance )
+				.map( resourceType::cast )
+				.collect( Collectors.toList() );
+	}
 
 	/**
 	 * Find all resources matching the given ANT pattern.
@@ -154,5 +185,7 @@ public interface FolderResource extends FileRepositoryResource
 	/**
 	 * @return true if the folder does not have any children
 	 */
-	boolean isEmpty();
+	default boolean isEmpty() {
+		return listChildren( false ).isEmpty();
+	}
 }
