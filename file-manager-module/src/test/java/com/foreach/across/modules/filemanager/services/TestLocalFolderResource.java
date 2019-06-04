@@ -6,9 +6,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
@@ -18,18 +15,13 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Arne Vandamme
  * @since 1.4.0
  */
-@ExtendWith(MockitoExtension.class)
 class TestLocalFolderResource
 {
-	@Mock
-	private LocalFileRepository repository;
-
 	private File tempDir;
 	private FolderDescriptor descriptor;
 	private FolderResource resource;
@@ -44,7 +36,7 @@ class TestLocalFolderResource
 	void createResource() {
 		descriptor = FolderDescriptor.of( "my-repo", "123/456" );
 		tempDir = Paths.get( System.getProperty( "java.io.tmpdir" ), UUID.randomUUID().toString(), UUID.randomUUID().toString() ).toFile();
-		resource = new LocalFolderResource( repository, descriptor, tempDir );
+		resource = new LocalFolderResource( descriptor, tempDir.toPath() );
 	}
 
 	@AfterEach
@@ -71,17 +63,17 @@ class TestLocalFolderResource
 		assertThat( resource )
 				.isEqualTo( resource )
 				.isNotEqualTo( mock( Resource.class ) )
-				.isEqualTo( new LocalFolderResource( repository, descriptor, tempDir ) )
-				.isNotEqualTo( new LocalFolderResource( repository, FolderDescriptor.of( "1:2/" ), tempDir ) );
+				.isEqualTo( new LocalFolderResource( descriptor, tempDir.toPath() ) )
+				.isNotEqualTo( new LocalFolderResource( FolderDescriptor.of( "1:2/" ), tempDir.toPath() ) );
 	}
 
 	@Test
 	void parentFolderResource() {
-		LocalFolderResource rootFolder = new LocalFolderResource( repository, FolderDescriptor.rootFolder( "my-repo" ), tempDir );
+		LocalFolderResource rootFolder = new LocalFolderResource( FolderDescriptor.rootFolder( "my-repo" ), tempDir.toPath() );
 		assertThat( rootFolder.getParentFolderResource() ).isEmpty();
 
-		when( repository.getFolderResource( FolderDescriptor.of( "my-repo", "123" ) ) ).thenReturn( rootFolder );
-		assertThat( resource.getParentFolderResource() ).contains( rootFolder );
+		assertThat( resource.getParentFolderResource() )
+				.contains( new LocalFolderResource( descriptor.getParentFolderDescriptor().orElse( null ), tempDir.getParentFile().toPath() ) );
 	}
 
 	@Test
@@ -319,29 +311,32 @@ class TestLocalFolderResource
 
 		File child = new File( tempDir, "childFile" );
 		child.createNewFile();
-		childFile = new LocalFileResource( repository, FileDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId(), "childFile" ), child );
+		childFile = new LocalFileResource( FileDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId(), "childFile" ),
+		                                   child.toPath() );
 		assertThat( childFile.exists() ).isTrue();
 
 		child = new File( tempDir, "childFolder" );
 		child.mkdir();
-		childFolder = new LocalFolderResource( repository,
-		                                       FolderDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId() + "/childFolder" ),
-		                                       child );
+		childFolder = new LocalFolderResource(
+				FolderDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId() + "/childFolder" ),
+				child.toPath()
+		);
 		assertThat( childFolder.exists() ).isTrue();
 
 		child = new File( child, "childFileInChildFolder" );
 		child.createNewFile();
 		childFileInChildFolder = new LocalFileResource(
-				repository, FileDescriptor.of( descriptor.getRepositoryId(), childFolder.getDescriptor().getFolderId(), "childFileInChildFolder" ), child
+				FileDescriptor.of( descriptor.getRepositoryId(), childFolder.getDescriptor().getFolderId(), "childFileInChildFolder" ),
+				child.toPath()
 		);
 		assertThat( childFileInChildFolder.exists() ).isTrue();
 
 		child = new File( childFileInChildFolder.getTargetFile().getParentFile(), "childFolderInChildFolder" );
 		child.mkdir();
-		childFolderInChildFolder = new LocalFolderResource( repository,
-		                                                    FolderDescriptor.of( descriptor.getRepositoryId(),
-		                                                                         childFolder.getDescriptor().getFolderId() + "/childFolderInChildFolder" ),
-		                                                    child );
+		childFolderInChildFolder = new LocalFolderResource(
+				FolderDescriptor.of( descriptor.getRepositoryId(),
+				                     childFolder.getDescriptor().getFolderId() + "/childFolderInChildFolder" ),
+				child.toPath() );
 		assertThat( childFolderInChildFolder.exists() ).isTrue();
 	}
 }

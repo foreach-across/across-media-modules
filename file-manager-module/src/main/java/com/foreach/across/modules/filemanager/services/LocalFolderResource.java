@@ -12,12 +12,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.AntPathMatcher;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.Consumer;
@@ -31,16 +27,14 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 class LocalFolderResource implements FolderResource
 {
-	private final LocalFileRepository fileRepository;
-
 	@Getter
 	private final FolderDescriptor descriptor;
 
-	private final File directory;
+	private final Path directory;
 
 	@Override
 	public Optional<FolderResource> getParentFolderResource() {
-		return descriptor.getParentFolderDescriptor().map( fileRepository::getFolderResource );
+		return descriptor.getParentFolderDescriptor().map( fd -> new LocalFolderResource( fd, directory.getParent() ) );
 	}
 
 	@Override
@@ -54,12 +48,12 @@ class LocalFolderResource implements FolderResource
 		if ( relativePath.endsWith( "/" ) ) {
 			FolderDescriptor folderDescriptor = FolderDescriptor.of( descriptor.getRepositoryId() + ":" + descriptor.getFolderId() + path );
 			String childPath = StringUtils.removeStart( folderDescriptor.getFolderId(), descriptor.getFolderId() );
-			return new LocalFolderResource( fileRepository, folderDescriptor, new File( directory, childPath ) );
+			return new LocalFolderResource( folderDescriptor, Paths.get( directory.toString(), childPath ) );
 		}
 
 		FileDescriptor fileDescriptor = FileDescriptor.of( descriptor.getRepositoryId() + ":" + descriptor.getFolderId() + path );
 		String childPath = StringUtils.removeStart( fileDescriptor.getFolderId(), descriptor.getFolderId() );
-		return new LocalFileResource( fileRepository, fileDescriptor, new File( directory, childPath + "/" + fileDescriptor.getFileId() ) );
+		return new LocalFileResource( fileDescriptor, Paths.get( directory.toString(), childPath, fileDescriptor.getFileId() ) );
 	}
 
 	@Override
@@ -78,7 +72,7 @@ class LocalFolderResource implements FolderResource
 
 				boolean shouldRecurse = !"/*".equalsIgnoreCase( p );
 
-				Path rootPath = directory.toPath();
+				Path rootPath = directory;
 				String pathPrefix = StringUtils.replace( rootPath.toAbsolutePath().toString(), "\\", "/" );
 
 				final String antPattern = p;
@@ -88,9 +82,8 @@ class LocalFolderResource implements FolderResource
 					if ( candidatePath.length() > pathPrefix.length() ) {
 						String pathToMatch = StringUtils.substring( candidatePath, pathPrefix.length() );
 						if ( !shouldRecurse || pathMatcher.match( antPattern, pathToMatch ) ) {
-							File file = candidate.toFile();
-							if ( !matchOnlyDirectories || file.isDirectory() ) {
-								resources.add( toFileRepositoryResource( file, pathToMatch ) );
+							if ( !matchOnlyDirectories || Files.isDirectory( candidate ) ) {
+								resources.add( toFileRepositoryResource( candidate, pathToMatch ) );
 							}
 						}
 					}
@@ -113,7 +106,7 @@ class LocalFolderResource implements FolderResource
 					} );
 				}
 				else {
-					Files.list( directory.toPath() ).forEach( processCandidate );
+					Files.list( directory ).forEach( processCandidate );
 				}
 
 				return resources;
@@ -123,32 +116,29 @@ class LocalFolderResource implements FolderResource
 		return Collections.emptyList();
 	}
 
-	private FileRepositoryResource toFileRepositoryResource( File candidate, String childPath ) {
-		if ( candidate.isDirectory() ) {
-			return new LocalFolderResource(
-					fileRepository,
-					FolderDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId() + childPath ),
-					candidate
-			);
+	private FileRepositoryResource toFileRepositoryResource( Path candidate, String childPath ) {
+		if ( Files.isDirectory( candidate ) ) {
+			return new LocalFolderResource( FolderDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId() + childPath ), candidate );
 		}
 
-		return new LocalFileResource( fileRepository, FileDescriptor.of( descriptor.getRepositoryId() + ":" + descriptor.getFolderId() + childPath ),
+		return new LocalFileResource( FileDescriptor.of( descriptor.getRepositoryId() + ":" + descriptor.getFolderId() + childPath ),
 		                              candidate );
 	}
 
 	@Override
+	@SneakyThrows
 	public boolean delete( boolean deleteChildren ) {
 		if ( exists() ) {
 			if ( deleteChildren ) {
 				try {
-					FileUtils.deleteDirectory( directory );
+					FileUtils.deleteDirectory( directory.toFile() );
 					return true;
 				}
 				catch ( IOException ioe ) {
 					return false;
 				}
 			}
-			return directory.delete();
+			return directory.toFile().delete();
 		}
 		return false;
 	}
@@ -157,7 +147,7 @@ class LocalFolderResource implements FolderResource
 	public boolean deleteChildren() {
 		if ( exists() ) {
 			try {
-				FileUtils.cleanDirectory( directory );
+				FileUtils.cleanDirectory( directory.toFile() );
 			}
 			catch ( IOException ioe ) {
 				return false;
@@ -171,7 +161,7 @@ class LocalFolderResource implements FolderResource
 	public boolean create() {
 		try {
 			if ( !exists() ) {
-				FileUtils.forceMkdir( directory );
+				Files.createDirectories( directory );
 				return true;
 			}
 			return false;
@@ -183,7 +173,7 @@ class LocalFolderResource implements FolderResource
 
 	@Override
 	public boolean exists() {
-		return directory.exists() && directory.isDirectory();
+		return Files.exists( directory ) && Files.isDirectory( directory );
 	}
 
 	@Override

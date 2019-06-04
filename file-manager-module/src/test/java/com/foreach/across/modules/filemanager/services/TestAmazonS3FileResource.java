@@ -246,7 +246,7 @@ class TestAmazonS3FileResource
 	@SneakyThrows
 	void copyFromFileResource() {
 		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
-		FileResource other = new LocalFileResource( mock( LocalFileRepository.class ), descriptor, otherTempFile );
+		FileResource other = new LocalFileResource( descriptor, otherTempFile.toPath() );
 		other.copyFrom( RES_TEXTFILE );
 
 		resource.copyFrom( other, false );
@@ -271,7 +271,7 @@ class TestAmazonS3FileResource
 		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
 
 		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
-		FileResource other = new LocalFileResource( mock( LocalFileRepository.class ), descriptor, otherTempFile );
+		FileResource other = new LocalFileResource( descriptor, otherTempFile.toPath() );
 		resource.copyTo( other );
 
 		otherTempFile.deleteOnExit();

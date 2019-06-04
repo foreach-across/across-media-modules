@@ -8,11 +8,9 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
@@ -29,13 +27,9 @@ import static org.mockito.Mockito.when;
  * @author Arne Vandamme
  * @since 1.4.0
  */
-@ExtendWith(MockitoExtension.class)
 class TestLocalFileResource
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
-
-	@Mock
-	private LocalFileRepository fileRepository;
 
 	private File tempFile;
 	private File nonExistingFile;
@@ -49,7 +43,7 @@ class TestLocalFileResource
 		descriptor = FileDescriptor.of( "my-repo", "123/456", "my.file" );
 		nonExistingFile = new File( UUID.randomUUID().toString() );
 
-		resource = new LocalFileResource( fileRepository, descriptor, tempFile );
+		resource = new LocalFileResource( descriptor, tempFile.toPath() );
 	}
 
 	@AfterEach
@@ -67,14 +61,14 @@ class TestLocalFileResource
 		assertThat( resource )
 				.isEqualTo( resource )
 				.isNotEqualTo( mock( Resource.class ) )
-				.isEqualTo( new LocalFileResource( fileRepository, descriptor, tempFile ) )
-				.isNotEqualTo( new LocalFileResource( fileRepository, FileDescriptor.of( "1:2:3" ), tempFile ) );
+				.isEqualTo( new LocalFileResource( descriptor, tempFile.toPath() ) )
+				.isNotEqualTo( new LocalFileResource( FileDescriptor.of( "1:2:3" ), tempFile.toPath() ) );
 	}
 
 	@Test
 	void folderResource() {
 		descriptor = FileDescriptor.of( "my-repo", "123/456", tempFile.getName() );
-		resource = new LocalFileResource( fileRepository, descriptor, tempFile );
+		resource = new LocalFileResource( descriptor, tempFile.toPath() );
 
 		assertThat( resource.getFolderResource() ).isNotNull();
 		assertThat( resource.getFolderResource().getDescriptor() ).isEqualTo( resource.getDescriptor().getFolderDescriptor() );
@@ -100,7 +94,7 @@ class TestLocalFileResource
 	@Test
 	void description() {
 		assertThat( resource.getDescription() )
-				.isEqualTo( "axfs [" + descriptor.toString() + "] -> " + new FileSystemResource( tempFile ).getDescription() );
+				.isEqualTo( "axfs [" + descriptor.toString() + "] -> " + new PathResource( tempFile.toPath() ).getDescription() );
 	}
 
 	@Test
@@ -109,7 +103,7 @@ class TestLocalFileResource
 				.isEqualTo( new FileSystemResource( tempFile ).exists() )
 				.isTrue();
 
-		assertThat( new LocalFileResource( fileRepository, descriptor, nonExistingFile ).exists() ).isFalse();
+		assertThat( new LocalFileResource( descriptor, nonExistingFile.toPath() ).exists() ).isFalse();
 	}
 
 	@Test
@@ -139,7 +133,7 @@ class TestLocalFileResource
 	void isReadable() {
 		assertThat( resource.isReadable() ).isTrue();
 
-		assertThat( new LocalFileResource( fileRepository, descriptor, nonExistingFile ).isReadable() )
+		assertThat( new LocalFileResource( descriptor, nonExistingFile.toPath() ).isReadable() )
 				.isFalse()
 				.isEqualTo( new FileSystemResource( nonExistingFile ).isReadable() );
 	}
@@ -148,7 +142,7 @@ class TestLocalFileResource
 	void isWritable() {
 		assertThat( resource.isWritable() ).isTrue();
 
-		assertThat( new LocalFileResource( fileRepository, descriptor, nonExistingFile ).isWritable() )
+		assertThat( new LocalFileResource( descriptor, nonExistingFile.toPath() ).isWritable() )
 				.isEqualTo( new FileSystemResource( nonExistingFile ).isWritable() )
 				.isFalse();
 	}
@@ -249,7 +243,7 @@ class TestLocalFileResource
 	@SneakyThrows
 	void copyFromFileResource() {
 		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
-		FileResource other = new LocalFileResource( fileRepository, descriptor, otherTempFile );
+		FileResource other = new LocalFileResource( descriptor, otherTempFile.toPath() );
 		other.copyFrom( RES_TEXTFILE );
 
 		resource.copyFrom( other, false );

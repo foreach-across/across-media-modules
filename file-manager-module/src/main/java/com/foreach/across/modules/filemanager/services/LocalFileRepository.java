@@ -59,7 +59,7 @@ public class LocalFileRepository extends AbstractFileRepository
 
 	@Override
 	protected FileResource buildFileResource( FileDescriptor descriptor ) {
-		return new LocalFileResource( this, descriptor, buildPath( descriptor ).toFile() );
+		return new LocalFileResource( descriptor, buildPath( descriptor ) );
 	}
 
 	private Path buildPath( FileDescriptor descriptor ) {

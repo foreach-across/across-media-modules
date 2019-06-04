@@ -12,7 +12,7 @@ The source can be built using [Maven][] with JDK 8.
 Some tests require [Localstack][] with the S3 service to be running.
 A `docker-compose` file is available in the root of this repository, running `docker-compose up` should start the S3 services with data being stored in `local-data/storage/localstack`.
 
- > On macOS you might have to do `TMPDIR=/private$TMPDIR docker-compose up` to workround tmp dir issues.
+ > On macOS you might have to do `TMPDIR=/private$TMPDIR docker-compose up` to workaround tmp dir issues.
 
 ### License
 Licensed under version 2.0 of the [Apache License][].

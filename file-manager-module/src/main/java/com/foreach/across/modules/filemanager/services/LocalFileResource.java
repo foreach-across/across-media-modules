@@ -5,8 +5,9 @@ import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.PathResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -25,24 +27,22 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * @since 1.4.0
  */
 @SuppressWarnings("common-java:DuplicatedBlocks")
-class LocalFileResource extends FileSystemResource implements FileResource, FileResource.TargetFile
+class LocalFileResource extends PathResource implements FileResource, FileResource.TargetFile
 {
-	private final LocalFileRepository fileRepository;
-
 	@Getter
 	private final FileDescriptor descriptor;
 
-	LocalFileResource( @NonNull LocalFileRepository fileRepository,
-	                   @NonNull FileDescriptor descriptor,
-	                   @NonNull File file ) {
+	private final Path file;
+
+	LocalFileResource( @NonNull FileDescriptor descriptor, @NonNull Path file ) {
 		super( file );
-		this.fileRepository = fileRepository;
 		this.descriptor = descriptor;
+		this.file = file;
 	}
 
 	@Override
 	public FolderResource getFolderResource() {
-		return new LocalFolderResource( fileRepository, descriptor.getFolderDescriptor(), getTargetFile().getParentFile() );
+		return new LocalFolderResource( descriptor.getFolderDescriptor(), file.getParent() );
 	}
 
 	@Override
@@ -100,6 +100,7 @@ class LocalFileResource extends FileSystemResource implements FileResource, File
 	}
 
 	@Override
+	@SneakyThrows
 	public File getTargetFile() {
 		return super.getFile();
 	}
