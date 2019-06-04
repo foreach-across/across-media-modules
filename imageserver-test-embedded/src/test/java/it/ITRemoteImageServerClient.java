@@ -69,20 +69,22 @@ public class ITRemoteImageServerClient
 		fetchedInfo = imageServerClient.imageInfo( externalId );
 		assertEquals( createdInfo, fetchedInfo );
 
-		InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(),
-		                                                         new ImageVariantDto( ImageTypeDto.JPEG ) );
-		byte[] originalSizeData = IOUtils.toByteArray( inputStream );
+		try (InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(),
+		                                                              new ImageVariantDto( ImageTypeDto.JPEG ) )) {
+			byte[] originalSizeData = IOUtils.toByteArray( inputStream );
 
-		ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), originalSizeData );
-		assertEquals( new DimensionsDto( 1920, 1080 ), modifiedUpload.getDimensionsDto() );
-		assertEquals( ImageTypeDto.JPEG, modifiedUpload.getImageType() );
+			ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), originalSizeData );
+			assertEquals( new DimensionsDto( 1920, 1080 ), modifiedUpload.getDimensionsDto() );
+			assertEquals( ImageTypeDto.JPEG, modifiedUpload.getImageType() );
+		}
 
-		inputStream = imageServerClient.imageStream( externalId, "website", 640, 480, ImageTypeDto.PNG );
-		byte[] scaledDate = IOUtils.toByteArray( inputStream );
+		try (InputStream inputStream = imageServerClient.imageStream( externalId, "website", 640, 480, ImageTypeDto.PNG )) {
+			byte[] scaledDate = IOUtils.toByteArray( inputStream );
 
-		modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
-		assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
-		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+			ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
+			assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
+			assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+		}
 
 		// Delete existing
 		assertTrue( imageServerClient.deleteImage( externalId ) );

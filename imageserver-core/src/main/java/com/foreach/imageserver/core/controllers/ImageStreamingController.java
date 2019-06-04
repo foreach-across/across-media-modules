@@ -268,8 +268,8 @@ public class ImageStreamingController
 		response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_NO_STORE );
 		if ( errorMessage != null ) {
 			// errorMessage can be null e.g. when a org.apache.catalina.connector.ClientAbortException occurs (it extends IOException)
-			try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
-				IOUtils.copy( bis, response.getOutputStream() );
+			try (InputStream is = new ByteArrayInputStream( errorMessage.getBytes() )) {
+				IOUtils.copy( is, response.getOutputStream() );
 			}
 			catch ( IOException e ) {
 				LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );

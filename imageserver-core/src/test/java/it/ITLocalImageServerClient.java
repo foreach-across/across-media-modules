@@ -121,19 +121,21 @@ public class ITLocalImageServerClient
 		fetchedInfo = imageServerClient.imageInfo( externalId );
 		assertEquals( createdInfo, fetchedInfo );
 
-		InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(), new ImageVariantDto( ImageTypeDto.JPEG ) );
-		byte[] originalSizeData = IOUtils.toByteArray( inputStream );
+		try (InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(), new ImageVariantDto( ImageTypeDto.JPEG ) )) {
+			byte[] originalSizeData = IOUtils.toByteArray( inputStream );
 
-		ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), originalSizeData );
-		assertEquals( new DimensionsDto( 1920, 1080 ), modifiedUpload.getDimensionsDto() );
-		assertEquals( ImageTypeDto.JPEG, modifiedUpload.getImageType() );
+			ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), originalSizeData );
+			assertEquals( new DimensionsDto( 1920, 1080 ), modifiedUpload.getDimensionsDto() );
+			assertEquals( ImageTypeDto.JPEG, modifiedUpload.getImageType() );
+		}
 
-		inputStream = imageServerClient.imageStream( externalId, "default", 640, 480, ImageTypeDto.PNG );
-		byte[] scaledDate = IOUtils.toByteArray( inputStream );
+		try (InputStream inputStream = imageServerClient.imageStream( externalId, "default", 640, 480, ImageTypeDto.PNG )) {
+			byte[] scaledDate = IOUtils.toByteArray( inputStream );
 
-		modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
-		assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
-		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+			ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
+			assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
+			assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+		}
 
 		// Delete existing
 		assertTrue( imageServerClient.deleteImage( externalId ) );
@@ -348,13 +350,13 @@ public class ITLocalImageServerClient
 	public void convertSingleImage() {
 		ImageDto result = imageServerClient.convertImage( image( "images/poppy_flower_nature.jpg" ),
 		                                                  Collections.singletonList(
-				                                                                             ImageTransformDto.builder()
-				                                                                                              .dpi( 300 )
-				                                                                                              .colorSpace(
-						                                                                                              ColorSpaceDto.GRAYSCALE )
-				                                                                                              .outputType(
-						                                                                                              ImageTypeDto.PNG )
-				                                                                                              .build() ) );
+				                                                  ImageTransformDto.builder()
+				                                                                   .dpi( 300 )
+				                                                                   .colorSpace(
+						                                                                   ColorSpaceDto.GRAYSCALE )
+				                                                                   .outputType(
+						                                                                   ImageTypeDto.PNG )
+				                                                                   .build() ) );
 
 		assertEquals( ImageTypeDto.PNG, result.getFormat() );
 	}
@@ -410,11 +412,11 @@ public class ITLocalImageServerClient
 	public void convertResizeEpsRetina() {
 		ImageDto result = imageServerClient.convertImage( image( "images/kaaimangrootkleur.eps" ),
 		                                                  Collections.singletonList(
-				                                                                             ImageTransformDto.builder()
-				                                                                                              .height( 1536 )
-				                                                                                              .quality( 100 )
-				                                                                                              .outputType( ImageTypeDto.PNG )
-				                                                                                              .build() ) );
+				                                                  ImageTransformDto.builder()
+				                                                                   .height( 1536 )
+				                                                                   .quality( 100 )
+				                                                                   .outputType( ImageTypeDto.PNG )
+				                                                                   .build() ) );
 
 		try (InputStream i = new ByteArrayInputStream( result.getImage() )) {
 			BufferedImage bimg = ImageIO.read( i );

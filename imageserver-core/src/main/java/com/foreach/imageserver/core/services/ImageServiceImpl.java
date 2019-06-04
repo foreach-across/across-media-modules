@@ -162,7 +162,7 @@ public class ImageServiceImpl implements ImageService
 	@Override
 	@SneakyThrows
 	public Image loadImageData( @NonNull byte[] imageBytes ) {
-		try (ByteArrayInputStream inputStream = new ByteArrayInputStream( imageBytes )) {
+		try (InputStream inputStream = new ByteArrayInputStream( imageBytes )) {
 			ImageAttributes imageAttributes = imageTransformService.getAttributes( inputStream );
 
 			Image image = new Image();
