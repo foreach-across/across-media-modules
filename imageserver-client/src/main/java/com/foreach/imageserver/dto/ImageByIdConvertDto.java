@@ -21,18 +21,12 @@ public class ImageByIdConvertDto extends ImageConvertDto
 	 */
 	private String imageId;
 
-	/**
-	 * The context in which the transformations must take place
-	 */
-	private String context;
-
 	public ImageByIdConvertDto() {
 		super( null, null, null );
 	}
 
-	public ImageByIdConvertDto( String pages, Map<String, List<ImageTransformDto>> transformations, String imageId, String context ) {
+	public ImageByIdConvertDto( String pages, Map<String, List<ImageTransformDto>> transformations, String imageId ) {
 		super( null, pages, transformations );
 		this.imageId = imageId;
-		this.context = context;
 	}
 }
