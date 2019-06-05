@@ -1,8 +1,6 @@
 package com.foreach.across.modules.filemanager.services;
 
-import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.business.FileResource;
-import com.foreach.across.modules.filemanager.business.FileStorageException;
+import com.foreach.across.modules.filemanager.business.*;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -178,6 +176,12 @@ public abstract class AbstractFileRepository implements FileRepository, FileMana
 		                          UUID.randomUUID().toString().replaceAll( "-", "" ) );
 	}
 
+	@Override
+	public FolderResource getFolderResource( FolderDescriptor descriptor ) {
+		validateFolderDescriptor( descriptor );
+		return buildFolderResource( descriptor );
+	}
+
 	/**
 	 * Validates if the descriptor is valid for this file repository.
 	 * A valid descriptor means it should be possible to have an actual file resource
@@ -185,11 +189,25 @@ public abstract class AbstractFileRepository implements FileRepository, FileMana
 	 *
 	 * @param descriptor to the file resource
 	 */
-	@SuppressWarnings("WeakerAccess")
-	protected void validateFileDescriptor( FileDescriptor descriptor ) {
+	protected void validateFileDescriptor( @NonNull FileDescriptor descriptor ) {
 		if ( !StringUtils.equals( repositoryId, descriptor.getRepositoryId() ) ) {
 			throw new IllegalArgumentException( String.format(
 					"Attempt to use a FileDescriptor of repository %s on repository %s", descriptor.getRepositoryId(),
+					repositoryId ) );
+		}
+	}
+
+	/**
+	 * Validates if the descriptor is valid for this file repository.
+	 * A valid descriptor means it should be possible to have an actual folder resource
+	 * matching it, it does not mean that the resource should already exist.
+	 *
+	 * @param descriptor to the folder resource
+	 */
+	protected void validateFolderDescriptor( FolderDescriptor descriptor ) {
+		if ( !StringUtils.equals( repositoryId, descriptor.getRepositoryId() ) ) {
+			throw new IllegalArgumentException( String.format(
+					"Attempt to use a FolderDescriptor of repository %s on repository %s", descriptor.getRepositoryId(),
 					repositoryId ) );
 		}
 	}
@@ -207,4 +225,17 @@ public abstract class AbstractFileRepository implements FileRepository, FileMana
 	 * @return file resource to use
 	 */
 	protected abstract FileResource buildFileResource( FileDescriptor descriptor );
+
+	/**
+	 * Create the {@link FolderResource} for a folder descriptor.
+	 * Basic validation of the descriptor will have been done in {@link #validateFolderDescriptor(FolderDescriptor)},
+	 * this method should return the actual folder resource that can be used.
+	 *
+	 * @param descriptor to the folder resource
+	 * @return folder resource to use
+	 */
+	protected FolderResource buildFolderResource( FolderDescriptor descriptor ) {
+		//todo: abstract
+		return null;
+	}
 }

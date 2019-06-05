@@ -1,6 +1,7 @@
 package com.foreach.across.modules.filemanager.business;
 
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -21,6 +22,15 @@ public interface FolderResource extends FileRepositoryResource
 {
 	@Override
 	FolderDescriptor getDescriptor();
+
+	/**
+	 * @return name of this folder
+	 */
+	default String getFolderName() {
+		String folderId = getDescriptor().getFolderId();
+		int lastSeparator = StringUtils.lastIndexOf( folderId, "/" );
+		return lastSeparator > 0 ? folderId.substring( lastSeparator + 1 ) : StringUtils.defaultString( folderId );
+	}
 
 	/**
 	 * @return parent folder resource

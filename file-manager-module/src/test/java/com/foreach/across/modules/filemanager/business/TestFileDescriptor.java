@@ -67,9 +67,17 @@ class TestFileDescriptor
 
 	@Test
 	void uriMayNotBeNull() {
-		assertThatExceptionOfType( IllegalArgumentException.class )
-				.isThrownBy( () -> of( null ) );
-		assertThatExceptionOfType( IllegalArgumentException.class )
-				.isThrownBy( () -> of( "" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> of( null ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> of( "" ) );
+	}
+
+	@Test
+	void fileIdMustAlwaysBePresent() {
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> of( "repo", null, "" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> of( "repo", null, null ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> of( "repo:" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> of( "repo:123/456:" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> of( "repo:/123/456/" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> of( "repo:/" ) );
 	}
 }

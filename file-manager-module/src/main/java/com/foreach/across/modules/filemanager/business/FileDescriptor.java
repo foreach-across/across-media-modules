@@ -52,7 +52,7 @@ public class FileDescriptor implements FileRepositoryResourceDescriptor
 			throw new IllegalArgumentException( "uri may not be null or empty" );
 		}
 
-		String[] parts = StringUtils.split( StringUtils.removeStart( uri, "axfs://" ), ":" );
+		String[] parts = StringUtils.removeStart( uri, "axfs://" ).split( ":", -1 );
 
 		Assert.isTrue( parts.length == 2 || parts.length == 3, "FileDescriptor URI must contain either 2 or 3 segments separated with :" );
 
@@ -70,6 +70,10 @@ public class FileDescriptor implements FileRepositoryResourceDescriptor
 		}
 
 		folderDescriptor = FolderDescriptor.of( parts[0], folderId );
+
+		if ( StringUtils.isEmpty( fileId ) ) {
+			throw new IllegalArgumentException( "A non-empty file id is required" );
+		}
 	}
 
 	/**
@@ -87,6 +91,10 @@ public class FileDescriptor implements FileRepositoryResourceDescriptor
 	public FileDescriptor( String repositoryId, String folderId, @NonNull String fileId ) {
 		folderDescriptor = FolderDescriptor.of( repositoryId, folderId );
 		this.fileId = fileId;
+
+		if ( StringUtils.isEmpty( fileId ) ) {
+			throw new IllegalArgumentException( "A non-empty file id is required" );
+		}
 	}
 
 	/**

@@ -132,4 +132,51 @@ class TestFolderDescriptor
 										)
 				);
 	}
+
+	@Test
+	void childFolderDescriptor() {
+		FolderDescriptor root = FolderDescriptor.rootFolder( "my-repo" );
+		assertThat( root.createFolderDescriptor( "/" ) )
+				.isEqualTo( root )
+				.isEqualTo( root.createFolderDescriptor( "" ) );
+
+		assertThat( root.createFolderDescriptor( "123" ) )
+				.isEqualTo( FolderDescriptor.of( "my-repo", "123" ) )
+				.isEqualTo( root.createFolderDescriptor( "/123" ) )
+				.isEqualTo( root.createFolderDescriptor( "/123/" ) )
+				.isEqualTo( root.createFolderDescriptor( "123/" ) );
+
+		assertThat( root.createFolderDescriptor( "123" ).createFolderDescriptor( "456" ) )
+				.isEqualTo( FolderDescriptor.of( "my-repo", "123/456" ) )
+				.isEqualTo( root.createFolderDescriptor( "123" ).createFolderDescriptor( "/456" ) )
+				.isEqualTo( root.createFolderDescriptor( "123" ).createFolderDescriptor( "/456/" ) )
+				.isEqualTo( root.createFolderDescriptor( "123" ).createFolderDescriptor( "456/" ) )
+				.isEqualTo( root.createFolderDescriptor( "/123/456" ) )
+				.isEqualTo( root.createFolderDescriptor( "/123/456/" ) )
+				.isEqualTo( root.createFolderDescriptor( "123/456" ) );
+	}
+
+	@Test
+	void childFileDescriptor() {
+		FolderDescriptor root = FolderDescriptor.rootFolder( "my-repo" );
+
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> root.createFileDescriptor( "" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> root.createFileDescriptor( "/" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> root.createFileDescriptor( "123/" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> root.createFolderDescriptor( "123" ).createFileDescriptor( "myfile/" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> root.createFolderDescriptor( "123" ).createFileDescriptor( "/" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> root.createFolderDescriptor( "123" ).createFileDescriptor( "" ) );
+
+		assertThat( root.createFileDescriptor( "myfile.txt" ) )
+				.isEqualTo( FileDescriptor.of( "my-repo", "myfile.txt" ) )
+				.isEqualTo( root.createFileDescriptor( "/myfile.txt" ) );
+
+		assertThat( root.createFileDescriptor( "123/456/myfile.txt" ) )
+				.isEqualTo( FileDescriptor.of( "my-repo", "123/456", "myfile.txt" ) )
+				.isEqualTo( root.createFileDescriptor( "/123/456/myfile.txt" ) )
+				.isEqualTo( root.createFolderDescriptor( "123" ).createFileDescriptor( "/456/myfile.txt" ) )
+				.isEqualTo( root.createFolderDescriptor( "123" ).createFileDescriptor( "456/myfile.txt" ) )
+				.isEqualTo( root.createFolderDescriptor( "123/456" ).createFileDescriptor( "myfile.txt" ) )
+				.isEqualTo( root.createFolderDescriptor( "123/456" ).createFileDescriptor( "/myfile.txt" ) );
+	}
 }

@@ -67,6 +67,8 @@ class TestAmazonS3FileResource
 
 	@AfterAll
 	static void tearDown() {
+		amazonS3.listObjects( BUCKET_NAME ).getObjectSummaries().forEach( o -> amazonS3.deleteObject( BUCKET_NAME, o.getKey() ) );
+		amazonS3.deleteBucket( BUCKET_NAME );
 		amazonS3 = null;
 	}
 

@@ -54,6 +54,13 @@ class TestLocalFolderResource
 	}
 
 	@Test
+	void folderName() {
+		assertThat( resource.getFolderName() ).isEqualTo( "456" );
+		assertThat( new LocalFolderResource( FolderDescriptor.of( "my-repo", "123" ), tempDir.toPath() ).getFolderName() ).isEqualTo( "123" );
+		assertThat( new LocalFolderResource( FolderDescriptor.rootFolder( "repo" ), tempDir.toPath() ).getFolderName() ).isNotNull().isEmpty();
+	}
+
+	@Test
 	void uri() {
 		assertThat( resource.getURI() ).isEqualTo( descriptor.toResourceURI() );
 	}
@@ -181,6 +188,14 @@ class TestLocalFolderResource
 		assertThat( resource.findResources( "**", FileResource.class ) ).containsExactlyInAnyOrder( childFile, childFileInChildFolder );
 		assertThat( resource.findResources( "**", FolderResource.class ) ).containsExactlyInAnyOrder( childFolder, childFolderInChildFolder );
 		assertThat( resource.findResources( "**/", FileResource.class ) ).isEmpty();
+
+		assertThat( resource.findResources( "childFil?" ) ).containsExactly( childFile );
+		assertThat( resource.findResources( "childFile" ) ).containsExactly( childFile );
+		assertThat( resource.findResources( "/**/childFile" ) ).containsExactly( childFile );
+		assertThat( resource.findResources( "/**/childFile*" ) ).containsExactlyInAnyOrder( childFile, childFileInChildFolder );
+		assertThat( resource.findResources( "/childFolder/childFileInChildFolder" ) ).containsExactlyInAnyOrder( childFileInChildFolder );
+		assertThat( resource.findResources( "/**/child*" ) )
+				.containsExactlyInAnyOrder( childFile, childFolder, childFolderInChildFolder, childFileInChildFolder );
 	}
 
 	@Test

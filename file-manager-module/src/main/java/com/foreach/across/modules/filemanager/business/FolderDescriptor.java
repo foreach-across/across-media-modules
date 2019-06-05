@@ -75,6 +75,30 @@ public class FolderDescriptor implements FileRepositoryResourceDescriptor
 		return repositoryId + ":" + ( folderId != null ? folderId + "/" : "/" );
 	}
 
+	/**
+	 * Create the folder descriptor for a child folder represented by the relative path.
+	 * The path can have multiple path segments.
+	 *
+	 * @param relativePath to the child folder
+	 * @return descriptor
+	 */
+	public FolderDescriptor createFolderDescriptor( @NonNull String relativePath ) {
+		String p = relativePath.startsWith( "/" ) ? relativePath : "/" + relativePath;
+		return of( repositoryId, StringUtils.defaultString( folderId ) + p );
+	}
+
+	/**
+	 * Create the file descriptor for a file in the folder represented by the relative path.
+	 * The path can have multiple path segments, all segments except the last will be considered sub-folders.
+	 *
+	 * @param relativePath to the child folder
+	 * @return descriptor
+	 */
+	public FileDescriptor createFileDescriptor( @NonNull String relativePath ) {
+		String p = relativePath.startsWith( "/" ) ? relativePath : "/" + relativePath;
+		return FileDescriptor.of( repositoryId + ":" + ( folderId != null ? "/" + folderId : "" ) + p );
+	}
+
 	@Override
 	public String toString() {
 		return getUri();

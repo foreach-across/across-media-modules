@@ -18,10 +18,13 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderDescriptor;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,6 +63,11 @@ public class LocalFileRepository extends AbstractFileRepository
 	@Override
 	protected FileResource buildFileResource( FileDescriptor descriptor ) {
 		return new LocalFileResource( descriptor, buildPath( descriptor ) );
+	}
+
+	@Override
+	protected FolderResource buildFolderResource( FolderDescriptor descriptor ) {
+		return new LocalFolderResource( descriptor, Paths.get( rootFolderPath, StringUtils.defaultString( descriptor.getFolderId() ) ) );
 	}
 
 	private Path buildPath( FileDescriptor descriptor ) {

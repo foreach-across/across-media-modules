@@ -2,6 +2,7 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -133,6 +134,11 @@ public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResou
 
 	@Override
 	protected void validateFileDescriptor( FileDescriptor descriptor ) {
+		// expiring file repository performs no descriptor validation
+	}
+
+	@Override
+	protected void validateFolderDescriptor( FolderDescriptor descriptor ) {
 		// expiring file repository performs no descriptor validation
 	}
 
