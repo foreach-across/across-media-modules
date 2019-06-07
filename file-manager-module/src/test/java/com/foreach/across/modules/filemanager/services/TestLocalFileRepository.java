@@ -45,23 +45,23 @@ public class TestLocalFileRepository extends BaseFileRepositoryTest
 
 		FolderResource cc = file.getFolderResource();
 		assertThat( cc.getDescriptor() ).isEqualTo( FolderDescriptor.of( "default:aa/bb/cc/" ) );
-		assertThat( cc.listChildren( false ) ).containsExactly( file );
+		assertThat( cc.listResources( false ) ).containsExactly( file );
 		assertThat( cc.getFolderName() ).isEqualTo( "cc" );
 
 		FolderResource bb = cc.getParentFolderResource().orElseThrow( AssertionError::new );
 		assertThat( bb.getDescriptor() ).isEqualTo( FolderDescriptor.of( "default:aa/bb/" ) );
-		assertThat( bb.listChildren( false ) ).containsExactly( cc );
+		assertThat( bb.listResources( false ) ).containsExactly( cc );
 		assertThat( bb.getFolderName() ).isEqualTo( "bb" );
 
 		FolderResource aa = bb.getParentFolderResource().orElseThrow( AssertionError::new );
 		assertThat( aa.getDescriptor() ).isEqualTo( FolderDescriptor.of( "default:aa/" ) );
-		assertThat( aa.listChildren( false ) ).containsExactly( bb );
+		assertThat( aa.listResources( false ) ).containsExactly( bb );
 		assertThat( aa.getFolderName() ).isEqualTo( "aa" );
-		assertThat( aa.listChildren( true ) ).containsExactlyInAnyOrder( bb, cc, file );
+		assertThat( aa.listResources( true ) ).containsExactlyInAnyOrder( bb, cc, file );
 
 		FolderResource root = aa.getParentFolderResource().orElseThrow( AssertionError::new );
 		assertThat( root.getDescriptor() ).isEqualTo( FolderDescriptor.rootFolder( "default" ) );
-		assertThat( root.listChildren( false ) ).contains( aa );
+		assertThat( root.listResources( false ) ).contains( aa );
 		assertThat( root.getFolderName() ).isEmpty();
 
 		assertThat( root.getParentFolderResource() ).isEmpty();
@@ -75,7 +75,7 @@ public class TestLocalFileRepository extends BaseFileRepositoryTest
 		folder.create();
 
 		assertThat( folder.exists() ).isTrue();
-		assertThat( folder.listChildren( false ) ).isEmpty();
+		assertThat( folder.listResources( false ) ).isEmpty();
 
 		FileResource file = folder.createFileResource();
 		assertThat( file.exists() ).isFalse();
@@ -87,17 +87,17 @@ public class TestLocalFileRepository extends BaseFileRepositoryTest
 		other.copyFrom( RES_TEXTFILE );
 		assertThat( other.exists() ).isTrue();
 
-		assertThat( folder.listChildren( false ) ).containsExactlyInAnyOrder( file, other );
+		assertThat( folder.listResources( false ) ).containsExactlyInAnyOrder( file, other );
 
 		FileResource nested = folder.getFileResource( "/subFolder/myfile.txt" );
 		assertThat( nested.exists() ).isFalse();
 		nested.copyFrom( RES_TEXTFILE );
 		assertThat( nested.exists() ).isTrue();
 
-		assertThat( folder.listChildren( false ) ).containsExactlyInAnyOrder( folder.getFolderResource( "subFolder/" ), file, other );
-		assertThat( folder.listChildren( true ) ).containsExactlyInAnyOrder( folder.getFolderResource( "subFolder/" ), file, other, nested );
+		assertThat( folder.listResources( false ) ).containsExactlyInAnyOrder( folder.getFolderResource( "subFolder/" ), file, other );
+		assertThat( folder.listResources( true ) ).containsExactlyInAnyOrder( folder.getFolderResource( "subFolder/" ), file, other, nested );
 
-		assertThat( fileRepository.getRootFolderResource().listChildren( false ) )
+		assertThat( fileRepository.getRootFolderResource().listResources( false ) )
 				.contains( folder.getParentFolderResource().orElseThrow( AssertionError::new ) );
 
 		assertThat( folder.findResources( "/**/myfile.txt" ) ).containsExactlyInAnyOrder( other, nested );

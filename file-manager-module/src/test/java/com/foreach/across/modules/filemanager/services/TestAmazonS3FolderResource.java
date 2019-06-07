@@ -1,15 +1,15 @@
 package com.foreach.across.modules.filemanager.services;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.foreach.across.modules.filemanager.business.*;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SyncTaskExecutor;
+import utils.AmazonS3Helper;
 
-import java.io.File;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,32 +20,39 @@ import static org.mockito.Mockito.mock;
  * @author Arne Vandamme
  * @since 1.4.0
  */
-class TestLocalFolderResource
+class TestAmazonS3FolderResource
 {
-	private File tempDir;
-	private FolderDescriptor descriptor;
-	private FolderResource resource;
+	private static final String BUCKET_NAME = "folder-resource-test";
+	private static final SyncTaskExecutor TASK_EXECUTOR = new SyncTaskExecutor();
 
-	private LocalFolderResource childFolder;
-	private LocalFolderResource childFolderInChildFolder;
-	private LocalFileResource childFile;
-	private LocalFileResource childFileInChildFolder;
+	private static AmazonS3 amazonS3;
+
+	private FolderDescriptor descriptor;
+	private AmazonS3FolderResource resource;
+	private String objectName;
+
+	private AmazonS3FolderResource childFolder;
+	private AmazonS3FolderResource childFolderInChildFolder;
+	private AmazonS3FileResource childFile;
+	private AmazonS3FileResource childFileInChildFolder;
 
 	@BeforeEach
 	@SneakyThrows
-	void createResource() {
+	void resetResource() {
+		if ( amazonS3 == null ) {
+			amazonS3 = AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
+		}
+
+		String parentObjectName = UUID.randomUUID().toString() + "/";
+		objectName = parentObjectName + "456/";
 		descriptor = FolderDescriptor.of( "my-repo", "123/456" );
-		tempDir = Paths.get( System.getProperty( "java.io.tmpdir" ), UUID.randomUUID().toString(), UUID.randomUUID().toString() ).toFile();
-		resource = new LocalFolderResource( descriptor, tempDir.toPath() );
+		resource = folderResource( descriptor, objectName );
 	}
 
-	@AfterEach
-	void tearDown() {
-		try {
-			FileUtils.deleteDirectory( tempDir.getParentFile() );
-		}
-		catch ( Exception ignore ) {
-		}
+	@AfterAll
+	static void tearDown() {
+		AmazonS3Helper.deleteBuckets( amazonS3, BUCKET_NAME );
+		amazonS3 = null;
 	}
 
 	@Test
@@ -56,8 +63,8 @@ class TestLocalFolderResource
 	@Test
 	void folderName() {
 		assertThat( resource.getFolderName() ).isEqualTo( "456" );
-		assertThat( new LocalFolderResource( FolderDescriptor.of( "my-repo", "123" ), tempDir.toPath() ).getFolderName() ).isEqualTo( "123" );
-		assertThat( new LocalFolderResource( FolderDescriptor.rootFolder( "repo" ), tempDir.toPath() ).getFolderName() ).isNotNull().isEmpty();
+		assertThat( folderResource( FolderDescriptor.of( "my-repo", "123" ), "some-obj/" ).getFolderName() ).isEqualTo( "123" );
+		assertThat( folderResource( FolderDescriptor.rootFolder( "repo" ), "some-obj/" ).getFolderName() ).isNotNull().isEmpty();
 	}
 
 	@Test
@@ -70,52 +77,47 @@ class TestLocalFolderResource
 		assertThat( resource )
 				.isEqualTo( resource )
 				.isNotEqualTo( mock( Resource.class ) )
-				.isEqualTo( new LocalFolderResource( descriptor, tempDir.toPath() ) )
-				.isNotEqualTo( new LocalFolderResource( FolderDescriptor.of( "1:2/" ), tempDir.toPath() ) );
+				.isEqualTo( folderResource( descriptor, "123/456/" ) )
+				.isNotEqualTo( folderResource( FolderDescriptor.of( "1:2/" ), "123/456/" ) );
 	}
 
 	@Test
 	void parentFolderResource() {
-		LocalFolderResource rootFolder = new LocalFolderResource( FolderDescriptor.rootFolder( "my-repo" ), tempDir.toPath() );
+		FolderResource rootFolder = folderResource( FolderDescriptor.rootFolder( "repo" ), "" );
 		assertThat( rootFolder.getParentFolderResource() ).isEmpty();
 
 		assertThat( resource.getParentFolderResource() )
-				.contains( new LocalFolderResource( descriptor.getParentFolderDescriptor().orElse( null ), tempDir.getParentFile().toPath() ) );
+				.contains( folderResource( descriptor.getParentFolderDescriptor().orElse( null ), "123/456/" ) );
 	}
 
 	@Test
-	void exists() {
-		assertThat( resource.exists() ).isFalse();
-		assertThat( tempDir.mkdirs() ).isTrue();
+	void folderAlwaysExists() {
 		assertThat( resource.exists() ).isTrue();
 	}
 
 	@Test
 	void create() {
-		assertThat( tempDir.exists() ).isFalse();
-		assertThat( resource.exists() ).isFalse();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
+		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.create() ).isTrue();
-		assertThat( tempDir.exists() ).isTrue();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isTrue();
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.create() ).isFalse();
 		assertThat( resource.exists() ).isTrue();
 	}
 
 	@Test
-	@SneakyThrows
-	void existingFileDoesNotCountAsFolder() {
-		assertThat( tempDir.getParentFile().mkdir() ).isTrue();
-		assertThat( tempDir.createNewFile() ).isTrue();
-		assertThat( resource.exists() ).isFalse();
-		assertThat( resource.create() ).isFalse();
-		assertThat( resource.create() ).isFalse();
-		assertThat( resource.exists() ).isFalse();
-		assertThat( resource.delete( false ) ).isFalse();
+	void rootFolderExistsButCannotBeCreatedOrDeleted() {
+		AmazonS3FolderResource rootFolder = folderResource( FolderDescriptor.rootFolder( "my-repo" ), "" );
+		assertThat( rootFolder.exists() ).isTrue();
+		assertThat( rootFolder.create() ).isFalse();
+		assertThat( rootFolder.delete( false ) ).isFalse();
 	}
 
 	@Test
-	void findResourcesEmptyIfResourceNotExists() {
-		assertThat( resource.exists() ).isFalse();
+	void findResourcesInNonExistingFolder() {
+		assertThat( resource.findResources( "*" ) ).isEmpty();
+		assertThat( resource.create() ).isTrue();
 		assertThat( resource.findResources( "*" ) ).isEmpty();
 	}
 
@@ -188,16 +190,11 @@ class TestLocalFolderResource
 
 	@Test
 	void emptyIfResourceNotExists() {
-		assertThat( resource.exists() ).isFalse();
 		assertThat( resource.isEmpty() ).isTrue();
 	}
 
 	@Test
 	void notEmptyIfChildren() {
-		assertThat( tempDir.mkdirs() ).isTrue();
-		assertThat( resource.exists() ).isTrue();
-		assertThat( resource.isEmpty() ).isTrue();
-
 		createFileTree();
 		assertThat( resource.isEmpty() ).isFalse();
 	}
@@ -215,26 +212,23 @@ class TestLocalFolderResource
 
 		FileRepositoryResource folderResource = resource.getResource( "childFolder/" );
 		assertThat( folderResource ).isNotNull().isInstanceOf( FolderResource.class ).isEqualTo( resource.getResource( "/childFolder/" ) );
-		assertThat( folderResource.exists() ).isFalse();
+		assertThat( folderResource.exists() ).isTrue();
 
 		createFileTree();
 		assertThat( fileResource.exists() ).isTrue();
-		assertThat( folderResource.exists() ).isTrue();
 
 		assertThat( resource.getResource( "childFolder/childFileInChildFolder" ).exists() ).isTrue();
 		assertThat( resource.getResource( "/childFolder/childFileInChildFolder" ).exists() ).isTrue();
-		assertThat( resource.getResource( "childFolder/childFileInChildFolder/" ).exists() ).isFalse();
+		assertThat( resource.getResource( "childFolder/childFileInChildFolder/" ).exists() ).isTrue();
 		assertThat( resource.getResource( "childFolder/childFolderInChildFolder" ).exists() ).isFalse();
 		assertThat( resource.getResource( "childFolder/childFolderInChildFolder/" ).exists() ).isTrue();
 		assertThat( resource.getResource( "/childFolder/childFolderInChildFolder/" ).exists() ).isTrue();
 
 		FolderResource created = (FolderResource) resource.getResource( "/childFolder/childFolderInChildFolder/nestedFolder/" );
-		assertThat( created.exists() ).isFalse();
+		assertThat( created.exists() ).isTrue();
 		assertThat( created.create() ).isTrue();
 
-		File createdFile = new File( childFileInChildFolder.getTargetFile().getParentFile(), "childFolderInChildFolder/nestedFolder" );
-		assertThat( createdFile.exists() ).isTrue();
-		assertThat( createdFile.isDirectory() ).isTrue();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName + "childFolder/childFolderInChildFolder/nestedFolder/" ) ).isTrue();
 	}
 
 	@Test
@@ -262,7 +256,7 @@ class TestLocalFolderResource
 		assertThat( resource.getFolderResource( "" ) ).isSameAs( resource );
 		assertThat( resource.getFolderResource( "/" ) ).isSameAs( resource );
 
-		assertThat( resource.getFolderResource( "/childFile" ) ).isNotEqualTo( childFile ).matches( r -> !r.exists() );
+		assertThat( resource.getFolderResource( "/childFile" ) ).isNotEqualTo( childFile ).matches( FileRepositoryResource::exists );
 	}
 
 	@Test
@@ -276,37 +270,47 @@ class TestLocalFolderResource
 	}
 
 	@Test
-	void deleteIfDirectoryEmpty() {
-		assertThat( tempDir.mkdirs() ).isTrue();
+	void deleteWithoutDeletingChildrenOnlyDeletesFolder() {
 		assertThat( resource.exists() ).isTrue();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
 		assertThat( resource.delete( false ) ).isTrue();
-		assertThat( resource.exists() ).isFalse();
-		assertThat( resource.delete( false ) ).isFalse();
-		assertThat( tempDir.exists() ).isFalse();
 
-		assertThat( tempDir.mkdirs() ).isTrue();
 		assertThat( resource.exists() ).isTrue();
-		assertThat( resource.delete( true ) ).isTrue();
-		assertThat( resource.exists() ).isFalse();
+		AmazonS3Helper.createFolder( amazonS3, BUCKET_NAME, objectName );
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isTrue();
+
+		createFileTree();
+		assertThat( resource.delete( false ) ).isTrue();
+
+		assertThat( resource.exists() ).isTrue();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
+		assertThat( childFile.exists() ).isTrue();
 	}
 
 	@Test
-	void deleteIfDirectoryNotEmpty() {
+	void deleteIfFolderNotEmpty() {
 		createFileTree();
 
 		assertThat( resource.exists() ).isTrue();
 		assertThat( childFileInChildFolder.exists() ).isTrue();
-		assertThat( resource.delete( false ) ).isFalse();
-		assertThat( tempDir.exists() ).isTrue();
+		assertThat( resource.delete( false ) ).isTrue();
+
+		childFileInChildFolder.resetObjectMetadata();
+		assertThat( childFileInChildFolder.exists() ).isTrue();
+
+		AmazonS3Helper.createFolder( amazonS3, BUCKET_NAME, objectName );
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isTrue();
 
 		assertThat( resource.delete( true ) ).isTrue();
-		assertThat( tempDir.exists() ).isFalse();
+
+		childFileInChildFolder.resetObjectMetadata();
 		assertThat( childFileInChildFolder.exists() ).isFalse();
+		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
 	}
 
 	@Test
 	void deleteChildren() {
-		assertThat( resource.exists() ).isFalse();
+		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.deleteChildren() ).isFalse();
 
 		createFileTree();
@@ -315,43 +319,44 @@ class TestLocalFolderResource
 		assertThat( childFileInChildFolder.exists() ).isTrue();
 
 		assertThat( resource.deleteChildren() ).isTrue();
+		childFileInChildFolder.resetObjectMetadata();
 		assertThat( childFileInChildFolder.exists() ).isFalse();
 		assertThat( resource.exists() ).isTrue();
 	}
 
-	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@SneakyThrows
 	private void createFileTree() {
-		tempDir.mkdirs();
+		amazonS3.putObject( BUCKET_NAME, objectName + "childFile", "" );
+		childFile = fileResource( FileDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId(), "childFile" ), objectName + "childFile" );
 
-		File child = new File( tempDir, "childFile" );
-		child.createNewFile();
-		childFile = new LocalFileResource( FileDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId(), "childFile" ),
-		                                   child.toPath() );
 		assertThat( childFile.exists() ).isTrue();
 
-		child = new File( tempDir, "childFolder" );
-		child.mkdir();
-		childFolder = new LocalFolderResource(
-				FolderDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId() + "/childFolder" ),
-				child.toPath()
-		);
+		AmazonS3Helper.createFolder( amazonS3, BUCKET_NAME, objectName + "childFolder/" );
+		childFolder = folderResource( FolderDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId() + "/childFolder" ),
+		                              objectName + "childFolder/" );
 		assertThat( childFolder.exists() ).isTrue();
 
-		child = new File( child, "childFileInChildFolder" );
-		child.createNewFile();
-		childFileInChildFolder = new LocalFileResource(
+		amazonS3.putObject( BUCKET_NAME, objectName + "childFolder/childFileInChildFolder", "" );
+		childFileInChildFolder = fileResource(
 				FileDescriptor.of( descriptor.getRepositoryId(), childFolder.getDescriptor().getFolderId(), "childFileInChildFolder" ),
-				child.toPath()
+				objectName + "childFolder/childFileInChildFolder"
 		);
 		assertThat( childFileInChildFolder.exists() ).isTrue();
 
-		child = new File( childFileInChildFolder.getTargetFile().getParentFile(), "childFolderInChildFolder" );
-		child.mkdir();
-		childFolderInChildFolder = new LocalFolderResource(
+		childFolderInChildFolder = folderResource(
 				FolderDescriptor.of( descriptor.getRepositoryId(),
 				                     childFolder.getDescriptor().getFolderId() + "/childFolderInChildFolder" ),
-				child.toPath() );
+				objectName + "childFolder/childFolderInChildFolder/" );
+		// Explicitly created so it would exist as empty
+		assertThat( childFolderInChildFolder.create() ).isTrue();
 		assertThat( childFolderInChildFolder.exists() ).isTrue();
+	}
+
+	private AmazonS3FolderResource folderResource( FolderDescriptor descriptor, String objectName ) {
+		return new AmazonS3FolderResource( descriptor, amazonS3, BUCKET_NAME, objectName, TASK_EXECUTOR );
+	}
+
+	private AmazonS3FileResource fileResource( FileDescriptor descriptor, String objectName ) {
+		return new AmazonS3FileResource( descriptor, amazonS3, BUCKET_NAME, objectName, TASK_EXECUTOR );
 	}
 }

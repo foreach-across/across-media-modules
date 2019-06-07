@@ -92,7 +92,7 @@ public interface FolderResource extends FileRepositoryResource
 	 * @return collection of file resources
 	 */
 	default Collection<FileResource> listFiles() {
-		return listChildren( false, FileResource.class );
+		return listResources( false, FileResource.class );
 	}
 
 	/**
@@ -102,7 +102,7 @@ public interface FolderResource extends FileRepositoryResource
 	 * @return collection of folder resources
 	 */
 	default Collection<FolderResource> listFolders() {
-		return listChildren( false, FolderResource.class );
+		return listResources( false, FolderResource.class );
 
 	}
 
@@ -117,7 +117,7 @@ public interface FolderResource extends FileRepositoryResource
 	 * @param resourceType   type of resources that should be returned
 	 * @return collection of resources
 	 */
-	default <U extends FileRepositoryResource> Collection<U> listChildren( boolean recurseFolders, Class<U> resourceType ) {
+	default <U extends FileRepositoryResource> Collection<U> listResources( boolean recurseFolders, Class<U> resourceType ) {
 		return findResources( recurseFolders ? "/**" : "/*", resourceType );
 	}
 
@@ -131,7 +131,7 @@ public interface FolderResource extends FileRepositoryResource
 	 * @param recurseFolders true if child folders should be navigated as well
 	 * @return collection of resources
 	 */
-	default Collection<FileRepositoryResource> listChildren( boolean recurseFolders ) {
+	default Collection<FileRepositoryResource> listResources( boolean recurseFolders ) {
 		return findResources( recurseFolders ? "/**" : "/*" );
 	}
 
@@ -186,7 +186,9 @@ public interface FolderResource extends FileRepositoryResource
 	 * <p/>
 	 * Not every file system might support empty folder creation, in which case the return
 	 * value is expected to be {@code false}. Creating a folder that already exists should
-	 * also not throw an exception but simply return {@code false}.
+	 * also not throw an exception but simply return {@code false}. Because of this,
+	 * this method can be used to avoid a call to {@link #exists()} if it would be
+	 * immediately followed by create anyway.
 	 *
 	 * @return true if folder has been created - {@link #exists()} should return {@code true}
 	 */
@@ -196,6 +198,6 @@ public interface FolderResource extends FileRepositoryResource
 	 * @return true if the folder does not have any children
 	 */
 	default boolean isEmpty() {
-		return listChildren( false ).isEmpty();
+		return listResources( false ).isEmpty();
 	}
 }

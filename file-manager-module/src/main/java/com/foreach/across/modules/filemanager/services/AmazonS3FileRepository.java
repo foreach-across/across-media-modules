@@ -19,6 +19,8 @@ package com.foreach.across.modules.filemanager.services;
 import com.amazonaws.services.s3.AmazonS3;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderDescriptor;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +59,12 @@ public class AmazonS3FileRepository extends AbstractFileRepository
 	@Override
 	protected FileResource buildFileResource( FileDescriptor descriptor ) {
 		return new AmazonS3FileResource( descriptor, amazonS3Client, bucketName, createObjectName( descriptor ), taskExecutor );
+	}
+
+	@Override
+	protected FolderResource buildFolderResource( FolderDescriptor descriptor ) {
+		String objectName = descriptor.getFolderId() != null ? descriptor.getFolderId() + "/" : "";
+		return new AmazonS3FolderResource( descriptor, amazonS3Client, bucketName, objectName, taskExecutor );
 	}
 
 	private String createObjectName( FileDescriptor descriptor ) {

@@ -1,10 +1,6 @@
 package com.foreach.across.modules.filemanager.services;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import lombok.SneakyThrows;
@@ -13,12 +9,11 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.util.StreamUtils;
+import utils.AmazonS3Helper;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -33,7 +28,6 @@ import static org.mockito.Mockito.when;
  * @author Arne Vandamme
  * @since 1.4.0
  */
-@ExtendWith(MockitoExtension.class)
 class TestAmazonS3FileResource
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
@@ -49,26 +43,17 @@ class TestAmazonS3FileResource
 	@SneakyThrows
 	void createResource() {
 		if ( amazonS3 == null ) {
-			amazonS3 = AmazonS3ClientBuilder.standard()
-			                                .withEndpointConfiguration( new AwsClientBuilder.EndpointConfiguration( "http://localhost:4572", "us-east-1" ) )
-			                                .withPathStyleAccessEnabled( true )
-			                                .withCredentials( new AWSStaticCredentialsProvider( new BasicAWSCredentials( "test", "test" ) ) )
-			                                .build();
-
-			if ( !amazonS3.doesBucketExist( BUCKET_NAME ) ) {
-				amazonS3.createBucket( BUCKET_NAME );
-			}
+			amazonS3 = AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
 		}
 
-		descriptor = FileDescriptor.of( "my-repo", "123/456", "my.file" );
 		objectName = UUID.randomUUID().toString();
+		descriptor = FileDescriptor.of( "my-repo", "123/456", objectName );
 		resource = new AmazonS3FileResource( descriptor, amazonS3, BUCKET_NAME, objectName, new SyncTaskExecutor() );
 	}
 
 	@AfterAll
 	static void tearDown() {
-		amazonS3.listObjects( BUCKET_NAME ).getObjectSummaries().forEach( o -> amazonS3.deleteObject( BUCKET_NAME, o.getKey() ) );
-		amazonS3.deleteBucket( BUCKET_NAME );
+		AmazonS3Helper.deleteBuckets( amazonS3, BUCKET_NAME );
 		amazonS3 = null;
 	}
 
@@ -79,6 +64,16 @@ class TestAmazonS3FileResource
 				.isNotEqualTo( mock( Resource.class ) )
 				.isEqualTo( new AmazonS3FileResource( resource.getDescriptor(), amazonS3, "other", "objectName", new SyncTaskExecutor() ) )
 				.isNotEqualTo( new AmazonS3FileResource( FileDescriptor.of( "1:2:3" ), amazonS3, BUCKET_NAME, objectName, new SyncTaskExecutor() ) );
+	}
+
+	@Test
+	void folderResource() {
+		assertThat( resource.getFolderResource() ).isNotNull();
+		assertThat( resource.getFolderResource().getDescriptor() ).isEqualTo( resource.getDescriptor().getFolderDescriptor() );
+
+		assertThat( resource.getFolderResource().listFiles() ).doesNotContain( resource );
+		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+		assertThat( resource.getFolderResource().listFiles() ).contains( resource );
 	}
 
 	@Test

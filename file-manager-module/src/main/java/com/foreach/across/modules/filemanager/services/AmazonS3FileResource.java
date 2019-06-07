@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Getter;
 import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
@@ -44,6 +45,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 	private final AmazonS3 amazonS3;
 	private final String bucketName;
 	private final String objectName;
+	private final TaskExecutor taskExecutor;
 
 	AmazonS3FileResource( @NonNull FileDescriptor fileDescriptor,
 	                      @NonNull AmazonS3 amazonS3,
@@ -55,6 +57,14 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 		this.amazonS3 = amazonS3;
 		this.bucketName = bucketName;
 		this.objectName = objectName;
+		this.taskExecutor = taskExecutor;
+	}
+
+	@Override
+	public FolderResource getFolderResource() {
+		int ix = objectName.lastIndexOf( '/' );
+		String folderObjectName = ix > 0 ? objectName.substring( 0, ix + 1 ) : "";
+		return new AmazonS3FolderResource( descriptor.getFolderDescriptor(), amazonS3, bucketName, folderObjectName, taskExecutor );
 	}
 
 	@Override
@@ -100,14 +110,14 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 	@Override
 	public boolean delete() {
 		amazonS3.deleteObject( bucketName, objectName );
-		resetObjectMetadataAndTempFile();
+		resetObjectMetadata();
 		return true;
 	}
 
 	@Override
 	public OutputStream getOutputStream() throws IOException {
 		// reset metadata - assume data will actually be written to the underlying resource
-		resetObjectMetadataAndTempFile();
+		resetObjectMetadata();
 		return super.getOutputStream();
 	}
 
@@ -116,7 +126,7 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 		throw new UnsupportedOperationException( "FileResource can not be resolved to java.io.File objects. Use getInputStream() or copyTo(File) instead." );
 	}
 
-	private void resetObjectMetadataAndTempFile() {
+	void resetObjectMetadata() {
 		if ( metadataField != null ) {
 			ReflectionUtils.setField( metadataField, this, null );
 		}
