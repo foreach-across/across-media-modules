@@ -233,7 +233,7 @@ class AmazonS3FolderResource implements FolderResource
 	                                              Set<FileRepositoryResource> resources ) {
 		objectSummaries.forEach( candidate -> {
 			String candidateObjectName = candidate.getKey();
-			if ( keyMatcher.test( candidateObjectName, keyPattern ) ) {
+			if ( !candidateObjectName.equals( objectName ) && keyMatcher.test( candidateObjectName, keyPattern ) ) {
 				resources.add( toFileRepositoryResource( candidateObjectName ) );
 			}
 		} );
