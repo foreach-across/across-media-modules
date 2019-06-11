@@ -2,6 +2,7 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,8 @@ public class CachedFileResource implements ExpiringFileResource
 	@Getter
 	private final FileResource cache;
 
+	private final CachingFileRepository cachingFileRepository;
+
 	/**
 	 * Timestamp when the input stream was last accessed.
 	 * Can be used to determine if the cached resource should be flushed.
@@ -58,6 +61,11 @@ public class CachedFileResource implements ExpiringFileResource
 	@Override
 	public FileDescriptor getDescriptor() {
 		return target.getDescriptor();
+	}
+
+	@Override
+	public FolderResource getFolderResource() {
+		return cachingFileRepository.createExpiringFolderResource( target.getFolderResource() );
 	}
 
 	@Override
@@ -212,5 +220,15 @@ public class CachedFileResource implements ExpiringFileResource
 		catch ( IOException ignore ) {
 			return 0;
 		}
+	}
+
+	@Override
+	public boolean equals( Object obj ) {
+		return obj == this || ( obj instanceof FileResource && target.equals( obj ) );
+	}
+
+	@Override
+	public int hashCode() {
+		return target.hashCode();
 	}
 }

@@ -143,10 +143,7 @@ public interface FileRepository
 	 * @param descriptor to get the folder resource for
 	 * @return folder resource
 	 */
-	default FolderResource getFolderResource( @NonNull FolderDescriptor descriptor ) {
-		// todo: implement
-		return null;
-	}
+	FolderResource getFolderResource( @NonNull FolderDescriptor descriptor );
 
 	/**
 	 * Quick check if a descriptor actually points to an existing file resource.

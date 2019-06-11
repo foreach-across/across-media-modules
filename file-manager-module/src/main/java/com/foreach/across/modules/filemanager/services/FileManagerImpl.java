@@ -16,9 +16,7 @@
 
 package com.foreach.across.modules.filemanager.services;
 
-import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.business.FileResource;
-import com.foreach.across.modules.filemanager.business.FileStorageException;
+import com.foreach.across.modules.filemanager.business.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
@@ -69,6 +67,16 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	@Override
 	public FileResource getFileResource( FileDescriptor descriptor ) {
 		return requireRepository( descriptor.getRepositoryId() ).getFileResource( descriptor );
+	}
+
+	@Override
+	public FolderResource getRootFolderResource() {
+		return requireRepository( DEFAULT_REPOSITORY ).getRootFolderResource();
+	}
+
+	@Override
+	public FolderResource getFolderResource( FolderDescriptor descriptor ) {
+		return requireRepository( descriptor.getRepositoryId() ).getFolderResource( descriptor );
 	}
 
 	@Override

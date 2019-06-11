@@ -49,10 +49,7 @@ public interface FileResource extends WritableResource, FileRepositoryResource
 	/**
 	 * @return the folder to which this file belongs
 	 */
-	default FolderResource getFolderResource() {
-		// todo: implement
-		return null;
-	}
+	FolderResource getFolderResource();
 
 	/**
 	 * Method {@code getFile()} is extended from {@link Resource} but it's advised

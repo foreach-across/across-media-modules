@@ -2,6 +2,7 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -77,6 +78,11 @@ public class ExpiringFileRepository extends AbstractExpiringFileRepository<Expir
 		private long lastAccessTime = System.currentTimeMillis();
 
 		private boolean evictedNonExpired = false;
+
+		@Override
+		public FolderResource getFolderResource() {
+			return ExpiringFileRepository.this.createExpiringFolderResource( target.getFolderResource() );
+		}
 
 		@Override
 		public long getCreationTime() {
@@ -166,6 +172,16 @@ public class ExpiringFileRepository extends AbstractExpiringFileRepository<Expir
 		@Override
 		public InputStream getInputStream() throws IOException {
 			return target().getInputStream();
+		}
+
+		@Override
+		public boolean equals( Object obj ) {
+			return obj == this || ( obj instanceof FileResource && target.equals( obj ) );
+		}
+
+		@Override
+		public int hashCode() {
+			return target.hashCode();
 		}
 
 		@Override

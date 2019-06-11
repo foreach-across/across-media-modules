@@ -2,6 +2,7 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,11 +35,14 @@ class TestCachedFileResource
 	@Mock
 	private FileResource cache;
 
+	@Mock
+	private CachingFileRepository cachingFileRepository;
+
 	private CachedFileResource resource;
 
 	@BeforeEach
 	void setUp() {
-		resource = new CachedFileResource( target, cache );
+		resource = new CachedFileResource( target, cache, cachingFileRepository );
 	}
 
 	@Test
@@ -47,6 +51,17 @@ class TestCachedFileResource
 		when( target.getDescriptor() ).thenReturn( fd );
 		assertThat( resource.getDescriptor() ).isSameAs( fd );
 		verifyNoMoreInteractions( target, cache );
+	}
+
+	@Test
+	void folderResource() {
+		FolderResource original = mock( FolderResource.class );
+		when( target.getFolderResource() ).thenReturn( original );
+
+		FolderResource wrapped = mock( FolderResource.class );
+		when( cachingFileRepository.createExpiringFolderResource( original ) ).thenReturn( wrapped );
+
+		assertThat( resource.getFolderResource() ).isSameAs( wrapped );
 	}
 
 	@Test

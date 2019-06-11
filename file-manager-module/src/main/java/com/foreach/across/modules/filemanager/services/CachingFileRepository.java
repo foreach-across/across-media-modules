@@ -80,7 +80,7 @@ public class CachingFileRepository extends AbstractExpiringFileRepository<Cached
 		FileRepository cacheRepository = fileManager.getRepository( cacheRepositoryId );
 		FileResource cacheFileResource = cacheFileResourceResolver.apply( descriptor, cacheRepository );
 
-		return new CachedFileResource( targetFileResource, cacheFileResource );
+		return new CachedFileResource( targetFileResource, cacheFileResource, this );
 	}
 
 	@Override

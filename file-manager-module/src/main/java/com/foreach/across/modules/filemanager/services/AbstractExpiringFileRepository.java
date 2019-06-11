@@ -1,21 +1,19 @@
 package com.foreach.across.modules.filemanager.services;
 
-import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.business.FileResource;
-import com.foreach.across.modules.filemanager.business.FolderDescriptor;
+import com.foreach.across.modules.filemanager.business.*;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.net.URI;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Base class for a file repository which tracks its file resources and expires them
@@ -30,6 +28,12 @@ import java.util.function.Function;
  * resources to track can be configured. Once this maximum is exceeded, the oldest file
  * resource will be evicted; after which point it will be fetched again from the target
  * repository. If a resource expires when evicted depends on the {@link #expireOnEvict} value.
+ * <p/>
+ * In the base implementation folder resources do not expire but only the file resources
+ * they return are converted to expiring resources. The actual folder actions are executed
+ * directly on the target folder resource. This means that folder executions (for example listing
+ * of files) can quickly cause evictions if {@link #maxItemsToTrack} is too low as every file
+ * returned will be wrapped as an expiring file resource.
  *
  * @author Arne Vandamme
  * @see ExpiringFileRepository
@@ -198,7 +202,27 @@ public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResou
 		} );
 	}
 
+	@Override
+	protected final FolderResource buildFolderResource( FolderDescriptor descriptor ) {
+		FolderResource targetFolderResource = targetFileRepository.getFolderResource( descriptor );
+		return createExpiringFolderResource( targetFolderResource );
+	}
+
+	@Override
+	public FolderResource getRootFolderResource() {
+		FolderResource rootFolderResource = targetFileRepository.getRootFolderResource();
+		return createExpiringFolderResource( rootFolderResource );
+	}
+
+	private T createExpiringFileResource( FileResource targetFileResource ) {
+		return createExpiringFileResource( targetFileResource.getDescriptor(), targetFileResource );
+	}
+
 	protected abstract T createExpiringFileResource( FileDescriptor descriptor, FileResource targetFileResource );
+
+	protected FolderResource createExpiringFolderResource( FolderResource targetFolderResource ) {
+		return new ExpiringFolderResource( targetFolderResource );
+	}
 
 	/**
 	 * Eviction notice of a file resource. The second parameter indicates if the resource has expired in the process or not.
@@ -263,6 +287,166 @@ public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResou
 			}
 
 			return shouldEvict;
+		}
+	}
+
+	/**
+	 * Wrapper that ensures the results from the target folder resource are converted
+	 * to expiring file resources.
+	 */
+	@RequiredArgsConstructor
+	private class ExpiringFolderResource implements FolderResource
+	{
+		private final FolderResource target;
+
+		@Override
+		public FolderDescriptor getDescriptor() {
+			return target.getDescriptor();
+		}
+
+		@Override
+		public Optional<FolderResource> getParentFolderResource() {
+			return target.getParentFolderResource().map( AbstractExpiringFileRepository.this::createExpiringFolderResource );
+		}
+
+		@Override
+		public FileRepositoryResource getResource( String relativePath ) {
+			return wrap( target.getResource( relativePath ) );
+		}
+
+		@Override
+		public Collection<FileRepositoryResource> findResources( String pattern ) {
+			return wrap( target.findResources( pattern ) );
+		}
+
+		@Override
+		public boolean delete( boolean deleteChildren ) {
+			if ( deleteChildren ) {
+				boolean deleted = deleteChildren();
+				return deleted || target.delete( false );
+			}
+
+			return target.delete( false );
+		}
+
+		@Override
+		public boolean deleteChildren() {
+			Collection<FileRepositoryResource> resources = target.findResources( "*" );
+
+			if ( !resources.isEmpty() ) {
+				try {
+					resources.forEach( r -> {
+						if ( r instanceof FileResource ) {
+							FileResource fileResource = (FileResource) r;
+							T wrapped = trackedResources.get( fileResource.getDescriptor() );
+							if ( wrapped != null ) {
+								wrapped.delete();
+							}
+							else {
+								fileResource.delete();
+							}
+						}
+						else {
+							AbstractExpiringFileRepository.this.createExpiringFolderResource( (FolderResource) r ).delete( true );
+						}
+					} );
+				}
+				catch ( Exception ignore ) {
+					return false;
+				}
+				return true;
+			}
+
+			return false;
+		}
+
+		@Override
+		public boolean create() {
+			return target.create();
+		}
+
+		@Override
+		public boolean exists() {
+			return target.exists();
+		}
+
+		@Override
+		public String getFolderName() {
+			return target.getFolderName();
+		}
+
+		@Override
+		public FolderResource getFolderResource( String relativePath ) {
+			return AbstractExpiringFileRepository.this.createExpiringFolderResource( target.getFolderResource( relativePath ) );
+		}
+
+		@Override
+		public FileResource getFileResource( String relativePath ) {
+			return AbstractExpiringFileRepository.this.createExpiringFileResource( target.getFileResource( relativePath ) );
+		}
+
+		@Override
+		public FileResource createFileResource() {
+			return AbstractExpiringFileRepository.this.createExpiringFileResource( target.createFileResource() );
+		}
+
+		@Override
+		public Collection<FileResource> listFiles() {
+			return wrap( target.listFiles() );
+		}
+
+		@Override
+		public Collection<FolderResource> listFolders() {
+			return wrap( target.listFolders() );
+		}
+
+		@Override
+		public <U extends FileRepositoryResource> Collection<U> listResources( boolean recurseFolders, Class<U> resourceType ) {
+			return wrap( target.listResources( recurseFolders, resourceType ) );
+		}
+
+		@Override
+		public Collection<FileRepositoryResource> listResources( boolean recurseFolders ) {
+			return wrap( target.listResources( recurseFolders ) );
+		}
+
+		@Override
+		public <U extends FileRepositoryResource> Collection<U> findResources( String pattern, Class<U> resourceType ) {
+			return wrap( target.findResources( pattern, resourceType ) );
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return target.isEmpty();
+		}
+
+		@Override
+		public URI getURI() {
+			return target.getURI();
+		}
+
+		@Override
+		public boolean equals( Object obj ) {
+			return obj == this || ( obj instanceof FolderResource && target.equals( obj ) );
+		}
+
+		@Override
+		public int hashCode() {
+			return target.hashCode();
+		}
+
+		private <U extends FileRepositoryResource> Collection<U> wrap( Collection<U> original ) {
+			return original.stream()
+			               .map( this::wrap )
+			               .collect( Collectors.toList() );
+		}
+
+		@SuppressWarnings("unchecked")
+		private <U extends FileRepositoryResource> U wrap( U resource ) {
+			if ( resource instanceof FolderResource ) {
+				return (U) AbstractExpiringFileRepository.this.createExpiringFolderResource( (FolderResource) resource );
+			}
+			return (U) AbstractExpiringFileRepository.this.createExpiringFileResource( (FileResource) resource );
 		}
 	}
 

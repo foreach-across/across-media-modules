@@ -18,6 +18,8 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderDescriptor;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Setter;
 
 import java.io.File;
@@ -65,6 +67,16 @@ public class FileRepositoryDelegate implements FileRepository
 	@Override
 	public FileResource getFileResource( FileDescriptor descriptor ) {
 		return actualImplementation.getFileResource( descriptor );
+	}
+
+	@Override
+	public FolderResource getRootFolderResource() {
+		return actualImplementation.getRootFolderResource();
+	}
+
+	@Override
+	public FolderResource getFolderResource( FolderDescriptor descriptor ) {
+		return actualImplementation.getFolderResource( descriptor );
 	}
 
 	@Override
