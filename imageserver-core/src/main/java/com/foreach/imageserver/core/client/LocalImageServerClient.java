@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * ImageServerClient that accesses the core services directly, instead of through
@@ -213,20 +212,6 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 	@Override
 	public ImageConvertResultDto convertImage( ImageConvertDto convertDto ) {
 		return imageService.convertImageToTargets( convertDto );
-	}
-
-	@Override
-	public ImageDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
-		String key = UUID.randomUUID().toString();
-
-		ImageConvertDto convertDto = ImageConvertDto.builder()
-		                                            .image( imageBytes )
-		                                            .transformation( key, transforms )
-		                                            .build();
-
-		return imageService.convertImageToTargets( convertDto )
-		                   .getTransforms()
-		                   .get( key );
 	}
 
 	@Override

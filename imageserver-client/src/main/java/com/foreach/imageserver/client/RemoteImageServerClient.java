@@ -20,7 +20,6 @@ import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.springframework.util.Assert.notNull;
 
@@ -299,23 +298,6 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		queryParams.set( "token", imageServerAccessToken );
 
 		return httpPost( ENDPOINT_IMAGE_CONVERT, queryParams, new HttpEntity<>( convertDto ), ResponseTypes.IMAGE_CONVERT );
-	}
-
-	@Override
-	public ImageDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
-		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-		queryParams.set( "token", imageServerAccessToken );
-
-		String key = UUID.randomUUID().toString();
-
-		ImageConvertDto convertDto = ImageConvertDto.builder()
-		                                            .image( imageBytes )
-		                                            .transformation( key, transforms )
-		                                            .build();
-
-		return httpPost( ENDPOINT_IMAGE_CONVERT, queryParams, new HttpEntity<>( convertDto ), ResponseTypes.IMAGE_CONVERT )
-				.getTransforms()
-				.get( key );
 	}
 
 	protected <T> T httpGet( String path, MultiValueMap<String, String> queryParams, Class<T> responseType ) {

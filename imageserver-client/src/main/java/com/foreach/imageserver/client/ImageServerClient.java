@@ -145,15 +145,6 @@ public interface ImageServerClient
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
 
 	/**
-	 * Convert given new or existing image using the given series of transformations.
-	 * The list of transformations contains of all the transformations you want to execute on the image. These will be executed in the supplied order.
-	 *
-	 * @param convertDto image and transformations
-	 * @return transformed images
-	 */
-	ImageConvertResultDto convertImage( ImageConvertDto convertDto );
-
-	/**
 	 * Convenience method to convert a single image with given transformations.
 	 * The result will be converted image.
 	 *
@@ -161,5 +152,32 @@ public interface ImageServerClient
 	 * @param transforms transformations
 	 * @return transformed image
 	 */
-	ImageDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms );
+	default ImageDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
+		return convertImage( ImageConvertDto.builder().image( imageBytes ).transformation( "transform", transforms ).build() )
+				.getTransforms()
+				.get( "transform" );
+	}
+
+	/**
+	 * Convenience method to convert a single previously registered image with given transformations.
+	 * The result will be converted image.
+	 *
+	 * @param imageId    registered image
+	 * @param transforms transformations
+	 * @return transformed image
+	 */
+	default ImageDto convertImage( String imageId, List<ImageTransformDto> transforms ) {
+		return convertImage( ImageConvertDto.builder().imageId( imageId ).transformation( "transform", transforms ).build() )
+				.getTransforms()
+				.get( "transform" );
+	}
+
+	/**
+	 * Convert given new or existing image using the given series of transformations.
+	 * The list of transformations contains of all the transformations you want to execute on the image. These will be executed in the supplied order.
+	 *
+	 * @param convertDto image and transformations
+	 * @return transformed images
+	 */
+	ImageConvertResultDto convertImage( ImageConvertDto convertDto );
 }

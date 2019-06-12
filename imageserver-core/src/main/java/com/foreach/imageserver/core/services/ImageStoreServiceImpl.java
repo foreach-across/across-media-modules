@@ -27,7 +27,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 	@Override
 	public void storeOriginalImage( Image image, byte[] imageBytes ) {
 		try (InputStream imageStream = new ByteArrayInputStream( imageBytes )) {
-			this.storeOriginalImage( image, imageStream );
+			storeOriginalImage( image, imageStream );
 		}
 		catch ( Exception e ) {
 			LOG.error(

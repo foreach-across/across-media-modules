@@ -18,9 +18,16 @@ import java.util.Map;
 public class ImageConvertDto
 {
 	/**
-	 * The image that we want to transform
+	 * The image that we want to transform.
+	 * Either this property or {@link #imageId} should be set (to convert a registered image).
 	 */
 	private byte[] image;
+
+	/**
+	 * Id of the registered image that we want to transform.
+	 * Either this property or {@link #image} bytes should be set.
+	 */
+	private String imageId;
 
 	/**
 	 * Which page number / scene numbers do we want to transform?

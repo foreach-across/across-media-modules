@@ -12,7 +12,9 @@ import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.core.transformers.SimpleImageSource;
 import com.foreach.imageserver.dto.*;
 import com.foreach.imageserver.logging.LogHelper;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -486,38 +488,15 @@ public class ImageServiceImpl implements ImageService
 		Map<String, ImageDto> transforms = new HashMap<>();
 		resultBuilder.transforms( transforms );
 
-		//
-		byte[] imageData = null;
-		if ( !ImageByIdConvertDto.class.isAssignableFrom( imageConvertDto.getClass() ) ) {
-			imageData = imageConvertDto.getImage();
-		}
-		else {
-			ImageByIdConvertDto dto = (ImageByIdConvertDto) imageConvertDto;
-			Image image = getByExternalId( dto.getImageId() );
-			ImageSource imageSource = imageStoreService.getOriginalImage( image );
-			try (InputStream is = imageSource.getImageStream()) {
-				imageData = IOUtils.toByteArray( is );
-			}
-			catch ( IOException e ) {
-				LOG.error( e.getMessage(), e );
-			}
-		}
-
 		try {
-			ImageAttributes imageAttributes;
-			try (InputStream is = new ByteArrayInputStream( imageData )) {
-				imageAttributes = imageTransformService.getAttributes( is );
-			}
-
-			ImageSource sourceImage = new SimpleImageSource( imageAttributes.getType(), imageData );
+			ImageConvertSource source = buildImageConvertSource( imageConvertDto );
 
 			for ( Map.Entry<String, List<ImageTransformDto>> entry : imageConvertDto.getTransformations().entrySet() ) {
 				for ( Integer page : pages ) {
-
 					String key = entry.getKey().replace( "*", page.toString() );
 					keys.add( key );
 
-					ImageSource resultImage = imageTransformService.transform( sourceImage, imageAttributes, entry.getValue() );
+					ImageSource resultImage = imageTransformService.transform( source.getImageSource(), source.getAttributes(), entry.getValue() );
 					try (InputStream is = resultImage.getImageStream()) {
 						transforms.put( key, ImageDto.builder()
 						                             .image( IOUtils.toByteArray( is ) )
@@ -534,6 +513,44 @@ public class ImageServiceImpl implements ImageService
 		resultBuilder.total( keys.size() );
 
 		return resultBuilder.build();
+	}
+
+	private ImageConvertSource buildImageConvertSource( ImageConvertDto convertDto ) throws IOException {
+		String imageId = convertDto.getImageId();
+		byte[] imageData = convertDto.getImage();
+
+		boolean uploadedImage = imageData != null && imageData.length > 0;
+		boolean registeredImage = StringUtils.isNotEmpty( imageId );
+
+		if ( !uploadedImage && !registeredImage ) {
+			throw new IllegalArgumentException(
+					"Image source for conversion must be specified either as byte array (image) or as id for a registered image (imageId)" );
+		}
+		if ( uploadedImage && registeredImage ) {
+			throw new IllegalArgumentException( "Both image (byte array) and imageId have been specified as source" );
+		}
+
+		if ( uploadedImage ) {
+			ImageAttributes imageAttributes;
+			try (InputStream is = new ByteArrayInputStream( imageData )) {
+				imageAttributes = imageTransformService.getAttributes( is );
+			}
+			return new ImageConvertSource( new SimpleImageSource( imageAttributes.getType(), imageData ), imageAttributes );
+
+		}
+		else {
+			Image image = getByExternalId( convertDto.getImageId() );
+			ImageSource imageSource = imageStoreService.getOriginalImage( image );
+			return new ImageConvertSource( imageSource, ImageAttributes.from( image ) );
+		}
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	private static class ImageConvertSource
+	{
+		private final ImageSource imageSource;
+		private final ImageAttributes attributes;
 	}
 
 	private static class VariantImageRequest

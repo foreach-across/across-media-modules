@@ -383,13 +383,31 @@ public class ITRemoteImageServerClient
 		                                                  Collections.singletonList(
 				                                                  ImageTransformDto.builder()
 				                                                                   .dpi( 300 )
-				                                                                   .colorSpace(
-						                                                                   ColorSpaceDto.GRAYSCALE )
-				                                                                   .outputType(
-						                                                                   ImageTypeDto.PNG )
+				                                                                   .colorSpace( ColorSpaceDto.GRAYSCALE )
+				                                                                   .outputType( ImageTypeDto.PNG )
 				                                                                   .build() ) );
 
 		assertEquals( ImageTypeDto.PNG, result.getFormat() );
+		assertTrue( result.getImage().length > 0 );
+	}
+
+	@Test
+	@SneakyThrows
+	public void convertSingleRegisteredImage() {
+		String imageId = UUID.randomUUID().toString();
+		ImageInfoDto imageInfoDto = imageServerClient.loadImage( imageId, image( "poppy_flower_nature.jpg" ) );
+		assertNotNull( imageInfoDto );
+
+		ImageDto result = imageServerClient.convertImage( imageId,
+		                                                  Collections.singletonList(
+				                                                  ImageTransformDto.builder()
+				                                                                   .dpi( 300 )
+				                                                                   .colorSpace( ColorSpaceDto.GRAYSCALE )
+				                                                                   .outputType( ImageTypeDto.PNG )
+				                                                                   .build() ) );
+
+		assertEquals( ImageTypeDto.PNG, result.getFormat() );
+		assertTrue( result.getImage().length > 0 );
 	}
 
 	@Test

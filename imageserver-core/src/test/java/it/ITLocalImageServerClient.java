@@ -359,6 +359,26 @@ public class ITLocalImageServerClient
 				                                                                   .build() ) );
 
 		assertEquals( ImageTypeDto.PNG, result.getFormat() );
+		assertTrue( result.getImage().length > 0 );
+	}
+
+	@Test
+	@SneakyThrows
+	public void convertSingleRegisteredImage() {
+		String imageId = UUID.randomUUID().toString();
+		imageServerClient.loadImage( imageId, image( "images/poppy_flower_nature.jpg" ) );
+		ImageDto result = imageServerClient.convertImage( imageId,
+		                                                  Collections.singletonList(
+				                                                  ImageTransformDto.builder()
+				                                                                   .dpi( 300 )
+				                                                                   .colorSpace(
+						                                                                   ColorSpaceDto.GRAYSCALE )
+				                                                                   .outputType(
+						                                                                   ImageTypeDto.PNG )
+				                                                                   .build() ) );
+
+		assertEquals( ImageTypeDto.PNG, result.getFormat() );
+		assertTrue( result.getImage().length > 0 );
 	}
 
 	@Test
