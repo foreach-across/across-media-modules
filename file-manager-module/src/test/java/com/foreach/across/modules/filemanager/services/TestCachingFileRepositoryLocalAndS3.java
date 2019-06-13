@@ -45,7 +45,7 @@ class TestCachingFileRepositoryLocalAndS3 extends BaseFileRepositoryTest
 	private LocalFileRepository cacheRepository;
 
 	@Override
-	void createRepository() {
+	FileRepository createRepository() {
 		if ( amazonS3 == null ) {
 			amazonS3 = AmazonS3ClientBuilder.standard()
 			                                .withEndpointConfiguration( new AwsClientBuilder.EndpointConfiguration( "http://localhost:4572", "us-east-1" ) )
@@ -72,11 +72,10 @@ class TestCachingFileRepositoryLocalAndS3 extends BaseFileRepositoryTest
 		                                                              .build();
 		repositoryToTest.setFileManager( fileManager );
 
-		cacheRepository = LocalFileRepository.builder().repositoryId( "cache" ).rootFolder( ROOT_DIR ).build();
+		cacheRepository = LocalFileRepository.builder().repositoryId( "cache" ).rootFolder( rootFolder ).build();
 		fileManager.registerRepository( cacheRepository );
 
-		this.fileRepository = repositoryToTest;
-
+		return repositoryToTest;
 	}
 
 	@Test

@@ -19,8 +19,8 @@ import com.foreach.across.modules.filemanager.business.reference.FileReferenceIn
 import com.foreach.across.modules.filemanager.business.reference.MultipartFileToFileReferenceConverter;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.test.AcrossTestContext;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static java.lang.Thread.currentThread;
@@ -31,16 +31,16 @@ import static org.springframework.util.ClassUtils.isPresent;
  * @author Steven Gentens
  * @since 3.0.0
  */
-public class TestBootstrapWithoutHibernateModuleClassPath
+class TestBootstrapWithoutHibernateModuleClassPath
 {
 	@Test
-	public void classesShouldNotBeOnTheClassPath() {
+	void classesShouldNotBeOnTheClassPath() {
 		assertThat( isPresent( "com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule", currentThread().getContextClassLoader() ) ).isFalse();
 	}
 
 	@Test
-	@Ignore("Conditional annotations are currently not applied to installers")
-	public void emptyBootstrap() {
+	@Disabled("Conditional annotations are currently not applied to installers")
+	void emptyBootstrap() {
 		try (AcrossTestContext context = web( false )
 				.modules( FileManagerModule.NAME )
 				.build()) {

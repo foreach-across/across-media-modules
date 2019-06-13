@@ -3,6 +3,8 @@ package com.foreach.across.modules.filemanager.services;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderResource;
@@ -129,6 +131,15 @@ class AmazonS3FileResource extends SimpleStorageResource implements FileResource
 	void resetObjectMetadata() {
 		if ( metadataField != null ) {
 			ReflectionUtils.setField( metadataField, this, null );
+		}
+	}
+
+	void loadMetadata( S3ObjectSummary summary ) {
+		if ( metadataField != null ) {
+			ObjectMetadata metadata = new ObjectMetadata();
+			metadata.setContentLength( summary.getSize() );
+			metadata.setLastModified( summary.getLastModified() );
+			ReflectionUtils.setField( metadataField, this, metadata );
 		}
 	}
 

@@ -2,14 +2,12 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.*;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,19 +31,10 @@ class TestLocalFolderResource
 
 	@BeforeEach
 	@SneakyThrows
-	void createResource() {
+	void createResource( @TempDir File tempDirRoot ) {
 		descriptor = FolderDescriptor.of( "my-repo", "123/456" );
-		tempDir = Paths.get( System.getProperty( "java.io.tmpdir" ), UUID.randomUUID().toString(), UUID.randomUUID().toString() ).toFile();
+		tempDir = new File( tempDirRoot, UUID.randomUUID().toString() );
 		resource = new LocalFolderResource( descriptor, tempDir.toPath() );
-	}
-
-	@AfterEach
-	void tearDown() {
-		try {
-			FileUtils.deleteDirectory( tempDir.getParentFile() );
-		}
-		catch ( Exception ignore ) {
-		}
 	}
 
 	@Test
@@ -104,7 +93,6 @@ class TestLocalFolderResource
 	@Test
 	@SneakyThrows
 	void existingFileDoesNotCountAsFolder() {
-		assertThat( tempDir.getParentFile().mkdir() ).isTrue();
 		assertThat( tempDir.createNewFile() ).isTrue();
 		assertThat( resource.exists() ).isFalse();
 		assertThat( resource.create() ).isFalse();

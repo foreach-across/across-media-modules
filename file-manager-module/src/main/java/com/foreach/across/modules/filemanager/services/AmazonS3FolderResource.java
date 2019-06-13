@@ -146,7 +146,7 @@ class AmazonS3FolderResource implements FolderResource
 							String partial = objectName.substring( 0, delim + 1 );
 							if ( partial.length() > 0 ) {
 								if ( keyMatcher.test( partial, keyPattern ) ) {
-									resources.add( toFileRepositoryResource( partial ) );
+									resources.add( toFileRepositoryResource( partial, null ) );
 								}
 							}
 							delim = objectName.indexOf( '/', delim + 1 );
@@ -183,7 +183,7 @@ class AmazonS3FolderResource implements FolderResource
 
 			for ( String commonPrefix : objectListing.getCommonPrefixes() ) {
 				if ( keyMatcher.test( commonPrefix, keyPattern ) ) {
-					resources.add( toFileRepositoryResource( commonPrefix ) );
+					resources.add( toFileRepositoryResource( commonPrefix, null ) );
 				}
 
 				if ( isKeyPathMatchesPartially( keyMatcher, keyPattern, commonPrefix ) ) {
@@ -234,18 +234,24 @@ class AmazonS3FolderResource implements FolderResource
 		objectSummaries.forEach( candidate -> {
 			String candidateObjectName = candidate.getKey();
 			if ( !candidateObjectName.equals( objectName ) && keyMatcher.test( candidateObjectName, keyPattern ) ) {
-				resources.add( toFileRepositoryResource( candidateObjectName ) );
+				resources.add( toFileRepositoryResource( candidateObjectName, candidate ) );
 			}
 		} );
 	}
 
-	private FileRepositoryResource toFileRepositoryResource( String childObjectName ) {
+	private FileRepositoryResource toFileRepositoryResource( String childObjectName, S3ObjectSummary childObjectSummary ) {
 		String childPath = StringUtils.removeStart( childObjectName, objectName );
 		if ( childObjectName.endsWith( "/" ) ) {
 			return new AmazonS3FolderResource( descriptor.createFolderDescriptor( childPath ), amazonS3, bucketName, childObjectName, taskExecutor );
 		}
 
-		return new AmazonS3FileResource( descriptor.createFileDescriptor( childPath ), amazonS3, bucketName, childObjectName, taskExecutor );
+		AmazonS3FileResource fileResource = new AmazonS3FileResource( descriptor.createFileDescriptor( childPath ), amazonS3, bucketName,
+		                                                              childObjectName, taskExecutor );
+		if ( childObjectSummary != null ) {
+			fileResource.loadMetadata( childObjectSummary );
+		}
+
+		return fileResource;
 	}
 
 	private String getValidPrefix( String keyPattern ) {

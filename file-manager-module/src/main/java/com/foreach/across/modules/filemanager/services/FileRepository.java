@@ -49,15 +49,16 @@ public interface FileRepository
 	 * will be deleted once the resource has been created. This is useful when moving
 	 * temporary files.
 	 * <p/>
-	 * By default this does the same as {@link #createFileResource()} followed by
-	 * a call to {@link FileResource#copyFrom(File, boolean)}.
+	 * By default the extension of the original file will be added to the file descriptor,
+	 * so it can more easily be used for mime type detection.
 	 *
 	 * @param originalFile   data to copy into the resource
 	 * @param deleteOriginal true if the original file should be deleted when done
 	 * @return FileResource instance.
 	 */
 	default FileResource createFileResource( @NonNull File originalFile, boolean deleteOriginal ) throws IOException {
-		FileResource fileResource = createFileResource();
+		FileDescriptor descriptor = generateFileDescriptor().withExtensionFrom( originalFile.getName() );
+		FileResource fileResource = getFileResource( descriptor );
 		fileResource.copyFrom( originalFile, deleteOriginal );
 		return fileResource;
 	}
@@ -96,7 +97,7 @@ public interface FileRepository
 	}
 
 	/**
-	 * Create a new file resource in the repository and and optionally allocate it immediately.
+	 * Create a new file resource in the repository and optionally allocate it immediately.
 	 * The resource returned is guaranteed not to exist before the call to this method, and can normally be written to after.
 	 * The call to {@link FileResource#exists()} should return {@code true} if parameter {@code allocateImmediately}
 	 * was {@code true}.

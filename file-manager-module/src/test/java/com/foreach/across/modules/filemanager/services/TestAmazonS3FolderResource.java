@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.task.SyncTaskExecutor;
 import utils.AmazonS3Helper;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -147,7 +148,17 @@ class TestAmazonS3FolderResource
 		assertThat( resource.findResources( "**", FolderResource.class ) ).containsExactlyInAnyOrder( childFolder, childFolderInChildFolder );
 		assertThat( resource.findResources( "**/", FileResource.class ) ).isEmpty();
 
-		assertThat( resource.findResources( "childFil?" ) ).containsExactly( childFile );
+		assertThat( resource.findResources( "childFil?" ) )
+				.containsExactly( childFile )
+				.satisfies( l -> {
+					try {
+						FileResource fr = (FileResource) l.iterator().next();
+						assertThat( fr.contentLength() ).isEqualTo( 10L );
+					}
+					catch ( IOException ioe ) {
+						throw new AssertionError( ioe );
+					}
+				} );
 		assertThat( resource.findResources( "childFile" ) ).containsExactly( childFile );
 		assertThat( resource.findResources( "/**/childFile" ) ).containsExactly( childFile );
 		assertThat( resource.findResources( "/**/childFile*" ) ).containsExactlyInAnyOrder( childFile, childFileInChildFolder );
@@ -232,12 +243,14 @@ class TestAmazonS3FolderResource
 	}
 
 	@Test
+	@SneakyThrows
 	void getFileResource() {
 		createFileTree();
 
 		assertThat( resource.getFileResource( "childFile" ) ).isEqualTo( childFile ).matches( Resource::exists );
 		assertThat( resource.getFileResource( "/childFile" ) ).isEqualTo( childFile );
 
+		assertThat( resource.getFileResource( "childFile" ).contentLength() ).isEqualTo( 10L );
 		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> resource.getFileResource( "" ) );
 		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> resource.getFileResource( "/" ) );
 		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> resource.getFileResource( null ) );
@@ -326,7 +339,7 @@ class TestAmazonS3FolderResource
 
 	@SneakyThrows
 	private void createFileTree() {
-		amazonS3.putObject( BUCKET_NAME, objectName + "childFile", "" );
+		amazonS3.putObject( BUCKET_NAME, objectName + "childFile", "dummy file" );
 		childFile = fileResource( FileDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId(), "childFile" ), objectName + "childFile" );
 
 		assertThat( childFile.exists() ).isTrue();

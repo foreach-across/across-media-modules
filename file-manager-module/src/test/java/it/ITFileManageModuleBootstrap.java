@@ -22,7 +22,7 @@ import com.foreach.across.modules.filemanager.business.reference.FileReferenceSe
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.standard;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
@@ -32,10 +32,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Steven Gentens
  * @since 1.3.0
  */
-public class ITFileManageModuleBootstrap
+class ITFileManageModuleBootstrap
 {
 	@Test
-	public void fileManagerModule() {
+	void fileManagerModule() {
 		try (AcrossTestContext ctx = standard().modules( FileManagerModule.NAME ).build()) {
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
 			assertThat( ctx.contextInfo().getModuleInfo( FileManagerModule.NAME ).getApplicationContext().getBeansOfType( FileReferenceService.class ) )
@@ -44,7 +44,7 @@ public class ITFileManageModuleBootstrap
 	}
 
 	@Test
-	public void fileManagerModuleAndPropertiesModule() {
+	void fileManagerModuleAndPropertiesModule() {
 		try (AcrossTestContext ctx = web().modules( FileManagerModule.NAME, PropertiesModule.NAME )
 		                                  .build()) {
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
@@ -54,7 +54,7 @@ public class ITFileManageModuleBootstrap
 	}
 
 	@Test
-	public void fileManagerModuleAndHibernateModule() {
+	void fileManagerModuleAndHibernateModule() {
 		try (AcrossTestContext ctx = web().modules( FileManagerModule.NAME, AcrossHibernateJpaModule.NAME )
 		                                  .build()) {
 			assertThat( ctx.contextInfo().isBootstrapped() ).isFalse();
@@ -66,7 +66,7 @@ public class ITFileManageModuleBootstrap
 	}
 
 	@Test
-	public void fileManagerModuleAndHibernateModuleAndPropertiesModule() {
+	void fileManagerModuleAndHibernateModuleAndPropertiesModule() {
 		try (AcrossTestContext ctx = web().modules( FileManagerModule.NAME, AcrossHibernateJpaModule.NAME, PropertiesModule.NAME )
 		                                  .build()) {
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();

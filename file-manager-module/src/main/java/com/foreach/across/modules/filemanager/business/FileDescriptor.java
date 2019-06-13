@@ -19,6 +19,7 @@ package com.foreach.across.modules.filemanager.business;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -128,9 +129,64 @@ public class FileDescriptor implements FileRepositoryResourceDescriptor
 		return folderDescriptor.getFolderId();
 	}
 
+	/**
+	 * Returns the extension of this file. This is the segment after the last dot in the file id.
+	 * An extension is not required and empty string will be returned if it is missing.
+	 *
+	 * @return extension of this file or empty string if none
+	 */
+	public String getExtension() {
+		return StringUtils.defaultString( FilenameUtils.getExtension( fileId ) );
+	}
+
 	@Override
 	public String toString() {
 		return getUri();
+	}
+
+	/**
+	 * Clones the current descriptor but modifies the file id by replacing the extension
+	 * with the extension from the path passed in. If path is null, empty or has no extension,
+	 * any current extension will be removed instead. If there is no current extension,
+	 * one will be added.
+	 * <p/>
+	 * Especially useful for modifying generated file descriptors to have the same extension
+	 * as an original file.
+	 *
+	 * @param path from which to get the extension
+	 * @return new descriptor
+	 */
+	public FileDescriptor withExtensionFrom( String path ) {
+		return withExtension( FilenameUtils.getExtension( path ) );
+	}
+
+	/**
+	 * Clones the current descriptor but modifies the file id by replacing the extension
+	 * with the extension passed in. If the new extension is null or empty,
+	 * any current extension will be removed instead. If there is no current extension,
+	 * one will be added.
+	 * <p/>
+	 * Especially useful for modifying generated file descriptors to have the same extension
+	 * as an original file.
+	 *
+	 * @param extension to apply to the file id
+	 * @return new descriptor
+	 */
+	public FileDescriptor withExtension( String extension ) {
+		String fileIdWithoutExtension = FilenameUtils.getBaseName( fileId );
+		return folderDescriptor.createFileDescriptor(
+				StringUtils.isEmpty( extension ) ? fileIdWithoutExtension : fileIdWithoutExtension + "." + StringUtils.removeStart( extension, "." )
+		);
+	}
+
+	/**
+	 * Clones the current descriptor but applies a suffix to the file id.
+	 *
+	 * @param suffix to append to the file id
+	 * @return new descriptor
+	 */
+	public FileDescriptor withSuffix( String suffix ) {
+		return folderDescriptor.createFileDescriptor( fileId + StringUtils.defaultString( suffix ) );
 	}
 
 	/**

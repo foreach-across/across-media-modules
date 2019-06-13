@@ -95,7 +95,10 @@ public class FileReferenceService
 			throw new IllegalArgumentException( e );
 		}
 
-		FileResource fileResource = fileRepository.createFileResource( tempFile, true );
+		// generate file resource with the extension of the original file
+		FileDescriptor descriptor = fileRepository.generateFileDescriptor().withExtensionFrom( file.getOriginalFilename() );
+		FileResource fileResource = fileRepository.getFileResource( descriptor );
+		fileResource.copyFrom( tempFile, true );
 
 		fileReference.setFileDescriptor( fileResource.getDescriptor() );
 		fileReference.setName( file.getOriginalFilename() );
@@ -162,7 +165,7 @@ public class FileReferenceService
 			LOG.debug( "Moving file '{}' to repository {}", fileDescriptor, repositoryId );
 
 			FileResource originalResource = fileManager.getFileResource( fileDescriptor );
-			FileResource newResource = fileManager.createFileResource( repositoryId );
+			FileResource newResource = generateTargetFileResource( fileDescriptor, repositoryId );
 			newResource.copyFrom( originalResource );
 
 			LOG.debug( "New file descriptor for file '{}': '{}'", fileDescriptor, newResource.getDescriptor() );
@@ -174,6 +177,12 @@ public class FileReferenceService
 				transactionalDeletePhysicalFile( fileDescriptor );
 			}
 		}
+	}
+
+	private FileResource generateTargetFileResource( FileDescriptor originalDescriptor, String targetRepositoryId ) {
+		FileRepository targetRepository = fileManager.getRepository( targetRepositoryId );
+		FileDescriptor descriptor = targetRepository.generateFileDescriptor().withExtension( originalDescriptor.getExtension() );
+		return targetRepository.getFileResource( descriptor );
 	}
 
 	/**

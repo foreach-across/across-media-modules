@@ -34,6 +34,30 @@ class TestFileDescriptor
 	}
 
 	@Test
+	void extensionAndSuffix() {
+		assertThat( FileDescriptor.of( "default:myfile" ).getExtension() ).isEmpty();
+		assertThat( FileDescriptor.of( "default:myfile.list.jpeg" ).getExtension() ).isEqualTo( "jpeg" );
+
+		assertThat( FileDescriptor.of( "default:myfile" ).withSuffix( "" ) ).isEqualTo( FileDescriptor.of( "default:myfile" ) );
+		assertThat( FileDescriptor.of( "default:myfile" ).withSuffix( null ) ).isEqualTo( FileDescriptor.of( "default:myfile" ) );
+		assertThat( FileDescriptor.of( "default:myfile" ).withSuffix( "_some.txt" ) ).isEqualTo( FileDescriptor.of( "default:myfile_some.txt" ) );
+		assertThat( FileDescriptor.of( "default:myfile" ).withSuffix( "txt" ) ).isEqualTo( FileDescriptor.of( "default:myfiletxt" ) );
+
+		assertThat( FileDescriptor.of( "default:myfile" ).withExtension( "txt" ) ).isEqualTo( FileDescriptor.of( "default:myfile.txt" ) );
+		assertThat( FileDescriptor.of( "default:myfile" ).withExtension( ".txt" ) ).isEqualTo( FileDescriptor.of( "default:myfile.txt" ) );
+		assertThat( FileDescriptor.of( "default:myfile.doc" ).withExtension( ".txt" ) ).isEqualTo( FileDescriptor.of( "default:myfile.txt" ) );
+		assertThat( FileDescriptor.of( "default:myfile.doc.html" ).withExtension( "txt" ) ).isEqualTo( FileDescriptor.of( "default:myfile.doc.txt" ) );
+		assertThat( FileDescriptor.of( "default:myfile.doc" ).withExtension( "" ) ).isEqualTo( FileDescriptor.of( "default:myfile" ) );
+		assertThat( FileDescriptor.of( "default:myfile.doc" ).withExtension( null ) ).isEqualTo( FileDescriptor.of( "default:myfile" ) );
+
+		assertThat( FileDescriptor.of( "default:myfile.doc" ).withExtensionFrom( null ) ).isEqualTo( FileDescriptor.of( "default:myfile" ) );
+		assertThat( FileDescriptor.of( "default:myfile.doc" ).withExtensionFrom( "" ) ).isEqualTo( FileDescriptor.of( "default:myfile" ) );
+		assertThat( FileDescriptor.of( "default:myfile.doc" ).withExtensionFrom( "/my.dir/my" ) ).isEqualTo( FileDescriptor.of( "default:myfile" ) );
+		assertThat( FileDescriptor.of( "default:myfile.doc" ).withExtensionFrom( "c:/my.dir/my.file.xls" ) ).isEqualTo(
+				FileDescriptor.of( "default:myfile.xls" ) );
+	}
+
+	@Test
 	void parseUri() {
 		FileDescriptor descriptor = FileDescriptor.of( "default:test-file.txt" );
 

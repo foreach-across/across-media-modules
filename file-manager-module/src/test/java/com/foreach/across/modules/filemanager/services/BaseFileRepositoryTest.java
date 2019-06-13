@@ -19,12 +19,11 @@ package com.foreach.across.modules.filemanager.services;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
@@ -32,7 +31,6 @@ import org.springframework.util.StreamUtils;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -45,52 +43,43 @@ abstract class BaseFileRepositoryTest
 {
 	static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 
-	static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
-	static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
+	private File fileOne;
 
-	private static final File FILE_ONE = new File( TEMP_DIR, UUID.randomUUID().toString() );
+	@TempDir
+	File tempDir;
 
+	String rootFolder;
 	FileRepository fileRepository;
 
 	@BeforeEach
 	void create() throws IOException {
-		cleanup();
+		fileOne = new File( tempDir, UUID.randomUUID().toString() + ".txt" );
+		rootFolder = tempDir.toPath().resolve( UUID.randomUUID().toString() ).toString();
 
-		assertFalse( FILE_ONE.exists() );
-
-		try (FileWriter w = new FileWriter( FILE_ONE )) {
+		try (FileWriter w = new FileWriter( fileOne )) {
 			IOUtils.copy( RES_TEXTFILE.getInputStream(), w, Charset.defaultCharset() );
 			w.flush();
 		}
-		createRepository();
+
+		fileRepository = createRepository();
 	}
 
-	abstract void createRepository();
-
-	@AfterEach
-	void cleanup() {
-		try {
-			if ( FILE_ONE.exists() ) {
-				FILE_ONE.delete();
-			}
-
-			FileUtils.deleteDirectory( new File( ROOT_DIR ) );
-		}
-		catch ( Exception e ) {
-			System.err.println( "Unit test could not cleanup files nicely" );
-		}
-	}
+	abstract FileRepository createRepository();
 
 	// create file creates an existing, empty file, which is writable
 	@Test
 	void moveIntoDeletesTheOriginalFile() {
-		assertTrue( FILE_ONE.exists() );
+		assertTrue( fileOne.exists() );
 
-		FileDescriptor descriptor = fileRepository.moveInto( FILE_ONE );
+		FileDescriptor descriptor = fileRepository.moveInto( fileOne );
 		assertNotNull( descriptor );
 		assertTrue( fileRepository.exists( descriptor ) );
 
-		assertFalse( FILE_ONE.exists() );
+		assertFalse( fileOne.exists() );
+
+		// original file extension is copied
+		assertTrue( descriptor.getFileId().endsWith( ".txt" ) );
+		assertEquals( "txt", descriptor.getExtension() );
 
 		assertTrue( fileRepository.delete( descriptor ) );
 		assertFalse( fileRepository.exists( descriptor ) );
@@ -98,8 +87,8 @@ abstract class BaseFileRepositoryTest
 
 	@Test
 	void savingFileAlwaysCreatesANewFile() {
-		FileDescriptor descriptorOne = fileRepository.save( FILE_ONE );
-		FileDescriptor descriptorTwo = fileRepository.save( FILE_ONE );
+		FileDescriptor descriptorOne = fileRepository.save( fileOne );
+		FileDescriptor descriptorTwo = fileRepository.save( fileOne );
 
 		assertNotEquals( descriptorOne, descriptorTwo );
 
@@ -228,7 +217,7 @@ abstract class BaseFileRepositoryTest
 
 	@Test
 	void modifyExistingFile() throws IOException {
-		FileDescriptor descriptor = fileRepository.save( FILE_ONE );
+		FileDescriptor descriptor = fileRepository.save( fileOne );
 
 		assertEquals( "some dummy text", read( descriptor ) );
 
@@ -245,7 +234,7 @@ abstract class BaseFileRepositoryTest
 
 	@Test
 	void renameFileRenamesTheFile() {
-		FileDescriptor original = fileRepository.save( FILE_ONE );
+		FileDescriptor original = fileRepository.save( fileOne );
 		String renamedName = UUID.randomUUID().toString();
 		FileDescriptor renamed = FileDescriptor.of( fileRepository.getRepositoryId(), null, renamedName );
 
@@ -256,7 +245,7 @@ abstract class BaseFileRepositoryTest
 
 	@Test
 	void renameFileCreatesDirectoriesIfNecessary() {
-		FileDescriptor original = fileRepository.save( FILE_ONE );
+		FileDescriptor original = fileRepository.save( fileOne );
 		String renamedName = UUID.randomUUID().toString();
 		String renamedDir = UUID.randomUUID().toString();
 		FileDescriptor renamed = FileDescriptor.of( fileRepository.getRepositoryId(), renamedDir, renamedName );
@@ -268,7 +257,7 @@ abstract class BaseFileRepositoryTest
 
 	@Test
 	void renameFileToDifferentRepositoryThrowsIllegalArgument() {
-		FileDescriptor original = fileRepository.save( FILE_ONE );
+		FileDescriptor original = fileRepository.save( fileOne );
 		String renamedName = UUID.randomUUID().toString();
 		String renamedDir = UUID.randomUUID().toString();
 		FileDescriptor renamed = FileDescriptor.of( "foo", renamedDir, renamedName );

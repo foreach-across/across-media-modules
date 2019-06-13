@@ -16,43 +16,23 @@
 
 package com.foreach.across.modules.filemanager.services;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-public class TestLocalFileRepositoryFactory
+class TestLocalFileRepositoryFactory
 {
-	private static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
-	private static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
+	@SuppressWarnings("WeakerAccess")
+	@TempDir
+	static File tempDir;
 
-	private LocalFileRepositoryFactory factory;
-
-	@Before
-	public void create() {
-		cleanup();
-
-		factory = new LocalFileRepositoryFactory( ROOT_DIR, null );
-	}
-
-	@After
-	public void cleanup() {
-		try {
-			FileUtils.deleteDirectory( new File( ROOT_DIR ) );
-		}
-		catch ( Exception e ) {
-			System.err.println( "Unit test could not cleanup files nicely" );
-		}
-	}
+	private LocalFileRepositoryFactory factory = new LocalFileRepositoryFactory( tempDir.getAbsolutePath(), null );
 
 	@Test
-	public void createRepositories() {
+	void createRepositories() {
 		FileRepository one = factory.create( "default" );
 		FileRepository two = factory.create( "temp" );
 
@@ -62,11 +42,9 @@ public class TestLocalFileRepositoryFactory
 		assertTrue( one instanceof LocalFileRepository );
 		assertTrue( two instanceof LocalFileRepository );
 
-		assertTrue( Paths.get( ROOT_DIR, "default" ).toFile().exists() );
-		assertTrue( Paths.get( ROOT_DIR, "temp" ).toFile().exists() );
-		assertEquals( Paths.get( ROOT_DIR, "default" ).toFile().getAbsolutePath(),
-		              ( (LocalFileRepository) one ).getRootFolderPath() );
-		assertEquals( Paths.get( ROOT_DIR, "temp" ).toFile().getAbsolutePath(),
-		              ( (LocalFileRepository) two ).getRootFolderPath() );
+		assertTrue( new File( tempDir, "default" ).exists() );
+		assertTrue( new File( tempDir, "temp" ).exists() );
+		assertEquals( new File( tempDir, "default" ).getAbsolutePath(), ( (LocalFileRepository) one ).getRootFolderPath() );
+		assertEquals( new File( tempDir, "temp" ).getAbsolutePath(), ( (LocalFileRepository) two ).getRootFolderPath() );
 	}
 }

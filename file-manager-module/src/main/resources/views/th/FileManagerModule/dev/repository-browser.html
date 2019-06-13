@@ -18,6 +18,7 @@
 
 <!--/* list all repositories */-->
 <div th:fragment="listAllRepositories(repositories)">
+    <div class="alert alert-warning">If a FileRepositoryFactory is present, repositories might only get registered upon first use.</div>
     <div class="panel panel-default">
         <div class="panel-heading">[[${repositories.size()}]] file repositories registered</div>
         <div class="panel-body">
@@ -64,12 +65,14 @@
             <span class="pull-right">[[${resources.size()}]] resources</span>
         </div>
         <div class="panel-body">
-            <div class="table-responsive">
+            <div class="" th:if="${resources.empty}">No resources present in this folder.</div>
+            <div class="table-responsive" th:unless="${resources.empty}">
                 <table class="table table-hover">
                     <thead>
                     <tr>
                         <th>Resource</th>
                         <th class="text-center">File size</th>
+                        <th class="text-center">Last modified</th>
                         <th class="row-actions"></th>
                     </tr>
                     </thead>
@@ -82,17 +85,20 @@
                                 <a th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager(repositoryId=${repo.repositoryId},folder=${resource.descriptor.uri})}">[[${resource.name}]]</a>
                             </td>
                             <td></td>
+                            <td class="text-center">[[${resource.lastModified}]]</td>
                             <td class="row-actions text-center">
                             </td>
                         </th:block>
                         <th:block th:unless="${resource.folder}">
                             <td>
                                 <i th:unless="${resource.folder}" class="fa fa-file-o"></i>
-                                &nbsp;<a target="_blank"
-                                         th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager(repositoryId=${repo.repositoryId},folder=${resource.descriptor.uri})}">[[${resource.name}]]</a>
+                                &nbsp;<a title="View file" target="_blank"
+                                         th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager/view(file=${resource.descriptor.uri})}">[[${resource.name}]]</a>
                             </td>
                             <td class="text-center">[[${resource.readableFileSize()}]]</td>
+                            <td class="text-center">[[${resource.lastModified}]]</td>
                             <td class="row-actions text-center">
+                                <a title="Download file" th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager/download(file=${resource.descriptor.uri})}"><i class="fa fa-download"></i></a>
                             </td>
                         </th:block>
 

@@ -30,10 +30,10 @@ class TestExpiringFileRepositoryLocal extends BaseFileRepositoryTest
 	private LocalFileRepository cacheRepository;
 
 	@Override
-	void createRepository() {
-		cacheRepository = LocalFileRepository.builder().repositoryId( "cache" ).rootFolder( ROOT_DIR ).build();
+	FileRepository createRepository() {
+		cacheRepository = LocalFileRepository.builder().repositoryId( "cache" ).rootFolder( rootFolder ).build();
 
-		this.fileRepository = ExpiringFileRepository.builder().targetFileRepository( cacheRepository ).build();
+		return ExpiringFileRepository.builder().targetFileRepository( cacheRepository ).build();
 	}
 
 	@Test

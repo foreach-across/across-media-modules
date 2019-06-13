@@ -92,7 +92,11 @@ class TestFileReferenceService
 		File tempFile = mock( File.class );
 		when( fileManager.createTempFile() ).thenReturn( tempFile );
 		FileResource fileResource = mock( FileResource.class );
-		when( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ).createFileResource( tempFile, true ) ).thenReturn( fileResource );
+
+		FileDescriptor generated = FileDescriptor.of( "1:2:3" );
+		when( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ).generateFileDescriptor() ).thenReturn( generated );
+
+		when( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ).getFileResource( generated.withExtension( "txt" ) ) ).thenReturn( fileResource );
 		when( fileResource.getDescriptor() ).thenReturn( FileDescriptor.of( "1:2:3" ) );
 
 		FileReference save = fileReferenceService.save( file, FileManager.DEFAULT_REPOSITORY );

@@ -21,8 +21,7 @@ import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.modules.filemanager.services.FileRepositoryRegistry;
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -30,13 +29,13 @@ import org.springframework.core.io.Resource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class ITFileManager extends AbstractFileManagerModuleIT
+class ITFileManager extends AbstractFileManagerModuleIT
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
-	private static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
 
 	@Autowired
 	private FileManager fileManager;
@@ -45,14 +44,14 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 	private FileRepositoryRegistry fileRepositoryRegistry;
 
 	@Test
-	public void bothTestAndDefaultRepositoryShouldBeAvailable() {
+	void bothTestAndDefaultRepositoryShouldBeAvailable() {
 		assertNotNull( fileManager );
 		assertNotNull( fileManager.getRepository( FileManager.TEMP_REPOSITORY ) );
 		assertNotNull( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ) );
 	}
 
 	@Test
-	public void fileCanBeStoredInDefaultRepository() throws IOException {
+	void fileCanBeStoredInDefaultRepository() throws IOException {
 		FileDescriptor file = fileManager.save( RES_TEXTFILE.getInputStream() );
 
 		assertNotNull( file );
@@ -60,7 +59,7 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 	}
 
 	@Test
-	public void moveFile() throws IOException {
+	void moveFile() throws IOException {
 		FileDescriptor file = fileManager.save( RES_TEXTFILE.getInputStream() );
 		FileDescriptor firstMoved = FileDescriptor.of( file.getRepositoryId(), file.getFolderId(), "renamed-" + file.getFileId() );
 		fileManager.move( file, firstMoved );
@@ -68,9 +67,9 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 		FileRepository defaultRep = fileManager.getRepository( file.getRepositoryId() );
 		assertTrue( defaultRep.getAsFile( firstMoved ).exists() );
 
-		Assertions.assertThatExceptionOfType( FileStorageException.class )
-		          .isThrownBy( () -> defaultRep.getAsFile( file ) )
-		          .withCauseInstanceOf( FileNotFoundException.class );
+		assertThatExceptionOfType( FileStorageException.class )
+				.isThrownBy( () -> defaultRep.getAsFile( file ) )
+				.withCauseInstanceOf( FileNotFoundException.class );
 
 		FileRepository moveIt = fileRepositoryRegistry.getRepository( "move-it" );
 		FileDescriptor secondMoved = FileDescriptor.of( moveIt.getRepositoryId(), file.getFolderId(), firstMoved.getFileId() );
@@ -78,12 +77,12 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 		fileManager.exists( secondMoved );
 		assertTrue( moveIt.getAsFile( secondMoved ).exists() );
 
-		Assertions.assertThatExceptionOfType( FileStorageException.class )
-		          .isThrownBy( () -> defaultRep.getAsFile( firstMoved ) )
-		          .withCauseInstanceOf( FileNotFoundException.class );
+		assertThatExceptionOfType( FileStorageException.class )
+				.isThrownBy( () -> defaultRep.getAsFile( firstMoved ) )
+				.withCauseInstanceOf( FileNotFoundException.class );
 
-		Assertions.assertThatExceptionOfType( FileStorageException.class )
-		          .isThrownBy( () -> defaultRep.getAsFile( file ) )
-		          .withCauseInstanceOf( FileNotFoundException.class );
+		assertThatExceptionOfType( FileStorageException.class )
+				.isThrownBy( () -> defaultRep.getAsFile( file ) )
+				.withCauseInstanceOf( FileNotFoundException.class );
 	}
 }

@@ -40,13 +40,13 @@ class TestAmazonS3FileRepository extends BaseFileRepositoryTest
 	private static AmazonS3 amazonS3;
 
 	@Override
-	void createRepository() {
+	FileRepository createRepository() {
 		if ( amazonS3 == null ) {
 			amazonS3 = AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
 		}
 
 		FileManager fileManager = mock( FileManager.class );
-		when( fileManager.createTempFile() ).thenAnswer( invoc -> new File( TEMP_DIR, UUID.randomUUID().toString() ) );
+		when( fileManager.createTempFile() ).thenAnswer( invoc -> new File( tempDir, UUID.randomUUID().toString() ) );
 
 		AmazonS3FileRepository s3 = AmazonS3FileRepository.builder()
 		                                                  .repositoryId( "s3-repo" )
@@ -55,7 +55,7 @@ class TestAmazonS3FileRepository extends BaseFileRepositoryTest
 		                                                  .build();
 		s3.setFileManager( fileManager );
 
-		this.fileRepository = s3;
+		return s3;
 	}
 
 	@AfterAll

@@ -27,8 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestLocalFileRepository extends BaseFileRepositoryTest
 {
-	public void createRepository() {
-		fileRepository = LocalFileRepository.builder().repositoryId( "default" ).rootFolder( ROOT_DIR ).build();
+	public FileRepository createRepository() {
+		return LocalFileRepository.builder().repositoryId( "default" ).rootFolder( rootFolder ).build();
 	}
 
 	@Test
