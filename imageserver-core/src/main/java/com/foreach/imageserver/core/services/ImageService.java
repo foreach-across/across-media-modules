@@ -3,6 +3,8 @@ package com.foreach.imageserver.core.services;
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.ImageSource;
+import com.foreach.imageserver.dto.ImageConvertDto;
+import com.foreach.imageserver.dto.ImageConvertResultDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import lombok.NonNull;
 import org.slf4j.Logger;
@@ -88,4 +90,12 @@ public interface ImageService
 	 * @return true if image was deleted, false if not found
 	 */
 	boolean deleteImage( String externalId );
+
+	/**
+	 * Convert the supplied image using the given transformations.
+	 *
+	 * @param imageConvertDto object that contains the source image + all the desired targets and which transformations to apply for each target
+	 * @return object containing all generated imaged
+	 */
+	ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto );
 }

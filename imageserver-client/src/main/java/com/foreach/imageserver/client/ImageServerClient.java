@@ -22,6 +22,7 @@ public interface ImageServerClient
 	String ENDPOINT_MODIFICATION_LIST = "api/modification/list";
 	String ENDPOINT_MODIFICATION_REGISTER = "api/modification/register";
 	String ENDPOINT_MODIFICATION_REGISTER_LIST = "api/modification/registerlist";
+	String ENDPOINT_IMAGE_CONVERT = "api/image/convert";
 
 	String getImageServerUrl();
 
@@ -101,8 +102,16 @@ public interface ImageServerClient
 	 */
 	boolean deleteImage( String imageId );
 
+	/**
+	 * @param imageId external image id
+	 * @return true when the image, as referenced by the external image id, exists
+	 */
 	boolean imageExists( String imageId );
 
+	/**
+	 * @param imageId external image id
+	 * @return image information dto object for the image, referenced by the given external image id
+	 */
 	ImageInfoDto imageInfo( String imageId );
 
 	/**
@@ -134,4 +143,41 @@ public interface ImageServerClient
 	List<ImageResolutionDto> listAllowedResolutions( String context );
 
 	List<ImageResolutionDto> listConfigurableResolutions( String context );
+
+	/**
+	 * Convenience method to convert a single image with given transformations.
+	 * The result will be converted image.
+	 *
+	 * @param imageBytes given image
+	 * @param transforms transformations
+	 * @return transformed image
+	 */
+	default ImageDto convertImage( byte[] imageBytes, List<ImageTransformDto> transforms ) {
+		return convertImage( ImageConvertDto.builder().image( imageBytes ).transformation( "transform", transforms ).build() )
+				.getTransforms()
+				.get( "transform" );
+	}
+
+	/**
+	 * Convenience method to convert a single previously registered image with given transformations.
+	 * The result will be converted image.
+	 *
+	 * @param imageId    registered image
+	 * @param transforms transformations
+	 * @return transformed image
+	 */
+	default ImageDto convertImage( String imageId, List<ImageTransformDto> transforms ) {
+		return convertImage( ImageConvertDto.builder().imageId( imageId ).transformation( "transform", transforms ).build() )
+				.getTransforms()
+				.get( "transform" );
+	}
+
+	/**
+	 * Convert given new or existing image using the given series of transformations.
+	 * The list of transformations contains of all the transformations you want to execute on the image. These will be executed in the supplied order.
+	 *
+	 * @param convertDto image and transformations
+	 * @return transformed images
+	 */
+	ImageConvertResultDto convertImage( ImageConvertDto convertDto );
 }

@@ -261,6 +261,22 @@ public class ImageStreamingController
 		}
 	}
 
+	private static void error( HttpServletResponse response, HttpStatus status, String errorMessage ) {
+		response.setStatus( status.value() );
+		response.setContentType( "text/plain" );
+		response.setHeader( "Cache-Control", "no-cache" );
+		response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_NO_STORE );
+		if ( errorMessage != null ) {
+			// errorMessage can be null e.g. when a org.apache.catalina.connector.ClientAbortException occurs (it extends IOException)
+			try (InputStream is = new ByteArrayInputStream( errorMessage.getBytes() )) {
+				IOUtils.copy( is, response.getOutputStream() );
+			}
+			catch ( IOException e ) {
+				LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );
+			}
+		}
+	}
+
 	private void renderImageSource( ImageSource imageSource, HttpServletResponse response ) {
 		response.setStatus( HttpStatus.OK.value() );
 		response.setContentType( imageSource.getImageType().getContentType() );
@@ -270,34 +286,18 @@ public class ImageStreamingController
 			response.setHeader( "Expires",
 			                    fastDateFormat.format( DateUtils.addSeconds( new Date(), maxCacheAgeInSeconds ) ) );
 		}
-		if ( !"".equals( akamaiCacheMaxAge ) ) {
+		if ( akamaiCacheMaxAge != null && !akamaiCacheMaxAge.isEmpty() ) {
 			response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_CACHE_MAX_AGE + akamaiCacheMaxAge );
 		}
 
-		try (InputStream imageStream = imageSource.getImageStream()) {
+		try (InputStream is = imageSource.getImageStream()) {
 			try (OutputStream responseStream = response.getOutputStream()) {
-				IOUtils.copy( imageStream, responseStream );
+				IOUtils.copy( is, responseStream );
 			}
 		}
 		catch ( IOException ioe ) {
 			LOG.error( "IOExeption in renderImageSource", ioe );
 			error( response, HttpStatus.INTERNAL_SERVER_ERROR, ioe.getMessage() );
-		}
-	}
-
-	private void error( HttpServletResponse response, HttpStatus status, String errorMessage ) {
-		response.setStatus( status.value() );
-		response.setContentType( "text/plain" );
-		response.setHeader( "Cache-Control", "no-cache" );
-		response.setHeader( AKAMAI_EDGE_CONTROL_HEADER, AKAMAI_NO_STORE );
-		if ( errorMessage != null ) {
-			// errorMessage can be null e.g. when a org.apache.catalina.connector.ClientAbortException occurs (it extends IOException)
-			try (ByteArrayInputStream bis = new ByteArrayInputStream( errorMessage.getBytes() )) {
-				IOUtils.copy( bis, response.getOutputStream() );
-			}
-			catch ( IOException e ) {
-				LOG.error( "Failed to write error message to output stream: errorMessage={}", errorMessage, e );
-			}
 		}
 	}
 }

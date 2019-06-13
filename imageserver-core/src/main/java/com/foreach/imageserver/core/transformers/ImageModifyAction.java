@@ -13,7 +13,6 @@ public class ImageModifyAction
 	private final Dimensions boundaries;
 	private final ImageType outputType;
 
-
 	public ImageModifyAction( SimpleImageSource sourceImageSource,
 	                          int outputWidth,
 	                          int outputHeight,

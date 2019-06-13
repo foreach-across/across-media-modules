@@ -21,12 +21,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -73,11 +73,15 @@ public class ImageServiceGetVariantSynchronizationTest
 		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getSecondOriginalImageSource() ), any(), any() );
 
 		for ( Future<ImageSource> future : testResults.getFirstImageFutures() ) {
-			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
+			try (InputStream is = future.get().getImageStream()) {
+				assertEquals( "IMAGE1", new String( IOUtils.toByteArray( is ) ) );
+			}
 		}
 
 		for ( Future<ImageSource> future : testResults.getSecondImageFutures() ) {
-			assertEquals( "IMAGE2", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
+			try (InputStream is = future.get().getImageStream()) {
+				assertEquals( "IMAGE2", new String( IOUtils.toByteArray( is ) ) );
+			}
 		}
 	}
 
@@ -102,7 +106,9 @@ public class ImageServiceGetVariantSynchronizationTest
 		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getSecondOriginalImageSource() ), any(), any() );
 
 		for ( Future<ImageSource> future : testResults.getFirstImageFutures() ) {
-			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
+			try (InputStream is = future.get().getImageStream()) {
+				assertEquals( "IMAGE1", new String( IOUtils.toByteArray( is ) ) );
+			}
 		}
 
 		for ( Future<ImageSource> future : testResults.getSecondImageFutures() ) {
@@ -137,13 +143,15 @@ public class ImageServiceGetVariantSynchronizationTest
 		verify( imageTransformService, times( 1 ) ).transform( eq( testResults.getSecondOriginalImageSource() ), any(), any() );
 
 		for ( Future<ImageSource> future : testResults.getFirstImageFutures() ) {
-			assertEquals( "IMAGE1", new String( IOUtils.toByteArray( future.get().getImageStream() ) ) );
+			try (InputStream is = future.get().getImageStream()) {
+				assertEquals( "IMAGE1", new String( IOUtils.toByteArray( is ) ) );
+			}
 		}
 
 		for ( Future<ImageSource> future : testResults.getSecondImageFutures() ) {
 			try {
 				future.get();
-				assertTrue( false );
+				fail();
 			}
 			catch ( ExecutionException e ) {
 				assertTrue( e.getCause() instanceof DelayedTransformError );

@@ -111,7 +111,7 @@ public final class DtoUtil
 		dto.setExternalId( image.getExternalId() );
 		dto.setCreated( image.getDateCreated() );
 		dto.setDimensionsDto( toDto( image.getDimensions() ) );
-		dto.setImageType( ImageTypeDto.valueOf( image.getImageType().name() ) );
+		dto.setImageType( toDto( image.getImageType() ) );
 		dto.setImageFileSize( image.getFileSize() );
 		dto.setSceneCount( image.getSceneCount() );
 
@@ -153,13 +153,17 @@ public final class DtoUtil
 		Set<ImageTypeDto> imageTypes = EnumSet.noneOf( ImageTypeDto.class );
 
 		for ( ImageType imageType : imageTypeSet ) {
-			ImageTypeDto dto = ImageTypeDto.valueOf( imageType.name() );
+			ImageTypeDto dto = toDto( imageType );
 			if ( dto != null ) {
 				imageTypes.add( dto );
 			}
 		}
 
 		return imageTypes;
+	}
+
+	public static ImageTypeDto toDto( ImageType imageType ) {
+		return ImageTypeDto.valueOf( imageType.name() );
 	}
 
 }

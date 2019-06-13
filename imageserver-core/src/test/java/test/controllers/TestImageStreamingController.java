@@ -42,7 +42,7 @@ public class TestImageStreamingController
 	@Test
 	public void testThatIOExceptionWithoutMessageDoesNotNullPointer() throws Exception {
 		ViewImageResponse viewImageResponse = new ViewImageResponse(  );
-		SimpleImageSource simpleImageSource = new SimpleImageSource( ImageType.JPEG, new byte[] { 1} );
+		SimpleImageSource simpleImageSource = new SimpleImageSource( ImageType.JPEG, new byte[] { 1 } );
 		HttpServletResponse response = mock( HttpServletResponse.class );
 		when( response.getOutputStream() ).thenThrow( new IOException() );
 		viewImageResponse.setImageSource( simpleImageSource );
@@ -58,7 +58,7 @@ public class TestImageStreamingController
 	@Test
 	public void testThatExpiresHeaderIsCorrect() throws Exception {
 		ViewImageResponse viewImageResponse = new ViewImageResponse(  );
-		SimpleImageSource simpleImageSource = new SimpleImageSource( ImageType.JPEG, new byte[] { 1} );
+		SimpleImageSource simpleImageSource = new SimpleImageSource( ImageType.JPEG, new byte[] { 1 } );
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		viewImageResponse.setImageSource( simpleImageSource );
 		when( imageRestService.renderImage( any( ViewImageRequest.class ) ) ).thenReturn( viewImageResponse );

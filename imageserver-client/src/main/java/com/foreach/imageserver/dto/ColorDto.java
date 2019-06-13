@@ -1,5 +1,7 @@
 package com.foreach.imageserver.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 /**
@@ -26,7 +28,8 @@ public class ColorDto
 		return value.startsWith( "#" ) ? "hex:" + value.substring( 1 ) : value;
 	}
 
-	public static ColorDto from( @NonNull String value ) {
+	@JsonCreator
+	public static ColorDto from( @JsonProperty("value") @NonNull String value ) {
 		String lowered = value.toLowerCase();
 		if ( lowered.startsWith( "hex:" ) ) {
 			lowered = "#" + lowered.substring( 4 );

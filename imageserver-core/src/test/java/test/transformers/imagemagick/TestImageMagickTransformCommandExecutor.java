@@ -22,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -59,6 +60,20 @@ public class TestImageMagickTransformCommandExecutor
 
 	@Autowired
 	private ImageMagickTransformCommandExecutor executor;
+
+	private static ImageTransformCommand createTransformCommand( ImageSource image,
+	                                                             ImageAttributes attributes,
+	                                                             Consumer<ImageTransformDto.ImageTransformDtoBuilder> transformBuilder ) {
+		ImageTransformDto.ImageTransformDtoBuilder transformDtoBuilder = ImageTransformDto.builder();
+		transformBuilder.accept( transformDtoBuilder );
+
+		return ImageTransformCommand
+				.builder()
+				.originalImage( image )
+				.originalImageAttributes( attributes )
+				.transform( transformDtoBuilder.build() )
+				.build();
+	}
 
 	@Test
 	public void transparentPngToTransparentGrayscalePng() {
@@ -262,20 +277,6 @@ public class TestImageMagickTransformCommandExecutor
 		assertImage( "images/svgWithBackground.png", renderSvg );
 	}
 
-	private static ImageTransformCommand createTransformCommand( ImageSource image,
-	                                                             ImageAttributes attributes,
-	                                                             Consumer<ImageTransformDto.ImageTransformDtoBuilder> transformBuilder ) {
-		ImageTransformDto.ImageTransformDtoBuilder transformDtoBuilder = ImageTransformDto.builder();
-		transformBuilder.accept( transformDtoBuilder );
-
-		return ImageTransformCommand
-				.builder()
-				.originalImage( image )
-				.originalImageAttributes( attributes )
-				.transform( transformDtoBuilder.build() )
-				.build();
-	}
-
 	private void assertArguments( String expected, ImageTransformCommand command ) {
 		IMOperation operation = executor.createIMOperation( command );
 		assertThat( operation ).isNotNull();
@@ -285,7 +286,9 @@ public class TestImageMagickTransformCommandExecutor
 	@SneakyThrows
 	private void assertImage( String expected, ImageTransformCommand command ) {
 		executor.execute( command );
-		assertTrue( imagesAreEqual( bufferedImage( command.getExecutionResult().getImageStream() ), bufferedImageFromClassPath( expected ) ) );
+		try (InputStream is = command.getExecutionResult().getImageStream()) {
+			assertTrue( imagesAreEqual( bufferedImage( is ), bufferedImageFromClassPath( expected ) ) );
+		}
 	}
 
 	private ImageSource image( String path ) {
