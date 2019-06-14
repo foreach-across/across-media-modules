@@ -1,6 +1,8 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
@@ -32,6 +34,12 @@ public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFac
 		String targetPath = getFolderName( image, context );
 
 		return composeFileDescriptor( image, fileName, targetPath, IMAGESERVER_VARIANTS_REPOSITORY, context );
+	}
+
+	@Override
+	public void removeVariantsForImage( FileManager fileManager, Image image ) {
+		String lookupPath = StringUtils.replace( IMAGESERVER_VARIANTS_REPOSITORY + ":*/" + image.getVariantPath() + "/" + image.getId() + "-*.*", "//", "/" );
+		fileManager.findFiles( lookupPath ).forEach( FileResource::delete );
 	}
 
 	private FileDescriptor composeFileDescriptor( Image image, String fileName, String targetPath, String defaultTargetRepository, ImageContext context ) {

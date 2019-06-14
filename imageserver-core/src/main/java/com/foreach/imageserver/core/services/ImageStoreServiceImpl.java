@@ -131,9 +131,9 @@ public class ImageStoreServiceImpl implements ImageStoreService
 		return defaultImageFileDescriptorFactory.createForVariant( image, context, imageResolution, imageVariant );
 	}
 
-	//TODO currently not supported as it is not supported by FileManagerModule
 	@Override
-	public void removeVariants( Long imageId ) {
+	public void removeVariants( Image image ) {
+		defaultImageFileDescriptorFactory.removeVariantsForImage( fileManager, image );
 	}
 
 	private void writeSafely( InputStream inputStream, FileDescriptor target ) {

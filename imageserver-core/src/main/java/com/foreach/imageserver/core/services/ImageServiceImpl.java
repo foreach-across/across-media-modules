@@ -137,7 +137,7 @@ public class ImageServiceImpl implements ImageService
 			imageModificationManager.deleteModifications( image.getId() );
 
 			// Delete variants
-			imageStoreService.removeVariants( image.getId() );
+			imageStoreService.removeVariants( image );
 
 			// Delete image record
 			LOG.debug( "Deleting image record for image {}", image );
@@ -208,7 +208,7 @@ public class ImageServiceImpl implements ImageService
 
 		storeImageModification( modifications, image );
 
-		imageStoreService.removeVariants( image.getId() );
+		imageStoreService.removeVariants( image );
 	}
 
 	private void storeImageModification( List<ImageModification> modifications, Image image ) {
