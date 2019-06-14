@@ -16,16 +16,14 @@
 
 package com.foreach.across.modules.filemanager.services;
 
-import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.business.FileResource;
-import com.foreach.across.modules.filemanager.business.FolderDescriptor;
-import com.foreach.across.modules.filemanager.business.FolderResource;
+import com.foreach.across.modules.filemanager.business.*;
 import lombok.Setter;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 
 /**
  * A FileRepository implementation that delegates its calls to an underlying implementation.
@@ -142,6 +140,21 @@ public class FileRepositoryDelegate implements FileRepository
 	@Override
 	public boolean move( FileDescriptor source, FileDescriptor target ) {
 		return repository().move( source, target );
+	}
+
+	@Override
+	public Collection<FileResource> findFiles( String pattern ) {
+		return repository().findFiles( pattern );
+	}
+
+	@Override
+	public <U extends FileRepositoryResource> Collection<U> findResources( String pattern, Class<U> resourceType ) {
+		return repository().findResources( pattern, resourceType );
+	}
+
+	@Override
+	public Collection<FileRepositoryResource> findResources( String pattern ) {
+		return repository().findResources( pattern );
 	}
 
 	private FileRepository repository() {

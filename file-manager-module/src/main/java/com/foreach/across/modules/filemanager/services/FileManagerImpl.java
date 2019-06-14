@@ -17,7 +17,11 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.*;
+import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
 import java.io.File;
@@ -25,6 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Implementation of both FileManager and FileRepositoryRegistry.  The registry deals out
@@ -37,7 +44,7 @@ import java.util.*;
 public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 {
 	private FileRepositoryFactory repositoryFactory;
-	private Map<String, FileRepositoryDelegate> repositories = new HashMap<>();
+	private Map<String, FileRepositoryDelegate> repositories = new TreeMap<>();
 
 	@Override
 	public FileResource createFileResource( String repositoryId ) {
@@ -225,6 +232,7 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 
 	@Override
 	public FileRepository registerRepository( FileRepository fileRepository ) {
+		Assert.notNull( fileRepository.getRepositoryId(), "A FileRepository must have a valid repository id" );
 		FileRepositoryDelegate delegate = repositories.get( fileRepository.getRepositoryId() );
 
 		if ( delegate == null ) {
@@ -244,6 +252,53 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 	@Override
 	public Collection<FileRepository> listRepositories() {
 		return Collections.unmodifiableCollection( new ArrayList<>( repositories.values() ) );
+	}
+
+	@Override
+	public Collection<FileResource> findFiles( String pattern ) {
+		return findResources( pattern, FileRepository::findFiles );
+	}
+
+	@Override
+	public <U extends FileRepositoryResource> Collection<U> findResources( String pattern, Class<U> resourceType ) {
+		BiFunction<FileRepository, String, Collection<U>> searchFunction = ( repository, p ) -> repository.findResources( p, resourceType );
+		return findResources( pattern, searchFunction );
+	}
+
+	@Override
+	public Collection<FileRepositoryResource> findResources( @NonNull String pattern ) {
+		return findResources( pattern, FileRepository::findResources );
+	}
+
+	private <U extends FileRepositoryResource> Collection<U> findResources( @NonNull String pattern,
+	                                                                        BiFunction<FileRepository, String, Collection<U>> searchFunction ) {
+		String withoutProtocol = StringUtils.removeStart( pattern, "axfs://" );
+		boolean protocolWasPresent = withoutProtocol.length() < pattern.length();
+		int repositoryDelimiter = withoutProtocol.indexOf( ':' );
+
+		if ( protocolWasPresent && ( repositoryDelimiter <= 0 || repositoryDelimiter == withoutProtocol.length() - 1 ) ) {
+			throw new IllegalArgumentException( "Pattern must contain a repository pattern when starting with axfs:// protocol" );
+		}
+
+		AntPathMatcher pathMatcher = new AntPathMatcher();
+		String repositoryPattern = repositoryDelimiter > 0 ? withoutProtocol.substring( 0, repositoryDelimiter ) : DEFAULT_REPOSITORY;
+		String resourcesPattern = StringUtils.replaceOnce( withoutProtocol.substring( repositoryDelimiter + 1 ), ":", "/" );
+
+		return matchingRepositories( pathMatcher, repositoryPattern )
+				.flatMap( repository -> searchFunction.apply( repository, resourcesPattern ).stream() )
+				.collect( Collectors.toList() );
+	}
+
+	private Stream<? extends FileRepository> matchingRepositories( AntPathMatcher matcher, String pattern ) {
+		boolean isPattern = matcher.isPattern( pattern );
+
+		return repositories.values()
+		                   .stream()
+		                   .filter(
+				                   repository -> isPattern
+						                   ? matcher.match( pattern, repository.getRepositoryId() )
+						                   : StringUtils.equals( pattern, repository.getRepositoryId() )
+		                   );
 	}
 
 	/**

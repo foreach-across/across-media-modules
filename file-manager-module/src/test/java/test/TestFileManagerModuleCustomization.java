@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -60,7 +62,9 @@ class TestFileManagerModuleCustomization
 		@Bean
 		FileRepositoryFactory fileRepositoryFactory() {
 			FileRepositoryFactory factory = mock( FileRepositoryFactory.class );
-			when( factory.create( any() ) ).thenReturn( mock( FileRepository.class, withSettings().extraInterfaces( FileManagerAware.class ) ) );
+			FileRepository repository = mock( FileRepository.class, withSettings().extraInterfaces( FileManagerAware.class ) );
+			when( repository.getRepositoryId() ).thenReturn( UUID.randomUUID().toString() );
+			when( factory.create( any() ) ).thenReturn( repository );
 			return factory;
 		}
 	}

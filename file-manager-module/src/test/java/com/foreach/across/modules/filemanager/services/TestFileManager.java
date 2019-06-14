@@ -18,6 +18,7 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -201,6 +203,7 @@ class TestFileManager
 		assertNull( fetched );
 		verify( factory ).create( "non-existing-one" );
 
+		when( repository.getRepositoryId() ).thenReturn( "creatable" );
 		when( factory.create( "creatable" ) ).thenReturn( repository );
 		fetched = fileManager.getRepository( "creatable" );
 
@@ -248,7 +251,81 @@ class TestFileManager
 		verify( repository ).shutdown();
 
 		Assertions.assertThat( fileManager.listRepositories() ).isEmpty();
+	}
 
+	@Test
+	@SuppressWarnings("unchecked")
+	void findResourcesSearchesInDefaultRepositoryIfNoRepositoryId() {
+		when( repository.getRepositoryId() ).thenReturn( FileManager.DEFAULT_REPOSITORY );
+		fileManager.registerRepository( repository );
+
+		FileResource file = mock( FileResource.class );
+		FolderResource folder = mock( FolderResource.class );
+		when( repository.findResources( any() ) ).thenReturn( Collections.singleton( file ) );
+		when( repository.findResources( any(), any() ) ).thenReturn( Collections.singleton( folder ) );
+		when( repository.findFiles( any() ) ).thenReturn( Collections.singleton( file ) );
+
+		Assertions.assertThat( fileManager.findResources( "**" ) ).containsExactly( file );
+		verify( repository ).findResources( "**" );
+		Assertions.assertThat( fileManager.findResources( "/my/file.txt" ) ).containsExactly( file );
+		verify( repository ).findResources( "/my/file.txt" );
+
+		Assertions.assertThat( fileManager.findResources( "*", FolderResource.class ) ).containsExactly( folder );
+		verify( repository ).findResources( "*", FolderResource.class );
+		Assertions.assertThat( fileManager.findResources( "/my/file2.txt", FolderResource.class ) ).containsExactly( folder );
+		verify( repository ).findResources( "/my/file2.txt", FolderResource.class );
+
+		Assertions.assertThat( fileManager.findFiles( "*/*" ) ).containsExactly( file );
+		verify( repository ).findFiles( "*/*" );
+		Assertions.assertThat( fileManager.findFiles( "/my/file3.txt" ) ).containsExactly( file );
+		verify( repository ).findFiles( "/my/file3.txt" );
+	}
+
+	@Test
+	void findRequiresRepositoryIdIfResourceProtocolPresent() {
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> fileManager.findResources( "axfs://**" ) );
+		assertThatExceptionOfType( IllegalArgumentException.class ).isThrownBy( () -> fileManager.findResources( "axfs://my/file.txt" ) );
+	}
+
+	@Test
+	void findResourcesInMatchingRepositories() {
+		when( repository.getRepositoryId() ).thenReturn( "repository-1" );
+		fileManager.registerRepository( repository );
+
+		FileRepository otherRepository = mock( FileRepository.class );
+		when( otherRepository.getRepositoryId() ).thenReturn( "repository-2" );
+		fileManager.registerRepository( otherRepository );
+
+		FileResource one = mock( FileResource.class );
+		FileResource two = mock( FileResource.class );
+
+		when( repository.findResources( any() ) ).thenReturn( Collections.singleton( one ) );
+		when( otherRepository.findResources( any() ) ).thenReturn( Collections.singleton( two ) );
+
+		Assertions.assertThat( fileManager.findResources( "repository-1:*" ) ).containsExactly( one );
+		verify( repository ).findResources( "*" );
+		verify( otherRepository, never() ).findResources( "*" );
+		Assertions.assertThat( fileManager.findResources( "axfs://repository-1:*" ) ).containsExactly( one );
+
+		Assertions.assertThat( fileManager.findResources( "repository-2:*" ) ).containsExactly( two );
+		Assertions.assertThat( fileManager.findResources( "unknown:*" ) ).isEmpty();
+
+		Assertions.assertThat( fileManager.findResources( "*:**/*" ) ).containsExactly( one, two );
+		verify( repository ).findResources( "**/*" );
+		verify( otherRepository ).findResources( "**/*" );
+		Assertions.assertThat( fileManager.findResources( "axfs://*:**/*" ) ).containsExactly( one, two );
+
+		Assertions.assertThat( fileManager.findResources( "repository-*:myfolder:file.txt" ) ).containsExactly( one, two );
+		verify( repository ).findResources( "myfolder/file.txt" );
+		verify( otherRepository ).findResources( "myfolder/file.txt" );
+
+		when( repository.findResources( any(), any() ) ).thenReturn( Collections.singleton( one ) );
+		Assertions.assertThat( fileManager.findResources( "repository-1:*", FileResource.class ) ).containsExactly( one );
+		verify( repository ).findResources( "*", FileResource.class );
+
+		when( otherRepository.findFiles( any() ) ).thenReturn( Collections.singleton( two ) );
+		Assertions.assertThat( fileManager.findFiles( "repository-2:*" ) ).containsExactly( two );
+		verify( otherRepository ).findFiles( "*" );
 	}
 
 	private FileRepository delegate( String repositoryId ) {
