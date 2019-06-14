@@ -1,5 +1,6 @@
 package com.foreach.across.modules.filemanager.business;
 
+import com.foreach.across.modules.filemanager.context.FileResourceProtocolResolver;
 import lombok.SneakyThrows;
 
 import java.io.Serializable;
@@ -20,7 +21,7 @@ public interface FileRepositoryResourceDescriptor extends Serializable
 	 */
 	@SneakyThrows
 	default URI toResourceURI() {
-		return new URI( "axfs://" + getUri() );
+		return new URI( FileResourceProtocolResolver.PROTOCOL + getUri() );
 	}
 
 	/**

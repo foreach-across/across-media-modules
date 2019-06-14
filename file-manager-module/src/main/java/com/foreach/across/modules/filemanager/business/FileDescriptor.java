@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.filemanager.business;
 
+import com.foreach.across.modules.filemanager.context.FileResourceProtocolResolver;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -53,7 +54,7 @@ public class FileDescriptor implements FileRepositoryResourceDescriptor
 			throw new IllegalArgumentException( "uri may not be null or empty" );
 		}
 
-		String[] parts = StringUtils.removeStart( uri, "axfs://" ).split( ":", -1 );
+		String[] parts = StringUtils.removeStart( uri, FileResourceProtocolResolver.PROTOCOL ).split( ":", -1 );
 
 		Assert.isTrue( parts.length == 2 || parts.length == 3, "FileDescriptor URI must contain either 2 or 3 segments separated with :" );
 

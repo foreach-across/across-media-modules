@@ -20,11 +20,15 @@ import com.foreach.across.core.annotations.PostRefresh;
 import com.foreach.across.core.annotations.RefreshableCollection;
 import com.foreach.across.core.events.AcrossModuleBootstrappedEvent;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
+import com.foreach.across.modules.filemanager.context.FileResourceProtocolResolver;
+import com.foreach.across.modules.filemanager.extensions.FileResourceResolverRegistrar;
 import com.foreach.across.modules.filemanager.services.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 
@@ -56,6 +60,20 @@ class FileManagerConfiguration
 
 		registerFileRepositoryFactory( settings, registry, fileRepositoryFactory );
 		registerTempRepository( settings, registry );
+	}
+
+	@Autowired
+	public void configureProtocolResolverInParents( ApplicationContext applicationContext ) {
+		FileResourceProtocolResolver protocolResolver = new FileResourceProtocolResolver( applicationContext.getAutowireCapableBeanFactory() );
+
+		ApplicationContext parent = applicationContext.getParent();
+		while ( parent != null ) {
+			if ( parent instanceof ConfigurableApplicationContext ) {
+				( (ConfigurableApplicationContext) parent ).addProtocolResolver( protocolResolver );
+			}
+			FileResourceResolverRegistrar.registerResourcePatternResolver( protocolResolver, parent );
+			parent = parent.getParent();
+		}
 	}
 
 	private void registerTempRepository( FileManagerModuleSettings settings, FileRepositoryRegistry registry ) {

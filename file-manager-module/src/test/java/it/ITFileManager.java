@@ -16,19 +16,25 @@
 
 package it;
 
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.modules.filemanager.services.FileRepositoryRegistry;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -84,5 +90,25 @@ class ITFileManager extends AbstractFileManagerModuleIT
 		assertThatExceptionOfType( FileStorageException.class )
 				.isThrownBy( () -> defaultRep.getAsFile( file ) )
 				.withCauseInstanceOf( FileNotFoundException.class );
+	}
+
+	@Test
+	@SneakyThrows
+	void resourceResolving( @Autowired AcrossContextInfo contextInfo, @Autowired ApplicationContext parentContext ) {
+		ApplicationContext applicationContext = contextInfo.getModuleInfo( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ).getApplicationContext();
+
+		FileResource fileResource = fileManager.getFileResource( FileDescriptor.of( "default:my-resource-file.txt" ) );
+		fileResource.copyFrom( RES_TEXTFILE );
+
+		Resource fromModuleContext = applicationContext.getResource( "axfs://default:my-resource-file.txt" );
+		assertThat( fromModuleContext.exists() ).isTrue();
+		assertThat( fromModuleContext ).isEqualTo( fileResource );
+
+		Resource fromParentContext = parentContext.getResource( "axfs://default:my-resource-file.txt" );
+		assertThat( fromParentContext.exists() ).isTrue();
+		assertThat( fromParentContext ).isEqualTo( fileResource );
+
+		assertThat( applicationContext.getResources( "axfs://default:my-resource-*.txt" ) ).contains( fileResource );
+		assertThat( parentContext.getResources( "axfs://default:my-resource-*.txt" ) ).contains( fileResource );
 	}
 }

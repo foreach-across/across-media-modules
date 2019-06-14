@@ -17,6 +17,7 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.*;
+import com.foreach.across.modules.filemanager.context.FileResourceProtocolResolver;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -272,7 +273,7 @@ public class FileManagerImpl implements FileManager, FileRepositoryRegistry
 
 	private <U extends FileRepositoryResource> Collection<U> findResources( @NonNull String pattern,
 	                                                                        BiFunction<FileRepository, String, Collection<U>> searchFunction ) {
-		String withoutProtocol = StringUtils.removeStart( pattern, "axfs://" );
+		String withoutProtocol = StringUtils.removeStart( pattern, FileResourceProtocolResolver.PROTOCOL );
 		boolean protocolWasPresent = withoutProtocol.length() < pattern.length();
 		int repositoryDelimiter = withoutProtocol.indexOf( ':' );
 

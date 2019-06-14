@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.filemanager.business;
 
+import com.foreach.across.modules.filemanager.context.FileResourceProtocolResolver;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -121,7 +122,7 @@ public class FolderDescriptor implements FileRepositoryResourceDescriptor
 	 * @return descriptor
 	 */
 	public static FolderDescriptor of( @NonNull String uri ) {
-		String[] parts = StringUtils.split( StringUtils.removeStart( uri, "axfs://" ), ":" );
+		String[] parts = StringUtils.split( StringUtils.removeStart( uri, FileResourceProtocolResolver.PROTOCOL ), ":" );
 		Assert.isTrue( parts.length == 2, "FolderDescriptor URI must contain 2 segments separated with :" );
 		Assert.isTrue( parts[1].endsWith( "/" ), "FolderDescriptor URI must end with trailing /" );
 
