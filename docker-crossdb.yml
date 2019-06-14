@@ -12,7 +12,7 @@ services:
       - './across-bamboo-specs/docker-build-files/wait-for-it.sh:/root/wait-for-it.sh'
       - './across-bamboo-specs/docker-build-files/wait-for-datasource.jar:/root/wait-for-datasource.jar'
       - './across-bamboo-specs/docker-build-files/dev-configs:/root/dev-configs'
-    command: 'sh -c "java -Ddatasource=${DATASOURCE:?specify the DATASOURCE variable} -jar /root/wait-for-datasource.jar && mvn --batch-mode clean compile test-compile failsafe:integration-test failsafe:verify -DacrossTest.datasource=${DATASOURCE:?specify the DATASOURCE variable}"'
+    command: 'sh -c "java -Ddatasource=${DATASOURCE:?specify the DATASOURCE variable} -jar /root/wait-for-datasource.jar && mvn --batch-mode -U clean compile test-compile failsafe:integration-test failsafe:verify -DacrossTest.datasource=${DATASOURCE:?specify the DATASOURCE variable}"'
     depends_on:
       - ${DATASOURCE}
   oracle:
