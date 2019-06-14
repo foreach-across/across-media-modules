@@ -18,6 +18,7 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
@@ -33,6 +34,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.*;
 
@@ -264,6 +266,30 @@ abstract class BaseFileRepositoryTest
 
 		assertThatExceptionOfType( IllegalArgumentException.class )
 				.isThrownBy( () -> fileRepository.move( original, renamed ) );
+	}
+
+	@Test
+	@SneakyThrows
+	void findResourcesAndFiles() {
+		FolderResource rootFolder = fileRepository.getRootFolderResource();
+		FolderResource folder = rootFolder.getFolderResource( "xx" );
+		FileResource file = folder.getFileResource( "findme.txt" );
+		file.copyFrom( RES_TEXTFILE );
+
+		assertThat( folder.exists() ).isTrue();
+		assertThat( file.exists() ).isTrue();
+
+		assertThat( fileRepository.findFiles( "**" ) ).contains( file );
+		assertThat( fileRepository.findFiles( "xx/*" ) ).containsExactly( file );
+		assertThat( fileRepository.findFiles( "xx/*.txt" ) ).containsExactly( file );
+		assertThat( fileRepository.findFiles( "/xx/findme.txt" ) ).containsExactly( file );
+		assertThat( fileRepository.findFiles( "**/findme.txt" ) ).contains( file );
+
+		assertThat( fileRepository.findResources( "**" ) ).contains( file, folder );
+		assertThat( fileRepository.findResources( "**", FileResource.class ) ).contains( file );
+		assertThat( fileRepository.findResources( "**", FolderResource.class ) ).contains( folder );
+		assertThat( fileRepository.findResources( "xx/*" ) ).containsExactly( file );
+		assertThat( fileRepository.findResources( "xx/" ) ).containsExactly( folder );
 	}
 
 	private String read( FileDescriptor descriptor ) throws IOException {

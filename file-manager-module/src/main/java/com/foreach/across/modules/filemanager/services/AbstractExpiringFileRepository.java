@@ -214,10 +214,6 @@ public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResou
 		return createExpiringFolderResource( rootFolderResource );
 	}
 
-	private T createExpiringFileResource( FileResource targetFileResource ) {
-		return createExpiringFileResource( targetFileResource.getDescriptor(), targetFileResource );
-	}
-
 	protected abstract T createExpiringFileResource( FileDescriptor descriptor, FileResource targetFileResource );
 
 	protected FolderResource createExpiringFolderResource( FolderResource targetFolderResource ) {
@@ -382,12 +378,12 @@ public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResou
 
 		@Override
 		public FileResource getFileResource( String relativePath ) {
-			return AbstractExpiringFileRepository.this.createExpiringFileResource( target.getFileResource( relativePath ) );
+			return createExpiringFileResource( target.getFileResource( relativePath ) );
 		}
 
 		@Override
 		public FileResource createFileResource() {
-			return AbstractExpiringFileRepository.this.createExpiringFileResource( target.createFileResource() );
+			return createExpiringFileResource( target.createFileResource() );
 		}
 
 		@Override
@@ -435,6 +431,10 @@ public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResou
 			return target.hashCode();
 		}
 
+		private T createExpiringFileResource( FileResource targetFileResource ) {
+			return AbstractExpiringFileRepository.this.createExpiringFileResource( targetFileResource.getDescriptor(), targetFileResource );
+		}
+
 		private <U extends FileRepositoryResource> Collection<U> wrap( Collection<U> original ) {
 			return original.stream()
 			               .map( this::wrap )
@@ -446,7 +446,7 @@ public abstract class AbstractExpiringFileRepository<T extends ExpiringFileResou
 			if ( resource instanceof FolderResource ) {
 				return (U) AbstractExpiringFileRepository.this.createExpiringFolderResource( (FolderResource) resource );
 			}
-			return (U) AbstractExpiringFileRepository.this.createExpiringFileResource( (FileResource) resource );
+			return (U) createExpiringFileResource( (FileResource) resource );
 		}
 	}
 

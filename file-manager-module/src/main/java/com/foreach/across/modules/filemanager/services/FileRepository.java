@@ -16,16 +16,14 @@
 
 package com.foreach.across.modules.filemanager.services;
 
-import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.business.FileResource;
-import com.foreach.across.modules.filemanager.business.FolderDescriptor;
-import com.foreach.across.modules.filemanager.business.FolderResource;
+import com.foreach.across.modules.filemanager.business.*;
 import lombok.NonNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 
 /**
  * Interface for a single file repository, allowing storing and getting of a single file.
@@ -122,6 +120,38 @@ public interface FileRepository
 	 * @return file resource
 	 */
 	FileResource getFileResource( @NonNull FileDescriptor descriptor );
+
+	/**
+	 * Find all file resources matching the given ANT pattern.
+	 *
+	 * @param pattern to match
+	 * @return resources
+	 */
+	default Collection<FileResource> findFiles( @NonNull String pattern ) {
+		return getRootFolderResource().findFiles( pattern );
+	}
+
+	/**
+	 * Find all resources matching the given ANT pattern in this repository.
+	 * This is the equivalent of starting a search from the root folder of the repository.
+	 *
+	 * @param pattern      to match
+	 * @param resourceType type of resources to return
+	 * @return resources
+	 */
+	default <U extends FileRepositoryResource> Collection<U> findResources( @NonNull String pattern, Class<U> resourceType ) {
+		return getRootFolderResource().findResources( pattern, resourceType );
+	}
+
+	/**
+	 * Find all resources matching the given ANT pattern.
+	 *
+	 * @param pattern to match
+	 * @return resources
+	 */
+	default Collection<FileRepositoryResource> findResources( @NonNull String pattern ) {
+		return getRootFolderResource().findResources( pattern );
+	}
 
 	/**
 	 * Get the {@link FolderResource} representing the root of this repository.

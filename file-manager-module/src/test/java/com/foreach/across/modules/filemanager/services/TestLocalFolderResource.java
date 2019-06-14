@@ -127,8 +127,8 @@ class TestLocalFolderResource
 		assertThat( resource.findResources( "*/*/" ) ).containsExactly( childFolderInChildFolder );
 		assertThat( resource.findResources( "**/" ) ).containsExactly( childFolder, childFolderInChildFolder );
 
-		assertThat( resource.findResources( "*", FileResource.class ) ).containsExactlyInAnyOrder( childFile );
-		assertThat( resource.findResources( "*", FolderResource.class ) ).containsExactlyInAnyOrder( childFolder );
+		assertThat( resource.findResources( "*", FileResource.class ) ).containsExactly( childFile ).isEqualTo( resource.findFiles( "*" ) );
+		assertThat( resource.findResources( "*", FolderResource.class ) ).containsExactly( childFolder );
 		assertThat( resource.findResources( "**", FileResource.class ) ).containsExactlyInAnyOrder( childFile, childFileInChildFolder );
 		assertThat( resource.findResources( "**", FolderResource.class ) ).containsExactlyInAnyOrder( childFolder, childFolderInChildFolder );
 		assertThat( resource.findResources( "**/", FileResource.class ) ).isEmpty();

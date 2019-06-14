@@ -195,7 +195,7 @@ public class FileDescriptor implements FileRepositoryResourceDescriptor
 	 * @param uri of the file
 	 * @return the descriptor
 	 */
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "squid:CallToDeprecatedMethod" })
 	public static FileDescriptor of( @NonNull String uri ) {
 		return new FileDescriptor( uri );
 	}

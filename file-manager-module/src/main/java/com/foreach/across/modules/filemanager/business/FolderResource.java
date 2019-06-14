@@ -136,6 +136,17 @@ public interface FolderResource extends FileRepositoryResource
 	}
 
 	/**
+	 * Find all file resources matching the given ANT pattern.
+	 * Equivalent of {@link #findResources(String, Class)} with a {@link FileResource} type filter.
+	 *
+	 * @param pattern to match
+	 * @return resources
+	 */
+	default Collection<FileResource> findFiles( @NonNull String pattern ) {
+		return findResources( pattern, FileResource.class );
+	}
+
+	/**
 	 * Find all resources matching the given ANT pattern.
 	 *
 	 * @param pattern      to match

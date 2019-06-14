@@ -37,6 +37,7 @@ public interface FileResource extends WritableResource, FileRepositoryResource
 	/**
 	 * @return resource URI to this resource
 	 */
+	@Override
 	default URI getURI() {
 		return getDescriptor().toResourceURI();
 	}

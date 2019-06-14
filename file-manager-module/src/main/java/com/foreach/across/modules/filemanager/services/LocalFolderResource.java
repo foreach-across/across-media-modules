@@ -8,15 +8,18 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.AntPathMatcher;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Represents a single folder (directory) on a {@link LocalFileRepository}.
@@ -24,6 +27,7 @@ import java.util.function.Consumer;
  * @author Arne Vandamme
  * @since 1.4.0
  */
+@Slf4j
 @RequiredArgsConstructor
 class LocalFolderResource implements FolderResource
 {
@@ -60,6 +64,7 @@ class LocalFolderResource implements FolderResource
 
 	@Override
 	@SneakyThrows
+	@SuppressWarnings("squid:S3776")
 	public Collection<FileRepositoryResource> findResources( @NonNull String pattern ) {
 		if ( exists() ) {
 			List<FileRepositoryResource> resources = new ArrayList<>();
@@ -83,10 +88,9 @@ class LocalFolderResource implements FolderResource
 				String candidatePath = StringUtils.replace( candidate.toAbsolutePath().toString(), "\\", "/" );
 				if ( candidatePath.length() > pathPrefix.length() ) {
 					String pathToMatch = StringUtils.substring( candidatePath, pathPrefix.length() );
-					if ( !shouldRecurse || ( usePathMatcher ? pathMatcher.match( antPattern, pathToMatch ) : StringUtils.equals( pathToMatch, antPattern ) ) ) {
-						if ( !matchOnlyDirectories || Files.isDirectory( candidate ) ) {
-							resources.add( toFileRepositoryResource( candidate, pathToMatch ) );
-						}
+					if ( ( !shouldRecurse || ( usePathMatcher ? pathMatcher.match( antPattern, pathToMatch ) : StringUtils.equals( pathToMatch, antPattern ) ) )
+							&& ( !matchOnlyDirectories || candidate.toFile().isDirectory() ) ) {
+						resources.add( toFileRepositoryResource( candidate, pathToMatch ) );
 					}
 				}
 			};
@@ -96,8 +100,7 @@ class LocalFolderResource implements FolderResource
 				{
 					@Override
 					public FileVisitResult preVisitDirectory( Path candidate, BasicFileAttributes attrs ) {
-						processCandidate.accept( candidate );
-						return FileVisitResult.CONTINUE;
+						return visitFile( candidate, attrs );
 					}
 
 					@Override
@@ -108,7 +111,9 @@ class LocalFolderResource implements FolderResource
 				} );
 			}
 			else {
-				Files.list( directory ).forEach( processCandidate );
+				try (Stream<Path> list = Files.list( directory )) {
+					list.forEach( processCandidate );
+				}
 			}
 
 			return resources;
@@ -118,7 +123,7 @@ class LocalFolderResource implements FolderResource
 	}
 
 	private FileRepositoryResource toFileRepositoryResource( Path candidate, String childPath ) {
-		if ( Files.isDirectory( candidate ) ) {
+		if ( candidate.toFile().isDirectory() ) {
 			return new LocalFolderResource( descriptor.createFolderDescriptor( childPath ), candidate );
 		}
 
@@ -135,10 +140,18 @@ class LocalFolderResource implements FolderResource
 					return true;
 				}
 				catch ( IOException ioe ) {
+					LOG.trace( "Exception deleting children of {}", directory, ioe );
 					return false;
 				}
 			}
-			return directory.toFile().delete();
+			try {
+				Files.delete( directory );
+				return true;
+			}
+			catch ( IOException ioe ) {
+				LOG.trace( "Exception deleting directory {}", directory, ioe );
+				return false;
+			}
 		}
 		return false;
 	}
@@ -173,7 +186,8 @@ class LocalFolderResource implements FolderResource
 
 	@Override
 	public boolean exists() {
-		return Files.exists( directory ) && Files.isDirectory( directory );
+		File file = directory.toFile();
+		return file.exists() && file.isDirectory();
 	}
 
 	@Override

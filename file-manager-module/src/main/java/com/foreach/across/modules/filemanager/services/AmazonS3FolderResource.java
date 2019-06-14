@@ -90,9 +90,9 @@ class AmazonS3FolderResource implements FolderResource
 				p = p.substring( 0, p.length() - 1 );
 			}
 
-			BiPredicate<String, String> keyMatcher = ( objectName, antPattern ) -> {
-				if ( pathMatcher.match( antPattern, antPattern.endsWith( "/" ) ? objectName : StringUtils.removeEnd( objectName, "/" ) ) ) {
-					return !matchOnlyDirectories || objectName.endsWith( "/" );
+			BiPredicate<String, String> keyMatcher = ( candidateObjectName, antPattern ) -> {
+				if ( pathMatcher.match( antPattern, antPattern.endsWith( "/" ) ? candidateObjectName : StringUtils.removeEnd( candidateObjectName, "/" ) ) ) {
+					return !matchOnlyDirectories || candidateObjectName.endsWith( "/" );
 				}
 				return false;
 			};
@@ -134,26 +134,7 @@ class AmazonS3FolderResource implements FolderResource
 					objectListing = this.amazonS3.listNextBatchOfObjects( objectListing );
 				}
 				addResourcesFromObjectSummaries( keyMatcher, keyPattern, objectListing.getObjectSummaries(), resources );
-
-				objectListing.getObjectSummaries().forEach( objectSummary -> {
-					String objectName = StringUtils.removeEnd( objectSummary.getKey(), "/" );
-
-					int last = objectName.lastIndexOf( '/' );
-
-					if ( last > 0 ) {
-						int delim = objectName.indexOf( '/', prefix.length() + 1 );
-						while ( delim != -1 && delim <= last ) {
-							String partial = objectName.substring( 0, delim + 1 );
-							if ( partial.length() > 0 ) {
-								if ( keyMatcher.test( partial, keyPattern ) ) {
-									resources.add( toFileRepositoryResource( partial, null ) );
-								}
-							}
-							delim = objectName.indexOf( '/', delim + 1 );
-						}
-					}
-				} );
-
+				extractFolderResources( keyMatcher, keyPattern, prefix, objectListing, resources );
 			}
 			catch ( AmazonS3Exception e ) {
 				if ( 301 != e.getStatusCode() ) {
@@ -162,6 +143,26 @@ class AmazonS3FolderResource implements FolderResource
 			}
 		}
 		while ( objectListing != null && objectListing.isTruncated() );
+	}
+
+	private void extractFolderResources( BiPredicate<String, String> keyMatcher,
+	                                     String keyPattern, String prefix, ObjectListing objectListing, Set<FileRepositoryResource> resources ) {
+		objectListing.getObjectSummaries().forEach( objectSummary -> {
+			String resultObjectName = StringUtils.removeEnd( objectSummary.getKey(), "/" );
+
+			int last = resultObjectName.lastIndexOf( '/' );
+
+			if ( last > 0 ) {
+				int delim = resultObjectName.indexOf( '/', prefix.length() + 1 );
+				while ( delim != -1 && delim <= last ) {
+					String partial = resultObjectName.substring( 0, delim + 1 );
+					if ( partial.length() > 0 && keyMatcher.test( partial, keyPattern ) ) {
+						resources.add( toFileRepositoryResource( partial, null ) );
+					}
+					delim = resultObjectName.indexOf( '/', delim + 1 );
+				}
+			}
+		} );
 	}
 
 	private void findProgressivelyWithPartialMatch( BiPredicate<String, String> keyMatcher,
@@ -215,7 +216,7 @@ class AmazonS3FolderResource implements FolderResource
 		int result = 0;
 		String subStr = str;
 		for ( int i = 0; i < pos; i++ ) {
-			int nthOccurrence = subStr.indexOf( "/" );
+			int nthOccurrence = subStr.indexOf( '/' );
 			if ( nthOccurrence == -1 ) {
 				return -1;
 			}
@@ -255,8 +256,8 @@ class AmazonS3FolderResource implements FolderResource
 	}
 
 	private String getValidPrefix( String keyPattern ) {
-		int starIndex = keyPattern.indexOf( "*" );
-		int markIndex = keyPattern.indexOf( "?" );
+		int starIndex = keyPattern.indexOf( '*' );
+		int markIndex = keyPattern.indexOf( '?' );
 		int index = Math.min(
 				starIndex == -1 ? keyPattern.length() : starIndex,
 				markIndex == -1 ? keyPattern.length() : markIndex
