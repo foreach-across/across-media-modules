@@ -255,6 +255,7 @@ class AmazonS3FolderResource implements FolderResource
 		return fileResource;
 	}
 
+	@SuppressWarnings("Duplicates")
 	private String getValidPrefix( String keyPattern ) {
 		int starIndex = keyPattern.indexOf( '*' );
 		int markIndex = keyPattern.indexOf( '?' );

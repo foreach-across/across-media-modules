@@ -11,15 +11,13 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.AntPathMatcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 /**
  * Represents a single folder (directory) on a {@link LocalFileRepository}.
@@ -68,53 +66,13 @@ class LocalFolderResource implements FolderResource
 	public Collection<FileRepositoryResource> findResources( @NonNull String pattern ) {
 		if ( exists() ) {
 			List<FileRepositoryResource> resources = new ArrayList<>();
-			AntPathMatcher pathMatcher = new AntPathMatcher( "/" );
-			String p = StringUtils.startsWith( pattern, "/" ) ? pattern : "/" + pattern;
-			boolean usePathMatcher = pathMatcher.isPattern( p );
-			boolean matchOnlyDirectories = StringUtils.endsWith( p, "/" );
 
-			if ( matchOnlyDirectories ) {
-				p = p.substring( 0, p.length() - 1 );
-			}
+			String pathPrefix = StringUtils.replace( directory.toAbsolutePath().toString(), "\\", "/" );
 
-			boolean shouldRecurse = !"/*".equalsIgnoreCase( p );
-
-			Path rootPath = directory;
-			String pathPrefix = StringUtils.replace( rootPath.toAbsolutePath().toString(), "\\", "/" );
-
-			final String antPattern = p;
-
-			Consumer<Path> processCandidate = candidate -> {
-				String candidatePath = StringUtils.replace( candidate.toAbsolutePath().toString(), "\\", "/" );
-				if ( candidatePath.length() > pathPrefix.length() ) {
-					String pathToMatch = StringUtils.substring( candidatePath, pathPrefix.length() );
-					if ( ( !shouldRecurse || ( usePathMatcher ? pathMatcher.match( antPattern, pathToMatch ) : StringUtils.equals( pathToMatch, antPattern ) ) )
-							&& ( !matchOnlyDirectories || candidate.toFile().isDirectory() ) ) {
-						resources.add( toFileRepositoryResource( candidate, pathToMatch ) );
-					}
-				}
-			};
-
-			if ( shouldRecurse ) {
-				Files.walkFileTree( rootPath, new SimpleFileVisitor<Path>()
-				{
-					@Override
-					public FileVisitResult preVisitDirectory( Path candidate, BasicFileAttributes attrs ) {
-						return visitFile( candidate, attrs );
-					}
-
-					@Override
-					public FileVisitResult visitFile( Path candidate, BasicFileAttributes attrs ) {
-						processCandidate.accept( candidate );
-						return FileVisitResult.CONTINUE;
-					}
-				} );
-			}
-			else {
-				try (Stream<Path> list = Files.list( directory )) {
-					list.forEach( processCandidate );
-				}
-			}
+			AntPathMatchingFileVisitor.walkFileTree( directory, pattern, candidate -> {
+				String relativePath = StringUtils.substring( candidate.toAbsolutePath().toString(), pathPrefix.length() );
+				resources.add( toFileRepositoryResource( candidate, relativePath ) );
+			} );
 
 			return resources;
 		}
