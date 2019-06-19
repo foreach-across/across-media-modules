@@ -133,7 +133,7 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public void removeVariants( Image image ) {
-		defaultImageFileDescriptorFactory.removeVariantsForImage( fileManager, image );
+		//defaultImageFileDescriptorFactory.removeVariantsForImage( fileManager, image );
 	}
 
 	private void writeSafely( InputStream inputStream, FileDescriptor target ) {
