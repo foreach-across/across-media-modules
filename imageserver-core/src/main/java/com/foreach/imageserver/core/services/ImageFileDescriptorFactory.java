@@ -33,12 +33,13 @@ public interface ImageFileDescriptorFactory
 	FileDescriptor createForVariant( Image image, ImageContext context, ImageResolution imageResolution, ImageVariant imageVariant );
 
 	/**
-	 * Remove all variants for a given image.
+	 * Remove all variants registered in a given context, for a given image.
 	 *
 	 * @param fileManager where the variants are stored
 	 * @param image to remove
+	 * @param imageContext context for which to remove the variants
 	 */
-	void removeVariantsForImage( FileManager fileManager, Image image );
+	void removeVariantsForImageAndContext( FileManager fileManager, Image image, ImageContext imageContext );
 
 	/**
 	 * Default implementation for generating only the file name aspect of a descriptor, based

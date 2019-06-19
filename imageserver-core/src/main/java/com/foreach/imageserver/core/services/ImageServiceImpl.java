@@ -21,6 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -184,31 +186,39 @@ public class ImageServiceImpl implements ImageService
 			          LogHelper.flatten( modification ) );
 		}
 
-		saveImageModifications( Arrays.asList( modification ), image );
+		saveImageModifications( Collections.singletonList( modification ), image );
 	}
 
-	/**
-	 * DO NOT MAKE THIS METHOD TRANSACTIONAL! If we are updating an existing modification, we need to make sure that
-	 * the changes are committed to the database *before* we clean up the filesystem. Otherwise a different instance
-	 * might recreate variants on disk using the old values.
-	 * <p>
-	 * TODO: if needed, storeImageModficication could perhaps be made transactional
-	 */
 	@Override
+	@Transactional
 	public void saveImageModifications( List<ImageModification> modifications, Image image ) {
 		if ( modifications == null ) {
 			LOG.warn( "Null parameters not allowed - ImageServiceImpl#saveImageModifications: modifications={}",
 			          LogHelper.flatten( modifications ) );
+			return;
 		}
-		if ( modifications.size() == 0 ) {
+
+		if ( modifications.isEmpty() ) {
 			LOG.warn(
 					"An empty list of modifications was provided - ImageServiceImpl#saveImageModifications: modifications={}",
 					LogHelper.flatten( modifications ) );
+			return;
 		}
 
 		storeImageModification( modifications, image );
 
-		imageStoreService.removeVariants( image );
+		if ( TransactionSynchronizationManager.isSynchronizationActive() ) {
+			TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronizationAdapter()
+			{
+				@Override
+				public void afterCommit() {
+					new Thread( () -> imageStoreService.removeVariants( image ) ).start();
+				}
+			} );
+		}
+		else {
+			imageStoreService.removeVariants( image );
+		}
 	}
 
 	private void storeImageModification( List<ImageModification> modifications, Image image ) {

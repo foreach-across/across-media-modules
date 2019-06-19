@@ -95,13 +95,13 @@ public class ImageRestServiceImpl implements ImageRestService
 	public PregenerateResolutionsResponse pregenerateResolutions( String imageId ) {
 		PregenerateResolutionsResponse response = new PregenerateResolutionsResponse();
 
-		final Image image = imageService.getByExternalId( imageId );
+		Image image = imageService.getByExternalId( imageId );
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
 		}
 		else {
-			final List<ImageResolution> pregenerateList = new LinkedList<>();
+			List<ImageResolution> pregenerateList = new LinkedList<>();
 			Collection<ImageResolution> resolutions = imageService.getAllResolutions();
 
 			for ( ImageResolution resolution : resolutions ) {
@@ -116,7 +116,7 @@ public class ImageRestServiceImpl implements ImageRestService
 				// TODO: offload this as set of tasks to generation service (with a threadpool)
 				Runnable runnable = () -> {
 					LOG.debug( "Start pregeneration of {} resolutions for {}", pregenerateList.size(), image );
-					for ( final ImageResolution resolution : pregenerateList ) {
+					for ( ImageResolution resolution : pregenerateList ) {
 						List<ImageType> allowedTypes = Collections.singletonList( ImageType.JPEG );
 						for ( ImageType outputType : allowedTypes ) {
 							ImageVariant variant = new ImageVariant();
@@ -361,7 +361,13 @@ public class ImageRestServiceImpl implements ImageRestService
 			}
 			else {
 				List<ImageModification> modifications = extractImageModifications( request, image, context, response );
-				imageService.saveImageModifications( modifications, image );
+
+				try {
+					imageService.saveImageModifications( modifications, image );
+				}
+				catch ( CropOutsideOfImageBoundsException e ) {
+					response.setCropOutsideOfImageBounds( true );
+				}
 			}
 		}
 
@@ -382,13 +388,6 @@ public class ImageRestServiceImpl implements ImageRestService
 				modifications.add( toModification( modificationDto, image, context, response ) );
 
 			}
-		}
-
-		try {
-			imageService.saveImageModifications( modifications, image );
-		}
-		catch ( CropOutsideOfImageBoundsException e ) {
-			response.setCropOutsideOfImageBounds( true );
 		}
 
 		return modifications;

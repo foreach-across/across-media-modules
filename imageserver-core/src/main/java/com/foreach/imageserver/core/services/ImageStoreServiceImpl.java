@@ -22,6 +22,7 @@ import java.io.InputStream;
 public class ImageStoreServiceImpl implements ImageStoreService
 {
 	private final FileManager fileManager;
+	private final ImageContextService imageContextService;
 	private final DefaultImageFileDescriptorFactory defaultImageFileDescriptorFactory;
 
 	@Override
@@ -133,7 +134,8 @@ public class ImageStoreServiceImpl implements ImageStoreService
 
 	@Override
 	public void removeVariants( Image image ) {
-		//defaultImageFileDescriptorFactory.removeVariantsForImage( fileManager, image );
+		imageContextService.getAllContexts()
+		                   .forEach( context -> defaultImageFileDescriptorFactory.removeVariantsForImageAndContext( fileManager, image, context ) );
 	}
 
 	private void writeSafely( InputStream inputStream, FileDescriptor target ) {

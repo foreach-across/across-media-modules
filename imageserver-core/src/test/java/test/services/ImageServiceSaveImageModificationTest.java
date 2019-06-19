@@ -102,8 +102,8 @@ public class ImageServiceSaveImageModificationTest
 	@Test
 	public void saveImageModifications() throws Exception {
 		try {
-			imageService.saveImageModifications( Arrays.asList(createModification( cropX, cropY, cropWidth, cropHeight )),
-			                                    createImage( imageWidth, imageHeight ) );
+			imageService.saveImageModifications( Arrays.asList( createModification( cropX, cropY, cropWidth, cropHeight ) ),
+			                                     createImage( imageWidth, imageHeight ) );
 		}
 		catch ( CropOutsideOfImageBoundsException e ) {
 			if ( !throwsError ) {
