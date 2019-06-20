@@ -11,7 +11,7 @@ public class ImageModificationDto
 {
 	/**
 	 * -- GETTER --
-	 *
+	 * <p>
 	 * The id of the resolution whose modification was used as the base for building this one.
 	 * If this modification is registered directly to the resolution, this id will be the same as
 	 * the id property of {@link #getResolution()}.  If another modification was used as base but then
@@ -77,6 +77,17 @@ public class ImageModificationDto
 	 */
 	public boolean isRegistered() {
 		return baseResolutionId != null && resolution != null && baseResolutionId.equals( resolution.getId() );
+	}
+
+	public ImageTransformDto asTransformDto() {
+		return ImageTransformDto.builder()
+		                        .width( resolution.getWidth() )
+		                        .height( resolution.getHeight() )
+		                        .crop( new CropDto().equals( crop ) ? null : crop )
+		                        .maxWidth( boundaries.isEmpty() ? null : boundaries.getWidth() )
+		                        .maxHeight( boundaries.isEmpty() ? null : boundaries.getHeight() )
+		                        .dpi( density.isEmpty() ? null : density.getWidth() )
+		                        .build();
 	}
 
 	@Override

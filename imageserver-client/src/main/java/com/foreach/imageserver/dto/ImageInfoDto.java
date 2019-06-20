@@ -16,10 +16,10 @@ public class ImageInfoDto
 	private ImageTypeDto imageType;
 	private DimensionsDto dimensionsDto;
 	private long imageFileSize;
+	private int sceneCount;
 
 	public ImageInfoDto() {
 	}
-
 
 	@Override
 	public boolean equals( Object o ) {
@@ -33,6 +33,7 @@ public class ImageInfoDto
 		ImageInfoDto that = (ImageInfoDto) o;
 
 		return Objects.equals( existing, that.existing )
+				&& Objects.equals( sceneCount, that.sceneCount )
 				&& Objects.equals( created, that.created )
 				&& Objects.equals( dimensionsDto, that.dimensionsDto )
 				&& Objects.equals( externalId, that.externalId )

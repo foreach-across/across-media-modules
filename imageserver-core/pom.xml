@@ -15,6 +15,14 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>file-manager-module</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.foreach.across.modules</groupId>
+			<artifactId>properties-module</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.foreach.imageserver</groupId>
 			<artifactId>imageserver-client</artifactId>
 			<version>5.0.0-SNAPSHOT</version>
@@ -62,6 +70,20 @@
 			<artifactId>im4java</artifactId>
 			<version>1.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.ghost4j</groupId>
+			<artifactId>ghost4j</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+		</dependency>
 		<!-- Left these in for future implementations -->
 		<dependency>
 			<groupId>foreach-custom</groupId>
@@ -80,11 +102,6 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
 		</dependency>
 	</dependencies>
 	<build>

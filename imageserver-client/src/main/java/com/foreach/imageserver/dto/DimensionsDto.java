@@ -1,5 +1,6 @@
 package com.foreach.imageserver.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@Builder(toBuilder = true)
 public class DimensionsDto
 {
 	private int width;
@@ -23,6 +25,14 @@ public class DimensionsDto
 	public DimensionsDto( int width, int height ) {
 		this.width = width;
 		this.height = height;
+	}
+
+	public boolean isEmpty() {
+		return width == 0 && height == 0;
+	}
+
+	public boolean hasUnspecifiedDimension() {
+		return width == 0 || height == 0;
 	}
 
 	@Override

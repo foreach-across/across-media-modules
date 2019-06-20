@@ -1751,7 +1751,7 @@ angular.module('ui.scroll', []).directive('ngScrollViewport', [
 'use strict';
 
 /**
- * Adds a 'ui-scrollfix' class to the element when the page scrolls past it's position.
+ * Adds a 'ui-scrollfix' class to the element when the scene scrolls past it's position.
  * @param [offset] {int} optional Y-offset to override the detected offset.
  *   Takes 300 (absolute) or -300 or +300 (relative to detected)
  */

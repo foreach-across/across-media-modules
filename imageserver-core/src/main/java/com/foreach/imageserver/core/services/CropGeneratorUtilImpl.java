@@ -10,7 +10,9 @@ import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.math.AspectRatio;
 import com.foreach.imageserver.math.ImageServerConversionUtils;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CropGeneratorUtilImpl implements CropGeneratorUtil
 {
 	/**
@@ -43,7 +45,7 @@ public class CropGeneratorUtilImpl implements CropGeneratorUtil
 				new ImageResolutionDto( targetDimensions.getWidth(), targetDimensions.getHeight() ) );
 		imageModificationDto.setBoundaries( new DimensionsDto() );
 
-		calculateDensity( imageModificationDto, originalDimensions );
+		//calculateDensity( imageModificationDto, originalDimensions );
 	}
 
 	private CropDto determineDefaultCrop( Dimensions originalDimensions, Dimensions targetDimensions ) {
@@ -138,6 +140,8 @@ public class CropGeneratorUtilImpl implements CropGeneratorUtil
 		return pos;
 	}
 
+	// todo: remove once ImageTransformDto features have been thoroughly tested
+	@SuppressWarnings( "unused" )
 	private void calculateDensity( ImageModificationDto normalized, Dimensions original ) {
 		if ( new DimensionsDto().equals( normalized.getDensity() ) ) {
 			DimensionsDto calculated = new DimensionsDto();

@@ -3,15 +3,13 @@ package com.foreach.imageserver.core;
 import com.foreach.imageserver.core.config.StoreSettings;
 import com.foreach.imageserver.core.config.StreamingSettings;
 import com.foreach.imageserver.core.config.TransformersSettings;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Arne Vandamme
  */
-@Getter
-@Setter
+@Data
 @ConfigurationProperties("imageServerCore")
 public class ImageServerCoreModuleSettings
 {
@@ -28,16 +26,14 @@ public class ImageServerCoreModuleSettings
 	public static final String IMAGE_NOT_FOUND_IMAGEKEY = "imageServerCore.streaming.imageNotFoundKey";
 
 	public static final String IMAGE_STORE_FOLDER = "imageServerCore.store.folder";
-	public static final String IMAGE_STORE_FOLDER_PERMISSIONS = "imageServerCore.store.folderPermissions";
-	public static final String IMAGE_STORE_FILE_PERMISSIONS = "imageServerCore.store.filePermissions";
 
 	public static final String TRANSFORMERS_CONCURRENT_LIMIT = "imageServerCore.transformers.concurrentLimit";
 
-	public static final String IMAGEMAGICK_ENABLED = "imageServerCore.transformers.imageMagickEnabled";
-	public static final String IMAGEMAGICK_PRIORITY = "imageServerCore.transformers.imageMagickPriority";
-	public static final String IMAGEMAGICK_USE_GRAPHICSMAGICK = "imageServerCore.transformers.useGraphicsMagick";
+	public static final String IMAGEMAGICK_ENABLED = "imageServerCore.transformers.imageMagick.enabled";
+	public static final String IMAGEMAGICK_PRIORITY = "imageServerCore.transformers.imageMagick.priority";
+	public static final String IMAGEMAGICK_USE_GRAPHICSMAGICK = "imageServerCore.transformers.imageMagick.useGraphicsMagick";
 	public static final String IMAGEMAGICK_USE_GHOSTSCRIPT = "imageServerCore.transformers.imageMagick.useGhostScript";
-	public static final String IMAGEMAGICK_PATH = "imageServerCore.transformers.imageMagickPath";
+	public static final String IMAGEMAGICK_PATH = "imageServerCore.transformers.imageMagick.path";
 
 	/**
 	 * Base path for all controllers.
@@ -85,7 +81,7 @@ public class ImageServerCoreModuleSettings
 	private Boolean createLocalClient = false;
 
 	private StreamingSettings streaming = new StreamingSettings();
-	private StoreSettings storeSettings = new StoreSettings();
+	private StoreSettings store = new StoreSettings();
 	private TransformersSettings transformers = new TransformersSettings();
 
 	public boolean isStrictMode() {

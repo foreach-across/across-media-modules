@@ -5,7 +5,6 @@ import com.foreach.imageserver.admin.controllers.AdminWebAppController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 /**
  * @author Arne Vandamme
@@ -14,13 +13,10 @@ import org.springframework.core.env.Environment;
 @RequiredArgsConstructor
 public class WebConfiguration
 {
-	private final Environment environment;
+	private final ImageServerAdminWebModuleSettings settings;
 
 	@Bean
 	public AdminWebAppController adminWebAppController() {
-		return new AdminWebAppController(
-				environment.getProperty( ImageServerAdminWebModuleSettings.IMAGE_SERVER_URL, "" ),
-				environment.getRequiredProperty( ImageServerAdminWebModuleSettings.ACCESS_TOKEN )
-		);
+		return new AdminWebAppController( settings.getImageServerUrl(), settings.getAccessToken() );
 	}
 }

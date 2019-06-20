@@ -30,5 +30,5 @@ public interface ImageTransformer extends Ordered
 
 	ImageAttributes execute( GetImageAttributesAction action );
 
-	InMemoryImageSource execute( ImageModifyAction action );
+	ImageSource execute( ImageModifyAction action );
 }

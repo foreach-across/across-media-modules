@@ -1,12 +1,11 @@
 package com.foreach.imageserver.core.config;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.foreach.imageserver.core.transformers.imagemagick.ImageMagickSettings;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+@Data
 @ConfigurationProperties("imageServerCore.transformers")
-@Getter
-@Setter
 public class TransformersSettings
 {
 	/**
@@ -17,28 +16,7 @@ public class TransformersSettings
 	private Integer concurrentLimit = 10;
 
 	/**
-	 * True if image magick transformer should be created.
+	 * Settings related to the imagemagick transformer
 	 */
-	private Boolean imageMagickEnabled = true;
-
-	/**
-	 * Path to the ImageMagick installation.
-	 */
-	private String imageMagickPath = "/usr/bin/";
-
-	/**
-	 * Priority for the ImageMagick transformer.
-	 */
-	private Integer imageMagickPriority = 1;
-
-	/**
-	 * True if GraphicsMagick should be used instead of regular ImageMagick.
-	 */
-	private Boolean useGraphicsMagick = false;
-
-	/**
-	 * True if ghostscript is supported on the GraphicsMagick installation.
-	 */
-	private Boolean useGhostScript = false;
-
+	private ImageMagickSettings imageMagick = new ImageMagickSettings();
 }

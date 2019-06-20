@@ -134,8 +134,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public ImageInfoDto loadImage( String imageId, byte[] imageBytes, Date imageDate, boolean replaceExisting ) {
-		Image image = imageService.saveImage( imageId, imageBytes, imageDate != null ? imageDate : new Date(),
-		                                      replaceExisting );
+		Image image = imageService.saveImage( imageId, imageBytes, imageDate != null ? imageDate : new Date(), replaceExisting );
 		return DtoUtil.toDto( image );
 	}
 
@@ -146,9 +145,7 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 
 	@Override
 	public boolean imageExists( String imageId ) {
-		Image image = imageService.getByExternalId( imageId );
-
-		return image != null;
+		return imageService.getByExternalId( imageId ) != null;
 	}
 
 	@Override
@@ -163,6 +160,12 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 			return imageInfoDto;
 		}
 
+		return DtoUtil.toDto( image );
+	}
+
+	@Override
+	public ImageInfoDto imageInfo( byte[] imageBytes ) {
+		Image image = imageService.loadImageData( imageBytes );
 		return DtoUtil.toDto( image );
 	}
 
@@ -204,6 +207,11 @@ public class LocalImageServerClient extends AbstractImageServerClient implements
 		}
 
 		return response.getImageResolutions();
+	}
+
+	@Override
+	public ImageConvertResultDto convertImage( ImageConvertDto convertDto ) {
+		return imageService.convertImageToTargets( convertDto );
 	}
 
 	@Override
