@@ -16,26 +16,32 @@
 
 package it;
 
+import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
+import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.modules.filemanager.services.FileRepositoryRegistry;
-import org.junit.Test;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class ITFileManager extends AbstractFileManagerModuleIT
+class ITFileManager extends AbstractFileManagerModuleIT
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
-	private static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
-	private static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
 
 	@Autowired
 	private FileManager fileManager;
@@ -44,14 +50,14 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 	private FileRepositoryRegistry fileRepositoryRegistry;
 
 	@Test
-	public void bothTestAndDefaultRepositoryShouldBeAvailable() {
+	void bothTestAndDefaultRepositoryShouldBeAvailable() {
 		assertNotNull( fileManager );
 		assertNotNull( fileManager.getRepository( FileManager.TEMP_REPOSITORY ) );
 		assertNotNull( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ) );
 	}
 
 	@Test
-	public void fileCanBeStoredInDefaultRepository() throws IOException {
+	void fileCanBeStoredInDefaultRepository() throws IOException {
 		FileDescriptor file = fileManager.save( RES_TEXTFILE.getInputStream() );
 
 		assertNotNull( file );
@@ -59,23 +65,50 @@ public class ITFileManager extends AbstractFileManagerModuleIT
 	}
 
 	@Test
-	public void moveFile() throws IOException {
+	void moveFile() throws IOException {
 		FileDescriptor file = fileManager.save( RES_TEXTFILE.getInputStream() );
-		FileDescriptor firstMoved = new FileDescriptor( file.getRepositoryId(), file.getFolderId(),
-		                                                "renamed-" + file.getFileId() );
+		FileDescriptor firstMoved = FileDescriptor.of( file.getRepositoryId(), file.getFolderId(), "renamed-" + file.getFileId() );
 		fileManager.move( file, firstMoved );
 		fileManager.exists( firstMoved );
 		FileRepository defaultRep = fileManager.getRepository( file.getRepositoryId() );
 		assertTrue( defaultRep.getAsFile( firstMoved ).exists() );
-		assertFalse( defaultRep.getAsFile( file ).exists() );
+
+		assertThatExceptionOfType( FileStorageException.class )
+				.isThrownBy( () -> defaultRep.getAsFile( file ) )
+				.withCauseInstanceOf( FileNotFoundException.class );
 
 		FileRepository moveIt = fileRepositoryRegistry.getRepository( "move-it" );
-		FileDescriptor secondMoved = new FileDescriptor( moveIt.getRepositoryId(), file.getFolderId(),
-		                                                 firstMoved.getFileId() );
+		FileDescriptor secondMoved = FileDescriptor.of( moveIt.getRepositoryId(), file.getFolderId(), firstMoved.getFileId() );
 		fileManager.move( firstMoved, secondMoved );
 		fileManager.exists( secondMoved );
 		assertTrue( moveIt.getAsFile( secondMoved ).exists() );
-		assertFalse( defaultRep.getAsFile( firstMoved ).exists() );
-		assertFalse( defaultRep.getAsFile( file ).exists() );
+
+		assertThatExceptionOfType( FileStorageException.class )
+				.isThrownBy( () -> defaultRep.getAsFile( firstMoved ) )
+				.withCauseInstanceOf( FileNotFoundException.class );
+
+		assertThatExceptionOfType( FileStorageException.class )
+				.isThrownBy( () -> defaultRep.getAsFile( file ) )
+				.withCauseInstanceOf( FileNotFoundException.class );
+	}
+
+	@Test
+	@SneakyThrows
+	void resourceResolving( @Autowired AcrossContextInfo contextInfo, @Autowired ApplicationContext parentContext ) {
+		ApplicationContext applicationContext = contextInfo.getModuleInfo( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ).getApplicationContext();
+
+		FileResource fileResource = fileManager.getFileResource( FileDescriptor.of( "default:my-resource-file.txt" ) );
+		fileResource.copyFrom( RES_TEXTFILE );
+
+		Resource fromModuleContext = applicationContext.getResource( "axfs://default:my-resource-file.txt" );
+		assertThat( fromModuleContext.exists() ).isTrue();
+		assertThat( fromModuleContext ).isEqualTo( fileResource );
+
+		Resource fromParentContext = parentContext.getResource( "axfs://default:my-resource-file.txt" );
+		assertThat( fromParentContext.exists() ).isTrue();
+		assertThat( fromParentContext ).isEqualTo( fileResource );
+
+		assertThat( applicationContext.getResources( "axfs://default:my-resource-*.txt" ) ).contains( fileResource );
+		assertThat( parentContext.getResources( "axfs://default:my-resource-*.txt" ) ).contains( fileResource );
 	}
 }

@@ -2,16 +2,22 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="file-manager-module-no-entity-module" />
+        <module name="file-manager-module-no-hibernate-module" />
+        <module name="file-manager-module-test" />
+      </profile>
       <profile name="Annotation profile for com.foreach.across.modules:file-manager-module-project" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processor name="com.querydsl.apt.jpa.JPAAnnotationProcessor" />
         <processor name="lombok.launch.AnnotationProcessorHider$AnnotationProcessor" />
+        <processor name="org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor" />
         <module name="file-manager-module" />
-        <module name="file-manager-module-no-entity-module" />
-        <module name="file-manager-module-no-hibernate-module" />
-        <module name="file-manager-module-test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

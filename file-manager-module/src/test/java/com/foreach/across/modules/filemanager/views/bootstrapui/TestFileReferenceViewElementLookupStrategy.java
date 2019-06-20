@@ -3,37 +3,35 @@ package com.foreach.across.modules.filemanager.views.bootstrapui;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.TypeDescriptor;
 
 import java.util.List;
 
 import static com.foreach.across.modules.filemanager.views.bootstrapui.FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
-@RunWith(MockitoJUnitRunner.class)
-public class TestFileReferenceViewElementLookupStrategy
+@ExtendWith(MockitoExtension.class)
+class TestFileReferenceViewElementLookupStrategy
 {
+	@Mock
+	private EntityPropertyDescriptor singleValueDescriptor;
+
+	@Mock
+	private EntityPropertyDescriptor multiValueDescriptor;
+
 	private FileReferenceViewElementLookupStrategy strategy = new FileReferenceViewElementLookupStrategy();
 
-	private EntityPropertyDescriptor singleValueDescriptor = mock( EntityPropertyDescriptor.class );
-	private EntityPropertyDescriptor multiValueDescriptor = mock( EntityPropertyDescriptor.class );
-
-	@Before
-	public void setUp() {
-		reset( singleValueDescriptor );
-	}
-
 	@Test
-	public void supportsControlAndValueModes() {
+	void supportsControlAndValueModes() {
 		assertThat( lookup( FileReference.class, ViewElementMode.FORM_READ ) ).isNull();
 		assertThat( lookup( FileReference.class, ViewElementMode.FORM_WRITE ) ).isNull();
 		assertThat( lookup( FileReference.class, ViewElementMode.LABEL ) ).isNull();
@@ -51,7 +49,7 @@ public class TestFileReferenceViewElementLookupStrategy
 	}
 
 	@Test
-	public void onlySupportsFileReferenceTypes() {
+	void onlySupportsFileReferenceTypes() {
 		assertThat( lookup( String.class, ViewElementMode.CONTROL ) ).isNull();
 		assertThat( lookup( String.class, ViewElementMode.LIST_CONTROL ) ).isNull();
 		assertThat( lookup( (Class) null, ViewElementMode.CONTROL ) ).isNull();

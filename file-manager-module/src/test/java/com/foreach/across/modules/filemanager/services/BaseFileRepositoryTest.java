@@ -17,82 +17,80 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import org.apache.commons.io.FileUtils;
+import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FolderResource;
+import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.*;
 
 /**
  * Base class with tests scenarios that should run on all implementations of FileRepository
  */
-public abstract class BaseFileRepositoryTest
+abstract class BaseFileRepositoryTest
 {
-	protected static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
+	static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 
-	protected static final String TEMP_DIR = System.getProperty( "java.io.tmpdir" );
-	protected static final String ROOT_DIR = Paths.get( TEMP_DIR, UUID.randomUUID().toString() ).toString();
+	private File fileOne;
 
-	private static final File FILE_ONE = new File( TEMP_DIR, UUID.randomUUID().toString() );
+	@TempDir
+	File tempDir;
 
-	protected FileRepository fileRepository;
+	String rootFolder;
+	FileRepository fileRepository;
 
-	@Before
-	public void create() throws IOException {
-		cleanup();
+	@BeforeEach
+	void create() throws IOException {
+		fileOne = new File( tempDir, UUID.randomUUID().toString() + ".txt" );
+		rootFolder = tempDir.toPath().resolve( UUID.randomUUID().toString() ).toString();
 
-		assertFalse( FILE_ONE.exists() );
-
-		try (FileWriter w = new FileWriter( FILE_ONE )) {
-			IOUtils.copy( RES_TEXTFILE.getInputStream(), w );
+		try (FileWriter w = new FileWriter( fileOne )) {
+			IOUtils.copy( RES_TEXTFILE.getInputStream(), w, Charset.defaultCharset() );
 			w.flush();
 		}
-		createRepository();
+
+		fileRepository = createRepository();
 	}
 
-	abstract void createRepository();
+	abstract FileRepository createRepository();
 
-	@After
-	public void cleanup() {
-		try {
-			if ( FILE_ONE.exists() ) {
-				FILE_ONE.delete();
-			}
-
-			FileUtils.deleteDirectory( new File( ROOT_DIR ) );
-		}
-		catch ( Exception e ) {
-			System.err.println( "Unit test could not cleanup files nicely" );
-		}
-	}
-
+	// create file creates an existing, empty file, which is writable
 	@Test
-	public void moveIntoDeletesTheOriginalFile() {
-		assertTrue( FILE_ONE.exists() );
+	void moveIntoDeletesTheOriginalFile() {
+		assertTrue( fileOne.exists() );
 
-		FileDescriptor descriptor = fileRepository.moveInto( FILE_ONE );
+		FileDescriptor descriptor = fileRepository.moveInto( fileOne );
 		assertNotNull( descriptor );
 		assertTrue( fileRepository.exists( descriptor ) );
 
-		assertFalse( FILE_ONE.exists() );
+		assertFalse( fileOne.exists() );
+
+		// original file extension is copied
+		assertTrue( descriptor.getFileId().endsWith( ".txt" ) );
+		assertEquals( "txt", descriptor.getExtension() );
 
 		assertTrue( fileRepository.delete( descriptor ) );
 		assertFalse( fileRepository.exists( descriptor ) );
 	}
 
 	@Test
-	public void savingFileAlwaysCreatesANewFile() {
-		FileDescriptor descriptorOne = fileRepository.save( FILE_ONE );
-		FileDescriptor descriptorTwo = fileRepository.save( FILE_ONE );
+	void savingFileAlwaysCreatesANewFile() {
+		FileDescriptor descriptorOne = fileRepository.save( fileOne );
+		FileDescriptor descriptorTwo = fileRepository.save( fileOne );
 
 		assertNotEquals( descriptorOne, descriptorTwo );
 
@@ -110,7 +108,7 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void savingInputStreamAlwaysCreatesANewFile() throws IOException {
+	void savingInputStreamAlwaysCreatesANewFile() throws IOException {
 		FileDescriptor descriptorOne = fileRepository.save( RES_TEXTFILE.getInputStream() );
 		FileDescriptor descriptorTwo = fileRepository.save( RES_TEXTFILE.getInputStream() );
 
@@ -130,7 +128,7 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void savingWithTargetFileDescriptorOverwritesExistingFile() throws IOException {
+	void savingWithTargetFileDescriptorOverwritesExistingFile() throws IOException {
 		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
 		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
 
@@ -146,29 +144,62 @@ public abstract class BaseFileRepositoryTest
 		assertFalse( fileRepository.exists( target ) );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void savingWithTargetFileDescriptorForADifferentRepositoryThrowsAnError() throws IOException {
+	@Test
+	void savingWithTargetFileDescriptorForADifferentRepositoryThrowsAnError() {
 		FileDescriptor target = FileDescriptor.of( "non-existing-repository-id", UUID.randomUUID().toString() );
-		fileRepository.save( target, RES_TEXTFILE.getInputStream(), true );
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void savingWithTargetFileDescriptorWithoutOverwritingThrowsExceptionIfFileExists() throws IOException {
-		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
-		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
-
-		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
+		assertThatExceptionOfType( IllegalArgumentException.class )
+				.isThrownBy( () -> fileRepository.save( target, RES_TEXTFILE.getInputStream(), true ) );
 	}
 
 	@Test
-	public void readInputStream() throws IOException {
+	void savingWithTargetFileDescriptorWithoutOverwritingThrowsExceptionIfFileExists() throws IOException {
+		FileDescriptor target = FileDescriptor.of( fileRepository.getRepositoryId(), UUID.randomUUID().toString() );
+		fileRepository.save( target, RES_TEXTFILE.getInputStream(), false );
+
+		assertThatExceptionOfType( IllegalArgumentException.class )
+				.isThrownBy( () -> fileRepository.save( target, RES_TEXTFILE.getInputStream(), false ) );
+	}
+
+	@Test
+	void readInputStream() throws IOException {
 		FileDescriptor descriptor = fileRepository.save( RES_TEXTFILE.getInputStream() );
 
 		assertEquals( "some dummy text", read( descriptor ) );
 	}
 
 	@Test
-	public void writeToNewFile() throws IOException {
+	@SneakyThrows
+	void createFileResource() {
+		FileResource resource = fileRepository.createFileResource();
+		Assertions.assertThat( resource.exists() ).isFalse();
+		Assertions.assertThat( resource ).isNotNull();
+
+		resource.copyFrom( RES_TEXTFILE );
+
+		Assertions.assertThat( readResource( resource ) )
+		          .isEqualTo( "some dummy text" )
+		          .isEqualTo( readResource( fileRepository.getFileResource( resource.getDescriptor() ) ) );
+	}
+
+	@Test
+	@SneakyThrows
+	void createAndAllocateFileResource() {
+		FileResource resource = fileRepository.createFileResource( true );
+		Assertions.assertThat( resource.exists() ).isNotNull();
+		try (InputStream is = resource.getInputStream()) {
+			Assertions.assertThat( is ).isNotNull();
+		}
+	}
+
+	@SneakyThrows
+	String readResource( FileResource resource ) {
+		try (InputStream is = resource.getInputStream()) {
+			return StreamUtils.copyToString( is, Charset.defaultCharset() );
+		}
+	}
+
+	@Test
+	void writeToNewFile() throws IOException {
 		FileDescriptor descriptor = fileRepository.createFile();
 
 		try (InputStream is = fileRepository.getInputStream( descriptor )) {
@@ -187,8 +218,8 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void modifyExistingFile() throws IOException {
-		FileDescriptor descriptor = fileRepository.save( FILE_ONE );
+	void modifyExistingFile() throws IOException {
+		FileDescriptor descriptor = fileRepository.save( fileOne );
 
 		assertEquals( "some dummy text", read( descriptor ) );
 
@@ -204,10 +235,10 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void renameFileRenamesTheFile() {
-		FileDescriptor original = fileRepository.save( FILE_ONE );
+	void renameFileRenamesTheFile() {
+		FileDescriptor original = fileRepository.save( fileOne );
 		String renamedName = UUID.randomUUID().toString();
-		FileDescriptor renamed = new FileDescriptor( fileRepository.getRepositoryId(), null, renamedName );
+		FileDescriptor renamed = FileDescriptor.of( fileRepository.getRepositoryId(), null, renamedName );
 
 		assertTrue( fileRepository.move( original, renamed ) );
 		assertTrue( fileRepository.exists( renamed ) );
@@ -215,25 +246,50 @@ public abstract class BaseFileRepositoryTest
 	}
 
 	@Test
-	public void renameFileCreatesDirectoriesIfNecessary() {
-		FileDescriptor original = fileRepository.save( FILE_ONE );
+	void renameFileCreatesDirectoriesIfNecessary() {
+		FileDescriptor original = fileRepository.save( fileOne );
 		String renamedName = UUID.randomUUID().toString();
 		String renamedDir = UUID.randomUUID().toString();
-		FileDescriptor renamed = new FileDescriptor( fileRepository.getRepositoryId(), renamedDir, renamedName );
+		FileDescriptor renamed = FileDescriptor.of( fileRepository.getRepositoryId(), renamedDir, renamedName );
 
 		assertTrue( fileRepository.move( original, renamed ) );
 		assertTrue( fileRepository.exists( renamed ) );
 		assertFalse( fileRepository.exists( original ) );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void renameFileToDifferentRepositoryThrowsIllegalArgument() {
-		FileDescriptor original = fileRepository.save( FILE_ONE );
+	@Test
+	void renameFileToDifferentRepositoryThrowsIllegalArgument() {
+		FileDescriptor original = fileRepository.save( fileOne );
 		String renamedName = UUID.randomUUID().toString();
 		String renamedDir = UUID.randomUUID().toString();
-		FileDescriptor renamed = new FileDescriptor( "foo", renamedDir, renamedName );
+		FileDescriptor renamed = FileDescriptor.of( "foo", renamedDir, renamedName );
 
-		fileRepository.move( original, renamed );
+		assertThatExceptionOfType( IllegalArgumentException.class )
+				.isThrownBy( () -> fileRepository.move( original, renamed ) );
+	}
+
+	@Test
+	@SneakyThrows
+	void findResourcesAndFiles() {
+		FolderResource rootFolder = fileRepository.getRootFolderResource();
+		FolderResource folder = rootFolder.getFolderResource( "xx" );
+		FileResource file = folder.getFileResource( "findme.txt" );
+		file.copyFrom( RES_TEXTFILE );
+
+		assertThat( folder.exists() ).isTrue();
+		assertThat( file.exists() ).isTrue();
+
+		assertThat( fileRepository.findFiles( "**" ) ).contains( file );
+		assertThat( fileRepository.findFiles( "xx/*" ) ).containsExactly( file );
+		assertThat( fileRepository.findFiles( "xx/*.txt" ) ).containsExactly( file );
+		assertThat( fileRepository.findFiles( "/xx/findme.txt" ) ).containsExactly( file );
+		assertThat( fileRepository.findFiles( "**/findme.txt" ) ).contains( file );
+
+		assertThat( fileRepository.findResources( "**" ) ).contains( file, folder );
+		assertThat( fileRepository.findResources( "**", FileResource.class ) ).contains( file );
+		assertThat( fileRepository.findResources( "**", FolderResource.class ) ).contains( folder );
+		assertThat( fileRepository.findResources( "xx/*" ) ).containsExactly( file );
+		assertThat( fileRepository.findResources( "xx/" ) ).containsExactly( folder );
 	}
 
 	private String read( FileDescriptor descriptor ) throws IOException {

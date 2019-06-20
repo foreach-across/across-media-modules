@@ -18,6 +18,7 @@ package com.foreach.across.modules.filemanager.business.reference;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.reference.properties.FileReferenceProperties;
 import com.foreach.across.modules.filemanager.business.reference.properties.FileReferencePropertiesService;
 import com.foreach.across.modules.filemanager.services.FileManager;
@@ -26,6 +27,7 @@ import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -39,6 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Central point for working with {@link FileReference}s.
@@ -75,12 +78,15 @@ public class FileReferenceService
 	 * @param fileRepository to save the file to
 	 * @return {@link FileReference} to the file
 	 */
+	@SneakyThrows(IOException.class)
 	public FileReference save( @NotNull MultipartFile file, @NotNull FileRepository fileRepository ) {
 		File tempFile;
 		FileReference fileReference = new FileReference();
 
 		try {
-			fileReference.setHash( DigestUtils.md5DigestAsHex( file.getInputStream() ) );
+			try (InputStream is = file.getInputStream()) {
+				fileReference.setHash( DigestUtils.md5DigestAsHex( is ) );
+			}
 			tempFile = fileManager.createTempFile();
 			file.transferTo( tempFile );
 		}
@@ -89,7 +95,12 @@ public class FileReferenceService
 			throw new IllegalArgumentException( e );
 		}
 
-		fileReference.setFileDescriptor( fileRepository.moveInto( tempFile ) );
+		// generate file resource with the extension of the original file
+		FileDescriptor descriptor = fileRepository.generateFileDescriptor().withExtensionFrom( file.getOriginalFilename() );
+		FileResource fileResource = fileRepository.getFileResource( descriptor );
+		fileResource.copyFrom( tempFile, true );
+
+		fileReference.setFileDescriptor( fileResource.getDescriptor() );
 		fileReference.setName( file.getOriginalFilename() );
 		fileReference.setFileSize( file.getSize() );
 		fileReference.setMimeType( file.getContentType() );
@@ -114,6 +125,7 @@ public class FileReferenceService
 	 * @param deleteOriginals true if original files should be deleted after move
 	 */
 	@Transactional
+	@SuppressWarnings("unused")
 	public void changeFileRepository( @NonNull Iterable<FileReference> fileReferences, @NonNull String repositoryId, boolean deleteOriginals ) {
 		fileReferences.forEach( fr -> changeFileRepository( fr, repositoryId, deleteOriginals ) );
 	}
@@ -129,6 +141,7 @@ public class FileReferenceService
 	 * @param repositoryId  name of the target repository
 	 */
 	@Transactional
+	@SuppressWarnings("unused")
 	public void changeFileRepository( @NonNull FileReference fileReference, @NonNull String repositoryId ) {
 		changeFileRepository( fileReference, repositoryId, false );
 	}
@@ -144,21 +157,32 @@ public class FileReferenceService
 	 * @param repositoryId  name of the target repository
 	 */
 	@Transactional
+	@SneakyThrows(IOException.class)
 	public void changeFileRepository( @NonNull FileReference fileReference, @NonNull String repositoryId, boolean removeOriginal ) {
 		FileDescriptor fileDescriptor = fileReference.getFileDescriptor();
 
 		if ( fileDescriptor != null && !StringUtils.equals( repositoryId, fileDescriptor.getRepositoryId() ) ) {
 			LOG.debug( "Moving file '{}' to repository {}", fileDescriptor, repositoryId );
-			FileDescriptor newDescriptor = fileManager.save( repositoryId, fileManager.getInputStream( fileDescriptor ) );
-			LOG.debug( "New file descriptor for file '{}': '{}'", fileDescriptor, newDescriptor );
 
-			fileReference.setFileDescriptor( newDescriptor );
+			FileResource originalResource = fileManager.getFileResource( fileDescriptor );
+			FileResource newResource = generateTargetFileResource( fileDescriptor, repositoryId );
+			newResource.copyFrom( originalResource );
+
+			LOG.debug( "New file descriptor for file '{}': '{}'", fileDescriptor, newResource.getDescriptor() );
+
+			fileReference.setFileDescriptor( newResource.getDescriptor() );
 			fileReferenceRepository.save( fileReference );
 
 			if ( removeOriginal ) {
 				transactionalDeletePhysicalFile( fileDescriptor );
 			}
 		}
+	}
+
+	private FileResource generateTargetFileResource( FileDescriptor originalDescriptor, String targetRepositoryId ) {
+		FileRepository targetRepository = fileManager.getRepository( targetRepositoryId );
+		FileDescriptor descriptor = targetRepository.generateFileDescriptor().withExtension( originalDescriptor.getExtension() );
+		return targetRepository.getFileResource( descriptor );
 	}
 
 	/**

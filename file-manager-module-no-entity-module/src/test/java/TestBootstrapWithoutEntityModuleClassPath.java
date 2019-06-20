@@ -21,7 +21,7 @@ import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static java.lang.Thread.currentThread;
@@ -32,15 +32,15 @@ import static org.springframework.util.ClassUtils.isPresent;
  * @author Steven Gentens
  * @since 3.0.0
  */
-public class TestBootstrapWithoutEntityModuleClassPath
+class TestBootstrapWithoutEntityModuleClassPath
 {
 	@Test
-	public void classesShouldNotBeOnTheClassPath() {
+	void classesShouldNotBeOnTheClassPath() {
 		assertThat( isPresent( "com.foreach.across.modules.entity.EntityModule", currentThread().getContextClassLoader() ) ).isFalse();
 	}
 
 	@Test
-	public void emptyBootstrap() {
+	void emptyBootstrap() {
 		try (AcrossTestContext context = web( true )
 				.modules( FileManagerModule.NAME )
 				.build()) {
@@ -52,7 +52,7 @@ public class TestBootstrapWithoutEntityModuleClassPath
 	}
 
 	@Test
-	public void bootstrapWithHibernateAndPropertiesModule() {
+	void bootstrapWithHibernateAndPropertiesModule() {
 		try (AcrossTestContext context = web( true )
 				.modules( FileManagerModule.NAME, PropertiesModule.NAME, AcrossHibernateJpaModule.NAME )
 				.build()) {

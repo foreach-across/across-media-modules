@@ -43,6 +43,7 @@ import java.util.UUID;
 @Table(name = FileReference.TABLE_FILE_REFERENCE)
 @Getter
 @Setter
+@SuppressWarnings("squid:S2160")
 public class FileReference extends SettableIdAuditableEntity<FileReference>
 {
 	public static final String TABLE_FILE_REFERENCE = "fmm_file_reference";
@@ -84,6 +85,7 @@ public class FileReference extends SettableIdAuditableEntity<FileReference>
 	@Column(name = "hash")
 	private String hash;
 
+	@SuppressWarnings( "squid:S2637" )
 	public FileReference() {
 		setUuid( "" );
 	}

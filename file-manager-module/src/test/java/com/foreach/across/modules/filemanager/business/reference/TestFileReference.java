@@ -17,17 +17,14 @@
 package com.foreach.across.modules.filemanager.business.reference;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-public class TestFileReference
+class TestFileReference
 {
 	@Test
-	public void builder() {
+	void builder() {
 		FileReference fileReference = FileReference.builder().build();
 		assertThat( fileReference.getUuid() ).isNotBlank();
 
@@ -54,13 +51,13 @@ public class TestFileReference
 	}
 
 	@Test
-	public void uuidIsSetIfNotPresent() {
+	void uuidIsSetIfNotPresent() {
 		FileReference fileReference = new FileReference();
 		assertThat( fileReference.getUuid() ).isNotBlank();
 	}
 
 	@Test
-	public void fileDescriptor() {
+	void fileDescriptor() {
 		String uri = "default:test-file.txt";
 		FileDescriptor fileDescriptor = new FileDescriptor( uri );
 
