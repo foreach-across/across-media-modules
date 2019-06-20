@@ -1,6 +1,7 @@
 package com.foreach.imageserver.core.utils;
 
 import org.junit.Test;
+import support.ImageUtils;
 
 import java.awt.image.BufferedImage;
 

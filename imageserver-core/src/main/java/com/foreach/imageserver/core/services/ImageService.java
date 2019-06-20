@@ -2,7 +2,9 @@ package com.foreach.imageserver.core.services;
 
 import com.foreach.imageserver.core.business.*;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.ImageSource;
+import com.foreach.imageserver.dto.ImageConvertDto;
+import com.foreach.imageserver.dto.ImageConvertResultDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import lombok.NonNull;
 import org.slf4j.Logger;
@@ -20,8 +22,7 @@ public interface ImageService
 
 	Image getByExternalId( String externalId );
 
-	Image saveImage( String externalId, byte[] imageBytes, Date imageDate,
-	                 boolean replaceExisting ) throws ImageStoreException;
+	Image saveImage( String externalId, byte[] imageBytes, Date imageDate, boolean replaceExisting ) throws ImageStoreException;
 
 	/**
 	 * Creates a temporary Image object containing ImageAttributes and the image data.
@@ -59,14 +60,14 @@ public interface ImageService
 	 */
 	void saveImageModifications( List<ImageModification> modifications, Image image );
 
-	StreamImageSource generateModification( Image image,
-	                                        ImageModificationDto modificationDto,
-	                                        ImageVariant imageVariant );
+	ImageSource generateModification( Image image,
+	                                  ImageModificationDto modificationDto,
+	                                  ImageVariant imageVariant );
 
-	StreamImageSource getVariantImage( Image image,
-	                                   ImageContext context,
-	                                   ImageResolution imageResolution,
-	                                   ImageVariant imageVariant );
+	ImageSource getVariantImage( Image image,
+	                             ImageContext context,
+	                             ImageResolution imageResolution,
+	                             ImageVariant imageVariant );
 
 	boolean hasModification( int imageId );
 
@@ -89,4 +90,12 @@ public interface ImageService
 	 * @return true if image was deleted, false if not found
 	 */
 	boolean deleteImage( String externalId );
+
+	/**
+	 * Convert the supplied image using the given transformations.
+	 *
+	 * @param imageConvertDto object that contains the source image + all the desired targets and which transformations to apply for each target
+	 * @return object containing all generated imaged
+	 */
+	ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto );
 }

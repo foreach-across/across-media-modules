@@ -29,35 +29,7 @@ import static org.springframework.util.Assert.notNull;
 public class RemoteImageServerClient extends AbstractImageServerClient
 {
 	private static final Logger LOG = LoggerFactory.getLogger( RemoteImageServerClient.class );
-
-	private static final class ResponseTypes
-	{
-		private ResponseTypes() {
-		}
-
-		private static final ParameterizedTypeReference<JsonResponse<List<ImageResolutionDto>>> RESOLUTIONS =
-				new ParameterizedTypeReference<JsonResponse<List<ImageResolutionDto>>>()
-				{
-				};
-
-		private static final ParameterizedTypeReference<JsonResponse<List<ImageModificationDto>>> MODIFICATIONS =
-				new ParameterizedTypeReference<JsonResponse<List<ImageModificationDto>>>()
-				{
-				};
-
-		private static final ParameterizedTypeReference<JsonResponse<Object>> OBJECT =
-				new ParameterizedTypeReference<JsonResponse<Object>>()
-				{
-				};
-
-		private static final ParameterizedTypeReference<JsonResponse<ImageInfoDto>> IMAGE_INFO =
-				new ParameterizedTypeReference<JsonResponse<ImageInfoDto>>()
-				{
-				};
-	}
-
 	private final String imageServerAccessToken;
-
 	private RestTemplate restTemplate;
 
 	public RemoteImageServerClient( String imageServerEndpoint, String imageServerAccessToken ) {
@@ -320,6 +292,14 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		return httpGet( ENDPOINT_MODIFICATION_LIST, queryParams, ResponseTypes.MODIFICATIONS );
 	}
 
+	@Override
+	public ImageConvertResultDto convertImage( ImageConvertDto convertDto ) {
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+		queryParams.set( "token", imageServerAccessToken );
+
+		return httpPost( ENDPOINT_IMAGE_CONVERT, queryParams, new HttpEntity<>( convertDto ), ResponseTypes.IMAGE_CONVERT );
+	}
+
 	protected <T> T httpGet( String path, MultiValueMap<String, String> queryParams, Class<T> responseType ) {
 		URI url = buildUri( path, queryParams );
 		HttpEntity<?> request = new HttpEntity<MultiValueMap<?, ?>>( new LinkedMultiValueMap<String, String>() );
@@ -370,6 +350,19 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 
 	protected <T> T httpPost( String path,
 	                          MultiValueMap<String, String> queryParams,
+	                          HttpEntity payload,
+	                          ParameterizedTypeReference<JsonResponse<T>> responseType ) {
+		URI url = buildUri( path, queryParams );
+
+		ResponseEntity<JsonResponse<T>> response = restTemplate.exchange( url, HttpMethod.POST, payload, responseType );
+
+		JsonResponse<T> body = response.getBody();
+
+		return body.getResult();
+	}
+
+	protected <T> T httpPost( String path,
+	                          MultiValueMap<String, String> queryParams,
 	                          MultiValueMap<String, ?> bodyParams,
 	                          ParameterizedTypeReference<JsonResponse<T>> responseType ) {
 		URI url = buildUri( path, queryParams );
@@ -387,5 +380,32 @@ public class RemoteImageServerClient extends AbstractImageServerClient
 		}
 
 		return body.getResult();
+	}
+
+	private static final class ResponseTypes
+	{
+		private static final ParameterizedTypeReference<JsonResponse<List<ImageResolutionDto>>> RESOLUTIONS =
+				new ParameterizedTypeReference<JsonResponse<List<ImageResolutionDto>>>()
+				{
+				};
+		private static final ParameterizedTypeReference<JsonResponse<List<ImageModificationDto>>> MODIFICATIONS =
+				new ParameterizedTypeReference<JsonResponse<List<ImageModificationDto>>>()
+				{
+				};
+		private static final ParameterizedTypeReference<JsonResponse<Object>> OBJECT =
+				new ParameterizedTypeReference<JsonResponse<Object>>()
+				{
+				};
+		private static final ParameterizedTypeReference<JsonResponse<ImageInfoDto>> IMAGE_INFO =
+				new ParameterizedTypeReference<JsonResponse<ImageInfoDto>>()
+				{
+				};
+		private static final ParameterizedTypeReference<JsonResponse<ImageConvertResultDto>> IMAGE_CONVERT =
+				new ParameterizedTypeReference<JsonResponse<ImageConvertResultDto>>()
+				{
+				};
+
+		private ResponseTypes() {
+		}
 	}
 }

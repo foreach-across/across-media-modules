@@ -1,6 +1,4 @@
 acrossHibernate:
-  applicationId: 
-  applicationName: Imageserver test embedded
   hibernate-properties:
     hibernate.format_sql: false
     hibernate.use_sql_comments: false
@@ -26,19 +24,15 @@ logging:
   request-response:
     enabled: true
 
-across:
-  development:
-    active: true
-
 server:
   error:
     includeStacktrace: ALWAYS
-  port: 8078
 
 spring:
-  datasource:
-    url: "jdbc:h2:./local-data/db/imageserver-test-embedded-db"
-    username: sa
+  http:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 imageServerCore:
   rootPath: /resources/images
@@ -46,15 +40,17 @@ imageServerCore:
   createLocalClient: true
   imageServerUrl: "http://localhost:${server.port}/resources/images"
   md5HashToken: sample-hash-imgserver
-  store:
-    folder: local-data/images
   streaming:
     provideStackTrace: true
   transformers:
     imageMagick:
       enabled: true
       useGraphicsMagick: true
+      use-ghost-script: true
+    ghostscript:
+      enabled: false
 
 imageServerAdmin:
   accessToken: standalone-access-token
   imageServerUrl: /resources/images
+

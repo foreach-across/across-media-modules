@@ -6,15 +6,14 @@ import com.foreach.imageserver.core.business.ImageType;
 
 public class ImageModifyAction
 {
-	private final StreamImageSource sourceImageSource;
+	private final ImageSource sourceImageSource;
 	private final Dimensions outputDimensions;
 	private final Crop crop;
 	private final Dimensions density;
 	private final Dimensions boundaries;
 	private final ImageType outputType;
 
-
-	public ImageModifyAction( StreamImageSource sourceImageSource,
+	public ImageModifyAction( SimpleImageSource sourceImageSource,
 	                          int outputWidth,
 	                          int outputHeight,
 	                          int cropX,
@@ -27,8 +26,7 @@ public class ImageModifyAction
 		this( sourceImageSource, outputWidth, outputHeight, cropX, cropY, cropWidth, cropHeight, densityWidth, densityHeight, outputType, null );
 	}
 
-
-	public ImageModifyAction( StreamImageSource sourceImageSource,
+	public ImageModifyAction( ImageSource sourceImageSource,
 	                          int outputWidth,
 	                          int outputHeight,
 	                          int cropX,
@@ -47,7 +45,7 @@ public class ImageModifyAction
 		this.boundaries = boundaries;
 	}
 
-	public StreamImageSource getSourceImageSource() {
+	public ImageSource getSourceImageSource() {
 		return sourceImageSource;
 	}
 

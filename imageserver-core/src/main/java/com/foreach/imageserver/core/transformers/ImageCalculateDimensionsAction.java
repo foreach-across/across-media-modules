@@ -2,13 +2,13 @@ package com.foreach.imageserver.core.transformers;
 
 public class ImageCalculateDimensionsAction
 {
-	private final StreamImageSource imageSource;
+	private final SimpleImageSource imageSource;
 
-	public ImageCalculateDimensionsAction( StreamImageSource imageSource ) {
+	public ImageCalculateDimensionsAction( SimpleImageSource imageSource ) {
 		this.imageSource = imageSource;
 	}
 
-	public StreamImageSource getImageSource() {
+	public SimpleImageSource getImageSource() {
 		return imageSource;
 	}
 }

@@ -1,14 +1,23 @@
 package com.foreach.imageserver.core.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageVariant;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
+import org.springframework.stereotype.Component;
+
+import java.util.Collection;
 
 import static com.foreach.imageserver.core.config.ServicesConfiguration.*;
 
+@Component
+@Slf4j
 public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFactory
 {
 	@Override
@@ -30,6 +39,18 @@ public class DefaultImageFileDescriptorFactory implements ImageFileDescriptorFac
 		String targetPath = getFolderName( image, context );
 
 		return composeFileDescriptor( image, fileName, targetPath, IMAGESERVER_VARIANTS_REPOSITORY, context );
+	}
+
+	@Override
+	public void removeVariantsForImageAndContext( FileManager fileManager, Image image, ImageContext imageContext ) {
+		StopWatch sw = new StopWatch();
+		sw.start();
+
+		String lookupPath = StringUtils.replace(
+				IMAGESERVER_VARIANTS_REPOSITORY + ":" + imageContext.getCode() + "/" + image.getVariantPath() + "/" + image.getId() + "-*.*", "//", "/" );
+		Collection<FileResource> files = fileManager.findFiles( lookupPath );
+		files.forEach( FileResource::delete );
+		LOG.debug( "Deleted {} variants for {} and context {} in {} ms", files.size(), image, imageContext.getCode(), sw.getTime() );
 	}
 
 	private FileDescriptor composeFileDescriptor( Image image, String fileName, String targetPath, String defaultTargetRepository, ImageContext context ) {

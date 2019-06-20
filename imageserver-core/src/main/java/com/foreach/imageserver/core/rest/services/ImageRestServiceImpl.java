@@ -6,25 +6,20 @@ import com.foreach.imageserver.core.rest.request.ListResolutionsRequest;
 import com.foreach.imageserver.core.rest.request.RegisterModificationRequest;
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
 import com.foreach.imageserver.core.rest.response.*;
-import com.foreach.imageserver.core.services.CropGeneratorUtil;
-import com.foreach.imageserver.core.services.DtoUtil;
-import com.foreach.imageserver.core.services.ImageContextService;
-import com.foreach.imageserver.core.services.ImageService;
+import com.foreach.imageserver.core.services.*;
 import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.ImageSource;
 import com.foreach.imageserver.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 /**
  * @author Arne Vandamme
  */
-@Service
 public class ImageRestServiceImpl implements ImageRestService
 {
 	private static final Logger LOG = LoggerFactory.getLogger( ImageRestService.class );
@@ -41,6 +36,9 @@ public class ImageRestServiceImpl implements ImageRestService
 	@Autowired
 	private ImageService imageService;
 
+	@Autowired
+	private ImageStoreService imageStoreService;
+
 	private String fallbackImageKey;
 
 	public void setFallbackImageKey( String fallbackImageKey ) {
@@ -52,12 +50,13 @@ public class ImageRestServiceImpl implements ImageRestService
 		ViewImageResponse response = new ViewImageResponse( request );
 
 		Image image = getImage( request );
+		LOG.trace( "Rendering image {}", image );
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
 		}
 		else {
-			StreamImageSource imageSource = imageService.generateModification(
+			ImageSource imageSource = imageService.generateModification(
 					image,
 					request.getImageModificationDto(),
 					imageVariant( image, request.getImageVariantDto() )
@@ -68,6 +67,16 @@ public class ImageRestServiceImpl implements ImageRestService
 			}
 			else {
 				response.setImageSource( imageSource );
+			}
+
+			if ( image.isTemporaryImage() ) {
+				LOG.trace( "Deleting temporary image: {}", image );
+				try {
+					imageStoreService.removeOriginal( image );
+				}
+				catch ( Exception e ) {
+					LOG.warn( "Exception deleting temporary image {}", image, e );
+				}
 			}
 		}
 
@@ -86,13 +95,13 @@ public class ImageRestServiceImpl implements ImageRestService
 	public PregenerateResolutionsResponse pregenerateResolutions( String imageId ) {
 		PregenerateResolutionsResponse response = new PregenerateResolutionsResponse();
 
-		final Image image = imageService.getByExternalId( imageId );
+		Image image = imageService.getByExternalId( imageId );
 
 		if ( image == null ) {
 			response.setImageDoesNotExist( true );
 		}
 		else {
-			final List<ImageResolution> pregenerateList = new LinkedList<>();
+			List<ImageResolution> pregenerateList = new LinkedList<>();
 			Collection<ImageResolution> resolutions = imageService.getAllResolutions();
 
 			for ( ImageResolution resolution : resolutions ) {
@@ -107,7 +116,7 @@ public class ImageRestServiceImpl implements ImageRestService
 				// TODO: offload this as set of tasks to generation service (with a threadpool)
 				Runnable runnable = () -> {
 					LOG.debug( "Start pregeneration of {} resolutions for {}", pregenerateList.size(), image );
-					for ( final ImageResolution resolution : pregenerateList ) {
+					for ( ImageResolution resolution : pregenerateList ) {
 						List<ImageType> allowedTypes = Collections.singletonList( ImageType.JPEG );
 						for ( ImageType outputType : allowedTypes ) {
 							ImageVariant variant = new ImageVariant();
@@ -256,9 +265,8 @@ public class ImageRestServiceImpl implements ImageRestService
 			response.setOutputTypeNotAllowed( true );
 			return response;
 		}
-		StreamImageSource imageSource = imageService.getVariantImage(
-				image, context, imageResolution, variant
-		);
+
+		ImageSource imageSource = imageService.getVariantImage( image, context, imageResolution, variant );
 
 		if ( imageSource == null ) {
 			response.setFailed( true );
@@ -353,7 +361,13 @@ public class ImageRestServiceImpl implements ImageRestService
 			}
 			else {
 				List<ImageModification> modifications = extractImageModifications( request, image, context, response );
-				imageService.saveImageModifications( modifications, image );
+
+				try {
+					imageService.saveImageModifications( modifications, image );
+				}
+				catch ( CropOutsideOfImageBoundsException e ) {
+					response.setCropOutsideOfImageBounds( true );
+				}
 			}
 		}
 
@@ -374,13 +388,6 @@ public class ImageRestServiceImpl implements ImageRestService
 				modifications.add( toModification( modificationDto, image, context, response ) );
 
 			}
-		}
-
-		try {
-			imageService.saveImageModifications( modifications, image );
-		}
-		catch ( CropOutsideOfImageBoundsException e ) {
-			response.setCropOutsideOfImageBounds( true );
 		}
 
 		return modifications;

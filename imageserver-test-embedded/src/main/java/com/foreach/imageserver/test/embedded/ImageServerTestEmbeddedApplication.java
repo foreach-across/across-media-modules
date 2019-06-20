@@ -2,8 +2,10 @@ package com.foreach.imageserver.test.embedded;
 
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.modules.adminweb.AdminWebModule;
+import com.foreach.across.modules.debugweb.DebugWebModule;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.logging.LoggingModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import com.foreach.imageserver.admin.ImageServerAdminWebModule;
@@ -19,7 +21,9 @@ import java.util.Collections;
 				AdminWebModule.NAME,
 				AcrossHibernateJpaModule.NAME,
 				PropertiesModule.NAME,
-				FileManagerModule.NAME
+				FileManagerModule.NAME,
+				DebugWebModule.NAME,
+				LoggingModule.NAME
 		}
 )
 public class ImageServerTestEmbeddedApplication

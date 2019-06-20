@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/across-imageserver-modules.iml" filepath="$PROJECT_DIR$/.idea/across-imageserver-modules.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bamboo-specs/bamboo-specs.iml" filepath="$PROJECT_DIR$/bamboo-specs/bamboo-specs.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-admin/imageserver-admin.iml" filepath="$PROJECT_DIR$/imageserver-admin/imageserver-admin.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-client/imageserver-client.iml" filepath="$PROJECT_DIR$/imageserver-client/imageserver-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-core/imageserver-core.iml" filepath="$PROJECT_DIR$/imageserver-core/imageserver-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imageserver-platform.iml" filepath="$PROJECT_DIR$/imageserver-platform.iml" />
       <module fileurl="file://$PROJECT_DIR$/imageserver-test-embedded/imageserver-test-embedded.iml" filepath="$PROJECT_DIR$/imageserver-test-embedded/imageserver-test-embedded.iml" />
-      <module fileurl="file://$PROJECT_DIR$/imageserver-test-standalone/imageserver-test-standalone.iml" filepath="$PROJECT_DIR$/imageserver-test-standalone/imageserver-test-standalone.iml" />
     </modules>
   </component>
 </project>

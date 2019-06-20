@@ -1,7 +1,9 @@
 package com.foreach.imageserver.core.rest.response;
 
 import com.foreach.imageserver.core.rest.request.ViewImageRequest;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
+import com.foreach.imageserver.core.transformers.ImageSource;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
 /**
@@ -11,7 +13,9 @@ public class ViewImageResponse extends ImageResponse
 {
 	private boolean resolutionDoesNotExist, failed;
 
-	private StreamImageSource imageSource;
+	@Getter
+	@Setter
+	private ImageSource imageSource;
 
 	public ViewImageResponse() {
 	}
@@ -34,13 +38,5 @@ public class ViewImageResponse extends ImageResponse
 
 	public void setFailed( boolean failed ) {
 		this.failed = failed;
-	}
-
-	public StreamImageSource getImageSource() {
-		return imageSource;
-	}
-
-	public void setImageSource( StreamImageSource imageSource ) {
-		this.imageSource = imageSource;
 	}
 }

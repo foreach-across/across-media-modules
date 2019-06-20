@@ -416,4 +416,20 @@
 		              tableName="${table.image_modification}"/>
 	</changeSet>
 
+	<changeSet id="201904171659" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.image}" columnName="scene_count"/>
+			</not>
+		</preConditions>
+
+		<comment>Add scene_count column to image records</comment>
+
+		<addColumn tableName="${table.image}">
+			<column name="scene_count" type="java.sql.Types.INTEGER" defaultValueNumeric="1">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

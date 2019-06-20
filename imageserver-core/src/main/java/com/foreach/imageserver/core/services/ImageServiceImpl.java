@@ -8,20 +8,25 @@ import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBounds
 import com.foreach.imageserver.core.services.exceptions.ImageCouldNotBeRetrievedException;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.core.transformers.ImageAttributes;
-import com.foreach.imageserver.core.transformers.InMemoryImageSource;
-import com.foreach.imageserver.core.transformers.StreamImageSource;
-import com.foreach.imageserver.dto.CropDto;
-import com.foreach.imageserver.dto.DimensionsDto;
-import com.foreach.imageserver.dto.ImageModificationDto;
-import com.foreach.imageserver.dto.ImageResolutionDto;
+import com.foreach.imageserver.core.transformers.ImageSource;
+import com.foreach.imageserver.core.transformers.SimpleImageSource;
+import com.foreach.imageserver.dto.*;
 import com.foreach.imageserver.logging.LogHelper;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,6 +59,29 @@ public class ImageServiceImpl implements ImageService
 
 	// Used concurrently from multiple threads.
 	private Map<VariantImageRequest, FutureVariantImage> futureVariantImages = new ConcurrentHashMap<>();
+
+	private static Set<Integer> splitIntoPageNumbers( String pages ) {
+		Set<Integer> result = new HashSet<>();
+
+		if ( pages != null ) {
+			String[] parts = pages.split( "," );
+			for ( String p : parts ) {
+				if ( p.chars().allMatch( Character::isDigit ) ) {
+					result.add( Integer.parseInt( p ) );
+				}
+				else if ( p.contains( "-" ) ) {
+					String[] parts2 = p.split( "-" );
+					if ( parts2[0].chars().allMatch( Character::isDigit ) && parts2[1].chars().allMatch( Character::isDigit ) ) {
+						for ( int i = Integer.parseInt( parts2[0] ); i < Integer.parseInt( parts2[1] ); i++ ) {
+							result.add( i );
+						}
+					}
+				}
+			}
+		}
+
+		return result;
+	}
 
 	@Override
 	public Image getById( long imageId ) {
@@ -111,7 +139,7 @@ public class ImageServiceImpl implements ImageService
 			imageModificationManager.deleteModifications( image.getId() );
 
 			// Delete variants
-			imageStoreService.removeVariants( image.getId() );
+			imageStoreService.removeVariants( image );
 
 			// Delete image record
 			LOG.debug( "Deleting image record for image {}", image );
@@ -136,15 +164,19 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
+	@SneakyThrows
 	public Image loadImageData( @NonNull byte[] imageBytes ) {
-		ImageAttributes imageAttributes = imageTransformService.getAttributes( new ByteArrayInputStream( imageBytes ) );
+		try (InputStream inputStream = new ByteArrayInputStream( imageBytes )) {
+			ImageAttributes imageAttributes = imageTransformService.getAttributes( inputStream );
 
-		Image image = new Image();
-		image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
-		image.setDimensions( imageAttributes.getDimensions() );
-		image.setImageType( imageAttributes.getType() );
-		image.setFileSize( imageBytes.length );
-		return image;
+			Image image = new Image();
+			image.setImageProfileId( imageProfileService.getDefaultProfile().getId() );
+			image.setDimensions( imageAttributes.getDimensions() );
+			image.setImageType( imageAttributes.getType() );
+			image.setFileSize( imageBytes.length );
+			image.setSceneCount( imageAttributes.getSceneCount() );
+			return image;
+		}
 	}
 
 	@Override
@@ -154,31 +186,39 @@ public class ImageServiceImpl implements ImageService
 			          LogHelper.flatten( modification ) );
 		}
 
-		saveImageModifications( Arrays.asList( modification ), image );
+		saveImageModifications( Collections.singletonList( modification ), image );
 	}
 
-	/**
-	 * DO NOT MAKE THIS METHOD TRANSACTIONAL! If we are updating an existing modification, we need to make sure that
-	 * the changes are committed to the database *before* we clean up the filesystem. Otherwise a different instance
-	 * might recreate variants on disk using the old values.
-	 * <p>
-	 * TODO: if needed, storeImageModficication could perhaps be made transactional
-	 */
 	@Override
+	@Transactional
 	public void saveImageModifications( List<ImageModification> modifications, Image image ) {
 		if ( modifications == null ) {
 			LOG.warn( "Null parameters not allowed - ImageServiceImpl#saveImageModifications: modifications={}",
 			          LogHelper.flatten( modifications ) );
+			return;
 		}
-		if ( modifications.size() == 0 ) {
+
+		if ( modifications.isEmpty() ) {
 			LOG.warn(
 					"An empty list of modifications was provided - ImageServiceImpl#saveImageModifications: modifications={}",
 					LogHelper.flatten( modifications ) );
+			return;
 		}
 
 		storeImageModification( modifications, image );
 
-		imageStoreService.removeVariants( image.getId() );
+		if ( TransactionSynchronizationManager.isSynchronizationActive() ) {
+			TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronizationAdapter()
+			{
+				@Override
+				public void afterCommit() {
+					new Thread( () -> imageStoreService.removeVariants( image ) ).start();
+				}
+			} );
+		}
+		else {
+			imageStoreService.removeVariants( image );
+		}
 	}
 
 	private void storeImageModification( List<ImageModification> modifications, Image image ) {
@@ -207,17 +247,17 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
-	public StreamImageSource getVariantImage( Image image,
-	                                          ImageContext context,
-	                                          ImageResolution imageResolution,
-	                                          ImageVariant imageVariant ) {
+	public ImageSource getVariantImage( Image image,
+	                                    ImageContext context,
+	                                    ImageResolution imageResolution,
+	                                    ImageVariant imageVariant ) {
 		if ( image == null || context == null || imageResolution == null || imageVariant == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageServiceImpl#getVariantImage: image={}, context={}, imageResolution={}, imageVariant={}",
 					LogHelper.flatten( image, context, imageResolution, imageVariant ) );
 		}
 
-		StreamImageSource imageSource =
+		ImageSource imageSource =
 				imageStoreService.getVariantImage( image, context, imageResolution, imageVariant );
 		if ( imageSource == null ) {
 			ImageModificationDto modification = cropGenerator.buildModificationDto( image, context, imageResolution );
@@ -232,8 +272,7 @@ public class ImageServiceImpl implements ImageService
 			 * ImageModification was not altered behind our back. Should this be the case we delete the variant from
 			 * disk; it will then be recreated during the next request.
 			 */
-			ImageModificationDto reviewModification =
-					cropGenerator.buildModificationDto( image, context, imageResolution );
+			ImageModificationDto reviewModification = cropGenerator.buildModificationDto( image, context, imageResolution );
 			if ( !modification.equals( reviewModification ) ) {
 				imageStoreService.removeVariantImage( image, context, imageResolution, imageVariant );
 			}
@@ -243,9 +282,9 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
-	public StreamImageSource generateModification( Image image,
-	                                               ImageModificationDto modificationDto,
-	                                               ImageVariant imageVariant ) {
+	public ImageSource generateModification( Image image,
+	                                         ImageModificationDto modificationDto,
+	                                         ImageVariant imageVariant ) {
 		cropGeneratorUtil.normalizeModificationDto( image, modificationDto );
 		return generateVariantImage( image, null, modificationDto, null, imageVariant, false );
 	}
@@ -254,12 +293,12 @@ public class ImageServiceImpl implements ImageService
 	 * We allow just one thread to generate a specific variant. Other threads that require this variant simultaneously
 	 * will block and re-use the same result.
 	 */
-	private StreamImageSource generateVariantImage( Image image,
-	                                                ImageContext context,
-	                                                ImageModificationDto imageModification,
-	                                                ImageResolution requestedResolution,
-	                                                ImageVariant imageVariant,
-	                                                boolean storeImage ) {
+	private ImageSource generateVariantImage( Image image,
+	                                          ImageContext context,
+	                                          ImageModificationDto imageModification,
+	                                          ImageResolution requestedResolution,
+	                                          ImageVariant imageVariant,
+	                                          boolean storeImage ) {
 		if ( image == null || context == null || imageModification == null || requestedResolution == null || imageVariant == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageServiceImpl#generateVariantImage: image={}, context={}, imageModification={}, requestedResolution={}, imageVariant={}, storeImage={}",
@@ -294,7 +333,7 @@ public class ImageServiceImpl implements ImageService
 		}
 		else {
 			try {
-				InMemoryImageSource variantImageSource =
+				ImageSource variantImageSource =
 						generateVariantImageInCurrentThread( image, context, imageModification, requestedResolution,
 						                                     imageVariant,
 						                                     storeImage );
@@ -302,7 +341,7 @@ public class ImageServiceImpl implements ImageService
 					futureVariantImage.setResult( variantImageSource );
 					futureVariantImages.remove( request );
 				}
-				return variantImageSource.stream();
+				return variantImageSource;
 			}
 			catch ( RuntimeException e ) {
 				LOG.error(
@@ -346,12 +385,12 @@ public class ImageServiceImpl implements ImageService
 		}
 	}
 
-	private InMemoryImageSource generateVariantImageInCurrentThread( Image image,
-	                                                                 ImageContext context,
-	                                                                 ImageModificationDto modificationDto,
-	                                                                 ImageResolution requestedResolution,
-	                                                                 ImageVariant imageVariant,
-	                                                                 boolean storeImage ) {
+	private ImageSource generateVariantImageInCurrentThread( Image image,
+	                                                         ImageContext context,
+	                                                         ImageModificationDto modificationDto,
+	                                                         ImageResolution requestedResolution,
+	                                                         ImageVariant imageVariant,
+	                                                         boolean storeImage ) {
 		if ( image == null || context == null || modificationDto == null || requestedResolution == null || imageVariant == null ) {
 			LOG.warn(
 					"Null parameters not allowed - ImageServiceImpl#generateVariantImageInCurrentThread: image={}, context={}, modificationDto={}, requestedResolution={}, imageVariant={}, storeImage={}",
@@ -367,11 +406,7 @@ public class ImageServiceImpl implements ImageService
 		imageResolution.setWidth( modificationDto.getResolution().getWidth() );
 		imageResolution.setHeight( modificationDto.getResolution().getHeight() );
 
-		ImageResolutionDto outputDimensions = modificationDto.getResolution();
-		CropDto crop = modificationDto.getCrop();
-		DimensionsDto density = modificationDto.getDensity();
-
-		StreamImageSource originalImageSource = imageStoreService.getOriginalImage( image );
+		ImageSource originalImageSource = imageStoreService.getOriginalImage( image );
 		if ( originalImageSource == null ) {
 			String message = String.format(
 					"The original image is not available on disk. image=%s, context=%s, modificationDto=%s, requestedResolution=%s, imageVariant=%s,",
@@ -381,11 +416,15 @@ public class ImageServiceImpl implements ImageService
 			throw new ImageCouldNotBeRetrievedException( message );
 		}
 
-		InMemoryImageSource variantImageSource =
-				imageTransformService.modify( originalImageSource, outputDimensions.getWidth(),
-				                              outputDimensions.getHeight(), crop.getX(), crop.getY(), crop.getWidth(),
-				                              crop.getHeight(), density.getWidth(), density.getHeight(),
-				                              imageVariant.getOutputType(), imageVariant.getBoundaries() );
+		ImageTransformDto transformDto = modificationDto.asTransformDto();
+		if ( imageVariant.getOutputType() != null ) {
+			transformDto.setOutputType( ImageTypeDto.forExtension( imageVariant.getOutputType().getExtension() ) );
+		}
+
+		ImageSource variantImageSource = imageTransformService.transform(
+				originalImageSource, ImageAttributes.from( image ), Collections.singleton( transformDto )
+		);
+
 		if ( variantImageSource == null ) {
 			String message = String.format(
 					"Failed to retrieve in-memory variant image source. image=%s, context=%s, modificationDto=%s, requestedResolution=%s, imageVariant=%s,",
@@ -398,8 +437,7 @@ public class ImageServiceImpl implements ImageService
 
 		// TODO We might opt to catch exceptions here and not fail on the write. We can return the variant in memory regardless.
 		if ( storeImage ) {
-			imageStoreService.storeVariantImage( image, context, requestedResolution, imageVariant,
-			                                     variantImageSource.byteStream() );
+			imageStoreService.storeVariantImage( image, context, requestedResolution, imageVariant, variantImageSource );
 		}
 
 		return variantImageSource;
@@ -443,6 +481,86 @@ public class ImageServiceImpl implements ImageService
 		}
 
 		imageResolutionManager.saveResolution( resolution );
+	}
+
+	@Override
+	public ImageConvertResultDto convertImageToTargets( ImageConvertDto imageConvertDto ) {
+		ImageConvertResultDto.ImageConvertResultDtoBuilder resultBuilder = ImageConvertResultDto.builder();
+
+		Collection<String> keys = new HashSet<>();
+		Set<Integer> pages = splitIntoPageNumbers( imageConvertDto.getPages() );
+		if ( pages.isEmpty() ) {
+			pages.add( 0 );
+		}
+		resultBuilder.pages( pages );
+		resultBuilder.keys( keys );
+
+		Map<String, ImageDto> transforms = new HashMap<>();
+		resultBuilder.transforms( transforms );
+
+		try {
+			ImageConvertSource source = buildImageConvertSource( imageConvertDto );
+
+			for ( Map.Entry<String, List<ImageTransformDto>> entry : imageConvertDto.getTransformations().entrySet() ) {
+				for ( Integer page : pages ) {
+					String key = entry.getKey().replace( "*", page.toString() );
+					keys.add( key );
+
+					ImageSource resultImage = imageTransformService.transform( source.getImageSource(), source.getAttributes(), entry.getValue() );
+					try (InputStream is = resultImage.getImageStream()) {
+						transforms.put( key, ImageDto.builder()
+						                             .image( IOUtils.toByteArray( is ) )
+						                             .format( DtoUtil.toDto( resultImage.getImageType() ) )
+						                             .build() );
+					}
+				}
+			}
+		}
+		catch ( Exception e ) {
+			throw new RuntimeException( "An error occurred while converting the image", e );
+		}
+
+		resultBuilder.total( keys.size() );
+
+		return resultBuilder.build();
+	}
+
+	private ImageConvertSource buildImageConvertSource( ImageConvertDto convertDto ) throws IOException {
+		String imageId = convertDto.getImageId();
+		byte[] imageData = convertDto.getImage();
+
+		boolean uploadedImage = imageData != null && imageData.length > 0;
+		boolean registeredImage = StringUtils.isNotEmpty( imageId );
+
+		if ( !uploadedImage && !registeredImage ) {
+			throw new IllegalArgumentException(
+					"Image source for conversion must be specified either as byte array (image) or as id for a registered image (imageId)" );
+		}
+		if ( uploadedImage && registeredImage ) {
+			throw new IllegalArgumentException( "Both image (byte array) and imageId have been specified as source" );
+		}
+
+		if ( uploadedImage ) {
+			ImageAttributes imageAttributes;
+			try (InputStream is = new ByteArrayInputStream( imageData )) {
+				imageAttributes = imageTransformService.getAttributes( is );
+			}
+			return new ImageConvertSource( new SimpleImageSource( imageAttributes.getType(), imageData ), imageAttributes );
+
+		}
+		else {
+			Image image = getByExternalId( convertDto.getImageId() );
+			ImageSource imageSource = imageStoreService.getOriginalImage( image );
+			return new ImageConvertSource( imageSource, ImageAttributes.from( image ) );
+		}
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	private static class ImageConvertSource
+	{
+		private final ImageSource imageSource;
+		private final ImageAttributes attributes;
 	}
 
 	private static class VariantImageRequest
@@ -503,11 +621,11 @@ public class ImageServiceImpl implements ImageService
 
 	private static class FutureVariantImage
 	{
-		private InMemoryImageSource result;
+		private ImageSource result;
 		private RuntimeException exception;
 		private Error error;
 
-		public synchronized StreamImageSource get() {
+		public synchronized ImageSource get() {
 			try {
 				while ( result == null && exception == null && error == null ) {
 					wait();
@@ -521,7 +639,7 @@ public class ImageServiceImpl implements ImageService
 					throw error;
 				}
 
-				return result.stream();
+				return result;
 			}
 			catch ( InterruptedException e ) {
 				Thread.currentThread().interrupt();
@@ -529,7 +647,7 @@ public class ImageServiceImpl implements ImageService
 			}
 		}
 
-		public synchronized void setResult( InMemoryImageSource result ) {
+		public synchronized void setResult( ImageSource result ) {
 			this.result = result;
 			notifyAll();
 		}

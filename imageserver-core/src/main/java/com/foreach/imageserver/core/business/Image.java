@@ -53,6 +53,12 @@ public class Image extends SettableIdBasedEntity<Image>
 	})
 	private Dimensions dimensions;
 
+	/**
+	 * Number of scenes in the image. If supported by the image type (eg PDF, animated gif).
+	 */
+	@Column(name = "scene_count")
+	private int sceneCount;
+
 	@Column(name = "file_size")
 	private long fileSize;
 
