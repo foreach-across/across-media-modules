@@ -3,7 +3,6 @@ package com.foreach.across.modules.filemanager.extensions;
 import com.foreach.across.core.annotations.ModuleConfiguration;
 import com.foreach.across.modules.filemanager.context.FileResourcePatternResolver;
 import com.foreach.across.modules.filemanager.context.FileResourceProtocolResolver;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -42,7 +41,7 @@ public class FileResourceResolverRegistrar implements BeanFactoryPostProcessor, 
 	}
 
 	@Override
-	public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) throws BeansException {
+	public void postProcessBeanFactory( ConfigurableListableBeanFactory beanFactory ) {
 		FileResourceProtocolResolver protocolResolver = new FileResourceProtocolResolver( beanFactory );
 
 		if ( resourceLoader instanceof DefaultResourceLoader ) {
@@ -62,6 +61,7 @@ public class FileResourceResolverRegistrar implements BeanFactoryPostProcessor, 
 	 * @param protocolResolver to use
 	 * @param resourceLoader   to attempt to register the pattern resolver
 	 */
+	@SuppressWarnings("squid:S3011")
 	public static void registerResourcePatternResolver( FileResourceProtocolResolver protocolResolver, ResourceLoader resourceLoader ) {
 		if ( resourceLoader instanceof AbstractApplicationContext && resourcePatternResolverField != null ) {
 			try {

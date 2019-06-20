@@ -234,8 +234,5 @@ public abstract class AbstractFileRepository implements FileRepository, FileMana
 	 * @param descriptor to the folder resource
 	 * @return folder resource to use
 	 */
-	protected FolderResource buildFolderResource( FolderDescriptor descriptor ) {
-		//todo: abstract
-		return null;
-	}
+	protected abstract FolderResource buildFolderResource( FolderDescriptor descriptor );
 }
