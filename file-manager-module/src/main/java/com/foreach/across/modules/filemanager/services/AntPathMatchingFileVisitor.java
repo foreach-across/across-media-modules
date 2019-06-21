@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  */
 class AntPathMatchingFileVisitor extends SimpleFileVisitor<Path>
 {
-	private final static Pattern INVALID_PATTERN = Pattern.compile( "/?\\.{1,2}(/|$)" );
+	private static final Pattern INVALID_PATTERN = Pattern.compile( "/?\\.{1,2}(/|$)" );
 
 	private final AntPathMatcher pathMatcher;
 	private final String pattern;

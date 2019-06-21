@@ -30,17 +30,17 @@ public class TestFileReferenceControlViewElementBuilder extends AbstractViewElem
 	private EntityPropertyDescriptor singleFileDescriptor;
 	private Object entity;
 
-	private final static String UUID = "some-uuid";
-	private final static String PROPERTY_NAME = "my-property";
-	private final static String FILE_NAME = "my-file.txt";
-	private final static String TEMPLATE = "<script type='text/html' data-role='selected-item-template'>" +
+	private static final String UUID = "some-uuid";
+	private static final String PROPERTY_NAME = "my-property";
+	private static final String FILE_NAME = "my-file.txt";
+	private static final String TEMPLATE = "<script type='text/html' data-role='selected-item-template'>" +
 			"<div class='file-reference-control-item'>replaceByName<a role='button' href='#' class='remove-file btn btn-link'>" +
 			"<span aria-hidden='true' class='glyphicon glyphicon-remove'></span></a></div></script>";
-	private final static String PRE_SELECTED = "<div class='js-file-reference-control'>" + TEMPLATE +
+	private static final String PRE_SELECTED = "<div class='js-file-reference-control'>" + TEMPLATE +
 			"<input type='file' name='" + PROPERTY_NAME + "' id='" + PROPERTY_NAME + "' class='js-file-control hidden' />" +
 			"<div class='file-reference-control-item'><a href='@fileReference:/" + UUID + "'>" + FILE_NAME + "</a><a role='button' href='#' class='remove-file btn btn-link'>" +
 			"<span aria-hidden='true' class='glyphicon glyphicon-remove'></span></a></div>" + "</div>";
-	private final static String NOT_SELECTED = "<div class='js-file-reference-control'>" + TEMPLATE +
+	private static final String NOT_SELECTED = "<div class='js-file-reference-control'>" + TEMPLATE +
 			"<input type='file' name='" + PROPERTY_NAME + "' id='" + PROPERTY_NAME + "' class='js-file-control' /></div>";
 
 	@Before
