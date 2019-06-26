@@ -5,6 +5,7 @@ import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.template.ClearTemplate;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,7 +20,7 @@ public class AdminWebAppController
 
 	public AdminWebAppController( String imageServerUrl, String accessToken ) {
 		this.accessToken = accessToken;
-		this.imageServerUrl = imageServerUrl;
+		this.imageServerUrl = StringUtils.removeEnd( imageServerUrl, "/" );
 	}
 
 	@EventListener
