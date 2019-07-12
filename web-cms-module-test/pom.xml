@@ -21,7 +21,7 @@
 	<parent>
 		<artifactId>web-cms-module-project</artifactId>
 		<groupId>com.foreach.across.modules</groupId>
-		<version>0.0.7-SNAPSHOT</version>
+		<version>0.0.7.RELEASE</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>web-cms-module</artifactId>
-			<version>0.0.7-SNAPSHOT</version>
+			<version>0.0.7.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
