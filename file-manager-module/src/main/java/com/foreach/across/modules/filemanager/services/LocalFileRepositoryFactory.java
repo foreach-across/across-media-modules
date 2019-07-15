@@ -68,9 +68,10 @@ public class LocalFileRepositoryFactory implements FileRepositoryFactory
 			}
 		}
 
-		LocalFileRepository repository = new LocalFileRepository( repositoryId, directory.getAbsolutePath() );
-		repository.setPathGenerator( pathGenerator );
-
-		return repository;
+		return LocalFileRepository.builder()
+		                          .repositoryId( repositoryId )
+		                          .rootFolder( directory.getAbsolutePath() )
+		                          .pathGenerator( pathGenerator )
+		                          .build();
 	}
 }

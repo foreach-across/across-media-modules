@@ -8,7 +8,7 @@ import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,12 +28,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 @ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, AcrossWebModule.NAME })
 public class FileReferenceController
 {
+	@SuppressWarnings("squid:S1075")
 	public static final String BASE_PATH = "/api/fmm/reference";
+
 	private final FileReferenceRepository fileReferenceRepository;
 	private final FileManager fileManager;
 
 	@GetMapping(BASE_PATH + "/{uuid}")
-	public ResponseEntity<InputStreamResource> downloadFile( @PathVariable("uuid") String uuid ) {
+	@SuppressWarnings("unused")
+	public ResponseEntity<Resource> downloadFile( @PathVariable("uuid") String uuid ) {
 		FileReference fileReference = fileReferenceRepository.findOne( QFileReference.fileReference.uuid.eq( uuid ) );
 
 		HttpHeaders headers = new HttpHeaders();
@@ -41,7 +44,7 @@ public class FileReferenceController
 		headers.set( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileReference.getName() );
 		headers.setContentLength( fileReference.getFileSize() );
 
-		return new ResponseEntity<>( new InputStreamResource( fileManager.getInputStream( fileReference.getFileDescriptor() ) ),
+		return new ResponseEntity<>( fileManager.getFileResource( fileReference.getFileDescriptor() ),
 		                             headers,
 		                             HttpStatus.OK );
 	}

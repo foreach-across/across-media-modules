@@ -8,7 +8,7 @@ import com.foreach.across.modules.filemanager.business.reference.properties.File
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.hibernate.aop.EntityInterceptorAdapter;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +45,7 @@ public class ITFileReferenceService extends AbstractFileManagerAndHibernateIT
 	private FileManager fileManager;
 
 	@Test
-	public void deleteIncludingPhysicalFile() throws IOException {
+	void deleteIncludingPhysicalFile() throws IOException {
 		FileReference fileReference = createFileReference( "physicalDeleted" );
 		checkIfObjectsExist( fileReference );
 		fileReferenceService.delete( fileReference, true );
@@ -55,7 +55,7 @@ public class ITFileReferenceService extends AbstractFileManagerAndHibernateIT
 	}
 
 	@Test
-	public void deleteExcludingPhysicalFile() throws IOException {
+	void deleteExcludingPhysicalFile() throws IOException {
 		FileReference fileReference = createFileReference( "physicalNotDeleted" );
 		checkIfObjectsExist( fileReference );
 		fileReferenceService.delete( fileReference, false );
@@ -65,7 +65,7 @@ public class ITFileReferenceService extends AbstractFileManagerAndHibernateIT
 	}
 
 	@Test
-	public void deleteExceptionDeletingReference() throws IOException {
+	void deleteExceptionDeletingReference() throws IOException {
 		FileReference fileReference = createFileReference( EXCEPTION_DELETING_REFERENCE );
 		checkIfObjectsExist( fileReference );
 		try {

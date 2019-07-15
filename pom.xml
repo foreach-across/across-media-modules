@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>standard-module-bom</artifactId>
-		<version>3.1.1.RELEASE</version>
+		<version>3.2.0.RELEASE</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -29,7 +29,7 @@
 	<groupId>com.foreach.across.modules</groupId>
 	<artifactId>file-manager-module-project</artifactId>
 	<packaging>pom</packaging>
-	<version>1.3.0.RELEASE</version>
+	<version>1.4.0.RELEASE</version>
 
 	<repositories>
 		<repository>
@@ -55,13 +55,11 @@
 	<developers>
 		<developer>
 			<name>Arne Vandamme</name>
-			<email>arne at foreach.be</email>
 			<organization>Foreach</organization>
 			<organizationUrl>http://www.foreach.be</organizationUrl>
 		</developer>
 		<developer>
 			<name>Sander Van Loock</name>
-			<email>svl at foreach.be</email>
 			<organization>Foreach</organization>
 			<organizationUrl>http://www.foreach.be</organizationUrl>
 		</developer>
@@ -70,37 +68,12 @@
 	<modules>
 		<module>file-manager-module</module>
 		<module>file-manager-module-test</module>
+		<module>file-manager-module-no-entity-module</module>
+		<module>file-manager-module-no-hibernate-module</module>
 	</modules>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<source>1.8</source>
-					<target>1.8</target>
-					<annotationProcessors>
-						<annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor
-						</annotationProcessor>
-						<annotationProcessor>com.querydsl.apt.jpa.JPAAnnotationProcessor</annotationProcessor>
-					</annotationProcessors>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>com.querydsl</groupId>
-						<artifactId>querydsl-apt</artifactId>
-						<version>${querydsl.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.hibernate.javax.persistence</groupId>
-						<artifactId>hibernate-jpa-2.1-api</artifactId>
-						<version>1.0.0.Final</version>
-					</dependency>
-				</dependencies>
-			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.5.5</version>
@@ -133,6 +106,11 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-aws-core</artifactId>
+				<version>2.1.0.RELEASE</version>
+			</dependency>
+			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>across-hibernate-module</artifactId>
 				<version>3.0.0.RELEASE</version>
@@ -145,12 +123,27 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>entity-module</artifactId>
-				<version>3.2.0.RELEASE</version>
+				<version>3.3.0.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>bootstrap-ui-module</artifactId>
 				<version>2.1.1.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.across.modules</groupId>
+				<artifactId>admin-web-module</artifactId>
+				<version>3.1.1.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>2.27.0</version>
+			</dependency>
+			<dependency>
+				<groupId>cloud.localstack</groupId>
+				<artifactId>localstack-utils</artifactId>
+				<version>0.1.19</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -165,6 +158,31 @@
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-apt</artifactId>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.sbrannen</groupId>
+			<artifactId>spring-test-junit5</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

@@ -19,6 +19,7 @@ import com.foreach.across.modules.filemanager.utils.FileReferenceUtils;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.resource.WebResourceRule;
 import com.foreach.across.modules.web.ui.MutableViewElement;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
@@ -44,13 +45,14 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 {
 	@Override
 	protected void registerWebResources( WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.add( new WebResource( WebResource.JAVASCRIPT_PAGE_END, "file-reference-control",
-		                                          "/static/FileManagerModule/js/file-upload.js",
-		                                          WebResource.VIEWS ) );
+		webResourceRegistry.apply(
+				WebResourceRule.add( WebResource.javascript( "@static:/FileManagerModule/js/file-upload.js" ) )
+				               .withKey( "file-reference-control" )
+				               .toBucket( WebResource.JAVASCRIPT_PAGE_END )
+		);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
 		NodeViewElementBuilder wrapper = div();
 

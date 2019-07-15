@@ -1,0 +1,113 @@
+<!--
+  ~ Copyright 2014 the original author or authors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!--/* list all repositories */-->
+<div th:fragment="listAllRepositories(repositories)">
+    <div class="alert alert-warning">If a FileRepositoryFactory is present, repositories might only get registered upon first use.</div>
+    <div class="panel panel-default">
+        <div class="panel-heading">[[${repositories.size()}]] file repositories registered</div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th class="result-number">#</th>
+                        <th>Repository ID</th>
+                        <th class="row-actions"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="repo,repoStat : ${repositories}" th:class="${repoStat.even} ? 'even' : 'odd'">
+                        <td class="result-number">[[${repoStat.count}]]</td>
+                        <td>
+                            <a th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager(repositoryId=${repo.repositoryId})}">[[${repo.repositoryId}]]</a>
+                        </td>
+                        <td class="row-actions text-center">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/* repository browsing */-->
+<div th:fragment="listResources(repo,folderPath,resources)">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <th:block th:each="path,pathStat : ${folderPath}">
+                <span th:if="${pathStat.first}">
+                    <i class="fa fa-folder-open-o"></i> <a th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager(repositoryId=${repo.repositoryId},folder=${path.descriptor.uri})}">[[${repo.repositoryId}]]</a>
+                </span>
+                <span th:unless="${pathStat.first || pathStat.last}">
+                    > <a th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager(repositoryId=${repo.repositoryId},folder=${path.descriptor.uri})}">[[${path.folderName}]]</a>
+                </span>
+                <span th:if="${pathStat.last && !pathStat.first}">
+                    > [[${path.folderName}]]
+                </span>
+            </th:block>
+            <span class="pull-right">[[${resources.size()}]] resources</span>
+        </div>
+        <div class="panel-body">
+            <div class="" th:if="${resources.empty}">No resources present in this folder.</div>
+            <div class="table-responsive" th:unless="${resources.empty}">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Resource</th>
+                        <th class="text-center">File size</th>
+                        <th class="text-center">Last modified</th>
+                        <th class="row-actions"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="resource,resourceStat : ${resources}" th:class="${resourceStat.even} ? 'even' : 'odd'">
+                        <th:block th:if="${resource.folder}">
+                            <td>
+                                <i class="fa fa-folder"></i>
+                                &nbsp;
+                                <a th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager(repositoryId=${repo.repositoryId},folder=${resource.descriptor.uri})}">[[${resource.name}]]</a>
+                            </td>
+                            <td></td>
+                            <td class="text-center">[[${resource.lastModified}]]</td>
+                            <td class="row-actions text-center">
+                            </td>
+                        </th:block>
+                        <th:block th:unless="${resource.folder}">
+                            <td>
+                                <i th:unless="${resource.folder}" class="fa fa-file-o"></i>
+                                &nbsp;<a title="View file" target="_blank"
+                                         th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager/view(file=${resource.descriptor.uri})}">[[${resource.name}]]</a>
+                            </td>
+                            <td class="text-center">[[${resource.readableFileSize()}]]</td>
+                            <td class="text-center">[[${resource.lastModified}]]</td>
+                            <td class="row-actions text-center">
+                                <a title="Download file" th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager/download(file=${resource.descriptor.uri})}"><i class="fa fa-download"></i></a>
+                            </td>
+                        </th:block>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

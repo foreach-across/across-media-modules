@@ -5,6 +5,7 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
+import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.web.AcrossWebModule;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Component
 @Exposed
-@ConditionalOnAcrossModule(allOf = { EntityModule.NAME, AcrossHibernateJpaModule.NAME })
+@ConditionalOnAcrossModule(allOf = { EntityModule.NAME, AcrossHibernateJpaModule.NAME, PropertiesModule.NAME })
 public class MultipartFileToFileReferenceConverter implements Converter<MultipartFile, FileReference>
 {
 	private final FileReferenceService fileReferenceService;

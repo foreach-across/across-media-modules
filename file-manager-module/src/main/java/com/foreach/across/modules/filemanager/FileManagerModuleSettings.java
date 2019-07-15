@@ -16,9 +16,15 @@
 
 package com.foreach.across.modules.filemanager;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("fileManagerModule")
+@Getter
+@Setter
+@EqualsAndHashCode
 public class FileManagerModuleSettings
 {
 	public static final String LOCAL_REPOSITORIES_ROOT = "fileManagerModule.localRepositoriesRoot";
@@ -34,19 +40,24 @@ public class FileManagerModuleSettings
 	 */
 	private String tempFolder = System.getProperty( "java.io.tmpdir" );
 
-	public String getLocalRepositoriesRoot() {
-		return localRepositoriesRoot;
-	}
+	/**
+	 * Expiration task configuration properties.
+	 */
+	private ExpirationProperties expiration = new ExpirationProperties();
 
-	public void setLocalRepositoriesRoot( String localRepositoriesRoot ) {
-		this.localRepositoriesRoot = localRepositoriesRoot;
-	}
+	@Getter
+	@Setter
+	@EqualsAndHashCode
+	public static class ExpirationProperties
+	{
+		/**
+		 * Should the expiration task be enabled (automatic expiry of tracked items in AbstractExpiringFileRepository implementations found.
+		 */
+		private boolean enabled;
 
-	public String getTempFolder() {
-		return tempFolder;
-	}
-
-	public void setTempFolder( String tempFolder ) {
-		this.tempFolder = tempFolder;
+		/**
+		 * Number of seconds delay between expiration task executions.
+		 */
+		private int intervalSeconds = 300;
 	}
 }
