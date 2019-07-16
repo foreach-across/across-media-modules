@@ -1,6 +1,7 @@
 package com.foreach.bamboo.imageserver;
 
 import com.atlassian.bamboo.specs.api.builders.BambooKey;
+import com.atlassian.bamboo.specs.api.builders.Variable;
 import com.atlassian.bamboo.specs.api.builders.notification.Notification;
 import com.atlassian.bamboo.specs.api.builders.permission.Permissions;
 import com.atlassian.bamboo.specs.api.builders.permission.PlanPermissions;
@@ -49,6 +50,7 @@ public class BambooSpec
 		Project project = new Project().key( new BambooKey( "IMAGESERVERTEST" ) ).name( "Foreach - ImageServer" );
 		return new Plan( project, "ImageServer - Build snapshot", new BambooKey( "IMAGESERVERPLATFORM10" ) )
 				.description( "Build and Test ImageServer" )
+				.variables( new Variable( "deployToSonatype", "false" ) )
 				.pluginConfigurations( new ConcurrentBuilds().useSystemWideDefault( false ), new AllOtherPluginsConfiguration() )
 				.stages( unitTests(), integrationTests(), deploySnapshot() )
 				.linkedRepositories( "Across - ImageServer - develop", "Across - Bamboo Specs" )
