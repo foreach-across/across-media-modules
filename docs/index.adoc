@@ -73,8 +73,9 @@ The following artifacts are available for the different <<components>>:
 
 === 5.0.0-SNAPSHOT
 
-* Upgrade to Across Platform 2.1.1
-
+* FileManagerModule is now used for the file storage, repository ids: `imageserver-originals`, `imageserver-variants` and `imageserver-temp`
+* Support for PDF file format when ghostscript is present - including multi-page pdf
+* Added support for ad hoc transforms using `ImageTransformDto`, allowing for more advanced transformations (eg. colorspace, specific pdf page etc)
 
 === 4.0.0.RELEASE
 
