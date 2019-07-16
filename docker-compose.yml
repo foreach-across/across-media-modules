@@ -15,6 +15,9 @@ services:
       - '.:/usr/src/app:delegated'
       # Reuse the maven repository from the host, we could omit it, but it would fetch at each build
       - '${HOME}/.m2:/root/.m2:delegated'
+      # Share our GPG keys with underlying container
+      - '${HOME}/.gnupg:/root/.gnupg:delegated'
+      - '/var/run/docker.sock:/var/run/docker.sock'
     stdin_open: true
     environment:
       # Specify the timezone - used by date tests
