@@ -16,11 +16,14 @@
 
 package com.foreach.across.modules.filemanager.services;
 
-import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.*;
+import lombok.Setter;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 
 /**
  * A FileRepository implementation that delegates its calls to an underlying implementation.
@@ -29,16 +32,54 @@ import java.io.OutputStream;
  *
  * @see com.foreach.across.modules.filemanager.services.FileManagerImpl
  */
+@SuppressWarnings({ "deprecation", "squid:CallToDeprecatedMethod" })
 public class FileRepositoryDelegate implements FileRepository
 {
+	@Setter
 	private FileRepository actualImplementation;
 
 	public FileRepository getActualImplementation() {
 		return actualImplementation;
 	}
 
-	public void setActualImplementation( FileRepository actualImplementation ) {
-		this.actualImplementation = actualImplementation;
+	@Override
+	public FileResource createFileResource( File originalFile, boolean deleteOriginal ) throws IOException {
+		return actualImplementation.createFileResource( originalFile, deleteOriginal );
+	}
+
+	@Override
+	public FileResource createFileResource( InputStream inputStream ) throws IOException {
+		return actualImplementation.createFileResource( inputStream );
+	}
+
+	@Override
+	public FileResource createFileResource() {
+		return actualImplementation.createFileResource();
+	}
+
+	@Override
+	public FileResource createFileResource( boolean allocateImmediately ) {
+		return actualImplementation.createFileResource( allocateImmediately );
+	}
+
+	@Override
+	public FileResource getFileResource( FileDescriptor descriptor ) {
+		return actualImplementation.getFileResource( descriptor );
+	}
+
+	@Override
+	public FolderResource getRootFolderResource() {
+		return actualImplementation.getRootFolderResource();
+	}
+
+	@Override
+	public FolderResource getFolderResource( FolderDescriptor descriptor ) {
+		return actualImplementation.getFolderResource( descriptor );
+	}
+
+	@Override
+	public FileDescriptor generateFileDescriptor() {
+		return actualImplementation.generateFileDescriptor();
 	}
 
 	@Override
@@ -64,6 +105,11 @@ public class FileRepositoryDelegate implements FileRepository
 	@Override
 	public FileDescriptor save( InputStream inputStream ) {
 		return repository().save( inputStream );
+	}
+
+	@Override
+	public void save( FileDescriptor target, InputStream inputStream, boolean replaceExisting ) {
+		repository().save( target, inputStream, replaceExisting );
 	}
 
 	@Override
@@ -94,6 +140,21 @@ public class FileRepositoryDelegate implements FileRepository
 	@Override
 	public boolean move( FileDescriptor source, FileDescriptor target ) {
 		return repository().move( source, target );
+	}
+
+	@Override
+	public Collection<FileResource> findFiles( String pattern ) {
+		return repository().findFiles( pattern );
+	}
+
+	@Override
+	public <U extends FileRepositoryResource> Collection<U> findResources( String pattern, Class<U> resourceType ) {
+		return repository().findResources( pattern, resourceType );
+	}
+
+	@Override
+	public Collection<FileRepositoryResource> findResources( String pattern ) {
+		return repository().findResources( pattern );
 	}
 
 	private FileRepository repository() {

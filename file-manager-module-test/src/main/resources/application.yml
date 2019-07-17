@@ -13,6 +13,7 @@ spring:
 across:
   development:
     active: true
+
 adminWebModule:
   title: Admin FMM
   login:
@@ -30,7 +31,10 @@ acrossModule:
     resources: ../file-manager-module/src/main/resources
 
 fileManagerModule:
-  localRepositoriesRoot: "../local-data/storage"
+  expiration:
+    enabled: true
+    interval-seconds: 30
+  local-repositories-root: "../local-data/storage"
 
 acrossHibernate:
   properties:

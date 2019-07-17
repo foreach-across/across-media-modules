@@ -1,7 +1,9 @@
 package com.foreach.across.modules.filemanager.business.reference;
 
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
 import com.foreach.across.modules.entity.EntityAttributes;
+import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.registry.properties.*;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
  * @since 1.3.0
  */
 @Component
+@ConditionalOnAcrossModule(EntityModule.NAME)
 public class FileReferencePropertyDescriptorEnhancer implements DefaultEntityPropertyRegistryProvider.PropertiesRegistrar
 {
 	@Override

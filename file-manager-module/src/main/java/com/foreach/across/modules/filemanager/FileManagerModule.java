@@ -45,11 +45,9 @@ public class FileManagerModule extends AcrossModule
 
 	@Override
 	public void prepareForBootstrap( ModuleBootstrapConfig currentModule, AcrossBootstrapConfig contextConfig ) {
-		if ( contextConfig.hasModule( AcrossHibernateJpaModule.NAME ) ) {
-			if ( !contextConfig.hasModule( PropertiesModule.NAME ) ) {
-				throw new AcrossConfigurationException( NAME + " requires " + PropertiesModule.NAME
-						                                        + " to be present when " + AcrossHibernateJpaModule.NAME + " is configured." );
-			}
+		if ( contextConfig.hasModule( AcrossHibernateJpaModule.NAME ) && !contextConfig.hasModule( PropertiesModule.NAME ) ) {
+			throw new AcrossConfigurationException( NAME + " requires " + PropertiesModule.NAME
+					                                        + " to be present when " + AcrossHibernateJpaModule.NAME + " is configured." );
 		}
 	}
 

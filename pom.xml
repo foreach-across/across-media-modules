@@ -68,6 +68,8 @@
 	<modules>
 		<module>file-manager-module</module>
 		<module>file-manager-module-test</module>
+		<module>file-manager-module-no-entity-module</module>
+		<module>file-manager-module-no-hibernate-module</module>
 	</modules>
 
 	<build>
@@ -131,6 +133,11 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-aws-core</artifactId>
+				<version>2.1.0.RELEASE</version>
+			</dependency>
+			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>across-hibernate-module</artifactId>
 				<version>5.0.0-SNAPSHOT</version>
@@ -144,11 +151,27 @@
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>entity-module</artifactId>
 				<version>4.0.0-SNAPSHOT</version>
+				<version>3.3.0.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>bootstrap-ui-module</artifactId>
 				<version>3.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.foreach.across.modules</groupId>
+				<artifactId>admin-web-module</artifactId>
+				<version>3.1.1.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>2.27.0</version>
+			</dependency>
+			<dependency>
+				<groupId>cloud.localstack</groupId>
+				<artifactId>localstack-utils</artifactId>
+				<version>0.1.19</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -163,6 +186,31 @@
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-apt</artifactId>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.sbrannen</groupId>
+			<artifactId>spring-test-junit5</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

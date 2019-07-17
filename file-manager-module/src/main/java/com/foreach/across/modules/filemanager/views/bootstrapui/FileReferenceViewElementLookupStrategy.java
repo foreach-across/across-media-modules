@@ -34,11 +34,12 @@ public class FileReferenceViewElementLookupStrategy implements ViewElementTypeLo
 		}
 
 		Class type = propertyType.isCollection() ? propertyType.getElementTypeDescriptor().getType() : propertyType.getType();
-		if ( type != null && FileReference.class.isAssignableFrom( type ) ) {
-			if ( ViewElementMode.isValue( viewElementMode ) || isNonFilterControl( viewElementMode ) ) {
-				return FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL;
-			}
+		if ( type != null
+				&& FileReference.class.isAssignableFrom( type )
+				&& ( ViewElementMode.isValue( viewElementMode ) || isNonFilterControl( viewElementMode ) ) ) {
+			return FileReferenceViewElementBuilderFactory.FILE_REFERENCE_CONTROL;
 		}
+
 		return null;
 	}
 

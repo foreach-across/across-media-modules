@@ -16,8 +16,14 @@
 
 package com.foreach.across.modules.filemanager.services;
 
+import java.util.Collection;
+
 /**
  * Management service to manage the registered FileRepository instances.
+ *
+ * @author Arne Vandamme
+ * @see FileManager
+ * @since 1.0.0
  */
 public interface FileRepositoryRegistry
 {
@@ -57,4 +63,9 @@ public interface FileRepositoryRegistry
 	 * @see FileRepositoryDelegate
 	 */
 	FileRepository registerRepository( FileRepository fileRepository );
+
+	/**
+	 * @return collection of all registered repositories
+	 */
+	Collection<FileRepository> listRepositories();
 }
