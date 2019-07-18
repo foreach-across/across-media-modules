@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author Sander Van Loock
@@ -30,7 +30,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 @RequiredArgsConstructor
-public class WebCmsWebModuleInterceptorConfiguration extends WebMvcConfigurerAdapter
+public class WebCmsWebModuleInterceptorConfiguration implements WebMvcConfigurer
 {
 	private final WebCmsEndpointContext context;
 

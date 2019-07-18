@@ -18,6 +18,9 @@ package com.foreach.across.modules.webcms.domain.type;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
@@ -30,6 +33,18 @@ import java.util.Optional;
 @Exposed
 public interface WebCmsTypeSpecifierLinkRepository extends IdBasedEntityJpaRepository<WebCmsTypeSpecifierLink>, QuerydslPredicateExecutor<WebCmsTypeSpecifierLink>
 {
+	@Override
+	List<WebCmsTypeSpecifierLink> findAll( Predicate predicate );
+
+	@Override
+	List<WebCmsTypeSpecifierLink> findAll( Predicate predicate, Sort sort );
+
+	@Override
+	List<WebCmsTypeSpecifierLink> findAll( Predicate predicate, OrderSpecifier<?>[] orders );
+
+	@Override
+	List<WebCmsTypeSpecifierLink> findAll( OrderSpecifier<?>[] orders );
+
 	List<WebCmsTypeSpecifierLink> findAllByOwnerObjectId( String ownerObjectId );
 
 	List<WebCmsTypeSpecifierLink> findAllByOwnerObjectIdAndLinkTypeOrderBySortIndexAsc( String ownerObjectId, String linkType );

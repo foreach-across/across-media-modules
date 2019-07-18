@@ -17,10 +17,7 @@ package com.foreach.across.modules.webcms.web.thymeleaf;
 
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateQueue;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.servlet.support.RequestContextUtils;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.engine.ITemplateHandler;
 import org.thymeleaf.engine.OutputTemplateHandler;
 import org.thymeleaf.model.*;
@@ -35,7 +32,7 @@ import java.util.ArrayDeque;
  *
  * @author Arne Vandamme
  * @see PlaceholderAttributeProcessor
- * @see ComponentAttributesProcessor
+ * @see ComponentAttributeProcessor
  * @see PlaceholderTemplatePostProcessor
  * @since 0.0.2
  */
@@ -79,7 +76,8 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 			private OutputTemplateHandler handler = new OutputTemplateHandler( buffer );
 		}
 
-		private WebCmsComponentAutoCreateQueue queue;
+		private ModelProcessingState modelProcessingState;
+		private WebCmsComponentAutoCreateQueue autoCreateQueue;
 
 		@Override
 		public void setNext( ITemplateHandler next ) {
@@ -90,8 +88,8 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 		public void setContext( ITemplateContext context ) {
 			modelFactory = context.getModelFactory();
 
-			ApplicationContext appCtx = RequestContextUtils.findWebApplicationContext( ( (WebEngineContext) context ).getRequest() );
-			queue = appCtx.getBean( WebCmsComponentAutoCreateQueue.class );
+			modelProcessingState = ModelProcessingState.retrieve( context );
+			autoCreateQueue = modelProcessingState.getAutoCreateQueue();
 		}
 
 		@Override
@@ -184,25 +182,27 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 				}
 			}
 			else if ( EXISTING_COMPONENT_PROXY.equals( processingInstruction.getTarget() ) ) {
-				queue.createProxy( processingInstruction.getContent() );
+				autoCreateQueue.createProxy( processingInstruction.getContent() );
 			}
 			else if ( CREATED_COMPONENT_PROXY.equals( processingInstruction.getTarget() ) ) {
-				WebCmsComponentModel componentCreated = queue.getComponentCreated( processingInstruction.getContent() );
+				WebCmsComponentModel componentCreated = autoCreateQueue.getComponentCreated( processingInstruction.getContent() );
 				if ( componentCreated != null ) {
-					queue.createProxy( componentCreated.getObjectId() );
+					autoCreateQueue.createProxy( componentCreated.getObjectId() );
 				}
 			}
 			else if ( START_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
-				queue.outputStarted( processingInstruction.getContent() );
+				autoCreateQueue.outputStarted( processingInstruction.getContent() );
 				output = new Output();
 				tree.push( output );
 
 				componentInCreation = true;
+				modelProcessingState.push( ModelProcessingState.Change.component() );
 			}
 			else if ( STOP_INSTRUCTION.equals( processingInstruction.getTarget() ) ) {
-				queue.outputFinished( processingInstruction.getContent(), tree.pop().buffer.toString() );
+				autoCreateQueue.outputFinished( processingInstruction.getContent(), tree.pop().buffer.toString() );
 				output = tree.peek();
 				componentInCreation = this.output != null;
+				modelProcessingState.pop();
 			}
 			else if ( PlaceholderTemplatePostProcessor.START_PLACEHOLDER.equals( processingInstruction.getTarget() ) && componentInCreation ) {
 				output = new Output();
@@ -212,7 +212,7 @@ final class ComponentTemplatePostProcessor implements IPostProcessor
 				next.handleProcessingInstruction( processingInstruction );
 			}
 			else if ( PlaceholderTemplatePostProcessor.STOP_PLACEHOLDER.equals( processingInstruction.getTarget() ) ) {
-				queue.placeholderRendered( processingInstruction.getContent() );
+				autoCreateQueue.placeholderRendered( processingInstruction.getContent() );
 
 				// remove placeholder
 				if ( componentInCreation ) {

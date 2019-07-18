@@ -21,15 +21,14 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelHierarchy;
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateQueue;
 import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateTask;
+import com.foreach.across.modules.webcms.domain.component.model.create.WebCmsComponentAutoCreateTask.Attribute;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.context.IEngineContext;
 import org.thymeleaf.context.ITemplateContext;
-import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.engine.AttributeName;
 import org.thymeleaf.model.*;
 import org.thymeleaf.processor.element.AbstractAttributeModelProcessor;
@@ -56,7 +55,7 @@ import static com.foreach.across.modules.webcms.web.thymeleaf.WebCmsDialect.PREF
  * @see PlaceholderTemplatePostProcessor
  * @see 0.0.2
  */
-final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
+final class ComponentAttributeProcessor extends AbstractAttributeModelProcessor
 {
 	private static final AtomicInteger COUNTER = new AtomicInteger();
 
@@ -69,22 +68,16 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	static final String ATTR_AUTO_CREATE = PREFIX + ":auto-create";
 	static final String ATTR_SCOPE = PREFIX + ":scope";
 	static final String ATTR_PARENT_CREATE_INCLUDE = PREFIX + ":parent-create-include";
+	static final String ATTR_META_PREFIX = PREFIX + ":meta";
+	static final String ATTR_PROP_PREFIX = PREFIX + ":prop";
+	static final String ATTR_ATTR_PREFIX = PREFIX + ":attr";
 
-	// used as a value for wcm:scope to ensure a component does not get auto created
-	static final String SCOPE_PLACEHOLDER_CREATE = "_placeholder";
-
-	// used to indicate that the component has a placeholder as parent
-	static final String ATTR_PLACEHOLDER_AS_PARENT = PREFIX + ":auto-create-paceholder-parent";
-
-	// used to indicate that all component attributes should in fact be ignored - set in the context of placeholders being parsed
-	static final String ATTR_NEVER_REPLACE = PREFIX + ":never-replace";
-
-	private static final Collection<String> ATTRIBUTES_TO_REMOVE = Arrays.asList(
-			ATTR_COMPONENT, ATTR_SCOPE, ATTR_SEARCH_PARENTS, ATTR_AUTO_CREATE, ATTR_TYPE, ATTR_ALWAYS_REPLACE, ATTR_PARSE_PLACEHOLDERS, ATTR_NEVER_REPLACE,
-			ATTR_PARENT_CREATE_INCLUDE, ATTR_PLACEHOLDER_AS_PARENT
+	private static final Collection<String> FIXED_ATTRIBUTES_TO_REMOVE = Arrays.asList(
+			ATTR_COMPONENT, ATTR_SCOPE, ATTR_SEARCH_PARENTS, ATTR_AUTO_CREATE, ATTR_TYPE, ATTR_ALWAYS_REPLACE, ATTR_PARSE_PLACEHOLDERS,
+			ATTR_PARENT_CREATE_INCLUDE
 	);
 
-	ComponentAttributesProcessor() {
+	ComponentAttributeProcessor() {
 		super(
 				TemplateMode.HTML,  // This processor will apply only to HTML mode
 				PREFIX,             // Prefix to be applied to name for matching
@@ -104,49 +97,56 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	                          String attributeValue,
 	                          IElementModelStructureHandler structureHandler ) {
 		if ( model.size() > 0 && model.get( 0 ) instanceof IProcessableElementTag ) {
-			WebEngineContext context = (WebEngineContext) templateContext;
+			ModelProcessingState modelProcessingState = ModelProcessingState.retrieve( templateContext );
+			ExpressionParser expressionParser = ExpressionParser.create( templateContext );
 
 			IProcessableElementTag elementTag = (IProcessableElementTag) model.get( 0 );
 			boolean isStandaloneTag = elementTag instanceof IStandaloneElementTag;
-			IModelFactory modelFactory = context.getModelFactory();
+			IModelFactory modelFactory = templateContext.getModelFactory();
 
 			// during a parse placeholders phase, component attributes should be ignored and the template parsed for placeholders instead
-			boolean ignoreComponent = elementTag.hasAttribute( ATTR_NEVER_REPLACE );
+			// all components inside (or on) the placeholder should be rendered
+
+			boolean ignoreComponent = modelProcessingState.isParsePlaceholdersOnly();
 
 			if ( !ignoreComponent ) {
-				ApplicationContext applicationContext = RequestContextUtils.findWebApplicationContext( ( context ).getRequest() );
-				WebCmsComponentModelHierarchy components = applicationContext.getBean( WebCmsComponentModelHierarchy.class );
+				WebCmsComponentModelHierarchy components = modelProcessingState.getComponentModelHierarchy();
 
-				String scopeName = elementTag.getAttributeValue( ATTR_SCOPE );
-				ComponentModelLookup lookupResult = lookupWebComponentModel( attributeValue, elementTag, components, scopeName );
+				String lookupScope = resolveLookupScope( elementTag, modelProcessingState );
+				ComponentModelLookup lookupResult = lookupWebComponentModel( attributeValue, elementTag, components, lookupScope );
 
-				WebCmsComponentAutoCreateQueue creationQueue = applicationContext.getBean( WebCmsComponentAutoCreateQueue.class );
+				WebCmsComponentAutoCreateQueue creationQueue = modelProcessingState.getAutoCreateQueue();
 				WebCmsComponentAutoCreateTask currentCreationTask = creationQueue.getCurrentTask();
 
 				boolean parsePlaceholders = elementTag.getAttribute( ATTR_PARSE_PLACEHOLDERS ) != null;
 				boolean shouldRenderComponentOutput = currentCreationTask == null
 						|| elementTag.hasAttribute( ATTR_PARENT_CREATE_INCLUDE )
-						|| elementTag.hasAttribute( ATTR_PLACEHOLDER_AS_PARENT );
+						|| modelProcessingState.isInsidePlaceholder();
 
-				String creationScope = determineCreationScope( elementTag, components, scopeName );
+				String creationScope = resolveCreationScope( elementTag, modelProcessingState, lookupScope );
 
-				boolean createProxy = !shouldRenderComponentOutput
-						&& WebCmsComponentUtils.isContainerType( currentCreationTask.getComponentType() );
+				boolean createProxy = !shouldRenderComponentOutput && WebCmsComponentUtils.isContainerType( currentCreationTask.getComponentType() );
 
 				if ( lookupResult != null && lookupResult.hasComponentModel() ) {
 					elementTag = renderComponentModel(
-							context, model, elementTag, modelFactory, lookupResult.getComponentModel(), parsePlaceholders, shouldRenderComponentOutput,
+							(IEngineContext) templateContext,
+							model,
+							elementTag,
+							modelFactory,
+							lookupResult.getComponentModel(),
+							parsePlaceholders,
+							shouldRenderComponentOutput,
 							createProxy
 					);
 				}
 				else {
 					boolean shouldRenderComponentDuringCreation = currentCreationTask == null || elementTag.hasAttribute( ATTR_PARENT_CREATE_INCLUDE );
 
-					if ( creationScope != null && !SCOPE_PLACEHOLDER_CREATE.equals( creationScope ) ) {
+					if ( creationScope != null ) {
 						createProxy &= !CONTAINER_MEMBER_SCOPE.equals( creationScope );
 						autoCreateComponent(
 								model, attributeValue, elementTag, isStandaloneTag, modelFactory, parsePlaceholders, creationQueue,
-								creationScope, shouldRenderComponentDuringCreation, createProxy
+								creationScope, shouldRenderComponentDuringCreation, createProxy, expressionParser
 						);
 					}
 					else if ( elementTag.hasAttribute( ATTR_ALWAYS_REPLACE ) || !shouldRenderComponentDuringCreation ) {
@@ -171,6 +171,51 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 		}
 	}
 
+	private String resolveLookupScope( IProcessableElementTag elementTag, ModelProcessingState modelProcessingState ) {
+		IAttribute attribute = elementTag.getAttribute( ATTR_SCOPE );
+		String scope = null;
+
+		if ( attribute == null ) {
+			if ( !modelProcessingState.isInsidePlaceholder() ) {
+				WebCmsComponentAutoCreateTask currentTask = modelProcessingState.getAutoCreateQueue().getCurrentTask();
+
+				if ( currentTask != null && WebCmsComponentUtils.isContainerType( currentTask.getComponentType() ) ) {
+					scope = CONTAINER_MEMBER_SCOPE;
+				}
+			}
+		}
+		else {
+			scope = attribute.getValue();
+		}
+
+		return scope;
+	}
+
+	private String resolveCreationScope( IProcessableElementTag elementTag, ModelProcessingState modelProcessingState, String lookupScope ) {
+		String creationScope = null;
+		IAttribute attribute = elementTag.getAttribute( ATTR_AUTO_CREATE );
+
+		if ( attribute != null ) {
+			creationScope = attribute.getValue();
+			if ( creationScope == null ) {
+				creationScope = lookupScope;
+			}
+			if ( creationScope == null ) {
+				creationScope = modelProcessingState.getComponentModelHierarchy().getDefaultScope();
+			}
+		}
+		else if ( CONTAINER_MEMBER_SCOPE.equals( lookupScope ) ) {
+			creationScope = CONTAINER_MEMBER_SCOPE;
+		}
+
+		// don't trigger container auto-creation when inside placeholder
+		if ( modelProcessingState.isInsidePlaceholder() && CONTAINER_MEMBER_SCOPE.equals( creationScope ) ) {
+			return null;
+		}
+
+		return creationScope;
+	}
+
 	private void writeComponentContentMarker( IModel model, IModelFactory modelFactory, ComponentModelLookup lookupResult ) {
 		if ( lookupResult != null ) {
 			model.insert( 1, modelFactory.createProcessingInstruction( ComponentTemplatePostProcessor.COMPONENT_RENDER, lookupResult.toString() ) );
@@ -186,11 +231,10 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	                                  WebCmsComponentAutoCreateQueue queue,
 	                                  String creationScope,
 	                                  boolean shouldRenderComponent,
-	                                  boolean createProxy ) {
+	                                  boolean createProxy,
+	                                  ExpressionParser expressionParser ) {
 		String componentType = elementTag.getAttributeValue( ATTR_TYPE );
 		WebCmsComponentAutoCreateTask task = queue.schedule( attributeValue, creationScope, componentType );
-
-		boolean createContainerMembers = WebCmsComponentUtils.isContainerType( task.getComponentType() );
 
 		// should also auto-create container members?
 		if ( isStandaloneTag ) {
@@ -203,10 +247,6 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 			}
 		}
 		else {
-			if ( createContainerMembers ) {
-				setContainerScopeForAllUnspecified( model, modelFactory );
-			}
-
 			if ( parsePlaceholders ) {
 				model.insert( 1, modelFactory.createProcessingInstruction( PlaceholderTemplatePostProcessor.START_PARSE_PLACEHOLDERS, "" ) );
 			}
@@ -245,6 +285,51 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 				              modelFactory.createProcessingInstruction( PlaceholderTemplatePostProcessor.STOP_PARSE_PLACEHOLDERS, "" ) );
 			}
 		}
+
+		attachAttributeValues( task, elementTag, expressionParser );
+	}
+
+	private void attachAttributeValues( WebCmsComponentAutoCreateTask task,
+	                                    IProcessableElementTag elementTag,
+	                                    ExpressionParser expressionParser ) {
+		for ( IAttribute attr : elementTag.getAllAttributes() ) {
+			String prefix = determineAttributePrefix( attr.getAttributeCompleteName() );
+
+			if ( prefix != null ) {
+				String propertyName = StringUtils.removeStart( attr.getAttributeCompleteName(), prefix );
+				int colon = propertyName.indexOf( ':' );
+				if ( colon >= 0 ) {
+					propertyName = StringUtils.substring( propertyName, colon + 1 );
+					Object attributeValue = expressionParser.parse( attr.getValue() );
+					if ( StringUtils.isNotEmpty( propertyName ) ) {
+						switch ( prefix ) {
+							case ATTR_META_PREFIX:
+								task.addAttributeValue( Attribute.METADATA, propertyName, attributeValue );
+								break;
+							case ATTR_PROP_PREFIX:
+								task.addAttributeValue( Attribute.PROPERTY, propertyName, attributeValue );
+								break;
+							default:
+								task.addAttributeValue( Attribute.ANY, propertyName, attributeValue );
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private String determineAttributePrefix( String attributeName ) {
+		if ( attributeName.startsWith( ATTR_META_PREFIX ) ) {
+			return ATTR_META_PREFIX;
+		}
+		else if ( attributeName.startsWith( ATTR_PROP_PREFIX ) ) {
+			return ATTR_PROP_PREFIX;
+		}
+		else if ( attributeName.startsWith( ATTR_ATTR_PREFIX ) ) {
+			return ATTR_ATTR_PREFIX;
+		}
+
+		return null;
 	}
 
 	private ITemplateEvent createContainerComponentRenderInstruction( IModelFactory modelFactory, WebCmsComponentAutoCreateTask task ) {
@@ -266,26 +351,6 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 		}
 	}
 
-	private String determineCreationScope( IProcessableElementTag elementTag, WebCmsComponentModelHierarchy components, String scopeName ) {
-		String creationScope = null;
-		IAttribute attribute = elementTag.getAttribute( ATTR_AUTO_CREATE );
-
-		if ( attribute != null ) {
-			creationScope = attribute.getValue();
-			if ( creationScope == null ) {
-				creationScope = scopeName;
-			}
-			if ( creationScope == null ) {
-				creationScope = components.getDefaultScope();
-			}
-		}
-		else if ( CONTAINER_MEMBER_SCOPE.equals( scopeName ) ) {
-			creationScope = CONTAINER_MEMBER_SCOPE;
-		}
-
-		return creationScope;
-	}
-
 	private IProcessableElementTag renderComponentModel( IEngineContext context,
 	                                                     IModel model,
 	                                                     IProcessableElementTag elementTag,
@@ -301,8 +366,6 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 			if ( model.get( model.size() - 1 ) instanceof ICloseElementTag ) {
 				model.remove( model.size() - 1 );
 			}
-
-			disableComponentBlocksInsidePlaceholderParsing( model, modelFactory );
 
 			model.add( modelFactory.createProcessingInstruction( PlaceholderTemplatePostProcessor.STOP_IGNORE_NON_PLACEHOLDERS, "" ) );
 		}
@@ -340,45 +403,6 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 		return elementTag;
 	}
 
-	private void disableComponentBlocksInsidePlaceholderParsing( IModel model, IModelFactory modelFactory ) {
-		for ( int i = 2; i < model.size(); i++ ) {
-			ITemplateEvent event = model.get( i );
-			if ( event instanceof IOpenElementTag || event instanceof IStandaloneElementTag ) {
-				IProcessableElementTag openElementTag = (IProcessableElementTag) event;
-				if ( openElementTag.hasAttribute( ATTR_COMPONENT ) ) {
-					model.replace( i, modelFactory.setAttribute( openElementTag, ATTR_NEVER_REPLACE, "true", AttributeValueQuotes.DOUBLE ) );
-				}
-				// not in auto creation, ensure placeholders and components are not included in the markup itself
-				if ( openElementTag.hasAttribute( ATTR_PARENT_CREATE_INCLUDE ) ) {
-					model.replace( i, modelFactory.removeAttribute( openElementTag, ATTR_PARENT_CREATE_INCLUDE ) );
-				}
-			}
-		}
-	}
-
-	private void setContainerScopeForAllUnspecified( IModel model, IModelFactory modelFactory ) {
-		for ( int i = 1; i < model.size(); i++ ) {
-			ITemplateEvent event = model.get( i );
-			if ( event instanceof IOpenElementTag || event instanceof IStandaloneElementTag ) {
-				IProcessableElementTag original = (IProcessableElementTag) event;
-				IProcessableElementTag openElementTag = original;
-				if ( openElementTag.hasAttribute( ATTR_COMPONENT ) ) {
-					if ( !openElementTag.hasAttribute( ATTR_SCOPE ) ) {
-						openElementTag = modelFactory.setAttribute(
-								openElementTag, ATTR_SCOPE, CONTAINER_MEMBER_SCOPE, AttributeValueQuotes.DOUBLE
-						);
-					}
-					if ( SCOPE_PLACEHOLDER_CREATE.equals( openElementTag.getAttributeValue( ATTR_AUTO_CREATE ) ) ) {
-						openElementTag = modelFactory.removeAttribute( openElementTag, ATTR_AUTO_CREATE );
-					}
-					if ( original != openElementTag ) {
-						model.replace( i, openElementTag );
-					}
-				}
-			}
-		}
-	}
-
 	private ComponentModelLookup lookupWebComponentModel( String componentName,
 	                                                      IProcessableElementTag elementTag,
 	                                                      WebCmsComponentModelHierarchy components,
@@ -405,8 +429,14 @@ final class ComponentAttributesProcessor extends AbstractAttributeModelProcessor
 	private void removeProcessedAttributesFromTag( IModel model, IProcessableElementTag elementTag, IModelFactory modelFactory ) {
 		IProcessableElementTag newFirstEvent = elementTag;
 
-		for ( String attributeToRemove : ATTRIBUTES_TO_REMOVE ) {
+		for ( String attributeToRemove : FIXED_ATTRIBUTES_TO_REMOVE ) {
 			newFirstEvent = modelFactory.removeAttribute( newFirstEvent, attributeToRemove );
+		}
+
+		for ( IAttribute attr : elementTag.getAllAttributes() ) {
+			if ( StringUtils.startsWithAny( attr.getAttributeCompleteName(), ATTR_META_PREFIX, ATTR_PROP_PREFIX, ATTR_ATTR_PREFIX ) ) {
+				newFirstEvent = modelFactory.removeAttribute( newFirstEvent, attr.getAttributeCompleteName() );
+			}
 		}
 
 		if ( newFirstEvent != elementTag ) {

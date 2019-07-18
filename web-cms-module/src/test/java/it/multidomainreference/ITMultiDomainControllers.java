@@ -17,16 +17,16 @@
 package it.multidomainreference;
 
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.3
  */
-public class ITMultiDomainControllers extends AbstractMultiDomainCmsApplicationWithTestDataIT
+class ITMultiDomainControllers extends AbstractMultiDomainCmsApplicationWithTestDataIT
 {
 	@Test
-	public void pageFromRightDomainIsSelected() {
+	void pageFromRightDomainIsSelected() {
 		Html doc = html( "http://foreach.be/cafe" );
 		doc.assertElementHasText( "Foreach Cafe (BE)", "title" );
 
@@ -35,7 +35,7 @@ public class ITMultiDomainControllers extends AbstractMultiDomainCmsApplicationW
 	}
 
 	@Test
-	public void domainBoundCustomControllers() {
+	void domainBoundCustomControllers() {
 		getAndExpect("http://foreach.be/multi-domain/be-only", "specific" );
 		getAndExpect("http://de.foreach.be:8080/multi-domain/be-only", "fallback" );
 
@@ -44,7 +44,7 @@ public class ITMultiDomainControllers extends AbstractMultiDomainCmsApplicationW
 	}
 
 	@Test
-	public void domainBoundPageMappings() {
+	void domainBoundPageMappings() {
 		getAndExpect("http://foreach.be/domain-mapped-page", "mapped page on be: Domain mapped page BE" );
 		getAndExpect("http://de.foreach.be:8080/domain-mapped-page", "mapped page on de: Domain mapped page DE" );
 	}

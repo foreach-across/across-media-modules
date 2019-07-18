@@ -23,7 +23,7 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
@@ -50,6 +50,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	 * Prefix that all object ids of a WebCmsComponent have.
 	 */
 	public static final String COLLECTION_ID = "wcm:component";
+
 	/**
 	 * Type of the WebCmsComponent.
 	 */
@@ -57,6 +58,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 	@JoinColumn(name = "component_type_id")
 	@NotNull
 	WebCmsComponentType componentType;
+
 	@Id
 	@GeneratedValue(generator = "seq_wcm_component_id")
 	@GenericGenerator(
@@ -68,6 +70,7 @@ public class WebCmsComponent extends WebCmsObjectSuperClass<WebCmsComponent>
 			}
 	)
 	private Long id;
+
 	/**
 	 * Unique object id of the asset that owns this component.
 	 * There is no actual referential integrity here, custom asset implementations must make sure they perform the required cleanup.

@@ -20,6 +20,7 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainContext;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
 
@@ -42,9 +43,11 @@ public class CookieWebCmsDomainContextResolver extends CookieGenerator implement
 	private static final String NO_DOMAIN_VALUE = "no-domain";
 
 	private final WebCmsDomainService domainService;
+	private final ApplicationEventPublisher eventPublisher;
 
-	public CookieWebCmsDomainContextResolver( WebCmsDomainService domainService ) {
+	public CookieWebCmsDomainContextResolver( WebCmsDomainService domainService, ApplicationEventPublisher eventPublisher ) {
 		this.domainService = domainService;
+		this.eventPublisher = eventPublisher;
 		setCookieName( DEFAULT_COOKIE_NAME );
 	}
 
@@ -88,6 +91,8 @@ public class CookieWebCmsDomainContextResolver extends CookieGenerator implement
 			String value = domainContext.holdsDomain() ? domainContext.getDomain().getObjectId() : NO_DOMAIN_VALUE;
 			if ( !StringUtils.equals( currentValue, value ) ) {
 				addCookie( response, value );
+				WebCmsDomainChangedEvent domainChangedEvent = new WebCmsDomainChangedEvent( currentValue, value );
+				eventPublisher.publishEvent( domainChangedEvent );
 			}
 		}
 		else if ( currentValue != null ) {

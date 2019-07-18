@@ -23,17 +23,17 @@ import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsCompone
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITPlaceholderRendering extends AbstractCmsApplicationWithTestDataIT
+class ITPlaceholderRendering extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
@@ -43,15 +43,15 @@ public class ITPlaceholderRendering extends AbstractCmsApplicationWithTestDataIT
 
 	private static Html html;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		if ( html == null ) {
 			html = html( "/render-placeholders" );
 		}
 	}
 
 	@Test
-	public void verifyGlobalComponentHasBeenInstalled() {
+	void verifyGlobalComponentHasBeenInstalled() {
 		val content = componentModelService.getComponentModelByName( "with-placeholders", null, ContainerWebCmsComponentModel.class );
 		assertNotNull( content );
 		assertEquals( "with-placeholders", content.getName() );
@@ -81,7 +81,7 @@ public class ITPlaceholderRendering extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void verifyPageAndComponentsHaveBeenInstalled() {
+	void verifyPageAndComponentsHaveBeenInstalled() {
 		val page = pageService.findByCanonicalPath( "/render-placeholders" )
 		                      .orElse( null );
 		assertNotNull( page );
@@ -131,38 +131,38 @@ public class ITPlaceholderRendering extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void placeholdersAreParsedAndRenderedIfComponent() {
+	void placeholdersAreParsedAndRenderedIfComponent() {
 		html.assertElementHasHTML( "Placeholders:<div>one</div>threetwo", "#placeholders-rendered" );
 		html.assertElementHasHTML( "Global placeholders:twothree", "#placeholders-rendered-in-global-component" );
 	}
 
 	@Test
-	public void placeholderAttributesAreIgnoredIfNotInComponent() {
+	void placeholderAttributesAreIgnoredIfNotInComponent() {
 		html.assertElementHasHTML( "<div>one</div>", "#no-component" );
 	}
 
 	@Test
-	public void placeholderAttributesAreIgnoredIfComponentNotFound() {
+	void placeholderAttributesAreIgnoredIfComponentNotFound() {
 		html.assertElementHasHTML( "First: <strong>one</strong> and second: <em>two</em>.", "#not-found-default-markup" );
 	}
 
 	@Test
-	public void placeholderAttributesAreIgnoredIfNotInParsingBlock() {
+	void placeholderAttributesAreIgnoredIfNotInParsingBlock() {
 		html.assertElementHasHTML( "Placeholders:", "#placeholders-not-parsed" );
 	}
 
 	@Test
-	public void placeholdersInsideSingleParsingBlockShouldBeRegisteredEvenIfInsideComponentBlocks() {
+	void placeholdersInsideSingleParsingBlockShouldBeRegisteredEvenIfInsideComponentBlocks() {
 		html.assertElementHasHTML( "Placeholders:<div>one</div><li>three</li>two", "#nested-placeholders" );
 	}
 
 	@Test
-	public void autoCreatePlaceholderAttributesAreIgnoredWhenRendering() {
+	void autoCreatePlaceholderAttributesAreIgnoredWhenRendering() {
 		html.assertElementHasHTML( "Placeholders:<div>one</div><li>three</li>two", "#nested-placeholders-with-include" );
 	}
 
 	@Test
-	public void componentsInsidePlaceholdersShouldAlwaysBeRendered() {
+	void componentsInsidePlaceholdersShouldAlwaysBeRendered() {
 		html.assertElementHasHTML(
 				"Placeholders:<div> Global component: footer </div>threeGlobal component: content",
 				"#placeholder-that-contains-component"

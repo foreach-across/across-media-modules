@@ -19,15 +19,19 @@ package com.foreach.across.modules.webcms.domain.component.web;
 import com.foreach.across.modules.entity.bind.EntityPropertyControlName;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
+import com.foreach.across.modules.entity.support.EntityViewMessageSource;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderHelper;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.helpers.EntityViewElementBatch;
+import com.foreach.across.modules.web.support.LocalizedTextResolver;
+import com.foreach.across.modules.web.support.MessageCodeSupportingLocalizedTextResolver;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -73,6 +77,10 @@ class EntityBasedMetadataAdminRenderer implements WebCmsComponentModelMetadataAd
 			nestedResolver.setFallbackCollections( metadataCodeResolver.buildMessageCodes( "", true ) );
 
 			formBuilder.setAttribute( EntityMessageCodeResolver.class, nestedResolver );
+
+			EntityViewMessageSource viewMessageSource = new EntityViewMessageSource( nestedResolver );
+			formBuilder.setAttribute( MessageSource.class, viewMessageSource );
+			formBuilder.setAttribute( LocalizedTextResolver.class, new MessageCodeSupportingLocalizedTextResolver( viewMessageSource ) );
 
 			ContainerViewElement container = new ContainerViewElement();
 			formBuilder.build().forEach( ( name, element ) -> container.addChild( element ) );

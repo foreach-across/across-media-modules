@@ -71,7 +71,7 @@ class WebCmsMenuConfiguration implements EntityConfigurer
 				                .show()
 				                .associationType( EntityAssociation.Type.EMBEDDED )
 				                .listView( lvb -> lvb.showProperties( "path", "group", "title", "endpoint", "sortIndex" )
-				                                     .defaultSort( new Sort( "sortIndex", "path" ) ) )
+				                                     .defaultSort( Sort.by( "sortIndex", "path" ) ) )
 				                .createOrUpdateFormView(
 						                fvb -> fvb.showProperties( "group", "*", "~menu" )
 				                )

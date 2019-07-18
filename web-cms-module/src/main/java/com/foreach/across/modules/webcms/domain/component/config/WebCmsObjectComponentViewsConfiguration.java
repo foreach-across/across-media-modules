@@ -38,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort;
 
 import javax.validation.groups.Default;
 import java.util.HashSet;
@@ -100,7 +101,7 @@ public class WebCmsObjectComponentViewsConfiguration
 								.parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
 								.listView(
 										lvb -> lvb.showProperties( "title", "name", "componentType", "lastModified" )
-										          .defaultSort( "title" )
+										          .defaultSort( new Sort( Sort.Direction.ASC, "sortIndex", "title" ) )
 								)
 								.createFormView( fvb -> fvb
 										.postProcess(

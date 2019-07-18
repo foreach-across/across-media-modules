@@ -25,17 +25,17 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCmsApplicationWithTestDataIT
+class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
@@ -50,8 +50,8 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	private static WebCmsPage page;
 	private static WebCmsDomain domain;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		if ( html == null ) {
 			domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
 			assertNotNull( domain );
@@ -63,7 +63,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 		}
 	}
 
-	public void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
+	void verifyPageDoesButNoneOfTheComponentsExist( WebCmsPage page ) {
 		assertNotNull( page );
 		assertEquals( domain, page.getDomain() );
 
@@ -80,7 +80,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	}
 
 	@Test
-	public void componentIsCreatedOnLowestLevelAndAsMarkupTypeByDefault() {
+	void componentIsCreatedOnLowestLevelAndAsMarkupTypeByDefault() {
 		html.assertElementHasText( "Page markup: Auto create creation scope", "#no-scope-or-type-specified" );
 
 		val text = componentModelService.getComponentModelByNameAndDomain( "page-markup", page, domain, TextWebCmsComponentModel.class );
@@ -93,7 +93,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	}
 
 	@Test
-	public void creationScopeIsTakenIntoAccount() {
+	void creationScopeIsTakenIntoAccount() {
 		html.assertElementHasText( "Global markup: Auto create creation scope", "#creation-scope-specified" );
 
 		assertNull( componentModelService.getComponentModelByName( "global-markup", page ) );
@@ -108,7 +108,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	}
 
 	@Test
-	public void componentScopeIsUsedAsCreationScope() {
+	void componentScopeIsUsedAsCreationScope() {
 		html.assertElementHasText( "Global markup2: Auto create creation scope", "#component-scope-specified" );
 
 		assertNull( componentModelService.getComponentModelByName( "global-markup2", page ) );
@@ -123,7 +123,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	}
 
 	@Test
-	public void assetScopeCreationLinksToTheAsset() {
+	void assetScopeCreationLinksToTheAsset() {
 		html.assertElementHasText( "Asset markup: Auto create creation scope", "#component-scope-specified-asset" );
 
 		val text = componentModelService.getComponentModelByNameAndDomain( "asset-markup", page, domain, TextWebCmsComponentModel.class );
@@ -136,7 +136,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	}
 
 	@Test
-	public void domainScopeCreation() {
+	void domainScopeCreation() {
 		html.assertElementHasText( "Domain markup: Auto create creation scope", "#component-scope-specified-domain" );
 
 		assertNull( componentModelService.getComponentModelByName( "domain-markup", page ) );
@@ -151,7 +151,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	}
 
 	@Test
-	public void componentIsCreatedWithTypeSpecified() {
+	void componentIsCreatedWithTypeSpecified() {
 		html.assertElementHasText( "Page rich-text: Auto create creation scope", "#type-specified" );
 
 		val text = componentModelService.getComponentModelByNameAndDomain( "page-rich-text", page, domain, TextWebCmsComponentModel.class );
@@ -164,7 +164,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	}
 
 	@Test
-	public void defaultTypeIsContainerIfChildComponentsGetCreated() {
+	void defaultTypeIsContainerIfChildComponentsGetCreated() {
 		html.assertElementHasHTML( "container titlecontainer body", "#default-container-type" );
 
 		val container = componentModelService.getComponentModelByNameAndDomain( "page-container", page, domain, ContainerWebCmsComponentModel.class );
@@ -190,7 +190,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	}
 
 	@Test
-	public void nestedStructureIsReflectedInContainers() {
+	void nestedStructureIsReflectedInContainers() {
 		html.assertElementHasHTML( "container titlecontainer sub titlecontainer footer text", "#nested-containers" );
 
 		val container = componentModelService.getComponentModelByNameAndDomain( "page-nested-container", page, domain, ContainerWebCmsComponentModel.class );
@@ -237,7 +237,7 @@ public class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCms
 	}
 
 	@Test
-	public void secondRenderYieldsSameOutput() {
+	void secondRenderYieldsSameOutput() {
 		Html secondRender = html( "http://foreach.be/auto-create-creation-scope" );
 		secondRender.assertElementHasText( "Page markup: Auto create creation scope", "#no-scope-or-type-specified" );
 		secondRender.assertElementHasText( "Global markup: Auto create creation scope", "#creation-scope-specified" );

@@ -2,6 +2,7 @@ target
 .idea/workspace.xml
 .idea/libraries
 .idea/excludeFromValidation
+.idea/template/template_variable_settings.xml
 *.iml
 db
 local-data

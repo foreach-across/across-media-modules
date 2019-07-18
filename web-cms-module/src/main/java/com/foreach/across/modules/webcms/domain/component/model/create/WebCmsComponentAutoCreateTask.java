@@ -22,10 +22,9 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Represents a task for creating components.
@@ -52,6 +51,12 @@ public class WebCmsComponentAutoCreateTask
 
 	private final Deque<WebCmsComponentAutoCreateTask> children = new ArrayDeque<>();
 
+	@Getter
+	private final Map<String, Object> metadata = new LinkedHashMap<>();
+
+	@Getter
+	private final List<AttributeValue> attributeValues = new ArrayList<>();
+
 	private int sortIndex;
 	private WebCmsObject owner;
 	private WebCmsDomain domain;
@@ -63,7 +68,28 @@ public class WebCmsComponentAutoCreateTask
 		children.add( task );
 	}
 
+	public void addAttributeValue( Attribute attributeType, String key, Object value ) {
+		attributeValues.add( new AttributeValue( attributeType, key, value ) );
+	}
+
 	public boolean hasChildren() {
 		return !children.isEmpty();
+	}
+
+	public enum Attribute
+	{
+		ANY,
+		METADATA,
+		PROPERTY
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	@ToString(of = { "key", "value" })
+	static class AttributeValue
+	{
+		private final Attribute attribute;
+		private final String key;
+		private final Object value;
 	}
 }

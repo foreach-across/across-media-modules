@@ -21,7 +21,7 @@ import com.foreach.across.modules.webcms.domain.domain.web.WebCmsSiteConfigurati
 import com.foreach.across.test.MockAcrossServletContext;
 import com.foreach.across.test.MockFilterRegistration;
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertNotNull;
@@ -37,32 +37,32 @@ public class ITWebCmsSiteConfigurationFilter extends AbstractMultiDomainCmsAppli
 	private MockAcrossServletContext servletContext;
 
 	@Test
-	public void defaultFilterShouldBeRegistered() {
+	void defaultFilterShouldBeRegistered() {
 		MockFilterRegistration filterRegistration = servletContext.getFilterRegistration( AbstractWebCmsDomainContextFilter.FILTER_NAME );
 		assertNotNull( filterRegistration );
 		assertTrue( filterRegistration.getFilter() instanceof WebCmsSiteConfigurationFilter );
 	}
 
 	@Test
-	public void noDomainIsDefault() {
+	void noDomainIsDefault() {
 		getAndExpect( "http://unknown.foreach.be/domain", "no-domain:it-IT" );
 	}
 
 	@Test
-	public void matchOnDomainWithoutPort() {
+	void matchOnDomainWithoutPort() {
 		getAndExpect( "http://foreach.be/domain", "be-foreach:de-DE" );
 		getAndExpect( "http://nl.foreach.be/domain", "be-foreach:nl-BE" );
 		getAndExpect( "http://fr.foreach.be/domain", "be-foreach:it-IT" );
 	}
 
 	@Test
-	public void portBasedDomainMatches() {
+	void portBasedDomainMatches() {
 		getAndExpect( "http://nl.foreach.be:8080/domain", "de-foreach:nl-NL" );
 		getAndExpect( "http://fr.foreach.be:8080/domain", "de-foreach:nl-NL" );
 	}
 
 	@Test
-	public void inactiveDomainIsIgnored() {
+	void inactiveDomainIsIgnored() {
 		getAndExpect( "http://foreach.be:8080/domain", "be-foreach:de-DE" );
 	}
 }

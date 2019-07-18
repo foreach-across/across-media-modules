@@ -33,9 +33,9 @@ import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
@@ -48,21 +48,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @AcrossWebAppConfiguration
 @ContextConfiguration(classes = ITWebCmsModuleUrlCaching.CacheConfig.class)
-public class ITWebCmsModuleUrlCaching
+class ITWebCmsModuleUrlCaching
 {
 	@Autowired
 	private WebCmsEndpointService webCmsEndpointService;
@@ -80,33 +80,32 @@ public class ITWebCmsModuleUrlCaching
 	private WebCmsPageService pageService;
 
 	private Map<Object, Object> pathToUrlCache;
-	private WebCmsPage page;
 	private WebCmsAssetEndpoint endpoint;
 
 	@Autowired
-	public void registerCaches( @Qualifier(WebCmsModuleCache.PATH_TO_URL_ID) ConcurrentMapCache pathToUrlCache ) {
+	void registerCaches( @Qualifier(WebCmsModuleCache.PATH_TO_URL_ID) ConcurrentMapCache pathToUrlCache ) {
 		this.pathToUrlCache = pathToUrlCache.getNativeCache();
 	}
 
-	@Before
-	public void before() {
+	@BeforeEach
+	void before() {
 		pathToUrlCache.clear();
 
-		page = WebCmsPage.builder()
-		                 .id( 1000L )
-		                 .pathSegment( "about" )
-		                 .canonicalPath( "/a" )
-		                 .title( "About page" )
-		                 .pageType( pageService.getPageTypeByKey( "default" ) )
-		                 .published( true )
-		                 .build();
+		WebCmsPage page = WebCmsPage.builder()
+		                            .id( 1000L )
+		                            .pathSegment( "about" )
+		                            .canonicalPath( "/a" )
+		                            .title( "About page" )
+		                            .pageType( pageService.getPageTypeByKey( "default" ) )
+		                            .published( true )
+		                            .build();
 		pageRepository.save( page );
 
 		endpoint = endpointRepository.findOneByAssetAndDomain( page, WebCmsDomain.NONE ).orElse( null );
 	}
 
 	@Test
-	public void idOfMissingWebCmsUrlGetsCached() {
+	void idOfMissingWebCmsUrlGetsCached() {
 		assertTrue( pathToUrlCache.isEmpty() );
 
 		Optional<WebCmsUrl> url = webCmsEndpointService.getUrlForPath( "/path" );
@@ -117,7 +116,7 @@ public class ITWebCmsModuleUrlCaching
 	}
 
 	@Test
-	public void createUrlAndGetItFromCache() {
+	void createUrlAndGetItFromCache() {
 		assertTrue( pathToUrlCache.isEmpty() );
 
 		repository.save( WebCmsUrl.builder()
@@ -136,7 +135,7 @@ public class ITWebCmsModuleUrlCaching
 	}
 
 	@Test
-	public void createAndDeleteUrlAndGetItFromCache() {
+	void createAndDeleteUrlAndGetItFromCache() {
 		assertTrue( pathToUrlCache.isEmpty() );
 
 		WebCmsUrl webCmsUrl = WebCmsUrl.builder()
@@ -163,7 +162,7 @@ public class ITWebCmsModuleUrlCaching
 	}
 
 	@Test
-	public void createAndUpdateUrlAndGetItFromCache() {
+	void createAndUpdateUrlAndGetItFromCache() {
 		assertTrue( pathToUrlCache.isEmpty() );
 
 		WebCmsUrl webCmsUrl = WebCmsUrl.builder()
@@ -215,7 +214,7 @@ public class ITWebCmsModuleUrlCaching
 	}
 
 	@EnableCaching
-	static class EnableCachingConfiguration
+	private static class EnableCachingConfiguration
 	{
 	}
 

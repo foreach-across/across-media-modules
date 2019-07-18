@@ -17,36 +17,36 @@
 package it.mappings;
 
 import it.AbstractCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITWebCmsArticleMapping extends AbstractCmsApplicationWithTestDataIT
+class ITWebCmsArticleMapping extends AbstractCmsApplicationWithTestDataIT
 {
 	@Test
-	public void publicationTypeMapping() {
+	void publicationTypeMapping() {
 		getAndExpect( "/facts/fact-one-small-music", "publicationTypeMapping: Fact One: Small Music" );
 	}
 
 	@Test
-	public void articleTypeMapping() {
+	void articleTypeMapping() {
 		getAndExpect( "/facts/fact-three-big-music", "bigArticleTypeMapping: Fact Three: Big Music" );
 	}
 
 	@Test
-	public void publicationMapping() {
+	void publicationMapping() {
 		getAndExpect( "/facts/fact-four-big-movies", "publicationMapping: Fact Four: Big Movies" );
 	}
 
 	@Test
-	public void articleTypeOnPublicationMapping() {
+	void articleTypeOnPublicationMapping() {
 		getAndExpect( "/facts/fact-two-small-movies", "articleTypeOnPublicationMapping: Fact Two: Small Movies" );
 	}
 
 	@Test
-	public void objectIdTrumpsAll() {
+	void objectIdTrumpsAll() {
 		getAndExpect( "/facts/fact-five-small-movies", "articleObjectIdMapping: Fact Five: Small Movies" );
 	}
 }

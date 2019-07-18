@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms.domain.endpoint.web.interceptor;
 import com.foreach.across.modules.bootstrapui.resource.JQueryWebResources;
 import com.foreach.across.modules.web.events.BuildTemplateWebResourcesEvent;
 import com.foreach.across.modules.web.resource.WebResource;
+import com.foreach.across.modules.web.resource.WebResourceRule;
 import com.foreach.across.modules.webcms.WebCmsModule;
 import com.foreach.across.modules.webcms.domain.endpoint.web.IgnoreEndpointModel;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.WebCmsEndpointContext;
@@ -111,13 +112,17 @@ public class WebCmsEndpointHandlerInterceptor extends HandlerInterceptorAdapter
 	}
 
 	@EventListener
-	void registerPreviewModeWebResources( BuildTemplateWebResourcesEvent webResourcesEvent ) {
+	public void registerPreviewModeWebResources( BuildTemplateWebResourcesEvent webResourcesEvent ) {
 		if ( context.isAvailable() && context.isPreviewMode() ) {
-			webResourcesEvent.addPackage( JQueryWebResources.NAME );
-			webResourcesEvent.addWithKey( WebResource.CSS, WebCmsModule.NAME + "-inline-editor", "/static/WebCmsModule/css/wcm-inline-editor.css",
-			                              WebResource.VIEWS );
-			webResourcesEvent.addWithKey( WebResource.JAVASCRIPT_PAGE_END, WebCmsModule.NAME + "-preview", "/static/WebCmsModule/js/wcm-preview-mode.js",
-			                              WebResource.VIEWS );
+			webResourcesEvent.applyResourceRules(
+					WebResourceRule.addPackage( JQueryWebResources.NAME ),
+					WebResourceRule.add( WebResource.css( "@static:/WebCmsModule/css/wcm-inline-editor.css" ) )
+					               .withKey( WebCmsModule.NAME + "-inline-editor" )
+					               .toBucket( WebResource.CSS ),
+					WebResourceRule.add( WebResource.javascript( "@static:/WebCmsModule/js/wcm-preview-mode.js" ) )
+					               .withKey( WebCmsModule.NAME + "-preview" )
+					               .toBucket( WebResource.JAVASCRIPT_PAGE_END )
+			);
 		}
 	}
 }

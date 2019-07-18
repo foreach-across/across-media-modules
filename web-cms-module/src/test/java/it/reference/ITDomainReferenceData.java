@@ -19,27 +19,27 @@ package it.reference;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import it.AbstractCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ITDomainReferenceData extends AbstractCmsApplicationWithTestDataIT
+class ITDomainReferenceData extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsDomainRepository domainRepository;
 
 	@Test
-	public void simpleDomainUnderscoreShouldHaveBeenImported() {
+	void simpleDomainUnderscoreShouldHaveBeenImported() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "simple_domain" ).orElse( null );
 		assertNotNull( domain );
 		assertEquals( "Simple domain with _", domain.getName() );
 	}
 
 	@Test
-	public void domainWithObjectIdSimpleDomainShouldHaveBeenImported() {
+	void domainWithObjectIdSimpleDomainShouldHaveBeenImported() {
 		WebCmsDomain domain = domainRepository.findOneByObjectId( "wcm:domain:simple-domain" ).orElse( null );
 		assertNotNull( domain );
 		assertEquals( "Simple domain with ObjectId simple-domain", domain.getName() );
@@ -48,7 +48,7 @@ public class ITDomainReferenceData extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void simpleDomainDotShouldHaveBeenImportedAndExtended() {
+	void simpleDomainDotShouldHaveBeenImportedAndExtended() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "simple.domain" ).orElse( null );
 		assertNotNull( domain );
 		assertEquals( "Name of simple.domain should have been replaced", domain.getName() );
@@ -56,7 +56,7 @@ public class ITDomainReferenceData extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void domainWithObjectIdDomainWithIdShouldHaveBeenImportedAndExtended() {
+	void domainWithObjectIdDomainWithIdShouldHaveBeenImportedAndExtended() {
 		WebCmsDomain domain = domainRepository.findOneByObjectId( "wcm:domain:domain-with-id" ).orElse( null );
 		assertNotNull( domain );
 		assertEquals( "domain.domain_with_id", domain.getDomainKey() );
@@ -64,12 +64,12 @@ public class ITDomainReferenceData extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void deleteMeDomainShouldHaveBeenDeleted() {
+	void deleteMeDomainShouldHaveBeenDeleted() {
 		assertEquals( Optional.empty(), domainRepository.findOneByDomainKey( "deleteMeDomain" ) );
 	}
 
 	@Test
-	public void complexDomainShouldHaveBeenImportedAndExtended() {
+	void complexDomainShouldHaveBeenImportedAndExtended() {
 		WebCmsDomain domain = domainRepository.findOneByObjectId( "wcm:domain:complex-domain" ).orElse( null );
 		assertNotNull( domain );
 		assertEquals( "A complex domain", domain.getName() );
@@ -80,7 +80,7 @@ public class ITDomainReferenceData extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void cookiesDomainShouldHaveBeenImportedAndExtended() {
+	void cookiesDomainShouldHaveBeenImportedAndExtended() {
 		WebCmsDomain domain = domainRepository.findOneByDomainKey( "domain.cookies" ).orElse( null );
 		assertNotNull( domain );
 		assertEquals( "Cookies", domain.getName() );

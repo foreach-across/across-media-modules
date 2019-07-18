@@ -21,17 +21,17 @@ import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsCompone
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import it.AbstractCmsApplicationWithTestDataIT;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
+class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsPageService pageService;
@@ -41,15 +41,15 @@ public class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
 
 	private static Html html;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	void setUp() {
 		if ( html == null ) {
 			html = html( "/render-components" );
 		}
 	}
 
 	@Test
-	public void verifyPageAndComponentsHaveBeenInstalled() {
+	void verifyPageAndComponentsHaveBeenInstalled() {
 		val page = pageService.findByCanonicalPath( "/render-components" )
 		                      .orElse( null );
 		assertNotNull( page );
@@ -77,62 +77,62 @@ public class ITComponentRendering extends AbstractCmsApplicationWithTestDataIT
 	}
 
 	@Test
-	public void ifComponentIsNotFoundTheRegularMarkupIsRendered() {
+	void ifComponentIsNotFoundTheRegularMarkupIsRendered() {
 		html.assertElementHasText( "Not found - default markup.", "#not-found-default-markup" );
 	}
 
 	@Test
-	public void markupIsAlwaysReplacedEvenIfNoComponentWhenAttributeIsPresent() {
+	void markupIsAlwaysReplacedEvenIfNoComponentWhenAttributeIsPresent() {
 		html.assertElementIsEmpty( "#not-found-replaced" );
 	}
 
 	@Test
-	public void componentFoundInDefaultScope() {
+	void componentFoundInDefaultScope() {
 		html.assertElementHasText( "Page component: custom", "#found-in-page" );
 	}
 
 	@Test
-	public void parentScopesAreSearchedIfNoScopeAndNotExplicitlyDenied() {
+	void parentScopesAreSearchedIfNoScopeAndNotExplicitlyDenied() {
 		html.assertElementHasText( "Global component: footer", "#found-in-global" );
 	}
 
 	@Test
-	public void componentFoundInLowestScopeTakesPrecedence() {
+	void componentFoundInLowestScopeTakesPrecedence() {
 		html.assertElementHasText( "Page component: content 2", "#shadowing-global" );
 	}
 
 	@Test
-	public void specifiedScopeIsAlwaysUsed() {
+	void specifiedScopeIsAlwaysUsed() {
 		html.assertElementHasText( "Global component: content", "#using-global" );
 	}
 
 	@Test
-	public void assetScopeIsAliasForPage() {
+	void assetScopeIsAliasForPage() {
 		html.assertElementHasText( "Page component: custom", "#using-asset" );
 	}
 
 	@Test
-	public void domainScopeIsAliasForGlobal() {
+	void domainScopeIsAliasForGlobal() {
 		html.assertElementHasText( "Global component: content", "#using-domain" );
 	}
 
 	@Test
-	public void notSearchingParentScopesIfExplicitlyDenied() {
+	void notSearchingParentScopesIfExplicitlyDenied() {
 		html.assertElementHasText( "Not found in scope and not searching parents.", "#not-found-in-scope" );
 	}
 
 	@Test
-	public void notSearchParentScopesIfScopeSpecifiedAndNotExplicitlyEnabled() {
+	void notSearchParentScopesIfScopeSpecifiedAndNotExplicitlyEnabled() {
 		html.assertElementHasText( "Not found in scope specified and not searching parents.", "#not-found-in-scope-specified" );
 	}
 
 	@Test
-	public void searchingParentScopesIfScopeSpecifiedButExplicitlyEnabled() {
+	void searchingParentScopesIfScopeSpecifiedButExplicitlyEnabled() {
 		html.assertElementHasText( "Global component: footer", "#found-by-search" );
 	}
 
 	@Test
-	public void selfClosingTagIsSupported() {
+	void selfClosingTagIsSupported() {
 		html.assertElementHasText( "Page component: custom", "#self-closing-tag" );
 	}
 }

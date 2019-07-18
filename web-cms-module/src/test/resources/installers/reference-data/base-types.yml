@@ -22,6 +22,12 @@ types:
             body:
               componentType: rich-text
               sortIndex: 2
+    image-with-alt:
+      objectId: "wcm:type:component:image-with-alt"
+      name: Image with alt text
+      attributes:
+        type: fixed-container
+        metadata: modules.test.metadata.ImageWithAltMetadata
     domain.complex.domain:big-teaser:
       name: Big Teaser
       attributes:

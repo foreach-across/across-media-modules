@@ -21,7 +21,7 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.domain.web.WebCmsSiteConfiguration;
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class ITMultiDomainDomainReferenceData extends AbstractMultiDomainCmsAppl
 	private WebCmsMultiDomainService multiDomainService;
 
 	@Test
-	public void domainMetadataIsSiteConfigurationClass() {
+	void domainMetadataIsSiteConfigurationClass() {
 		WebCmsDomain foreach = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
 		assertNotNull( foreach );
 
@@ -56,7 +56,7 @@ public class ITMultiDomainDomainReferenceData extends AbstractMultiDomainCmsAppl
 	}
 
 	@Test
-	public void attributesAreImportedAndConvertedToStrongTypes() {
+	void attributesAreImportedAndConvertedToStrongTypes() {
 		WebCmsDomain foreach = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
 		assertNotNull( foreach );
 

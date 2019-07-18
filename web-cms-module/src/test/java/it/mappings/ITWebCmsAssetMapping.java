@@ -17,35 +17,32 @@
 package it.mappings;
 
 import it.AbstractCmsApplicationWithTestDataIT;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.2
  */
-public class ITWebCmsAssetMapping extends AbstractCmsApplicationWithTestDataIT
+class ITWebCmsAssetMapping extends AbstractCmsApplicationWithTestDataIT
 {
 	@Test
-	public void defaultPageMapping() {
+	void defaultPageMapping() {
 		getAndExpect( "/mappings/page/one", "defaultPageMapping: Mappings: Page One" );
 	}
 
 	@Test
-	public void defaultArticleMapping() {
+	void defaultArticleMapping() {
 		getAndExpect( "/news/mappings-article-one", "defaultArticleMapping: Mappings: Article One" );
 	}
 
 	@Test
-	public void controllerLevelObjectIdMapping() {
+	void controllerLevelObjectIdMapping() {
 		getAndExpect( "/mappings/page/two", "controllerObjectIdMapping: Mappings: Page Two" );
 		getAndExpect( "/news/mappings-article-two", "controllerObjectIdMapping: Mappings: Article Two" );
 	}
 
 	@Test
-	public void methodLevelObjectIdMapping() {
+	void methodLevelObjectIdMapping() {
 		getAndExpect( "/mappings/page/three", "methodObjectIdMapping: Mappings: Page Three" );
 	}
 }

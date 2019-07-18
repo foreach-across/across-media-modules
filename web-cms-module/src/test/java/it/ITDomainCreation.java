@@ -18,12 +18,12 @@ package it;
 
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -35,7 +35,7 @@ public class ITDomainCreation extends AbstractCmsApplicationIT
 	private WebCmsDomainRepository domainRepository;
 
 	@Test
-	public void createAndFetchDomain() {
+	void createAndFetchDomain() {
 		WebCmsDomain domain = WebCmsDomain.builder()
 		                                  .domainKey( "manually-created-domain" )
 		                                  .name( "Manually created domain" )

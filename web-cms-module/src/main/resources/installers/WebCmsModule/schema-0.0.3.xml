@@ -274,11 +274,13 @@
 		<dropTable tableName="${table.page_type}"/>
 	</changeSet>
 
-	<changeSet id="201709011634e1" author="stg">
+	<changeSet id="201709011634e1-support-postgres" author="stg">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<dbms type="mssql"/>
+				<dbms type="postgresql"/>
 			</not>
+			<tableExists tableName="${table.component_type}"/>
 			<columnExists tableName="${table.type}" columnName="description"/>
 		</preConditions>
 		<comment>Move existing descriptions of wcm_component_type to wcm_type</comment>
@@ -288,9 +290,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="201709011634e2" author="stg">
+	<changeSet id="201709011634e2-support-postgres" author="stg">
 		<preConditions onFail="MARK_RAN">
-			<dbms type="mssql"/>
+			<or>
+				<dbms type="mssql"/>
+				<dbms type="postgresql"/>
+			</or>
+			<tableExists tableName="${table.component_type}"/>
 			<columnExists tableName="${table.type}" columnName="description"/>
 		</preConditions>
 		<comment>Sql Server - Move existing descriptions of wcm_component_type to wcm_type</comment>
@@ -307,7 +313,6 @@
 			<foreignKeyConstraintExists foreignKeyName="fk_wcm_comp_comptype" foreignKeyTableName="${table.component}"/>
 			<tableExists tableName="${table.component_type}"/>
 		</preConditions>
-		<comment>Move existing descriptions of wcm_component_type to wcm_type</comment>
 		<comment>Drop the component_type table and refer fk_wcm_comp_comptype to wcm_type table</comment>
 		<dropForeignKeyConstraint baseTableName="${table.component}" constraintName="fk_wcm_comp_comptype"/>
 		<addForeignKeyConstraint baseTableName="${table.component}"

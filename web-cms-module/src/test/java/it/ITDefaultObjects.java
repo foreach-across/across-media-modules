@@ -35,7 +35,7 @@ import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepo
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierRepository;
 import com.foreach.across.test.AcrossTestContext;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,16 +47,16 @@ import static com.foreach.across.modules.webcms.domain.article.QWebCmsArticleTyp
 import static com.foreach.across.modules.webcms.domain.component.QWebCmsComponentType.webCmsComponentType;
 import static com.foreach.across.modules.webcms.domain.publication.QWebCmsPublicationType.webCmsPublicationType;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-public class ITDefaultObjects
+class ITDefaultObjects
 {
 	@Test
-	public void byDefaultTheAssetsShouldBeImported() {
+	void byDefaultTheAssetsShouldBeImported() {
 		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME )
 		                                  .build()) {
 			verifyComponentTypes( ctx );
@@ -317,7 +317,7 @@ public class ITDefaultObjects
 	}
 
 	@Test
-	public void disablingTheDefaultAssetsInstaller() {
+	void disablingTheDefaultAssetsInstaller() {
 		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME )
 		                                  .property( "web-cms-module.default-data.assets.enabled", "false" )
 		                                  .build()) {

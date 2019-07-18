@@ -33,6 +33,7 @@ import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUt
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
+import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetLink;
 import com.foreach.across.modules.webcms.domain.asset.web.builders.WebCmsAssetEndpointViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.asset.web.processors.WebCmsAssetListViewProcessor;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,8 @@ class WebCmsAssetConfiguration implements EntityConfigurer
 
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
+		entities.withType( WebCmsAssetLink.class ).hide();
+
 		entities.withType( WebCmsAssetEndpoint.class )
 		        .entityModel( model -> model.labelPrinter( assetEndpointLabelPrinter ) )
 		        .attribute( "endpointValueBuilder", assetEndpointViewElementBuilder )

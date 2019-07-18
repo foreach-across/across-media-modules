@@ -17,6 +17,8 @@
 package com.foreach.across.modules.webcms.domain.image;
 
 import com.foreach.across.modules.webcms.domain.WebCmsObjectNotFoundException;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.SneakyThrows;
@@ -56,6 +58,11 @@ public class TestStringToWebCmsImageConverter
 	@Mock
 	private WebCmsImageRepository imageRepository;
 
+	@Mock
+	private WebCmsMultiDomainService multiDomainService;
+
+	private WebCmsDomain domain = WebCmsDomain.builder().objectId( "mydomain" ).build();
+
 	@InjectMocks
 	private StringToWebCmsImageConverter converter;
 
@@ -75,6 +82,21 @@ public class TestStringToWebCmsImageConverter
 	public void objectIdIsGeneratedAndImageFoundReturned() {
 		String path = "classpath:/test.resource";
 		String objectId = WebCmsUtils.prefixObjectIdForCollection( "import-" + DigestUtils.md5DigestAsHex( path.getBytes() ), WebCmsImage.COLLECTION_ID );
+		when( imageRepository.findOneByObjectId( objectId ) ).thenReturn( Optional.of( image ) );
+
+		assertSame( image, converter.convert( path ) );
+		assertSame( image, converter.convert( objectId ) );
+	}
+
+	@Test
+	public void objectIdIsGeneratedWithCurrentDomainIfDomainBound() {
+		when( multiDomainService.getCurrentDomainForType( WebCmsImage.class ) ).thenReturn( domain );
+
+		String path = "classpath:/test.resource";
+		String objectId = WebCmsUtils.prefixObjectIdForCollection(
+				"import-" + DigestUtils.md5DigestAsHex( path.getBytes() ) + "-" + DigestUtils.md5DigestAsHex( domain.getObjectId().getBytes() ),
+				WebCmsImage.COLLECTION_ID
+		);
 		when( imageRepository.findOneByObjectId( objectId ) ).thenReturn( Optional.of( image ) );
 
 		assertSame( image, converter.convert( path ) );
@@ -107,6 +129,38 @@ public class TestStringToWebCmsImageConverter
 		assertEquals( expectedObjectId, image.getObjectId() );
 		assertEquals( "my-image.jpeg", image.getName() );
 		assertTrue( image.isPublished() );
+		assertNull( image.getDomain() );
+
+		InOrder ordered = Mockito.inOrder( imageRepository, imageConnector );
+
+		ordered.verify( imageConnector ).saveImageData( image, data );
+		ordered.verify( imageRepository ).save( image );
+	}
+
+	@SneakyThrows
+	@Test
+	public void imageIsCreatedAndAttachedToDomainAndResourceUploadedIfFound() {
+		when( multiDomainService.getCurrentDomainForType( WebCmsImage.class ) ).thenReturn( domain );
+
+		String path = "classpath:/test.resource";
+		String expectedObjectId = WebCmsUtils.prefixObjectIdForCollection(
+				"import-" + DigestUtils.md5DigestAsHex( path.getBytes() ) + "-" + DigestUtils.md5DigestAsHex( domain.getObjectId().getBytes() ),
+				WebCmsImage.COLLECTION_ID
+		);
+
+		Resource resource = mock( Resource.class );
+		when( applicationContext.getResource( path ) ).thenReturn( resource );
+		when( resource.exists() ).thenReturn( true );
+		when( resource.getFilename() ).thenReturn( "my-image.jpeg" );
+		byte[] data = new byte[] { 12, 45 };
+		when( resource.getInputStream() ).thenReturn( new ByteArrayInputStream( data ) );
+
+		WebCmsImage image = converter.convert( path );
+		assertNotNull( image );
+		assertEquals( expectedObjectId, image.getObjectId() );
+		assertEquals( "my-image.jpeg", image.getName() );
+		assertTrue( image.isPublished() );
+		assertSame( domain, image.getDomain() );
 
 		InOrder ordered = Mockito.inOrder( imageRepository, imageConnector );
 

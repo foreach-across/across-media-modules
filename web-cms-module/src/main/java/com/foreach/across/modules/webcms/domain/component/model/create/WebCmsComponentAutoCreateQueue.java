@@ -124,7 +124,7 @@ public class WebCmsComponentAutoCreateQueue
 	}
 
 	/**
-	 * Single a placeholder block has just been rendered.
+	 * Signal a placeholder block has just been rendered.
 	 * If a component is being created, the placeholder should be added to that component.
 	 *
 	 * @param placeholderName name of the placeholder
@@ -160,6 +160,11 @@ public class WebCmsComponentAutoCreateQueue
 	 * @return component created by that task
 	 */
 	public WebCmsComponentModel getComponentCreated( String taskId ) {
-		return componentsCreated.get( taskId );
+		WebCmsComponentModel componentModel = componentsCreated.get( taskId );
+		if ( componentModel == null ) {
+			LOG.error( "Could not retrieve the expected auto-created component with task id {}", taskId );
+		}
+		return componentModel;
 	}
+
 }

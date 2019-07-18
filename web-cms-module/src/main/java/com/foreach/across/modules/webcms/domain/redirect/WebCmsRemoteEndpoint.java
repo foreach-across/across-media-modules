@@ -19,7 +19,7 @@ package com.foreach.across.modules.webcms.domain.redirect;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.Column;

@@ -34,9 +34,9 @@ import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierReposito
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
 import it.AbstractMultiDomainCmsApplicationWithTestDataIT;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -46,7 +46,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class ITWebCmsAssetService extends AbstractMultiDomainCmsApplicationWithTestDataIT
+class ITWebCmsAssetService extends AbstractMultiDomainCmsApplicationWithTestDataIT
 {
 	@Autowired
 	private WebCmsEndpointService endpointService;
@@ -83,8 +83,8 @@ public class ITWebCmsAssetService extends AbstractMultiDomainCmsApplicationWithT
 
 	private WebCmsDomain domain;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		domain = WebCmsDomain.builder()
 		                     .name( "My domain" )
 		                     .domainKey( "my-domain" )
@@ -96,7 +96,7 @@ public class ITWebCmsAssetService extends AbstractMultiDomainCmsApplicationWithT
 	}
 
 	@Test
-	public void buildPreviewUrlForAsset() {
+	void buildPreviewUrlForAsset() {
 		WebCmsArticle asset = WebCmsArticle
 				.builder()
 				.publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ).orElse( null ) )
@@ -127,7 +127,7 @@ public class ITWebCmsAssetService extends AbstractMultiDomainCmsApplicationWithT
 	}
 
 	@Test
-	public void buildPreviewUrlForAssetAndDomain() {
+	void buildPreviewUrlForAssetAndDomain() {
 		WebCmsArticle assetNullDomain = WebCmsArticle
 				.builder()
 				.publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ).orElse( null ) )
@@ -157,8 +157,8 @@ public class ITWebCmsAssetService extends AbstractMultiDomainCmsApplicationWithT
 		articleRepository.delete( assetNullDomain );
 	}
 
-	@After
-	public void reset() {
+	@AfterEach
+	void reset() {
 		domainRepository.delete( domain );
 	}
 }

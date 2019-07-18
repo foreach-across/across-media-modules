@@ -16,12 +16,18 @@
 
 package com.foreach.across.modules.webcms.web;
 
-import com.foreach.across.modules.web.resource.SimpleWebResourcePackage;
+import com.foreach.across.modules.bootstrapui.resource.BootstrapUiWebResources;
 import com.foreach.across.modules.web.resource.WebResource;
+import com.foreach.across.modules.web.resource.WebResourcePackage;
 import com.foreach.across.modules.web.resource.WebResourcePackageManager;
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.web.resource.WebResource.CSS;
+import static com.foreach.across.modules.web.resource.WebResource.JAVASCRIPT_PAGE_END;
+import static com.foreach.across.modules.web.resource.WebResourceRule.add;
 
 /**
  * Contains the general web resources to enable the administration UI for {@link WebCmsComponentModel}s.
@@ -31,23 +37,30 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnAdminUI
 @Component
-public class WebCmsComponentAdminResources extends SimpleWebResourcePackage
+public class WebCmsComponentAdminResources implements WebResourcePackage
 {
 	public static final String NAME = "wcm-components-admin";
 
 	public WebCmsComponentAdminResources( WebResourcePackageManager adminWebResourcePackageManager ) {
 		adminWebResourcePackageManager.register( NAME, this );
+	}
 
-		setWebResources(
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "jquery-ui", "https://code.jquery.com/ui/1.12.1/jquery-ui.min.js", WebResource.EXTERNAL ),
-				new WebResource(
-						WebResource.JAVASCRIPT_PAGE_END,
-						"bootbox",
-						"https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js",
-						WebResource.EXTERNAL
-				),
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, NAME, "/static/WebCmsModule/js/wcm-admin-components.js", WebResource.VIEWS ),
-				new WebResource( WebResource.CSS, NAME, "/static/WebCmsModule/css/wcm-admin-styles.css", WebResource.VIEWS )
+	@Override
+	public void install( WebResourceRegistry webResourceRegistry ) {
+		webResourceRegistry.apply(
+				add( WebResource.javascript( "@webjars:/jquery-ui/1.12.1/jquery-ui.min.js" ) )
+						.withKey( "jquery-ui" )
+						.toBucket( JAVASCRIPT_PAGE_END )
+						.before( BootstrapUiWebResources.NAME ),
+				add( WebResource.javascript( "@webjars:/bootbox/4.4.0/bootbox.js" ) )
+						.withKey( "bootbox" )
+						.toBucket( JAVASCRIPT_PAGE_END ),
+				add( WebResource.javascript( "@static:/WebCmsModule/js/wcm-admin-components.js" ) )
+						.withKey( NAME )
+						.toBucket( JAVASCRIPT_PAGE_END ),
+				add( WebResource.css( "@static:/WebCmsModule/css/wcm-admin-styles.css" ) )
+						.withKey( NAME )
+						.toBucket( CSS )
 		);
 	}
 }

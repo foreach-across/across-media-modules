@@ -22,6 +22,7 @@ import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAda
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
+import com.foreach.across.modules.web.resource.WebResourceRule;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
@@ -44,7 +45,9 @@ final class ArticleCreateFormProcessor extends EntityViewProcessorAdapter
 {
 	@Override
 	protected void registerWebResources( EntityViewRequest entityViewRequest, EntityView entityView, WebResourceRegistry webResourceRegistry ) {
-		webResourceRegistry.add( WebResource.JAVASCRIPT_PAGE_END, "/static/WebCmsModule/js/wcm-article.js", WebResource.VIEWS );
+		webResourceRegistry.apply(
+				WebResourceRule.add( WebResource.javascript( "@static:/WebCmsModule/js/wcm-article.js" ) ).toBucket( WebResource.JAVASCRIPT_PAGE_END )
+		);
 	}
 
 	@Override

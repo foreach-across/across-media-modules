@@ -16,12 +16,15 @@
 
 package it;
 
+import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import modules.test.CmsTestModule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * Base class for all integration tests using the same application context with a same backing db.
@@ -29,7 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @AcrossWebAppConfiguration(classes = AbstractCmsApplicationWithTestDataIT.Config.class)
 public abstract class AbstractCmsApplicationWithTestDataIT extends AbstractMockMvcTest
 {
@@ -39,6 +42,11 @@ public abstract class AbstractCmsApplicationWithTestDataIT extends AbstractMockM
 		@Bean
 		CmsTestModule cmsTestModule() {
 			return new CmsTestModule();
+		}
+
+		@Bean
+		WebCmsImageConnector webCmsImageConnector() {
+			return mock( WebCmsImageConnector.class );
 		}
 	}
 }

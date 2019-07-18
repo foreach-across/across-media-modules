@@ -144,7 +144,7 @@ public class WebCmsRenderUtilityService
 	 */
 	public WebCmsComponentModel member( String componentName, WebCmsComponentModel container ) {
 		WebCmsComponentModel target = container instanceof ProxyWebCmsComponentModel ? ( (ProxyWebCmsComponentModel) container ).getTarget() : container;
-		if ( target != null && target instanceof ContainerWebCmsComponentModel ) {
+		if ( target instanceof ContainerWebCmsComponentModel ) {
 			return ( (ContainerWebCmsComponentModel) target ).getMember( componentName );
 		}
 		return null;
@@ -160,7 +160,7 @@ public class WebCmsRenderUtilityService
 	 */
 	public List<WebCmsComponentModel> members( WebCmsComponentModel container ) {
 		WebCmsComponentModel target = container instanceof ProxyWebCmsComponentModel ? ( (ProxyWebCmsComponentModel) container ).getTarget() : container;
-		if ( target != null && target instanceof ContainerWebCmsComponentModel ) {
+		if ( target instanceof ContainerWebCmsComponentModel ) {
 			return ( (ContainerWebCmsComponentModel) target ).getMembers();
 		}
 		return Collections.emptyList();

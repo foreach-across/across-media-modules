@@ -16,11 +16,16 @@
 
 package com.foreach.across.modules.webcms.web;
 
-import com.foreach.across.modules.web.resource.SimpleWebResourcePackage;
 import com.foreach.across.modules.web.resource.WebResource;
+import com.foreach.across.modules.web.resource.WebResourcePackage;
 import com.foreach.across.modules.web.resource.WebResourcePackageManager;
+import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.web.resource.WebResource.*;
+import static com.foreach.across.modules.web.resource.WebResourceRule.add;
+import static com.foreach.across.modules.web.resource.WebResourceRule.addPackage;
 
 /**
  * @author Arne Vandamme
@@ -28,21 +33,30 @@ import org.springframework.stereotype.Component;
  */
 @ConditionalOnAdminUI
 @Component
-public class ImageWebCmsComponentAdminResources extends SimpleWebResourcePackage
+public class ImageWebCmsComponentAdminResources implements WebResourcePackage
 {
 	public static final String NAME = "wcm-image-components-admin";
 
 	public ImageWebCmsComponentAdminResources( WebResourcePackageManager adminWebResourcePackageManager ) {
 		adminWebResourcePackageManager.register( NAME, this );
+	}
 
-		setDependencies( WebCmsComponentAdminResources.NAME );
+	@Override
+	public void install( WebResourceRegistry webResourceRegistry ) {
+		webResourceRegistry.apply(
+				addPackage( WebCmsComponentAdminResources.NAME ),
 
-		setWebResources(
-				new WebResource( WebResource.CSS, NAME, "/static/WebCmsModule/css/wcm-admin-image-component-styles.css", WebResource.VIEWS ),
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, NAME, "/static/WebCmsModule/js/wcm-admin-image-components.js", WebResource.VIEWS ),
-				new WebResource( WebResource.JAVASCRIPT_PAGE_END, "entityQueryFilterForm", "/static/entity/js/entity-query.js", WebResource.VIEWS ),
-				new WebResource( WebResource.JAVASCRIPT, "lodash", "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js",
-				                 WebResource.EXTERNAL )
+				// WebCmsModule specific
+				add( WebResource.css( "@static:/WebCmsModule/css/wcm-admin-image-component-styles.css" ) ).withKey( NAME ).toBucket( CSS ),
+				add( WebResource.javascript( "@static:/WebCmsModule/js/wcm-admin-image-components.js" ) ).withKey( NAME ).toBucket( JAVASCRIPT_PAGE_END ),
+
+				// Ensure EntityQuery filtering is possible in dialog
+				add( WebResource.javascript( "@static:/entity/js/entity-query.js" ) ).withKey( "entityQueryFilterForm" ).toBucket( JAVASCRIPT_PAGE_END ),
+
+				// Lodash
+				add( WebResource.javascript( "@webjars:/lodash/4.17.4/lodash.min.js" ) )
+						.withKey( "lodash" )
+						.toBucket( JAVASCRIPT )
 		);
 	}
 }
