@@ -172,6 +172,26 @@
 				<artifactId>localstack-utils</artifactId>
 				<version>0.1.19</version>
 			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>5.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-commons</artifactId>
+				<version>1.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>5.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.vintage</groupId>
+				<artifactId>junit-vintage-engine</artifactId>
+				<version>5.4.2</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -189,6 +209,11 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
