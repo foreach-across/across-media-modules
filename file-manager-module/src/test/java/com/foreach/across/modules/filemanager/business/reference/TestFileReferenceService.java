@@ -72,9 +72,6 @@ class TestFileReferenceService
 		when( inputStream.read( any() ) ).thenReturn( -1 );
 		FileDescriptor fileDescriptor = FileDescriptor.of( FileManager.TEMP_REPOSITORY, "my-unique-file-name" );
 
-		FileDescriptor newDescriptor = FileDescriptor.of( FileManager.DEFAULT_REPOSITORY, UUID.randomUUID().toString() );
-		when( fileRepository.moveInto( any() ) ).thenReturn( newDescriptor );
-
 		FileReferenceProperties fileReferenceProperties = mock( FileReferenceProperties.class );
 		when( fileReferencePropertiesService.getProperties( any() ) ).thenReturn( fileReferenceProperties );
 
