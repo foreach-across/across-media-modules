@@ -112,6 +112,7 @@ class TestAmazonS3FileResource
 
 	@Test
 	void isReadable() {
+		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
 		assertThat( resource.isReadable() ).isTrue();
 	}
 
