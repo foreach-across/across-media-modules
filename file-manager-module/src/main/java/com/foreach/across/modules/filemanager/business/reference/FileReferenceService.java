@@ -225,7 +225,7 @@ public class FileReferenceService
 					}
 				}
 				catch ( Exception e ) {
-					LOG.warn( "Was asked to delete file {} but was an exception occurred and file was most likely not deleted.", fileDescriptor, e );
+					LOG.warn( "Was asked to delete file {} but an exception occurred and file was most likely not deleted.", fileDescriptor, e );
 				}
 			}
 		} );
