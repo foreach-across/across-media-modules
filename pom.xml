@@ -29,7 +29,7 @@
 	<groupId>com.foreach.across.modules</groupId>
 	<artifactId>file-manager-module-project</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 
 	<repositories>
 		<repository>
@@ -44,11 +44,11 @@
 		Across standard module that provides a set of generic services for accessing files across different types
 		of file repositories (eg. disk, remote storage...).
 	</description>
-	<url>https://foreach.atlassian.net/wiki/display/AX/FileManagerModule</url>
+	<url>https://across.dev/modules/filemanagermodule</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 
@@ -56,12 +56,12 @@
 		<developer>
 			<name>Arne Vandamme</name>
 			<organization>Foreach</organization>
-			<organizationUrl>http://www.foreach.be</organizationUrl>
+			<organizationUrl>https://www.foreach.be</organizationUrl>
 		</developer>
 		<developer>
 			<name>Sander Van Loock</name>
 			<organization>Foreach</organization>
-			<organizationUrl>http://www.foreach.be</organizationUrl>
+			<organizationUrl>https://www.foreach.be</organizationUrl>
 		</developer>
 	</developers>
 
@@ -135,7 +135,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-aws-core</artifactId>
-				<version>2.1.0.RELEASE</version>
+				<version>2.1.2.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
@@ -160,7 +160,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>admin-web-module</artifactId>
-				<version>3.1.1.RELEASE</version>
+				<version>4.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
@@ -191,15 +191,6 @@
 				<groupId>org.junit.vintage</groupId>
 				<artifactId>junit-vintage-engine</artifactId>
 				<version>5.4.2</version>
-			</dependency>
-			<dependency>
-				<!--
-				FIX FOR Caused by: liquibase.exception.DatabaseException: Unknown constraint type: 3
-                https://liquibase.jira.com/browse/CORE-3141
-                 -->
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-core</artifactId>
-				<version>3.6.3</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
