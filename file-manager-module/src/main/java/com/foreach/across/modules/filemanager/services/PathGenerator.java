@@ -23,6 +23,7 @@ package com.foreach.across.modules.filemanager.services;
  * @see com.foreach.across.modules.filemanager.services.LocalFileRepository
  * @see com.foreach.across.modules.filemanager.services.DateFormatPathGenerator
  */
+@FunctionalInterface
 public interface PathGenerator
 {
 	/**

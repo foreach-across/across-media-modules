@@ -1,0 +1,7 @@
+version: '2.1'
+services:
+  # expose port 4572 to Docker
+  maven-base:
+    network_mode: "host"
+  sonar:
+    network_mode: "host"

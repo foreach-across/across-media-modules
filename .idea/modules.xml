@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/file-manager-module/file-manager-module.iml" filepath="$PROJECT_DIR$/file-manager-module/file-manager-module.iml" />
-      <module fileurl="file://$PROJECT_DIR$/file-manager-module/file-manager-module.iml" filepath="$PROJECT_DIR$/file-manager-module/file-manager-module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/file-manager-module-no-entity-module/file-manager-module-no-entity-module.iml" filepath="$PROJECT_DIR$/file-manager-module-no-entity-module/file-manager-module-no-entity-module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/file-manager-module-no-hibernate-module/file-manager-module-no-hibernate-module.iml" filepath="$PROJECT_DIR$/file-manager-module-no-hibernate-module/file-manager-module-no-hibernate-module.iml" />
       <module fileurl="file://$PROJECT_DIR$/file-manager-module-project.iml" filepath="$PROJECT_DIR$/file-manager-module-project.iml" />
-      <module fileurl="file://$PROJECT_DIR$/file-manager-module-test/file-manager-module-test.iml" filepath="$PROJECT_DIR$/file-manager-module-test/file-manager-module-test.iml" />
       <module fileurl="file://$PROJECT_DIR$/file-manager-module-test/file-manager-module-test.iml" filepath="$PROJECT_DIR$/file-manager-module-test/file-manager-module-test.iml" />
     </modules>
   </component>

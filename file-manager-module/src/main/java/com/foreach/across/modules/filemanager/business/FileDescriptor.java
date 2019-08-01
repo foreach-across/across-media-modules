@@ -16,43 +16,65 @@
 
 package com.foreach.across.modules.filemanager.business;
 
+import com.foreach.across.modules.filemanager.context.FileResourceProtocolResolver;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 /**
- * Represents a single file in a FileRepository.
+ * Represents a single {@link FileResource} in a specific FileRepository.
  */
-public class FileDescriptor implements Serializable
+@EqualsAndHashCode
+public class FileDescriptor implements FileRepositoryResourceDescriptor
 {
 	private static final long serialVersionUID = 1L;
 
-	private final String repositoryId, fileId, folderId;
+	/**
+	 * Unique id of the file within the folder.
+	 */
+	@Getter
+	private final String fileId;
 
-	private final String uri;
+	/**
+	 * The descriptor of the folder this file would belong to.
+	 */
+	@Getter
+	private final FolderDescriptor folderDescriptor;
 
 	/**
 	 * @deprecated in favour of {@link FileDescriptor#of(String)}. Will be removed in 2.0.0.
 	 */
 	@Deprecated
-	public FileDescriptor( String uri ) {
-		this.uri = uri;
+	public FileDescriptor( @NonNull String uri ) {
+		// todo: make private in 2.0.0
+		if ( StringUtils.isBlank( uri ) ) {
+			throw new IllegalArgumentException( "uri may not be null or empty" );
+		}
 
-		String[] parts = StringUtils.split( uri, ":" );
+		String[] parts = StringUtils.removeStart( uri, FileResourceProtocolResolver.PROTOCOL ).split( ":", -1 );
 
-		Assert.isTrue( parts.length == 2 || parts.length == 3 );
+		Assert.isTrue( parts.length == 2 || parts.length == 3, "FileDescriptor URI must contain either 2 or 3 segments separated with :" );
 
-		this.repositoryId = parts[0];
+		String folderId;
 
 		if ( parts.length == 2 ) {
-			this.folderId = null;
-			this.fileId = parts[1];
+			String cleaned = StringUtils.replace( parts[1], "\\", "/" );
+			int lastSeparator = StringUtils.lastIndexOf( cleaned, "/" );
+			folderId = lastSeparator >= 0 ? cleaned.substring( 0, lastSeparator ) : null;
+			fileId = lastSeparator >= 0 ? cleaned.substring( lastSeparator + 1 ) : cleaned;
 		}
 		else {
-			this.folderId = parts[1];
-			this.fileId = parts[2];
+			folderId = parts[1];
+			fileId = parts[2];
+		}
+
+		folderDescriptor = FolderDescriptor.of( parts[0], folderId );
+
+		if ( StringUtils.isEmpty( fileId ) ) {
+			throw new IllegalArgumentException( "A non-empty file id is required" );
 		}
 	}
 
@@ -65,35 +87,122 @@ public class FileDescriptor implements Serializable
 	}
 
 	/**
+	 * @deprecated in favour of {@link FileDescriptor#of(String, String, String)}. Will be removed in 2.0.0.
+	 */
+	@Deprecated
+	public FileDescriptor( String repositoryId, String folderId, @NonNull String fileId ) {
+		folderDescriptor = FolderDescriptor.of( repositoryId, folderId );
+		this.fileId = fileId;
+
+		if ( StringUtils.isEmpty( fileId ) ) {
+			throw new IllegalArgumentException( "A non-empty file id is required" );
+		}
+	}
+
+	/**
+	 * @return Unique uri of the entire file.
+	 */
+	@Override
+	public String getUri() {
+		StringBuilder uri = new StringBuilder( folderDescriptor.getRepositoryId() ).append( ":" );
+
+		if ( folderDescriptor.getFolderId() != null ) {
+			uri.append( folderDescriptor.getFolderId() ).append( ":" );
+		}
+
+		uri.append( fileId );
+
+		return uri.toString();
+	}
+
+	/**
+	 * @return Unique id of the repository this file belongs to.
+	 */
+	@Override
+	public String getRepositoryId() {
+		return folderDescriptor.getRepositoryId();
+	}
+
+	/**
+	 * @return Path within the repository this file can be found, null if the file is considered in the root folder.
+	 */
+	public String getFolderId() {
+		return folderDescriptor.getFolderId();
+	}
+
+	/**
+	 * Returns the extension of this file. This is the segment after the last dot in the file id.
+	 * An extension is not required and empty string will be returned if it is missing.
+	 *
+	 * @return extension of this file or empty string if none
+	 */
+	public String getExtension() {
+		return StringUtils.defaultString( FilenameUtils.getExtension( fileId ) );
+	}
+
+	@Override
+	public String toString() {
+		return getUri();
+	}
+
+	/**
+	 * Clones the current descriptor but modifies the file id by replacing the extension
+	 * with the extension from the path passed in. If path is null, empty or has no extension,
+	 * any current extension will be removed instead. If there is no current extension,
+	 * one will be added.
+	 * <p/>
+	 * Especially useful for modifying generated file descriptors to have the same extension
+	 * as an original file.
+	 *
+	 * @param path from which to get the extension
+	 * @return new descriptor
+	 */
+	public FileDescriptor withExtensionFrom( String path ) {
+		return withExtension( FilenameUtils.getExtension( path ) );
+	}
+
+	/**
+	 * Clones the current descriptor but modifies the file id by replacing the extension
+	 * with the extension passed in. If the new extension is null or empty,
+	 * any current extension will be removed instead. If there is no current extension,
+	 * one will be added.
+	 * <p/>
+	 * Especially useful for modifying generated file descriptors to have the same extension
+	 * as an original file.
+	 *
+	 * @param extension to apply to the file id
+	 * @return new descriptor
+	 */
+	public FileDescriptor withExtension( String extension ) {
+		String fileIdWithoutExtension = FilenameUtils.getBaseName( fileId );
+		return folderDescriptor.createFileDescriptor(
+				StringUtils.isEmpty( extension ) ? fileIdWithoutExtension : fileIdWithoutExtension + "." + StringUtils.removeStart( extension, "." )
+		);
+	}
+
+	/**
+	 * Clones the current descriptor but applies a suffix to the file id.
+	 *
+	 * @param suffix to append to the file id
+	 * @return new descriptor
+	 */
+	public FileDescriptor withSuffix( String suffix ) {
+		return folderDescriptor.createFileDescriptor( fileId + StringUtils.defaultString( suffix ) );
+	}
+
+	/**
 	 * Creates a {@link FileDescriptor} based on a uri.
 	 *
 	 * @param uri of the file
 	 * @return the descriptor
 	 */
-	public static FileDescriptor of( String uri ) {
-		if ( StringUtils.isBlank( uri ) ) {
-			throw new IllegalArgumentException( "uri may not be null or empty" );
-		}
-
-		String[] parts = StringUtils.split( uri, ":" );
-
-		Assert.isTrue( parts.length == 2 || parts.length == 3, "FileDescriptor URI must contain either 2 or 3 segments separated with :" );
-
-		String repositoryId = parts[0];
-		String folderId = null;
-		String fileId;
-		if ( parts.length == 2 ) {
-			fileId = parts[1];
-		}
-		else {
-			folderId = parts[1];
-			fileId = parts[2];
-		}
-		return FileDescriptor.of( repositoryId, folderId, fileId );
+	@SuppressWarnings({ "deprecation", "squid:CallToDeprecatedMethod" })
+	public static FileDescriptor of( @NonNull String uri ) {
+		return new FileDescriptor( uri );
 	}
 
 	/**
-	 * Creates a {@link FileDescriptor} for a specific repository.
+	 * Creates a {@link FileDescriptor} in the root folder of a specific repository.
 	 *
 	 * @param repositoryId in which the file should be stored
 	 * @param fileId       identifier of the file
@@ -111,89 +220,8 @@ public class FileDescriptor implements Serializable
 	 * @param fileId       identifier of the file
 	 * @return the descriptor
 	 */
+	@SuppressWarnings("all")
 	public static FileDescriptor of( String repositoryId, String folderId, String fileId ) {
 		return new FileDescriptor( repositoryId, folderId, fileId );
-	}
-
-	/**
-	 * @deprecated in favour of {@link FileDescriptor#of(String, String, String)}. Will be removed in 2.0.0.
-	 */
-	@Deprecated
-	public FileDescriptor( String repositoryId, String folderId, String fileId ) {
-		this.repositoryId = repositoryId;
-		this.fileId = fileId;
-		this.folderId = folderId;
-
-		uri = buildUri( repositoryId, folderId, fileId );
-	}
-
-	/**
-	 * @return Unique uri of the entire file.
-	 */
-	public String getUri() {
-		return uri;
-	}
-
-	/**
-	 * @return Unique id of the repository this file belongs to.
-	 */
-	public String getRepositoryId() {
-		return repositoryId;
-	}
-
-	/**
-	 * @return Unique id of the file within the folder.
-	 */
-	public String getFileId() {
-		return fileId;
-	}
-
-	/**
-	 * @return Path within the repository this file can be found, null if the file is considered in the root folder.
-	 */
-	public String getFolderId() {
-		return folderId;
-	}
-
-	@Override
-	public String toString() {
-		return uri;
-	}
-
-	@Override
-	public boolean equals( Object o ) {
-		if ( this == o ) {
-			return true;
-		}
-		if ( o == null || getClass() != o.getClass() ) {
-			return false;
-		}
-
-		FileDescriptor that = (FileDescriptor) o;
-
-		return Objects.equals( repositoryId, that.repositoryId )
-				&& Objects.equals( folderId, that.folderId )
-				&& Objects.equals( fileId, that.fileId );
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash( repositoryId, folderId, fileId );
-	}
-
-	public static String buildUri( String repositoryId, String folderId, String fileId ) {
-		if ( StringUtils.isBlank( repositoryId ) || StringUtils.isBlank( fileId ) ) {
-			throw new IllegalArgumentException( "both a repositoryId and a fileId are required to build a valid uri" );
-		}
-
-		StringBuilder uri = new StringBuilder( repositoryId ).append( ":" );
-
-		if ( folderId != null ) {
-			uri.append( folderId ).append( ":" );
-		}
-
-		uri.append( fileId );
-
-		return uri.toString();
 	}
 }

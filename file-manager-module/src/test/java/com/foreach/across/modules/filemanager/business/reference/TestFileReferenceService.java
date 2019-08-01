@@ -17,16 +17,16 @@
 package com.foreach.across.modules.filemanager.business.reference;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.reference.properties.FileReferenceProperties;
 import com.foreach.across.modules.filemanager.business.reference.properties.FileReferencePropertiesService;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import lombok.SneakyThrows;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,26 +44,20 @@ import static org.mockito.Mockito.*;
  * @author Steven Gentens
  * @since 1.3.0
  */
-@RunWith(MockitoJUnitRunner.class)
-public class TestFileReferenceService
+@ExtendWith(MockitoExtension.class)
+class TestFileReferenceService
 {
-	private ApplicationEventPublisher applicationEventPublisher;
 	private FileManager fileManager;
-	private FileReferenceRepository fileReferenceRepository;
 	private FileReferenceService fileReferenceService;
-	private FileReferencePropertiesService fileReferencePropertiesService;
 
 	private MultipartFile file;
-	private InputStream inputStream;
-	private FileDescriptor fileDescriptor;
-	private FileDescriptor newDescriptor;
 
-	@Before
-	public void setUp() throws IOException {
-		applicationEventPublisher = mock( ApplicationEventPublisher.class );
+	@BeforeEach
+	void setUp() throws IOException {
+		ApplicationEventPublisher applicationEventPublisher = mock( ApplicationEventPublisher.class );
 		fileManager = mock( FileManager.class );
-		fileReferenceRepository = mock( FileReferenceRepository.class );
-		fileReferencePropertiesService = mock( FileReferencePropertiesService.class );
+		FileReferenceRepository fileReferenceRepository = mock( FileReferenceRepository.class );
+		FileReferencePropertiesService fileReferencePropertiesService = mock( FileReferencePropertiesService.class );
 		fileReferenceService = new FileReferenceService( fileManager, applicationEventPublisher, fileReferenceRepository, fileReferencePropertiesService );
 
 		FileRepository fileRepository = mock( FileRepository.class );
@@ -73,13 +67,10 @@ public class TestFileReferenceService
 		when( file.getOriginalFilename() ).thenReturn( "my-file.txt" );
 		when( file.getContentType() ).thenReturn( "text/pdf" );
 		when( file.getSize() ).thenReturn( 5L );
-		inputStream = mock( InputStream.class );
+		InputStream inputStream = mock( InputStream.class );
 		when( file.getInputStream() ).thenReturn( inputStream );
 		when( inputStream.read( any() ) ).thenReturn( -1 );
-		fileDescriptor = FileDescriptor.of( FileManager.TEMP_REPOSITORY, "my-unique-file-name" );
-
-		newDescriptor = FileDescriptor.of( FileManager.DEFAULT_REPOSITORY, UUID.randomUUID().toString() );
-		when( fileRepository.moveInto( any() ) ).thenReturn( newDescriptor );
+		FileDescriptor fileDescriptor = FileDescriptor.of( FileManager.TEMP_REPOSITORY, "my-unique-file-name" );
 
 		FileReferenceProperties fileReferenceProperties = mock( FileReferenceProperties.class );
 		when( fileReferencePropertiesService.getProperties( any() ) ).thenReturn( fileReferenceProperties );
@@ -95,21 +86,27 @@ public class TestFileReferenceService
 					fileReference.setLastModifiedDate( new Date() );
 					return fileReference;
 				} );
-
 	}
 
 	@Test
 	@SneakyThrows
-	public void save() {
-		FileReference save = fileReferenceService.save( file, FileManager.DEFAULT_REPOSITORY );
+	void save() {
+		File tempFile = mock( File.class );
+		when( fileManager.createTempFile() ).thenReturn( tempFile );
+		FileResource fileResource = mock( FileResource.class );
 
-		ArgumentCaptor<File> tempFile = ArgumentCaptor.forClass( File.class );
-		verify( file ).transferTo( tempFile.capture() );
-		verify( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ), times( 1 ) ).moveInto( tempFile.getValue() );
+		FileDescriptor generated = FileDescriptor.of( "1:2:3" );
+		when( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ).generateFileDescriptor() ).thenReturn( generated );
+
+		when( fileManager.getRepository( FileManager.DEFAULT_REPOSITORY ).getFileResource( generated.withExtension( "txt" ) ) ).thenReturn( fileResource );
+		when( fileResource.getDescriptor() ).thenReturn( FileDescriptor.of( "1:2:3" ) );
+
+		FileReference save = fileReferenceService.save( file, FileManager.DEFAULT_REPOSITORY );
+		verify( file ).transferTo( tempFile );
 
 		assertThat( save ).hasNoNullFieldsOrPropertiesExcept( "newEntityId" );
 		assertThat( save.getMimeType() ).isEqualTo( file.getContentType() );
 		assertThat( save.getFileSize() ).isEqualTo( file.getSize() );
-		assertThat( save.getFileDescriptor() ).isEqualTo( newDescriptor );
+		assertThat( save.getFileDescriptor() ).isEqualTo( FileDescriptor.of( "1:2:3" ) );
 	}
 }

@@ -22,15 +22,22 @@ import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+import java.nio.file.Path;
+
+@ExtendWith(SpringExtension.class)
 @AcrossWebAppConfiguration
 public abstract class AbstractFileManagerAndHibernateIT
 {
+	@SuppressWarnings("WeakerAccess")
+	@TempDir
+	static Path tempDir;
+
 	@Configuration
 	@AcrossTestConfiguration(modules = { PropertiesModule.NAME, AcrossHibernateJpaModule.NAME })
 	protected static class Config
@@ -38,10 +45,7 @@ public abstract class AbstractFileManagerAndHibernateIT
 		@Bean
 		public FileManagerModule fileManagerModule() {
 			FileManagerModule module = new FileManagerModule();
-			module.setProperty(
-					FileManagerModuleSettings.LOCAL_REPOSITORIES_ROOT,
-					System.getProperty( "java.io.tmpdir" )
-			);
+			module.setProperty( FileManagerModuleSettings.LOCAL_REPOSITORIES_ROOT, tempDir.toString() );
 			return module;
 		}
 	}
