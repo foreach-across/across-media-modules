@@ -18,6 +18,7 @@ package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
+import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
 import com.foreach.across.modules.bootstrapui.elements.builder.ColumnViewElementBuilder;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
@@ -50,6 +51,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -247,6 +249,11 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 	                           EntityView entityView,
 	                           ContainerViewElement container,
 	                           ViewElementBuilderContext builderContext ) {
+		container.find( SingleEntityFormViewProcessor.FORM, FormViewElement.class )
+		         .ifPresent( form -> {
+			         String qs = StringUtils.defaultString( entityViewRequest.getWebRequest().getNativeRequest( HttpServletRequest.class ).getQueryString() );
+			         form.setAction( "?" + UriUtils.decode( qs, "UTF-8" ) );
+		         } );
 		if ( isSingleComponent( entityViewRequest.getCommand() ) ) {
 			container.find( SingleEntityFormViewProcessor.RIGHT_COLUMN, ContainerViewElement.class )
 			         .ifPresent( ContainerViewElement::clearChildren );
