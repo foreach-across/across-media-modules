@@ -24,7 +24,7 @@ function registerSingleFileUploadControl( control ) {
             fileInput.attr( 'type', 'hidden' );
             fileInput.removeAttr( 'value' );
             fileInput.attr( 'type', 'file' );
-            fileInput.removeClass( 'hidden' );
+            fileInput.removeClass( 'd-none' );
         } );
     }
 
@@ -39,7 +39,7 @@ function registerSingleFileUploadControl( control ) {
         const {files} = fileInput[0];
         if ( files.length > 0 ) {
             const file = files[0];
-            fileInput.addClass( "hidden" );
+            fileInput.addClass( "d-none" );
             control.append( selectedFileTemplate.replace( "{{fileName}}", file.name ) );
             registerRemoveHandler( control );
         }
@@ -68,7 +68,7 @@ function registerMultiFileUploadControl( control ) {
 
             if ( newFiles.length > 0 ) {
                 const name = fileInput.data( 'control-name' ).replace( /{{key}}/g, itemId );
-                fileInput.addClass( 'hidden' );
+                fileInput.addClass( 'd-none' );
                 fileInput.removeAttr( 'data-role' );
                 fileInput.removeAttr( 'data-control-name' );
                 fileInput.attr( 'name', name );

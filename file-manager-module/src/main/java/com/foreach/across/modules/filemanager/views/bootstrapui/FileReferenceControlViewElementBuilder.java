@@ -2,7 +2,6 @@ package com.foreach.across.modules.filemanager.views.bootstrapui;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.elements.FormControlElement;
-import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.HiddenFormElement;
 import com.foreach.across.modules.bootstrapui.elements.builder.FileUploadFormElementBuilder;
 import com.foreach.across.modules.bootstrapui.elements.builder.ScriptViewElementBuilder;
@@ -32,6 +31,7 @@ import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilder
 import static com.foreach.across.modules.entity.bind.EntityPropertyControlName.forProperty;
 import static com.foreach.across.modules.entity.views.util.EntityViewElementUtils.currentPropertyBinder;
 import static com.foreach.across.modules.entity.views.util.EntityViewElementUtils.currentPropertyDescriptor;
+import static com.foreach.across.modules.filemanager.config.FileManagerIcons.fileManagerIcons;
 
 /**
  * Creates a file upload {@link com.foreach.across.modules.web.ui.ViewElement} for {@link FileReference} properties.
@@ -150,6 +150,6 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 		            .add( StringUtils.isNotBlank( url )
 				                  ? link().text( name ).url( url )
 				                  : text( name ) )
-		            .add( button().link().css( "remove-file" ).iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) ) );
+		            .add( button().link().css( "remove-file" ).iconOnly( fileManagerIcons.removeFile() ) );
 	}
 }
