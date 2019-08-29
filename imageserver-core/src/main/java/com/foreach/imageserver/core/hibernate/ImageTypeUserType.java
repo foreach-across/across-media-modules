@@ -3,6 +3,7 @@ package com.foreach.imageserver.core.hibernate;
 import com.foreach.imageserver.core.business.ImageType;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.usertype.UserType;
@@ -39,10 +40,12 @@ public class ImageTypeUserType implements UserType
 		return Objects.hashCode( x );
 	}
 
+
+
 	@Override
 	public Object nullSafeGet( ResultSet rs,
 	                           String[] names,
-	                           SessionImplementor session,
+	                           SharedSessionContractImplementor session,
 	                           Object owner ) throws HibernateException, SQLException {
 		Integer id = (Integer) TYPE.get( rs, names[0], session );
 		for ( ImageType imageType : ImageType.values() ) {
@@ -58,7 +61,7 @@ public class ImageTypeUserType implements UserType
 	public void nullSafeSet( PreparedStatement st,
 	                         Object value,
 	                         int index,
-	                         SessionImplementor session ) throws HibernateException, SQLException {
+	                         SharedSessionContractImplementor session ) throws HibernateException, SQLException {
 		Integer result = ( (ImageType) value ).getId();
 		TYPE.set( st, result, index, session );
 	}

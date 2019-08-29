@@ -47,7 +47,7 @@ public class TestImageModificationResolver
 		r.setCropGeneratorUtil( cropGeneratorUtil );
 
 		doAnswer( invocationOnMock -> {
-			ImageResolution resolution = invocationOnMock.getArgumentAt( 1, ImageResolution.class );
+			ImageResolution resolution = invocationOnMock.getArgument( 1 );
 			return new Dimensions( resolution.getWidth(), resolution.getHeight() );
 		} ).when( cropGeneratorUtil ).applyResolution( any( Image.class ), any( ImageResolution.class ) );
 

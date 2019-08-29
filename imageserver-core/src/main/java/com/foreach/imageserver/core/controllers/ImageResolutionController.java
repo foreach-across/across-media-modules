@@ -14,10 +14,7 @@ import com.foreach.imageserver.dto.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Arne Vandamme
@@ -51,18 +48,21 @@ public class ImageResolutionController extends BaseImageAPIController
 			return error( "Access denied." );
 		}
 
-		ImageResolution resolution = imageService.getResolution( resolutionId );
+		Optional<ImageResolution> fetchedResolution = imageService.getResolution( resolutionId );
+		if ( fetchedResolution.isPresent() ) {
+			ImageResolution resolution = fetchedResolution.get();
+			List<String> contextNames = new ArrayList<>( resolution.getContexts().size() );
 
-		List<String> contextNames = new ArrayList<>( resolution.getContexts().size() );
+			for ( ImageContext ctx : resolution.getContexts() ) {
+				contextNames.add( ctx.getCode() );
+			}
 
-		for ( ImageContext ctx : resolution.getContexts() ) {
-			contextNames.add( ctx.getCode() );
+			ImageResolutionFormDto dto = new ImageResolutionFormDto( DtoUtil.toDto( resolution ) );
+			dto.setContext( contextNames.toArray( new String[contextNames.size()] ) );
+
+			return success( dto );
 		}
-
-		ImageResolutionFormDto dto = new ImageResolutionFormDto( DtoUtil.toDto( resolution ) );
-		dto.setContext( contextNames.toArray( new String[contextNames.size()] ) );
-
-		return success( dto );
+		return error( "Specified resolution does not exist." );
 	}
 
 	@RequestMapping(value = UPDATE_RESOLUTION, method = RequestMethod.POST)

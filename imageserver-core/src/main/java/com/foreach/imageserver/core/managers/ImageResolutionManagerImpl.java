@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,8 +22,8 @@ public class ImageResolutionManagerImpl implements ImageResolutionManager
 
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "'byId-'+#resolutionId")
-	public ImageResolution getById( long resolutionId ) {
-		return imageResolutionRepository.findOne( resolutionId );
+	public Optional<ImageResolution> getById( long resolutionId ) {
+		return imageResolutionRepository.findById( resolutionId );
 	}
 
 	@Override

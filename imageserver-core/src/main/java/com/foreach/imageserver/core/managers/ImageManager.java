@@ -2,9 +2,11 @@ package com.foreach.imageserver.core.managers;
 
 import com.foreach.imageserver.core.business.Image;
 
+import java.util.Optional;
+
 public interface ImageManager
 {
-	Image getById( long imageId );
+	Optional<Image> getById( long imageId );
 
 	Image getByExternalId( String externalId );
 

@@ -18,6 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -229,7 +230,7 @@ public class CropGeneratorTest
 		resolution.setWidth( width );
 		resolution.setHeight( height );
 
-		when( imageResolutionManager.getById( resolution.getId() ) ).thenReturn( resolution );
+		when( imageResolutionManager.getById( resolution.getId() ) ).thenReturn( Optional.of( resolution ) );
 
 		modification.setContextId( 1 );
 		modification.setCrop( new Crop( x, y, cropWidth, cropHeight ) );

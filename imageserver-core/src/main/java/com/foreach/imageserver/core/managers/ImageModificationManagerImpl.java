@@ -57,6 +57,6 @@ public class ImageModificationManagerImpl implements ImageModificationManager
 	@Override
 	@Transactional
 	public void deleteModifications( long imageId ) {
-		imageModificationRepository.delete( getAllModifications( imageId ) );
+		imageModificationRepository.deleteAll( getAllModifications( imageId ) );
 	}
 }

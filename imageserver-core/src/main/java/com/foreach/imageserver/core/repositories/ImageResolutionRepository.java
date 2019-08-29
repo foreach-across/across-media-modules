@@ -20,8 +20,11 @@ public interface ImageResolutionRepository extends IdBasedEntityJpaRepository<Im
 
 	@Transactional
 	default void updateContextsForResolution( long resolutionId, Collection<ImageContext> contexts ) {
-		ImageResolution imageResolution = findOne( resolutionId );
-		imageResolution.setContexts( contexts );
-		save( imageResolution );
+		findById( resolutionId ).ifPresent(
+				ir -> {
+					ir.setContexts( contexts );
+					save( ir );
+				}
+		);
 	}
 }

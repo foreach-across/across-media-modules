@@ -30,13 +30,16 @@ public class ImageResolutionServiceImpl implements ImageResolutionService
 		Map<Crop, ImageResolution> cropsThatFit = new HashMap<>();
 
 		for ( ImageModification modification : modificationList ) {
-			ImageResolution imageResolution = imageResolutionManager.getById( modification.getResolutionId() );
-			// check dimensions
-			AspectRatio image = new AspectRatio( imageResolution.getHeight(), imageResolution.getWidth() );
-			if ( requestedRatio.equals( image ) ) {
-				// collect crops with the same ratio
-				cropsThatFit.put( modification.getCrop(), imageResolution );
-			}
+			imageResolutionManager.getById( modification.getResolutionId() )
+			                      .ifPresent( imageResolution -> {
+				                      // check dimensions
+				                      AspectRatio image = new AspectRatio( imageResolution.getHeight(), imageResolution.getWidth() );
+				                      if ( requestedRatio.equals( image ) ) {
+					                      // collect crops with the same ratio
+					                      cropsThatFit.put( modification.getCrop(), imageResolution );
+				                      }
+			                      } );
+
 		}
 
 		// when there are no matching crops, return null
