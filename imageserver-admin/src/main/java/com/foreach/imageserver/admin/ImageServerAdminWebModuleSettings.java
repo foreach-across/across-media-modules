@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties("imageServerAdmin")
+@ConfigurationProperties("image-server-admin")
 public class ImageServerAdminWebModuleSettings
 {
 	public static final String IMAGE_SERVER_URL = "imageServerAdmin.imageServerUrl";

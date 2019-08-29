@@ -22,15 +22,15 @@ import java.util.Collections;
 				AcrossHibernateJpaModule.NAME,
 				PropertiesModule.NAME,
 				FileManagerModule.NAME,
-				DebugWebModule.NAME,
-				LoggingModule.NAME
+				DebugWebModule.NAME
+//				, LoggingModule.NAME
 		}
 )
 public class ImageServerTestEmbeddedApplication
 {
 	public static void main( String[] args ) {
 		SpringApplication springApplication = new SpringApplication( ImageServerTestEmbeddedApplication.class );
-		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.location", "${user.home}/dev-configs/imageserver-embedded.yml" ) );
+		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.additional-location", "${user.home}/dev-configs/imageserver-embedded.yml" ) );
 		springApplication.run( args );
 	}
 

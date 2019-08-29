@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties("imageServerCore.transformers.imageMagick")
+@ConfigurationProperties("image-server-core.transformers.image-magick")
 public class ImageMagickSettings
 {
 	/**

@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Arne Vandamme
  */
 @Data
-@ConfigurationProperties("imageServerCore")
+@ConfigurationProperties("image-server-core")
 public class ImageServerCoreModuleSettings
 {
 	public static final String ROOT_PATH = "imageServerCore.rootPath";

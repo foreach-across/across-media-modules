@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties("imageServerCore.transformers")
+@ConfigurationProperties("image-server-core.transformers")
 public class TransformersSettings
 {
 	/**
