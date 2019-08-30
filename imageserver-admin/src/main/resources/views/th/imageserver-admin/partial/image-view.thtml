@@ -1,14 +1,14 @@
 <div ng-controller="ImageViewController as controller">
     <h3>View a stored image</h3>
 
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
+    <nav class="navbar navbar-default mb-3" role="navigation">
+        <div>
             <form role="form" class="navbar-form">
                 <div class="form-group">
                     <input type="text" class="form-control" ng-model="controller.externalId"
                            ng-enter="controller.loadImage()" placeholder="External id"/>
                 </div>
-                <a href="" ng-click="controller.loadImage()" class="btn btn-default">load</a>
+                <a href="" ng-click="controller.loadImage()" class="btn btn-primary">load</a>
             </form>
         </div>
     </nav>
@@ -20,8 +20,8 @@
     <div ng-if="controller.image.existing" class="container-fluid">
         <div class="row">
             <div class="col-md-3">
-                <div class="panel panel-default">
-                    <div class="panel-body">
+                <div class="card mb-3">
+                    <div class="card-body">
                         <p><strong>{{controller.image.externalId}}</strong><br/>
                             {{controller.image.dimensionsDto.width}} x {{controller.image.dimensionsDto.height}}<br/>
                             {{controller.image.imageType}}<br/>
