@@ -51,7 +51,7 @@ public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsCompone
 
 		ContainerViewElementBuilder members = BootstrapUiBuilders.container();
 		if ( !componentModel.isFixed() ) {
-			members.add( BootstrapUiBuilders.html( "<h5 class=\"wcm-sortable-component-title\">Drag the container members to reorder them.</h5>" ) );
+			members.add( BootstrapUiBuilders.html( "<p class=\"wcm-sortable-component-title\">Drag the container members to reorder them.</p>" ) );
 		}
 		for ( int i = 0; i < componentModel.getMembers().size(); i++ ) {
 			String scopedPrefix = controlNamePrefix + ".members[" + i + "]";

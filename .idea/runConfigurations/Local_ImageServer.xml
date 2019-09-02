@@ -1,12 +1,12 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Local ImageServer" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
-    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+    <module name="web-cms-module-test" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="webapps.admin.WebCmsTestApplication" />
-    <option name="ACTIVE_PROFILES" value="local-imageserver" />
+    <option name="ACTIVE_PROFILES" value="local-imageserver, dev" />
     <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
     <option name="ALTERNATIVE_JRE_PATH" />
-    <module name="web-cms-module-test" />
-    <envs />
-    <method />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
   </configuration>
 </component>

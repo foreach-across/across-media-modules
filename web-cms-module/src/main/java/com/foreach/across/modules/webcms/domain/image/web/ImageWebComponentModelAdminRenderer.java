@@ -19,7 +19,6 @@ package com.foreach.across.modules.webcms.domain.image.web;
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
-import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
@@ -30,6 +29,7 @@ import com.foreach.across.modules.webcms.web.ImageWebCmsComponentAdminResources;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import static com.foreach.across.modules.bootstrapui.styles.BootstrapStyles.css;
 import static com.foreach.across.modules.webcms.config.icons.WebCmsIcons.webCmsIcons;
 
 /**
@@ -96,7 +96,7 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 						BootstrapUiBuilders.button()
 						                   .name( "btn-select-image" )
 						                   .css( thumbnailUrl != null ? "d-none" : "" )
-						                   .style( Style.DEFAULT )
+						                   .with( css.button.secondary )
 						                   .text( "Select image" )
 				)
 				.postProcessor( ( builderContext, wrapper ) -> {

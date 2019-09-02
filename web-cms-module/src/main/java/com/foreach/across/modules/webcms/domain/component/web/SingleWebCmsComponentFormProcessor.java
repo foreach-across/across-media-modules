@@ -59,6 +59,8 @@ import org.springframework.web.util.UrlPathHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.groups.Default;
 
+import static com.foreach.across.modules.bootstrapui.styles.BootstrapStyles.css;
+
 /**
  * Layouts the web component form pages, builds the actual component model and renders the form.
  * Mainly intended for indirect use by the {@link WebCmsObjectComponentViewsConfiguration}.
@@ -214,6 +216,7 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 			breadcrumb.addFirst(
 					BootstrapUiBuilders.node( "li" )
 					                   .attribute( "title", owner.getName() )
+					                   .with( css.breadcrumb.item )
 					                   .add(
 							                   createLink
 									                   ? BootstrapUiBuilders.link()

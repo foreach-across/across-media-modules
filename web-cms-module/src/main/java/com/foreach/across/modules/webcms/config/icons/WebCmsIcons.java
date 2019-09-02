@@ -58,7 +58,7 @@ public class WebCmsIcons
 		mutableIconSet.add( WebCmsMenuIcons.DOMAIN_GROUP, ( imageName ) -> IconSet.iconSet( FONT_AWESOME_SOLID_ICON_SET ).icon( "home" ) );
 		mutableIconSet.add( WebCmsMenuIcons.SELECTED_DOMAIN, ( imageName ) -> IconSet.iconSet( FONT_AWESOME_REGULAR_ICON_SET ).icon( "dot-circle" ) );
 
-		mutableIconSet.add( PREVIEW, ( imageName ) -> IconSet.iconSet( FONT_AWESOME_SOLID_ICON_SET ).icon( "file-image" ) );
+		mutableIconSet.add( PREVIEW, ( imageName ) -> IconSet.iconSet( FONT_AWESOME_REGULAR_ICON_SET ).icon( "file-image" ) );
 
 		IconSetRegistry.addIconSet( WebCmsModule.NAME, mutableIconSet );
 	}

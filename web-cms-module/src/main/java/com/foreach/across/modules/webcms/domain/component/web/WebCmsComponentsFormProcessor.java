@@ -60,6 +60,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static com.foreach.across.modules.bootstrapui.styles.BootstrapStyles.css;
+
 /**
  * Processor that renders a number of components as direct form controls.
  * Useful if you want to create a single form that allows direct editing of a number of components,
@@ -221,6 +223,7 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 			breadcrumb.addFirst(
 					BootstrapUiBuilders.node( "li" )
 					                   .attribute( "title", owner.getName() )
+					                   .with( css.breadcrumb.item )
 					                   .add(
 							                   createLink
 									                   ? BootstrapUiBuilders.link()
