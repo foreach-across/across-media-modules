@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.foreach.across.modules.webcms.config.WebCmsIcons.webCmsIcons;
+import static com.foreach.across.modules.webcms.config.icons.WebCmsIcons.webCmsIcons;
 
 /**
  * Builds the admin domain selector in case per-domain management is active.
@@ -56,7 +56,7 @@ class WebCmsDomainNavBuilder
 		if ( !multiDomainConfiguration.isDisabled() && !multiDomainConfiguration.isDomainSelectablePerEntity() ) {
 			PathBasedMenuBuilder menuBuilder = event.builder()
 			                                        .group( "/wcmDomain", "#{webCmsModule.menu.domainNav.switchDomain=Switch domain}" )
-			                                        .attribute( NavComponentBuilder.ATTR_ICON, webCmsIcons.home() )
+			                                        .attribute( NavComponentBuilder.ATTR_ICON, webCmsIcons.menu.domainGroup() )
 			                                        .attribute( NavComponentBuilder.ATTR_ICON_ONLY, true )
 			                                        .attribute( AdminMenu.ATTR_NAV_POSITION, AdminWebLayoutTemplate.NAVBAR_RIGHT )
 			                                        .and();
@@ -75,7 +75,7 @@ class WebCmsDomainNavBuilder
 						             .order( Ordered.HIGHEST_PRECEDENCE );
 
 				if ( WebCmsDomain.isNoDomain( currentDomain ) ) {
-					itemBuilder.attribute( NavComponentBuilder.ATTR_ICON, webCmsIcons.selectedItem() );
+					itemBuilder.attribute( NavComponentBuilder.ATTR_ICON, webCmsIcons.menu.selectedDomain() );
 				}
 			}
 
@@ -86,7 +86,7 @@ class WebCmsDomainNavBuilder
 								       "@adminWeb:/?ts=" + System.currentTimeMillis() + "&wcmSelectDomain=" + domain.getDomainKey() );
 
 						if ( domain.equals( currentDomain ) ) {
-							item.attribute( NavComponentBuilder.ATTR_ICON, webCmsIcons.selectedItem() );
+							item.attribute( NavComponentBuilder.ATTR_ICON, webCmsIcons.menu.selectedDomain() );
 							menuBuilder.root( "/" ).title( domain.getName() ).attribute( NavComponentBuilder.ATTR_ICON_ONLY, false );
 						}
 					}

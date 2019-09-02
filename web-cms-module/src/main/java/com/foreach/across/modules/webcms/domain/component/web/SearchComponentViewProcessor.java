@@ -55,7 +55,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Collections;
 
-import static com.foreach.across.modules.webcms.config.WebCmsIcons.webCmsIcons;
+import static com.foreach.across.modules.webcms.config.icons.WebCmsIcons.webCmsIcons;
 
 /**
  * This processor is a work in progress.
@@ -135,7 +135,7 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 									                   .append(
 											                   BootstrapUiBuilders.button()
 											                                      .submit()
-											                                      .iconOnly( webCmsIcons.search() )
+											                                      .iconOnly( webCmsIcons.component.search() )
 									                   )
 					                   )
 			);
@@ -250,7 +250,7 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 									     BootstrapUiBuilders.link()
 									                        .url( url )
 									                        .title( "View container members" )
-									                        .add( webCmsIcons.viewComponents() )
+									                        .add( webCmsIcons.component.viewMembers() )
 							     )
 							     .build( viewElementBuilderContext )
 					);
@@ -274,7 +274,7 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 								     BootstrapUiBuilders.link()
 								                        .url( url )
 								                        .title( "View components" )
-								                        .add( webCmsIcons.viewComponents() )
+								                        .add( webCmsIcons.component.viewMembers() )
 						     )
 						     .build( viewElementBuilderContext )
 				);

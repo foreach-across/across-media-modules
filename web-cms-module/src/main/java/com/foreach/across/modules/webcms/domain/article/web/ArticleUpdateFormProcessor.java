@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import static com.foreach.across.modules.webcms.config.WebCmsIcons.webCmsIcons;
+import static com.foreach.across.modules.webcms.config.icons.WebCmsIcons.webCmsIcons;
 
 /**
  * @author Arne Vandamme

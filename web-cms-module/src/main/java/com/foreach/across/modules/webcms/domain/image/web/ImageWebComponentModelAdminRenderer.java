@@ -30,7 +30,7 @@ import com.foreach.across.modules.webcms.web.ImageWebCmsComponentAdminResources;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import static com.foreach.across.modules.webcms.config.WebCmsIcons.webCmsIcons;
+import static com.foreach.across.modules.webcms.config.icons.WebCmsIcons.webCmsIcons;
 
 /**
  * @author Arne Vandamme
@@ -81,14 +81,14 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 								                   BootstrapUiBuilders.button()
 								                                      .link()
 								                                      .attribute( "data-wcm-image-action", "edit" )
-								                                      .iconOnly( webCmsIcons.edit() )
+								                                      .iconOnly( webCmsIcons.image.edit() )
 								                                      .text( "Change image" )
 						                   )
 						                   .add(
 								                   BootstrapUiBuilders.button()
 								                                      .link()
 								                                      .attribute( "data-wcm-image-action", "delete" )
-								                                      .iconOnly( webCmsIcons.remove() )
+								                                      .iconOnly( webCmsIcons.image.remove() )
 								                                      .text( "Remove image" )
 						                   )
 				)
