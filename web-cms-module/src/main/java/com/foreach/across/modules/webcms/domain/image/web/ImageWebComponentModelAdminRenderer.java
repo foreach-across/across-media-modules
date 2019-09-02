@@ -19,7 +19,6 @@ package com.foreach.across.modules.webcms.domain.image.web;
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
-import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
@@ -30,6 +29,8 @@ import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConne
 import com.foreach.across.modules.webcms.web.ImageWebCmsComponentAdminResources;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.webcms.config.WebCmsIcons.webCmsIcons;
 
 /**
  * @author Arne Vandamme
@@ -66,7 +67,7 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 				)
 				.add(
 						BootstrapUiBuilders.div()
-						                   .css( "image-thumbnail-container", thumbnailUrl != null ? "" : "hidden" )
+						                   .css( "image-thumbnail-container", thumbnailUrl != null ? "" : "d-none" )
 						                   .add(
 								                   BootstrapUiBuilders.node( "img" )
 								                                      .attribute( "src", thumbnailUrl )
@@ -75,26 +76,26 @@ public class ImageWebComponentModelAdminRenderer implements WebCmsComponentModel
 				)
 				.add(
 						BootstrapUiBuilders.div()
-						                   .css( "image-thumbnail-actions", thumbnailUrl != null ? "" : "hidden" )
+						                   .css( "image-thumbnail-actions", thumbnailUrl != null ? "" : "d-none" )
 						                   .add(
 								                   BootstrapUiBuilders.button()
 								                                      .link()
 								                                      .attribute( "data-wcm-image-action", "edit" )
-								                                      .iconOnly( new GlyphIcon( GlyphIcon.EDIT ) )
+								                                      .iconOnly( webCmsIcons.edit() )
 								                                      .text( "Change image" )
 						                   )
 						                   .add(
 								                   BootstrapUiBuilders.button()
 								                                      .link()
 								                                      .attribute( "data-wcm-image-action", "delete" )
-								                                      .iconOnly( new GlyphIcon( GlyphIcon.REMOVE ) )
+								                                      .iconOnly( webCmsIcons.remove() )
 								                                      .text( "Remove image" )
 						                   )
 				)
 				.add(
 						BootstrapUiBuilders.button()
 						                   .name( "btn-select-image" )
-						                   .css( thumbnailUrl != null ? "hidden" : "" )
+						                   .css( thumbnailUrl != null ? "d-none" : "" )
 						                   .style( Style.DEFAULT )
 						                   .text( "Select image" )
 				)

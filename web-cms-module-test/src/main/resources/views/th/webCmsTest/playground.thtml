@@ -3,7 +3,7 @@
 <div th:fragment="body(component)"
      class="form-group main-component-form-group"
      th:with="settings=${component.find('settings')},content=${component.find('content')},metadata=${component.find('metadata')},model=${component.getAttribute('componentModel')},htmlId=${#ids.seq('component-tab')}">
-    <div class="pull-right">
+    <div class="float-right">
         <ul class="component-tabs">
             <li class="active content-tab">
                 <a th:href="${'#content-' + htmlId}" data-toggle="tab"><span class="glyphicon glyphicon-pencil"></span></a>

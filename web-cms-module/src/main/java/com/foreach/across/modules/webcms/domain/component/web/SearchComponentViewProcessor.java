@@ -17,8 +17,6 @@
 package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
-import com.foreach.across.modules.bootstrapui.elements.FaIcon;
-import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.bootstrapui.elements.builder.TableViewElementBuilder;
 import com.foreach.across.modules.entity.query.EntityQuery;
 import com.foreach.across.modules.entity.query.EntityQueryExecutor;
@@ -56,6 +54,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Collections;
+
+import static com.foreach.across.modules.webcms.config.WebCmsIcons.webCmsIcons;
 
 /**
  * This processor is a work in progress.
@@ -116,7 +116,7 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 						                                            BootstrapUiBuilders.link()
 						                                                               .url( url )
 						                                                               .text( entityConfiguration.getEntityMessageCodeResolver()
-						                                                                                       .getNameSingular() ) ) );
+						                                                                                         .getNameSingular() ) ) );
 			              } );
 
 			builderMap.put(
@@ -127,17 +127,17 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 					                   .add( pills )
 					                   .add(
 							                   BootstrapUiBuilders
-									                  .inputGroup(
-											                  BootstrapUiBuilders.textbox()
-											                                     .controlName( "qs" )
-											                                     .text( request.getParameter( "qs" ) )
-									                  )
-									                  .addonAfter(
-											                  BootstrapUiBuilders.button()
-											                                     .submit()
-											                                     .iconOnly( new GlyphIcon( GlyphIcon.SEARCH ) )
-									                  )
-					                  )
+									                   .inputGroup(
+											                   BootstrapUiBuilders.textbox()
+											                                      .controlName( "qs" )
+											                                      .text( request.getParameter( "qs" ) )
+									                   )
+									                   .append(
+											                   BootstrapUiBuilders.button()
+											                                      .submit()
+											                                      .iconOnly( webCmsIcons.search() )
+									                   )
+					                   )
 			);
 		}
 		else {
@@ -164,16 +164,16 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 		breadcrumb.addFirst(
 				BootstrapUiBuilders.node( "li" )
 				                   .add(
-						                  parent != null
-								                  ? BootstrapUiBuilders.link()
-								                                       .url(
-										                                      ServletUriComponentsBuilder.fromCurrentRequest()
-										                                                                 .replaceQueryParam( "parent" )
-										                                                                 .toUriString()
-								                                      )
-								                                       .text( "Search components" )
-								                  : BootstrapUiBuilders.text( "Search components" )
-				                  )
+						                   parent != null
+								                   ? BootstrapUiBuilders.link()
+								                                        .url(
+										                                        ServletUriComponentsBuilder.fromCurrentRequest()
+										                                                                   .replaceQueryParam( "parent" )
+										                                                                   .toUriString()
+								                                        )
+								                                        .text( "Search components" )
+								                   : BootstrapUiBuilders.text( "Search components" )
+				                   )
 		);
 
 		containerBuilder.addFirst( breadcrumb );
@@ -250,7 +250,7 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 									     BootstrapUiBuilders.link()
 									                        .url( url )
 									                        .title( "View container members" )
-									                        .add( new FaIcon( FaIcon.VideoPlayer.FORWARD ) )
+									                        .add( webCmsIcons.viewComponents() )
 							     )
 							     .build( viewElementBuilderContext )
 					);
@@ -274,7 +274,7 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 								     BootstrapUiBuilders.link()
 								                        .url( url )
 								                        .title( "View components" )
-								                        .add( new FaIcon( FaIcon.VideoPlayer.FORWARD ) )
+								                        .add( webCmsIcons.viewComponents() )
 						     )
 						     .build( viewElementBuilderContext )
 				);
@@ -294,13 +294,13 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 			breadcrumb.addFirst(
 					BootstrapUiBuilders.node( "li" )
 					                   .add(
-							                  asLink
-									                  ? BootstrapUiBuilders.link()
-									                                       .url( url )
-									                                       .title( owner.getName() )
-									                                       .text( title )
-									                  : BootstrapUiBuilders.text( title )
-					                  )
+							                   asLink
+									                   ? BootstrapUiBuilders.link()
+									                                        .url( url )
+									                                        .title( owner.getName() )
+									                                        .text( title )
+									                   : BootstrapUiBuilders.text( title )
+					                   )
 			);
 
 			if ( owner.hasOwner() ) {
@@ -327,13 +327,13 @@ public final class SearchComponentViewProcessor extends EntityViewProcessorAdapt
 		breadcrumb.addFirst(
 				BootstrapUiBuilders.node( "li" )
 				                   .add(
-						                  asLink
-								                  ? BootstrapUiBuilders.link()
-								                                       .url( url )
-								                                       .title( title )
-								                                       .text( title )
-								                  : BootstrapUiBuilders.text( title )
-				                  )
+						                   asLink
+								                   ? BootstrapUiBuilders.link()
+								                                        .url( url )
+								                                        .title( title )
+								                                        .text( title )
+								                   : BootstrapUiBuilders.text( title )
+				                   )
 		);
 
 	}

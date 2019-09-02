@@ -20,8 +20,6 @@ import com.foreach.across.modules.adminweb.menu.AdminMenu;
 import com.foreach.across.modules.adminweb.menu.AdminMenuEvent;
 import com.foreach.across.modules.adminweb.ui.AdminWebLayoutTemplate;
 import com.foreach.across.modules.bootstrapui.components.builder.NavComponentBuilder;
-import com.foreach.across.modules.bootstrapui.elements.FaIcon;
-import com.foreach.across.modules.bootstrapui.elements.GlyphIcon;
 import com.foreach.across.modules.spring.security.actions.AllowableAction;
 import com.foreach.across.modules.web.menu.PathBasedMenuBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
@@ -34,6 +32,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.foreach.across.modules.webcms.config.WebCmsIcons.webCmsIcons;
 
 /**
  * Builds the admin domain selector in case per-domain management is active.
@@ -56,7 +56,7 @@ class WebCmsDomainNavBuilder
 		if ( !multiDomainConfiguration.isDisabled() && !multiDomainConfiguration.isDomainSelectablePerEntity() ) {
 			PathBasedMenuBuilder menuBuilder = event.builder()
 			                                        .group( "/wcmDomain", "#{webCmsModule.menu.domainNav.switchDomain=Switch domain}" )
-			                                        .attribute( NavComponentBuilder.ATTR_ICON, new GlyphIcon( GlyphIcon.HOME ) )
+			                                        .attribute( NavComponentBuilder.ATTR_ICON, webCmsIcons.home() )
 			                                        .attribute( NavComponentBuilder.ATTR_ICON_ONLY, true )
 			                                        .attribute( AdminMenu.ATTR_NAV_POSITION, AdminWebLayoutTemplate.NAVBAR_RIGHT )
 			                                        .and();
@@ -75,7 +75,7 @@ class WebCmsDomainNavBuilder
 						             .order( Ordered.HIGHEST_PRECEDENCE );
 
 				if ( WebCmsDomain.isNoDomain( currentDomain ) ) {
-					itemBuilder.attribute( NavComponentBuilder.ATTR_ICON, new FaIcon( FaIcon.WebApp.DOT_CIRCLE_O ) );
+					itemBuilder.attribute( NavComponentBuilder.ATTR_ICON, webCmsIcons.selectedItem() );
 				}
 			}
 
@@ -86,7 +86,7 @@ class WebCmsDomainNavBuilder
 								       "@adminWeb:/?ts=" + System.currentTimeMillis() + "&wcmSelectDomain=" + domain.getDomainKey() );
 
 						if ( domain.equals( currentDomain ) ) {
-							item.attribute( NavComponentBuilder.ATTR_ICON, new FaIcon( FaIcon.WebApp.DOT_CIRCLE_O ) );
+							item.attribute( NavComponentBuilder.ATTR_ICON, webCmsIcons.selectedItem() );
 							menuBuilder.root( "/" ).title( domain.getName() ).attribute( NavComponentBuilder.ATTR_ICON_ONLY, false );
 						}
 					}
