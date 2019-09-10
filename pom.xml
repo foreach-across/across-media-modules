@@ -17,29 +17,41 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.foreach.across</groupId>
-		<artifactId>standard-module-bom</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<artifactId>across-standard-module-parent</artifactId>
+		<version>5.0.0-TEST-SNAPSHOT</version>
 	</parent>
-
-	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.foreach.across.modules</groupId>
 	<artifactId>file-manager-module-project</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>${revision}</version>
+
+	<developers>
+		<developer>
+			<name>Foreach</name>
+			<organization>Foreach</organization>
+			<organizationUrl>https://www.foreach.be</organizationUrl>
+		</developer>
+	</developers>
 
 	<repositories>
 		<repository>
-			<id>foreach-nexus</id>
-			<name>Foreach nexus</name>
-			<url>http://repository.foreach.be/nexus/repository/public/</url>
+			<id>across</id>
+			<name>Across Repository</name>
+			<url>https://repository.foreach.be/nexus/repository/public/</url>
 		</repository>
 	</repositories>
 
-	<name>${project.groupId}:${project.artifactId}</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<revision>2.0.0-TEST-SNAPSHOT</revision>
+	</properties>
+
 	<description>
 		Across standard module that provides a set of generic services for accessing files across different types
 		of file repositories (eg. disk, remote storage...).
@@ -52,76 +64,12 @@
 		</license>
 	</licenses>
 
-	<developers>
-		<developer>
-			<name>Arne Vandamme</name>
-			<organization>Foreach</organization>
-			<organizationUrl>https://www.foreach.be</organizationUrl>
-		</developer>
-		<developer>
-			<name>Sander Van Loock</name>
-			<organization>Foreach</organization>
-			<organizationUrl>https://www.foreach.be</organizationUrl>
-		</developer>
-	</developers>
-
 	<modules>
 		<module>file-manager-module</module>
 		<module>file-manager-module-test</module>
 		<module>file-manager-module-no-entity-module</module>
 		<module>file-manager-module-no-hibernate-module</module>
 	</modules>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<source>1.8</source>
-					<target>1.8</target>
-					<annotationProcessors>
-						<annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor
-						</annotationProcessor>
-						<annotationProcessor>com.querydsl.apt.jpa.JPAAnnotationProcessor</annotationProcessor>
-					</annotationProcessors>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>com.querydsl</groupId>
-						<artifactId>querydsl-apt</artifactId>
-						<version>${querydsl.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.hibernate.javax.persistence</groupId>
-						<artifactId>hibernate-jpa-2.1-api</artifactId>
-						<version>1.0.2.Final</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.5</version>
-				<inherited>false</inherited>
-				<configuration>
-					<finalName>${project.artifactId}</finalName>
-					<descriptors>
-						<descriptor>site.xml</descriptor>
-					</descriptors>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 
 	<dependencyManagement>
 		<dependencies>
@@ -140,27 +88,27 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>across-hibernate-module</artifactId>
-				<version>5.0.0-SNAPSHOT</version>
+				<version>5.0.0-TEST-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>properties-module</artifactId>
-				<version>2.0.0-SNAPSHOT</version>
+				<version>2.0.0-TEST-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>entity-module</artifactId>
-				<version>4.0.0-SNAPSHOT</version>
+				<version>4.0.0-TEST-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>bootstrap-ui-module</artifactId>
-				<version>3.0.0-SNAPSHOT</version>
+				<version>3.0.0-TEST-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>admin-web-module</artifactId>
-				<version>4.0.0-SNAPSHOT</version>
+				<version>4.0.0-TEST-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
@@ -173,43 +121,18 @@
 				<version>0.1.19</version>
 			</dependency>
 			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>5.4.2</version>
-			</dependency>
-			<dependency>
 				<groupId>org.junit.platform</groupId>
 				<artifactId>junit-platform-commons</artifactId>
 				<version>1.4.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-engine</artifactId>
-				<version>5.4.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.vintage</groupId>
-				<artifactId>junit-vintage-engine</artifactId>
-				<version>5.4.2</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-apt</artifactId>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -234,8 +157,6 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:git:https://bitbucket.org/beforeach/file-manager-module.git</connection>
-		<developerConnection>scm:git:https://bitbucket.org/beforeach/file-manager-module.git</developerConnection>
 		<url>https://bitbucket.org/beforeach/file-manager-module</url>
 	</scm>
 </project>

@@ -1,5 +1,7 @@
 package com.foreach.across.modules.filemanager.config;
 
+import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
+import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
 import com.foreach.across.modules.bootstrapui.elements.icons.IconSetRegistry;
 import com.foreach.across.modules.bootstrapui.elements.icons.SimpleIconSet;
 import com.foreach.across.modules.filemanager.FileManagerModule;
@@ -11,6 +13,7 @@ import static com.foreach.across.modules.bootstrapui.config.FontAwesomeIconSetCo
 import static com.foreach.across.modules.bootstrapui.styles.BootstrapStyles.css;
 
 @Configuration
+@ConditionalOnAcrossModule(BootstrapUiModule.NAME)
 public class FileManagerIcons
 {
 	public final static String REMOVE_FILE = "remove-file";
