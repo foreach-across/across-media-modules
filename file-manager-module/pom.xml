@@ -202,7 +202,7 @@
 						<inherited>true</inherited>
 						<id>aggregate</id>
 						<goals>
-							<goal>aggregate</goal>
+							<goal>aggregate-no-fork</goal>
 						</goals>
 						<phase>prepare-package</phase>
 						<configuration>

@@ -9,3 +9,4 @@ file-manager-module/src/main/resources/views/static/FileManagerModule/js
 file-manager-module/src/main/resources/views/static/FileManagerModule/css
 .idea/template/
 local-data/
+.flattened-pom.xml
