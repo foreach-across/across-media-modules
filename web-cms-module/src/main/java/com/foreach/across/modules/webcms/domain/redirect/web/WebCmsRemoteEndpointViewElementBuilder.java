@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.redirect.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.registry.EntityConfiguration;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
@@ -29,6 +28,8 @@ import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 
 /**
  * @author Arne Vandamme
@@ -50,9 +51,10 @@ public class WebCmsRemoteEndpointViewElementBuilder implements ViewElementBuilde
 		String updateUrl = entityConfiguration.getAttribute( EntityViewLinkBuilder.class ).forInstance( endpoint ).updateView().toUriString();
 		String name = entityConfiguration.getEntityMessageCodeResolver().getNameSingular();
 
-		return BootstrapUiBuilders.link()
-		                          .url( updateUrl )
-		                          .text( name + ": " + endpoint.getTargetUrl() )
-		                          .build( viewElementBuilderContext );
+		return bootstrap.builders
+				.link()
+				.url( updateUrl )
+				.text( name + ": " + endpoint.getTargetUrl() )
+				.build( viewElementBuilderContext );
 	}
 }

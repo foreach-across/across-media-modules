@@ -18,7 +18,6 @@ package com.foreach.across.modules.webcms.domain.asset.web.builders;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
 import com.foreach.across.modules.web.ui.ViewElement;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
@@ -28,6 +27,9 @@ import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConne
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * This builder builds a {@link ViewElement} for image upload for the current entity which is an {@link WebCmsImage}.
@@ -48,19 +50,19 @@ public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewEle
 
 		if ( image.isNew() ) {
 			// Only allow uploads for a new image
-			return BootstrapUiBuilders.file()
-			                          .controlName( "extensions[image].imageData" )
-			                          .build( viewElementBuilderContext );
+			return bootstrap.builders.file()
+			                         .controlName( "extensions[image].imageData" )
+			                         .build( viewElementBuilderContext );
 		}
 
 		String imageUrl = imageConnector.buildImageUrl( image, 800, 600 );
-		return BootstrapUiBuilders.div()
-		                          .css( "image-preview-container" )
-		                          .add(
-				                          BootstrapUiBuilders.node( "img" )
-				                                             .attribute( "src", imageUrl )
-		                          )
-		                          .build( viewElementBuilderContext );
+		return html.builders.div()
+		                    .css( "image-preview-container" )
+		                    .add(
+				                    html.builders.img()
+				                                 .attribute( "src", imageUrl )
+		                    )
+		                    .build( viewElementBuilderContext );
 
 		/*
 		ViewElement thumbnailPreview = image.getImageServerKey()

@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.component.container;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.web.ui.ViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
@@ -26,6 +25,9 @@ import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentMod
 import com.foreach.across.modules.webcms.domain.component.web.WebCmsComponentModelMembersAdminRenderer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * @author Arne Vandamme
@@ -46,12 +48,12 @@ public class ContainerWebCmsComponentModelAdminRenderer implements WebCmsCompone
 	@Override
 	public ViewElementBuilder createMembersViewElementBuilder( ContainerWebCmsComponentModel componentModel, String controlNamePrefix ) {
 		if ( componentModel.isEmpty() ) {
-			return componentModel.isFixed() ? null : BootstrapUiBuilders.alert().warning().text( "This container is currently empty." );
+			return componentModel.isFixed() ? null : bootstrap.builders.alert().warning().text( "This container is currently empty." );
 		}
 
-		ContainerViewElementBuilder members = BootstrapUiBuilders.container();
+		ContainerViewElementBuilder members = html.builders.container();
 		if ( !componentModel.isFixed() ) {
-			members.add( BootstrapUiBuilders.html( "<p class=\"wcm-sortable-component-title\">Drag the container members to reorder them.</p>" ) );
+			members.add( html.builders.unescapedText( "<p class=\"wcm-sortable-component-title\">Drag the container members to reorder them.</p>" ) );
 		}
 		for ( int i = 0; i < componentModel.getMembers().size(); i++ ) {
 			String scopedPrefix = controlNamePrefix + ".members[" + i + "]";

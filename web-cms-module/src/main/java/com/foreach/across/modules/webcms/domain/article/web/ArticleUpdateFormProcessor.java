@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.article.web;
 
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.bootstrapui.elements.LinkViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
@@ -36,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 import static com.foreach.across.modules.webcms.config.icons.WebCmsIcons.webCmsIcons;
 
 /**
@@ -77,11 +77,11 @@ final class ArticleUpdateFormProcessor extends EntityViewProcessorAdapter
 		container.find( SingleEntityFormViewProcessor.RIGHT_COLUMN, ContainerViewElement.class )
 		         .ifPresent( target -> {
 			         target.addChild(
-					         BootstrapUiBuilders.row()
-					                            .name( "pub-metadata" )
-					                            .add( BootstrapUiBuilders.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-left" ) )
-					                            .add( BootstrapUiBuilders.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-right" ) )
-					                            .build( builderContext )
+					         bootstrap.builders.row()
+					                           .name( "pub-metadata" )
+					                           .add( bootstrap.builders.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-left" ) )
+					                           .add( bootstrap.builders.column( Grid.Device.MD.width( 6 ) ).name( "pub-metadata-right" ) )
+					                           .build( builderContext )
 			         );
 
 			         container
