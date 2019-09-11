@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>across-standard-module-parent</artifactId>
-		<version>5.0.0-TEST-SNAPSHOT</version>
+		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.foreach.across.modules</groupId>
@@ -49,7 +49,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<revision>2.0.0-TEST-SNAPSHOT</revision>
+		<revision>2.0.0-SNAPSHOT</revision>
 	</properties>
 
 	<description>
@@ -88,27 +88,27 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>across-hibernate-module</artifactId>
-				<version>5.0.0-TEST-SNAPSHOT</version>
+				<version>4.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>properties-module</artifactId>
-				<version>2.0.0-TEST-SNAPSHOT</version>
+				<version>2.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>entity-module</artifactId>
-				<version>4.0.0-TEST-SNAPSHOT</version>
+				<version>4.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>bootstrap-ui-module</artifactId>
-				<version>3.0.0-TEST-SNAPSHOT</version>
+				<version>3.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>admin-web-module</artifactId>
-				<version>4.0.0-TEST-SNAPSHOT</version>
+				<version>4.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
