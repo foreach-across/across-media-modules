@@ -9,6 +9,7 @@ import com.atlassian.bamboo.specs.builders.task.ScriptTask;
 import com.atlassian.bamboo.specs.builders.task.SshTask;
 import com.atlassian.bamboo.specs.builders.task.TestParserTask;
 import com.atlassian.bamboo.specs.model.task.TestParserTaskProperties;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.foreach.bamboo.imageserver.Jobs.*;
 
@@ -79,11 +80,23 @@ public class Stages
 	}
 
 	private static String buildMavenDeployToNexusAndSonatypeCommand( String deployCommandTemplate ) {
-		return "if test \"${bamboo.deployToSonatype}\" = \"true\"; then\n" +
-				"  echo Deploying to Sonatype\n" +
-				"  " + deployCommandTemplate.replace( "{profile}", "sonatype" ) + "\n" +
-				"fi\n" +
-				"\n" +
-				deployCommandTemplate.replace( "{profile}", "foreach" ) + "\n";
+		String baseTemplate =
+				"if test \"${bamboo.deployToSonatype}\" = \"true\"; then\n" +
+						"  echo Deploying to Sonatype\n" +
+						"  if find . -name \"pom.xml\" -exec grep standard-module-bom {} +; then\n" +
+						"     " + deployCommandTemplate.replace( "{profile}", "sonatype" ) + "\n" +
+						"   else\n" +
+						//The assembly:assembly goal was removed somewhere between 2 and 3
+						"     " + StringUtils.replace( deployCommandTemplate.replace( "{profile}", "sonatype" ), "assembly:assembly", "" ) + "\n" +
+						"   fi\n" +
+						"fi\n" +
+						"\n" +
+						"if find . -name \"pom.xml\" -exec grep standard-module-bom {} +; then\n" +
+						//TODO: remove me when no more across >= 5.0.0 branches
+						deployCommandTemplate.replace( "{profile}", "foreach" ) + "\n" +
+						"else\n" +
+						StringUtils.replace( deployCommandTemplate.replace( "{profile}", "across" ), "assembly:assembly", "" ) + "\n" +
+						"fi";
+		return baseTemplate;
 	}
 }
