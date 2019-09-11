@@ -2,15 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<artifactId>imageserver-platform</artifactId>
 		<groupId>com.foreach.imageserver</groupId>
-		<version>5.1.0-SNAPSHOT</version>
+		<version>${revision}</version>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>imageserver-test-embedded</artifactId>
-	<packaging>jar</packaging>
+
+	<properties>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<sonar.skip>true</sonar.skip>
+	</properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -28,7 +34,7 @@
 		<dependency>
 			<groupId>com.foreach.imageserver</groupId>
 			<artifactId>imageserver-core</artifactId>
-			<version>5.1.0-SNAPSHOT</version>
+			<version>${revision}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.hibernate</groupId>
@@ -39,7 +45,7 @@
 		<dependency>
 			<groupId>com.foreach.imageserver</groupId>
 			<artifactId>imageserver-admin</artifactId>
-			<version>5.1.0-SNAPSHOT</version>
+			<version>${revision}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.libs</groupId>

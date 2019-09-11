@@ -13,12 +13,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -45,11 +43,11 @@ public class TestImageModificationResolver
 	public void before() {
 		ImageModificationResolverImpl r = new ImageModificationResolverImpl();
 		r.setCropGeneratorUtil( cropGeneratorUtil );
-
-		doAnswer( invocationOnMock -> {
-			ImageResolution resolution = invocationOnMock.getArgument( 1 );
-			return new Dimensions( resolution.getWidth(), resolution.getHeight() );
-		} ).when( cropGeneratorUtil ).applyResolution( any( Image.class ), any( ImageResolution.class ) );
+//
+//		doAnswer( invocationOnMock -> {
+//			ImageResolution resolution = invocationOnMock.getArgument( 1 );
+//			return new Dimensions( resolution.getWidth(), resolution.getHeight() );
+//		} ).when( cropGeneratorUtil ).applyResolution( any( Image.class ), any( ImageResolution.class ) );
 
 		resolver = r;
 

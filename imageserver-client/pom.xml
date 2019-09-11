@@ -6,13 +6,15 @@
 	<parent>
 		<groupId>com.foreach.imageserver</groupId>
 		<artifactId>imageserver-platform</artifactId>
-		<version>5.1.0-SNAPSHOT</version>
+		<version>${revision}</version>
 	</parent>
 
 	<artifactId>imageserver-client</artifactId>
-	<name>ImageServer Client Module</name>
-	<version>5.1.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+
+	<properties>
+		<maven.javadoc.skip>false</maven.javadoc.skip>
+		<maven.deploy.skip>false</maven.deploy.skip>
+	</properties>
 
 	<dependencies>
 		<!-- Dont pull these in transitively -->
@@ -56,13 +58,22 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
+				<!-- This defines how a specific module will be flattened -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-sources</id>
+						<id>flatten</id>
+						<phase>process-resources</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
 						</goals>
 					</execution>
 				</executions>

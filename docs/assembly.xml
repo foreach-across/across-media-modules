@@ -23,8 +23,20 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
-			<outputDirectory>../..</outputDirectory>
-			<directory>target/site</directory>
+			<directory>../imageserver-admin/target/site</directory>
+			<outputDirectory>${project.version}/imageserver-admin</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../imageserver-client/target/site</directory>
+			<outputDirectory>${project.version}/imageserver-client</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../imageserver-core/target/site</directory>
+			<outputDirectory>${project.version}/imageserver-core</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>../target/site</directory>
+			<outputDirectory>${project.version}/reference</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly>

@@ -5,13 +5,15 @@
 	<parent>
 		<groupId>com.foreach.imageserver</groupId>
 		<artifactId>imageserver-platform</artifactId>
-		<version>5.1.0-SNAPSHOT</version>
+		<version>${revision}</version>
 	</parent>
 
 	<artifactId>imageserver-core</artifactId>
-	<name>ImageServer Core Module</name>
-	<version>5.1.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+
+	<properties>
+		<maven.javadoc.skip>false</maven.javadoc.skip>
+		<maven.deploy.skip>false</maven.deploy.skip>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -25,7 +27,7 @@
 		<dependency>
 			<groupId>com.foreach.imageserver</groupId>
 			<artifactId>imageserver-client</artifactId>
-			<version>5.1.0-SNAPSHOT</version>
+			<version>${revision}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.foreach.across</groupId>
@@ -68,21 +70,14 @@
 		<dependency>
 			<groupId>org.im4java</groupId>
 			<artifactId>im4java</artifactId>
-			<version>1.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ghost4j</groupId>
 			<artifactId>ghost4j</artifactId>
-			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
-			<version>4.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
 		</dependency>
 		<!-- Left these in for future implementations -->
 		<dependency>
@@ -104,32 +99,31 @@
 			</exclusions>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
+				<!-- This defines how a specific module will be flattened -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
 						<goals>
-							<goal>test-jar</goal>
+							<goal>flatten</goal>
 						</goals>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
 					<execution>
-						<id>attach-sources</id>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>clean</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
