@@ -26,7 +26,6 @@ import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
-import com.foreach.across.modules.web.ui.elements.HtmlViewElements;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
@@ -49,6 +48,7 @@ import java.util.Optional;
 
 import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 import static com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor.LEFT_COLUMN;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * Renders a form to force the user to select an action to be taken with regards to the primary URL of an asset.
@@ -158,14 +158,14 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 		PrimaryUrlUpdateFormData data = entityViewRequest.getCommand().getEntity( PrimaryUrlUpdateFormData.class );
 		EntityMessageCodeResolver codeResolver = entityViewRequest.getEntityViewContext().getMessageCodeResolver();
 
-		val form = HtmlViewElements.html.builders.container();
+		val form = html.builders.container();
 
 		form.add(
 				bootstrap.builders
 						.alert()
 						.warning()
 						.add(
-								HtmlViewElements.html.builders.unescapedText(
+								html.builders.unescapedText(
 										codeResolver.getMessageWithFallback( "description", null )
 								)
 						)
