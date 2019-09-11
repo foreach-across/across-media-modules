@@ -39,7 +39,7 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<skipAssembly>false</skipAssembly>
-					<finalName>imageserver-platform-distribution</finalName>
+					<finalName>imageserver-platform</finalName>
 					<descriptors>
 						<descriptor>docs/assembly.xml</descriptor>
 					</descriptors>
