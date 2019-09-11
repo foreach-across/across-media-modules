@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.core.annotations.RefreshableCollection;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.Grid;
 import com.foreach.across.modules.entity.bind.EntityPropertyControlName;
@@ -38,6 +37,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 
 /**
  * Central API for building the administration UI for editing components.
@@ -72,9 +73,9 @@ public final class WebCmsComponentModelAdminRenderService
 		}
 
 		formElementBuilder.add(
-				BootstrapUiBuilders.hidden()
-				                   .controlName( controlNamePrefix + ".component.sortIndex" )
-				                   .value( componentModel.getComponent().getSortIndex() )
+				bootstrap.builders.hidden()
+				                  .controlName( controlNamePrefix + ".component.sortIndex" )
+				                  .value( componentModel.getComponent().getSortIndex() )
 		);
 
 		return formElementBuilder;
@@ -104,26 +105,27 @@ public final class WebCmsComponentModelAdminRenderService
 				? componentRepository.findOneByObjectId( componentModel.getOwnerObjectId() ).orElse( null )
 				: null;
 
-		return BootstrapUiBuilders.row()
-		                          .add(
-				                          BootstrapUiBuilders.column( Grid.Device.MEDIUM.width( 6 ) )
-				                                             .add( formGroups.get( "title" ) )
-				                                             .add( formGroups.get( "name" ) )
-				                                             .add( formGroups.get( "sortIndex" ) )
-		                          )
-		                          .add(
-				                          BootstrapUiBuilders.column( Grid.Device.MEDIUM.width( 6 ) )
-				                                             .add( formGroups.get( "componentType" ) )
-				                                             .add( formGroups.get( "lastModified" ) )
-		                          )
-		                          .postProcessor( ( builderContext, container ) -> {
-			                          if ( ownerContainer != null ) {
-				                          container.find( "formGroup-title", FormGroupElement.class )
-				                                   .ifPresent( group -> group.setRequired( false ) );
-				                          container.find( "formGroup-name", FormGroupElement.class )
-				                                   .ifPresent( group -> group.setRequired( false ) );
-			                          }
-		                          } );
+		return bootstrap.builders
+				.row()
+				.add(
+						bootstrap.builders.column( Grid.Device.MEDIUM.width( 6 ) )
+						                  .add( formGroups.get( "title" ) )
+						                  .add( formGroups.get( "name" ) )
+						                  .add( formGroups.get( "sortIndex" ) )
+				)
+				.add(
+						bootstrap.builders.column( Grid.Device.MEDIUM.width( 6 ) )
+						                  .add( formGroups.get( "componentType" ) )
+						                  .add( formGroups.get( "lastModified" ) )
+				)
+				.postProcessor( ( builderContext, container ) -> {
+					if ( ownerContainer != null ) {
+						container.find( "formGroup-title", FormGroupElement.class )
+						         .ifPresent( group -> group.setRequired( false ) );
+						container.find( "formGroup-name", FormGroupElement.class )
+						         .ifPresent( group -> group.setRequired( false ) );
+					}
+				} );
 	}
 
 	@SuppressWarnings("unchecked")

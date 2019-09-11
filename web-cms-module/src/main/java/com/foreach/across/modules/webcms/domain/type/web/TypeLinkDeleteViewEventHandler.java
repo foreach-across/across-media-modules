@@ -16,9 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.type.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.views.events.BuildEntityDeleteViewEvent;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElements;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.type.QWebCmsTypeSpecifierLink;
 import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifier;
@@ -51,14 +51,16 @@ class TypeLinkDeleteViewEventHandler
 			deleteViewEvent.setDeleteDisabled( true );
 			deleteViewEvent.associations()
 			               .addChild(
-					               BootstrapUiBuilders.node( "li" )
-					                                  .add(
-							                                  BootstrapUiBuilders.html(
-									                                 builderContext
-											                                 .getMessage( "objectsLinkedToTypeSpecifier", new Object[] { nonSelfLinks } )
-							                                 )
-					                                 )
-					                                  .build( builderContext )
+					               HtmlViewElements.html.builders
+							               .li()
+							               .add(
+									               HtmlViewElements.html.unescapedText(
+											               builderContext
+													               .getMessage( "objectsLinkedToTypeSpecifier",
+													                            new Object[] { nonSelfLinks } )
+									               )
+							               )
+							               .build( builderContext )
 			               );
 		}
 	}

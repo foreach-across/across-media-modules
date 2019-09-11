@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.image.web;
 
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.TableViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
@@ -38,6 +37,8 @@ import lombok.val;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
+
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 
 /**
  * @author Arne Vandamme
@@ -67,7 +68,7 @@ public class WebCmsImageListViewProcessor extends EntityViewProcessorAdapter
 		page.addCssClass( "wcm-image" );
 
 		Menu menu = WebCmsImageFormViewProcessor.buildImageMenu( entityViewRequest, linkBuilder );
-		page.addToNav( BootstrapUiBuilders.nav( menu ).pills().build() );
+		page.addToNav( bootstrap.builders.nav().menu( menu ).pills().build() );
 	}
 
 	@Override

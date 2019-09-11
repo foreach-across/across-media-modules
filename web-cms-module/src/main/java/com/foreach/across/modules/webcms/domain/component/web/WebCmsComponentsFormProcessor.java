@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.core.annotations.Exposed;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
 import com.foreach.across.modules.bootstrapui.elements.builder.ColumnViewElementBuilder;
 import com.foreach.across.modules.entity.views.EntityView;
@@ -29,6 +28,7 @@ import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
@@ -61,6 +61,8 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.foreach.across.modules.bootstrapui.styles.BootstrapStyles.css;
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * Processor that renders a number of components as direct form controls.
@@ -188,7 +190,8 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 
 		if ( isSingleComponent( command ) ) {
 			val componentModel = componentModels.models[0];
-			val ownerTrail = BootstrapUiBuilders.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
+
+			val ownerTrail = html.builders.li( HtmlViewElement.Functions.css( "breadcrumb", "wcm-component-owner-trail" ) );
 			val baseUrl = entityViewRequest.getEntityViewContext().getLinkBuilder()
 			                               .forInstance( entityViewRequest.getEntityViewContext().getEntity() )
 			                               .updateView()
@@ -221,20 +224,21 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 			val linkToRoot = ( owner.hasOwner() && owner.getOwnerObjectId().equals( root.getObjectId() ) ) || rootComponents.contains( owner );
 			String title = StringUtils.defaultIfBlank( owner.getTitle(), StringUtils.defaultIfBlank( owner.getName(), owner.getComponentType().getName() ) );
 			breadcrumb.addFirst(
-					BootstrapUiBuilders.node( "li" )
-					                   .attribute( "title", owner.getName() )
-					                   .with( css.breadcrumb.item )
-					                   .add(
-							                   createLink
-									                   ? BootstrapUiBuilders.link()
-									                                        .url(
-											                                        linkToRoot
-													                                        ? baseUrl
-													                                        : linkBuilder.update( owner ).withFromUrl( baseUrl ).toUriString()
-									                                        )
-									                                        .text( title )
-									                   : BootstrapUiBuilders.text( title )
-					                   )
+					html.builders
+							.li()
+							.attribute( "title", owner.getName() )
+							.with( css.breadcrumb.item )
+							.add(
+									createLink
+											? bootstrap.builders.link()
+											                    .url(
+													                    linkToRoot
+															                    ? baseUrl
+															                    : linkBuilder.update( owner ).withFromUrl( baseUrl ).toUriString()
+											                    )
+											                    .text( title )
+											: html.builders.text( title )
+							)
 			);
 
 			if ( owner.hasOwner() && !linkToRoot ) {

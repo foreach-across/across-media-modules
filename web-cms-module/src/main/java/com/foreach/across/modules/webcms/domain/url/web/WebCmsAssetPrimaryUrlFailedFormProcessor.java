@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.url.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.entity.views.EntityView;
@@ -27,6 +26,7 @@ import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElements;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
@@ -47,6 +47,7 @@ import org.springframework.web.bind.WebDataBinder;
 import java.util.Collections;
 import java.util.Optional;
 
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 import static com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor.LEFT_COLUMN;
 
 /**
@@ -157,24 +158,25 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 		PrimaryUrlUpdateFormData data = entityViewRequest.getCommand().getEntity( PrimaryUrlUpdateFormData.class );
 		EntityMessageCodeResolver codeResolver = entityViewRequest.getEntityViewContext().getMessageCodeResolver();
 
-		val form = BootstrapUiBuilders.container();
+		val form = HtmlViewElements.html.builders.container();
 
 		form.add(
-				BootstrapUiBuilders.alert()
-				                   .warning()
-				                   .add(
-						                   BootstrapUiBuilders
-								                   .html( codeResolver.getMessageWithFallback( "description", null )
-								                   )
-				                   )
+				bootstrap.builders
+						.alert()
+						.warning()
+						.add(
+								HtmlViewElements.html.builders.unescapedText(
+										codeResolver.getMessageWithFallback( "description", null )
+								)
+						)
 		);
 
 		if ( data.getCurrentPrimaryUrl() != null ) {
 			form.add(
-					BootstrapUiBuilders
+					bootstrap.builders
 							.formGroup()
 							.control(
-									BootstrapUiBuilders
+									bootstrap.builders
 											.radio()
 											.controlName( "entity.action" )
 											.value( PrimaryUrlUpdateAction.LOCK_CURRENT_PRIMARY_URL.name() )
@@ -190,18 +192,19 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 		}
 
 		form.add(
-				BootstrapUiBuilders.radio()
-				                   .controlName( "entity.action" )
-				                   .value( PrimaryUrlUpdateAction.CREATE_NEW_PRIMARY_URL.name() )
-				                   .selected( data.getAction() == PrimaryUrlUpdateAction.CREATE_NEW_PRIMARY_URL )
-				                   .label( codeResolver.getMessageWithFallback( "action.createPrimaryUrl", null ) )
+				bootstrap.builders
+						.radio()
+						.controlName( "entity.action" )
+						.value( PrimaryUrlUpdateAction.CREATE_NEW_PRIMARY_URL.name() )
+						.selected( data.getAction() == PrimaryUrlUpdateAction.CREATE_NEW_PRIMARY_URL )
+						.label( codeResolver.getMessageWithFallback( "action.createPrimaryUrl", null ) )
 		);
 
 		form.add(
-				BootstrapUiBuilders
+				bootstrap.builders
 						.formGroup()
 						.control(
-								BootstrapUiBuilders
+								bootstrap.builders
 										.textbox()
 										.controlName( "entity.newPrimaryUrl" )
 										.placeholder( codeResolver.getMessageWithFallback( "action.createPrimaryUrl[placeholder]", null ) )
@@ -219,15 +222,17 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 		);
 
 		form.add(
-				BootstrapUiBuilders.formGroup()
-				                   .control(
-						                   BootstrapUiBuilders.radio()
-						                                      .controlName( "entity.action" )
-						                                      .value( PrimaryUrlUpdateAction.DO_NOTHING.name() )
-						                                      .selected( data.getAction() == PrimaryUrlUpdateAction.DO_NOTHING )
-						                                      .label( codeResolver.getMessageWithFallback( "action.doNothing", null ) )
-				                   )
-				                   .helpBlock( codeResolver.getMessageWithFallback( "action.doNothing[help]", null ) )
+				bootstrap.builders
+						.formGroup()
+						.control(
+								bootstrap.builders
+										.radio()
+										.controlName( "entity.action" )
+										.value( PrimaryUrlUpdateAction.DO_NOTHING.name() )
+										.selected( data.getAction() == PrimaryUrlUpdateAction.DO_NOTHING )
+										.label( codeResolver.getMessageWithFallback( "action.doNothing", null ) )
+						)
+						.helpBlock( codeResolver.getMessageWithFallback( "action.doNothing[help]", null ) )
 		);
 
 		builderMap.get( LEFT_COLUMN, ContainerViewElementBuilderSupport.class ).add( form );
@@ -241,6 +246,13 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 		container.removeFromTree( "btn-cancel" );
 	}
 
+	enum PrimaryUrlUpdateAction
+	{
+		LOCK_CURRENT_PRIMARY_URL,
+		CREATE_NEW_PRIMARY_URL,
+		DO_NOTHING
+	}
+
 	@Data
 	static class PrimaryUrlUpdateFormData
 	{
@@ -251,12 +263,5 @@ public class WebCmsAssetPrimaryUrlFailedFormProcessor extends EntityViewProcesso
 		String getCurrentPrimaryUrlValue() {
 			return currentPrimaryUrl != null ? currentPrimaryUrl.getPath() : null;
 		}
-	}
-
-	enum PrimaryUrlUpdateAction
-	{
-		LOCK_CURRENT_PRIMARY_URL,
-		CREATE_NEW_PRIMARY_URL,
-		DO_NOTHING
 	}
 }
