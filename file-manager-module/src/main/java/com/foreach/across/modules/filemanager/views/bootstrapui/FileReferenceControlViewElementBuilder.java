@@ -27,11 +27,12 @@ import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 
-import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.*;
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 import static com.foreach.across.modules.entity.bind.EntityPropertyControlName.forProperty;
 import static com.foreach.across.modules.entity.views.util.EntityViewElementUtils.currentPropertyBinder;
 import static com.foreach.across.modules.entity.views.util.EntityViewElementUtils.currentPropertyDescriptor;
 import static com.foreach.across.modules.filemanager.config.FileManagerIcons.fileManagerIcons;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * Creates a file upload {@link com.foreach.across.modules.web.ui.ViewElement} for {@link FileReference} properties.
@@ -54,7 +55,7 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 
 	@Override
 	protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
-		NodeViewElementBuilder wrapper = div();
+		NodeViewElementBuilder wrapper = html.builders.div();
 
 		EntityPropertyBinder propertyBinder = currentPropertyBinder( builderContext );
 		EntityPropertyDescriptor propertyDescriptor = currentPropertyDescriptor( builderContext );
@@ -62,7 +63,7 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 
 		boolean isForMultiple = propertyBinder instanceof ListEntityPropertyBinder;
 
-		FileUploadFormElementBuilder fileUploadBuilder = file().css( "js-file-control" );
+		FileUploadFormElementBuilder fileUploadBuilder = bootstrap.builders.file().css( "js-file-control" );
 
 		if ( isForMultiple ) {
 			addMultipleSelectedElements( wrapper, controlName, (ListEntityPropertyBinder) propertyBinder, builderContext );
@@ -131,8 +132,8 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 
 					              wrapper.add(
 							              selectedFileBuilder( file.getName(), builderContext.buildLink( FileReferenceUtils.getDownloadUrl( file ) ) )
-									              .add( hidden().controlName( binderProperty.withValue().toString() ).value( file.getId() ) )
-									              .add( hidden().controlName( binderProperty.toSortIndex() ).value( item.getSortIndex() ) )
+									              .add( bootstrap.builders.hidden().controlName( binderProperty.withValue().toString() ).value( file.getId() ) )
+									              .add( bootstrap.builders.hidden().controlName( binderProperty.toSortIndex() ).value( item.getSortIndex() ) )
 					              );
 				              }
 
@@ -140,16 +141,17 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 	}
 
 	private ScriptViewElementBuilder selectedItemTemplate() {
-		return script( MediaType.TEXT_HTML )
-				.attribute( "data-role", "selected-item-template" )
-				.add( selectedFileBuilder( "{{fileName}}", null ) );
+		return bootstrap.builders.script()
+		                         .type( MediaType.TEXT_HTML )
+		                         .attribute( "data-role", "selected-item-template" )
+		                         .add( selectedFileBuilder( "{{fileName}}", null ) );
 	}
 
 	private NodeViewElementBuilder selectedFileBuilder( String name, String url ) {
-		return div().css( "file-reference-control-item" )
-		            .add( StringUtils.isNotBlank( url )
-				                  ? link().text( name ).url( url )
-				                  : text( name ) )
-		            .add( button().link().css( "remove-file" ).iconOnly( fileManagerIcons.removeFile() ) );
+		return html.builders.div().css( "file-reference-control-item" )
+		                    .add( StringUtils.isNotBlank( url )
+				                          ? bootstrap.builders.link().text( name ).url( url )
+				                          : html.builders.text( name ) )
+		                    .add( bootstrap.builders.button().link().css( "remove-file" ).iconOnly( fileManagerIcons.removeFile() ) );
 	}
 }
