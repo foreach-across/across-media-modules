@@ -52,7 +52,7 @@ public class WebCmsComponentAdminResources implements WebResourcePackage
 						.withKey( "jquery-ui" )
 						.toBucket( JAVASCRIPT_PAGE_END )
 						.before( BootstrapUiWebResources.NAME ),
-				add( WebResource.javascript( "@webjars:/bootbox/4.4.0/bootbox.js" ) )
+				add( WebResource.javascript( "@webjars:/bootbox.js/5.3.2/bootbox.js" ) )
 						.withKey( "bootbox" )
 						.toBucket( JAVASCRIPT_PAGE_END ),
 				add( WebResource.javascript( "@static:/WebCmsModule/js/wcm-admin-components.js" ) )
