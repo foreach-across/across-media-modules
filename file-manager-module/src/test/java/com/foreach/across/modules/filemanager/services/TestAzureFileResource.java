@@ -1,19 +1,21 @@
 package com.foreach.across.modules.filemanager.services;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FileStorageException;
+import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
-import utils.AmazonS3Helper;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -24,55 +26,52 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * @author Arne Vandamme
- * @since 1.4.0
- */
-class TestAmazonS3FileResource
+@ExtendWith(SpringExtension.class)
+class TestAzureFileResource
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
-	private static final String BUCKET_NAME = "ax-filemanager-test";
+	private static final String CONTAINER_NAME = "ax-filemanager-test";
 
-	private static AmazonS3 amazonS3;
-
+	private CloudBlobClient cloudBlobClient;
 	private FileDescriptor descriptor;
 	private FileResource resource;
 	private String objectName;
 
-	@AfterAll
-	static void tearDown() {
-		AmazonS3Helper.deleteBuckets( amazonS3, BUCKET_NAME );
-		amazonS3 = null;
-	}
-
 	@BeforeEach
 	@SneakyThrows
 	void createResource() {
-		if ( amazonS3 == null ) {
-			amazonS3 = AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
+		if ( cloudBlobClient == null ) {
+			cloudBlobClient = CloudStorageAccount.getDevelopmentStorageAccount().createCloudBlobClient();
+			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
 		}
-
 		objectName = UUID.randomUUID().toString();
 		descriptor = FileDescriptor.of( "my-repo", "123/456", objectName );
-		resource = new AmazonS3FileResource( descriptor, amazonS3, BUCKET_NAME, objectName, new SyncTaskExecutor() );
+		resource = new AzureFileResource( descriptor, cloudBlobClient, CONTAINER_NAME, objectName );
+	}
+
+	@AfterEach
+	@SneakyThrows
+	void destroyResource() {
+		cloudBlobClient.getContainerReference( CONTAINER_NAME ).deleteIfExists();
 	}
 
 	@Test
+	@SneakyThrows
 	void equals() {
+		Resource actual = new AzureFileResource( descriptor, cloudBlobClient, CONTAINER_NAME, objectName );
 		assertThat( resource )
 				.isEqualTo( resource )
-				.isNotEqualTo( mock( Resource.class ) )
-				.isEqualTo( new AmazonS3FileResource( resource.getDescriptor(), amazonS3, "other", "objectName", new SyncTaskExecutor() ) )
-				.isNotEqualTo( new AmazonS3FileResource( FileDescriptor.of( "1:2:3" ), amazonS3, BUCKET_NAME, objectName, new SyncTaskExecutor() ) );
+				.isEqualTo( actual );
 	}
 
 	@Test
+	@SneakyThrows
 	void folderResource() {
 		assertThat( resource.getFolderResource() ).isNotNull();
 		assertThat( resource.getFolderResource().getDescriptor() ).isEqualTo( resource.getDescriptor().getFolderDescriptor() );
 
 		assertThat( resource.getFolderResource().listFiles() ).doesNotContain( resource );
-		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+		cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).uploadText( "some-data" );
 		assertThat( resource.getFolderResource().listFiles() ).contains( resource );
 	}
 
@@ -82,27 +81,29 @@ class TestAmazonS3FileResource
 	}
 
 	@Test
-	@SneakyThrows
 	void uri() {
 		assertThat( resource.getURI() ).isEqualTo( descriptor.toResourceURI() );
 	}
 
+	/*
+	this test appears in the TestAmazonS3FileResource, but getUrl is a supported operation on AzureFileResource
 	@Test
 	void urlIsNotSupported() {
 		assertThatExceptionOfType( UnsupportedOperationException.class ).isThrownBy( () -> resource.getURL() );
-	}
+	}*/
 
 	@Test
 	void description() {
 		assertThat( resource.getDescription() )
-				.startsWith( "axfs [" + descriptor.toString() + "] -> Amazon s3 resource" )
+				.startsWith( "axfs [" + descriptor.toString() + "] -> Azure storage blob resource" )
 				.isEqualTo( resource.toString() );
 	}
 
 	@Test
+	@SneakyThrows
 	void exists() {
 		assertThat( resource.exists() ).isFalse();
-		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+		cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).uploadText( "some-data" );
 		assertThat( resource.exists() ).isTrue();
 	}
 
@@ -112,8 +113,9 @@ class TestAmazonS3FileResource
 	}
 
 	@Test
+	@SneakyThrows
 	void isReadable() {
-		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+		cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).uploadText( "some-data" );
 		assertThat( resource.isReadable() ).isTrue();
 	}
 
@@ -128,18 +130,17 @@ class TestAmazonS3FileResource
 	}
 
 	@Test
+	@SneakyThrows
 	void delete() {
-		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+		cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).uploadText( "some-data" );
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.delete() ).isTrue();
 		assertThat( resource.exists() ).isFalse();
-
-		// delete always returns true
 		assertThat( resource.delete() ).isTrue();
 	}
 
 	@Test
-	void filename() {
+	void fileName() {
 		assertThat( resource.getFilename() ).isEqualTo( descriptor.getFileId() );
 	}
 
@@ -147,8 +148,9 @@ class TestAmazonS3FileResource
 	@Test
 	@SneakyThrows
 	void contentLengthAndLastModified() {
-		assertThatExceptionOfType( FileNotFoundException.class )
+		assertThatExceptionOfType( FileStorageException.class )
 				.isThrownBy( () -> resource.contentLength() )
+				.withCauseInstanceOf( FileNotFoundException.class )
 				.withMessageContaining( resource.getDescriptor().toString() );
 
 		try (InputStream is = RES_TEXTFILE.getInputStream()) {
@@ -184,7 +186,7 @@ class TestAmazonS3FileResource
 	@SneakyThrows
 	void outputStreamResetsMetadata() {
 		assertThat( resource.exists() ).isFalse();
-		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+		cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).uploadText( "some-data" );
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.contentLength() ).isEqualTo( 9 );
 
@@ -196,9 +198,7 @@ class TestAmazonS3FileResource
 
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.contentLength() ).isNotEqualTo( 9 ).isEqualTo( RES_TEXTFILE.contentLength() );
-
-		assertThat( amazonS3.getObjectAsString( BUCKET_NAME, objectName ) )
-				.isEqualTo( "some dummy text" );
+		assertThat( cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).downloadText() ).isEqualTo( "some dummy text" );
 	}
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")
@@ -267,7 +267,7 @@ class TestAmazonS3FileResource
 	@Test
 	@SneakyThrows
 	void copyToFileResource() {
-		amazonS3.putObject( BUCKET_NAME, objectName, "some-data" );
+		cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).uploadText( "some-data" );
 
 		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
 		FileResource other = new LocalFileResource( descriptor, otherTempFile.toPath() );
@@ -281,27 +281,27 @@ class TestAmazonS3FileResource
 	@Test
 	@SneakyThrows
 	void noFileCreatedIfExceptionOnInputStream() {
-		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
+		assertThat( cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).exists() ).isFalse();
 
 		InputStream inputStream = mock( InputStream.class );
 		when( inputStream.available() ).thenThrow( new IOException() );
 
 		assertThatExceptionOfType( IOException.class )
 				.isThrownBy( () -> resource.copyFrom( inputStream ) );
-		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
+		assertThat( cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).exists() ).isFalse();
 	}
 
 	@Test
 	@SneakyThrows
 	void noFileCreatedIfExceptionOnOtherFileResource() {
-		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
+		assertThat( cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).exists() ).isFalse();
 
 		FileResource other = mock( FileResource.class );
 		when( other.getInputStream() ).thenThrow( new IOException() );
 
 		assertThatExceptionOfType( IOException.class )
 				.isThrownBy( () -> resource.copyFrom( other ) );
-		assertThat( amazonS3.doesObjectExist( BUCKET_NAME, objectName ) ).isFalse();
+		assertThat( cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).exists() ).isFalse();
 	}
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")
@@ -322,7 +322,7 @@ class TestAmazonS3FileResource
 		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
 		assertThat( otherTempFile.delete() ).isTrue();
 
-		assertThatExceptionOfType( IOException.class )
+		assertThatExceptionOfType( FileStorageException.class )
 				.isThrownBy( () -> resource.copyTo( otherTempFile ) );
 		assertThat( otherTempFile.exists() ).isFalse();
 	}
@@ -341,5 +341,36 @@ class TestAmazonS3FileResource
 		try (InputStream is = resource.getInputStream()) {
 			return StreamUtils.copyToString( is, Charset.defaultCharset() );
 		}
+	}
+
+	@Test
+	@SneakyThrows
+	void writingToNonExistentFile() {
+		assertThat( resource.exists() ).isFalse();
+
+		try (InputStream is = RES_TEXTFILE.getInputStream()) {
+			try (OutputStream os = resource.getOutputStream()) {
+				IOUtils.copy( is, os );
+			}
+		}
+
+		assertThat( resource.exists() ).isTrue();
+		assertThat( resource.contentLength() ).isNotEqualTo( 9 ).isEqualTo( RES_TEXTFILE.contentLength() );
+
+		assertThat( cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).downloadText() )
+				.isEqualTo( "some dummy text" );
+	}
+
+	@Test
+	@SneakyThrows
+	void writingNothingToNonExistentFile() {
+		assertThat( resource.exists() ).isFalse();
+		try (OutputStream os = resource.getOutputStream()) {
+			os.write( 0 );
+			os.flush();
+		}
+		assertThat( resource.exists() ).isTrue();
+		assertThat( resource.contentLength() ).isEqualTo( 1 );
+		assertThat( cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).downloadText() ).isEqualTo( "\0" );
 	}
 }

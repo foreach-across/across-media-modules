@@ -46,6 +46,7 @@ public abstract class AbstractFileRepository implements FileRepository, FileMana
 		FileResource fileResource = buildFileResource( descriptor );
 		if ( allocateImmediately ) {
 			try (OutputStream os = fileResource.getOutputStream()) {
+				os.write( 0 );
 				os.flush();
 			}
 			catch ( IOException ioe ) {

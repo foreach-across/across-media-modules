@@ -18,3 +18,12 @@ services:
     volumes:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - ./local-data/storage/localstack:/tmp/localstack/data
+
+  fmm-azurite:
+    image: 'mcr.microsoft.com/azure-storage/azurite'
+    ports:
+      # 10000 is the blob storage service
+      # 10001 is the queue storage service
+      - "10000-10001:10000-10001"
+    volumes:
+      - ./local-data/storage/azurite:/data

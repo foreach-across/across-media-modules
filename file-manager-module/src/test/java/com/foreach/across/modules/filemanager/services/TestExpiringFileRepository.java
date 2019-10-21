@@ -111,8 +111,8 @@ class TestExpiringFileRepository
 		fr = null;
 		assertThat( fr ).isNull();
 
-		System.gc();
-		System.runFinalization();
+		runFinalization();
+
 		// was fetched twice, same target mock will be finalized twice
 		verify( targetFileResource, times( 2 ) ).delete();
 	}
@@ -141,8 +141,7 @@ class TestExpiringFileRepository
 		fr = null;
 		assertThat( fr ).isNull();
 
-		System.gc();
-		System.runFinalization();
+		runFinalization();
 		verifyZeroInteractions( targetFileResource );
 	}
 
@@ -170,8 +169,7 @@ class TestExpiringFileRepository
 		fr = null;
 		assertThat( fr ).isNull();
 
-		System.gc();
-		System.runFinalization();
+		runFinalization();
 		verifyZeroInteractions( targetFileResource );
 
 	}
@@ -201,8 +199,7 @@ class TestExpiringFileRepository
 		fr = null;
 		assertThat( fr ).isNull();
 
-		System.gc();
-		System.runFinalization();
+		runFinalization();
 		verify( targetFileResource ).delete();
 	}
 
@@ -234,6 +231,13 @@ class TestExpiringFileRepository
 
 		verify( targetFileResource ).delete();
 		assertThat( repository.getFileResource( fd ) ).isNotSameAs( fr );
+	}
+
+	@SneakyThrows
+	private void runFinalization() {
+		System.gc();
+		System.runFinalization();
+		Thread.sleep( 500 );
 	}
 
 	@Nested

@@ -89,5 +89,9 @@
 			<groupId>cloud.localstack</groupId>
 			<artifactId>localstack-utils</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.microsoft.azure</groupId>
+			<artifactId>azure-storage</artifactId>
+		</dependency>
 	</dependencies>
 </project>

@@ -1,18 +1,15 @@
 package test;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
-import com.foreach.across.modules.filemanager.services.AmazonS3FileRepository;
+import com.foreach.across.modules.filemanager.services.AzureFileRepository;
 import com.foreach.across.modules.filemanager.services.CachingFileRepository;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.test.AcrossTestConfiguration;
+import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,18 +31,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Arne Vandamme
  * @since 1.4.0
  */
-@DisplayName("AWS - Local file caching semantics")
+@DisplayName("Azure - Local file caching semantics")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
-class TestCustomFileRepositoryConfiguration
+class TestCustomAzureFileRepositoryConfiguration
 {
-	private static final String BUCKET_NAME = "caching-test";
+	private static final String CONTAINER_NAME = "caching-test";
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 
 	@Test
 	@SneakyThrows
-	void cachedFileResource( @Autowired AmazonS3 amazonS3, @Autowired FileManager fileManager ) {
-		FileResource myFile = fileManager.createFileResource( "s3" );
+	void cachedFileResource( @Autowired CloudBlobClient cloudBlobClient, @Autowired FileManager fileManager ) {
+		FileResource myFile = fileManager.createFileResource( "az" );
 		myFile.copyFrom( RES_TEXTFILE );
 
 		FileDescriptor tempFileDescriptor = FileDescriptor.of( FileManager.TEMP_REPOSITORY, myFile.getDescriptor().getFolderId(),
@@ -56,8 +53,15 @@ class TestCustomFileRepositoryConfiguration
 		assertThat( readResource( myFile ) ).isEqualTo( "some dummy text" );
 		assertThat( readResource( tempFile ) ).isEqualTo( "some dummy text" );
 
-		assertThat( amazonS3.getObjectAsString( BUCKET_NAME, "12/34/56/" + myFile.getDescriptor().getFileId() ) ).isEqualTo( "some dummy text" );
-		amazonS3.putObject( BUCKET_NAME, "12/34/56/" + myFile.getDescriptor().getFileId(), "updated text" );
+		assertThat(
+				cloudBlobClient.getContainerReference( CONTAINER_NAME )
+				               .getBlockBlobReference( "12/34/56/" + myFile.getDescriptor().getFileId() )
+				               .downloadText()
+		).isEqualTo( "some dummy text" );
+
+		cloudBlobClient.getContainerReference( CONTAINER_NAME )
+		               .getBlockBlobReference( "12/34/56/" + myFile.getDescriptor().getFileId() )
+		               .uploadText( "updated text" );
 
 		tempFile.delete();
 		assertThat( tempFile.exists() ).isFalse();
@@ -75,20 +79,13 @@ class TestCustomFileRepositoryConfiguration
 	@AcrossTestConfiguration
 	static class RepositoriesConfiguration
 	{
+
 		@Bean
-		AmazonS3 amazonS3() {
-			AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard()
-			                                         .withEndpointConfiguration(
-					                                         new AwsClientBuilder.EndpointConfiguration( "http://localhost:4572", "us-east-1" ) )
-			                                         .withPathStyleAccessEnabled( true )
-			                                         .withCredentials( new AWSStaticCredentialsProvider( new BasicAWSCredentials( "test", "test" ) ) )
-			                                         .build();
-
-			if ( !amazonS3.doesBucketExist( BUCKET_NAME ) ) {
-				amazonS3.createBucket( BUCKET_NAME );
-			}
-
-			return amazonS3;
+		@SneakyThrows
+		CloudBlobClient cloudBlobClient() {
+			CloudBlobClient cloudBlobClient = CloudStorageAccount.getDevelopmentStorageAccount().createCloudBlobClient();
+			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
+			return cloudBlobClient;
 		}
 
 		@Bean
@@ -97,16 +94,16 @@ class TestCustomFileRepositoryConfiguration
 		}
 
 		@Bean
-		FileRepository remoteRepository( AmazonS3 amazonS3 ) {
+		FileRepository remoteRepository( CloudBlobClient cloudBlobClient ) {
 			return CachingFileRepository.withTranslatedFileDescriptor()
 			                            .expireOnShutdown( true )
 			                            .targetFileRepository(
-					                            AmazonS3FileRepository.builder()
-					                                                  .repositoryId( "s3" )
-					                                                  .amazonS3( amazonS3 )
-					                                                  .bucketName( BUCKET_NAME )
-					                                                  .pathGenerator( () -> "12/34/56" )
-					                                                  .build()
+					                            AzureFileRepository.builder()
+					                                               .repositoryId( "az" )
+					                                               .blobClient( cloudBlobClient )
+					                                               .containerName( CONTAINER_NAME )
+					                                               .pathGenerator( () -> "12/34/56" )
+					                                               .build()
 			                            ).build();
 		}
 	}
