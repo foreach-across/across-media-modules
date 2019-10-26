@@ -24,9 +24,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.UUID;
 
@@ -97,7 +97,7 @@ public abstract class WebCmsObjectSuperClass<T extends WebCmsObjectSuperClass<T>
 	 * @return the globally unique object id
 	 */
 	@Override
-	public final String getObjectId() {
+	public String getObjectId() {
 		return objectId;
 	}
 
@@ -107,7 +107,7 @@ public abstract class WebCmsObjectSuperClass<T extends WebCmsObjectSuperClass<T>
 	 *
 	 * @param objectId to use
 	 */
-	public final void setObjectId( String objectId ) {
+	public void setObjectId( String objectId ) {
 		this.objectId = StringUtils.isEmpty( objectId ) ? null : WebCmsUtils.prefixObjectIdForCollection( objectId, getObjectCollectionId() );
 	}
 
