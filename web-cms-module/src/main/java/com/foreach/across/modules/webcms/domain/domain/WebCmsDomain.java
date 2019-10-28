@@ -177,7 +177,7 @@ public class WebCmsDomain extends SettableIdAuditableEntity<WebCmsDomain> implem
 	 * @return the globally unique object id
 	 */
 	@Override
-	public final String getObjectId() {
+	public String getObjectId() {
 		return objectId;
 	}
 
@@ -186,7 +186,7 @@ public class WebCmsDomain extends SettableIdAuditableEntity<WebCmsDomain> implem
 	 *
 	 * @param objectId to use
 	 */
-	public final void setObjectId( String objectId ) {
+	public void setObjectId( String objectId ) {
 		this.objectId = StringUtils.isEmpty( objectId ) ? null : WebCmsUtils.prefixObjectIdForCollection( objectId, COLLECTION_ID );
 	}
 
