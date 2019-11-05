@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 class TestAzureFileResource
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
+	private static final Resource EMPTY_FILE = new ClassPathResource( "emptyfile.txt" );
 	private static final String CONTAINER_NAME = "ax-filemanager-test";
 
 	private CloudBlobClient cloudBlobClient;
@@ -341,6 +342,24 @@ class TestAzureFileResource
 		try (InputStream is = resource.getInputStream()) {
 			return StreamUtils.copyToString( is, Charset.defaultCharset() );
 		}
+	}
+
+	@Test
+	@SneakyThrows
+	void emptyFileUploadWorks() {
+		assertThat( resource.exists() ).isFalse();
+
+		try (InputStream is = EMPTY_FILE.getInputStream()) {
+			try (OutputStream os = resource.getOutputStream()) {
+				IOUtils.copy( is, os );
+			}
+		}
+
+		assertThat( resource.exists() ).isTrue();
+		assertThat( resource.contentLength() ).isEqualTo( 0 ).isEqualTo( EMPTY_FILE.contentLength() );
+
+		assertThat( cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).downloadText() )
+				.isEqualTo( "" );
 	}
 
 	@Test

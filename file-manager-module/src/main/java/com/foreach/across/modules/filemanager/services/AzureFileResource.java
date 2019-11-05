@@ -96,7 +96,7 @@ public class AzureFileResource implements FileResource
 	public OutputStream getOutputStream() {
 		try {
 			resetBlobProperties();
-			return new LazyOutputStream( file.openOutputStream() );
+			return new LazyOutputStream( file.openOutputStream(), file );
 		}
 		catch ( StorageException e ) {
 			throw handleStorageException( e );
@@ -194,6 +194,7 @@ public class AzureFileResource implements FileResource
 	private static class LazyOutputStream extends OutputStream
 	{
 		private final OutputStream fileOutputStream;
+		private final CloudBlockBlob file;
 		private boolean wasWrittenTo = false;
 		private boolean wasClosed = false;
 
@@ -214,6 +215,15 @@ public class AzureFileResource implements FileResource
 		public void close() throws IOException {
 			if ( wasWrittenTo && !wasClosed ) {
 				fileOutputStream.close();
+			}
+			else {
+				// Empty zero-byte file
+				try {
+					file.uploadText( "" );
+				}
+				catch ( StorageException ignore ) {
+
+				}
 			}
 			super.close();
 			wasClosed = true;
