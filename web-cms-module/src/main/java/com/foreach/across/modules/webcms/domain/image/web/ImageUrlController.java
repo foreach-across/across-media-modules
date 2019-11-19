@@ -20,6 +20,7 @@ import com.foreach.across.modules.adminweb.annotations.AdminWebController;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,7 +36,7 @@ class ImageUrlController
 {
 	private final WebCmsImageConnector imageConnector;
 
-	@GetMapping("/utils/buildImageUrl")
+	@GetMapping(value = "/utils/buildImageUrl", produces = MediaType.TEXT_PLAIN_VALUE)
 	public String buildImageUrl( @RequestParam("width") int boxWidth, @RequestParam("height") int boxHeight, @RequestParam("imageId") WebCmsImage image ) {
 		return imageConnector.buildImageUrl( image, boxWidth, boxHeight );
 	}
