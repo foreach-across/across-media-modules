@@ -37,6 +37,12 @@
 			<name>Foreach nexus</name>
 			<url>http://repository.foreach.be/nexus/repository/public/</url>
 		</repository>
+		<repository>
+			<!-- spring-test-junit5  -->
+			<id>mulesoft</id>
+			<name>mulesoft</name>
+			<url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+		</repository>
 	</repositories>
 
 	<name>${project.groupId}:${project.artifactId}</name>
