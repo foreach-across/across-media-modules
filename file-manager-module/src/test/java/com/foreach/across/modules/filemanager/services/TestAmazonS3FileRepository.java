@@ -60,8 +60,12 @@ class TestAmazonS3FileRepository extends BaseFileRepositoryTest
 
 	@AfterAll
 	static void tearDown() {
-		AmazonS3Helper.deleteBuckets( amazonS3, BUCKET_NAME );
-		amazonS3 = null;
+		try  {
+			AmazonS3Helper.deleteBuckets( amazonS3, BUCKET_NAME );
+		} finally {
+			amazonS3.shutdown();
+			amazonS3 = null;
+		}
 	}
 
 	@Test

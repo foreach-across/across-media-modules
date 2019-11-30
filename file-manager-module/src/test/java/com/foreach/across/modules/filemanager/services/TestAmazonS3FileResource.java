@@ -33,7 +33,7 @@ class TestAmazonS3FileResource
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 	private static final String BUCKET_NAME = "ax-filemanager-test";
 
-	private static AmazonS3 amazonS3;
+	private static AmazonS3 amazonS3 = AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
 
 	private FileDescriptor descriptor;
 	private FileResource resource;
@@ -42,10 +42,6 @@ class TestAmazonS3FileResource
 	@BeforeEach
 	@SneakyThrows
 	void createResource() {
-		if ( amazonS3 == null ) {
-			amazonS3 = AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
-		}
-
 		objectName = UUID.randomUUID().toString();
 		descriptor = FileDescriptor.of( "my-repo", "123/456", objectName );
 		resource = new AmazonS3FileResource( descriptor, amazonS3, BUCKET_NAME, objectName, new SyncTaskExecutor() );
@@ -53,7 +49,11 @@ class TestAmazonS3FileResource
 
 	@AfterAll
 	static void tearDown() {
-		AmazonS3Helper.deleteBuckets( amazonS3, BUCKET_NAME );
+		try {
+			AmazonS3Helper.deleteBuckets( amazonS3, BUCKET_NAME );
+		} finally {
+			amazonS3.shutdown();
+		}
 		amazonS3 = null;
 	}
 

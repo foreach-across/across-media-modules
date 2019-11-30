@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.foreach.across.modules.filemanager.business.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.Resource;
@@ -26,7 +27,7 @@ class TestAmazonS3FolderResource
 	private static final String BUCKET_NAME = "folder-resource-test";
 	private static final SyncTaskExecutor TASK_EXECUTOR = new SyncTaskExecutor();
 
-	private static AmazonS3 amazonS3;
+	private static AmazonS3 amazonS3 = AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
 
 	private FolderDescriptor descriptor;
 	private AmazonS3FolderResource resource;
@@ -40,10 +41,6 @@ class TestAmazonS3FolderResource
 	@BeforeEach
 	@SneakyThrows
 	void resetResource() {
-		if ( amazonS3 == null ) {
-			amazonS3 = AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
-		}
-
 		String parentObjectName = UUID.randomUUID().toString() + "/";
 		objectName = parentObjectName + "456/";
 		descriptor = FolderDescriptor.of( "my-repo", "123/456" );
@@ -52,7 +49,11 @@ class TestAmazonS3FolderResource
 
 	@AfterAll
 	static void tearDown() {
-		AmazonS3Helper.deleteBuckets( amazonS3, BUCKET_NAME );
+		try {
+			AmazonS3Helper.deleteBuckets( amazonS3, BUCKET_NAME );
+		} finally {
+			amazonS3.shutdown();
+		}
 		amazonS3 = null;
 	}
 

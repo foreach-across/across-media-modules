@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
@@ -37,6 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("AWS - Local file caching semantics")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class TestCustomFileRepositoryConfiguration
 {
 	private static final String BUCKET_NAME = "caching-test";
@@ -75,7 +77,7 @@ class TestCustomFileRepositoryConfiguration
 	@AcrossTestConfiguration
 	static class RepositoriesConfiguration
 	{
-		@Bean
+		@Bean(destroyMethod = "shutdown")
 		AmazonS3 amazonS3() {
 			AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard()
 			                                         .withEndpointConfiguration(
