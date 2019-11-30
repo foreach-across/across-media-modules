@@ -272,8 +272,12 @@ class TestCachingFileRepositoryLocalAndS3 extends BaseFileRepositoryTest
 
 	@AfterAll
 	static void tearDown() {
-		amazonS3.listObjects( BUCKET_NAME ).getObjectSummaries().forEach( o -> amazonS3.deleteObject( BUCKET_NAME, o.getKey() ) );
-		amazonS3.deleteBucket( BUCKET_NAME );
-		amazonS3 = null;
+		try {
+			amazonS3.listObjects( BUCKET_NAME ).getObjectSummaries().forEach( o -> amazonS3.deleteObject( BUCKET_NAME, o.getKey() ) );
+			amazonS3.deleteBucket( BUCKET_NAME );
+		} finally {
+			amazonS3.shutdown();
+			amazonS3 = null;
+		}
 	}
 }
