@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.foreach.across.modules.webcms.config.icons;
+package com.foreach.across.modules.webcms.icons;
 
 import com.foreach.across.modules.bootstrapui.elements.icons.IconSetRegistry;
-import com.foreach.across.modules.web.ui.elements.AbstractNodeViewElement;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.webcms.WebCmsModule;
 
-public class WebCmsMenuIcons
+public class WebCmsComponentIcons
 {
-	public final static String DOMAIN_GROUP = "menuDomainItem";
-	public final static String SELECTED_DOMAIN = "menuSelectedDomain";
+	public static final String SEARCH = "searchComponents";
+	public final static String VIEW = "viewMemberComponents";
 
-	public AbstractNodeViewElement domainGroup() {
-		return IconSetRegistry.getIconSet( WebCmsModule.NAME ).icon( DOMAIN_GROUP );
+	public HtmlViewElement search() {
+		return IconSetRegistry.getIconSet( WebCmsModule.NAME ).icon( SEARCH );
 	}
 
-	public AbstractNodeViewElement selectedDomain() {
-		return IconSetRegistry.getIconSet( WebCmsModule.NAME ).icon( SELECTED_DOMAIN );
+	public HtmlViewElement viewMembers() {
+		return IconSetRegistry.getIconSet( WebCmsModule.NAME ).icon( VIEW );
 	}
 }

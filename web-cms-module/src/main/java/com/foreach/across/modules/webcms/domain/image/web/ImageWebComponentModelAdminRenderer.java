@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 import static com.foreach.across.modules.bootstrapui.styles.BootstrapStyles.css;
 import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
-import static com.foreach.across.modules.webcms.config.icons.WebCmsIcons.webCmsIcons;
+import static com.foreach.across.modules.webcms.WebCmsModuleIcons.webCmsIcons;
 
 /**
  * @author Arne Vandamme

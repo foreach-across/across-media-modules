@@ -52,7 +52,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import java.util.*;
 
-import static com.foreach.across.modules.webcms.config.icons.WebCmsIcons.webCmsIcons;
+import static com.foreach.across.modules.webcms.WebCmsModuleIcons.webCmsIcons;
 
 /**
  * @author Arne Vandamme

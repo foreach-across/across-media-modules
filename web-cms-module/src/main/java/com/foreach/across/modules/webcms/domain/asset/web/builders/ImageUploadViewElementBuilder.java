@@ -50,7 +50,7 @@ public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewEle
 
 		if ( image.isNew() ) {
 			// Only allow uploads for a new image
-			return bootstrap.builders.file()
+			return bootstrap.builders.fileUpload()
 			                         .controlName( "extensions[image].imageData" )
 			                         .build( viewElementBuilderContext );
 		}
@@ -58,40 +58,7 @@ public class ImageUploadViewElementBuilder implements ViewElementBuilder<ViewEle
 		String imageUrl = imageConnector.buildImageUrl( image, 800, 600 );
 		return html.builders.div()
 		                    .css( "image-preview-container" )
-		                    .add(
-				                    html.builders.img()
-				                                 .attribute( "src", imageUrl )
-		                    )
+		                    .add( html.builders.img().attribute( "src", imageUrl ) )
 		                    .build( viewElementBuilderContext );
-
-		/*
-		ViewElement thumbnailPreview = image.getImageServerKey()
-		                                    .map( imageServerKey -> {
-			                                    String imageUrl = imageConnector.buildImageUrl( image, 200, 200 );
-			                                    LOG.trace( "Rendering thumbnail of url {}", imageUrl );
-			                                    return bootstrapUiFactory.node( "img" )
-			                                                             .attribute( "src", imageUrl )
-			                                                             .build( viewElementBuilderContext );
-		                                    } )
-		                                    .orElseGet( () -> {
-			                                    LOG.trace( "No image yet for {}", image );
-			                                    return bootstrapUiFactory.node( "div" )
-			                                                             .add( bootstrapUiFactory.text( "Upload image.." ) )
-			                                                             .build( viewElementBuilderContext );
-		                                    } );
-
-		LOG.trace( "Rendering image upload for owner {}", image );
-		NodeViewElement fileUpload = new NodeViewElement( "input" );
-		fileUpload.setAttribute( "type", "file" );
-		fileUpload.addCssClass( "form-control" );
-		fileUpload.setAttribute( "name", "extensions[image].imageData" );
-
-		return bootstrapUiFactory.row()
-		                         .add(
-				                         bootstrapUiFactory.column( Grid.Device.MD.width( 6 ) ).add( thumbnailPreview ),
-				                         bootstrapUiFactory.column( Grid.Device.MD.width( 6 ) ).add( fileUpload )
-		                         )
-		                         .build();
-		*/
 	}
 }

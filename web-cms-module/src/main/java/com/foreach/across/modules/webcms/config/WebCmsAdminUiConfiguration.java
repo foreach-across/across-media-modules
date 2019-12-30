@@ -19,9 +19,12 @@ package com.foreach.across.modules.webcms.config;
 import com.foreach.across.core.annotations.OrderInModule;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
+import com.foreach.across.modules.webcms.WebCmsModuleIcons;
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Contains the base configuration for the admin UI.
@@ -34,6 +37,11 @@ import org.springframework.core.Ordered;
 @Configuration
 class WebCmsAdminUiConfiguration implements EntityConfigurer
 {
+	@PostConstruct
+	void registerIcons() {
+		WebCmsModuleIcons.registerIconSet();
+	}
+
 	@Override
 	public void configure( EntitiesConfigurationBuilder entities ) {
 		// Object ID is generally not writable and is hidden

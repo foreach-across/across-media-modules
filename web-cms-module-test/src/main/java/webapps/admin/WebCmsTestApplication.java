@@ -16,6 +16,7 @@
 
 package webapps.admin;
 
+import com.foreach.across.AcrossApplicationRunnerBuilder;
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.debugweb.DebugWebModule;
@@ -30,11 +31,7 @@ import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainC
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.imageserver.admin.ImageServerAdminWebModule;
 import com.foreach.imageserver.core.ImageServerCoreModule;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -56,13 +53,12 @@ import java.util.Collections;
 				EhcacheModule.NAME
 		}
 )
-@Import({ DataSourceAutoConfiguration.class, H2ConsoleAutoConfiguration.class })
 public class WebCmsTestApplication
 {
 	public static void main( String[] args ) {
-		SpringApplication springApplication = new SpringApplication( WebCmsTestApplication.class );
-		springApplication.setDefaultProperties( Collections.singletonMap( "spring.config.additional-location", "${user.home}/dev-configs/wcm-test-application.yml" ) );
-		springApplication.run( args );
+		AcrossApplicationRunnerBuilder application = new AcrossApplicationRunnerBuilder( WebCmsTestApplication.class );
+		application.properties( Collections.singletonMap( "spring.config.additional-location", "${user.home}/dev-configs/wcm-test-application.yml" ) );
+		application.run( args );
 	}
 
 	@Bean

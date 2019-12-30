@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.foreach.across.modules.webcms.config.icons.WebCmsIcons.webCmsIcons;
+import static com.foreach.across.modules.webcms.WebCmsModuleIcons.webCmsIcons;
 
 /**
  * Builds the admin domain selector in case per-domain management is active.
