@@ -1,21 +1,17 @@
 package com.foreach.across.modules.filemanager.views.bootstrapui;
 
-import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.elements.FormControlElement;
 import com.foreach.across.modules.bootstrapui.elements.HiddenFormElement;
 import com.foreach.across.modules.bootstrapui.elements.builder.FileUploadFormElementBuilder;
 import com.foreach.across.modules.bootstrapui.elements.builder.ScriptViewElementBuilder;
 import com.foreach.across.modules.entity.EntityAttributes;
-import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.entity.bind.EntityPropertyBinder;
 import com.foreach.across.modules.entity.bind.EntityPropertyControlName;
 import com.foreach.across.modules.entity.bind.ListEntityPropertyBinder;
-import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyHandlingType;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
 import com.foreach.across.modules.filemanager.utils.FileReferenceUtils;
-import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.web.resource.WebResource;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.resource.WebResourceRule;
@@ -31,7 +27,7 @@ import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewE
 import static com.foreach.across.modules.entity.bind.EntityPropertyControlName.forProperty;
 import static com.foreach.across.modules.entity.views.util.EntityViewElementUtils.currentPropertyBinder;
 import static com.foreach.across.modules.entity.views.util.EntityViewElementUtils.currentPropertyDescriptor;
-import static com.foreach.across.modules.filemanager.config.FileManagerIcons.fileManagerIcons;
+import static com.foreach.across.modules.filemanager.FileManagerModuleIcons.fileManagerIcons;
 import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
@@ -40,8 +36,6 @@ import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
  * @author Steven Gentens
  * @since 1.3.0
  */
-@ConditionalOnBootstrapUI
-@ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, EntityModule.NAME })
 public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSupport
 {
 	@Override
@@ -63,7 +57,7 @@ public class FileReferenceControlViewElementBuilder extends ViewElementBuilderSu
 
 		boolean isForMultiple = propertyBinder instanceof ListEntityPropertyBinder;
 
-		FileUploadFormElementBuilder fileUploadBuilder = bootstrap.builders.file().css( "js-file-control" );
+		FileUploadFormElementBuilder fileUploadBuilder = bootstrap.builders.fileUpload().css( "js-file-control" );
 
 		if ( isForMultiple ) {
 			addMultipleSelectedElements( wrapper, controlName, (ListEntityPropertyBinder) propertyBinder, builderContext );
