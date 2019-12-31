@@ -17,7 +17,10 @@
 package it;
 
 import com.foreach.across.core.AcrossConfigurationException;
+import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
+import com.foreach.across.modules.entity.EntityModule;
 import com.foreach.across.modules.filemanager.FileManagerModule;
+import com.foreach.across.modules.filemanager.FileManagerModuleIcons;
 import com.foreach.across.modules.filemanager.business.reference.FileReferenceService;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
@@ -27,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import static com.foreach.across.test.support.AcrossTestBuilders.standard;
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Steven Gentens
@@ -40,6 +44,9 @@ class ITFileManageModuleBootstrap
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
 			assertThat( ctx.contextInfo().getModuleInfo( FileManagerModule.NAME ).getApplicationContext().getBeansOfType( FileReferenceService.class ) )
 					.isEmpty();
+
+			assertThatExceptionOfType( IllegalArgumentException.class )
+					.isThrownBy( FileManagerModuleIcons.fileManagerIcons::removeFile );
 		}
 	}
 
@@ -50,6 +57,9 @@ class ITFileManageModuleBootstrap
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
 			assertThat( ctx.contextInfo().getModuleInfo( FileManagerModule.NAME ).getApplicationContext().getBeansOfType( FileReferenceService.class ) )
 					.isEmpty();
+
+			assertThatExceptionOfType( IllegalArgumentException.class )
+					.isThrownBy( FileManagerModuleIcons.fileManagerIcons::removeFile );
 		}
 	}
 
@@ -62,6 +72,7 @@ class ITFileManageModuleBootstrap
 		catch ( AcrossConfigurationException e ) {
 			assertThat( e.getMessage() ).isEqualTo( FileManagerModule.NAME + " requires " + PropertiesModule.NAME
 					                                        + " to be present when " + AcrossHibernateJpaModule.NAME + " is configured." );
+
 		}
 	}
 
@@ -72,7 +83,20 @@ class ITFileManageModuleBootstrap
 			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
 			assertThat( ctx.contextInfo().getModuleInfo( FileManagerModule.NAME ).getApplicationContext().getBeansOfType( FileReferenceService.class ) )
 					.hasSize( 1 );
+
+			assertThatExceptionOfType( IllegalArgumentException.class )
+					.isThrownBy( FileManagerModuleIcons.fileManagerIcons::removeFile );
 		}
 	}
 
+	@Test
+	void entityModule() {
+		try (AcrossTestContext ctx = web().modules( FileManagerModule.NAME, BootstrapUiModule.NAME, EntityModule.NAME ).build()) {
+			assertThat( ctx.contextInfo().isBootstrapped() ).isTrue();
+			assertThat( ctx.contextInfo().getModuleInfo( FileManagerModule.NAME ).getApplicationContext().getBeansOfType( FileReferenceService.class ) )
+					.isEmpty();
+
+			assertThat( FileManagerModuleIcons.fileManagerIcons.removeFile() ).isNotNull();
+		}
+	}
 }
