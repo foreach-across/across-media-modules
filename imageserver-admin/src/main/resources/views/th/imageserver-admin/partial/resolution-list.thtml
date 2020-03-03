@@ -1,6 +1,6 @@
 <h3>Manage resolutions</h3>
 <nav class="navbar navbar-default" role="navigation">
-	<div class="container-fluid justify-content-between">
+	<div class="container-fluid axu-justify-content-between">
         <div>
             <select class="custom-select" ng-model="selectedContext" ng-options="context for context in contexts"
                     ng-change="selectContext(selectedContext)">

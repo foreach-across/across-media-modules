@@ -4,7 +4,7 @@
 <body>
 <div th:fragment="content" ng-app="imageServerAdmin"
      th:attr="ng-init='token=\'' + ${accessToken} + '\';imageServerUrl=\'' + @{${imageServerUrl}} + '\''">
-    <div class="col-md-12 mb-3">
+    <div class="col-md-12 axu-mb-3">
         <ul class="nav nav-pills">
             <li class="nav-item" ng-class="{active: selectedMenu == 'view'}"
                 sec:authorize="hasAuthority('imageserver view images')">

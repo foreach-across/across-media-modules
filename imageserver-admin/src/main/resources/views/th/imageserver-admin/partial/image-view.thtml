@@ -1,7 +1,7 @@
 <div ng-controller="ImageViewController as controller">
     <h3>View a stored image</h3>
 
-    <nav class="navbar navbar-default mb-3" role="navigation">
+    <nav class="navbar navbar-default axu-mb-3" role="navigation">
         <div>
             <form role="form" class="navbar-form">
                 <div class="form-group">
@@ -20,7 +20,7 @@
     <div ng-if="controller.image.existing" class="container-fluid">
         <div class="row">
             <div class="col-md-3">
-                <div class="card mb-3">
+                <div class="card axu-mb-3">
                     <div class="card-body">
                         <p><strong>{{controller.image.externalId}}</strong><br/>
                             {{controller.image.dimensionsDto.width}} x {{controller.image.dimensionsDto.height}}<br/>
