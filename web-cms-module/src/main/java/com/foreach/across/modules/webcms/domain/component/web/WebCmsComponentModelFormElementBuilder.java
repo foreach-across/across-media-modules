@@ -16,6 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component.web;
 
+import com.foreach.across.modules.bootstrapui.styles.AcrossStyleRule;
 import com.foreach.across.modules.bootstrapui.styles.BootstrapStyles;
 import com.foreach.across.modules.entity.support.EntityMessageCodeResolver;
 import com.foreach.across.modules.web.ui.DefaultViewElementBuilderContext;
@@ -181,7 +182,8 @@ public final class WebCmsComponentModelFormElementBuilder extends AbstractNodeVi
 
 			if ( StringUtils.isNotEmpty( descriptionText ) ) {
 				NodeViewElement helpBlock = new NodeViewElement( "p" );
-				helpBlock.set( BootstrapStyles.css.form.text, BootstrapStyles.css.text.muted, BootstrapStyles.css.margin.bottom.s1 );
+				helpBlock.set( BootstrapStyles.css.form.text, AcrossStyleRule.utility( BootstrapStyles.css.text.muted ),
+				               AcrossStyleRule.utility( BootstrapStyles.css.margin.bottom.s1 ) );
 				helpBlock.addCssClass( "help-block", "description-block" );
 				helpBlock.addChild( TextViewElement.html( descriptionText ) );
 				container.addChild( helpBlock );
@@ -191,7 +193,8 @@ public final class WebCmsComponentModelFormElementBuilder extends AbstractNodeVi
 
 			if ( StringUtils.isNotEmpty( additionalDescriptionText ) ) {
 				NodeViewElement helpBlock = new NodeViewElement( "p" );
-				helpBlock.set( BootstrapStyles.css.form.text, BootstrapStyles.css.text.muted, BootstrapStyles.css.margin.bottom.s1 );
+				helpBlock.set( BootstrapStyles.css.form.text, AcrossStyleRule.utility( BootstrapStyles.css.text.muted ),
+				               AcrossStyleRule.utility( BootstrapStyles.css.margin.bottom.s1 ) );
 				helpBlock.addCssClass( "help-block", "description-block-additional" );
 				helpBlock.addChild( TextViewElement.html( additionalDescriptionText ) );
 				container.addChild( helpBlock );
