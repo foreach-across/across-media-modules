@@ -32,7 +32,7 @@
                 <a th:href="@{${componentLinkBuilder.update(model.component).withFromUrl(currentComponentUrl).toUriString()}}"><i class="fas fa-edit"></i></a>
             </li>
             <li th:if="${element.showDeleteButton}">
-                <a th:href="@{${'@adminWeb:/entities/webCmsComponent/' + model.component.id + '/delete'}(from=${currentComponentUrl})}"><i class="fas fa-times text-danger"></i></a>
+                <a th:href="@{${'@adminWeb:/entities/webCmsComponent/' + model.component.id + '/delete'}(from=${currentComponentUrl})}"><i class="fas fa-times axu-text-danger"></i></a>
             </li>
         </ul>
     </div>
