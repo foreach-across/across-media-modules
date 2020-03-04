@@ -4,6 +4,7 @@ import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
 import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
 import com.foreach.across.modules.bootstrapui.elements.icons.IconSetRegistry;
 import com.foreach.across.modules.bootstrapui.elements.icons.SimpleIconSet;
+import com.foreach.across.modules.bootstrapui.styles.AcrossStyleRule;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,7 +27,8 @@ public class FileManagerModuleIcons
 
 	public static void registerIconSet() {
 		SimpleIconSet iconset = new SimpleIconSet();
-		iconset.add( REMOVE_FILE, ( name ) -> IconSetRegistry.getIconSet( ICON_SET_FONT_AWESOME_SOLID ).icon( "times" ).set( css.text.danger ) );
+		iconset.add( REMOVE_FILE, ( name ) -> IconSetRegistry.getIconSet( ICON_SET_FONT_AWESOME_SOLID ).icon( "times" )
+		                                                     .set( AcrossStyleRule.utility( css.text.danger ) ) );
 		IconSetRegistry.addIconSet( ICON_SET, iconset );
 	}
 }
