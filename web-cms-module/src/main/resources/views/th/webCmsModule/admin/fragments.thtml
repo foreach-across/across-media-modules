@@ -6,7 +6,7 @@
      th:classappend="${element.showAsLinkedComponent} ? 'wcm-linked-component'"
      th:data-wcm-component-id="${model.objectId}"
      th:with="htmlId=${#ids.seq('component-tab')}">
-    <div class="float-right">
+    <div class="axu-float-right">
         <ul class="wcm-component-tabs" th:unless="${element.showAsLinkedComponent}">
             <li th:if="${element.showAddComponentButton}">
                 <a th:href="@{@adminWeb:/entities/webCmsComponent/create(view=createMember,entity.ownerObjectId=${model.objectId},from=${currentComponentUrl})}" title="Add a component to this container"><i class="fas fa-plus-circle"></i></a>

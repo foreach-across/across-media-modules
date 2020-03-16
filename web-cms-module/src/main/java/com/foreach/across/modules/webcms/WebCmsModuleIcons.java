@@ -19,6 +19,7 @@ package com.foreach.across.modules.webcms;
 import com.foreach.across.modules.bootstrapui.elements.icons.IconSet;
 import com.foreach.across.modules.bootstrapui.elements.icons.IconSetRegistry;
 import com.foreach.across.modules.bootstrapui.elements.icons.SimpleIconSet;
+import com.foreach.across.modules.bootstrapui.styles.AcrossBootstrapStyles;
 import com.foreach.across.modules.bootstrapui.styles.AcrossStyleRule;
 import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.webcms.icons.WebCmsComponentIcons;
@@ -55,7 +56,7 @@ public class WebCmsModuleIcons
 
 		mutableIconSet.add( WebCmsImageIcons.EDIT, ( imageName ) -> IconSet.iconSet( ICON_SET_FONT_AWESOME_SOLID ).icon( "edit" ) );
 		mutableIconSet.add( WebCmsImageIcons.REMOVE, ( imageName ) -> IconSet.iconSet( ICON_SET_FONT_AWESOME_SOLID ).icon( "times" )
-		                                                                     .set( AcrossStyleRule.utility( css.text.danger ) ) );
+		                                                                     .set( AcrossBootstrapStyles.css.text.danger  ) );
 
 		mutableIconSet.add( WebCmsMenuIcons.DOMAIN_GROUP, ( imageName ) -> IconSet.iconSet( ICON_SET_FONT_AWESOME_SOLID ).icon( "home" ) );
 		mutableIconSet.add( WebCmsMenuIcons.SELECTED_DOMAIN, ( imageName ) -> IconSet.iconSet( ICON_SET_FONT_AWESOME_REGULAR ).icon( "dot-circle" ) );

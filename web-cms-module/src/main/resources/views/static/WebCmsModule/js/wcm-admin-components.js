@@ -30,7 +30,7 @@
         $( '[data-wcm-component-id]', node ).each(
                 function () {
                     var component = $( this );
-                    var firstLink = component.find( '> .float-right > ul.wcm-component-tabs a[data-wcm-component-tab]' ).first();
+                    var firstLink = component.find( '> .axu-float-right > ul.wcm-component-tabs a[data-wcm-component-tab]' ).first();
 
                     component.find( ':input' ).change( function () {
                         $( this ).closest( 'form' ).data( 'changed', true );
@@ -40,7 +40,7 @@
                         var tab = link.data( 'wcm-component-tab' );
 
                         component.find( '> .wcm-component-tab-pane' ).removeClass( 'active' );
-                        component.find( '> .float-right > ul.wcm-component-tabs li' ).removeClass( 'active' );
+                        component.find( '> .axu-float-right > ul.wcm-component-tabs li' ).removeClass( 'active' );
 
                         link.closest( 'li' ).addClass( 'active' );
                         var tabPane = link.attr( 'href' );
@@ -67,7 +67,7 @@
                                        } )
                             .disableSelection();
 
-                    component.find( '> .float-right > ul.wcm-component-tabs a' )
+                    component.find( '> .axu-float-right > ul.wcm-component-tabs a' )
                             .each( function () {
                                 var link = $( this );
                                 var tab = link.data( 'wcm-component-tab' );
