@@ -191,7 +191,7 @@ public class WebCmsComponentsFormProcessor extends EntityViewProcessorAdapter
 		if ( isSingleComponent( command ) ) {
 			val componentModel = componentModels.models[0];
 
-			val ownerTrail = html.builders.li( HtmlViewElement.Functions.css( "breadcrumb", "wcm-component-owner-trail" ) );
+			val ownerTrail = html.builders.ul( HtmlViewElement.Functions.css( "breadcrumb", "wcm-component-owner-trail" ) );
 			val baseUrl = entityViewRequest.getEntityViewContext().getLinkBuilder()
 			                               .forInstance( entityViewRequest.getEntityViewContext().getEntity() )
 			                               .updateView()
