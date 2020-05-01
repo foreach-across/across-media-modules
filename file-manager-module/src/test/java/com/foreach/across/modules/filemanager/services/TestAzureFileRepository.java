@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import utils.AzureStorageHelper;
 
 import java.io.File;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class TestAzureFileRepository extends BaseFileRepositoryTest
 	@SneakyThrows
 	static void createResource() {
 		if ( cloudBlobClient == null ) {
-			cloudBlobClient = CloudStorageAccount.getDevelopmentStorageAccount().createCloudBlobClient();
+			cloudBlobClient = AzureStorageHelper.azurite.getCloudBlobClient();
 			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
 		}
 	}

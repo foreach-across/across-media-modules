@@ -38,7 +38,7 @@ public class TestAzureFolderResource
 	@SneakyThrows
 	void resetResource() {
 		if ( cloudBlobClient == null ) {
-			cloudBlobClient = CloudStorageAccount.getDevelopmentStorageAccount().createCloudBlobClient();
+			cloudBlobClient = AzureStorageHelper.azurite.getCloudBlobClient();
 			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
 		}
 

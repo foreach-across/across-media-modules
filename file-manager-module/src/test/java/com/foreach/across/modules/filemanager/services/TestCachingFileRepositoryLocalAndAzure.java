@@ -26,6 +26,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
+import utils.AzureStorageHelper;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -45,7 +46,7 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 	@SneakyThrows
 	FileRepository createRepository() {
 		if ( cloudBlobClient == null ) {
-			cloudBlobClient = CloudStorageAccount.getDevelopmentStorageAccount().createCloudBlobClient();
+			cloudBlobClient = AzureStorageHelper.azurite.getCloudBlobClient();
 			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
 		}
 		FileManagerImpl fileManager = new FileManagerImpl();

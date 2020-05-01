@@ -16,6 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
+import utils.AzureStorageHelper;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -41,7 +42,7 @@ class TestAzureFileResource
 	@SneakyThrows
 	void createResource() {
 		if ( cloudBlobClient == null ) {
-			cloudBlobClient = CloudStorageAccount.getDevelopmentStorageAccount().createCloudBlobClient();
+			cloudBlobClient = AzureStorageHelper.azurite.getCloudBlobClient();
 			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
 		}
 		objectName = UUID.randomUUID().toString();
