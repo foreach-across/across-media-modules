@@ -19,6 +19,7 @@ package modules.test.controllers;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.web.WebCmsArticleMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @ResponseBody
 @WebCmsArticleMapping(publicationType = { "fun-facts", "boring-facts" })
+@RequestMapping("**")
 public class ArticleMappingController
 {
 	@WebCmsArticleMapping
