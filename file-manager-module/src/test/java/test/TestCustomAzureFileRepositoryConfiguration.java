@@ -91,7 +91,7 @@ class TestCustomAzureFileRepositoryConfiguration
 		@Bean
 		@SneakyThrows
 		CloudBlobClient cloudBlobClient( AzuriteContainer azurite ) {
-			CloudBlobClient cloudBlobClient = azurite.getCloudBlobClient();
+			CloudBlobClient cloudBlobClient = azurite.storageAccount().createCloudBlobClient();
 			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
 			return cloudBlobClient;
 		}

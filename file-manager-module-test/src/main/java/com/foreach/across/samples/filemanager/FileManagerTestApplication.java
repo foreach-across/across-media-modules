@@ -79,7 +79,8 @@ public class FileManagerTestApplication
 
 	@Bean
 	public LocalStackContainer localStackContainer() {
-		LocalStackContainer localstack = new LocalStackContainer()
+		LocalStackContainer localstack = new LocalStackContainer("0.9.3")
+				.withFileSystemBind( "../local-data/storage/localstack", "/tmp/localstack/data" )
 				.withServices(S3);
 		localstack.start();
 		return localstack;
