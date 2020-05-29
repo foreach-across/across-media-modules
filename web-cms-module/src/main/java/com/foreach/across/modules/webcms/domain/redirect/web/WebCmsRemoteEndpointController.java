@@ -21,6 +21,7 @@ import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.WebCmsE
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 0.0.1
  */
 @Controller
+@RequestMapping("**")
 public class WebCmsRemoteEndpointController
 {
 	@IgnoreEndpointModel

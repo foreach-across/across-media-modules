@@ -25,6 +25,7 @@ import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 0.0.1
  */
 @Controller
+@RequestMapping("**")
 @Slf4j
 class WebCmsAssetEndpointController
 {
