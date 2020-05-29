@@ -27,4 +27,4 @@ services:
       - "10000-10001:10000-10001"
     volumes:
       - ./local-data/storage/azurite:/data
-    command: [ "azurite", "-l", "/data", "--blobHost", "0.0.0.0", "--queueHost", "0.0.0.0", "--loose" ]
+    command: [ "azurite", "-l", "/data", "--blobHost", "0.0.0.0", "--queueHost", "0.0.0.0" ]

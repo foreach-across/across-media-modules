@@ -28,7 +28,7 @@ class TestFileReferenceViewElementBuilderFactory
 		                                                    FILE_REFERENCE_CONTROL );
 		assertThat( builder )
 				.isInstanceOf( FileReferenceControlViewElementBuilder.class );
-		assertThat( ( (ViewElementBuilderSupport) builder ) ).extracting( "postProcessors" ).isNotEmpty();
+		assertThat( ( (ViewElementBuilderSupport) builder ) ).extracting( "postProcessors" ).asList().hasSize( 1 );
 		// TODO fix checking by type
 		// .hasAtLeastOneElementOfType( EntityPropertyControlNamePostProcessor.class );
 
