@@ -84,7 +84,7 @@ public class WebCmsArticleAdminConfiguration
 			        )
 			        .listView(
 					        lvb -> lvb.showProperties( "publication", "title", "articleType", "publicationDate", "lastModified" )
-					                  .defaultSort( new Sort( Sort.Direction.DESC, "lastModifiedDate" ) )
+					                  .defaultSort( Sort.by( Sort.Direction.DESC, "lastModifiedDate" ) )
 					                  .entityQueryPredicate( "publication.published = true" )
 					                  .viewProcessor( new WebCmsArticleListViewProcessor() )
 			        )

@@ -29,6 +29,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -148,8 +149,8 @@ public class TestWebCmsAssetCondition
 		values.put( "objectId", objectId );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getDeclaredAnnotation( WebCmsAssetMapping.class ) )
-				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsAssetMapping.class, null ) );
+		when( annotatedElement.getDeclaredAnnotations() )
+				.thenReturn( new Annotation[] { AnnotationUtils.synthesizeAnnotation( values, WebCmsAssetMapping.class, null ) } );
 		condition.setAnnotatedElement( annotatedElement );
 
 		return condition;

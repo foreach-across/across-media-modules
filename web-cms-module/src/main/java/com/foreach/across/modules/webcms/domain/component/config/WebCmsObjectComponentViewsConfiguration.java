@@ -101,7 +101,7 @@ public class WebCmsObjectComponentViewsConfiguration
 								.parentDeleteMode( EntityAssociation.ParentDeleteMode.WARN )
 								.listView(
 										lvb -> lvb.showProperties( "title", "name", "componentType", "lastModified" )
-										          .defaultSort( new Sort( Sort.Direction.ASC, "sortIndex", "title" ) )
+										          .defaultSort( Sort.by( Sort.Direction.ASC, "sortIndex", "title" ) )
 								)
 								.createFormView( fvb -> fvb
 										.postProcess(

@@ -33,6 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
@@ -294,8 +295,8 @@ public class TestWebCmsEndpointCondition
 		values.put( "series", series );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getDeclaredAnnotation( WebCmsEndpointMapping.class ) )
-				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsEndpointMapping.class, null ) );
+		when( annotatedElement.getDeclaredAnnotations() )
+				.thenReturn( new Annotation[] { AnnotationUtils.synthesizeAnnotation( values, WebCmsEndpointMapping.class, null ) } );
 		condition.setAnnotatedElement( annotatedElement );
 
 		return condition;
