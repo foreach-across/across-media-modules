@@ -48,7 +48,7 @@ public class ArticleMappingController
 	}
 
 	@WebCmsArticleMapping(publication = "movies", articleType = "small-article")
-	public String articleTypOnPublicationMapping( WebCmsArticle article ) {
+	public String articleTypeOnPublicationMapping( WebCmsArticle article ) {
 		return "articleTypeOnPublicationMapping: " + article.getTitle();
 	}
 
