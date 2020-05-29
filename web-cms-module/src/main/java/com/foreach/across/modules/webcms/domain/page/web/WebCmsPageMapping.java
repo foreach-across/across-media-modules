@@ -23,6 +23,7 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.annotation.*;
 
@@ -37,6 +38,7 @@ import java.lang.annotation.*;
 @Documented
 @WebCmsAssetMapping(value = WebCmsPage.class) //I think this should be here, however the comparison doesn't work when it is.
 @CustomRequestMapping(WebCmsPageCondition.class)
+@RequestMapping("**")
 public @interface WebCmsPageMapping
 {
 	/**

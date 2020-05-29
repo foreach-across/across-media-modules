@@ -21,6 +21,7 @@ import com.foreach.across.modules.webcms.domain.domain.web.WebCmsDomainMapping;
 import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.annotation.*;
 
@@ -33,6 +34,7 @@ import java.lang.annotation.*;
 @Documented
 @WebCmsDomainMapping
 @CustomRequestMapping(WebCmsEndpointCondition.class)
+@RequestMapping("**")
 public @interface WebCmsEndpointMapping
 {
 	Class<? extends WebCmsEndpoint> value() default WebCmsEndpoint.class;
