@@ -43,13 +43,13 @@ public class ImageManagerTest extends AbstractCachedIntegrationTest
 		assertNotNull( cache );
 		assertNull( cache.get( "byId-" + insertedImage.getId() ) );
 
-		Image retrievedImage = imageManager.getById( insertedImage.getId() );
+		Image retrievedImage = imageManager.getById( insertedImage.getId() ).orElse( null );
 		shouldBeEqual( insertedImage, retrievedImage );
 		assertSame( retrievedImage, cache.get( "byId-" + insertedImage.getId() ).get() );
 
 		deleteAllImages();
 
-		Image retrievedAgainImage = imageManager.getById( insertedImage.getId() );
+		Image retrievedAgainImage = imageManager.getById( insertedImage.getId() ).orElse( null );
 		shouldBeEqual( insertedImage, retrievedAgainImage );
 		assertSame( retrievedImage, retrievedAgainImage );
 	}

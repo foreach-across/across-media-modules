@@ -8,3 +8,4 @@ target
 db
 local-data
 .DS_Store
+.flattened-pom.xml

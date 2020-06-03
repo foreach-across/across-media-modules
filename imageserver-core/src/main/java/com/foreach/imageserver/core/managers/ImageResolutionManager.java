@@ -4,10 +4,11 @@ import com.foreach.imageserver.core.business.ImageResolution;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface ImageResolutionManager
 {
-	ImageResolution getById( long resolutionId );
+	Optional<ImageResolution> getById( long resolutionId );
 
 	List<ImageResolution> getForContext( long contextId );
 

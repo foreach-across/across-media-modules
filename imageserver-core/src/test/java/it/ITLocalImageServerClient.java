@@ -20,6 +20,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -32,6 +33,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.testcontainers.containers.GenericContainer;
+import test.transformers.imagemagick.ImageServerTestContainer;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -55,6 +58,9 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = { "spring.jpa.show-sql=true" })
 public class ITLocalImageServerClient
 {
+	@ClassRule
+	public static GenericContainer imageserverContainer = ImageServerTestContainer.CONTAINER;
+
 	@Autowired(required = false)
 	private ImageServerClient imageServerClient;
 

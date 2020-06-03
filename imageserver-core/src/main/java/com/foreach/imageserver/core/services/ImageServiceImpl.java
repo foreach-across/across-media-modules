@@ -84,7 +84,7 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
-	public Image getById( long imageId ) {
+	public Optional<Image> getById( long imageId ) {
 		return imageManager.getById( imageId );
 	}
 
@@ -449,7 +449,7 @@ public class ImageServiceImpl implements ImageService
 	}
 
 	@Override
-	public ImageResolution getResolution( long resolutionId ) {
+	public Optional<ImageResolution> getResolution( long resolutionId ) {
 		return imageResolutionManager.getById( resolutionId );
 	}
 

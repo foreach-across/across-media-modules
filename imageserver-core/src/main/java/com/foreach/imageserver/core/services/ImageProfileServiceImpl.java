@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class ImageProfileServiceImpl implements ImageProfileService
 {
@@ -20,8 +22,8 @@ public class ImageProfileServiceImpl implements ImageProfileService
 	}
 
 	@Override
-	public ImageProfile getById( long id ) {
-		return imageProfileRepository.findOne( id );
+	public Optional<ImageProfile> getById( long id ) {
+		return imageProfileRepository.findById( id );
 	}
 
 	@Transactional
@@ -33,7 +35,7 @@ public class ImageProfileServiceImpl implements ImageProfileService
 			imageProfile = new ImageProfile();
 		}
 		else {
-			imageProfile = getById( imageProfileDto.getId() );
+			imageProfile = getById( imageProfileDto.getId() ).get();
 		}
 
 		BeanUtils.copyProperties( imageProfileDto, imageProfile );

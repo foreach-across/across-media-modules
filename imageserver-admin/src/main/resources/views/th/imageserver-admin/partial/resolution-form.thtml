@@ -6,11 +6,11 @@
     {{feedback.message}}
 </div>
 
-<form role="form">
+<form role="form col-md-6">
     <div class="form-group form-inline">
-        <label for="resolution.width">Dimensions</label>
+        <label for="resolution.width" class="axu-pr-2">Dimensions</label>
         <input class="form-control" type="text" id="resolution.width" name="resolution.width" ng-model="resolution.width"/>
-        x
+        <span class="axu-px-2">x</span>
         <input type="text" class="form-control" name="resolution.height" ng-model="resolution.height"/>
     </div>
     <div class="form-group">
@@ -60,6 +60,6 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-default" ng-click="save()">Save</button>
-    <a ng-href="#/manage/resolutions" class="btn btn-default">Cancel</a>
+    <button type="button" class="btn btn-primary" ng-click="save()">Save</button>
+    <a ng-href="#/manage/resolutions" class="btn btn-link">Cancel</a>
 </form>

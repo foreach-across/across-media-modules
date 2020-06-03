@@ -29,10 +29,14 @@ server:
     includeStacktrace: ALWAYS
 
 spring:
-  http:
+  servlet:
     multipart:
-      max-file-size: 100MB
       max-request-size: 100MB
+      max-file-size: 100MB
+
+acrossModule:
+  ImageServerAdminWebModule:
+    resources: ../imageserver-admin/src/main/resources
 
 imageServerCore:
   rootPath: /resources/images

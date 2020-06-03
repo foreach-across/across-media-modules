@@ -6,6 +6,7 @@ import com.foreach.imageserver.core.transformers.ImageAttributesCommand;
 import com.foreach.imageserver.core.transformers.ImageModificationException;
 import com.foreach.imageserver.core.transformers.imagemagick.ImageMagickAttributesCommandExecutor;
 import org.im4java.process.ProcessStarter;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.testcontainers.containers.GenericContainer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -30,6 +32,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TestImageMagickAttributesCommandExecutor
 {
+	@ClassRule
+	public static GenericContainer imageserverContainer = ImageServerTestContainer.CONTAINER;
+
 	@Autowired
 	private ImageMagickAttributesCommandExecutor executor;
 

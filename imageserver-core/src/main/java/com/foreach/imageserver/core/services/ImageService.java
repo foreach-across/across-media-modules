@@ -13,12 +13,13 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface ImageService
 {
 	Logger LOG = LoggerFactory.getLogger( ImageService.class );
 
-	Image getById( long imageId );
+	Optional<Image> getById( long imageId );
 
 	Image getByExternalId( String externalId );
 
@@ -71,7 +72,7 @@ public interface ImageService
 
 	boolean hasModification( int imageId );
 
-	ImageResolution getResolution( long resolutionId );
+	Optional<ImageResolution> getResolution( long resolutionId );
 
 	ImageResolution getResolution( int width, int height );
 

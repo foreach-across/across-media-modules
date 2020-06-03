@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Optional;
 
 @Installer(description = "Installs the default image_profile", version = 1,
            phase = InstallerPhase.AfterModuleBootstrap)
@@ -43,9 +44,9 @@ public class DefaultDataInstaller
 	}
 
 	private void createImageProfile() {
-		ImageProfile profile = imageProfileService.getById( ImageProfile.DEFAULT_PROFILE_ID );
+		Optional<ImageProfile> profile = imageProfileService.getById( ImageProfile.DEFAULT_PROFILE_ID );
 
-		if ( profile == null ) {
+		if ( !profile.isPresent() ) {
 			ImageProfileDto imageProfileDto = new ImageProfileDto();
 			imageProfileDto.setNewEntity( true );
 			imageProfileDto.setId( ImageProfile.DEFAULT_PROFILE_ID );

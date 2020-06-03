@@ -5,7 +5,6 @@ import com.foreach.across.core.annotations.AcrossDepends;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.core.context.configurer.ApplicationContextConfigurer;
 import com.foreach.across.core.context.configurer.ComponentScanConfigurer;
-import com.foreach.across.core.database.HasSchemaConfiguration;
 import com.foreach.across.core.database.SchemaConfiguration;
 import com.foreach.across.core.filters.AnnotationBeanFilter;
 import com.foreach.across.core.installers.AcrossSequencesInstaller;
@@ -22,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Set;
 
 @AcrossDepends(required = { AcrossWebModule.NAME, AcrossHibernateJpaModule.NAME, FileManagerModule.NAME })
-public class ImageServerCoreModule extends AcrossModule implements HibernatePackageConfigurer, HasSchemaConfiguration
+public class ImageServerCoreModule extends AcrossModule implements HibernatePackageConfigurer
 {
 	public static final String NAME = "ImageServerCoreModule";
 	private final SchemaConfiguration schemaConfiguration = new ImageSchemaConfiguration();
@@ -77,10 +76,5 @@ public class ImageServerCoreModule extends AcrossModule implements HibernatePack
 					new PackagesToScanProvider( "com.foreach.imageserver.core.business" ),
 					new TableAliasProvider( schemaConfiguration.getTables() ) ) );
 		}
-	}
-
-	@Override
-	public SchemaConfiguration getSchemaConfiguration() {
-		return schemaConfiguration;
 	}
 }

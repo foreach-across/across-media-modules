@@ -9,6 +9,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class ImageManagerImpl implements ImageManager
@@ -21,8 +23,8 @@ public class ImageManagerImpl implements ImageManager
 	@Override
 	@Cacheable(value = CACHE_NAME, key = "T(com.foreach.imageserver.core.managers.ImageManagerImpl).byIdKey(#imageId)",
 			unless = "#result == null")
-	public Image getById( long imageId ) {
-		return imageRepository.findOne( imageId );
+	public Optional<Image> getById( long imageId ) {
+		return imageRepository.findById( imageId );
 	}
 
 	@Override

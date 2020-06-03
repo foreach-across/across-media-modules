@@ -39,7 +39,7 @@ public class ImageResolutionManagerTest extends AbstractCachedIntegrationTest
 		assertNotNull( cache );
 		assertNull( cache.get( "byId-10" ) );
 
-		ImageResolution retrievedResolution = imageResolutionManager.getById( 10 );
+		ImageResolution retrievedResolution = imageResolutionManager.getById( 10 ).orElse( null );
 		assertEquals( 10L, retrievedResolution.getId().longValue() );
 		assertEquals( 111, retrievedResolution.getWidth() );
 		assertEquals( 222, retrievedResolution.getHeight() );
@@ -47,7 +47,7 @@ public class ImageResolutionManagerTest extends AbstractCachedIntegrationTest
 
 		deleteImageResolutions();
 
-		ImageResolution retrievedAgainResolution = imageResolutionManager.getById( 10 );
+		ImageResolution retrievedAgainResolution = imageResolutionManager.getById( 10 ).orElse( null );
 		assertSame( retrievedResolution, retrievedAgainResolution );
 		assertEquals( 10L, retrievedAgainResolution.getId().longValue() );
 		assertEquals( 111, retrievedAgainResolution.getWidth() );
