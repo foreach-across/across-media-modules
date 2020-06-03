@@ -95,6 +95,6 @@ public class Stages
 	}
 
 	private static String cleanAcrossDepsFromLocalRepository() {
-		return DOCKER_COMPOSE + " run maven-base mvn dependency:purge-local-repository -Dinclude=com.foreach.across,com.foreach.across.modules -DreResolve=false -Dverbose=true";
+		return DOCKER_COMPOSE + " run maven-gm mvn dependency:purge-local-repository -Dinclude=com.foreach.across,com.foreach.across.modules -DreResolve=false -Dverbose=true";
 	}
 }
