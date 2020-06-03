@@ -11,6 +11,7 @@ import com.foreach.imageserver.dto.*;
 import lombok.SneakyThrows;
 import org.im4java.core.IMOperation;
 import org.im4java.process.ProcessStarter;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.testcontainers.containers.GenericContainer;
 
 import java.io.File;
 import java.io.InputStream;
@@ -38,6 +40,9 @@ import static support.ImageUtils.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TestImageMagickTransformCommandExecutor
 {
+	@ClassRule
+	public static GenericContainer imageserverContainer = ImageServerTestContainer.CONTAINER;
+
 	private final Function<Consumer<ImageTransformDto.ImageTransformDtoBuilder>, ImageTransformCommand> cropTestImage = transform ->
 			createTransformCommand( image( "images/cropCorrectness.png" ),
 			                        new ImageAttributes( ImageType.PNG, new Dimensions( 2000, 1000 ), 1 ),

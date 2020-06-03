@@ -10,7 +10,6 @@ services:
       context: .
       dockerfile: 'Dockerfile'
     working_dir: '${WORKING_DIR:-/usr/src/app}'
-    container_name: imageserver-container
     volumes:
       - '.:/usr/src/app:delegated'
       # Reuse the maven repository from the host, we could omit it, but it would fetch at each build
@@ -26,4 +25,4 @@ services:
       LANG: "en_US.UTF-8"
       # Required by embedded mongo db - across-autoconfigure/test-projects
       LC_ALL: "C"
-    command: bash
+    command: 'mvn -U clean verify'

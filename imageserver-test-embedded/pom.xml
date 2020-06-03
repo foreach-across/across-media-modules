@@ -84,6 +84,17 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- override these to scope <compile> to support testcontainers at compile time -->
+		<dependency>
+			<groupId>com.foreach.across</groupId>
+			<artifactId>across-test</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 </project>
