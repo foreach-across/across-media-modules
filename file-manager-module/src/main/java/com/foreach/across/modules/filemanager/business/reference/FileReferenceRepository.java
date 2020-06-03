@@ -18,13 +18,13 @@ package com.foreach.across.modules.filemanager.business.reference;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 /**
  * @author Steven Gentens
  * @since 1.3.0
  */
 @Exposed
-public interface FileReferenceRepository extends IdBasedEntityJpaRepository<FileReference>, QueryDslPredicateExecutor<FileReference>
+public interface FileReferenceRepository extends IdBasedEntityJpaRepository<FileReference>, QuerydslPredicateExecutor<FileReference>
 {
 }

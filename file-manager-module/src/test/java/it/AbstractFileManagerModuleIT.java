@@ -16,6 +16,8 @@
 
 package it;
 
+import com.foreach.across.core.AcrossModule;
+import com.foreach.across.core.EmptyAcrossModule;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.FileManagerModuleSettings;
 import com.foreach.across.test.AcrossTestConfiguration;
@@ -44,5 +46,14 @@ public abstract class AbstractFileManagerModuleIT
 			module.setProperty( FileManagerModuleSettings.LOCAL_REPOSITORIES_ROOT, tempDir.toString() );
 			return module;
 		}
+
+		@Bean
+		public AcrossModule testModule() {
+			return new EmptyAcrossModule( "testModule", ActivateModule.class );
+		}
+	}
+
+	static class ActivateModule
+	{
 	}
 }

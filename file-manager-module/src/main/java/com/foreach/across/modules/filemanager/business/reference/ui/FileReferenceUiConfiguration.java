@@ -1,7 +1,6 @@
 package com.foreach.across.modules.filemanager.business.reference.ui;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.StaticFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.EntityModule;
@@ -24,6 +23,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
+
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 
 /**
  * Hides the default {@link FileReference} admin UI. But also configures the default views as readonly
@@ -68,18 +69,18 @@ class FileReferenceUiConfiguration implements EntityConfigurer
 	private ViewElementBuilder fileReferenceDownloadLinkBuilder( boolean forList ) {
 		return builderContext -> {
 			FileReference fileReference = EntityViewElementUtils.currentEntity( builderContext, FileReference.class );
-			return BootstrapUiBuilders.link()
-			                          .url( FileReferenceUtils.getDownloadUrl( fileReference ) )
-			                          .text( fileReference.getName() )
-			                          .map( link -> {
-				                          if ( !forList ) {
-					                          StaticFormElement wrapper = new StaticFormElement();
-					                          wrapper.addChild( link );
-					                          return wrapper;
-				                          }
-				                          return link;
-			                          } )
-			                          .build( builderContext );
+			return bootstrap.builders.link()
+			                         .url( FileReferenceUtils.getDownloadUrl( fileReference ) )
+			                         .text( fileReference.getName() )
+			                         .map( link -> {
+				                         if ( !forList ) {
+					                         StaticFormElement wrapper = new StaticFormElement();
+					                         wrapper.addChild( link );
+					                         return wrapper;
+				                         }
+				                         return link;
+			                         } )
+			                         .build( builderContext );
 
 		};
 	}

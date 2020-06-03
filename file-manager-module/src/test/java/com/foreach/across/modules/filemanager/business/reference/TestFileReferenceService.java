@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -69,6 +70,7 @@ class TestFileReferenceService
 		InputStream inputStream = mock( InputStream.class );
 		when( file.getInputStream() ).thenReturn( inputStream );
 		when( inputStream.read( any() ) ).thenReturn( -1 );
+		FileDescriptor fileDescriptor = FileDescriptor.of( FileManager.TEMP_REPOSITORY, "my-unique-file-name" );
 
 		FileReferenceProperties fileReferenceProperties = mock( FileReferenceProperties.class );
 		when( fileReferencePropertiesService.getProperties( any() ) ).thenReturn( fileReferenceProperties );

@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
  * @author Arne Vandamme
  * @since 1.4.0
  */
-@ModuleConfiguration
+@ModuleConfiguration(optional = true)
 public class FileResourceResolverRegistrar implements BeanFactoryPostProcessor, ResourceLoaderAware
 {
 	private static final Field resourcePatternResolverField = ReflectionUtils.findField( AbstractApplicationContext.class, "resourcePatternResolver" );

@@ -16,7 +16,6 @@
 
 package it;
 
-import com.foreach.across.core.context.bootstrap.AcrossBootstrapConfigurer;
 import com.foreach.across.core.context.info.AcrossContextInfo;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
@@ -95,7 +94,7 @@ class ITFileManager extends AbstractFileManagerModuleIT
 	@Test
 	@SneakyThrows
 	void resourceResolving( @Autowired AcrossContextInfo contextInfo, @Autowired ApplicationContext parentContext ) {
-		ApplicationContext applicationContext = contextInfo.getModuleInfo( AcrossBootstrapConfigurer.CONTEXT_POSTPROCESSOR_MODULE ).getApplicationContext();
+		ApplicationContext applicationContext = contextInfo.getModuleInfo( "testModule" ).getApplicationContext();
 
 		FileResource fileResource = fileManager.getFileResource( FileDescriptor.of( "default:my-resource-file.txt" ) );
 		fileResource.copyFrom( RES_TEXTFILE );

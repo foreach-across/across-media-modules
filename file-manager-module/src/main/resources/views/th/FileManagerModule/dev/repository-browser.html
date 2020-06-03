@@ -19,9 +19,9 @@
 <!--/* list all repositories */-->
 <div th:fragment="listAllRepositories(repositories)">
     <div class="alert alert-warning">If a FileRepositoryFactory is present, repositories might only get registered upon first use.</div>
-    <div class="panel panel-default">
-        <div class="panel-heading">[[${repositories.size()}]] file repositories registered</div>
-        <div class="panel-body">
+    <div class="card">
+        <div class="card-header">[[${repositories.size()}]] file repositories registered</div>
+        <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
@@ -37,7 +37,7 @@
                         <td>
                             <a th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager(repositoryId=${repo.repositoryId})}">[[${repo.repositoryId}]]</a>
                         </td>
-                        <td class="row-actions text-center">
+                        <td class="row-actions axu-text-center">
                         </td>
                     </tr>
                     </tbody>
@@ -49,8 +49,8 @@
 
 <!--/* repository browsing */-->
 <div th:fragment="listResources(repo,folderPath,resources)">
-    <div class="panel panel-default">
-        <div class="panel-heading">
+    <div class="card">
+        <div class="card-header">
             <th:block th:each="path,pathStat : ${folderPath}">
                 <span th:if="${pathStat.first}">
                     <i class="fa fa-folder-open-o"></i> <a th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager(repositoryId=${repo.repositoryId},folder=${path.descriptor.uri})}">[[${repo.repositoryId}]]</a>
@@ -62,17 +62,17 @@
                     > [[${path.folderName}]]
                 </span>
             </th:block>
-            <span class="pull-right">[[${resources.size()}]] resources</span>
+            <span class="axu-float-right">[[${resources.size()}]] resources</span>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <div class="" th:if="${resources.empty}">No resources present in this folder.</div>
             <div class="table-responsive" th:unless="${resources.empty}">
                 <table class="table table-hover">
                     <thead>
                     <tr>
                         <th>Resource</th>
-                        <th class="text-center">File size</th>
-                        <th class="text-center">Last modified</th>
+                        <th class="axu-text-center">File size</th>
+                        <th class="axu-text-center">Last modified</th>
                         <th class="row-actions"></th>
                     </tr>
                     </thead>
@@ -85,8 +85,8 @@
                                 <a th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager(repositoryId=${repo.repositoryId},folder=${resource.descriptor.uri})}">[[${resource.name}]]</a>
                             </td>
                             <td></td>
-                            <td class="text-center">[[${resource.lastModified}]]</td>
-                            <td class="row-actions text-center">
+                            <td class="axu-text-center">[[${resource.lastModified}]]</td>
+                            <td class="row-actions axu-text-center">
                             </td>
                         </th:block>
                         <th:block th:unless="${resource.folder}">
@@ -95,9 +95,9 @@
                                 &nbsp;<a title="View file" target="_blank"
                                          th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager/view(file=${resource.descriptor.uri})}">[[${resource.name}]]</a>
                             </td>
-                            <td class="text-center">[[${resource.readableFileSize()}]]</td>
-                            <td class="text-center">[[${resource.lastModified}]]</td>
-                            <td class="row-actions text-center">
+                            <td class="axu-text-center">[[${resource.readableFileSize()}]]</td>
+                            <td class="axu-text-center">[[${resource.lastModified}]]</td>
+                            <td class="row-actions axu-text-center">
                                 <a title="Download file" th:href="@{@adminWeb:/ax/developer/fileManagerModule/fileManager/download(file=${resource.descriptor.uri})}"><i class="fa fa-download"></i></a>
                             </td>
                         </th:block>

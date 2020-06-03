@@ -1,8 +1,8 @@
 package com.foreach.across.modules.filemanager.views.bootstrapui;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
+import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
 import com.foreach.across.modules.entity.EntityModule;
-import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.views.EntityViewElementBuilderFactory;
 import com.foreach.across.modules.entity.views.ViewElementMode;
@@ -18,9 +18,8 @@ import org.springframework.stereotype.Component;
  * @author Steven Gentens
  * @since 1.3.0
  */
-@ConditionalOnBootstrapUI
 @Component
-@ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, EntityModule.NAME })
+@ConditionalOnAcrossModule(allOf = { BootstrapUiModule.NAME, AcrossHibernateJpaModule.NAME, EntityModule.NAME })
 public class FileReferenceViewElementBuilderFactory implements EntityViewElementBuilderFactory
 {
 	public static final String FILE_REFERENCE_CONTROL = FileReferenceViewElementBuilderFactory.class.getName() + ".fileReferenceControl";

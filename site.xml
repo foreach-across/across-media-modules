@@ -24,7 +24,7 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
-			<directory>${project.basedir}/file-manager-module/target/apidocs</directory>
+			<directory>target/apidocs</directory>
 			<outputDirectory>${project.version}/javadoc</outputDirectory>
 		</fileSet>
 	</fileSets>

@@ -1,8 +1,8 @@
 package com.foreach.across.modules.filemanager.views.bootstrapui;
 
 import com.foreach.across.core.annotations.ConditionalOnAcrossModule;
+import com.foreach.across.modules.bootstrapui.BootstrapUiModule;
 import com.foreach.across.modules.entity.EntityModule;
-import com.foreach.across.modules.entity.conditionals.ConditionalOnBootstrapUI;
 import com.foreach.across.modules.entity.registry.properties.EntityPropertyDescriptor;
 import com.foreach.across.modules.entity.views.ViewElementMode;
 import com.foreach.across.modules.entity.views.ViewElementTypeLookupStrategy;
@@ -21,8 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Order(1)
-@ConditionalOnBootstrapUI
-@ConditionalOnAcrossModule(allOf = { AcrossHibernateJpaModule.NAME, EntityModule.NAME })
+@ConditionalOnAcrossModule(allOf = { BootstrapUiModule.NAME, AcrossHibernateJpaModule.NAME, EntityModule.NAME })
 public class FileReferenceViewElementLookupStrategy implements ViewElementTypeLookupStrategy
 {
 	@Override

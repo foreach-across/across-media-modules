@@ -46,3 +46,4 @@ public class FileReferencePropertiesServiceImpl extends AbstractEntityProperties
 		return new FileReferenceProperties( entityId, propertyTypeRegistry, source );
 	}
 }
+

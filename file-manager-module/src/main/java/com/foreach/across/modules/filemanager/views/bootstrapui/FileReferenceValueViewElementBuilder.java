@@ -1,6 +1,5 @@
 package com.foreach.across.modules.filemanager.views.bootstrapui;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.LinkViewElement;
 import com.foreach.across.modules.bootstrapui.elements.StaticFormElement;
 import com.foreach.across.modules.entity.views.ViewElementMode;
@@ -16,7 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders.*;
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * @author Steven Gentens
@@ -34,14 +34,14 @@ public class FileReferenceValueViewElementBuilder extends ViewElementBuilderSupp
 	protected MutableViewElement createElement( ViewElementBuilderContext builderContext ) {
 		List<ViewElementBuilder> links = buildLinks( EntityViewElementUtils.currentPropertyValue( builderContext ), builderContext );
 
-		ContainerViewElementBuilderSupport container = listValue ? container() : div();
+		ContainerViewElementBuilderSupport container = listValue ? html.builders.container() : html.builders.div();
 
 		int last = links.size() - 1;
 		for ( int i = 0; i < links.size(); i++ ) {
 			container.add( links.get( i ) );
 
 			if ( i < last && listValue ) {
-				container.add( text( ", " ) );
+				container.add( html.builders.text( ", " ) );
 			}
 		}
 
@@ -72,10 +72,10 @@ public class FileReferenceValueViewElementBuilder extends ViewElementBuilderSupp
 	}
 
 	private ViewElementBuilder buildDownloadLink( ViewElementBuilderContext builderContext, FileReference fileReference ) {
-		return BootstrapUiBuilders.link()
-		                          .text( fileReference.getName() )
-		                          .url( builderContext.buildLink( FileReferenceUtils.getDownloadUrl( fileReference ) ) )
-		                          .map( this::wrapAsStaticControl );
+		return bootstrap.builders.link()
+		                         .text( fileReference.getName() )
+		                         .url( builderContext.buildLink( FileReferenceUtils.getDownloadUrl( fileReference ) ) )
+		                         .map( this::wrapAsStaticControl );
 	}
 
 	private ViewElement wrapAsStaticControl( LinkViewElement link ) {

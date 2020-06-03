@@ -30,7 +30,7 @@ public class FileUploadController
 	@PostMapping("/uploadFile")
 	public String processFile( @RequestParam(name = "file") MultipartFile file ) {
 		FileReference reference = fileReferenceService.save( file, FileManager.DEFAULT_REPOSITORY );
-		FileReference saved = fileReferenceRepository.findOne( reference.getId() );
+		FileReference saved = fileReferenceRepository.findById( reference.getId() ).orElse( null );
 		return "redirect:/upload";
 	}
 }
