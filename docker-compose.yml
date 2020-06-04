@@ -1,34 +1,5 @@
 version: '2.1'
 services:
-  localstack:
-    image: 'localstack/localstack:0.9.3'
-    ports:
-      - "4567-4584:4567-4584"
-      - "${PORT_WEB_UI-8099}:${PORT_WEB_UI-8099}"
-    environment:
-#      - SERVICES=${SERVICES- }
-      - SERVICES=s3
-      - DEBUG=${DEBUG- }
-      #- DATA_DIR=${DATA_DIR- }
-      - DATA_DIR=/tmp/localstack/data
-      - PORT_WEB_UI=${PORT_WEB_UI-8099}
-      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
-      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
-      - DOCKER_HOST=unix:///var/run/docker.sock
-    volumes:
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
-      - ./local-data/storage/localstack:/tmp/localstack/data
-
-  fmm-azurite:
-    image: 'mcr.microsoft.com/azure-storage/azurite'
-    ports:
-      # 10000 is the blob storage service
-      # 10001 is the queue storage service
-      - "10000-10001:10000-10001"
-    volumes:
-      - ./local-data/storage/azurite:/data
-    command: [ "azurite", "-l", "/data", "--blobHost", "0.0.0.0", "--queueHost", "0.0.0.0" ]
-
   maven-base:
     # 1.) Do not use the alpine image as it fails frontend-maven-plugin:install-node-and-yarn
     #     https://github.com/eirslett/frontend-maven-plugin/issues/743

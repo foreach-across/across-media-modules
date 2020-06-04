@@ -127,11 +127,6 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>cloud.localstack</groupId>
-			<artifactId>localstack-utils</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.microsoft.azure</groupId>
 			<artifactId>azure-storage</artifactId>
 			<optional>true</optional>
@@ -225,7 +220,7 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.6</version>
+				<version>1.10.0</version>
 				<executions>
 					<execution>
 						<id>install node and yarn</id>
