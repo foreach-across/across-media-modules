@@ -26,18 +26,19 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Sander Van Loock
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsUrlRepository extends IdBasedEntityJpaRepository<WebCmsUrl>, QueryDslPredicateExecutor<WebCmsUrl>
+public interface WebCmsUrlRepository extends IdBasedEntityJpaRepository<WebCmsUrl>, QuerydslPredicateExecutor<WebCmsUrl>
 {
-	WebCmsUrl findOneByPathAndEndpoint_Domain( String path, WebCmsDomain domain );
+	Optional<WebCmsUrl> findOneByPathAndEndpoint_Domain( String path, WebCmsDomain domain );
 
 	List<WebCmsUrl> findAllByEndpoint( WebCmsEndpoint entity );
 

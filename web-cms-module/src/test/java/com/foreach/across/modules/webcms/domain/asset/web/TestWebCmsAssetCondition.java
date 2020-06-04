@@ -18,17 +18,13 @@ package com.foreach.across.modules.webcms.domain.asset.web;
 
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsConditionCombination;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -56,27 +52,14 @@ public class TestWebCmsAssetCondition
 	@Mock
 	private WebCmsEndpointContextResolver resolver;
 
-	private WebCmsAssetEndpoint<WebCmsAsset> endpoint;
-	private WebCmsUrl url;
-
-	@Before
-	public void setUp() throws Exception {
-		endpoint = WebCmsAssetEndpoint.builder().build();
-		url = WebCmsUrl.builder().httpStatus( HttpStatus.I_AM_A_TEAPOT ).build();
-
-		when( context.getEndpoint() ).thenReturn( endpoint );
-		when( context.isResolved() ).thenReturn( true );
-		when( context.getUrl() ).thenReturn( url );
-	}
-
 	@Test
-	public void emptyConditionContent() throws Exception {
+	public void emptyConditionContent() {
 		WebCmsAssetCondition condition = new WebCmsAssetCondition( context, resolver );
 		assertEquals( 2, condition.getContent().size() );
 	}
 
 	@Test
-	public void statusHasPreferenceOverSeries() throws Exception {
+	public void statusHasPreferenceOverSeries() {
 		WebCmsAssetCondition conditionWithObjectId = condition( HttpStatus.OK, new String[] { "xyz" } );
 		WebCmsAssetCondition conditionWithoutObjectId = condition( HttpStatus.OK );
 
@@ -88,7 +71,7 @@ public class TestWebCmsAssetCondition
 	}
 
 	@Test
-	public void checkObjectIdControllerIsAllowedToSupersedeMethod() throws Exception {
+	public void checkObjectIdControllerIsAllowedToSupersedeMethod() {
 		WebCmsAssetCondition method = condition( HttpStatus.OK, new String[] { "xyz", "abc" } );
 		WebCmsAssetCondition controller = condition( HttpStatus.OK, new String[] { "xyz", "abc", "googly" } );
 
@@ -106,7 +89,7 @@ public class TestWebCmsAssetCondition
 	}
 
 	@Test
-	public void checkObjectIdMethodCanBeEmpty() throws Exception {
+	public void checkObjectIdMethodCanBeEmpty() {
 		WebCmsAssetCondition method = condition( HttpStatus.OK );
 		WebCmsAssetCondition controller = condition( HttpStatus.OK, new String[] { "xyz", "abc", "googly" } );
 
@@ -116,7 +99,7 @@ public class TestWebCmsAssetCondition
 	}
 
 	@Test
-	public void checkObjectIdSubsetControllerCanBeEmpty() throws Exception {
+	public void checkObjectIdSubsetControllerCanBeEmpty() {
 		WebCmsAssetCondition method = condition( HttpStatus.OK, new String[] { "xyz", "abc", "googly" } );
 		WebCmsAssetCondition controller = condition( HttpStatus.OK );
 
@@ -128,7 +111,7 @@ public class TestWebCmsAssetCondition
 	}
 
 	@Test
-	public void checkObjectIdBothEmpty() throws Exception {
+	public void checkObjectIdBothEmpty() {
 		WebCmsAssetCondition method = condition( HttpStatus.OK );
 		WebCmsAssetCondition controller = condition( HttpStatus.OK );
 
@@ -165,7 +148,7 @@ public class TestWebCmsAssetCondition
 		values.put( "objectId", objectId );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getAnnotation( WebCmsAssetMapping.class ) )
+		when( annotatedElement.getDeclaredAnnotation( WebCmsAssetMapping.class ) )
 				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsAssetMapping.class, null ) );
 		condition.setAnnotatedElement( annotatedElement );
 
@@ -174,10 +157,5 @@ public class TestWebCmsAssetCondition
 
 	private WebCmsAssetCondition condition( HttpStatus status, String[] objectId ) {
 		return condition( WebCmsAsset.class, new HttpStatus[] { status }, new HttpStatus.Series[0], objectId );
-	}
-
-	class DummyWebCmsPageEndpoint extends WebCmsEndpoint
-	{
-
 	}
 }

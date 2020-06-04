@@ -46,7 +46,7 @@ public class ITMultiDomainDomainReferenceData extends AbstractMultiDomainCmsAppl
 
 	@Test
 	void domainMetadataIsSiteConfigurationClass() {
-		WebCmsDomain foreach = domainRepository.findOneByDomainKey( "nl-foreach" );
+		WebCmsDomain foreach = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
 		assertNotNull( foreach );
 
 		WebCmsSiteConfiguration site = multiDomainService.getMetadataForDomain( foreach, WebCmsSiteConfiguration.class );
@@ -57,7 +57,7 @@ public class ITMultiDomainDomainReferenceData extends AbstractMultiDomainCmsAppl
 
 	@Test
 	void attributesAreImportedAndConvertedToStrongTypes() {
-		WebCmsDomain foreach = domainRepository.findOneByDomainKey( "be-foreach" );
+		WebCmsDomain foreach = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
 		assertNotNull( foreach );
 
 		WebCmsSiteConfiguration site = multiDomainService.getMetadataForDomain( foreach, WebCmsSiteConfiguration.class );

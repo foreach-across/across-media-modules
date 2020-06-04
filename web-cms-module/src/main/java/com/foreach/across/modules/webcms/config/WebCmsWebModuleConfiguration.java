@@ -26,8 +26,8 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ import java.util.List;
  */
 @Configuration
 @RequiredArgsConstructor
-class WebCmsWebModuleConfiguration extends WebMvcConfigurerAdapter
+class WebCmsWebModuleConfiguration implements WebMvcConfigurer
 {
 	private final WebCmsEndpointContext context;
 

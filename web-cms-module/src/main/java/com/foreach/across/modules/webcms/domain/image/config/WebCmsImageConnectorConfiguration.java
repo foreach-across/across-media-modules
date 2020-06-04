@@ -112,7 +112,7 @@ class WebCmsImageConnectorConfiguration
 
 		@Exposed
 		@Bean
-		@ConditionalOnProperty(prefix = "webCmsModule.images.imageServer", value = "enabled", havingValue = "true")
+		@ConditionalOnProperty(prefix = "web-cms-module.images.image-server", value = "enabled", havingValue = "true")
 		public ImageServerClient imageServerClient( ImageServerClientProperties properties ) {
 			RemoteImageServerClient imageServerClient = new RemoteImageServerClient( properties.getUrl(), properties.getAccessToken() );
 			if ( !StringUtils.isEmpty( properties.getHashToken() ) ) {
@@ -167,7 +167,7 @@ class WebCmsImageConnectorConfiguration
 
 		@Exposed
 		@Bean
-		@ConditionalOnProperty(prefix = "webCmsModule.images.cloudinary", value = "enabled", havingValue = "true")
+		@ConditionalOnProperty(prefix = "web-cms-module.images.cloudinary", value = "enabled", havingValue = "true")
 		public Cloudinary cloudinary( CloudinaryProperties properties ) {
 			Map<String, String> settings = new HashMap<>();
 			settings.put( "cloud_name", properties.getCloudName() );

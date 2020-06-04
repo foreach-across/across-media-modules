@@ -53,7 +53,7 @@ public class WebCmsDomainCache
 
 	public WebCmsDomain getDomain( String objectId ) {
 		return cache.get( objectId, () -> {
-			WebCmsDomain domain = domainRepository.findOneByObjectId( objectId );
+			WebCmsDomain domain = domainRepository.findOneByObjectId( objectId ).orElse( null );
 			if ( domain != null ) {
 				cache.put( "key:" + domain.getDomainKey(), domain );
 			}
@@ -63,7 +63,7 @@ public class WebCmsDomainCache
 
 	public WebCmsDomain getDomainByKey( String domainKey ) {
 		return cache.get( "key:" + domainKey, () -> {
-			WebCmsDomain domain = domainRepository.findOneByDomainKey( domainKey );
+			WebCmsDomain domain = domainRepository.findOneByDomainKey( domainKey ).orElse( null );
 			if ( domain != null ) {
 				cache.put( domain.getObjectId(), domain );
 			}

@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -104,13 +104,7 @@ public class TestWebCmsMultiDomainAdminUiService
 	@Test
 	public void noDomainsAreAccessibleIfPermissionsButNoDomain() {
 		when( domainRepository.findAll() ).thenReturn( Collections.emptyList() );
-
-		AllowableActions actions = mock( AllowableActions.class );
-		when( entityConfiguration.getAllowableActions() ).thenReturn( actions );
-
 		assertEquals( Collections.emptyList(), adminUiService.getAccessibleDomains() );
-
-		verify( actions, never() ).contains( any() );
 	}
 
 	@Test

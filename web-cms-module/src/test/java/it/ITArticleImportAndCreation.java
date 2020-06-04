@@ -72,11 +72,13 @@ public class ITArticleImportAndCreation extends AbstractCmsApplicationIT
 		QWebCmsArticle query = QWebCmsArticle.webCmsArticle;
 
 		WebCmsArticle article = articleRepository.findOne( query.publication.publicationKey.eq( "test-publication" )
-		                                                                                   .and( query.title.eq( "Test article 1" ) ) );
+		                                                                                   .and( query.title.eq( "Test article 1" ) ) )
+		                                         .orElse( null );
 		assertNotNull( article );
 
 		WebCmsArticle other = articleRepository.findOne( query.publication.publicationKey.eq( "test-publication" )
-		                                                                                 .and( query.title.eq( "Test article 2" ) ) );
+		                                                                                 .and( query.title.eq( "Test article 2" ) ) )
+		                                       .orElse( null );
 		assertNotNull( other );
 		assertNotEquals( article, other );
 
@@ -86,11 +88,12 @@ public class ITArticleImportAndCreation extends AbstractCmsApplicationIT
 
 	@Test
 	void creatingArticleSetsComponentsAttachedToTheArticleType() {
-		WebCmsArticle blog = WebCmsArticle.builder()
-		                                  .articleType( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ) )
-		                                  .publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ) )
-		                                  .title( "Blog article" )
-		                                  .build();
+		WebCmsArticle blog = WebCmsArticle
+				.builder()
+				.articleType( articleTypeRepository.findOneByTypeKeyAndDomain( "blog", WebCmsDomain.NONE ).orElse( null ) )
+				.publication( publicationRepository.findOneByPublicationKeyAndDomain( "blogs", WebCmsDomain.NONE ).orElse( null ) )
+				.title( "Blog article" )
+				.build();
 		articleRepository.save( blog );
 
 		assertDefaultBodyComponent( blog );

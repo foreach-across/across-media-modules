@@ -154,9 +154,9 @@ WebCmsModule.imageSelector = (function ( $ ) {
             $( 'a[data-wcm-image-action=delete]', container ).on( 'click', function () {
                 container.find( '[data-wcm-component-property=image]' ).val( '' );
                 container.find( 'img' ).attr( 'src', '' );
-                container.find( '.image-thumbnail-container' ).addClass( 'hidden' );
-                container.find( '.image-thumbnail-actions' ).addClass( 'hidden' );
-                container.find( 'button[name=btn-select-image]' ).removeClass( 'hidden' );
+                container.find( '.image-thumbnail-container' ).addClass( 'd-none' );
+                container.find( '.image-thumbnail-actions' ).addClass( 'd-none' );
+                container.find( 'button[name=btn-select-image]' ).removeClass( 'd-none' );
             } );
 
             $( 'button[name=btn-select-image], a[data-wcm-image-action=edit]', container ).on( 'click', function () {
@@ -166,9 +166,9 @@ WebCmsModule.imageSelector = (function ( $ ) {
                             callback: function ( image ) {
                                 container.find( '[data-wcm-component-property=image]' ).val( image.imageId );
                                 container.find( 'img' ).attr( 'src', image.url );
-                                container.find( '.image-thumbnail-container' ).removeClass( 'hidden' );
-                                container.find( '.image-thumbnail-actions' ).removeClass( 'hidden' );
-                                container.find( 'button[name=btn-select-image]' ).addClass( 'hidden' );
+                                container.find( '.image-thumbnail-container' ).removeClass( 'd-none' );
+                                container.find( '.image-thumbnail-actions' ).removeClass( 'd-none' );
+                                container.find( 'button[name=btn-select-image]' ).addClass( 'd-none' );
                             }
                         }
                 );

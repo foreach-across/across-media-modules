@@ -10,7 +10,7 @@ The source can be built using [Maven][] with JDK 8.
 ### License
 Licensed under version 2.0 of the [Apache License][].
 
-[module wiki]: https://foreach.atlassian.net/wiki/display/AX/WebCmsModule
-[contributor guidelines]: https://foreach.atlassian.net/wiki/display/AX/Contributor+guidelines
-[Maven]: http://maven.apache.org
-[Apache License]: http://www.apache.org/licenses/LICENSE-2.0
+[module wiki]: https://across.dev/modules/WebCmsModule
+[contributor guidelines]: https://across.dev/contributing
+[Maven]: https://maven.apache.org
+[Apache License]: https://www.apache.org/licenses/LICENSE-2.0

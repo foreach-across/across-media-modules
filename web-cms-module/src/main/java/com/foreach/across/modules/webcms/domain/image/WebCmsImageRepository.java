@@ -18,14 +18,16 @@ package com.foreach.across.modules.webcms.domain.image;
 
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+
+import java.util.Optional;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
 @Exposed
-public interface WebCmsImageRepository extends IdBasedEntityJpaRepository<WebCmsImage>, QueryDslPredicateExecutor<WebCmsImage>
+public interface WebCmsImageRepository extends IdBasedEntityJpaRepository<WebCmsImage>, QuerydslPredicateExecutor<WebCmsImage>
 {
-	WebCmsImage findOneByObjectId( String objectId );
+	Optional<WebCmsImage> findOneByObjectId( String objectId );
 }

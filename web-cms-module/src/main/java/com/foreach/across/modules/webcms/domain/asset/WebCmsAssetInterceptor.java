@@ -27,6 +27,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Sets the publication date and ensures that there is a single endpoint pointing to the asset.
@@ -82,9 +83,10 @@ public class WebCmsAssetInterceptor extends EntityInterceptorAdapter<WebCmsAsset
 	public void afterUpdate( WebCmsAsset entity ) {
 		if ( urlConfiguration.isEnabledForAsset( entity ) ) {
 			WebCmsDomain domain = multiDomainConfiguration.isDomainBound( WebCmsAssetEndpoint.class ) ? entity.getDomain() : WebCmsDomain.NONE;
-			WebCmsAssetEndpoint<?> endpoint = endpointRepository.findOneByAssetAndDomain( entity, domain );
 
-			if ( endpoint == null ) {
+			Optional<WebCmsAssetEndpoint> endpoint = endpointRepository.findOneByAssetAndDomain( entity, domain );
+
+			if ( !endpoint.isPresent() ) {
 				afterCreate( entity );
 			}
 		}

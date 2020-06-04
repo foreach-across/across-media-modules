@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.component.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.ButtonViewElement;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.builder.ColumnViewElementBuilder;
@@ -34,6 +33,7 @@ import com.foreach.across.modules.entity.web.links.SingleEntityViewLinkBuilder;
 import com.foreach.across.modules.web.resource.WebResourceRegistry;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.HtmlViewElement;
 import com.foreach.across.modules.web.ui.elements.builder.ContainerViewElementBuilderSupport;
 import com.foreach.across.modules.web.ui.elements.builder.NodeViewElementBuilder;
 import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
@@ -58,6 +58,10 @@ import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.groups.Default;
+
+import static com.foreach.across.modules.bootstrapui.styles.BootstrapStyles.css;
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * Layouts the web component form pages, builds the actual component model and renders the form.
@@ -178,7 +182,7 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 		ColumnViewElementBuilder columnViewElementBuilder = builderMap.get( SingleEntityFormViewProcessor.LEFT_COLUMN, ColumnViewElementBuilder.class );
 
 		if ( componentModel.hasOwner() ) {
-			val ownerTrail = BootstrapUiBuilders.node( "ul" ).css( "breadcrumb", "wcm-component-owner-trail" );
+			val ownerTrail = html.builders.ul( HtmlViewElement.Functions.css( "breadcrumb", "wcm-component-owner-trail" ) );
 			if ( addToOwnerTrail( ownerTrail, componentModel.getObjectId(), entityViewRequest.getEntityViewContext().getLinkBuilder(), false ) ) {
 				columnViewElementBuilder.add( ownerTrail );
 			}
@@ -200,7 +204,7 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 				                         if ( StringUtils.isNotEmpty( ownerObjectId )
 						                         && WebCmsUtils.isObjectIdForCollection( ownerObjectId, WebCmsComponent.COLLECTION_ID ) ) {
 					                         EntityViewContext entityViewContext = entityViewRequest.getEntityViewContext();
-					                         WebCmsComponent owner = componentRepository.findOneByObjectId( ownerObjectId );
+					                         WebCmsComponent owner = componentRepository.findOneByObjectId( ownerObjectId ).orElse( null );
 					                         btn.setUrl( entityViewContext.getLinkBuilder().forInstance( owner ).updateView().toUriString() );
 				                         }
 			                         } );
@@ -208,19 +212,21 @@ public class SingleWebCmsComponentFormProcessor extends SaveEntityViewProcessor
 	}
 
 	private boolean addToOwnerTrail( NodeViewElementBuilder breadcrumb, String objectId, EntityViewLinkBuilder linkBuilder, boolean createLink ) {
-		WebCmsComponent owner = componentRepository.findOneByObjectId( objectId );
+		WebCmsComponent owner = componentRepository.findOneByObjectId( objectId ).orElse( null );
 		if ( owner != null ) {
 			String title = StringUtils.defaultIfBlank( owner.getTitle(), StringUtils.defaultIfBlank( owner.getName(), owner.getComponentType().getName() ) );
 			breadcrumb.addFirst(
-					BootstrapUiBuilders.node( "li" )
-					                   .attribute( "title", owner.getName() )
-					                   .add(
-							                   createLink
-									                   ? BootstrapUiBuilders.link()
-									                                        .url( linkBuilder.forInstance( owner ).updateView().toUriString() )
-									                                        .text( title )
-									                   : BootstrapUiBuilders.text( title )
-					                   )
+					html.builders
+							.li()
+							.attribute( "title", owner.getName() )
+							.with( css.breadcrumb.item )
+							.add(
+									createLink
+											? bootstrap.builders.link()
+											                    .url( linkBuilder.forInstance( owner ).updateView().toUriString() )
+											                    .text( title )
+											: html.builders.text( title )
+							)
 			);
 
 			if ( owner.hasOwner() ) {

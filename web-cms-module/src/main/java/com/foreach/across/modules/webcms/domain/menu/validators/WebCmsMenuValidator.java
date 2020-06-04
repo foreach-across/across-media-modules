@@ -43,17 +43,15 @@ public class WebCmsMenuValidator extends EntityValidatorSupport<WebCmsMenu>
 	@Override
 	protected void postValidation( WebCmsMenu entity, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "name" ) ) {
-			WebCmsMenu existing = menuRepository.findOneByNameAndDomain( entity.getName(), entity.getDomain() );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "name", "alreadyExists" );
-			}
+			menuRepository.findOneByNameAndDomain( entity.getName(), entity.getDomain() )
+			              .filter( existing -> !entity.equals( existing ) )
+			              .ifPresent( e -> errors.rejectValue( "name", "alreadyExists" ) );
 		}
 
 		if ( !errors.hasFieldErrors( "name" ) && !errors.hasFieldErrors( "objectId" ) ) {
-			WebCmsMenu existing = menuRepository.findOneByObjectId( entity.getObjectId() );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "objectId", "alreadyExists" );
-			}
+			menuRepository.findOneByObjectId( entity.getObjectId() )
+			              .filter( existing -> !entity.equals( existing ) )
+			              .ifPresent( e -> errors.rejectValue( "objectId", "alreadyExists" ) );
 		}
 	}
 }

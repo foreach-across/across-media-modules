@@ -46,24 +46,22 @@ public class WebCmsDomainValidator extends EntityValidatorSupport<WebCmsDomain>
 	protected void postValidation( WebCmsDomain entity, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "name" ) ) {
 			val query = QWebCmsDomain.webCmsDomain;
-			WebCmsDomain existing = domainRepository.findOne( query.name.equalsIgnoreCase( entity.getName() ) );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "name", "alreadyExists" );
-			}
+
+			domainRepository.findOne( query.name.equalsIgnoreCase( entity.getName() ) )
+			                .filter( existing -> !entity.equals( existing ) )
+			                .ifPresent( e -> errors.rejectValue( "name", "alreadyExists" ) );
 		}
 
 		if ( !errors.hasFieldErrors( "domainKey" ) ) {
-			WebCmsDomain existing = domainRepository.findOneByDomainKey( entity.getDomainKey() );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "domainKey", "alreadyExists" );
-			}
+			domainRepository.findOneByDomainKey( entity.getDomainKey() )
+			                .filter( existing -> !entity.equals( existing ) )
+			                .ifPresent( e -> errors.rejectValue( "domainKey", "alreadyExists" ) );
 		}
 
 		if ( !errors.hasFieldErrors( "domainKey" ) && !errors.hasFieldErrors( "objectId" ) ) {
-			WebCmsDomain existing = domainRepository.findOneByObjectId( entity.getObjectId() );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "objectId", "alreadyExists" );
-			}
+			domainRepository.findOneByObjectId( entity.getObjectId() )
+			                .filter( existing -> !entity.equals( existing ) )
+			                .ifPresent( e -> errors.rejectValue( "objectId", "alreadyExists" ) );
 		}
 	}
 }

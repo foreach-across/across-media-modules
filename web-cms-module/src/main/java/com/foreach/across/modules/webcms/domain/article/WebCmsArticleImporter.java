@@ -55,7 +55,7 @@ public final class WebCmsArticleImporter extends AbstractWebCmsAssetImporter<Web
 		if ( StringUtils.isEmpty( entryKey ) ) {
 			return null;
 		}
-		return articleRepository.findOneByObjectId( entryKey );
+		return articleRepository.findOneByObjectId( entryKey ).orElse( null );
 	}
 
 	@Autowired

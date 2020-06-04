@@ -82,7 +82,7 @@ public final class WebCmsPublicationImporter extends AbstractWebCmsAssetImporter
 		if ( domain != null ) {
 			builder.and( query.domain.eq( domain ) );
 		}
-		return publicationRepository.findOne( builder.and( query.publicationKey.eq( entryKey ) ) );
+		return publicationRepository.findOne( builder.and( query.publicationKey.eq( entryKey ) ) ).orElse( null );
 	}
 
 	@Override

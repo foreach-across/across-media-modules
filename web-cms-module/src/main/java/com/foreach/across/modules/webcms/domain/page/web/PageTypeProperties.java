@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 @Slf4j
-@ConfigurationProperties(prefix = "webCmsModule.pages")
+@ConfigurationProperties(prefix = "web-cms-module.pages")
 @RequiredArgsConstructor
 public class PageTypeProperties
 {
@@ -60,7 +60,7 @@ public class PageTypeProperties
 			keyOrObjectId = PageTypeProperties.DEFAULT_PAGE_TYPE_TYPE_KEY;
 		}
 
-		WebCmsDomain defaultDomain = domainRepository.findOneByDomainKey( multiDomainConfiguration.getDefaultDomainKey() );
+		WebCmsDomain defaultDomain = domainRepository.findOneByDomainKey( multiDomainConfiguration.getDefaultDomainKey() ).orElse( null );
 		WebCmsPageType defaultPageType = typeSpecifierService.getTypeSpecifier( keyOrObjectId, WebCmsPageType.class );
 
 		if ( defaultPageType == null ) {

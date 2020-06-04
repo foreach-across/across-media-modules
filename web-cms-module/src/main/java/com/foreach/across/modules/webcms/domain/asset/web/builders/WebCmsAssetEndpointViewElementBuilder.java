@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.asset.web.builders;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.registry.EntityConfiguration;
 import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.entity.views.util.EntityViewElementUtils;
@@ -30,6 +29,8 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
 
 /**
  * @author Arne Vandamme
@@ -52,9 +53,9 @@ public class WebCmsAssetEndpointViewElementBuilder implements ViewElementBuilder
 		String updateUrl = entityConfiguration.getAttribute( EntityViewLinkBuilder.class ).forInstance( asset ).updateView().toUriString();
 		String name = entityConfiguration.getEntityMessageCodeResolver().getNameSingular();
 
-		return BootstrapUiBuilders.link()
-		                          .url( updateUrl )
-		                          .text( name + ": " + entityConfiguration.getLabel( asset ) )
-		                          .build( viewElementBuilderContext );
+		return bootstrap.builders.link()
+		                         .url( updateUrl )
+		                         .text( name + ": " + entityConfiguration.getLabel( asset ) )
+		                         .build( viewElementBuilderContext );
 	}
 }

@@ -57,7 +57,7 @@ public abstract class AbstractWebCmsAssetImporter<T extends WebCmsAsset> extends
 
 		if ( objectId != null ) {
 			validateObjectId( objectId );
-			existing = assetRepository.findOneByObjectId( objectId );
+			existing = assetRepository.findOneByObjectId( objectId ).orElse( null );
 		}
 
 		WebCmsDomain domain = retrieveDomainForDataEntry( item, assetType );

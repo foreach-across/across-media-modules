@@ -39,10 +39,10 @@ class WebCmsMenuServiceImpl implements WebCmsMenuService
 
 	@Override
 	public WebCmsMenu getMenuByName( String menuName, WebCmsDomain domain ) {
-		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( menuName, domain );
+		WebCmsMenu menu = menuRepository.findOneByNameAndDomain( menuName, domain ).orElse( null );
 
 		if ( menu == null && !WebCmsDomain.isNoDomain( domain ) && multiDomainService.isNoDomainAllowed( WebCmsMenu.class ) ) {
-			menu = menuRepository.findOneByNameAndDomain( menuName, WebCmsDomain.NONE );
+			menu = menuRepository.findOneByNameAndDomain( menuName, WebCmsDomain.NONE ).orElse( null );
 		}
 
 		return menu;

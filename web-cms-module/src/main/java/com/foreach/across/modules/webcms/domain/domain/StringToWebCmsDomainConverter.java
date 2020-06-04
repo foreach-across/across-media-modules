@@ -54,7 +54,7 @@ public class StringToWebCmsDomainConverter implements Converter<String, WebCmsDo
 	@Override
 	public WebCmsDomain convert( String value ) {
 		if ( NumberUtils.isDigits( value ) ) {
-			return domainRepository.findOne( Long.parseLong( value ) );
+			return domainRepository.findById( Long.parseLong( value ) ).orElse( null );
 		}
 		else if ( WebCmsUtils.isObjectIdForCollection( value, WebCmsDomain.COLLECTION_ID ) ) {
 			return domainService.getDomain( value );

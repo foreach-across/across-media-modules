@@ -39,7 +39,7 @@ class WebCmsMenuInterceptor extends EntityInterceptorAdapter<WebCmsMenu>
 
 	@Override
 	public void beforeDelete( WebCmsMenu entity ) {
-		menuItemRepository.delete( menuItemRepository.findAllByMenu( entity ) );
+		menuItemRepository.deleteAll( menuItemRepository.findAllByMenu( entity ) );
 	}
 
 	@Override

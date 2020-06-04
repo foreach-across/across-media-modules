@@ -16,7 +16,10 @@
 
 package test.component.text;
 
-import com.foreach.across.modules.webcms.domain.component.*;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
@@ -44,7 +47,7 @@ public class TestTextWebCmsComponentModelCustomization extends AbstractWebCmsCom
 
 	@Autowired
 	public void registerCustomComponentType( WebCmsComponentTypeRepository typeRepository ) {
-		if ( typeRepository.findOneByTypeKeyAndDomain( "custom-text", WebCmsDomain.NONE ) == null ) {
+		if ( !typeRepository.findOneByTypeKeyAndDomain( "custom-text", WebCmsDomain.NONE ).isPresent() ) {
 			typeRepository.save(
 					WebCmsComponentType.builder()
 					                   .name( "Custom text component" )
@@ -90,7 +93,7 @@ public class TestTextWebCmsComponentModelCustomization extends AbstractWebCmsCom
 		assertFalse( StringUtils.isBlank( component.getMetadata() ) );
 
 		val fetched = componentModelService.buildModelForComponent(
-				componentRepository.findOneByObjectId( component.getObjectId() ), TextWebCmsComponentModel.class
+				componentRepository.findOneByObjectId( component.getObjectId() ).orElse( null ), TextWebCmsComponentModel.class
 		);
 		assertEquals( "my text...", fetched.getContent() );
 		metadata = fetched.getMetadata( MyMetadata.class );
@@ -103,7 +106,7 @@ public class TestTextWebCmsComponentModelCustomization extends AbstractWebCmsCom
 		componentModelService.save( fetched );
 
 		val updated = componentModelService.buildModelForComponent(
-				componentRepository.findOneByObjectId( component.getObjectId() ), TextWebCmsComponentModel.class
+				componentRepository.findOneByObjectId( component.getObjectId() ).orElse( null ), TextWebCmsComponentModel.class
 		);
 		assertEquals( "my text...", updated.getContent() );
 		metadata = fetched.getMetadata( MyMetadata.class );
@@ -125,7 +128,7 @@ public class TestTextWebCmsComponentModelCustomization extends AbstractWebCmsCom
 		renderAndExpect( model, "<div><h1>NETHERLANDS</h1><p>more</p></div>" );
 
 		metadata.setEnabled( false );
-		renderAndExpect( model, "<div><p>more</p></div>"  );
+		renderAndExpect( model, "<div><p>more</p></div>" );
 	}
 
 	@Data

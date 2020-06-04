@@ -88,12 +88,12 @@ final class StringToWebCmsImageConverter implements Converter<String, WebCmsImag
 
 		}
 		if ( WebCmsUtils.isObjectIdForCollection( source, WebCmsImage.COLLECTION_ID ) ) {
-			return imageRepository.findOneByObjectId( source );
+			return imageRepository.findOneByObjectId( source ).orElse( null );
 		}
 
 		WebCmsDomain currentDomain = multiDomainService.getCurrentDomainForType( WebCmsImage.class );
 		String objectId = generateImageObjectId( source, currentDomain );
-		WebCmsImage image = imageRepository.findOneByObjectId( objectId );
+		WebCmsImage image = imageRepository.findOneByObjectId( objectId ).orElse( null );
 
 		if ( image == null ) {
 			Resource imageResource = applicationContext.getResource( source );

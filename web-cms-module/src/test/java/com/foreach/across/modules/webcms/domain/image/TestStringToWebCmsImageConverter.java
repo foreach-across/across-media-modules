@@ -28,12 +28,13 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.util.DigestUtils;
 
 import java.io.ByteArrayInputStream;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -73,7 +74,7 @@ public class TestStringToWebCmsImageConverter
 	@Test
 	public void objectIdIsLookedUpImmediately() {
 		String objectId = WebCmsUtils.generateObjectId( WebCmsImage.COLLECTION_ID );
-		when( imageRepository.findOneByObjectId( objectId ) ).thenReturn( image );
+		when( imageRepository.findOneByObjectId( objectId ) ).thenReturn( Optional.of( image ) );
 		assertSame( image, converter.convert( objectId ) );
 	}
 
@@ -81,7 +82,7 @@ public class TestStringToWebCmsImageConverter
 	public void objectIdIsGeneratedAndImageFoundReturned() {
 		String path = "classpath:/test.resource";
 		String objectId = WebCmsUtils.prefixObjectIdForCollection( "import-" + DigestUtils.md5DigestAsHex( path.getBytes() ), WebCmsImage.COLLECTION_ID );
-		when( imageRepository.findOneByObjectId( objectId ) ).thenReturn( image );
+		when( imageRepository.findOneByObjectId( objectId ) ).thenReturn( Optional.of( image ) );
 
 		assertSame( image, converter.convert( path ) );
 		assertSame( image, converter.convert( objectId ) );
@@ -96,7 +97,7 @@ public class TestStringToWebCmsImageConverter
 				"import-" + DigestUtils.md5DigestAsHex( path.getBytes() ) + "-" + DigestUtils.md5DigestAsHex( domain.getObjectId().getBytes() ),
 				WebCmsImage.COLLECTION_ID
 		);
-		when( imageRepository.findOneByObjectId( objectId ) ).thenReturn( image );
+		when( imageRepository.findOneByObjectId( objectId ) ).thenReturn( Optional.of( image ) );
 
 		assertSame( image, converter.convert( path ) );
 		assertSame( image, converter.convert( objectId ) );

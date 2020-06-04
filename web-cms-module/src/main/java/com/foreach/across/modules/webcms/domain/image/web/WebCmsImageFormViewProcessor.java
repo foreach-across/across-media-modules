@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.image.web;
 
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.ColumnViewElement;
 import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
@@ -51,6 +50,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
+
 /**
  * This processor handles the file upload of the form. First, it adds an image extension.  Second, the entity form type is set to multipart/form-data
  * and lastly, the fileupload is handled by {@link WebCmsImageConnector}.
@@ -65,6 +66,16 @@ import javax.servlet.http.HttpServletRequest;
 public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 {
 	private final WebCmsImageConnector imageConnector;
+
+	static Menu buildImageMenu( EntityViewRequest entityViewRequest, EntityViewLinkBuilder linkBuilder ) {
+		Menu menu = new PathBasedMenuBuilder()
+				.item( "/details", "Search images", linkBuilder.toUriString() ).order( 1 ).and()
+				.item( "/associations", "Upload new image", linkBuilder.createView().toUriString() ).order( 2 ).and()
+				.build();
+		menu.sort();
+		menu.select( new RequestMenuSelector( entityViewRequest.getWebRequest().getNativeRequest( HttpServletRequest.class ) ) );
+		return menu;
+	}
 
 	@Override
 	public void initializeCommandObject( EntityViewRequest entityViewRequest, EntityViewCommand command, WebDataBinder dataBinder ) {
@@ -147,7 +158,7 @@ public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 			page.getHeader().clearChildren();
 
 			Menu menu = buildImageMenu( entityViewRequest, linkBuilder );
-			page.withNav( nav -> nav.addFirstChild( BootstrapUiBuilders.nav( menu ).pills().build() ) );
+			page.withNav( nav -> nav.addFirstChild( bootstrap.builders.nav().menu( menu ).pills().build() ) );
 		}
 
 		ContainerViewElementUtils.find( container, "entityForm", FormViewElement.class )
@@ -163,16 +174,6 @@ public class WebCmsImageFormViewProcessor extends EntityViewProcessorAdapter
 						                     "formGroup-externalId", "formGroup-lastModified" )
 				                              .forEach( column::addChild )
 		         );
-	}
-
-	static Menu buildImageMenu( EntityViewRequest entityViewRequest, EntityViewLinkBuilder linkBuilder ) {
-		Menu menu = new PathBasedMenuBuilder()
-				.item( "/details", "Search images", linkBuilder.toUriString() ).order( 1 ).and()
-				.item( "/associations", "Upload new image", linkBuilder.createView().toUriString() ).order( 2 ).and()
-				.build();
-		menu.sort();
-		menu.select( new RequestMenuSelector( entityViewRequest.getWebRequest().getNativeRequest( HttpServletRequest.class ) ) );
-		return menu;
 	}
 
 	@Data

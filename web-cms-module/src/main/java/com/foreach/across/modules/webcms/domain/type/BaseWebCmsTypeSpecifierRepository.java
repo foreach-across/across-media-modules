@@ -20,6 +20,8 @@ import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import org.springframework.data.repository.NoRepositoryBean;
 
+import java.util.Optional;
+
 /**
  * Repository interface for any {@link WebCmsTypeSpecifier} implementation.
  *
@@ -29,5 +31,5 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface BaseWebCmsTypeSpecifierRepository<T extends WebCmsTypeSpecifier<?>> extends WebCmsObjectEntityRepository<T>
 {
-	T findOneByTypeKeyAndDomain( String typeKey, WebCmsDomain domain );
+	Optional<T> findOneByTypeKeyAndDomain( String typeKey, WebCmsDomain domain );
 }

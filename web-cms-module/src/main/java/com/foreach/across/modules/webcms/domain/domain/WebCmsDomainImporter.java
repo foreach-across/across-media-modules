@@ -54,10 +54,10 @@ public class WebCmsDomainImporter extends AbstractWebCmsDataImporter<WebCmsDomai
 		WebCmsDomain existing = null;
 
 		if ( objectId != null ) {
-			existing = domainRepository.findOneByObjectId( objectId );
+			existing = domainRepository.findOneByObjectId( objectId ).orElse( null );
 		}
 
-		return existing != null ? existing : domainRepository.findOneByDomainKey( domainKey );
+		return existing != null ? existing : domainRepository.findOneByDomainKey( domainKey ).orElse( null );
 	}
 
 	@Override

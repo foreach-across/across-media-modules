@@ -57,12 +57,12 @@ final class WebCmsTypeSpecifierImporter extends AbstractWebCmsDataImporter<WebCm
 		WebCmsTypeSpecifier existing = null;
 
 		if ( objectId != null ) {
-			existing = typeRepository.findOneByObjectId( objectId );
+			existing = typeRepository.findOneByObjectId( objectId ).orElse( null );
 		}
 
 		WebCmsDomain domain = retrieveDomainForDataEntry( data, WebCmsTypeSpecifier.class );
 
-		return existing != null ? existing : typeRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, typeKey, domain );
+		return existing != null ? existing : typeRepository.findOneByObjectTypeAndTypeKeyAndDomain( typeGroup, typeKey, domain ).orElse( null );
 	}
 
 	@Override

@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -294,7 +294,7 @@ public class TestWebCmsEndpointCondition
 		values.put( "series", series );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getAnnotation( WebCmsEndpointMapping.class ) )
+		when( annotatedElement.getDeclaredAnnotation( WebCmsEndpointMapping.class ) )
 				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsEndpointMapping.class, null ) );
 		condition.setAnnotatedElement( annotatedElement );
 

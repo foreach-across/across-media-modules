@@ -20,6 +20,8 @@ import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 
+import java.util.Optional;
+
 /**
  * @author Sander Van Loock
  * @since 0.0.1
@@ -27,5 +29,5 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 @Exposed
 public interface WebCmsRemoteEndpointRepository extends IdBasedEntityJpaRepository<WebCmsRemoteEndpoint>
 {
-	WebCmsRemoteEndpoint findOneByTargetUrlAndDomain( String targetUrl, WebCmsDomain domain );
+	Optional<WebCmsRemoteEndpoint> findOneByTargetUrlAndDomain( String targetUrl, WebCmsDomain domain );
 }

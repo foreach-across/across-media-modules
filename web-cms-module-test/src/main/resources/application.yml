@@ -31,17 +31,13 @@ adminWebModule:
       key: webcms
   root-path: /cms
 
-debugWebModule:
-  security:
-    password: debug
-
 ehcacheModule:
   cacheManagerName: webCmsModuleTestCacheManager
 
 spring:
   datasource:
     username: sa
-  http:
+  servlet:
     multipart:
       max-file-size: 10MB
 
@@ -51,4 +47,8 @@ webCmsModule:
     excluded-path-patterns: /across/resources/**, /webjars/**, /**/*.js, /**/*.css
   pages:
     default-page-type: default
+
+debug-web-module:
+  security:
+    enabled: false
 

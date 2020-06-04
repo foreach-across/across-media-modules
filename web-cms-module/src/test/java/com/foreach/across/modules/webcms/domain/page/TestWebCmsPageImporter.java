@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.page;
 
 import com.foreach.across.modules.webcms.data.*;
-import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
@@ -27,13 +26,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -82,7 +81,6 @@ public class TestWebCmsPageImporter
 		WebCmsDataEntry data = WebCmsDataEntry.builder()
 		                                      .data( Collections.singletonMap( "objectId", "wcm:asset:page:valid-page-id" ) )
 		                                      .build();
-		when( multiDomainService.isDomainBound( any( WebCmsObject.class ) ) ).thenReturn( false );
 		pageImporter.importData( data );
 	}
 

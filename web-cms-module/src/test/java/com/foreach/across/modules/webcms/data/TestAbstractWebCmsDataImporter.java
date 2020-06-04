@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,7 +29,7 @@ import java.util.Map;
 
 import static com.foreach.across.modules.webcms.data.WebCmsDataAction.CREATE;
 import static com.foreach.across.modules.webcms.data.WebCmsDataAction.UPDATE;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -63,10 +63,10 @@ public class TestAbstractWebCmsDataImporter
 
 		when( conversionService.convertToPropertyValues( any(), any() ) ).thenReturn( true );
 
-		when( before.supports( eq( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED ), any( WebCmsDataEntry.class ), anyBoolean(), any() ) ).thenReturn(
-				true );
-		when( after.supports( eq( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED ), any( WebCmsDataEntry.class ), anyBoolean(), any() ) ).thenReturn(
-				true );
+		when( before.supports( eq( WebCmsPropertyDataImporter.Phase.BEFORE_ASSET_SAVED ), any( WebCmsDataEntry.class ), any(), any() ) )
+				.thenReturn( true );
+		when( after.supports( eq( WebCmsPropertyDataImporter.Phase.AFTER_ASSET_SAVED ), any( WebCmsDataEntry.class ), any(), any() ) )
+				.thenReturn( true );
 	}
 
 	@Test

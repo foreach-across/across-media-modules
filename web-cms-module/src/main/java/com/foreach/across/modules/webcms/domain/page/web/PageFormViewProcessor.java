@@ -17,7 +17,6 @@
 package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.modules.adminweb.ui.PageContentStructure;
-import com.foreach.across.modules.bootstrapui.elements.FaIcon;
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
 import com.foreach.across.modules.bootstrapui.elements.LinkViewElement;
 import com.foreach.across.modules.entity.views.EntityView;
@@ -37,7 +36,6 @@ import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpointRepository;
 import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetService;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
-import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpoint;
 import com.foreach.across.modules.webcms.domain.menu.QWebCmsMenuItem;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenu;
 import com.foreach.across.modules.webcms.domain.menu.WebCmsMenuItem;
@@ -53,6 +51,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import java.util.*;
+
+import static com.foreach.across.modules.webcms.WebCmsModuleIcons.webCmsIcons;
 
 /**
  * @author Arne Vandamme
@@ -80,7 +80,7 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 						openLink.setAttribute( "target", "_blank" );
 						openLink.setUrl( previewUrl );
 						openLink.setTitle( event.getEntityViewContext().getEntityMessages().withNameSingular( "actions.open" ) );
-						openLink.addChild( new FaIcon( FaIcon.WebApp.FILE_IMAGE_O ) );
+						openLink.addChild( webCmsIcons.preview() );
 
 						PageContentStructure adminPage = event.getPageContentStructure();
 						adminPage.addToPageTitleSubText( TextViewElement.html( "&nbsp;" ) );
@@ -108,13 +108,14 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 		WebCmsPage page = entityViewRequest.getEntityViewContext().getEntity( WebCmsPage.class );
 		WebCmsPage pageFromCommand = command.getEntity( WebCmsPage.class );
 		if ( page != null ) {
-			WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, multiDomainService.getCurrentDomainForEntity( page ) );
-
-			if ( endpoint != null ) {
-				menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ).and( QWebCmsMenuItem.webCmsMenuItem.generated.isTrue() ) )
-				                  .forEach( item -> advancedSettings.getAutoCreateMenu().add( item.getMenu() ) );
-			}
-
+			assetEndpointRepository
+					.findOneByAssetAndDomain( page, multiDomainService.getCurrentDomainForEntity( page ) )
+					.ifPresent( endpoint ->
+							            menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint )
+							                                                                               .and( QWebCmsMenuItem.webCmsMenuItem.generated
+									                                                                                     .isTrue() ) )
+							                              .forEach( item -> advancedSettings.getAutoCreateMenu().add( item.getMenu() ) )
+					);
 		}
 
 		if ( pageFromCommand != null && pageFromCommand.getPageType() == null ) {
@@ -130,35 +131,34 @@ public final class PageFormViewProcessor extends EntityViewProcessorAdapter
 			val page = command.getEntity( WebCmsPage.class );
 			val advancedSettings = command.getExtension( "advanced", AdvancedSettings.class );
 
-			WebCmsEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( page, multiDomainService.getCurrentDomainForEntity( page ) );
+			assetEndpointRepository
+					.findOneByAssetAndDomain( page, multiDomainService.getCurrentDomainForEntity( page ) )
+					.ifPresent( endpoint -> {
+						menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ) )
+						                  .forEach( item -> {
+							                  if ( !advancedSettings.getAutoCreateMenu().contains( item.getMenu() ) ) {
+								                  WebCmsMenuItem remove = item.toDto();
+								                  remove.setGenerated( false );
+								                  menuItemRepository.save( remove );
+							                  }
+						                  } );
 
-			if ( endpoint != null ) {
-				menuItemRepository.findAll( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ) )
-				                  .forEach( item -> {
-					                  if ( !advancedSettings.getAutoCreateMenu().contains( item.getMenu() ) ) {
-						                  WebCmsMenuItem remove = item.toDto();
-						                  remove.setGenerated( false );
-						                  menuItemRepository.save( remove );
-					                  }
-				                  } );
+						advancedSettings.getAutoCreateMenu()
+						                .forEach( menu -> {
+							                Optional<WebCmsMenuItem> existing = menuItemRepository.findOne(
+									                QWebCmsMenuItem.webCmsMenuItem.menu.eq( menu ).and( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ) )
+							                );
 
-				advancedSettings.getAutoCreateMenu()
-				                .forEach( menu -> {
-					                WebCmsMenuItem existing = menuItemRepository.findOne(
-							                QWebCmsMenuItem.webCmsMenuItem.menu.eq( menu ).and( QWebCmsMenuItem.webCmsMenuItem.endpoint.eq( endpoint ) )
-					                );
+							                WebCmsMenuItem dto = existing.map( WebCmsMenuItem::toDto )
+							                                             .orElseGet( () -> WebCmsMenuItem.builder().menu( menu ).endpoint( endpoint ).build() );
 
-					                WebCmsMenuItem dto = existing != null
-							                ? existing.toDto()
-							                : WebCmsMenuItem.builder().menu( menu ).endpoint( endpoint ).build();
+							                dto.setTitle( page.getTitle() );
+							                dto.setPath( page.getCanonicalPath() );
+							                dto.setGenerated( true );
 
-					                dto.setTitle( page.getTitle() );
-					                dto.setPath( page.getCanonicalPath() );
-					                dto.setGenerated( true );
-
-					                menuItemRepository.save( dto );
-				                } );
-			}
+							                menuItemRepository.save( dto );
+						                } );
+					} );
 		}
 	}
 

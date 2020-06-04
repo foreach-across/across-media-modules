@@ -6,3 +6,4 @@ target
 *.iml
 db
 local-data
+.flattened-pom.xml

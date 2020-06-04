@@ -45,11 +45,9 @@ public class WebCmsUrlValidator extends EntityValidatorSupport<WebCmsUrl>
 	@Override
 	protected void postValidation( WebCmsUrl entity, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "path" ) ) {
-			WebCmsUrl existing = urlRepository.findOneByPathAndEndpoint_Domain( entity.getPath(), entity.getEndpoint().getDomain() );
-
-			if ( existing != null && !existing.equals( entity ) ) {
-				errors.rejectValue( "path", "alreadyExists" );
-			}
+			urlRepository.findOneByPathAndEndpoint_Domain( entity.getPath(), entity.getEndpoint().getDomain() )
+			             .filter( existing -> !entity.equals( existing ) )
+			             .ifPresent( e -> errors.rejectValue( "path", "alreadyExists" ) );
 		}
 
 		if ( !errors.hasErrors() && entity.isPrimary() ) {

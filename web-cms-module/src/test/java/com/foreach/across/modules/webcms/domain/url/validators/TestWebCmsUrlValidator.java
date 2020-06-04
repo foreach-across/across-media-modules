@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 
@@ -99,10 +99,6 @@ public class TestWebCmsUrlValidator
 	public void dontErrorWhenOnlyOnePrimary() throws Exception {
 		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
 		                                             .build();
-		when( repository.findAllByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
-				WebCmsUrl.builder().httpStatus( HttpStatus.OK ).build(),
-				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).build()
-		) );
 		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).build();
 
 		validator.postValidation( url, errors );
@@ -114,10 +110,6 @@ public class TestWebCmsUrlValidator
 	public void dontErrorWhenNoPrimary() throws Exception {
 		WebCmsEndpoint endpoint = WebCmsAssetEndpoint.builder()
 		                                             .build();
-		when( repository.findAllByEndpoint( endpoint ) ).thenReturn( Arrays.asList(
-				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_MODIFIED ).build(),
-				WebCmsUrl.builder().httpStatus( HttpStatus.NOT_FOUND ).build()
-		) );
 		WebCmsUrl url = WebCmsUrl.builder().endpoint( endpoint ).build();
 
 		validator.postValidation( url, errors );

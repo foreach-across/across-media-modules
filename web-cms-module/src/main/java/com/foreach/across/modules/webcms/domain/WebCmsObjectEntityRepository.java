@@ -20,7 +20,7 @@ import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRep
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
@@ -32,7 +32,7 @@ import java.util.List;
  * @since 0.0.1
  */
 @NoRepositoryBean
-public interface WebCmsObjectEntityRepository<T extends WebCmsObjectSuperClass> extends WebCmsObjectRepository<T>, IdBasedEntityJpaRepository<T>, QueryDslPredicateExecutor<T>
+public interface WebCmsObjectEntityRepository<T extends WebCmsObjectSuperClass> extends WebCmsObjectRepository<T>, IdBasedEntityJpaRepository<T>, QuerydslPredicateExecutor<T>
 {
 	@Override
 	List<T> findAll( Predicate predicate );

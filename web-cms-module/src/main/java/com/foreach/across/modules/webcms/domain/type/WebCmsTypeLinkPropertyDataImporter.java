@@ -24,6 +24,8 @@ import com.foreach.across.modules.webcms.domain.WebCmsObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Supports assets or type specifiers to have the <strong>wcm:types</strong> property,
  * create links to the types specified.
@@ -56,13 +58,13 @@ public class WebCmsTypeLinkPropertyDataImporter implements WebCmsPropertyDataImp
 		conversionService.convertToPropertyValues( propertyData.getMapData(), typeLink );
 		typeLink.setOwner( asset );
 
-		WebCmsTypeSpecifierLink existing = typeLinkRepository.findOneByOwnerObjectIdAndLinkTypeAndTypeSpecifier(
+		Optional<WebCmsTypeSpecifierLink> existing = typeLinkRepository.findOneByOwnerObjectIdAndLinkTypeAndTypeSpecifier(
 				typeLink.getOwnerObjectId(),
 				typeLink.getLinkType(),
 				typeLink.getTypeSpecifier()
 		);
 
-		if ( existing == null ) {
+		if ( !existing.isPresent() ) {
 			typeLinkRepository.save( typeLink );
 		}
 

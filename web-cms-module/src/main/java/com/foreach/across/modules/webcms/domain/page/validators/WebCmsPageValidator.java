@@ -50,10 +50,9 @@ public class WebCmsPageValidator extends EntityValidatorSupport<WebCmsPage>
 	@Override
 	protected void postValidation( WebCmsPage page, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "canonicalPath" ) ) {
-			WebCmsPage other = pageRepository.findOneByCanonicalPathAndDomain( page.getCanonicalPath(), page.getDomain() );
-			if ( other != null && !other.equals( page ) ) {
-				errors.rejectValue( "canonicalPath", "alreadyExists" );
-			}
+			pageRepository.findOneByCanonicalPathAndDomain( page.getCanonicalPath(), page.getDomain() )
+			              .filter( existing -> !page.equals( existing ) )
+			              .ifPresent( e -> errors.rejectValue( "canonicalPath", "alreadyExists" ) );
 		}
 	}
 

@@ -30,7 +30,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.persistence.*;
@@ -177,7 +177,7 @@ public class WebCmsDomain extends SettableIdAuditableEntity<WebCmsDomain> implem
 	 * @return the globally unique object id
 	 */
 	@Override
-	public final String getObjectId() {
+	public String getObjectId() {
 		return objectId;
 	}
 
@@ -186,7 +186,7 @@ public class WebCmsDomain extends SettableIdAuditableEntity<WebCmsDomain> implem
 	 *
 	 * @param objectId to use
 	 */
-	public final void setObjectId( String objectId ) {
+	public void setObjectId( String objectId ) {
 		this.objectId = StringUtils.isEmpty( objectId ) ? null : WebCmsUtils.prefixObjectIdForCollection( objectId, COLLECTION_ID );
 	}
 

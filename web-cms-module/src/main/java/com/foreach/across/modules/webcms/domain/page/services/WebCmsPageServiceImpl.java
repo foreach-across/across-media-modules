@@ -67,12 +67,13 @@ class WebCmsPageServiceImpl implements WebCmsPageService
 
 	@Override
 	public Optional<WebCmsPage> findByCanonicalPathAndDomain( String canonicalPath, WebCmsDomain domain ) {
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( canonicalPath, domain );
+		Optional<WebCmsPage> page = pageRepository.findOneByCanonicalPathAndDomain( canonicalPath, domain );
 
-		if ( page == null && !WebCmsDomain.isNoDomain( domain ) && multiDomainService.isNoDomainAllowed( WebCmsPage.class ) ) {
+		if ( !page.isPresent() && !WebCmsDomain.isNoDomain( domain ) && multiDomainService.isNoDomainAllowed( WebCmsPage.class ) ) {
 			page = pageRepository.findOneByCanonicalPathAndDomain( canonicalPath, WebCmsDomain.NONE );
 		}
-		return Optional.ofNullable( page );
+
+		return page;
 	}
 
 	@Override

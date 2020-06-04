@@ -21,6 +21,8 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -44,13 +46,13 @@ public class ITDomainCreation extends AbstractCmsApplicationIT
 		domainRepository.save( domain );
 		assertFalse( domain.isNew() );
 
-		WebCmsDomain byId = domainRepository.findOne( domain.getId() );
+		WebCmsDomain byId = domainRepository.findById( domain.getId() ).orElse( null );
 		assertEquals( domain, byId );
 
-		WebCmsDomain byKey = domainRepository.findOneByDomainKey( domain.getDomainKey() );
+		WebCmsDomain byKey = domainRepository.findOneByDomainKey( domain.getDomainKey() ).orElse( null );
 		assertEquals( domain, byKey );
 
-		WebCmsDomain byObjectId = domainRepository.findOneByObjectId( domain.getObjectId() );
+		WebCmsDomain byObjectId = domainRepository.findOneByObjectId( domain.getObjectId() ).orElse( null );
 		assertEquals( domain, byObjectId );
 
 		assertEquals( "manually-created-domain", byObjectId.getDomainKey() );
@@ -63,11 +65,11 @@ public class ITDomainCreation extends AbstractCmsApplicationIT
 
 		domainRepository.save( byObjectId.toBuilder().active( false ).build() );
 
-		WebCmsDomain updated = domainRepository.findOne( domain.getId() );
+		WebCmsDomain updated = domainRepository.findById( domain.getId() ).orElse( null );
 		assertFalse( updated.isActive() );
 
-		domainRepository.delete( updated.getId() );
+		domainRepository.deleteById( updated.getId() );
 
-		assertNull( domainRepository.findOneByDomainKey( domain.getDomainKey() ) );
+		assertEquals( Optional.empty(), domainRepository.findOneByDomainKey( domain.getDomainKey() ) );
 	}
 }

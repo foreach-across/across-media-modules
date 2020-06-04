@@ -48,28 +48,25 @@ public class WebCmsTypeSpecifierValidator extends EntityValidatorSupport<WebCmsT
 	protected void postValidation( WebCmsTypeSpecifier entity, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "name" ) ) {
 			QWebCmsTypeSpecifier query = QWebCmsTypeSpecifier.webCmsTypeSpecifier;
-			WebCmsTypeSpecifier existing = typeSpecifierRepository.findOne( query.name.equalsIgnoreCase( entity.getName() )
-			                                                                          .and( query.objectType.eq( entity.getObjectType() ) ) );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "name", "alreadyExists" );
-			}
+
+			typeSpecifierRepository.findOne( query.name.equalsIgnoreCase( entity.getName() )
+			                                           .and( query.objectType.eq( entity.getObjectType() ) ) )
+			                       .filter( existing -> !entity.equals( existing ) )
+			                       .ifPresent( e -> errors.rejectValue( "name", "alreadyExists" ) );
 		}
 
 		if ( !errors.hasFieldErrors( "typeKey" ) ) {
 			if ( !errors.hasFieldErrors( "typeKey" ) ) {
-				WebCmsTypeSpecifier existing = typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( entity.getObjectType(), entity.getTypeKey(),
-				                                                                                               entity.getDomain() );
-				if ( existing != null && !entity.equals( existing ) ) {
-					errors.rejectValue( "typeKey", "alreadyExists" );
-				}
+				typeSpecifierRepository.findOneByObjectTypeAndTypeKeyAndDomain( entity.getObjectType(), entity.getTypeKey(), entity.getDomain() )
+				                       .filter( existing -> !entity.equals( existing ) )
+				                       .ifPresent( e -> errors.rejectValue( "typeKey", "alreadyExists" ) );
 			}
 		}
 
 		if ( !errors.hasFieldErrors( "typeKey" ) && !errors.hasFieldErrors( "objectId" ) ) {
-			WebCmsTypeSpecifier existing = typeSpecifierRepository.findOneByObjectId( entity.getObjectId() );
-			if ( existing != null && !entity.equals( existing ) ) {
-				errors.rejectValue( "objectId", "alreadyExists" );
-			}
+			typeSpecifierRepository.findOneByObjectId( entity.getObjectId() )
+			                       .filter( existing -> !entity.equals( existing ) )
+			                       .ifPresent( e -> errors.rejectValue( "objectId", "alreadyExists" ) );
 		}
 	}
 

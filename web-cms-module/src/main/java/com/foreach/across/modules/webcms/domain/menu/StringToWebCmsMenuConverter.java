@@ -45,11 +45,11 @@ public class StringToWebCmsMenuConverter implements Converter<String, WebCmsMenu
 	@Override
 	public WebCmsMenu convert( String value ) {
 		if ( NumberUtils.isDigits( value ) ) {
-			return webCmsMenuRepository.findOne( Long.parseLong( value ) );
+			return webCmsMenuRepository.findById( Long.parseLong( value ) ).orElse( null );
 		}
 
 		if ( WebCmsUtils.isObjectIdForCollection( value, WebCmsMenu.COLLECTION_ID ) ) {
-			return webCmsMenuRepository.findOneByObjectId( value );
+			return webCmsMenuRepository.findOneByObjectId( value ).orElse( null );
 		}
 
 		return menuService.getMenuByName( value );

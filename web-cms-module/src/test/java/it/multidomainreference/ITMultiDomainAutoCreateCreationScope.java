@@ -53,7 +53,7 @@ class ITMultiDomainAutoCreateCreationScope extends AbstractMultiDomainCmsApplica
 	@BeforeEach
 	void setUp() {
 		if ( html == null ) {
-			domain = domainRepository.findOneByDomainKey( "be-foreach" );
+			domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
 			assertNotNull( domain );
 
 			page = pageService.findByCanonicalPathAndDomain( "/auto-create-creation-scope", domain )

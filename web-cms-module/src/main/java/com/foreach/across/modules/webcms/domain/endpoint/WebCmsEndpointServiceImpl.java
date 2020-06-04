@@ -80,7 +80,7 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 		boolean canBeUpdated = asset.getPublicationDate() == null || ( new Date() ).before( asset.getPublicationDate() );
 
 		WebCmsDomain domain = multiDomainService.isDomainBound( WebCmsAssetEndpoint.class ) ? asset.getDomain() : WebCmsDomain.NONE;
-		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, domain );
+		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, domain ).orElse( null );
 
 		if ( endpoint != null ) {
 			Optional<WebCmsUrl> currentUrl = endpoint.getPrimaryUrl();
@@ -95,7 +95,7 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 			newPrimaryUrl.setPrimary( true );
 			newPrimaryUrl.setEndpoint( endpoint );
 
-			WebCmsUrl existing = urlRepository.findOneByPathAndEndpoint_Domain( primaryUrl, domain );
+			WebCmsUrl existing = urlRepository.findOneByPathAndEndpoint_Domain( primaryUrl, domain ).orElse( null );
 
 			if ( existing != null && !endpoint.equals( existing.getEndpoint() ) ) {
 				ModificationReport<EndpointModificationType, WebCmsUrl> modificationReport =
@@ -158,13 +158,8 @@ public class WebCmsEndpointServiceImpl implements WebCmsEndpointService
 	@Transactional(readOnly = true)
 	@Override
 	public Optional<WebCmsUrl> getPrimaryUrlForAssetOnDomain( WebCmsAsset asset, WebCmsDomain domain ) {
-		WebCmsAssetEndpoint endpoint = assetEndpointRepository.findOneByAssetAndDomain( asset, domain );
-
-		if ( endpoint != null ) {
-			return endpoint.getPrimaryUrl();
-		}
-
-		return Optional.empty();
+		return assetEndpointRepository.findOneByAssetAndDomain( asset, domain )
+		                              .map( e -> e.getPrimaryUrl().orElse( null ) );
 	}
 
 	@Override

@@ -55,13 +55,9 @@ public class WebCmsComponentValidator extends EntityValidatorSupport<WebCmsCompo
 	protected void postValidation( WebCmsComponent entity, Errors errors, Object... validationHints ) {
 		if ( !errors.hasFieldErrors( "name" ) ) {
 			if ( !entity.hasOwner() || !StringUtils.isEmpty( entity.getName() ) ) {
-				WebCmsComponent existing = componentRepository.findOneByOwnerObjectIdAndNameAndDomain(
-						entity.getOwnerObjectId(), entity.getName(), entity.getDomain()
-				);
-
-				if ( existing != null && !entity.equals( existing ) ) {
-					errors.rejectValue( "name", "alreadyExists" );
-				}
+				componentRepository.findOneByOwnerObjectIdAndNameAndDomain( entity.getOwnerObjectId(), entity.getName(), entity.getDomain() )
+				                   .filter( existing -> !entity.equals( existing ) )
+				                   .ifPresent( e -> errors.rejectValue( "name", "alreadyExists" ) );
 			}
 		}
 	}

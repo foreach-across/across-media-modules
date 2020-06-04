@@ -48,13 +48,13 @@ public final class StringToWebCmsPageConverter implements Converter<String, WebC
 	@Override
 	public WebCmsPage convert( String source ) {
 		if ( NumberUtils.isDigits( source ) ) {
-			return pageRepository.findOne( Long.parseLong( source ) );
+			return pageRepository.findById( Long.parseLong( source ) ).orElse( null );
 		}
 
 		if ( source.startsWith( "/" ) ) {
 			return pageService.findByCanonicalPath( source ).orElse( null );
 		}
 
-		return pageRepository.findOneByObjectId( source );
+		return pageRepository.findOneByObjectId( source ).orElse( null );
 	}
 }

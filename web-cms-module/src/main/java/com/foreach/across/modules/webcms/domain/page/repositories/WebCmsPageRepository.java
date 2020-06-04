@@ -21,6 +21,8 @@ import com.foreach.across.modules.webcms.domain.WebCmsObjectEntityRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 
+import java.util.Optional;
+
 /**
  * @author Arne Vandamme
  * @since 0.0.1
@@ -28,5 +30,5 @@ import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 @Exposed
 public interface WebCmsPageRepository extends WebCmsObjectEntityRepository<WebCmsPage>
 {
-	WebCmsPage findOneByCanonicalPathAndDomain( String canonicalPath, WebCmsDomain domain );
+	Optional<WebCmsPage> findOneByCanonicalPathAndDomain( String canonicalPath, WebCmsDomain domain );
 }

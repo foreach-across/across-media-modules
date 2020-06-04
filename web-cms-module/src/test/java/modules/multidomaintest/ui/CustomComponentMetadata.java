@@ -19,7 +19,7 @@ package modules.multidomaintest.ui;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class CustomComponentMetadata

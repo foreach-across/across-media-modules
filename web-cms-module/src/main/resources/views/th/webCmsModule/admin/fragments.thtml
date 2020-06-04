@@ -6,38 +6,38 @@
      th:classappend="${element.showAsLinkedComponent} ? 'wcm-linked-component'"
      th:data-wcm-component-id="${model.objectId}"
      th:with="htmlId=${#ids.seq('component-tab')}">
-    <div class="pull-right">
+    <div class="axu-float-right">
         <ul class="wcm-component-tabs" th:unless="${element.showAsLinkedComponent}">
             <li th:if="${element.showAddComponentButton}">
-                <a th:href="@{@adminWeb:/entities/webCmsComponent/create(view=createMember,entity.ownerObjectId=${model.objectId},from=${currentComponentUrl})}" title="Add a component to this container"><span class="glyphicon glyphicon-plus-sign"></span></a>
+                <a th:href="@{@adminWeb:/entities/webCmsComponent/create(view=createMember,entity.ownerObjectId=${model.objectId},from=${currentComponentUrl})}" title="Add a component to this container"><i class="fas fa-plus-circle"></i></a>
             </li>
             <li th:if="${element.hasMembers()}">
-                <a th:href="${'#members-' + htmlId}" title="Update container members" data-wcm-component-tab="members"><span class="glyphicon glyphicon-option-vertical"></span></a>
+                <a th:href="${'#members-' + htmlId}" title="Update container members" data-wcm-component-tab="members"><i class="fas fa-ellipsis-v fa-fw"></i></a>
             </li>
             <li th:if="${element.hasContent()}" class="content-tab component-tab-link-default">
-                <a th:href="${'#content-' + htmlId}" title="Update content" data-wcm-component-tab="content"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a th:href="${'#content-' + htmlId}" title="Update content" data-wcm-component-tab="content"><i class="fas fa-edit fa-fw"></i></a>
             </li>
             <li th:if="${element.hasMetadata()}">
-                <a th:href="${'#metadata-' + htmlId}" title="Update component attributes" data-wcm-component-tab="metadata"><span class="glyphicon glyphicon-th-list"></span></a>
+                <a th:href="${'#metadata-' + htmlId}" title="Update component attributes" data-wcm-component-tab="metadata"><i class="fas fa-th-list fa-fw"></i></a>
             </li>
             <li th:if="${element.hasSettings()}">
-                <a th:href="${'#settings-' + htmlId}" title="Basic settings" data-wcm-component-tab="settings"><span class="glyphicon glyphicon-cog"></span></a>
+                <a th:href="${'#settings-' + htmlId}" title="Basic settings" data-wcm-component-tab="settings"><i class="fas fa-cog fa-fw"></i></a>
             </li>
             <li th:if="${element.showDeleteButton}">
-                <a th:href="@{${'@adminWeb:/entities/webCmsComponent/' + model.component.id + '/delete'}(from=${currentComponentUrl})}"><span class="glyphicon glyphicon-remove"></span></a>
+                <a th:href="@{${'@adminWeb:/entities/webCmsComponent/' + model.component.id + '/delete'}(from=${currentComponentUrl})}"><i class="fas fa-remove fa-fw"></i></a>
             </li>
         </ul>
         <ul class="wcm-component-tabs" th:if="${element.showAsLinkedComponent}">
             <li>
-                <a th:href="@{${componentLinkBuilder.update(model.component).withFromUrl(currentComponentUrl).toUriString()}}"><span class="glyphicon glyphicon-edit"></span></a>
+                <a th:href="@{${componentLinkBuilder.update(model.component).withFromUrl(currentComponentUrl).toUriString()}}"><i class="fas fa-edit"></i></a>
             </li>
             <li th:if="${element.showDeleteButton}">
-                <a th:href="@{${'@adminWeb:/entities/webCmsComponent/' + model.component.id + '/delete'}(from=${currentComponentUrl})}"><span class="glyphicon glyphicon-remove"></span></a>
+                <a th:href="@{${'@adminWeb:/entities/webCmsComponent/' + model.component.id + '/delete'}(from=${currentComponentUrl})}"><i class="fas fa-times axu-text-danger"></i></a>
             </li>
         </ul>
     </div>
-    <span class="wcm-sortable-component-handle glyphicon glyphicon-menu-hamburger"></span>
-    <label class="control-label" th:title="${model.name}" th:text="${element.label}">Component title</label>
+    <span class="wcm-sortable-component-handle fas fa-bars"></span>
+    <label class="control-label" th:title="${model.name}"><strong th:text="${element.label}">Component title</strong></label>
     <!--/* content */-->
     <div th:if="${element.hasContent()}" class="wcm-component-tab-pane wcm-component-content-tab" th:id="${'content-' + htmlId}">
         <across:view element="${element.content}"/>

@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,7 +65,7 @@ class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	void alwaysCreatedPageShouldBeCreatedWithBothObjectIdAndCanonicalPathGenerated() {
-		val page = pageRepository.findOneByCanonicalPathAndDomain( "/always-created-page", WebCmsDomain.NONE );
+		val page = pageRepository.findOneByCanonicalPathAndDomain( "/always-created-page", WebCmsDomain.NONE ).orElse( null );
 		assertNotNull( page );
 		assertNull( page.getParent() );
 		assertEquals( "Always Created Page", page.getTitle() );
@@ -79,7 +80,7 @@ class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	void simplePageShouldHaveItsPathGeneratedAndShouldNotBePublished() {
-		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-simple" );
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-simple" ).orElse( null );
 		assertNotNull( page );
 		assertNull( page.getParent() );
 		assertEquals( "Simple Page", page.getTitle() );
@@ -94,7 +95,7 @@ class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	void childPageShouldHaveItsPathGeneratedAndShouldBePublished() {
-		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-simple-child" );
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-simple-child" ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Simple Child Page", page.getTitle() );
 		assertNotNull( page.getParent() );
@@ -110,7 +111,7 @@ class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	void fixedPathPageShouldHaveNonGeneratedPathSegmentAndPublicationDateSet() throws Exception {
-		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-fixed-path-segment" );
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-fixed-path-segment" ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Fixed Path Segment Page", page.getTitle() );
 		assertNotNull( page.getParent() );
@@ -126,7 +127,7 @@ class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	void fixedCanonicalPathPageShouldHaveNonGeneratedCanonicalPathAndShouldBePublishedWithPublicationDate() throws Exception {
-		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-fixed-canonical-path" );
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-fixed-canonical-path" ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Fixed Canonical Path Page", page.getTitle() );
 		assertNotNull( page.getParent() );
@@ -142,7 +143,7 @@ class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	void extensionPageShouldBeCreatedWithKeyAsCanonicalPath() {
-		val page = pageRepository.findOneByCanonicalPathAndDomain( "/extension/one", WebCmsDomain.NONE );
+		val page = pageRepository.findOneByCanonicalPathAndDomain( "/extension/one", WebCmsDomain.NONE ).orElse( null );
 		assertNotNull( page );
 		assertNull( page.getParent() );
 		assertEquals( "Extension Page One", page.getTitle() );
@@ -157,19 +158,19 @@ class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	void updateForNonExistingPageShouldBeIgnored() {
-		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/two", WebCmsDomain.NONE ) );
+		assertEquals( Optional.empty(), pageRepository.findOneByCanonicalPathAndDomain( "/extension/two", WebCmsDomain.NONE ) );
 	}
 
 	@Test
 	void existingPageShouldBeDeleted() {
-		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/deleteme", WebCmsDomain.NONE ) );
+		assertEquals( Optional.empty(), pageRepository.findOneByCanonicalPathAndDomain( "/extension/deleteme", WebCmsDomain.NONE ) );
 	}
 
 	@Test
 	void existingPageShouldBeUpdatedUsingTheCanonicalPathAsKeyLookup() throws Exception {
-		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/updateme1", WebCmsDomain.NONE ) );
+		assertNull( pageRepository.findOneByCanonicalPathAndDomain( "/extension/updateme1", WebCmsDomain.NONE ).orElse( null ) );
 
-		val page = pageRepository.findOneByCanonicalPathAndDomain( "/extension/updated1", WebCmsDomain.NONE );
+		val page = pageRepository.findOneByCanonicalPathAndDomain( "/extension/updated1", WebCmsDomain.NONE ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Extension Updated 1", page.getTitle() );
 		assertNull( page.getParent() );
@@ -184,7 +185,7 @@ class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	void existingPageShouldBeUpdatedUsingTheObjectIdAndKeyShouldBeIgnored() {
-		val page = pageRepository.findOneByObjectId( "wcm:asset:page:extension-updateme2" );
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:extension-updateme2" ).orElse( null );
 		assertNotNull( page );
 		assertEquals( "Extension Updated 2", page.getTitle() );
 		assertNull( page.getParent() );
@@ -207,21 +208,21 @@ class ITPageReferenceData extends AbstractCmsApplicationWithTestDataIT
 
 	@Test
 	void frequentlyUsedDomainsPageShouldHaveBeenImported() {
-		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-freq-domains" );
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-freq-domains" ).orElse( null );
 		assertNotNull( page );
-		assertEquals( domainRepository.findOneByObjectId( "wcm:domain:simple-domain" ), page.getDomain() );
+		assertEquals( domainRepository.findOneByObjectId( "wcm:domain:simple-domain" ), Optional.of( page.getDomain() ) );
 	}
 
 	@Test
 	void generalDomainsPageShouldHaveBeenImported() {
-		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-gen-domains" );
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-gen-domains" ).orElse( null );
 		assertNotNull( page );
-		assertEquals( domainRepository.findOneByDomainKey( "domain.complex.domain" ), page.getDomain() );
+		assertEquals( domainRepository.findOneByDomainKey( "domain.complex.domain" ), Optional.of( page.getDomain() ) );
 	}
 
 	@Test
 	void commonDomainsPageShouldHaveBeenImportedAndExtended() {
-		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-common-domains" );
+		val page = pageRepository.findOneByObjectId( "wcm:asset:page:reference-common-domains" ).orElse( null );
 		assertNotNull( page );
 		assertNull( page.getDomain() );
 	}

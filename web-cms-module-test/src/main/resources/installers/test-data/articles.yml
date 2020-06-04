@@ -10,7 +10,7 @@ types:
               componentType: image
               title: Image
               sortIndex: 0
-            content:
+            body:
               sortIndex: 1
             bottom-image:
               componentType: image

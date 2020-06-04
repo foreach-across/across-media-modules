@@ -52,8 +52,8 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void contentNlShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "content", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "content", domain ).orElse( null );
 		assertNotNull( component );
 		assertEquals( "Content (NL)", component.getTitle() );
 		assertEquals( componentModelService.getComponentType( "plain-text" ), component.getComponentType() );
@@ -62,8 +62,8 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void contentBeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "content", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "content", domain ).orElse( null );
 		assertNotNull( component );
 		assertEquals( "Content (BE)", component.getTitle() );
 		assertEquals( componentModelService.getComponentType( "plain-text" ), component.getComponentType() );
@@ -72,8 +72,8 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void contentDeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "content", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "content", domain ).orElse( null );
 		assertNotNull( component );
 		assertEquals( "Content (DE)", component.getTitle() );
 		assertEquals( componentModelService.getComponentType( "plain-text" ), component.getComponentType() );
@@ -82,8 +82,8 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void teaserNlShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "nl-teaser", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "nl-teaser", domain ).orElse( null );
 		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( component.getObjectId(),
 		                                                                                                         component.getDomain() );
 		assertNotNull( component );
@@ -97,15 +97,15 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void teaserBeShouldHaveBeenDeleted() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "be-teaser", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "be-teaser", domain ).orElse( null );
 		assertNull( component );
 	}
 
 	@Test
 	void teaserDeShouldHaveBeenImportedAndExtended() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "de-teaser", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "de-teaser", domain ).orElse( null );
 		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( component.getObjectId(),
 		                                                                                                         component.getDomain() );
 		assertNotNull( component );
@@ -119,8 +119,8 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void teaserFrShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "fr-foreach" );
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "fr-teaser", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "fr-foreach" ).orElse( null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "fr-teaser", domain ).orElse( null );
 		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( component.getObjectId(),
 		                                                                                                         component.getDomain() );
 		assertNotNull( component );
@@ -134,8 +134,8 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void homepageNlShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/homepage", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsPage page = pageRepository.findOneByCanonicalPathAndDomain( "/homepage", domain ).orElse( null );
 		assertNotNull( page );
 		List<WebCmsComponent> components = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( page.getObjectId(), page.getDomain() );
 		assertEquals( 1, components.size() );
@@ -145,15 +145,15 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 	@Test
 	void acrossBlogTypeShouldHaveBeenImported() {
 		val query = QWebCmsComponentType.webCmsComponentType;
-		WebCmsComponentType componentType = componentTypeRepository.findOne( query.typeKey.eq( "ax-blog" ).and( query.domain.isNull() ) );
+		WebCmsComponentType componentType = componentTypeRepository.findOne( query.typeKey.eq( "ax-blog" ).and( query.domain.isNull() ) ).orElse( null );
 		assertNotNull( componentType );
 		assertEquals( "Across Blog", componentType.getName() );
 	}
 
 	@Test
 	void acrossBlogBeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" );
-		WebCmsComponent blog = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "ax-blog-be", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
+		WebCmsComponent blog = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "ax-blog-be", domain ).orElse( null );
 		assertNotNull( blog );
 		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( blog.getObjectId(), blog.getDomain() );
 		assertEquals( 4, children.size() );
@@ -165,8 +165,8 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void acrossBlogDeShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" );
-		WebCmsComponent blog = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "ax-blog-de", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "de-foreach" ).orElse( null );
+		WebCmsComponent blog = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "ax-blog-de", domain ).orElse( null );
 		assertNotNull( blog );
 		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( blog.getObjectId(), blog.getDomain() );
 		assertEquals( 4, children.size() );
@@ -178,8 +178,8 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void acrossBlogNlShouldHaveBeenImported() {
-		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" );
-		WebCmsComponent blog = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "ax-blog-nl", domain );
+		WebCmsDomain domain = domainRepository.findOneByDomainKey( "nl-foreach" ).orElse( null );
+		WebCmsComponent blog = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "ax-blog-nl", domain ).orElse( null );
 		assertNotNull( blog );
 		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( blog.getObjectId(), blog.getDomain() );
 		assertEquals( 4, children.size() );
@@ -191,14 +191,15 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void myCustomComponentTypeShouldHaveBeenImported() {
-		WebCmsComponentType componentType = componentTypeRepository.findOneByTypeKeyAndDomain( "my-custom-component", WebCmsDomain.NONE );
+		WebCmsComponentType componentType = componentTypeRepository.findOneByTypeKeyAndDomain( "my-custom-component", WebCmsDomain.NONE ).orElse( null );
 		assertNotNull( componentType );
 		assertEquals( "modules.multidomaintest.ui.CustomComponentMetadata", componentType.getAttribute( "metadata" ) );
 	}
 
 	@Test
 	void myCustomComponentShouldHaveBeenImported() {
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "my-custom-component", null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "my-custom-component", null )
+		                                               .orElse( null );
 		assertNotNull( component );
 		WebCmsComponentModel componentModel = componentModelService.getComponentModel( component.getObjectId() );
 		assertNotNull( componentModel );
@@ -211,7 +212,8 @@ class ITMultiDomainComponentReferenceData extends AbstractMultiDomainCmsApplicat
 
 	@Test
 	void teaserSingleValueImportsShouldHaveBeenImported() {
-		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "teaser-single-value-imports", null );
+		WebCmsComponent component = componentRepository.findOneByOwnerObjectIdAndNameAndDomain( null, "teaser-single-value-imports", null )
+		                                               .orElse( null );
 		assertNotNull( component );
 		List<WebCmsComponent> children = componentRepository.findAllByOwnerObjectIdAndDomainOrderBySortIndexAsc( component.getObjectId(),
 		                                                                                                         component.getDomain() );

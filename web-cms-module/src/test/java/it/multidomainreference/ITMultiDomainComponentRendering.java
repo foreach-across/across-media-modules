@@ -54,7 +54,7 @@ class ITMultiDomainComponentRendering extends AbstractMultiDomainCmsApplicationW
 
 	@Test
 	void verifyPageAndComponentsHaveBeenInstalled() {
-		val foreachBe = domainRepository.findOneByDomainKey( "be-foreach" );
+		val foreachBe = domainRepository.findOneByDomainKey( "be-foreach" ).orElse( null );
 		assertNotNull( foreachBe );
 
 		val page = pageService.findByCanonicalPathAndDomain( "/render-components", foreachBe )

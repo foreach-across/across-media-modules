@@ -49,7 +49,7 @@ public class WebCmsRemoteEndpointImporter extends AbstractWebCmsDataImporter<Web
 	protected WebCmsEndpoint retrieveExistingInstance( WebCmsDataEntry data ) {
 		WebCmsDomain domain = retrieveDomainForDataEntry( data, WebCmsRemoteEndpoint.class );
 		String targetUrl = data.getMapData().containsKey( "targetUrl" ) ? (String) data.getMapData().get( "targetUrl" ) : data.getKey();
-		return remoteEndpointRepository.findOneByTargetUrlAndDomain( targetUrl, domain );
+		return remoteEndpointRepository.findOneByTargetUrlAndDomain( targetUrl, domain ).orElse( null );
 	}
 
 	@Override

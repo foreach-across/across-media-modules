@@ -19,6 +19,8 @@ package com.foreach.across.modules.webcms.domain.asset;
 import com.foreach.across.core.annotations.Exposed;
 import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRepository;
 
+import java.util.Optional;
+
 /**
  * @author Arne Vandamme
  * @since 0.0.1
@@ -26,5 +28,5 @@ import com.foreach.across.modules.hibernate.jpa.repositories.IdBasedEntityJpaRep
 @Exposed
 public interface WebCmsAssetRepository extends IdBasedEntityJpaRepository<WebCmsAsset>
 {
-	<T extends WebCmsAsset<T>> T findOneByObjectId( String objectId );
+	<T extends WebCmsAsset<T>> Optional<T> findOneByObjectId( String objectId );
 }

@@ -17,7 +17,7 @@
 package com.foreach.across.modules.webcms.domain.url;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 import org.springframework.http.HttpStatus;
 
@@ -32,8 +32,8 @@ import java.util.Objects;
  * A custom Hibernate type to persist {@link HttpStatus} objects with their status code.
  *
  * @author Sander Van Loock
- * @since 0.0.1
  * @see HttpStatus#value
+ * @since 0.0.1
  */
 @Slf4j
 public class HttpStatusType implements UserType
@@ -59,7 +59,7 @@ public class HttpStatusType implements UserType
 	}
 
 	@Override
-	public Object nullSafeGet( ResultSet rs, String[] names, SessionImplementor session, Object owner ) throws SQLException {
+	public Object nullSafeGet( ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner ) throws SQLException {
 		int statusCode = rs.getInt( names[0] );
 		try {
 			return HttpStatus.valueOf( statusCode );
@@ -71,7 +71,7 @@ public class HttpStatusType implements UserType
 	}
 
 	@Override
-	public void nullSafeSet( PreparedStatement st, Object value, int index, SessionImplementor session ) throws SQLException {
+	public void nullSafeSet( PreparedStatement st, Object value, int index, SharedSessionContractImplementor session ) throws SQLException {
 		if ( value == null || !( value instanceof HttpStatus ) ) {
 			st.setNull( index, Types.INTEGER );
 		}

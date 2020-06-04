@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.type.web;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.entity.views.events.BuildEntityDeleteViewEvent;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
@@ -26,6 +25,8 @@ import com.foreach.across.modules.webcms.domain.type.WebCmsTypeSpecifierLinkRepo
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * @author Arne Vandamme
@@ -51,14 +52,16 @@ class TypeLinkDeleteViewEventHandler
 			deleteViewEvent.setDeleteDisabled( true );
 			deleteViewEvent.associations()
 			               .addChild(
-					               BootstrapUiBuilders.node( "li" )
-					                                  .add(
-							                                  BootstrapUiBuilders.html(
-									                                 builderContext
-											                                 .getMessage( "objectsLinkedToTypeSpecifier", new Object[] { nonSelfLinks } )
-							                                 )
-					                                 )
-					                                  .build( builderContext )
+					               html.builders
+							               .li()
+							               .add(
+									               html.unescapedText(
+											               builderContext
+													               .getMessage( "objectsLinkedToTypeSpecifier",
+													                            new Object[] { nonSelfLinks } )
+									               )
+							               )
+							               .build( builderContext )
 			               );
 		}
 	}

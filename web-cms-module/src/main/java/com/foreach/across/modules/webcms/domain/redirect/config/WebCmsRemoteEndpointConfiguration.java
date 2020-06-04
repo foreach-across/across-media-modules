@@ -16,7 +16,6 @@
 
 package com.foreach.across.modules.webcms.domain.redirect.config;
 
-import com.foreach.across.modules.bootstrapui.elements.BootstrapUiBuilders;
 import com.foreach.across.modules.bootstrapui.elements.Style;
 import com.foreach.across.modules.bootstrapui.elements.TextareaFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
@@ -59,6 +58,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
+import static com.foreach.across.modules.web.ui.elements.HtmlViewElements.html;
 
 /**
  * @author Arne Vandamme
@@ -157,7 +159,7 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			tableBuilder.items( EntityUtils.asPage( urls ) );
 			tableBuilder.tableOnly();
 			tableBuilder.hideResultNumber();
-			tableBuilder.noResults( BootstrapUiBuilders.container() );
+			tableBuilder.noResults( html.builders.container() );
 
 			val associationLinkBuilder = entityViewContext.getLinkBuilder()
 			                                              .forInstance( entityViewContext.getEntity() )
@@ -173,14 +175,14 @@ class WebCmsRemoteEndpointConfiguration implements EntityConfigurer
 			String message = entityViewContext.getMessageCodeResolver()
 			                                  .getMessage( "properties.urls.add", "Add a path to redirect" );
 
-			return BootstrapUiBuilders.div()
-			                          .name( "formGroup-urls" )
-			                          .add( tableBuilder )
-			                          .add( BootstrapUiBuilders.button()
-			                                                   .link( associationLinkBuilder.createView().toUriString() )
-			                                                   .style( Style.PRIMARY )
-			                                                   .text( message ) )
-			                          .build( new DefaultViewElementBuilderContext() );
+			return html.builders.div()
+			                    .name( "formGroup-urls" )
+			                    .add( tableBuilder )
+			                    .add( bootstrap.builders.button()
+			                                            .link( associationLinkBuilder.createView().toUriString() )
+			                                            .style( Style.PRIMARY )
+			                                            .text( message ) )
+			                    .build( new DefaultViewElementBuilderContext() );
 		}
 	}
 

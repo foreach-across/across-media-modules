@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 
@@ -62,7 +62,6 @@ public class TestWebCmsArticleCondition
 
 		when( context.getEndpoint( WebCmsAssetEndpoint.class ) ).thenReturn( endpoint );
 		when( context.isResolved() ).thenReturn( true );
-		when( context.getUrl() ).thenReturn( url );
 		when( context.isOfType( WebCmsAssetEndpoint.class ) ).thenReturn( true );
 
 		WebCmsArticle article = new WebCmsArticle();
@@ -199,7 +198,7 @@ public class TestWebCmsArticleCondition
 		values.put( "publication", publications );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getAnnotation( WebCmsArticleMapping.class ) )
+		when( annotatedElement.getDeclaredAnnotation( WebCmsArticleMapping.class ) )
 				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsArticleMapping.class, null ) );
 		condition.setAnnotatedElement( annotatedElement );
 

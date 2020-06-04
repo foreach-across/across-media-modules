@@ -16,7 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.page.config;
 
-import com.foreach.across.modules.bootstrapui.elements.*;
+import com.foreach.across.modules.bootstrapui.elements.BootstrapUiElements;
+import com.foreach.across.modules.bootstrapui.elements.TableViewElement;
+import com.foreach.across.modules.bootstrapui.elements.TextboxFormElement;
 import com.foreach.across.modules.entity.EntityAttributes;
 import com.foreach.across.modules.entity.config.EntityConfigurer;
 import com.foreach.across.modules.entity.config.builders.EntitiesConfigurationBuilder;
@@ -48,6 +50,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import static com.foreach.across.modules.bootstrapui.ui.factories.BootstrapViewElements.bootstrap;
+import static com.foreach.across.modules.webcms.WebCmsModuleIcons.webCmsIcons;
 
 /**
  * @author Arne Vandamme
@@ -185,12 +190,12 @@ public class WebCmsPageConfiguration
 												                      EntityMessages entityMessages =
 														                      entityViewRequest.getEntityViewContext().getEntityMessages();
 												                      cell.addFirstChild(
-														                      BootstrapUiBuilders.button()
-														                                         .link( previewUrl )
-														                                         .attribute( "target", "_blank" )
-														                                         .iconOnly( new FaIcon( FaIcon.WebApp.FILE_IMAGE_O ) )
-														                                         .text( entityMessages.withNameSingular( "actions.open" ) )
-														                                         .build( ctx ) );
+														                      bootstrap.builders.button()
+														                                        .link( previewUrl )
+														                                        .attribute( "target", "_blank" )
+														                                        .iconOnly( webCmsIcons.preview() )
+														                                        .text( entityMessages.withNameSingular( "actions.open" ) )
+														                                        .build( ctx ) );
 											                      } )
 							          );
 				          } );

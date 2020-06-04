@@ -16,17 +16,20 @@
 
 package test.component.container;
 
-import com.foreach.across.modules.webcms.domain.component.*;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentRepository;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
+import com.foreach.across.modules.webcms.domain.component.WebCmsComponentTypeRepository;
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
-import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
-import test.component.text.TestTextWebCmsComponentModelCustomization.MyMetadata;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test.AbstractWebCmsComponentModelRenderingTest;
+import test.component.text.TestTextWebCmsComponentModelCustomization.MyMetadata;
 
 import static org.junit.Assert.*;
 
@@ -44,7 +47,7 @@ public class TestContainerWebCmsComponentModelCustomization extends AbstractWebC
 
 	@Autowired
 	public void registerCustomComponentType( WebCmsComponentTypeRepository typeRepository ) {
-		if ( typeRepository.findOneByTypeKeyAndDomain( "custom-container", WebCmsDomain.NONE ) == null ) {
+		if ( !typeRepository.findOneByTypeKeyAndDomain( "custom-container", WebCmsDomain.NONE ).isPresent() ) {
 			typeRepository.save(
 					WebCmsComponentType.builder()
 					                   .name( "Custom container component" )
@@ -94,7 +97,7 @@ public class TestContainerWebCmsComponentModelCustomization extends AbstractWebC
 		assertFalse( StringUtils.isBlank( component.getMetadata() ) );
 
 		val fetched = componentModelService.buildModelForComponent(
-				componentRepository.findOneByObjectId( component.getObjectId() ), ContainerWebCmsComponentModel.class
+				componentRepository.findOneByObjectId( component.getObjectId() ).orElse( null ), ContainerWebCmsComponentModel.class
 		);
 		assertEquals( title, fetched.getMember( "title" ) );
 		metadata = fetched.getMetadata( MyMetadata.class );
@@ -107,7 +110,7 @@ public class TestContainerWebCmsComponentModelCustomization extends AbstractWebC
 		componentModelService.save( fetched );
 
 		val updated = componentModelService.buildModelForComponent(
-				componentRepository.findOneByObjectId( component.getObjectId() ), ContainerWebCmsComponentModel.class
+				componentRepository.findOneByObjectId( component.getObjectId() ).orElse( null ), ContainerWebCmsComponentModel.class
 		);
 		assertEquals( title, updated.getMember( "title" ) );
 		metadata = fetched.getMetadata( MyMetadata.class );
