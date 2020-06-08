@@ -1,10 +1,6 @@
 package test;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
@@ -25,6 +21,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
+import utils.AmazonS3Helper;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -79,18 +76,7 @@ class TestCustomAwsFileRepositoryConfiguration
 	{
 		@Bean(destroyMethod = "shutdown")
 		AmazonS3 amazonS3() {
-			AmazonS3 amazonS3 = AmazonS3ClientBuilder.standard()
-			                                         .withEndpointConfiguration(
-					                                         new AwsClientBuilder.EndpointConfiguration( "http://localhost:4572", "us-east-1" ) )
-			                                         .withPathStyleAccessEnabled( true )
-			                                         .withCredentials( new AWSStaticCredentialsProvider( new BasicAWSCredentials( "test", "test" ) ) )
-			                                         .build();
-
-			if ( !amazonS3.doesBucketExist( BUCKET_NAME ) ) {
-				amazonS3.createBucket( BUCKET_NAME );
-			}
-
-			return amazonS3;
+			return AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
 		}
 
 		@Bean

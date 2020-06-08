@@ -20,12 +20,12 @@ import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
-import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
+import utils.AzureStorageHelper;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -45,7 +45,7 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 	@SneakyThrows
 	FileRepository createRepository() {
 		if ( cloudBlobClient == null ) {
-			cloudBlobClient = CloudStorageAccount.getDevelopmentStorageAccount().createCloudBlobClient();
+			cloudBlobClient = AzureStorageHelper.azurite.storageAccount().createCloudBlobClient();
 			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
 		}
 		FileManagerImpl fileManager = new FileManagerImpl();

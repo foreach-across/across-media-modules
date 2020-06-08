@@ -1,8 +1,5 @@
 package com.foreach.across.samples.filemanager;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.foreach.across.config.AcrossApplication;
@@ -21,10 +18,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.testcontainers.containers.localstack.LocalStackContainer;
 
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3;
 
 /**
  * @author Steven Gentens
@@ -66,12 +66,21 @@ public class FileManagerTestApplication
 
 	@Bean
 	@Profile("aws")
-	public AmazonS3 amazonS3() {
+	public AmazonS3 amazonS3( LocalStackContainer localStackContainer ) {
 		return AmazonS3ClientBuilder.standard()
-		                            .withEndpointConfiguration( new AwsClientBuilder.EndpointConfiguration( "http://localhost:4572", "us-east-1" ) )
+		                            .withEndpointConfiguration( localStackContainer.getEndpointConfiguration( S3 ) )
 		                            .withPathStyleAccessEnabled( true )
-		                            .withCredentials( new AWSStaticCredentialsProvider( new BasicAWSCredentials( "test", "test" ) ) )
+		                            .withCredentials( localStackContainer.getDefaultCredentialsProvider() )
 		                            .build();
+	}
+
+	@Bean
+	public LocalStackContainer localStackContainer() {
+		LocalStackContainer localstack = new LocalStackContainer( "0.9.3" )
+				.withFileSystemBind( "../local-data/storage/localstack", "/tmp/localstack/data" )
+				.withServices( S3 );
+		localstack.start();
+		return localstack;
 	}
 
 	@Bean

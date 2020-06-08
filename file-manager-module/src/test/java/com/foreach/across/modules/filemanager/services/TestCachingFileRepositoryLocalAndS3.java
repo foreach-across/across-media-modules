@@ -16,11 +16,7 @@
 
 package com.foreach.across.modules.filemanager.services;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
@@ -29,6 +25,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
+import utils.AmazonS3Helper;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -47,15 +44,7 @@ class TestCachingFileRepositoryLocalAndS3 extends BaseFileRepositoryTest
 	@Override
 	FileRepository createRepository() {
 		if ( amazonS3 == null ) {
-			amazonS3 = AmazonS3ClientBuilder.standard()
-			                                .withEndpointConfiguration( new AwsClientBuilder.EndpointConfiguration( "http://localhost:4572", "us-east-1" ) )
-			                                .withPathStyleAccessEnabled( true )
-			                                .withCredentials( new AWSStaticCredentialsProvider( new BasicAWSCredentials( "test", "test" ) ) )
-			                                .build();
-
-			if ( !amazonS3.doesBucketExist( BUCKET_NAME ) ) {
-				amazonS3.createBucket( BUCKET_NAME );
-			}
+			amazonS3 = AmazonS3Helper.createClientWithBuckets( BUCKET_NAME );
 		}
 		FileManagerImpl fileManager = new FileManagerImpl();
 
