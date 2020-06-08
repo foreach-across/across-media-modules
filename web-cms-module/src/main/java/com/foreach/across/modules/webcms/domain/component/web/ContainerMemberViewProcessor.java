@@ -17,12 +17,16 @@
 package com.foreach.across.modules.webcms.domain.component.web;
 
 import com.foreach.across.modules.bootstrapui.elements.FormGroupElement;
+import com.foreach.across.modules.bootstrapui.elements.FormViewElement;
+import com.foreach.across.modules.bootstrapui.styles.AcrossBootstrapStyles;
 import com.foreach.across.modules.entity.views.EntityView;
 import com.foreach.across.modules.entity.views.processors.EntityViewProcessorAdapter;
+import com.foreach.across.modules.entity.views.processors.SingleEntityFormViewProcessor;
 import com.foreach.across.modules.entity.views.request.EntityViewCommand;
 import com.foreach.across.modules.entity.views.request.EntityViewRequest;
 import com.foreach.across.modules.web.ui.ViewElementBuilderContext;
 import com.foreach.across.modules.web.ui.elements.ContainerViewElement;
+import com.foreach.across.modules.web.ui.elements.support.ContainerViewElementUtils;
 import com.foreach.across.modules.webcms.config.ConditionalOnAdminUI;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel;
@@ -86,6 +90,9 @@ public class ContainerMemberViewProcessor extends EntityViewProcessorAdapter
 		if ( component != null && component.hasOwner() ) {
 			entityViewRequest.getPageContentStructure().withNav( ContainerViewElement::clearChildren );
 		}
+
+		ContainerViewElementUtils.find( container, SingleEntityFormViewProcessor.FORM, FormViewElement.class )
+		                         .ifPresent( fve -> fve.set( AcrossBootstrapStyles.css.padding.top.s3 ) );
 
 		container.find( "formGroup-title", FormGroupElement.class )
 		         .ifPresent( group -> group.setRequired( false ) );
