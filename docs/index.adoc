@@ -301,7 +301,7 @@ An access token is not required if the client will only be used for creating ima
 ----
 @Bean
 public ImageServerClient imageServerClient() {
-    return new RemoteImageServerClient( "http://imageserverurl/", "access-token );
+    return new RemoteImageServerClient( "http://imageserverurl/", "access-token" );
 }
 ----
 
@@ -315,7 +315,7 @@ If the server is not operating in <<strict-mode,strict mode>>, you can also conf
 ----
 @Bean
 public ImageServerClient imageServerClient() {
-    RemoteImageServerClient client = new RemoteImageServerClient( "http://imageserverurl/", "access-token );
+    RemoteImageServerClient client = new RemoteImageServerClient( "http://imageserverurl/", "access-token" );
     client.setImageRequestHashBuilder( ImageRequestHashBuilder.md5( "hash-token" ) );
     return client;
 }
