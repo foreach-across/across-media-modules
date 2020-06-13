@@ -1,30 +1,136 @@
 version: '2.1'
 services:
-  localstack:
-    image: 'localstack/localstack:0.9.3'
-    ports:
-      - "4567-4584:4567-4584"
-      - "${PORT_WEB_UI-8099}:${PORT_WEB_UI-8099}"
+  maven-base:
+    # 1.) Do not use the alpine image as it fails frontend-maven-plugin:install-node-and-yarn
+    #     https://github.com/eirslett/frontend-maven-plugin/issues/743
+    # 2.) Avoid 3.5.4 or higher for now, surefire fails due to a broken openjdk package
+    #     https://github.com/carlossg/docker-maven/issues/90
+    # 3.) Using > 3.5.0 because of timestamp issues with -SNAPSHOT dependencies
+    #     https://issues.apache.org/jira/browse/MDEPLOY-221
+    image: 'ax-maven-with-build-tools:3.5.2-jdk-8'
+    build:
+      context: .
+      dockerfile: 'docker-build-files/Dockerfile'
+    working_dir: '${WORKING_DIR:-/usr/src/app}'
+    volumes:
+      - '../:/usr/src/app:delegated'
+      - './docker-build-files/wait-for-it.sh:/root/wait-for-it.sh'
+      - './docker-build-files/wait-for-datasource.jar:/root/wait-for-datasource.jar'
+      # TODO: should we map the dev-configs volume or just include it in our repo?
+      - './docker-build-files/dev-configs:/root/dev-configs'
+      # Reuse the maven repository from the host, we could omit it, but it would fetch at each build
+      - '${HOME}/.m2:/root/.m2:delegated'
+      # Reuse embedded mongo db downloads
+      - '${HOME}/.embedmongo:/root/.embedmongo:delegated'
+      # Share our GPG keys with underlying container
+      - '${HOME}/.gnupg:/root/.gnupg:delegated'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    # WINDOWS USERS using cmd.exe:
+    #- '${USERPROFILE}/.m2:/root/.m2'
     environment:
-#      - SERVICES=${SERVICES- }
-      - SERVICES=s3
-      - DEBUG=${DEBUG- }
-      #- DATA_DIR=${DATA_DIR- }
-      - DATA_DIR=/tmp/localstack/data
-      - PORT_WEB_UI=${PORT_WEB_UI-8099}
-      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
-      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
-      - DOCKER_HOST=unix:///var/run/docker.sock
-    volumes:
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
-      - ./local-data/storage/localstack:/tmp/localstack/data
+      # Specify the timezone - used by date tests
+      TZ: "Europe/Brussels"
+      # Specify a language - used by LocaleContextHolder
+      LANG: "en_US.UTF-8"
+      # Required by embedded mongo db - across-autoconfigure/test-projects
+      LC_ALL: "C"
+      # Faster maven startup https://jrebel.com/rebellabs/your-maven-build-is-slow-speed-it-up/
+      MAVEN_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 
-  fmm-azurite:
-    image: 'mcr.microsoft.com/azure-storage/azurite'
+  ### Sonar ########
+  #
+  # docker-compose up --exit-code-from sonar --abort-on-container-exit sonar
+  # docker-compose rm -f -s -v sonar
+  #
+  ####################
+  sonar:
+    extends:
+      service: 'maven-base'
+    command: sh -c "mvn -U --batch-mode org.jacoco:jacoco-maven-plugin:prepare-agent clean install -Dmaven.javadoc.skip=true -Pcoverage-per-test && mvn --batch-mode sonar:sonar -P!sonar,ax-sonarcloud -Dsonar.projectKey=$ACROSS_PLAN_KEY -Dsonar.branch.name=$bamboo_planRepository_branchName"
+
+  ### H2 ########
+  #
+  # docker-compose up --exit-code-from crossdb-test-h2 --abort-on-container-exit crossdb-test-h2
+  # docker-compose rm -s -f -v crossdb-test-h2
+  #
+  ####################
+  crossdb-test-h2:
+    extends:
+      service: 'maven-base'
+    command: sh -c "mvn  --batch-mode clean test-compile failsafe:integration-test failsafe:verify -Dmaven.javadoc.skip=true -DacrossTest.datasource=h2"
+
+  ### MySQL ########
+  #
+  # docker-compose up --exit-code-from crossdb-test-mysql --abort-on-container-exit mysql crossdb-test-mysql
+  # docker-compose rm -s -f -v mysql crossdb-test-mysql
+  #
+  ####################
+  crossdb-test-mysql:
+    extends:
+      service: 'maven-base'
+    #command: 'mvn clean test-compile failsafe:integration-test failsafe:verify -Dmaven.javadoc.skip=true -DacrossTest.datasource=mysql'
+    command: sh -c "java -Ddatasource=mysql -jar /root/wait-for-datasource.jar && mvn --batch-mode clean test-compile failsafe:integration-test failsafe:verify -Dmaven.javadoc.skip=true -DacrossTest.datasource=mysql"
+    depends_on:
+      - 'mysql'
+  mysql:
+    image: 'mysql:5.5'
+    restart: 'always'
     ports:
-      # 10000 is the blob storage service
-      # 10001 is the queue storage service
-      - "10000-10001:10000-10001"
-    volumes:
-      - ./local-data/storage/azurite:/data
-    command: [ "azurite", "-l", "/data", "--blobHost", "0.0.0.0", "--queueHost", "0.0.0.0" ]
+      - "3306:3306"
+    tmpfs:
+      - /var/lib/mysql:rw
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=axt
+      - MYSQL_USER=axt
+      - MYSQL_PASSWORD=across_test
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+
+  ### PostgreSQL ########
+  #
+  # docker-compose up --exit-code-from crossdb-test-postgres --abort-on-container-exit postgres crossdb-test-postgres
+  # docker-compose rm -s -f -v postgres crossdb-test-postgres
+  #
+  ####################
+  crossdb-test-postgres:
+    extends:
+      service: 'maven-base'
+    command: sh -c "java -Ddatasource=postgres -jar /root/wait-for-datasource.jar && mvn --batch-mode clean test-compile failsafe:integration-test failsafe:verify -Dmaven.javadoc.skip=true -DacrossTest.datasource=postgres"
+    #command: 'mvn clean test-compile failsafe:integration-test failsafe:verify -Dmaven.javadoc.skip=true -DacrossTest.datasource=postgres'
+    depends_on:
+      - 'postgres'
+  postgres:
+    image: 'postgres:9.6.11'
+    restart: 'always'
+    ports:
+      - "5432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data:rw
+    environment:
+      - POSTGRES_DB=axt
+      - POSTGRES_USER=axt
+      - POSTGRES_PASSWORD=across_test
+
+  ### Microsoft SQL Server ########
+  #
+  # docker-compose up --exit-code-from crossdb-test-mssql --abort-on-container-exit mssql crossdb-test-mssql
+  # docker-compose rm -s -f -v mssql crossdb-test-mssql
+  #
+  #################################
+  crossdb-test-mssql:
+    extends:
+      service: 'maven-base'
+    #command: 'mvn clean test-compile failsafe:integration-test failsafe:verify -Dmaven.javadoc.skip=true -DacrossTest.datasource=mssql'
+    command: sh -c "java -Ddatasource=mssql -jar /root/wait-for-datasource.jar && mvn --batch-mode clean test-compile failsafe:integration-test failsafe:verify -Dmaven.javadoc.skip=true -DacrossTest.datasource=mssql"
+    depends_on:
+      - 'mssql'
+  mssql:
+    image: microsoft/mssql-server-linux:2017-latest
+    hostname: 'sqlserver'
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: across_tEst
+      MSSQL_PID: Developer
+    # TODO: https://github.com/Microsoft/mssql-docker/issues/11
+    ports:
+      - '1433:1433'

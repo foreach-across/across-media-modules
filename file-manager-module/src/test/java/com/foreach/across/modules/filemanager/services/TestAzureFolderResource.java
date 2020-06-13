@@ -1,7 +1,6 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.*;
-import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
@@ -38,7 +37,7 @@ public class TestAzureFolderResource
 	@SneakyThrows
 	void resetResource() {
 		if ( cloudBlobClient == null ) {
-			cloudBlobClient = CloudStorageAccount.getDevelopmentStorageAccount().createCloudBlobClient();
+			cloudBlobClient = AzureStorageHelper.azurite.storageAccount().createCloudBlobClient();
 			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
 		}
 

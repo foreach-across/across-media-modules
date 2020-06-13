@@ -1,18 +1,18 @@
 package utils;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
+import org.testcontainers.containers.localstack.LocalStackContainer;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.stream.Stream;
+
+import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3;
 
 /**
  * Helper methods for localstack Amazon S3 client.
@@ -23,12 +23,19 @@ import java.util.stream.Stream;
 @UtilityClass
 public class AmazonS3Helper
 {
-	public static AmazonS3 createClientWithBuckets( String... bucketsToCreate ) {
+	public LocalStackContainer localstack = new LocalStackContainer( "0.9.3" )
+			.withServices( S3 );
+
+	static {
+		localstack.start();
+	}
+
+	public AmazonS3 createClientWithBuckets( String... bucketsToCreate ) {
 		AmazonS3 amazonS3 = AmazonS3ClientBuilder
 				.standard()
-				.withEndpointConfiguration( new AwsClientBuilder.EndpointConfiguration( "http://localhost:4572", "us-east-1" ) )
+				.withEndpointConfiguration( localstack.getEndpointConfiguration( S3 ) )
 				.withPathStyleAccessEnabled( true )
-				.withCredentials( new AWSStaticCredentialsProvider( new BasicAWSCredentials( "test", "test" ) ) )
+				.withCredentials( localstack.getDefaultCredentialsProvider() )
 				.build();
 
 		Stream.of( bucketsToCreate )
