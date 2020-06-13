@@ -155,7 +155,7 @@ public class ImageRestServiceImpl implements ImageRestService
 
 		Image image = imageService.getByExternalId( request.getExternalId() );
 		if ( image == null ) {
-			LOG_IMAGE_NOT_FOUND.error( request.getExternalId() );
+			LOG_IMAGE_NOT_FOUND.error( "Could not find image with externalId: {}", request.getExternalId() );
 		}
 
 		if ( image == null
