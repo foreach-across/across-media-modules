@@ -1,5 +1,6 @@
 package utils;
 
+import com.foreach.testcontainers.AzuriteContainer;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.experimental.UtilityClass;

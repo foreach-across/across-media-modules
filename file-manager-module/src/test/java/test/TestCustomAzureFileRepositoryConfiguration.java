@@ -8,6 +8,7 @@ import com.foreach.across.modules.filemanager.services.CachingFileRepository;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.test.AcrossTestConfiguration;
+import com.foreach.testcontainers.AzuriteContainer;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +22,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
 import org.testcontainers.containers.wait.strategy.Wait;
-import utils.AzuriteContainer;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;

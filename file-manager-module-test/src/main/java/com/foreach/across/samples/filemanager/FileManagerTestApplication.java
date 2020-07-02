@@ -10,7 +10,7 @@ import com.foreach.across.modules.filemanager.services.*;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.microsoft.azure.storage.CloudStorageAccount;
+import com.foreach.testcontainers.AzuriteContainer;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import org.springframework.boot.SpringApplication;
@@ -35,14 +35,16 @@ public class FileManagerTestApplication
 {
 	@Bean
 	@Profile("azure")
-	public CloudStorageAccount azureStorage() {
-		return CloudStorageAccount.getDevelopmentStorageAccount();
+	public AzuriteContainer azureStorage() {
+		AzuriteContainer container = new AzuriteContainer();
+		container.start();
+		return container;
 	}
 
 	@Bean
 	@Profile("azure")
-	public FileRepository fileRepositoryAzure( CloudStorageAccount storageAccount ) {
-		CloudBlobClient cloudBlobClient = storageAccount.createCloudBlobClient();
+	public FileRepository fileRepositoryAzure( AzuriteContainer azuriteContainer ) {
+		CloudBlobClient cloudBlobClient = azuriteContainer.storageAccount().createCloudBlobClient();
 		try {
 			cloudBlobClient.getContainerReference( "car-files" ).createIfNotExists();
 		}
@@ -75,6 +77,7 @@ public class FileManagerTestApplication
 	}
 
 	@Bean
+	@Profile("aws")
 	public LocalStackContainer localStackContainer() {
 		LocalStackContainer localstack = new LocalStackContainer( "0.9.3" )
 				.withFileSystemBind( "../local-data/storage/localstack", "/tmp/localstack/data" )
