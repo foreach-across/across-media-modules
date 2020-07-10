@@ -51,7 +51,7 @@ public abstract class BaseImageAPIController
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
 	public JsonResponse handleError( HttpServletRequest req, Exception exception ) {
-		LOG.error( exception.getMessage()  );
+		LOG.error( exception.getMessage(), exception );
 		return error( exception.getMessage() );
 	}
 }
