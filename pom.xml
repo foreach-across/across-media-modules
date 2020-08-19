@@ -95,6 +95,11 @@
 				<artifactId>across-hibernate-module</artifactId>
 				<version>4.0.0.RELEASE</version>
 			</dependency>
+			<!--			<dependency>-->
+			<!--				<groupId>org.springframework.integration</groupId>-->
+			<!--				<artifactId>spring-integration</artifactId>-->
+			<!--				<version>5.1.9.RELEASE</version>-->
+			<!--			</dependency>-->
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>properties-module</artifactId>
