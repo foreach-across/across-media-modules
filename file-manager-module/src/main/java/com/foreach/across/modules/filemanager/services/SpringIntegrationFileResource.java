@@ -38,9 +38,22 @@ public abstract class SpringIntegrationFileResource implements FileResource
 		return getPath( fileDescriptor );
 	}
 
-	public static String getPath( FileDescriptor fileDescriptor ) {
+	protected static String getPath( FileDescriptor fileDescriptor ) {
 		String path = StringUtils.join( Arrays.asList( fileDescriptor.getFolderId(), fileDescriptor.getFileId() ), "/" );
 		path = StringUtils.prependIfMissing( path, "/" );
 		return path;
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		return o != null && ( o instanceof FileResource && fileDescriptor.equals( ( (FileResource) o ).getDescriptor() ) );
+	}
+
+	@Override
+	public int hashCode() {
+		return fileDescriptor.hashCode();
 	}
 }

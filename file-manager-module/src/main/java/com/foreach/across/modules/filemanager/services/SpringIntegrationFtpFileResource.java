@@ -2,17 +2,21 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
+import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.business.FolderResource;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.springframework.integration.file.remote.session.Session;
 import org.springframework.integration.ftp.session.FtpRemoteFileTemplate;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
-
-import static org.apache.commons.io.FileUtils.ONE_GB;
 
 @Slf4j
 public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResource
@@ -62,27 +66,24 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 
 	@Override
 	public OutputStream getOutputStream() throws IOException {
-		if ( !exists() || file == null ) {
-			remoteFileTemplate.<Void, FTPClient>executeWithClient( this::instantiateAsEmptyFile );
+		boolean shouldCreateFile = file == null || !exists();
+		Session<FTPFile> session = remoteFileTemplate.getSession();
+		FTPClient client = (FTPClient) session.getClientInstance();
+
+		if ( shouldCreateFile ) {
+			instantiateAsEmptyFile( client );
 		}
-		return remoteFileTemplate.execute( session -> {
-			InputStream in = session.readRaw( getPath() );
-			OutputStream out = new ByteArrayOutputStream();
-			if ( contentLength() > 1.5 * ONE_GB ) {
-				IOUtils.copyLarge( in, out );
-			}
-			else {
-				IOUtils.copy( in, out );
-			}
-			in.close();
-			session.finalizeRaw();
-			return out;
-		} );
+		return new FtpFileOutputStream( client.storeFileStream( getPath() ), client, session );
 	}
 
 	private Void instantiateAsEmptyFile( FTPClient client ) {
 		try (InputStream bin = new ByteArrayInputStream( new byte[0] )) {
+			if ( fileDescriptor.getFolderId() != null
+					&& client.mdtmFile( fileDescriptor.getFolderId() ) == null ) {
+				client.makeDirectory( fileDescriptor.getFolderId() );
+			}
 			client.storeFile( getPath(), bin );
+			client.completePendingCommand();
 
 			this.file = client.mdtmFile( getPath() );
 		}
@@ -94,6 +95,120 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 
 	@Override
 	public InputStream getInputStream() throws IOException {
-		return remoteFileTemplate.execute( session -> session.readRaw( getPath() ) );
+		Session<FTPFile> session = remoteFileTemplate.getSession();
+		FTPClient client = (FTPClient) session.getClientInstance();
+		return new FtpFileInputStream( client.retrieveFileStream( getPath() ), client, session );
+	}
+
+	/**
+	 * Wrapper around an input stream retrieved through an {@link FTPClient}.
+	 * Ensures that {@link FTPClient#completePendingCommand()} is called when the stream is closed.
+	 */
+	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+	private static class FtpFileInputStream extends InputStream
+	{
+		private final InputStream inputStream;
+		private final FTPClient ftpClient;
+		private final Session session;
+		private boolean isClosed = false;
+
+		@Override
+		public int read( byte[] b ) throws IOException {
+			return inputStream.read( b );
+		}
+
+		@Override
+		public int read( byte[] b, int off, int len ) throws IOException {
+			return inputStream.read( b, off, len );
+		}
+
+		@Override
+		public long skip( long n ) throws IOException {
+			return inputStream.skip( n );
+		}
+
+		@Override
+		public int available() throws IOException {
+			return inputStream.available();
+		}
+
+		@Override
+		public void close() throws IOException {
+			if ( !isClosed ) {
+				inputStream.close();
+				if ( !ftpClient.completePendingCommand() ) {
+					LOG.error( "Unable to verify that the file has been modified correctly." );
+					session.close();
+					throw new FileStorageException( "File transfer may not be successful. Please check the logs for more info." );
+				}
+				isClosed = true;
+			}
+		}
+
+		@Override
+		public synchronized void mark( int readlimit ) {
+			inputStream.mark( readlimit );
+		}
+
+		@Override
+		public synchronized void reset() throws IOException {
+			inputStream.reset();
+		}
+
+		@Override
+		public boolean markSupported() {
+			return inputStream.markSupported();
+		}
+
+		@Override
+		public int read() throws IOException {
+			return inputStream.read();
+		}
+	}
+
+	/**
+	 * Wrapper around an output stream retrieved through an {@link FTPClient}.
+	 * Ensures that {@link FTPClient#completePendingCommand()} is called when the stream is closed.
+	 */
+	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+	private static class FtpFileOutputStream extends OutputStream
+	{
+		private final OutputStream outputStream;
+		private final FTPClient ftpClient;
+		private final Session session;
+		private boolean isClosed = false;
+
+		@Override
+		public void write( int b ) throws IOException {
+			outputStream.write( b );
+		}
+
+		@Override
+		public void write( byte[] b ) throws IOException {
+			outputStream.write( b );
+		}
+
+		@Override
+		public void write( byte[] b, int off, int len ) throws IOException {
+			outputStream.write( b, off, len );
+		}
+
+		@Override
+		public void flush() throws IOException {
+			outputStream.flush();
+		}
+
+		@Override
+		public void close() throws IOException {
+			if ( !isClosed ) {
+				outputStream.close();
+				if ( !ftpClient.completePendingCommand() ) {
+					LOG.error( "Unable to verify that the file has been modified correctly." );
+					session.close();
+					throw new FileStorageException( "File transfer may not be successful. Please check the logs for more info." );
+				}
+				isClosed = true;
+			}
+		}
 	}
 }

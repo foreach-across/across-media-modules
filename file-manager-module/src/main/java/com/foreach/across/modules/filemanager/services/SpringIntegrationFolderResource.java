@@ -56,11 +56,24 @@ public abstract class SpringIntegrationFolderResource implements FolderResource
 		return (boolean) remoteFileTemplate.execute( session -> session.mkdir( getPath() ) );
 	}
 
-	private String getPath() {
+	protected String getPath() {
 		return getPath( folderDescriptor );
 	}
 
-	private static String getPath( FolderDescriptor descriptor ) {
-		return StringUtils.defaultString( descriptor.getFolderId(), "/" );
+	protected static String getPath( FolderDescriptor descriptor ) {
+		return StringUtils.prependIfMissing( StringUtils.defaultString( descriptor.getFolderId(), "/" ), "/" );
+	}
+
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o ) {
+			return true;
+		}
+		return o != null && ( o instanceof FolderResource && folderDescriptor.equals( ( (FolderResource) o ).getDescriptor() ) );
+	}
+
+	@Override
+	public int hashCode() {
+		return folderDescriptor.hashCode();
 	}
 }
