@@ -49,9 +49,10 @@ public class TestSpringIntegrationFtpFileRepository extends BaseFileRepositoryTe
 	}
 
 	@BeforeAll
-	static void init() {
+	static void init() throws InterruptedException {
 		ftpContainer.start();
-		System.out.println();
+		// give container some time to instantiate
+		Thread.sleep( 1000 );
 	}
 
 	@AfterAll

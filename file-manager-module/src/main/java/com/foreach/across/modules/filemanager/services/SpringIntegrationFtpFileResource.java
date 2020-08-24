@@ -76,19 +76,15 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 		return new FtpFileOutputStream( client.storeFileStream( getPath() ), client, session );
 	}
 
-	private Void instantiateAsEmptyFile( FTPClient client ) {
+	private Void instantiateAsEmptyFile( FTPClient client ) throws IOException {
 		try (InputStream bin = new ByteArrayInputStream( new byte[0] )) {
 			if ( fileDescriptor.getFolderId() != null
 					&& client.mdtmFile( fileDescriptor.getFolderId() ) == null ) {
 				client.makeDirectory( fileDescriptor.getFolderId() );
 			}
 			client.storeFile( getPath(), bin );
-			client.completePendingCommand();
 
 			this.file = client.mdtmFile( getPath() );
-		}
-		catch ( IOException e ) {
-			LOG.error( "Unable to create empty file for descriptor {}", fileDescriptor, e );
 		}
 		return null;
 	}
@@ -138,9 +134,9 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 				inputStream.close();
 				if ( !ftpClient.completePendingCommand() ) {
 					LOG.error( "Unable to verify that the file has been modified correctly." );
-					session.close();
 					throw new FileStorageException( "File transfer may not be successful. Please check the logs for more info." );
 				}
+				session.close();
 				isClosed = true;
 			}
 		}
@@ -204,9 +200,9 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 				outputStream.close();
 				if ( !ftpClient.completePendingCommand() ) {
 					LOG.error( "Unable to verify that the file has been modified correctly." );
-					session.close();
 					throw new FileStorageException( "File transfer may not be successful. Please check the logs for more info." );
 				}
+				session.close();
 				isClosed = true;
 			}
 		}
