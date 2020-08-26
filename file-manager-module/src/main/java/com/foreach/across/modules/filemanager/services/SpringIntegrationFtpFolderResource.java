@@ -29,6 +29,11 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	}
 
 	@Override
+	public boolean exists() {
+		return retrieveRemoteFile( getPath() ) != null;
+	}
+
+	@Override
 	public Optional<FolderResource> getParentFolderResource() {
 		return folderDescriptor.getParentFolderDescriptor()
 		                       .map( fd -> new SpringIntegrationFtpFolderResource( fd, remoteFileTemplate ) );
@@ -64,18 +69,19 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				p = p.substring( 0, p.length() - 1 );
 			}
 
-			if ( !p.contains( "*" ) ) {
+			if ( !p.contains( "*" ) && !p.contains( "?" ) ) {
 				return resolveExactPath( p );
 			}
 
-			if ( !p.contains( "**" ) ) {
+			if ( !p.contains( "**" ) && !p.contains( "?" ) ) {
 				return resolvePatternForListing( p, matchOnlyDirectories );
 			}
 
 			BiPredicate<String, String> keyMatcher = ( candidateObjectName, antPattern ) -> {
-				String path = antPattern.endsWith( "/" ) ? candidateObjectName : StringUtils.removeEnd( candidateObjectName, "/" );
-				LOG.info( "[MATCHER] checking whether '{}' matches item '{}'", antPattern, path );
-				if ( pathMatcher.match( antPattern, path ) ) {
+				String patternToMatch = !StringUtils.isBlank( antPattern ) ? StringUtils.prependIfMissing( antPattern, "/" ) : antPattern;
+				String path = patternToMatch.endsWith( "/" ) ? candidateObjectName : StringUtils.removeEnd( candidateObjectName, "/" );
+				LOG.info( "[MATCHER] checking whether pattern '{}' matches item '{}'", patternToMatch, path );
+				if ( pathMatcher.match( patternToMatch, path ) ) {
 					LOG.info( "[MATCHER] Matched! checking whether only directories should match: '{}', matches directory? '{}'", matchOnlyDirectories,
 					          candidateObjectName.endsWith( "/" ) );
 					return !matchOnlyDirectories || candidateObjectName.endsWith( "/" );
@@ -90,16 +96,6 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		}
 
 		return Collections.emptyList();
-	}
-
-	private Collection<FileRepositoryResource> resolvePatternForListing( String p, boolean matchOnlyDirectories ) {
-		LOG.info( "Got a pattern we can just pass to the client '{}'", p );
-
-		if ( matchOnlyDirectories ) {
-			return new ArrayList<>( retrieveFoldersForPath( p ) );
-		}
-		return Stream.concat( retrieveFoldersForPath( p ).stream(), retrieveFilesForPath( p ).stream() )
-		             .collect( Collectors.toList() );
 	}
 
 	private Collection<FileRepositoryResource> resolveExactPath( String p ) {
@@ -117,6 +113,36 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		}
 		FileDescriptor.of( folderDescriptor.getRepositoryId(), pathToSearch );
 		return Collections.singletonList( createFileResource( ftpFile ) );
+	}
+
+	private Collection<FileRepositoryResource> resolvePatternForListing( String p, boolean matchOnlyDirectories ) {
+		LOG.info( "Got a pattern we can just pass to the client '{}'", p );
+		if ( p.endsWith( "*" ) ) {
+			String withoutEndListing = StringUtils.removeEnd( p, "*" );
+			if ( !withoutEndListing.isEmpty() ) {
+				List<FolderResource> folders;
+				if ( !withoutEndListing.contains( "*" ) ) {
+					folders = Collections.singletonList( getFolderResource( withoutEndListing ) );
+				}
+				else {
+					String pathToSearch = StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( withoutEndListing, "/" );
+					folders = retrieveFoldersForPath( pathToSearch );
+				}
+
+				return folders.stream()
+				              .map( f -> f.findResources( "*" ) )
+				              .flatMap( Collection::stream )
+				              .collect( Collectors.toList() );
+			}
+		}
+
+		String currentPath = getPath();
+		if ( matchOnlyDirectories ) {
+			return new ArrayList<>( retrieveFoldersForPath( currentPath ) );
+		}
+
+		return Stream.concat( retrieveFoldersForPath( currentPath ).stream(), retrieveFilesForPath( currentPath ).stream() )
+		             .collect( Collectors.toList() );
 	}
 
 	private FTPFile retrieveRemoteFile( String pathToSearch ) {
@@ -138,85 +164,40 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	                                            String currentPath,
 	                                            String keyPattern ) {
 		if ( !keyPattern.endsWith( "/" ) ) {
-
 			retrieveFilesForPath( currentPath )
 					.stream()
 					.filter( file -> {
-						String filePath = SpringIntegrationFtpFileResource.getPath( file.getDescriptor() );
-						LOG.info( "Checking whether file '{}' matches '{}'", filePath, keyPattern );
-						return keyMatcher.test( filePath, keyPattern );
+						String path = SpringIntegrationFtpFileResource.getPath( file.getDescriptor() );
+						LOG.info( "Checking whether file '{}' matches '{}'", path, keyPattern );
+						return keyMatcher.test( path, keyPattern );
 					} )
 					.forEach( resources::add );
 		}
 
-		String remainingPatternPart = getRemainingPatternPart( keyPattern, currentPath );
-		if ( remainingPatternPart != null && remainingPatternPart.startsWith( "**" ) ) {
-			findAllResourcesThatMatches( keyMatcher, resources, currentPath, keyPattern );
+		String pathToLookFor = currentPath;
+		String patternBasedOnPath = keyPattern;
+		if ( !keyPattern.startsWith( "**" ) && !keyPattern.startsWith( "?" ) ) {
+			String nextValidPrefix = getValidPrefix( keyPattern );
+			String remainingKeyPattern = StringUtils.removeStart( keyPattern, nextValidPrefix );
+			pathToLookFor = currentPath + StringUtils.prependIfMissing( nextValidPrefix, "/" );
+			pathToLookFor = pathToLookFor.replaceAll( "//", "/" );
+			patternBasedOnPath = remainingKeyPattern;
 		}
-		else {
-			findProgressivelyWithPartialMatch( keyMatcher, resources, currentPath, keyPattern );
-		}
-	}
+		String newKeyPattern = patternBasedOnPath;
 
-	private void findAllResourcesThatMatches( BiPredicate<String, String> keyMatcher,
-	                                          Set<FileRepositoryResource> resources,
-	                                          String currentPath,
-	                                          String keyPattern ) {
-		LOG.info( "Recursively checking '{}' for matches to '{}'", currentPath, keyPattern );
-		List<FolderResource> folders = retrieveFoldersForPath( currentPath );
-		folders.stream()
-		       .filter( f -> {
-			       String folderPath = "/" + f.getDescriptor().getFolderId() + "/";
-			       LOG.info( "Checking whether folder '{}' matches '{}'", folderPath, keyPattern );
-			       return keyMatcher.test( folderPath, keyPattern );
-		       } )
-		       .forEach( resources::add );
-		folders.forEach( f -> resources.addAll( f.findResources( keyPattern ) ) );
-	}
+		List<FolderResource> folderResources = retrieveFoldersForPath( pathToLookFor );
+		folderResources.stream()
+		               .filter( folder -> {
+			               String path = SpringIntegrationFtpFolderResource.getPath( folder.getDescriptor() );
+			               LOG.info( "Checking whether folder '{}' matches '{}'", path, newKeyPattern );
+			               return keyMatcher.test( path, newKeyPattern );
+		               } )
+		               .forEach( resources::add );
+		folderResources
+				.forEach(
+						f -> resources.addAll( f.findResources( newKeyPattern ) )
+				);
 
-	private void findProgressivelyWithPartialMatch( BiPredicate<String, String> keyMatcher,
-	                                                Set<FileRepositoryResource> resources,
-	                                                String currentPath,
-	                                                String keyPattern ) {
-		String remainingPatternPart = getRemainingPatternPart( keyPattern, currentPath );
-		int nextSlash = StringUtils.indexOf( remainingPatternPart, "/" );
-		if ( nextSlash != -1 ) {
-			String nextPatternPath = StringUtils.substring( remainingPatternPart, nextSlash );
-			String newCurrentPath = currentPath + "/" + StringUtils.removeEnd( remainingPatternPart, nextPatternPath );
-			LOG.info( "Progressively: Checking whether '{}' matches '{}'", newCurrentPath, nextPatternPath );
-			SpringIntegrationFtpFolderResource newFolderResource = new SpringIntegrationFtpFolderResource(
-					FolderDescriptor.of( folderDescriptor.getRepositoryId(), newCurrentPath ), remoteFileTemplate );
-			resources.addAll( newFolderResource.findResources( nextPatternPath ) );
-		}
-		else {
-			String path = currentPath + keyPattern;
-			LOG.info( "Progressively: looking into '{}'", path );
-			resources.addAll( retrieveFilesForPath( path ) );
-		}
-	}
-
-	@SuppressWarnings("Duplicates")
-	private String getRemainingPatternPart( String keyPattern, String path ) {
-		int numberOfSlashes = org.springframework.util.StringUtils.countOccurrencesOf( path, "/" );
-		int indexOfNthSlash = getIndexOfNthOccurrence( keyPattern, numberOfSlashes );
-		return indexOfNthSlash == -1 ? null : keyPattern.substring( indexOfNthSlash );
-	}
-
-	@SuppressWarnings("Duplicates")
-	private int getIndexOfNthOccurrence( String str, int pos ) {
-		int result = 0;
-		String subStr = str;
-		for ( int i = 0; i < pos; i++ ) {
-			int nthOccurrence = subStr.indexOf( '/' );
-			if ( nthOccurrence == -1 ) {
-				return -1;
-			}
-			else {
-				result += nthOccurrence + 1;
-				subStr = subStr.substring( nthOccurrence + 1 );
-			}
-		}
-		return result;
 	}
 
 	@SuppressWarnings("Duplicates")
@@ -239,8 +220,7 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		LOG.info( "[FETCH] Retrieving folders for '{}'", path );
 		FTPFile[] ftpFiles = null;
 		try {
-			String pathToSearch = StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( path, "/" );
-			ftpFiles = client.listDirectories( pathToSearch );
+			ftpFiles = client.listDirectories( path );
 		}
 		catch ( IOException e ) {
 			LOG.error( "Unexpected error whilst listing directories for path '{}'. Falling back to no directories found.", path, e );

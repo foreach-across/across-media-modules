@@ -3,6 +3,7 @@ package com.foreach.across.modules.filemanager.services;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.integration.file.remote.RemoteFileTemplate;
 import org.springframework.integration.file.remote.session.Session;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@Slf4j
 public abstract class SpringIntegrationFolderResource implements FolderResource
 {
 	private final FolderDescriptor folderDescriptor;
@@ -58,7 +60,8 @@ public abstract class SpringIntegrationFolderResource implements FolderResource
 		if ( optionalParent.isPresent() ) {
 			FolderResource parent = optionalParent.get();
 			if ( !parent.exists() ) {
-				parent.create();
+				boolean created = parent.create();
+				LOG.debug( "Parent for '{}' did not exist, attempted to create parent with result: {}", this.getDescriptor(), created );
 			}
 		}
 		return (boolean) remoteFileTemplate.execute( session -> session.mkdir( getPath() ) );
