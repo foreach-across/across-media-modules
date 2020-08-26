@@ -8,6 +8,7 @@ import org.springframework.integration.file.remote.RemoteFileTemplate;
 import org.springframework.integration.file.remote.session.Session;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public abstract class SpringIntegrationFolderResource implements FolderResource
@@ -53,6 +54,13 @@ public abstract class SpringIntegrationFolderResource implements FolderResource
 	@Override
 	@SuppressWarnings("unchecked")
 	public boolean create() {
+		Optional<FolderResource> optionalParent = getParentFolderResource();
+		if ( optionalParent.isPresent() ) {
+			FolderResource parent = optionalParent.get();
+			if ( !parent.exists() ) {
+				parent.create();
+			}
+		}
 		return (boolean) remoteFileTemplate.execute( session -> session.mkdir( getPath() ) );
 	}
 

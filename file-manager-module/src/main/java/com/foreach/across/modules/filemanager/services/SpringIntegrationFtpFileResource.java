@@ -36,7 +36,7 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 
 	@Override
 	public FolderResource getFolderResource() {
-		return null;
+		return new SpringIntegrationFtpFolderResource( fileDescriptor.getFolderDescriptor(), remoteFileTemplate );
 	}
 
 	@Override
@@ -78,13 +78,18 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 
 	private Void instantiateAsEmptyFile( FTPClient client ) throws IOException {
 		try (InputStream bin = new ByteArrayInputStream( new byte[0] )) {
-			if ( fileDescriptor.getFolderId() != null
-					&& client.mdtmFile( fileDescriptor.getFolderId() ) == null ) {
-				client.makeDirectory( fileDescriptor.getFolderId() );
+			FolderResource folder = getFolderResource();
+			if ( !folder.exists() ) {
+				folder.create();
 			}
-			client.storeFile( getPath(), bin );
 
-			this.file = client.mdtmFile( getPath() );
+			boolean fileCreated = client.storeFile( getPath(), bin );
+
+			if ( !fileCreated ) {
+				throw new FileStorageException( "Unable to create a basic empty file" );
+			}
+
+			this.file = client.mlistFile( getPath() );
 		}
 		return null;
 	}

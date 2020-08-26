@@ -23,6 +23,7 @@ import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.AmazonS3Helper;
 
@@ -164,5 +165,12 @@ class TestAmazonS3FileRepository extends BaseFileRepositoryTest
 		assertThat( root.findResources( "ee" ) ).contains( folderInRoot );
 		assertThat( root.findResources( "/?e/*" ) ).contains( fileInFolderInRoot );
 		assertThat( root.findResources( "/ee/*" ) ).contains( fileInFolderInRoot );
+	}
+
+	@Override
+	@Test
+	@Disabled
+	void findResourcesAndFilesWithHierarchySetup() {
+		super.findResourcesAndFilesWithHierarchySetup();
 	}
 }

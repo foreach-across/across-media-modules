@@ -8,6 +8,7 @@ import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.AzureStorageHelper;
 
@@ -149,5 +150,12 @@ public class TestAzureFileRepository extends BaseFileRepositoryTest
 		assertThat( root.findResources( "ee" ) ).contains( folderInRoot );
 		assertThat( root.findResources( "/?e/*" ) ).contains( fileInFolderInRoot );
 		assertThat( root.findResources( "/ee/*" ) ).contains( fileInFolderInRoot );
+	}
+
+	@Override
+	@Test
+	@Disabled
+	void findResourcesAndFilesWithHierarchySetup() {
+		super.findResourcesAndFilesWithHierarchySetup();
 	}
 }

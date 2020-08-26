@@ -17,6 +17,7 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileRepositoryResource;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.SneakyThrows;
@@ -32,6 +33,9 @@ import org.springframework.util.StreamUtils;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -290,6 +294,96 @@ abstract class BaseFileRepositoryTest
 		assertThat( fileRepository.findResources( "**", FolderResource.class ) ).contains( folder );
 		assertThat( fileRepository.findResources( "xx/*" ) ).containsExactly( file );
 		assertThat( fileRepository.findResources( "xx/" ) ).containsExactly( folder );
+	}
+
+	@Test
+	@SneakyThrows
+	void findResourcesAndFilesWithHierarchySetup() {
+		FolderResource rootFolder = fileRepository.getRootFolderResource();
+		FolderResource level1 = rootFolder.getFolderResource( "/child1" );
+		FolderResource level1_1 = rootFolder.getFolderResource( "/child1/child1" );
+		FolderResource level1_1_1 = rootFolder.getFolderResource( "/child1/child1/child1" );
+		FolderResource level2 = rootFolder.getFolderResource( "/child2" );
+		FolderResource level2_1 = rootFolder.getFolderResource( "/child2/child1" );
+		FolderResource level2_1_1 = rootFolder.getFolderResource( "/child2/child1/child1" );
+		FolderResource level2_1_2 = rootFolder.getFolderResource( "/child2/child1/child2" );
+		FolderResource level2_2 = rootFolder.getFolderResource( "/child2/child2" );
+
+		List<FolderResource> folders = Arrays.asList( level1, level1_1, level1_1_1, level2, level2_1, level2_1_1, level2_1_2, level2_2 );
+		folders.forEach( FolderResource::create );
+
+		FileResource text = rootFolder.getFileResource( "text.txt" );
+		FileResource level1_1_text = level1_1.getFileResource( "text.txt" );
+		FileResource level1_1_1_text = level1_1_1.getFileResource( "text.txt" );
+		FileResource level1_1_1_png = level1_1_1.getFileResource( "image.png" );
+		FileResource level2_1_1_png = level2_1_1.getFileResource( "image.png" );
+		FileResource level2_1_2_png = level2_1_2.getFileResource( "image.png" );
+		FileResource level2_1_2_png2 = level2_1_2.getFileResource( "image2.png" );
+		FileResource level2_2_png = level2_2.getFileResource( "image.png" );
+		List<FileResource> files = Arrays.asList( text, level1_1_text, level1_1_1_text, level1_1_1_png, level2_1_1_png, level2_1_2_png,
+		                                          level2_1_2_png2, level2_2_png );
+		for ( int i = 0; i < files.size(); i++ ) {
+			saveEmptyFile( files.get( i ) );
+		}
+
+		// findself
+		Collection<FileRepositoryResource> self = rootFolder.findResources( "/" );
+		assertThat( self )
+				.hasSize( 1 )
+				.containsExactlyInAnyOrder( rootFolder );
+
+		// find everything
+		Collection<FileRepositoryResource> allResources = rootFolder.findResources( "**" );
+		assertThat( allResources )
+				.hasSize( 16 )
+				.containsExactlyInAnyOrder( level1, text, level1_1, level1_1_text, level1_1_1, level1_1_1_text, level1_1_1_png, level2, level2_1, level2_1_1,
+				                            level2_1_1_png, level2_1_2, level2_1_2_png, level2_1_2_png2, level2_2, level2_2_png );
+
+		// find all folders
+		Collection<FileRepositoryResource> allFolders = rootFolder.findResources( "**/" );
+		assertThat( allFolders )
+				.hasSize( 8 )
+				.containsExactlyInAnyOrder( level1, level1_1, level1_1_1, level2, level2_1, level2_1_1, level2_1_2, level2_2 );
+
+		// find first level folders
+		Collection<FileRepositoryResource> firstLevelFolders = rootFolder.findResources( "*/" );
+		assertThat( firstLevelFolders )
+				.hasSize( 2 )
+				.containsExactlyInAnyOrder( level1, level2 );
+
+		// find first level files and folders
+		Collection<FileRepositoryResource> firstLevelFilesAndFolders = rootFolder.findResources( "*" );
+		assertThat( firstLevelFilesAndFolders )
+				.hasSize( 3 )
+				.containsExactlyInAnyOrder( text, level1, level2 );
+
+		// find all first second level folders
+		Collection<FileRepositoryResource> child1FoldersOnSecondLevel = rootFolder.findResources( "*/child1/" );
+		assertThat( child1FoldersOnSecondLevel )
+				.hasSize( 2 )
+				.containsExactlyInAnyOrder( level1_1, level2_1 );
+
+		// find all child2 folders
+		Collection<FileRepositoryResource> allChild2Folders = rootFolder.findResources( "**/child2" );
+		assertThat( allChild2Folders )
+				.hasSize( 3 )
+				.containsExactlyInAnyOrder( level2, level2_1_2, level2_2 );
+
+		// find all png files in child1 folders
+		Collection<FileRepositoryResource> allPngFilesInAnyChild1Folder = rootFolder.findResources( "**/child1/**/*.png" );
+		assertThat( allPngFilesInAnyChild1Folder )
+				.hasSize( 4 )
+				.containsExactlyInAnyOrder( level1_1_1_png, level2_1_1_png, level2_1_2_png, level2_1_2_png2 );
+
+		allPngFilesInAnyChild1Folder = rootFolder.findResources( "**/child1/**.png" );
+		assertThat( allPngFilesInAnyChild1Folder )
+				.hasSize( 2 )
+				.containsExactlyInAnyOrder( level1_1_1_png, level2_1_1_png );
+	}
+
+	void saveEmptyFile( FileResource resource ) throws IOException {
+		OutputStream outputStream = resource.getOutputStream();
+		outputStream.close();
 	}
 
 	private String read( FileDescriptor descriptor ) throws IOException {
