@@ -90,7 +90,8 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				return false;
 			};
 
-			findResourcesWithMatchingKeys( keyMatcher, resources, getPath() + getValidPrefix( p ), StringUtils.prependIfMissing( p, "/" ) );
+			findResourcesWithMatchingKeys( keyMatcher, resources, getPath() + getValidPrefix( p ), StringUtils.prependIfMissing( p, "/" ),
+			                               matchOnlyDirectories );
 
 			return resources;
 		}
@@ -130,18 +131,20 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				}
 
 				return folders.stream()
-				              .map( f -> f.findResources( "*" ) )
+				              .map( f -> f.findResources( matchOnlyDirectories ? "*/" : "*" ) )
 				              .flatMap( Collection::stream )
 				              .collect( Collectors.toList() );
 			}
 		}
 
-		String currentPath = getPath();
+		String pathToSearch = p.length() > 1
+				? StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( p, "/" )
+				: getPath();
 		if ( matchOnlyDirectories ) {
-			return new ArrayList<>( retrieveFoldersForPath( currentPath ) );
+			return new ArrayList<>( retrieveFoldersForPath( pathToSearch ) );
 		}
 
-		return Stream.concat( retrieveFoldersForPath( currentPath ).stream(), retrieveFilesForPath( currentPath ).stream() )
+		return Stream.concat( retrieveFoldersForPath( pathToSearch ).stream(), retrieveFilesForPath( pathToSearch ).stream() )
 		             .collect( Collectors.toList() );
 	}
 
@@ -162,7 +165,7 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	private void findResourcesWithMatchingKeys( BiPredicate<String, String> keyMatcher,
 	                                            Set<FileRepositoryResource> resources,
 	                                            String currentPath,
-	                                            String keyPattern ) {
+	                                            String keyPattern, boolean matchOnlyDirectories ) {
 		if ( !keyPattern.endsWith( "/" ) ) {
 			retrieveFilesForPath( currentPath )
 					.stream()
@@ -188,14 +191,18 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		List<FolderResource> folderResources = retrieveFoldersForPath( pathToLookFor );
 		folderResources.stream()
 		               .filter( folder -> {
-			               String path = SpringIntegrationFtpFolderResource.getPath( folder.getDescriptor() );
+			               String path = StringUtils.appendIfMissing( SpringIntegrationFtpFolderResource.getPath( folder.getDescriptor() ), "/" );
 			               LOG.info( "Checking whether folder '{}' matches '{}'", path, newKeyPattern );
 			               return keyMatcher.test( path, newKeyPattern );
 		               } )
 		               .forEach( resources::add );
+
 		folderResources
 				.forEach(
-						f -> resources.addAll( f.findResources( newKeyPattern ) )
+						f -> {
+							String recursivePattern = matchOnlyDirectories ? StringUtils.appendIfMissing( newKeyPattern, "/" ) : newKeyPattern;
+							resources.addAll( f.findResources( recursivePattern ) );
+						}
 				);
 
 	}
