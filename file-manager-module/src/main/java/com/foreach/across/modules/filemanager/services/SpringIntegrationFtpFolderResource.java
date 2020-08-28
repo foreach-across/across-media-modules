@@ -40,7 +40,11 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	}
 
 	@Override
-	public FileRepositoryResource getResource( String relativePath ) {
+	public FileRepositoryResource getResource( @NonNull String relativePath ) {
+		if ( relativePath.isEmpty() || "/".equals( relativePath ) ) {
+			return this;
+		}
+
 		if ( relativePath.endsWith( "/" ) ) {
 			return new SpringIntegrationFtpFolderResource( folderDescriptor.createFolderDescriptor( relativePath ), remoteFileTemplate );
 		}
@@ -56,7 +60,7 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 
 	@Override
 	@SuppressWarnings("Duplicates")
-	public Collection<FileRepositoryResource> findResources( String pattern ) {
+	public Collection<FileRepositoryResource> findResources( @NonNull String pattern ) {
 		if ( exists() ) {
 			LOG.info( "Looking for resources with pattern '{}' in '{}'", pattern, getPath() );
 
@@ -118,6 +122,21 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 
 	private Collection<FileRepositoryResource> resolvePatternForListing( String p, boolean matchOnlyDirectories ) {
 		LOG.info( "Got a pattern we can just pass to the client '{}'", p );
+
+		String validPrefix = getValidPrefix( p );
+		String remainingPattern = StringUtils.removeStart( p, validPrefix );
+
+		if ( remainingPattern.startsWith( "*" ) && remainingPattern.contains( "/" ) ) {
+			String pathToSearch =
+					StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( validPrefix, "/" );
+			String withoutListing = StringUtils.removeStart( remainingPattern, "*" );
+			return retrieveFoldersForPath( pathToSearch )
+					.stream()
+					.map( f -> f.findResources( matchOnlyDirectories ? StringUtils.appendIfMissing( withoutListing, "/" ) : withoutListing ) )
+					.flatMap( Collection::stream )
+					.collect( Collectors.toSet() );
+		}
+
 		if ( p.endsWith( "*" ) ) {
 			String withoutEndListing = StringUtils.removeEnd( p, "*" );
 			if ( !withoutEndListing.isEmpty() ) {
@@ -133,7 +152,7 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				return folders.stream()
 				              .map( f -> f.findResources( matchOnlyDirectories ? "*/" : "*" ) )
 				              .flatMap( Collection::stream )
-				              .collect( Collectors.toList() );
+				              .collect( Collectors.toSet() );
 			}
 		}
 
@@ -141,11 +160,11 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				? StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( p, "/" )
 				: getPath();
 		if ( matchOnlyDirectories ) {
-			return new ArrayList<>( retrieveFoldersForPath( pathToSearch ) );
+			return new HashSet<>( retrieveFoldersForPath( pathToSearch ) );
 		}
 
 		return Stream.concat( retrieveFoldersForPath( pathToSearch ).stream(), retrieveFilesForPath( pathToSearch ).stream() )
-		             .collect( Collectors.toList() );
+		             .collect( Collectors.toSet() );
 	}
 
 	private FTPFile retrieveRemoteFile( String pathToSearch ) {

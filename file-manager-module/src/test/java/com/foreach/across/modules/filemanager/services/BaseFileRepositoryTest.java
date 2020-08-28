@@ -300,6 +300,8 @@ abstract class BaseFileRepositoryTest
 	@SneakyThrows
 	void findResourcesAndFilesWithHierarchySetup() {
 		FolderResource rootFolder = fileRepository.getRootFolderResource();
+		assertThat( rootFolder.deleteChildren() ).isTrue();
+
 		FolderResource level1 = rootFolder.getFolderResource( "/child1" );
 		FolderResource level1_1 = rootFolder.getFolderResource( "/child1/child1" );
 		FolderResource level1_1_1 = rootFolder.getFolderResource( "/child1/child1/child1" );
@@ -379,6 +381,8 @@ abstract class BaseFileRepositoryTest
 		assertThat( allPngFilesInAnyChild1Folder )
 				.hasSize( 2 )
 				.containsExactlyInAnyOrder( level1_1_1_png, level2_1_1_png );
+
+		assertThat( rootFolder.deleteChildren() ).isTrue();
 	}
 
 	void saveEmptyFile( FileResource resource ) throws IOException {

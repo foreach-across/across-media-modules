@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 public class TestSpringIntegrationFtpFileRepository extends BaseFileRepositoryTest
 {
-	static FtpContainer ftpContainer = new FtpContainer();
+	private static FtpContainer ftpContainer = new FtpContainer();
 	private static FtpRemoteFileTemplate template;
 
 	@Override

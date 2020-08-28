@@ -21,6 +21,9 @@ public abstract class SpringIntegrationFileResource implements FileResource
 
 	@Override
 	public boolean delete() {
+		if ( !exists() ) {
+			return true;
+		}
 		return remoteFileTemplate.remove( getPath() );
 	}
 
@@ -55,5 +58,10 @@ public abstract class SpringIntegrationFileResource implements FileResource
 	@Override
 	public int hashCode() {
 		return fileDescriptor.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return getDescription();
 	}
 }

@@ -12,10 +12,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.integration.file.remote.session.Session;
 import org.springframework.integration.ftp.session.FtpRemoteFileTemplate;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 
 @Slf4j
@@ -40,18 +37,38 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 	}
 
 	@Override
+	public boolean exists() {
+		return getFtpFile() != null;
+	}
+
+	@Override
+	public boolean delete() {
+		boolean deleted = super.delete();
+		resetFileMetadata();
+		return deleted;
+	}
+
+	@Override
 	public URL getURL() throws IOException {
 		throw new UnsupportedOperationException( "URL is not supported for an FTP FileResource" );
 	}
 
 	@Override
 	public long contentLength() throws IOException {
-		return file == null ? 0 : file.getSize();
+		FTPFile file = getFtpFile();
+		if ( file == null ) {
+			throw new FileNotFoundException( "Unable to locate file " + fileDescriptor );
+		}
+		return file.getSize();
 	}
 
 	@Override
 	public long lastModified() throws IOException {
-		return file == null ? 0 : file.getTimestamp().toInstant().toEpochMilli();
+		FTPFile file = getFtpFile();
+		if ( file == null ) {
+			throw new FileNotFoundException( "Unable to locate file " + fileDescriptor );
+		}
+		return file.getTimestamp().toInstant().toEpochMilli();
 	}
 
 	@Override
@@ -66,14 +83,19 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 
 	@Override
 	public OutputStream getOutputStream() throws IOException {
-		boolean shouldCreateFile = file == null || !exists();
+		boolean shouldCreateFile = !exists();
 		Session<FTPFile> session = remoteFileTemplate.getSession();
 		FTPClient client = (FTPClient) session.getClientInstance();
 
 		if ( shouldCreateFile ) {
 			instantiateAsEmptyFile( client );
 		}
+		resetFileMetadata();
 		return new FtpFileOutputStream( client.storeFileStream( getPath() ), client, session );
+	}
+
+	void resetFileMetadata() {
+		this.file = null;
 	}
 
 	private Void instantiateAsEmptyFile( FTPClient client ) throws IOException {
@@ -88,17 +110,35 @@ public class SpringIntegrationFtpFileResource extends SpringIntegrationFileResou
 			if ( !fileCreated ) {
 				throw new FileStorageException( "Unable to create a basic empty file" );
 			}
-
-			this.file = client.mlistFile( getPath() );
 		}
 		return null;
 	}
 
 	@Override
 	public InputStream getInputStream() throws IOException {
+		if ( !exists() ) {
+			throw new FileNotFoundException( "Unable to locate file " + fileDescriptor );
+		}
 		Session<FTPFile> session = remoteFileTemplate.getSession();
 		FTPClient client = (FTPClient) session.getClientInstance();
 		return new FtpFileInputStream( client.retrieveFileStream( getPath() ), client, session );
+	}
+
+	private FTPFile getFtpFile() {
+		if ( file == null ) {
+			this.file = remoteFileTemplate.executeWithClient( this::fetchFileInfo );
+		}
+		return file;
+	}
+
+	private FTPFile fetchFileInfo( FTPClient client ) {
+		try {
+			return client.mlistFile( getPath() );
+		}
+		catch ( IOException e ) {
+			LOG.debug( "Unexpected error whilst retrieving file", e );
+		}
+		return null;
 	}
 
 	/**
