@@ -23,6 +23,7 @@ import com.foreach.across.modules.filemanager.business.FolderResource;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
 import utils.AzureStorageHelper;
@@ -259,6 +260,13 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 		assertThat( root.findResources( "ee" ) ).contains( folderInRoot );
 		assertThat( root.findResources( "/?e/*" ) ).contains( fileInFolderInRoot );
 		assertThat( root.findResources( "/ee/*" ) ).contains( fileInFolderInRoot );
+	}
+
+	@Override
+	@Test
+	@Disabled
+	void findResourcesAndFilesWithHierarchySetup() {
+		super.findResourcesAndFilesWithHierarchySetup();
 	}
 
 	@AfterAll
