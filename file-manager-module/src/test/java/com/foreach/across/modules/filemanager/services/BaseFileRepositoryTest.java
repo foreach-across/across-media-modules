@@ -300,7 +300,9 @@ abstract class BaseFileRepositoryTest
 	@SneakyThrows
 	void findResourcesAndFilesWithHierarchySetup() {
 		FolderResource rootFolder = fileRepository.getRootFolderResource();
-		assertThat( rootFolder.deleteChildren() ).isTrue();
+		if ( !rootFolder.findResources( "*" ).isEmpty() ) {
+			assertThat( rootFolder.deleteChildren() ).isTrue();
+		}
 
 		FolderResource level1 = rootFolder.getFolderResource( "/child1" );
 		FolderResource level1_1 = rootFolder.getFolderResource( "/child1/child1" );

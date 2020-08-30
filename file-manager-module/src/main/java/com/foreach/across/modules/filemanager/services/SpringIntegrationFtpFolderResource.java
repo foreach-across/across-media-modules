@@ -62,8 +62,6 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	@SuppressWarnings("Duplicates")
 	public Collection<FileRepositoryResource> findResources( @NonNull String pattern ) {
 		if ( exists() ) {
-			LOG.info( "Looking for resources with pattern '{}' in '{}'", pattern, getPath() );
-
 			Set<FileRepositoryResource> resources = new LinkedHashSet<>();
 			AntPathMatcher pathMatcher = new AntPathMatcher( "/" );
 			String p = StringUtils.startsWith( pattern, "/" ) ? pattern.substring( 1 ) : pattern;
@@ -84,13 +82,9 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 			BiPredicate<String, String> keyMatcher = ( candidateObjectName, antPattern ) -> {
 				String patternToMatch = !StringUtils.isBlank( antPattern ) ? StringUtils.prependIfMissing( antPattern, "/" ) : antPattern;
 				String path = patternToMatch.endsWith( "/" ) ? candidateObjectName : StringUtils.removeEnd( candidateObjectName, "/" );
-				LOG.info( "[MATCHER] checking whether pattern '{}' matches item '{}'", patternToMatch, path );
 				if ( pathMatcher.match( patternToMatch, path ) ) {
-					LOG.info( "[MATCHER] Matched! checking whether only directories should match: '{}', matches directory? '{}'", matchOnlyDirectories,
-					          candidateObjectName.endsWith( "/" ) );
 					return !matchOnlyDirectories || candidateObjectName.endsWith( "/" );
 				}
-				LOG.info( "[MATCHER] Not a match." );
 				return false;
 			};
 
@@ -121,8 +115,6 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	}
 
 	private Collection<FileRepositoryResource> resolvePatternForListing( String p, boolean matchOnlyDirectories ) {
-		LOG.info( "Got a pattern we can just pass to the client '{}'", p );
-
 		String validPrefix = getValidPrefix( p );
 		String remainingPattern = StringUtils.removeStart( p, validPrefix );
 
@@ -190,7 +182,6 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 					.stream()
 					.filter( file -> {
 						String path = SpringIntegrationFtpFileResource.getPath( file.getDescriptor() );
-						LOG.info( "Checking whether file '{}' matches '{}'", path, keyPattern );
 						return keyMatcher.test( path, keyPattern );
 					} )
 					.forEach( resources::add );
@@ -206,12 +197,20 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 			patternBasedOnPath = remainingKeyPattern;
 		}
 		String newKeyPattern = patternBasedOnPath;
-
+		if ( !newKeyPattern.contains( "/" ) && !matchOnlyDirectories && newKeyPattern.contains( "?" ) ) {
+			String matchingPattern = pathToLookFor + StringUtils.removeStart( newKeyPattern, "/" );
+			List<FileResource> filesForPath = retrieveFilesForPath( pathToLookFor );
+			filesForPath.stream()
+			            .filter( file -> {
+				            String path = SpringIntegrationFileResource.getPath( file.getDescriptor() );
+				            return keyMatcher.test( path, matchingPattern );
+			            } )
+			            .forEach( resources::add );
+		}
 		List<FolderResource> folderResources = retrieveFoldersForPath( pathToLookFor );
 		folderResources.stream()
 		               .filter( folder -> {
 			               String path = StringUtils.appendIfMissing( SpringIntegrationFtpFolderResource.getPath( folder.getDescriptor() ), "/" );
-			               LOG.info( "Checking whether folder '{}' matches '{}'", path, newKeyPattern );
 			               return keyMatcher.test( path, newKeyPattern );
 		               } )
 		               .forEach( resources::add );
@@ -243,7 +242,6 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	}
 
 	private List<FolderResource> retrieveFoldersForPath( FTPClient client, String path ) {
-		LOG.info( "[FETCH] Retrieving folders for '{}'", path );
 		FTPFile[] ftpFiles = null;
 		try {
 			ftpFiles = client.listDirectories( path );
@@ -265,14 +263,11 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	}
 
 	private List<FileResource> retrieveFilesForPath( FTPClient client, String path ) {
-		// this shit also matches folders, so we should exclude folders here
-		LOG.info( "[FETCH] Retrieving files for '{}'", path );
 		FTPFile[] ftpFiles = null;
 		try {
 			ftpFiles = client.listFiles( path );
 		}
 		catch ( IOException e ) {
-			LOG.error( "Unexpected error whilst listing directories for path '{}'. Falling back to no directories found.", path, e );
 			ftpFiles = new FTPFile[0];
 		}
 
