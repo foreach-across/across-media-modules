@@ -1,11 +1,15 @@
 package com.foreach.across.modules.filemanager.services;
 
-import com.foreach.across.modules.filemanager.business.*;
+import com.foreach.across.modules.filemanager.business.FileDescriptor;
+import com.foreach.across.modules.filemanager.business.FileRepositoryResource;
+import com.foreach.across.modules.filemanager.business.FolderDescriptor;
+import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.springframework.integration.file.remote.session.Session;
 import org.springframework.integration.ftp.session.FtpRemoteFileTemplate;
 import org.springframework.util.AntPathMatcher;
 
@@ -31,6 +35,10 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	@Override
 	public boolean exists() {
 		return retrieveRemoteFile( getPath() ) != null;
+	}
+
+	protected boolean exists( FTPClient client ) {
+		return retrieveRemoteFile( client, getPath() ) != null;
 	}
 
 	@Override
@@ -61,7 +69,15 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	@Override
 	@SuppressWarnings("Duplicates")
 	public Collection<FileRepositoryResource> findResources( @NonNull String pattern ) {
-		if ( exists() ) {
+		try (Session session = remoteFileTemplate.getSession();) {
+			FTPClient client = (FTPClient) session.getClientInstance();
+			return findResources( pattern, client );
+		}
+	}
+
+	@SuppressWarnings("Duplicates")
+	protected Collection<FileRepositoryResource> findResources( @NonNull String pattern, FTPClient client ) {
+		if ( exists( client ) ) {
 			Set<FileRepositoryResource> resources = new LinkedHashSet<>();
 			AntPathMatcher pathMatcher = new AntPathMatcher( "/" );
 			String p = StringUtils.startsWith( pattern, "/" ) ? pattern.substring( 1 ) : pattern;
@@ -72,11 +88,11 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 			}
 
 			if ( !p.contains( "*" ) && !p.contains( "?" ) ) {
-				return resolveExactPath( p );
+				return resolveExactPath( p, client );
 			}
 
 			if ( !p.contains( "**" ) && !p.contains( "?" ) ) {
-				return resolvePatternForListing( p, matchOnlyDirectories );
+				return resolvePatternForListing( p, matchOnlyDirectories, client );
 			}
 
 			BiPredicate<String, String> keyMatcher = ( candidateObjectName, antPattern ) -> {
@@ -89,7 +105,7 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 			};
 
 			findResourcesWithMatchingKeys( keyMatcher, resources, getPath() + getValidPrefix( p ), StringUtils.prependIfMissing( p, "/" ),
-			                               matchOnlyDirectories );
+			                               matchOnlyDirectories, client );
 
 			return resources;
 		}
@@ -97,9 +113,9 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		return Collections.emptyList();
 	}
 
-	private Collection<FileRepositoryResource> resolveExactPath( String p ) {
+	private Collection<FileRepositoryResource> resolveExactPath( String p, FTPClient client ) {
 		String pathToSearch = StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( p, "/" );
-		FTPFile ftpFile = retrieveRemoteFile( pathToSearch );
+		FTPFile ftpFile = retrieveRemoteFile( client, pathToSearch );
 
 		if ( ftpFile == null ) {
 			return Collections.emptyList();
@@ -114,7 +130,7 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		return Collections.singletonList( createFileResource( ftpFile ) );
 	}
 
-	private Collection<FileRepositoryResource> resolvePatternForListing( String p, boolean matchOnlyDirectories ) {
+	private Collection<FileRepositoryResource> resolvePatternForListing( String p, boolean matchOnlyDirectories, FTPClient client ) {
 		String validPrefix = getValidPrefix( p );
 		String remainingPattern = StringUtils.removeStart( p, validPrefix );
 
@@ -122,9 +138,9 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 			String pathToSearch =
 					StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( validPrefix, "/" );
 			String withoutListing = StringUtils.removeStart( remainingPattern, "*" );
-			return retrieveFoldersForPath( pathToSearch )
+			return retrieveFoldersForPath( client, pathToSearch )
 					.stream()
-					.map( f -> f.findResources( matchOnlyDirectories ? StringUtils.appendIfMissing( withoutListing, "/" ) : withoutListing ) )
+					.map( f -> f.findResources( matchOnlyDirectories ? StringUtils.appendIfMissing( withoutListing, "/" ) : withoutListing, client ) )
 					.flatMap( Collection::stream )
 					.collect( Collectors.toSet() );
 		}
@@ -132,17 +148,17 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		if ( p.endsWith( "*" ) ) {
 			String withoutEndListing = StringUtils.removeEnd( p, "*" );
 			if ( !withoutEndListing.isEmpty() ) {
-				List<FolderResource> folders;
+				List<SpringIntegrationFtpFolderResource> folders;
 				if ( !withoutEndListing.contains( "*" ) ) {
-					folders = Collections.singletonList( getFolderResource( withoutEndListing ) );
+					folders = Collections.singletonList( (SpringIntegrationFtpFolderResource) getFolderResource( withoutEndListing ) );
 				}
 				else {
 					String pathToSearch = StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( withoutEndListing, "/" );
-					folders = retrieveFoldersForPath( pathToSearch );
+					folders = retrieveFoldersForPath( client, pathToSearch );
 				}
 
 				return folders.stream()
-				              .map( f -> f.findResources( matchOnlyDirectories ? "*/" : "*" ) )
+				              .map( f -> f.findResources( matchOnlyDirectories ? "*/" : "*", client ) )
 				              .flatMap( Collection::stream )
 				              .collect( Collectors.toSet() );
 			}
@@ -152,10 +168,10 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				? StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( p, "/" )
 				: getPath();
 		if ( matchOnlyDirectories ) {
-			return new HashSet<>( retrieveFoldersForPath( pathToSearch ) );
+			return new HashSet<>( retrieveFoldersForPath( client, pathToSearch ) );
 		}
 
-		return Stream.concat( retrieveFoldersForPath( pathToSearch ).stream(), retrieveFilesForPath( pathToSearch ).stream() )
+		return Stream.concat( retrieveFoldersForPath( client, pathToSearch ).stream(), retrieveFilesForPath( client, pathToSearch ).stream() )
 		             .collect( Collectors.toSet() );
 	}
 
@@ -176,9 +192,9 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	private void findResourcesWithMatchingKeys( BiPredicate<String, String> keyMatcher,
 	                                            Set<FileRepositoryResource> resources,
 	                                            String currentPath,
-	                                            String keyPattern, boolean matchOnlyDirectories ) {
+	                                            String keyPattern, boolean matchOnlyDirectories, FTPClient client ) {
 		if ( !keyPattern.endsWith( "/" ) ) {
-			retrieveFilesForPath( currentPath )
+			retrieveFilesForPath( client, currentPath )
 					.stream()
 					.filter( file -> {
 						String path = SpringIntegrationFtpFileResource.getPath( file.getDescriptor() );
@@ -197,9 +213,10 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 			patternBasedOnPath = remainingKeyPattern;
 		}
 		String newKeyPattern = patternBasedOnPath;
+
 		if ( !newKeyPattern.contains( "/" ) && !matchOnlyDirectories && newKeyPattern.contains( "?" ) ) {
 			String matchingPattern = pathToLookFor + StringUtils.removeStart( newKeyPattern, "/" );
-			List<FileResource> filesForPath = retrieveFilesForPath( pathToLookFor );
+			List<SpringIntegrationFtpFileResource> filesForPath = retrieveFilesForPath( client, pathToLookFor );
 			filesForPath.stream()
 			            .filter( file -> {
 				            String path = SpringIntegrationFileResource.getPath( file.getDescriptor() );
@@ -207,7 +224,8 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 			            } )
 			            .forEach( resources::add );
 		}
-		List<FolderResource> folderResources = retrieveFoldersForPath( pathToLookFor );
+
+		List<SpringIntegrationFtpFolderResource> folderResources = retrieveFoldersForPath( client, pathToLookFor );
 		folderResources.stream()
 		               .filter( folder -> {
 			               String path = StringUtils.appendIfMissing( SpringIntegrationFtpFolderResource.getPath( folder.getDescriptor() ), "/" );
@@ -219,7 +237,7 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				.forEach(
 						f -> {
 							String recursivePattern = matchOnlyDirectories ? StringUtils.appendIfMissing( newKeyPattern, "/" ) : newKeyPattern;
-							resources.addAll( f.findResources( recursivePattern ) );
+							resources.addAll( f.findResources( recursivePattern, client ) );
 						}
 				);
 
@@ -237,11 +255,11 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		return beforeIndex.contains( "/" ) ? beforeIndex.substring( 0, beforeIndex.lastIndexOf( '/' ) + 1 ) : "";
 	}
 
-	private List<FolderResource> retrieveFoldersForPath( String path ) {
-		return remoteFileTemplate.<List<FolderResource>, FTPClient>executeWithClient( client -> retrieveFoldersForPath( client, path ) );
+	private List<SpringIntegrationFtpFolderResource> retrieveFoldersForPath( String path ) {
+		return remoteFileTemplate.<List<SpringIntegrationFtpFolderResource>, FTPClient>executeWithClient( client -> retrieveFoldersForPath( client, path ) );
 	}
 
-	private List<FolderResource> retrieveFoldersForPath( FTPClient client, String path ) {
+	private List<SpringIntegrationFtpFolderResource> retrieveFoldersForPath( FTPClient client, String path ) {
 		FTPFile[] ftpFiles = null;
 		try {
 			ftpFiles = client.listDirectories( path );
@@ -258,11 +276,11 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		             .collect( Collectors.toList() );
 	}
 
-	private List<FileResource> retrieveFilesForPath( String path ) {
-		return remoteFileTemplate.<List<FileResource>, FTPClient>executeWithClient( client -> retrieveFilesForPath( client, path ) );
+	private List<SpringIntegrationFtpFileResource> retrieveFilesForPath( String path ) {
+		return remoteFileTemplate.<List<SpringIntegrationFtpFileResource>, FTPClient>executeWithClient( client -> retrieveFilesForPath( client, path ) );
 	}
 
-	private List<FileResource> retrieveFilesForPath( FTPClient client, String path ) {
+	private List<SpringIntegrationFtpFileResource> retrieveFilesForPath( FTPClient client, String path ) {
 		FTPFile[] ftpFiles = null;
 		try {
 			ftpFiles = client.listFiles( path );
