@@ -126,8 +126,7 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 					new SpringIntegrationFtpFolderResource( FolderDescriptor.of( folderDescriptor.getRepositoryId(), pathToSearch ),
 					                                        remoteFileTemplate ) );
 		}
-		FileDescriptor.of( folderDescriptor.getRepositoryId(), pathToSearch );
-		return Collections.singletonList( createFileResource( ftpFile ) );
+		return Collections.singletonList( createFileResource( ftpFile, StringUtils.removeStart( pathToSearch, "/" ) ) );
 	}
 
 	private Collection<FileRepositoryResource> resolvePatternForListing( String p, boolean matchOnlyDirectories, FTPClient client ) {
@@ -255,10 +254,6 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		return beforeIndex.contains( "/" ) ? beforeIndex.substring( 0, beforeIndex.lastIndexOf( '/' ) + 1 ) : "";
 	}
 
-	private List<SpringIntegrationFtpFolderResource> retrieveFoldersForPath( String path ) {
-		return remoteFileTemplate.<List<SpringIntegrationFtpFolderResource>, FTPClient>executeWithClient( client -> retrieveFoldersForPath( client, path ) );
-	}
-
 	private List<SpringIntegrationFtpFolderResource> retrieveFoldersForPath( FTPClient client, String path ) {
 		FTPFile[] ftpFiles = null;
 		try {
@@ -274,10 +269,6 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				             FolderDescriptor.of( folderDescriptor.getRepositoryId(), getPath() ).createFolderDescriptor( file.getName() ),
 				             remoteFileTemplate ) )
 		             .collect( Collectors.toList() );
-	}
-
-	private List<SpringIntegrationFtpFileResource> retrieveFilesForPath( String path ) {
-		return remoteFileTemplate.<List<SpringIntegrationFtpFileResource>, FTPClient>executeWithClient( client -> retrieveFilesForPath( client, path ) );
 	}
 
 	private List<SpringIntegrationFtpFileResource> retrieveFilesForPath( FTPClient client, String path ) {
@@ -296,12 +287,16 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 	}
 
 	private SpringIntegrationFtpFileResource createFileResource( FTPFile file ) {
-		String fileName = file.getName();
+		return createFileResource( file, file.getName() );
+	}
+
+	private SpringIntegrationFtpFileResource createFileResource( FTPFile file, String fullPath ) {
+		String fileName = fullPath;
 		String folderName = getPath();
 		int lastIndexOfSlash = fileName.lastIndexOf( "/" );
 		if ( lastIndexOfSlash != -1 ) {
 			fileName = fileName.substring( lastIndexOfSlash + 1 );
-			folderName = file.getName().replace( fileName, "" );
+			folderName = fullPath.replace( fileName, "" );
 		}
 		return new SpringIntegrationFtpFileResource( FileDescriptor.of( folderDescriptor.getRepositoryId(), folderName, fileName ),
 		                                             file,
