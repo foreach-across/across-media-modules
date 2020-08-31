@@ -131,6 +131,11 @@
 				<version>0.1.19</version>
 			</dependency>
 			<dependency>
+				<groupId>commons-net</groupId>
+				<artifactId>commons-net</artifactId>
+				<version>3.7</version>
+			</dependency>
+			<dependency>
 				<groupId>org.junit.platform</groupId>
 				<artifactId>junit-platform-commons</artifactId>
 				<version>1.4.2</version>
