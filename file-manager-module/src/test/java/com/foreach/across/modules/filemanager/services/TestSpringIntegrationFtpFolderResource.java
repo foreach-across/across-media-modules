@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
  */
 class TestSpringIntegrationFtpFolderResource
 {
-	private static FtpContainer ftpContainer = new FtpContainer();
+	private static final FtpContainer ftpContainer = new FtpContainer();
 
 	private FolderDescriptor descriptor;
 	private SpringIntegrationFtpFolderResource resource;
@@ -50,7 +50,7 @@ class TestSpringIntegrationFtpFolderResource
 			defaultFtpSessionFactory.setUsername( "fmm" );
 			defaultFtpSessionFactory.setPassword( "test" );
 			defaultFtpSessionFactory.setHost( "localhost" );
-			defaultFtpSessionFactory.setPort( 21 );
+			defaultFtpSessionFactory.setPort( ftpContainer.getMappedPort( 21 ) );
 			defaultFtpSessionFactory.setDefaultTimeout( 5000 );
 			defaultFtpSessionFactory.setConnectTimeout( 5000 );
 			defaultFtpSessionFactory.setDataTimeout( 5000 );
