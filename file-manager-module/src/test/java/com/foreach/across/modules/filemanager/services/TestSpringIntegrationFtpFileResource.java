@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,10 +63,13 @@ class TestSpringIntegrationFtpFileResource
 	}
 
 	@BeforeAll
-	static void init() throws InterruptedException {
+	static void init() {
 		ftpContainer.start();
-		// give container some time to configure & start up the ftp server
-		Thread.sleep( 1000 );
+	}
+
+	@AfterAll
+	static void tearDown() {
+		ftpContainer.stop();
 	}
 
 	@BeforeEach

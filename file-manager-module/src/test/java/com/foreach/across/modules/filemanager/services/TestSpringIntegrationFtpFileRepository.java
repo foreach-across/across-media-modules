@@ -57,10 +57,13 @@ public class TestSpringIntegrationFtpFileRepository extends BaseFileRepositoryTe
 	}
 
 	@BeforeAll
-	static void init() throws InterruptedException {
+	static void init() {
 		ftpContainer.start();
-		// give container some time to configure & start up the ftp server
-		Thread.sleep( 1000 );
+	}
+
+	@AfterAll
+	static void tearDown() {
+		ftpContainer.stop();
 	}
 
 	@Test
@@ -159,10 +162,5 @@ public class TestSpringIntegrationFtpFileRepository extends BaseFileRepositoryTe
 		assertThat( root.findResources( "ee" ) ).contains( folderInRoot );
 		assertThat( root.findResources( "/?e/*" ) ).contains( fileInFolderInRoot );
 		assertThat( root.findResources( "/ee/*" ) ).contains( fileInFolderInRoot );
-	}
-
-	@AfterAll
-	static void tearDown() {
-		ftpContainer.stop();
 	}
 }
