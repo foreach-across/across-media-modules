@@ -1,9 +1,6 @@
 package com.foreach.across.modules.filemanager.services;
 
-import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.business.FileRepositoryResource;
-import com.foreach.across.modules.filemanager.business.FolderDescriptor;
-import com.foreach.across.modules.filemanager.business.FolderResource;
+import com.foreach.across.modules.filemanager.business.*;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -91,10 +88,6 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				return resolveExactPath( p, client );
 			}
 
-			if ( !p.contains( "**" ) && !p.contains( "?" ) ) {
-				return resolvePatternForListing( p, matchOnlyDirectories, client );
-			}
-
 			BiPredicate<String, String> keyMatcher = ( candidateObjectName, antPattern ) -> {
 				String patternToMatch = !StringUtils.isBlank( antPattern ) ? StringUtils.prependIfMissing( antPattern, "/" ) : antPattern;
 				String path = patternToMatch.endsWith( "/" ) ? candidateObjectName : StringUtils.removeEnd( candidateObjectName, "/" );
@@ -103,6 +96,10 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 				}
 				return false;
 			};
+
+			if ( !p.contains( "**" ) && !p.contains( "?" ) ) {
+				return resolvePatternForListing( p, matchOnlyDirectories, keyMatcher, client );
+			}
 
 			findResourcesWithMatchingKeys( keyMatcher, resources, getPath() + getValidPrefix( p ), StringUtils.prependIfMissing( p, "/" ),
 			                               matchOnlyDirectories, client );
@@ -129,49 +126,59 @@ public class SpringIntegrationFtpFolderResource extends SpringIntegrationFolderR
 		return Collections.singletonList( createFileResource( ftpFile, StringUtils.removeStart( pathToSearch, "/" ) ) );
 	}
 
-	private Collection<FileRepositoryResource> resolvePatternForListing( String p, boolean matchOnlyDirectories, FTPClient client ) {
+	private Collection<FileRepositoryResource> resolvePatternForListing( String p,
+	                                                                     boolean matchOnlyDirectories,
+	                                                                     BiPredicate<String, String> keyMatcher,
+	                                                                     FTPClient client ) {
 		String validPrefix = getValidPrefix( p );
 		String remainingPattern = StringUtils.removeStart( p, validPrefix );
 
-		if ( remainingPattern.startsWith( "*" ) && remainingPattern.contains( "/" ) ) {
-			String pathToSearch =
-					StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( validPrefix, "/" );
-			String withoutListing = StringUtils.removeStart( remainingPattern, "*" );
+		String pathToSearch =
+				StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( validPrefix, "/" );
+		// not yet the final part
+		if ( remainingPattern.contains( "/" ) ) {
+			int nextSlash = StringUtils.indexOf( remainingPattern, "/" );
+			String nextPart = StringUtils.substring( remainingPattern, 0, nextSlash + 1 );
+			String keyPattern = StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( nextPart, "/" );
+			String withoutNextPart = StringUtils.removeStart( remainingPattern, nextPart );
 			return retrieveFoldersForPath( client, pathToSearch )
 					.stream()
-					.map( f -> f.findResources( matchOnlyDirectories ? StringUtils.appendIfMissing( withoutListing, "/" ) : withoutListing, client ) )
+					.filter( f -> {
+						String pathToTest = StringUtils.appendIfMissing( f.getPath(), "/" );
+						return keyMatcher.test( pathToTest, keyPattern );
+					} )
+					.map( f -> {
+						String pathToFind = matchOnlyDirectories ? StringUtils.appendIfMissing( withoutNextPart, "/" ) : withoutNextPart;
+						return f.findResources( pathToFind, client );
+					} )
 					.flatMap( Collection::stream )
 					.collect( Collectors.toSet() );
 		}
 
-		if ( p.endsWith( "*" ) ) {
-			String withoutEndListing = StringUtils.removeEnd( p, "*" );
-			if ( !withoutEndListing.isEmpty() ) {
-				List<SpringIntegrationFtpFolderResource> folders;
-				if ( !withoutEndListing.contains( "*" ) ) {
-					folders = Collections.singletonList( (SpringIntegrationFtpFolderResource) getFolderResource( withoutEndListing ) );
-				}
-				else {
-					String pathToSearch = StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( withoutEndListing, "/" );
-					folders = retrieveFoldersForPath( client, pathToSearch );
-				}
+		SpringIntegrationFtpFolderResource baseResource = validPrefix.isEmpty() ? this : (SpringIntegrationFtpFolderResource) getFolderResource( validPrefix );
 
-				return folders.stream()
-				              .map( f -> f.findResources( matchOnlyDirectories ? "*/" : "*", client ) )
-				              .flatMap( Collection::stream )
-				              .collect( Collectors.toSet() );
-			}
-		}
-
-		String pathToSearch = p.length() > 1
-				? StringUtils.removeEnd( getPath(), "/" ) + "/" + StringUtils.removeStart( p, "/" )
-				: getPath();
+		String keyPattern = StringUtils.removeEnd( baseResource.getPath(), "/" ) + "/" + StringUtils.removeStart( remainingPattern, "/" );
 		if ( matchOnlyDirectories ) {
-			return new HashSet<>( retrieveFoldersForPath( client, pathToSearch ) );
+			return baseResource.retrieveFoldersForPath( client, pathToSearch )
+			                   .stream()
+			                   .filter( f -> {
+				                   String pathToTest = StringUtils.appendIfMissing( f.getPath(), "/" );
+				                   return keyMatcher.test( pathToTest, keyPattern );
+			                   } )
+			                   .collect( Collectors.toSet() );
 		}
 
-		return Stream.concat( retrieveFoldersForPath( client, pathToSearch ).stream(), retrieveFilesForPath( client, pathToSearch ).stream() )
-		             .collect( Collectors.toSet() );
+		return Stream.concat( baseResource.retrieveFoldersForPath( client, pathToSearch ).stream(),
+		                      baseResource.retrieveFilesForPath( client, pathToSearch ).stream() )
+		             .filter( f -> {
+			             if ( f instanceof FolderResource ) {
+				             String folderPath = SpringIntegrationFolderResource.getPath( ( (FolderResource) f ).getDescriptor() );
+				             String pathToTest = StringUtils.appendIfMissing( folderPath, "/" );
+				             return keyMatcher.test( pathToTest, keyPattern );
+			             }
+			             String pathToTest = SpringIntegrationFileResource.getPath( ( (FileResource) f ).getDescriptor() );
+			             return keyMatcher.test( pathToTest, keyPattern );
+		             } ).collect( Collectors.toSet() );
 	}
 
 	private FTPFile retrieveRemoteFile( String pathToSearch ) {
