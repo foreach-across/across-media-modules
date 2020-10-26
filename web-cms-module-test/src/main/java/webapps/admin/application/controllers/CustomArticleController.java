@@ -16,17 +16,11 @@
 
 package webapps.admin.application.controllers;
 
-import com.foreach.across.modules.web.template.ClearTemplate;
 import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.article.web.WebCmsArticleMapping;
-import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
-import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import com.foreach.across.modules.webcms.domain.asset.web.WebCmsAssetMapping;
-import com.foreach.across.modules.webcms.domain.page.web.PageTemplateResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @author Arne Vandamme

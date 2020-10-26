@@ -26,6 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collection;
 import java.util.HashMap;
@@ -144,8 +145,8 @@ public class TestWebCmsDomainCondition
 		values.put( "value", domains );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getDeclaredAnnotation( WebCmsDomainMapping.class ) )
-				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsDomainMapping.class, null ) );
+		when( annotatedElement.getDeclaredAnnotations() )
+				.thenReturn( new Annotation[] { AnnotationUtils.synthesizeAnnotation( values, WebCmsDomainMapping.class, null ) } );
 		condition.setAnnotatedElement( annotatedElement );
 
 		return condition;

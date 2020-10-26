@@ -80,7 +80,7 @@ class WebCmsImageAdminUiConfiguration implements EntityConfigurer
 		        .listView(
 				        lvb -> lvb.viewProcessor( listViewProcessor )
 				                  .entityQueryFilter( eq -> eq.basicMode( true ).showProperties( "text" ) )
-				                  .defaultSort( new Sort( Sort.Direction.DESC, "publicationDate" ) )
+				                  .defaultSort( Sort.by( Sort.Direction.DESC, "publicationDate" ) )
 				                  .postProcess( ListFormViewProcessor.class,
 				                                listFormViewProcessor -> listFormViewProcessor.setAddDefaultButtons( false ) )
 		        );

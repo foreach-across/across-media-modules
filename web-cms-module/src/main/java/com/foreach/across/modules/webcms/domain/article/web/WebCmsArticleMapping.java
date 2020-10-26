@@ -25,6 +25,7 @@ import com.foreach.across.modules.webcms.domain.publication.WebCmsPublication;
 import com.foreach.across.modules.webcms.domain.publication.WebCmsPublicationType;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.annotation.*;
 
@@ -39,6 +40,7 @@ import java.lang.annotation.*;
 @Documented
 @WebCmsAssetMapping(WebCmsArticle.class)
 @CustomRequestMapping(WebCmsArticleCondition.class)
+@RequestMapping("**")
 public @interface WebCmsArticleMapping
 {
 	/**

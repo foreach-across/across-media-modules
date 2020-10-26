@@ -34,6 +34,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.HashMap;
 import java.util.Map;
@@ -198,8 +199,8 @@ public class TestWebCmsArticleCondition
 		values.put( "publication", publications );
 
 		AnnotatedElement annotatedElement = mock( AnnotatedElement.class );
-		when( annotatedElement.getDeclaredAnnotation( WebCmsArticleMapping.class ) )
-				.thenReturn( AnnotationUtils.synthesizeAnnotation( values, WebCmsArticleMapping.class, null ) );
+		when( annotatedElement.getDeclaredAnnotations() )
+				.thenReturn( new Annotation[] { AnnotationUtils.synthesizeAnnotation( values, WebCmsArticleMapping.class, null ) } );
 		condition.setAnnotatedElement( annotatedElement );
 
 		return condition;

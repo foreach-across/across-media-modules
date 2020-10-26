@@ -17,6 +17,7 @@
 package com.foreach.across.modules.webcms.domain.domain.web;
 
 import com.foreach.across.modules.web.mvc.condition.CustomRequestMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.annotation.*;
 
@@ -38,6 +39,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @CustomRequestMapping(WebCmsDomainCondition.class)
+@RequestMapping("**")
 public @interface WebCmsDomainMapping
 {
 	/**
