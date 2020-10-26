@@ -20,22 +20,22 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetEndpoint;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.DefaultWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 
 /**
  * @author Sander Van Loock
  * @since 0.0.1
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestWebCmsEndpointHandlerMethodArgumentResolver
 {
 	@Mock
@@ -48,7 +48,7 @@ public class TestWebCmsEndpointHandlerMethodArgumentResolver
 	private WebCmsEndpointHandlerMethodArgumentResolver resolver;
 	private WebCmsEndpoint endpoint;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		context = new DefaultWebCmsEndpointContext();
 		endpoint = WebCmsAssetEndpoint.builder().build();
@@ -57,12 +57,12 @@ public class TestWebCmsEndpointHandlerMethodArgumentResolver
 		context.setUrl( WebCmsUrl.builder().build() );
 		resolver = new WebCmsEndpointHandlerMethodArgumentResolver( context );
 
-		doReturn( WebCmsAssetEndpoint.class ).when( methodThatShouldResolve ).getParameterType();
-		doReturn( String.class ).when( methodThatShouldNotResolve ).getParameterType();
 	}
 
 	@Test
 	public void supportsParameter() throws Exception {
+		doReturn( WebCmsAssetEndpoint.class ).when( methodThatShouldResolve ).getParameterType();
+		doReturn( String.class ).when( methodThatShouldNotResolve ).getParameterType();
 		assertTrue( resolver.supportsParameter( methodThatShouldResolve ) );
 		assertFalse( resolver.supportsParameter( methodThatShouldNotResolve ) );
 	}

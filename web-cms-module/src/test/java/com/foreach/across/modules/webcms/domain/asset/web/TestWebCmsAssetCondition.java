@@ -21,10 +21,10 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAsset;
 import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointContextResolver;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.endpoint.web.controllers.InvalidWebCmsConditionCombination;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -35,8 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +43,7 @@ import static org.mockito.Mockito.when;
  * @author Raf Ceuls
  * @since 0.0.2
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestWebCmsAssetCondition
 {
 	@Mock
@@ -81,12 +80,14 @@ public class TestWebCmsAssetCondition
 		assertTrue( Arrays.equals( combined.objectId, new String[] { "xyz", "abc" } ) ); // should do a regular pass
 	}
 
-	@Test(expected = InvalidWebCmsConditionCombination.class)
+	@Test
 	public void checkObjectIdControllerIsNotAllowedToBeSupersededByMethod() throws Exception {
-		WebCmsAssetCondition controller = condition( HttpStatus.OK, new String[] { "xyz", "abc" } );
-		WebCmsAssetCondition method = condition( HttpStatus.OK, new String[] { "xyz", "abc", "googly" } );
+		assertThrows( InvalidWebCmsConditionCombination.class, () -> {
+			WebCmsAssetCondition controller = condition( HttpStatus.OK, new String[] { "xyz", "abc" } );
+			WebCmsAssetCondition method = condition( HttpStatus.OK, new String[] { "xyz", "abc", "googly" } );
 
-		controller.combine( method );
+			controller.combine( method );
+		} );
 	}
 
 	@Test

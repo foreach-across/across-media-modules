@@ -27,26 +27,26 @@ import com.foreach.across.modules.webcms.domain.domain.web.WebCmsDomainUrlConfig
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrlCache;
 import com.foreach.across.modules.webcms.domain.url.repositories.WebCmsUrlRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestWebCmsAssetService
 {
 	private WebCmsDomain domain = new WebCmsDomain();
@@ -77,7 +77,7 @@ public class TestWebCmsAssetService
 
 	private WebCmsAssetServiceImpl assetService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		endpointService = new WebCmsEndpointServiceImpl( assetEndpointRepository, urlRepository, urlCache, eventPublisher, multiDomainService );
 		assetService = new WebCmsAssetServiceImpl( uriComponentsService, endpointService, assetEndpointRepository, multiDomainService );

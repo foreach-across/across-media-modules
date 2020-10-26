@@ -21,7 +21,7 @@ import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentM
 import com.foreach.across.modules.webcms.domain.component.placeholder.PlaceholderWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.placeholder.WebCmsPlaceholderContentModel;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test.AbstractWebCmsComponentModelRenderingTest;
 

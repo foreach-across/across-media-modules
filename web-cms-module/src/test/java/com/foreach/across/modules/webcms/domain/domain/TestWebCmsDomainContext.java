@@ -16,9 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.domain;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -29,9 +29,11 @@ public class TestWebCmsDomainContext
 {
 	private WebCmsDomain domain = WebCmsDomain.builder().domainKey( "my-domain" ).build();
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void unableToCreateContextWithoutDomain() {
-		new WebCmsDomainContext( null, null );
+		assertThrows( IllegalArgumentException.class, () -> {
+			new WebCmsDomainContext( null, null );
+		} );
 	}
 
 	@Test

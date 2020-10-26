@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.endpoint.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Sander Van Loock

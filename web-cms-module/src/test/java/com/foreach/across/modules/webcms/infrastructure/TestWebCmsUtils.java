@@ -17,11 +17,11 @@
 package com.foreach.across.modules.webcms.infrastructure;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.across.modules.webcms.infrastructure.WebCmsUtils.generateCanonicalPath;
 import static com.foreach.across.modules.webcms.infrastructure.WebCmsUtils.generateUrlPathSegment;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -29,9 +29,11 @@ import static org.junit.Assert.*;
  */
 public class TestWebCmsUtils
 {
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void unableToGeneratePathSegmentForNull() {
-		generateUrlPathSegment( null );
+		assertThrows( NullPointerException.class, () -> {
+			generateUrlPathSegment( null );
+		} );
 	}
 
 	@Test
@@ -44,9 +46,11 @@ public class TestWebCmsUtils
 		assertEquals( "nested-path-things", generateUrlPathSegment( "/nested/path/things" ) );
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void unableToGenerateCanonicalPathForNull() {
-		generateCanonicalPath( null );
+		assertThrows( NullPointerException.class, () -> {
+			generateCanonicalPath( null );
+		} );
 	}
 
 	@Test
@@ -98,11 +102,11 @@ public class TestWebCmsUtils
 	@Test
 	public void isObjectIdForCollection() {
 		String objectId = "wcm:asset:test:1561sd65f1sd56";
-		assertFalse( WebCmsUtils.isObjectIdForCollection( null, "wcm:asset:test") );
-		assertFalse( WebCmsUtils.isObjectIdForCollection( "", "wcm:asset:test") );
-		assertTrue( WebCmsUtils.isObjectIdForCollection( objectId, "wcm:asset:test") );
-		assertFalse( WebCmsUtils.isObjectIdForCollection( objectId, "wcm:asset:test2") );
-		assertFalse( WebCmsUtils.isObjectIdForCollection( "wcm:asset:test1561sd65f1sd56", "wcm:asset:test") );
+		assertFalse( WebCmsUtils.isObjectIdForCollection( null, "wcm:asset:test" ) );
+		assertFalse( WebCmsUtils.isObjectIdForCollection( "", "wcm:asset:test" ) );
+		assertTrue( WebCmsUtils.isObjectIdForCollection( objectId, "wcm:asset:test" ) );
+		assertFalse( WebCmsUtils.isObjectIdForCollection( objectId, "wcm:asset:test2" ) );
+		assertFalse( WebCmsUtils.isObjectIdForCollection( "wcm:asset:test1561sd65f1sd56", "wcm:asset:test" ) );
 	}
 
 	@Test

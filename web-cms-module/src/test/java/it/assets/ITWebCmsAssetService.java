@@ -43,8 +43,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class ITWebCmsAssetService extends AbstractMultiDomainCmsApplicationWithTestDataIT
 {

@@ -21,17 +21,17 @@ import com.foreach.across.modules.webcms.domain.asset.WebCmsAssetRepository;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.page.services.WebCmsPageService;
 import com.foreach.across.modules.webcms.domain.page.validators.WebCmsPageValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
  * @since 0.0.2
  */
 @SuppressWarnings("unused")
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestWebCmsPageImporter
 {
 	@Mock
@@ -63,17 +63,19 @@ public class TestWebCmsPageImporter
 	@InjectMocks
 	private WebCmsPageImporter pageImporter;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		pageImporter.setPropertyDataImportService( propertyDataImportService );
 	}
 
-	@Test(expected = WebCmsDataImportException.class)
+	@Test
 	public void validateObjectIdFailsIfNotMatchingObjectId() {
-		WebCmsDataEntry data = WebCmsDataEntry.builder()
-		                                      .data( Collections.singletonMap( "objectId", "wcm:assets:page:invalid-page-id" ) )
-		                                      .build();
-		pageImporter.importData( data );
+		assertThrows( WebCmsDataImportException.class, () -> {
+			WebCmsDataEntry data = WebCmsDataEntry.builder()
+			                                      .data( Collections.singletonMap( "objectId", "wcm:assets:page:invalid-page-id" ) )
+			                                      .build();
+			pageImporter.importData( data );
+		} );
 	}
 
 	@Test

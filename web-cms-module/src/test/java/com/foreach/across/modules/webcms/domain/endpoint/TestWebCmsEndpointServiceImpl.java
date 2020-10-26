@@ -29,12 +29,12 @@ import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationStatus;
 import lombok.val;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 
@@ -44,14 +44,14 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.foreach.across.modules.webcms.infrastructure.ModificationStatus.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.2
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestWebCmsEndpointServiceImpl
 {
 	@Mock
@@ -73,7 +73,7 @@ public class TestWebCmsEndpointServiceImpl
 	private WebCmsUrl existingUrl;
 	private WebCmsAssetEndpoint<WebCmsPage> endpoint;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		page = WebCmsPage.builder().build();
 		endpoint = WebCmsAssetEndpoint.<WebCmsPage>builder().asset( page ).build();

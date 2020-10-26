@@ -21,12 +21,12 @@ import com.foreach.across.modules.webcms.domain.component.WebCmsComponent;
 import com.foreach.across.modules.webcms.domain.component.WebCmsComponentType;
 import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestProxyWebCmsComponentModel
 {
 	@Mock
@@ -42,14 +42,18 @@ public class TestProxyWebCmsComponentModel
 
 	private ProxyWebCmsComponentModel proxy = new ProxyWebCmsComponentModel();
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void settingSelfAsProxyTargetIsBadIdea() {
-		proxy.setTarget( proxy );
+		assertThrows( IllegalArgumentException.class, () -> {
+			proxy.setTarget( proxy );
+		} );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void settingAnotherProxyAsTargetIsNotAllowed() {
-		proxy.setTarget( mock( ProxyWebCmsComponentModel.class ) );
+		assertThrows( IllegalArgumentException.class, () -> {
+			proxy.setTarget( mock( ProxyWebCmsComponentModel.class ) );
+		} );
 	}
 
 	@Test

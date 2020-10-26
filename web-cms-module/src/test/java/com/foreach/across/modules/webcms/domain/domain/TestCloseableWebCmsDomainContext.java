@@ -16,12 +16,12 @@
 
 package com.foreach.across.modules.webcms.domain.domain;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * @author Arne Vandamme
@@ -31,12 +31,12 @@ public class TestCloseableWebCmsDomainContext
 {
 	private WebCmsDomain one = WebCmsDomain.builder().id( 123L ).build();
 
-	@Before
+	@BeforeEach
 	public void before() {
 		WebCmsDomainContextHolder.clearWebCmsDomainContext();
 	}
 
-	@After
+	@AfterEach
 	public void after() {
 		WebCmsDomainContextHolder.clearWebCmsDomainContext();
 	}

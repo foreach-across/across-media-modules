@@ -24,7 +24,7 @@ import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.image.connector.CloudinaryWebCmsImageConnector;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.test.AcrossTestContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import test.images.TestCustomImageConnector.CustomImageConnectorConfiguration;
@@ -32,7 +32,7 @@ import test.images.TestCustomImageConnector.CustomImageConnectorConfiguration;
 import java.util.List;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static test.images.TestCustomImageConnector.BEAN_NAME;

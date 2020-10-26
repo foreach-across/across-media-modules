@@ -17,12 +17,12 @@
 package com.foreach.across.modules.webcms.domain.component.model;
 
 import com.foreach.across.modules.webcms.domain.WebCmsObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.function.BiFunction;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -35,7 +35,7 @@ public class TestWebCmsComponentModelSet
 
 	private Model noName, one, two, three;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		components = new WebCmsComponentModelSet();
 
@@ -44,23 +44,29 @@ public class TestWebCmsComponentModelSet
 		two = new Model( "two" );
 		three = new Model( "three" );
 
-		assertEquals( "Test model class not equal - parent changed?", noName, noName );
-		assertEquals( "Test model class not equal - parent changed?", one, one );
+		assertEquals( noName, noName, "Test model class not equal - parent changed?" );
+		assertEquals( one, one, "Test model class not equal - parent changed?" );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void nameIsRequiredOnComponentAdd() {
-		components.add( noName );
+		assertThrows( IllegalArgumentException.class, () -> {
+			components.add( noName );
+		} );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void componentIsRequiredOnAdd() {
-		components.add( null );
+		assertThrows( IllegalArgumentException.class, () -> {
+			components.add( null );
+		} );
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void nameIsRequiredOnPut() {
-		components.put( null, noName );
+		assertThrows( NullPointerException.class, () -> {
+			components.put( null, noName );
+		} );
 	}
 
 	@Test

@@ -21,22 +21,22 @@ import com.foreach.across.modules.webcms.domain.page.web.PageTypeProperties;
 import com.foreach.across.modules.webcms.infrastructure.ModificationReport;
 import com.foreach.across.modules.webcms.infrastructure.ModificationType;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
 import static com.foreach.across.modules.webcms.domain.page.services.PrepareModificationType.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestPagePropertyGenerator
 {
 	@Mock
@@ -45,7 +45,7 @@ public class TestPagePropertyGenerator
 
 	private Map<ModificationType, ModificationReport<PrepareModificationType, Object>> modifications;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		page = new WebCmsPage();
 		modifications = null;

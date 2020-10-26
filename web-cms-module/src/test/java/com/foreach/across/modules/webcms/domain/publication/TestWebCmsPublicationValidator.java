@@ -18,21 +18,21 @@ package com.foreach.across.modules.webcms.domain.publication;
 
 import com.foreach.across.modules.webcms.domain.publication.web.WebCmsPublicationValidator;
 import com.querydsl.core.types.Predicate;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestWebCmsPublicationValidator
 {
 	@Mock
@@ -83,6 +83,7 @@ public class TestWebCmsPublicationValidator
 		WebCmsPublication publication = new WebCmsPublication();
 		publication.setName( "test" );
 
+		when( errors.hasFieldErrors( "name" ) ).thenReturn( false );
 		when( errors.hasFieldErrors( "publicationKey" ) ).thenReturn( true );
 		validator.validate( publication, errors );
 

@@ -17,10 +17,10 @@
 package com.foreach.across.modules.webcms.domain.domain;
 
 import com.foreach.across.modules.entity.query.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * @author Arne Vandamme

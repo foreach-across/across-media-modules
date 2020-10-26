@@ -22,13 +22,13 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConnector;
 import com.foreach.across.modules.webcms.infrastructure.WebCmsUtils;
 import lombok.SneakyThrows;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.util.DigestUtils;
@@ -36,7 +36,7 @@ import org.springframework.util.DigestUtils;
 import java.io.ByteArrayInputStream;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
  * @author Arne Vandamme
  * @since 0.0.2
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestStringToWebCmsImageConverter
 {
 	private final WebCmsImage image = new WebCmsImage();
@@ -66,9 +66,11 @@ public class TestStringToWebCmsImageConverter
 	@InjectMocks
 	private StringToWebCmsImageConverter converter;
 
-	@Test(expected = WebCmsObjectNotFoundException.class)
+	@Test
 	public void conversionExceptionIsThrownIfImageNotFound() {
-		converter.convert( WebCmsUtils.generateObjectId( WebCmsImage.COLLECTION_ID ) );
+		assertThrows( WebCmsObjectNotFoundException.class, () -> {
+			converter.convert( WebCmsUtils.generateObjectId( WebCmsImage.COLLECTION_ID ) );
+		} );
 	}
 
 	@Test
@@ -103,10 +105,12 @@ public class TestStringToWebCmsImageConverter
 		assertSame( image, converter.convert( objectId ) );
 	}
 
-	@Test(expected = WebCmsObjectNotFoundException.class)
+	@Test
 	public void ifResourceDoesNotExistExceptionIsThrown() {
 		when( applicationContext.getResource( "classpath:/dont/exist" ) ).thenReturn( mock( Resource.class ) );
-		converter.convert( "classpath:/dont/exist" );
+		assertThrows( WebCmsObjectNotFoundException.class, () -> {
+			converter.convert( "classpath:/dont/exist" );
+		} );
 	}
 
 	@SneakyThrows

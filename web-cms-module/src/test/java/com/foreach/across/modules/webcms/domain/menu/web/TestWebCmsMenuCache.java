@@ -24,26 +24,26 @@ import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
 import com.foreach.across.modules.webcms.domain.menu.*;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.1
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestWebCmsMenuCache
 {
 	@Mock
@@ -65,12 +65,11 @@ public class TestWebCmsMenuCache
 
 	private WebCmsMenu myMenu = WebCmsMenu.builder().id( 123L ).build();
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeEach
+	public void setUp() {
 		when( cacheManager.getCache( WebCmsModuleCache.MENU ) ).thenReturn( cache );
 		menuCache.reloadCache();
 
-		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( myMenu );
 	}
 
 	@Test
@@ -88,6 +87,7 @@ public class TestWebCmsMenuCache
 
 	@Test
 	public void noItemsOnMenu() {
+		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( myMenu );
 		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Collections.emptyList() );
 		assertNull( cache.get( "0:myMenu" ) );
 
@@ -122,6 +122,7 @@ public class TestWebCmsMenuCache
 
 	@Test
 	public void singleNonGroupItem() {
+		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( myMenu );
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).url( "item url" ).sortIndex( 2 ).build();
 		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Collections.singletonList( item ) );
 
@@ -139,6 +140,7 @@ public class TestWebCmsMenuCache
 
 	@Test
 	public void itemAndGroupItem() {
+		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( myMenu );
 		WebCmsMenuItem item = WebCmsMenuItem.builder().path( "/test" ).title( "item title" ).url( "item url" ).sortIndex( 2 ).build();
 		WebCmsMenuItem group = WebCmsMenuItem.builder().path( "/group" ).title( "group title" ).group( true ).sortIndex( 1 ).build();
 		when( itemRepository.findAllByMenu( myMenu ) ).thenReturn( Arrays.asList( item, group ) );
@@ -160,6 +162,7 @@ public class TestWebCmsMenuCache
 
 	@Test
 	public void linkedPageWithoutSpecificUrl() {
+		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( myMenu );
 		WebCmsPage linkedPage = WebCmsPage.builder().canonicalPath( "canonicalPath" ).published( true ).build();
 		WebCmsAssetEndpoint endpoint = WebCmsAssetEndpoint.builder().asset( linkedPage ).build();
 		WebCmsUrl primaryUrl = WebCmsUrl.builder().primary( true ).path( "/primary" ).build();
@@ -181,6 +184,7 @@ public class TestWebCmsMenuCache
 
 	@Test
 	public void unpublishedPageIsDisabled() {
+		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( myMenu );
 		WebCmsPage linkedPage = WebCmsPage.builder().canonicalPath( "canonicalPath" ).published( false ).build();
 		WebCmsAssetEndpoint endpoint = WebCmsAssetEndpoint.builder().asset( linkedPage ).build();
 		WebCmsUrl primaryUrl = WebCmsUrl.builder().primary( true ).path( "/primary" ).build();
@@ -203,6 +207,7 @@ public class TestWebCmsMenuCache
 
 	@Test
 	public void specificUrlTakesPrecedence() {
+		when( menuService.getMenuByName( "myMenu", WebCmsDomain.NONE ) ).thenReturn( myMenu );
 		WebCmsPage linkedPage = WebCmsPage.builder().canonicalPath( "canonicalPath" ).published( true ).build();
 		WebCmsAssetEndpoint endpoint = WebCmsAssetEndpoint.builder().asset( linkedPage ).build();
 		WebCmsUrl primaryUrl = WebCmsUrl.builder().primary( true ).path( "/primary" ).build();

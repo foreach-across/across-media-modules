@@ -16,7 +16,7 @@
 
 package com.foreach.across.modules.webcms.domain.component;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.across.modules.webcms.domain.component.WebCmsComponentType.builder;
 import static com.foreach.across.modules.webcms.domain.component.WebCmsComponentUtils.getBaseType;
@@ -24,7 +24,7 @@ import static com.foreach.across.modules.webcms.domain.component.WebCmsComponent
 import static com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel.TYPE_DYNAMIC;
 import static com.foreach.across.modules.webcms.domain.component.container.ContainerWebCmsComponentModel.TYPE_FIXED;
 import static com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel.TYPE_ATTRIBUTE;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme

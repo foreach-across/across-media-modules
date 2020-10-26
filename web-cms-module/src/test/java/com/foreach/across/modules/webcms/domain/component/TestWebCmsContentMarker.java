@@ -16,9 +16,9 @@
 
 package com.foreach.across.modules.webcms.domain.component;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -26,19 +26,25 @@ import static org.junit.Assert.*;
  */
 public class TestWebCmsContentMarker
 {
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void markerKeyIsRequired() {
-		new WebCmsContentMarker( null );
+		assertThrows( IllegalArgumentException.class, () -> {
+			new WebCmsContentMarker( null );
+		} );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void markerKeyMustNotBeBlank() {
-		new WebCmsContentMarker( "" );
+		assertThrows( IllegalArgumentException.class, () -> {
+			new WebCmsContentMarker( "" );
+		} );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void markerKeyMayNotContainWhiteSpace() {
-		new WebCmsContentMarker( "test me" );
+		assertThrows( IllegalArgumentException.class, () -> {
+			new WebCmsContentMarker( "test me" );
+		} );
 	}
 
 	@Test

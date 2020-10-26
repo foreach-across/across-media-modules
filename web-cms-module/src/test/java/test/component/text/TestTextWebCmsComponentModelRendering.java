@@ -16,12 +16,12 @@
 
 package test.component.text;
 
-import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
-import test.AbstractWebCmsComponentModelRenderingTest;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModel;
 import com.foreach.across.modules.webcms.domain.component.model.WebCmsComponentModelService;
-import org.junit.Test;
+import com.foreach.across.modules.webcms.domain.component.text.TextWebCmsComponentModel;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import test.AbstractWebCmsComponentModelRenderingTest;
 
 /**
  * @author Arne Vandamme

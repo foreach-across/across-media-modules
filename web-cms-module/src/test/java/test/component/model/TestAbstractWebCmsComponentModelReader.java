@@ -27,21 +27,20 @@ import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.across.test.AcrossWebAppConfiguration;
 import it.DynamicDataSourceConfigurer;
 import lombok.Data;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @AcrossWebAppConfiguration
 public class TestAbstractWebCmsComponentModelReader
 {
@@ -51,7 +50,7 @@ public class TestAbstractWebCmsComponentModelReader
 	private WebCmsComponent component;
 	private WebCmsComponentType componentType;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		componentType = new WebCmsComponentType();
 		component = new WebCmsComponent();

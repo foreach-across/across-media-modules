@@ -27,7 +27,7 @@ import com.foreach.imageserver.client.RemoteImageServerClient;
 import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import test.images.TestCustomImageConnector.CustomImageConnectorConfiguration;
@@ -35,7 +35,7 @@ import test.images.TestCustomImageConnector.CustomImageConnectorConfiguration;
 import java.util.List;
 
 import static com.foreach.across.test.support.AcrossTestBuilders.web;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static test.images.TestCustomImageConnector.BEAN_NAME;

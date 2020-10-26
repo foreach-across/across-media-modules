@@ -21,25 +21,28 @@ import com.foreach.across.modules.entity.registry.EntityRegistry;
 import com.foreach.across.modules.spring.security.actions.AllowableAction;
 import com.foreach.across.modules.spring.security.actions.AllowableActions;
 import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.3
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TestWebCmsMultiDomainAdminUiService
 {
 	private WebCmsDomain one = WebCmsDomain.builder().id( 123L ).build();
@@ -60,14 +63,12 @@ public class TestWebCmsMultiDomainAdminUiService
 	@InjectMocks
 	private WebCmsMultiDomainAdminUiService adminUiService;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		WebCmsDomainContextHolder.clearWebCmsDomainContext();
-
-		when( entityRegistry.getEntityConfiguration( WebCmsDomain.class ) ).thenReturn( entityConfiguration );
 	}
 
-	@After
+	@AfterEach
 	public void after() {
 		WebCmsDomainContextHolder.clearWebCmsDomainContext();
 	}
@@ -109,6 +110,7 @@ public class TestWebCmsMultiDomainAdminUiService
 
 	@Test
 	public void noDomainsAreAccessibleIfNoPermissions() {
+		when( entityRegistry.getEntityConfiguration( WebCmsDomain.class ) ).thenReturn( entityConfiguration );
 		when( multiDomainConfiguration.isNoDomainAllowed() ).thenReturn( true );
 		when( domainRepository.findAll() ).thenReturn( Collections.emptyList() );
 
@@ -122,6 +124,7 @@ public class TestWebCmsMultiDomainAdminUiService
 
 	@Test
 	public void accessibleDomainsContainsNullIfUserAllowedToManageDomainType() {
+		when( entityRegistry.getEntityConfiguration( WebCmsDomain.class ) ).thenReturn( entityConfiguration );
 		when( multiDomainConfiguration.isNoDomainAllowed() ).thenReturn( true );
 		when( domainRepository.findAll() ).thenReturn( Collections.emptyList() );
 
@@ -135,6 +138,7 @@ public class TestWebCmsMultiDomainAdminUiService
 
 	@Test
 	public void accessibleNullDomainWithSpecificPermissions() {
+		when( entityRegistry.getEntityConfiguration( WebCmsDomain.class ) ).thenReturn( entityConfiguration );
 		when( multiDomainConfiguration.isNoDomainAllowed() ).thenReturn( true );
 		when( domainRepository.findAll() ).thenReturn( Collections.emptyList() );
 
@@ -149,6 +153,7 @@ public class TestWebCmsMultiDomainAdminUiService
 	@SuppressWarnings("unchecked")
 	@Test
 	public void domainsWithTheRightActionsAreReturned() {
+		when( entityRegistry.getEntityConfiguration( WebCmsDomain.class ) ).thenReturn( entityConfiguration );
 		when( domainRepository.findAll() ).thenReturn( Arrays.asList( one, two ) );
 
 		AllowableActions actionsOne = mock( AllowableActions.class );
@@ -170,6 +175,7 @@ public class TestWebCmsMultiDomainAdminUiService
 	@SuppressWarnings("unchecked")
 	@Test
 	public void combinationOfDomainsAndNoDomain() {
+		when( entityRegistry.getEntityConfiguration( WebCmsDomain.class ) ).thenReturn( entityConfiguration );
 		when( multiDomainConfiguration.isNoDomainAllowed() ).thenReturn( true );
 
 		AllowableActions actions = mock( AllowableActions.class );

@@ -23,11 +23,13 @@ import com.foreach.across.modules.webcms.domain.endpoint.web.WebCmsEndpointConte
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.ConfigurableWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.redirect.WebCmsRemoteEndpoint;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -38,14 +40,15 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
 import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Sander Van Loock
  * @since 0.0.1
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TestWebCmsEndpointCondition
 {
 	@Mock
@@ -57,7 +60,7 @@ public class TestWebCmsEndpointCondition
 	private WebCmsAssetEndpoint endpoint;
 	private WebCmsUrl url;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		endpoint = WebCmsAssetEndpoint.builder().build();
 		endpoint.setDomain( WebCmsDomain.builder().domainKey( "some-domain" ).build() );
@@ -313,12 +316,12 @@ public class TestWebCmsEndpointCondition
 		List<?> content = (List<?>) condition.getContent();
 		assertEquals( expectedEndpointClass, content.get( 0 ) );
 		List<HttpStatus> statusesAsList = Arrays.asList( (HttpStatus[]) content.get( 1 ) );
-		assertEquals( "Actual statuses do not match expected", expectedStatuses.length, statusesAsList.size() );
+		assertEquals( expectedStatuses.length, statusesAsList.size(), "Actual statuses do not match expected" );
 		for ( HttpStatus status : expectedStatuses ) {
 			assertTrue( statusesAsList.contains( status ) );
 		}
 		List<HttpStatus.Series> seriesAsList = Arrays.asList( (HttpStatus.Series[]) content.get( 2 ) );
-		assertEquals( "Actual series do not match expected", expectedSeries.length, seriesAsList.size() );
+		assertEquals( expectedSeries.length, seriesAsList.size(), "Actual series do not match expected" );
 		for ( HttpStatus.Series serie : expectedSeries ) {
 			assertTrue( seriesAsList.contains( serie ) );
 		}

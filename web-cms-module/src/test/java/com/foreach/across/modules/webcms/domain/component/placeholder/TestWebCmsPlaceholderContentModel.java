@@ -16,12 +16,12 @@
 
 package com.foreach.across.modules.webcms.domain.component.placeholder;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme
@@ -31,7 +31,7 @@ public class TestWebCmsPlaceholderContentModel
 {
 	private WebCmsPlaceholderContentModel model;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		model = new WebCmsPlaceholderContentModel();
 	}

@@ -21,12 +21,12 @@ import com.foreach.across.modules.webcms.domain.endpoint.WebCmsEndpointService;
 import com.foreach.across.modules.webcms.domain.endpoint.config.WebCmsEndpointMappingConfiguration;
 import com.foreach.across.modules.webcms.domain.endpoint.web.context.DefaultWebCmsEndpointContext;
 import com.foreach.across.modules.webcms.domain.url.WebCmsUrl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,12 +36,12 @@ import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestWebCmsEndpointContextResolver
 {
 	@Mock
@@ -56,7 +56,7 @@ public class TestWebCmsEndpointContextResolver
 	private WebCmsUrl url;
 	private WebCmsAssetEndpoint endpoint;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		endpoint = WebCmsAssetEndpoint.builder().build();
 		url = WebCmsUrl.builder().endpoint( endpoint ).build();
@@ -66,7 +66,7 @@ public class TestWebCmsEndpointContextResolver
 
 	@Test
 	public void endpointShouldNotBeMappedIfRequestDoesNotMatch() {
-		when( mappingConfiguration.shouldMapToWebCmsUrl( anyString() )).thenReturn( false );
+		when( mappingConfiguration.shouldMapToWebCmsUrl( anyString() ) ).thenReturn( false );
 
 		DefaultWebCmsEndpointContext context = new DefaultWebCmsEndpointContext();
 		HttpServletRequest request = new MockHttpServletRequest();

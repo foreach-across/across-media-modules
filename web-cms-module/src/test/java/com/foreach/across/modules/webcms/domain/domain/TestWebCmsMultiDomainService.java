@@ -21,22 +21,22 @@ import com.foreach.across.modules.webcms.domain.article.WebCmsArticle;
 import com.foreach.across.modules.webcms.domain.domain.config.WebCmsMultiDomainConfiguration;
 import com.foreach.across.modules.webcms.domain.image.WebCmsImage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Arne Vandamme
  * @since 0.0.3
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TestWebCmsMultiDomainService
 {
 	private WebCmsDomain one = WebCmsDomain.builder().id( 123L ).build();
@@ -50,12 +50,12 @@ public class TestWebCmsMultiDomainService
 	@InjectMocks
 	private WebCmsMultiDomainServiceImpl multiDomainService;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		WebCmsDomainContextHolder.clearWebCmsDomainContext();
 	}
 
-	@After
+	@AfterEach
 	public void after() {
 		WebCmsDomainContextHolder.clearWebCmsDomainContext();
 	}

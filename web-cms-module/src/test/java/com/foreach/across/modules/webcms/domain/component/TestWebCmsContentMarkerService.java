@@ -16,15 +16,15 @@
 
 package com.foreach.across.modules.webcms.domain.component;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author Arne Vandamme
@@ -104,7 +104,7 @@ public class TestWebCmsContentMarkerService
 	public void stripMarkers() {
 		assertEquals(
 				"Replaced  and replaced  and  again and !",
-				markerService.stripMarkers("Replaced @@one@@ and replaced @@one(return two)@@ and @@one@@ again and @@unknown@@!")
+				markerService.stripMarkers( "Replaced @@one@@ and replaced @@one(return two)@@ and @@one@@ again and @@unknown@@!" )
 		);
 	}
 }

@@ -18,10 +18,10 @@ package com.foreach.across.modules.webcms.domain.page.web;
 
 import com.foreach.across.modules.webcms.domain.page.WebCmsPage;
 import com.foreach.across.modules.webcms.domain.page.WebCmsPageType;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme
@@ -32,7 +32,7 @@ public class TestPageTemplateResolver
 	private PageTemplateProperties properties;
 	private PageTemplateResolver resolver;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		properties = new PageTemplateProperties();
 		resolver = new PageTemplateResolver( properties );
@@ -47,7 +47,6 @@ public class TestPageTemplateResolver
 		assertEquals( "default", resolver.resolvePageTemplate( (String) null ) );
 		assertEquals( "default", resolver.resolvePageTemplate( "" ) );
 	}
-
 
 	@Test
 	public void defaultTemplateForPageTypeReturnedIfNotMoreSpecific() {

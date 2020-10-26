@@ -23,14 +23,16 @@ import com.foreach.across.modules.webcms.WebCmsEntityAttributes;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomain;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsDomainBound;
 import com.foreach.across.modules.webcms.domain.domain.WebCmsMultiDomainService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +41,8 @@ import static org.mockito.Mockito.when;
  * @since 0.0.3
  */
 @SuppressWarnings("unchecked")
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TestCurrentDomainAwareAllowableActionsBuilder
 {
 	private WebCmsDomain currentDomain = WebCmsDomain.builder().id( 123L ).build();
@@ -65,7 +68,7 @@ public class TestCurrentDomainAwareAllowableActionsBuilder
 	@InjectMocks
 	private CurrentDomainAwareAllowableActionsBuilder actionsBuilder;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		when( actionsBuilder.getAllowableActions( entityConfiguration ) ).thenReturn( configurationActions );
 		when( actionsBuilder.getAllowableActions( entityConfiguration, entity ) ).thenReturn( entityActions );
