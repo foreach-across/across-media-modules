@@ -2,11 +2,11 @@ package test.repositories;
 
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.repositories.ImageContextRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test.AbstractIntegrationTest;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ImageContextRepositoryTest extends AbstractIntegrationTest
 {

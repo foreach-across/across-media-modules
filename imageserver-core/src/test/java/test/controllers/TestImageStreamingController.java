@@ -9,24 +9,24 @@ import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.transformers.SimpleImageSource;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = TestImageStreamingController.Config.class)
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 public class TestImageStreamingController
 {
 	@Autowired
@@ -34,14 +34,14 @@ public class TestImageStreamingController
 	@Autowired
 	private ImageRestService imageRestService;
 
-	@Before
+	@BeforeEach
 	public void resetMocks() {
 		reset( imageRestService );
 	}
 
 	@Test
 	public void testThatIOExceptionWithoutMessageDoesNotNullPointer() throws Exception {
-		ViewImageResponse viewImageResponse = new ViewImageResponse(  );
+		ViewImageResponse viewImageResponse = new ViewImageResponse();
 		SimpleImageSource simpleImageSource = new SimpleImageSource( ImageType.JPEG, new byte[] { 1 } );
 		HttpServletResponse response = mock( HttpServletResponse.class );
 		when( response.getOutputStream() ).thenThrow( new IOException() );

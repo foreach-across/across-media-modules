@@ -1,12 +1,12 @@
 package com.foreach.imageserver.core.rest.request;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.function.BooleanSupplier;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
@@ -16,7 +16,7 @@ public class TestViewImageRequest
 {
 	private ViewImageRequest request;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		request = new ViewImageRequest();
 	}

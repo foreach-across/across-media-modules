@@ -5,7 +5,7 @@ import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.repositories.ImageContextRepository;
 import com.foreach.imageserver.core.repositories.ImageResolutionRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
@@ -15,7 +15,7 @@ import test.AbstractCachedIntegrationTest;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageResolutionManagerTest extends AbstractCachedIntegrationTest
 {

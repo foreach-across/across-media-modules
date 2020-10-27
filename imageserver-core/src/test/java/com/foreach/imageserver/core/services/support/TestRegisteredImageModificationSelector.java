@@ -1,7 +1,7 @@
 package com.foreach.imageserver.core.services.support;
 
 import com.foreach.imageserver.core.business.ImageModification;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Arne Vandamme

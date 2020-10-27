@@ -7,23 +7,23 @@ import com.foreach.imageserver.core.controllers.ImageInfoController;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.ImageInfoDto;
 import com.foreach.imageserver.dto.JsonResponse;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
  * @author Gunther Van Geetsom
  * @since 5.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestImageInfoController.Config.class)
 public class TestImageInfoController
 {
@@ -33,7 +33,7 @@ public class TestImageInfoController
 	@Autowired
 	private ImageInfoController imageInfoController;
 
-	@Before
+	@BeforeEach
 	public void resetMocks() {
 		reset( imageService );
 	}

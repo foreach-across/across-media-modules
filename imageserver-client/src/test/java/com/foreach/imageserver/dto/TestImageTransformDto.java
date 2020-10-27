@@ -1,7 +1,7 @@
 package com.foreach.imageserver.dto;
 
 import com.foreach.imageserver.math.AspectRatio;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.imageserver.dto.ImageTransformDto.builder;
 import static com.foreach.imageserver.dto.ImageTransformDto.from;

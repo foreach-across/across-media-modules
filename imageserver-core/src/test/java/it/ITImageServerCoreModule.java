@@ -10,32 +10,36 @@ import com.foreach.across.modules.web.mvc.PrefixingRequestMappingHandlerMapping;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.core.ImageServerCoreModule;
-import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
-import com.foreach.imageserver.core.config.WebConfiguration;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.ImageTransformService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.multipart.MultipartResolver;
 
-import static org.junit.Assert.*;
+import static com.foreach.imageserver.core.ImageServerCoreModule.NAME;
+import static com.foreach.imageserver.core.ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER;
+import static com.foreach.imageserver.core.ImageServerCoreModuleSettings.ROOT_PATH;
+import static com.foreach.imageserver.core.config.WebConfiguration.IMAGE_REQUEST_HASH_BUILDER;
+import static it.ITImageServerCoreModule.Config;
+import static java.lang.System.getProperty;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
-@ContextConfiguration(classes = ITImageServerCoreModule.Config.class)
+@ContextConfiguration(classes = Config.class)
 public class ITImageServerCoreModule
 {
 	@Autowired
@@ -84,10 +88,12 @@ public class ITImageServerCoreModule
 		assertNull( imageServerClient );
 	}
 
-	@Test(expected = NoSuchBeanDefinitionException.class)
+	@Test
 	public void noImageRequestHashBuilderShouldBeCreated() {
-		assertNull( beanRegistry.getBeanFromModule( ImageServerCoreModule.NAME,
-		                                            WebConfiguration.IMAGE_REQUEST_HASH_BUILDER ) );
+		assertThrows( NoSuchBeanDefinitionException.class, () -> {
+			assertNull( beanRegistry.getBeanFromModule( NAME,
+			                                            IMAGE_REQUEST_HASH_BUILDER ) );
+		} );
 	}
 
 	@Configuration
@@ -101,9 +107,9 @@ public class ITImageServerCoreModule
 
 		private ImageServerCoreModule imageServerCoreModule() {
 			ImageServerCoreModule imageServerCoreModule = new ImageServerCoreModule();
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
-			                                   System.getProperty( "java.io.tmpdir" ) );
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/imgsrvr" );
+			imageServerCoreModule.setProperty( IMAGE_STORE_FOLDER,
+			                                   getProperty( "java.io.tmpdir" ) );
+			imageServerCoreModule.setProperty( ROOT_PATH, "/imgsrvr" );
 
 			return imageServerCoreModule;
 		}

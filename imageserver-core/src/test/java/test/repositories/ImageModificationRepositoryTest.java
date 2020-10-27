@@ -5,14 +5,14 @@ import com.foreach.imageserver.core.repositories.ImageContextRepository;
 import com.foreach.imageserver.core.repositories.ImageModificationRepository;
 import com.foreach.imageserver.core.repositories.ImageRepository;
 import com.foreach.imageserver.core.repositories.ImageResolutionRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test.AbstractIntegrationTest;
 
 import java.util.Calendar;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageModificationRepositoryTest extends AbstractIntegrationTest
 {

@@ -7,7 +7,7 @@ import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.managers.ImageManager;
 import com.foreach.imageserver.core.repositories.ImageRepository;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -17,7 +17,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageManagerTest extends AbstractCachedIntegrationTest
 {

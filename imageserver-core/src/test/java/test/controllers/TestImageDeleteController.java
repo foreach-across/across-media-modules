@@ -3,18 +3,18 @@ package test.controllers;
 import com.foreach.imageserver.core.controllers.ImageDeleteController;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.dto.JsonResponse;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Arne Vandamme
  * @since 3.5
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestImageDeleteController.Config.class)
 public class TestImageDeleteController
 {
@@ -32,7 +32,7 @@ public class TestImageDeleteController
 	@Autowired
 	private ImageDeleteController imageDeleteController;
 
-	@Before
+	@BeforeEach
 	public void resetMocks() {
 		reset( imageService );
 	}

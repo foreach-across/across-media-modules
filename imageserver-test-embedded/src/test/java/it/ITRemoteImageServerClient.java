@@ -8,13 +8,13 @@ import com.foreach.imageserver.test.embedded.ImageServerTestEmbeddedApplication;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -25,12 +25,12 @@ import java.text.ParseException;
 import java.util.*;
 
 import static com.foreach.imageserver.dto.ImageTypeDto.PNG;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles("it")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = ImageServerTestEmbeddedApplication.class)
 public class ITRemoteImageServerClient
@@ -40,7 +40,7 @@ public class ITRemoteImageServerClient
 	@Value("${local.server.port}")
 	private int port;
 
-	@Before
+	@BeforeEach
 	public void createClient() {
 		String url = "http://localhost:" + port + "/resources/images";
 		String accessToken = "standalone-access-token";

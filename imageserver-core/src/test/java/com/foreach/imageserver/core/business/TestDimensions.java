@@ -1,9 +1,9 @@
 package com.foreach.imageserver.core.business;
 
 import com.foreach.imageserver.math.AspectRatio;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestDimensions
 {
@@ -73,8 +73,7 @@ public class TestDimensions
 		assertEquals( expected, left.equals( right ) );
 
 		if ( expected ) {
-			assertEquals( "hashCode() is broken, it should return identical result for objects that are equal",
-			              left.hashCode(), right.hashCode() );
+			assertEquals( left.hashCode(), right.hashCode(), "hashCode() is broken, it should return identical result for objects that are equal" );
 		}
 	}
 }

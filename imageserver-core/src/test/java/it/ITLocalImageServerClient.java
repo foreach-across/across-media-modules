@@ -8,21 +8,16 @@ import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.test.AcrossTestConfiguration;
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.core.ImageServerCoreModule;
-import com.foreach.imageserver.core.ImageServerCoreModuleSettings;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.business.ImageType;
-import com.foreach.imageserver.core.config.WebConfiguration;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.exceptions.ImageStoreException;
 import com.foreach.imageserver.dto.*;
 import lombok.SneakyThrows;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,35 +26,54 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.testcontainers.containers.GenericContainer;
-import test.transformers.imagemagick.ImageServerTestContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
-import static com.foreach.imageserver.dto.ImageTypeDto.PNG;
-import static org.junit.Assert.*;
+import static com.foreach.imageserver.core.ImageServerCoreModule.NAME;
+import static com.foreach.imageserver.core.ImageServerCoreModuleSettings.*;
+import static com.foreach.imageserver.core.config.WebConfiguration.IMAGE_REQUEST_HASH_BUILDER;
+import static com.foreach.imageserver.dto.ColorDto.from;
+import static com.foreach.imageserver.dto.ColorSpaceDto.GRAYSCALE;
+import static com.foreach.imageserver.dto.ImageConvertDto.builder;
+import static com.foreach.imageserver.dto.ImageTypeDto.*;
+import static java.lang.System.getProperty;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
+import static java.util.EnumSet.allOf;
+import static java.util.UUID.randomUUID;
+import static javax.imageio.ImageIO.read;
+import static org.apache.commons.io.IOUtils.toByteArray;
+import static org.apache.commons.lang3.time.DateUtils.parseDate;
+import static org.junit.jupiter.api.Assertions.*;
+import static test.transformers.imagemagick.ImageServerTestContainer.CONTAINER;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
 @ContextConfiguration(classes = ITLocalImageServerClient.Config.class)
 @TestPropertySource(properties = { "spring.jpa.show-sql=true" })
+@Testcontainers
 public class ITLocalImageServerClient
 {
-	@ClassRule
-	public static GenericContainer imageserverContainer = ImageServerTestContainer.CONTAINER;
+	@Container
+	private static final GenericContainer imageserverContainer = CONTAINER;
 
 	@Autowired(required = false)
 	private ImageServerClient imageServerClient;
@@ -73,13 +87,15 @@ public class ITLocalImageServerClient
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
 
-	@Test(expected = NoSuchBeanDefinitionException.class)
+	@Test
 	public void noImageRequestHashBuilderShouldBeCreated() {
-		assertNull( beanRegistry.getBeanFromModule( ImageServerCoreModule.NAME,
-		                                            WebConfiguration.IMAGE_REQUEST_HASH_BUILDER ) );
+		assertThrows( NoSuchBeanDefinitionException.class, () -> {
+			assertNull( beanRegistry.getBeanFromModule( NAME,
+			                                            IMAGE_REQUEST_HASH_BUILDER ) );
+		} );
 	}
 
-	@Before
+	@BeforeEach
 	public void registerResolutions() {
 		registerResolution( 640, 480 );
 		registerResolution( 320, 240 );
@@ -93,8 +109,8 @@ public class ITLocalImageServerClient
 			resolution.setWidth( width );
 			resolution.setHeight( height );
 			resolution.setConfigurable( true );
-			resolution.setContexts( Collections.singleton( imageContextService.getByCode( "default" ) ) );
-			resolution.setAllowedOutputTypes( EnumSet.allOf( ImageType.class ) );
+			resolution.setContexts( singleton( imageContextService.getByCode( "default" ) ) );
+			resolution.setAllowedOutputTypes( allOf( ImageType.class ) );
 
 			imageService.saveImageResolution( resolution );
 		}
@@ -108,9 +124,9 @@ public class ITLocalImageServerClient
 
 	@Test
 	public void uploadingKnownResourceImage() throws Exception {
-		String externalId = UUID.randomUUID().toString();
+		String externalId = randomUUID().toString();
 		byte[] imageData = image( "images/poppy_flower_nature.jpg" );
-		Date date = DateUtils.parseDate( "2013-05-14 13:33:22", "yyyy-MM-dd HH:mm:ss" );
+		Date date = parseDate( "2013-05-14 13:33:22", "yyyy-MM-dd HH:mm:ss" );
 
 		ImageInfoDto fetchedInfo = imageServerClient.imageInfo( externalId );
 		assertFalse( fetchedInfo.isExisting() );
@@ -122,25 +138,25 @@ public class ITLocalImageServerClient
 		assertEquals( externalId, createdInfo.getExternalId() );
 		assertEquals( date, createdInfo.getCreated() );
 		assertEquals( new DimensionsDto( 1920, 1080 ), createdInfo.getDimensionsDto() );
-		assertEquals( ImageTypeDto.JPEG, createdInfo.getImageType() );
+		assertEquals( JPEG, createdInfo.getImageType() );
 
 		fetchedInfo = imageServerClient.imageInfo( externalId );
 		assertEquals( createdInfo, fetchedInfo );
 
-		try (InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(), new ImageVariantDto( ImageTypeDto.JPEG ) )) {
-			byte[] originalSizeData = IOUtils.toByteArray( inputStream );
+		try (InputStream inputStream = imageServerClient.imageStream( externalId, new ImageModificationDto(), new ImageVariantDto( JPEG ) )) {
+			byte[] originalSizeData = toByteArray( inputStream );
 
-			ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), originalSizeData );
+			ImageInfoDto modifiedUpload = imageServerClient.loadImage( randomUUID().toString(), originalSizeData );
 			assertEquals( new DimensionsDto( 1920, 1080 ), modifiedUpload.getDimensionsDto() );
-			assertEquals( ImageTypeDto.JPEG, modifiedUpload.getImageType() );
+			assertEquals( JPEG, modifiedUpload.getImageType() );
 		}
 
-		try (InputStream inputStream = imageServerClient.imageStream( externalId, "default", 640, 480, ImageTypeDto.PNG )) {
-			byte[] scaledDate = IOUtils.toByteArray( inputStream );
+		try (InputStream inputStream = imageServerClient.imageStream( externalId, "default", 640, 480, PNG )) {
+			byte[] scaledDate = toByteArray( inputStream );
 
-			ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
+			ImageInfoDto modifiedUpload = imageServerClient.loadImage( randomUUID().toString(), scaledDate );
 			assertEquals( new DimensionsDto( 640, 480 ), modifiedUpload.getDimensionsDto() );
-			assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+			assertEquals( PNG, modifiedUpload.getImageType() );
 		}
 
 		// Delete existing
@@ -156,7 +172,7 @@ public class ITLocalImageServerClient
 
 	@Test
 	public void replacingImage() throws Exception {
-		String externalId = UUID.randomUUID().toString();
+		String externalId = randomUUID().toString();
 		byte[] imageOne =
 				image( "images/poppy_flower_nature.jpg" );
 		byte[] imageTwo =
@@ -166,7 +182,7 @@ public class ITLocalImageServerClient
 		assertTrue( createdInfo.isExisting() );
 		assertEquals( externalId, createdInfo.getExternalId() );
 		assertEquals( new DimensionsDto( 1920, 1080 ), createdInfo.getDimensionsDto() );
-		assertEquals( ImageTypeDto.JPEG, createdInfo.getImageType() );
+		assertEquals( JPEG, createdInfo.getImageType() );
 
 		ImageInfoDto replaced;
 		boolean failed = false;
@@ -185,7 +201,7 @@ public class ITLocalImageServerClient
 		assertTrue( replaced.isExisting() );
 		assertEquals( externalId, replaced.getExternalId() );
 		assertEquals( new DimensionsDto( 100, 100 ), replaced.getDimensionsDto() );
-		assertEquals( ImageTypeDto.PNG, replaced.getImageType() );
+		assertEquals( PNG, replaced.getImageType() );
 
 		ImageInfoDto fetched = imageServerClient.imageInfo( externalId );
 		assertNotNull( fetched );
@@ -196,7 +212,7 @@ public class ITLocalImageServerClient
 
 	@Test
 	public void registerModification() throws ParseException, IOException {
-		String externalId = UUID.randomUUID().toString();
+		String externalId = randomUUID().toString();
 		byte[] imageData =
 				image( "images/poppy_flower_nature.jpg" );
 
@@ -222,13 +238,13 @@ public class ITLocalImageServerClient
 	}
 
 	private byte[] image( String s ) throws IOException {
-		return IOUtils.toByteArray(
+		return toByteArray(
 				getClass().getClassLoader().getResourceAsStream( s ) );
 	}
 
 	@Test
 	public void registerModifications() throws ParseException, IOException {
-		String externalId = UUID.randomUUID().toString();
+		String externalId = randomUUID().toString();
 		byte[] imageData =
 				image( "images/poppy_flower_nature.jpg" );
 
@@ -246,7 +262,7 @@ public class ITLocalImageServerClient
 		modificationDto.setCrop( new CropDto( 10, 10, 100, 150 ) );
 		modificationDto.setDensity( new DimensionsDto( 100, 100 ) );
 
-		List<ImageModificationDto> imageModificationDtos = Arrays.asList( modificationDto, modificationDto2 );
+		List<ImageModificationDto> imageModificationDtos = asList( modificationDto, modificationDto2 );
 
 		imageServerClient.registerImageModifications( externalId, "default", imageModificationDtos );
 
@@ -264,13 +280,13 @@ public class ITLocalImageServerClient
 		byte[] imageData = image( "images/poppy_flower_nature.jpg" );
 
 		InputStream renderedImage = imageServerClient.imageStream( imageData, new ImageModificationDto( 100, 100 ),
-		                                                           new ImageVariantDto( ImageTypeDto.PNG ) );
+		                                                           new ImageVariantDto( PNG ) );
 
-		byte[] scaledDate = IOUtils.toByteArray( renderedImage );
+		byte[] scaledDate = toByteArray( renderedImage );
 
-		ImageInfoDto modifiedUpload = imageServerClient.loadImage( UUID.randomUUID().toString(), scaledDate );
+		ImageInfoDto modifiedUpload = imageServerClient.loadImage( randomUUID().toString(), scaledDate );
 		assertEquals( new DimensionsDto( 100, 100 ), modifiedUpload.getDimensionsDto() );
-		assertEquals( ImageTypeDto.PNG, modifiedUpload.getImageType() );
+		assertEquals( PNG, modifiedUpload.getImageType() );
 	}
 
 	@Test
@@ -280,7 +296,7 @@ public class ITLocalImageServerClient
 		ImageInfoDto imageInfoDto = imageServerClient.imageInfo( imageData );
 		assertEquals( 1, imageInfoDto.getSceneCount() );
 		assertEquals( new DimensionsDto( 1920, 1080 ), imageInfoDto.getDimensionsDto() );
-		assertEquals( ImageTypeDto.JPEG, imageInfoDto.getImageType() );
+		assertEquals( JPEG, imageInfoDto.getImageType() );
 	}
 
 	@Test
@@ -291,13 +307,13 @@ public class ITLocalImageServerClient
 		ImageInfoDto imageInfoDto = imageServerClient.imageInfo( pdfData );
 		assertEquals( 5, imageInfoDto.getSceneCount() );
 		assertEquals( new DimensionsDto( 612, 792 ), imageInfoDto.getDimensionsDto() );
-		assertEquals( ImageTypeDto.PDF, imageInfoDto.getImageType() );
+		assertEquals( PDF, imageInfoDto.getImageType() );
 	}
 
 	@Test
 	@SneakyThrows
 	public void sceneCountIsPersisted() {
-		String externalId = UUID.randomUUID().toString();
+		String externalId = randomUUID().toString();
 		byte[] imageData = image( "images/sample-pdf.pdf" );
 
 		ImageInfoDto fetchedInfo = imageServerClient.imageInfo( externalId );
@@ -311,27 +327,27 @@ public class ITLocalImageServerClient
 		assertEquals( externalId, createdInfo.getExternalId() );
 		assertEquals( 5, createdInfo.getSceneCount() );
 		assertEquals( new DimensionsDto( 612, 792 ), createdInfo.getDimensionsDto() );
-		assertEquals( ImageTypeDto.PDF, createdInfo.getImageType() );
+		assertEquals( PDF, createdInfo.getImageType() );
 
 		fetchedInfo = imageServerClient.imageInfo( externalId );
 		assertEquals( new DimensionsDto( 612, 792 ), fetchedInfo.getDimensionsDto() );
 		assertEquals( createdInfo.getSceneCount(), fetchedInfo.getSceneCount() );
-		assertEquals( ImageTypeDto.PDF, createdInfo.getImageType() );
+		assertEquals( PDF, createdInfo.getImageType() );
 	}
 
 	@Test
 	@SneakyThrows
 	public void convertImage() {
-		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
-		                                                 .image( image( "images/poppy_flower_nature.jpg" ) )
-		                                                 .transformation( "flower-*", Collections.singletonList( ImageTransformDto.builder()
-		                                                                                                                          .dpi( 300 )
-		                                                                                                                          .colorSpace(
-				                                                                                                                          ColorSpaceDto.GRAYSCALE )
-		                                                                                                                          .outputType(
-				                                                                                                                          ImageTypeDto.PNG )
-		                                                                                                                          .build() ) )
-		                                                 .build();
+		ImageConvertDto imageConvertDto = builder()
+				.image( image( "images/poppy_flower_nature.jpg" ) )
+				.transformation( "flower-*", singletonList( ImageTransformDto.builder()
+				                                                             .dpi( 300 )
+				                                                             .colorSpace(
+						                                                             GRAYSCALE )
+				                                                             .outputType(
+						                                                             PNG )
+				                                                             .build() ) )
+				.build();
 
 		ImageConvertResultDto imageConvertResultDto = imageServerClient.convertImage( imageConvertDto );
 
@@ -348,59 +364,59 @@ public class ITLocalImageServerClient
 
 		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
 		ImageDto transformation = imageConvertResultDto.getTransforms().get( key );
-		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+		assertEquals( PNG, transformation.getFormat() );
 	}
 
 	@Test
 	@SneakyThrows
 	public void convertSingleImage() {
 		ImageDto result = imageServerClient.convertImage( image( "images/poppy_flower_nature.jpg" ),
-		                                                  Collections.singletonList(
+		                                                  singletonList(
 				                                                  ImageTransformDto.builder()
 				                                                                   .dpi( 300 )
 				                                                                   .colorSpace(
-						                                                                   ColorSpaceDto.GRAYSCALE )
+						                                                                   GRAYSCALE )
 				                                                                   .outputType(
-						                                                                   ImageTypeDto.PNG )
+						                                                                   PNG )
 				                                                                   .build() ) );
 
-		assertEquals( ImageTypeDto.PNG, result.getFormat() );
+		assertEquals( PNG, result.getFormat() );
 		assertTrue( result.getImage().length > 0 );
 	}
 
 	@Test
 	@SneakyThrows
 	public void convertSingleRegisteredImage() {
-		String imageId = UUID.randomUUID().toString();
+		String imageId = randomUUID().toString();
 		imageServerClient.loadImage( imageId, image( "images/poppy_flower_nature.jpg" ) );
 		ImageDto result = imageServerClient.convertImage( imageId,
-		                                                  Collections.singletonList(
+		                                                  singletonList(
 				                                                  ImageTransformDto.builder()
 				                                                                   .dpi( 300 )
 				                                                                   .colorSpace(
-						                                                                   ColorSpaceDto.GRAYSCALE )
+						                                                                   GRAYSCALE )
 				                                                                   .outputType(
-						                                                                   ImageTypeDto.PNG )
+						                                                                   PNG )
 				                                                                   .build() ) );
 
-		assertEquals( ImageTypeDto.PNG, result.getFormat() );
+		assertEquals( PNG, result.getFormat() );
 		assertTrue( result.getImage().length > 0 );
 	}
 
 	@Test
 	@SneakyThrows
 	public void convertImagePdf() {
-		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
-		                                                 .image( image( "images/sample-pdf.pdf" ) )
-		                                                 .pages( "1,3-6" )
-		                                                 .transformation( "sample-*", Collections.singletonList( ImageTransformDto.builder()
-		                                                                                                                          .dpi( 300 )
-		                                                                                                                          .colorSpace(
-				                                                                                                                          ColorSpaceDto.GRAYSCALE )
-		                                                                                                                          .outputType(
-				                                                                                                                          ImageTypeDto.PNG )
-		                                                                                                                          .build() ) )
-		                                                 .build();
+		ImageConvertDto imageConvertDto = builder()
+				.image( image( "images/sample-pdf.pdf" ) )
+				.pages( "1,3-6" )
+				.transformation( "sample-*", singletonList( ImageTransformDto.builder()
+				                                                             .dpi( 300 )
+				                                                             .colorSpace(
+						                                                             GRAYSCALE )
+				                                                             .outputType(
+						                                                             PNG )
+				                                                             .build() ) )
+				.build();
 
 		ImageConvertResultDto imageConvertResultDto = imageServerClient.convertImage( imageConvertDto );
 
@@ -421,31 +437,31 @@ public class ITLocalImageServerClient
 		assertEquals( 4, imageConvertResultDto.getTransforms().size() );
 
 		ImageDto transformation = imageConvertResultDto.getTransforms().get( "sample-1" );
-		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+		assertEquals( PNG, transformation.getFormat() );
 
 		transformation = imageConvertResultDto.getTransforms().get( "sample-3" );
-		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+		assertEquals( PNG, transformation.getFormat() );
 
 		transformation = imageConvertResultDto.getTransforms().get( "sample-4" );
-		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+		assertEquals( PNG, transformation.getFormat() );
 
 		transformation = imageConvertResultDto.getTransforms().get( "sample-5" );
-		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+		assertEquals( PNG, transformation.getFormat() );
 	}
 
 	@Test
 	@SneakyThrows
 	public void convertResizeEpsRetina() {
 		ImageDto result = imageServerClient.convertImage( image( "images/kaaimangrootkleur.eps" ),
-		                                                  Collections.singletonList(
+		                                                  singletonList(
 				                                                  ImageTransformDto.builder()
 				                                                                   .height( 1536 )
 				                                                                   .quality( 100 )
-				                                                                   .outputType( ImageTypeDto.PNG )
+				                                                                   .outputType( PNG )
 				                                                                   .build() ) );
 
 		try (InputStream i = new ByteArrayInputStream( result.getImage() )) {
-			BufferedImage bimg = ImageIO.read( i );
+			BufferedImage bimg = read( i );
 			assertEquals( 1536, bimg.getHeight() );
 		}
 	}
@@ -453,18 +469,18 @@ public class ITLocalImageServerClient
 	@Test
 	@SneakyThrows
 	public void convertImagePdfEchoBackgroundColor() {
-		ImageConvertDto imageConvertDto = ImageConvertDto.builder()
-		                                                 .image( image( "images/55980.pdf" ) )
-		                                                 .pages( "0" )
-		                                                 .transformation( "echo-*", Collections.singletonList( ImageTransformDto.builder()
-		                                                                                                                        .height( 560 )
-		                                                                                                                        .backgroundColor(
-				                                                                                                                        ColorDto.from(
-						                                                                                                                        "#fff1e0" ) )
-		                                                                                                                        .dpi( 300 )
-		                                                                                                                        .quality( 100 )
-		                                                                                                                        .outputType( PNG )
-		                                                                                                                        .build() ) )
+		ImageConvertDto imageConvertDto = builder()
+				.image( image( "images/55980.pdf" ) )
+				.pages( "0" )
+				.transformation( "echo-*", singletonList( ImageTransformDto.builder()
+				                                                           .height( 560 )
+				                                                           .backgroundColor(
+						                                                           from(
+								                                                           "#fff1e0" ) )
+				                                                           .dpi( 300 )
+				                                                           .quality( 100 )
+				                                                           .outputType( PNG )
+				                                                           .build() ) )
 		                                                 .build();
 
 		ImageConvertResultDto imageConvertResultDto = imageServerClient.convertImage( imageConvertDto );
@@ -480,10 +496,10 @@ public class ITLocalImageServerClient
 		assertEquals( 1, imageConvertResultDto.getTransforms().size() );
 
 		ImageDto transformation = imageConvertResultDto.getTransforms().get( "echo-0" );
-		assertEquals( ImageTypeDto.PNG, transformation.getFormat() );
+		assertEquals( PNG, transformation.getFormat() );
 
 		try (InputStream i = new ByteArrayInputStream( transformation.getImage() )) {
-			BufferedImage bimg = ImageIO.read( i );
+			BufferedImage bimg = read( i );
 			assertEquals( 560, bimg.getHeight() );
 		}
 	}
@@ -503,16 +519,16 @@ public class ITLocalImageServerClient
 
 		private ImageServerCoreModule imageServerCoreModule() {
 			ImageServerCoreModule imageServerCoreModule = new ImageServerCoreModule();
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_STORE_FOLDER,
-			                                   new File( System.getProperty( "java.io.tmpdir" ), UUID.randomUUID().toString() ) );
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.ROOT_PATH, "/imgsrvr" );
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.PROVIDE_STACKTRACE, true );
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_ENABLED, true );
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_USE_GRAPHICSMAGICK, true );
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGEMAGICK_PATH,
+			imageServerCoreModule.setProperty( IMAGE_STORE_FOLDER,
+			                                   new File( getProperty( "java.io.tmpdir" ), randomUUID().toString() ) );
+			imageServerCoreModule.setProperty( ROOT_PATH, "/imgsrvr" );
+			imageServerCoreModule.setProperty( PROVIDE_STACKTRACE, true );
+			imageServerCoreModule.setProperty( IMAGEMAGICK_ENABLED, true );
+			imageServerCoreModule.setProperty( IMAGEMAGICK_USE_GRAPHICSMAGICK, true );
+			imageServerCoreModule.setProperty( IMAGEMAGICK_PATH,
 			                                   imageMagickPath );
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.CREATE_LOCAL_CLIENT, true );
-			imageServerCoreModule.setProperty( ImageServerCoreModuleSettings.IMAGE_SERVER_URL, "http://somehost/img" );
+			imageServerCoreModule.setProperty( CREATE_LOCAL_CLIENT, true );
+			imageServerCoreModule.setProperty( IMAGE_SERVER_URL, "http://somehost/img" );
 
 			return imageServerCoreModule;
 		}

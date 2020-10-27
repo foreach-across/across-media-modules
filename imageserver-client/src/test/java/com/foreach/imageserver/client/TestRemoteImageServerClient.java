@@ -3,8 +3,8 @@ package com.foreach.imageserver.client;
 import com.foreach.imageserver.dto.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,8 +19,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
@@ -36,7 +35,7 @@ public class TestRemoteImageServerClient
 	private RestTemplate restTemplate = new RestTemplate();
 	private MockRestServiceServer mockRestServiceServer;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		mockRestServiceServer = MockRestServiceServer.createServer( restTemplate );
 		ReflectionTestUtils.setField( imageServerClient, "restTemplate", restTemplate );
@@ -158,12 +157,14 @@ public class TestRemoteImageServerClient
 		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&height=2000", url );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void imageUrlNoSizeNoImageResolution() {
 		ImageVariantDto variant = new ImageVariantDto();
 		variant.setImageType( ImageTypeDto.JPEG );
-		String url = imageServerClient.imageUrl( "10", "ONLINE", null, variant );
-		assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&height=2000", url );
+		assertThrows( IllegalArgumentException.class, () -> {
+			String url = imageServerClient.imageUrl( "10", "ONLINE", null, variant );
+			assertEquals( "http://localhost:8078/view?iid=10&context=ONLINE&height=2000", url );
+		} );
 	}
 
 	@Test

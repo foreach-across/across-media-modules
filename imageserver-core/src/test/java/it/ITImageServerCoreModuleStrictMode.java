@@ -1,36 +1,40 @@
 package it;
 
 import com.foreach.across.core.context.registry.AcrossContextBeanRegistry;
-import com.foreach.imageserver.core.ImageServerCoreModule;
-import com.foreach.imageserver.core.config.WebConfiguration;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import static org.junit.Assert.assertNull;
+import static com.foreach.imageserver.core.ImageServerCoreModule.NAME;
+import static com.foreach.imageserver.core.config.WebConfiguration.IMAGE_REQUEST_HASH_BUILDER;
+import static it.ITImageServerCoreModule.Config;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext
 @WebAppConfiguration
 @TestPropertySource(properties = { "imageServerCore.strictMode=true", "imageServerCore.md5HashToken=test" })
-@ContextConfiguration(classes = ITImageServerCoreModule.Config.class)
+@ContextConfiguration(classes = Config.class)
 public class ITImageServerCoreModuleStrictMode
 {
 	@Autowired
 	private AcrossContextBeanRegistry beanRegistry;
 
-	@Test(expected = NoSuchBeanDefinitionException.class)
+	@Test
 	public void noImageRequestHashBuilderShouldBeCreated() {
-		assertNull( beanRegistry.getBeanFromModule( ImageServerCoreModule.NAME,
-		                                            WebConfiguration.IMAGE_REQUEST_HASH_BUILDER ) );
+		assertThrows( NoSuchBeanDefinitionException.class, () -> {
+			assertNull( beanRegistry.getBeanFromModule( NAME,
+			                                            IMAGE_REQUEST_HASH_BUILDER ) );
+		} );
 	}
 }

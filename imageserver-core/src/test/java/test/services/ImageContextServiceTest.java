@@ -5,14 +5,14 @@ import com.foreach.imageserver.core.managers.ImageResolutionManager;
 import com.foreach.imageserver.core.services.ImageContextService;
 import com.foreach.imageserver.core.services.ImageContextServiceImpl;
 import com.foreach.imageserver.math.AspectRatio;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -22,7 +22,7 @@ public class ImageContextServiceTest
 	public static final int CONTEXT_ID = 2;
 	private ImageContextService contextService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		contextService = new ImageContextServiceImpl();
 		ImageResolutionManager imageResolutionManager = mock( ImageResolutionManager.class );

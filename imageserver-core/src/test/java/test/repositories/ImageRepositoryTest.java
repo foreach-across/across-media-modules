@@ -7,15 +7,15 @@ import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.repositories.ImageProfileRepository;
 import com.foreach.imageserver.core.repositories.ImageRepository;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test.AbstractIntegrationTest;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ImageRepositoryTest extends AbstractIntegrationTest
 {

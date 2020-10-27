@@ -3,13 +3,13 @@ package test.managers;
 import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.managers.ImageContextManager;
 import com.foreach.imageserver.core.repositories.ImageContextRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import test.AbstractCachedIntegrationTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageContextManagerTest extends AbstractCachedIntegrationTest
 {

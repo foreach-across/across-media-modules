@@ -5,13 +5,13 @@ import com.foreach.imageserver.core.business.Dimensions;
 import com.foreach.imageserver.core.business.Image;
 import com.foreach.imageserver.core.business.ImageModification;
 import com.foreach.imageserver.dto.ImageResolutionDto;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Arne Vandamme
@@ -24,7 +24,7 @@ abstract class AbstractImageModficationSelectorTest
 	protected ImageResolutionDto requested;
 	protected Map<ImageModification, ImageResolutionDto> candidates;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		image = new Image();
 		image.setDimensions( new Dimensions( 1600, 1200 ) );

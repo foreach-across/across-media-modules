@@ -11,17 +11,18 @@ import com.foreach.imageserver.dto.*;
 import lombok.SneakyThrows;
 import org.im4java.core.IMOperation;
 import org.im4java.process.ProcessStarter;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
 import java.io.InputStream;
@@ -29,7 +30,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static support.ImageUtils.*;
 
 /**
@@ -37,10 +38,11 @@ import static support.ImageUtils.*;
  * @since 5.0.0
  */
 @ContextConfiguration(classes = TestImageMagickTransformCommandExecutor.Config.class)
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
+@Testcontainers
 public class TestImageMagickTransformCommandExecutor
 {
-	@ClassRule
+	@Container
 	public static GenericContainer imageserverContainer = ImageServerTestContainer.CONTAINER;
 
 	private final Function<Consumer<ImageTransformDto.ImageTransformDtoBuilder>, ImageTransformCommand> cropTestImage = transform ->

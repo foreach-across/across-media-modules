@@ -9,32 +9,19 @@ import com.foreach.imageserver.core.services.ImageService;
 import com.foreach.imageserver.core.services.ImageServiceImpl;
 import com.foreach.imageserver.core.services.ImageStoreService;
 import com.foreach.imageserver.core.services.exceptions.CropOutsideOfImageBoundsException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.stream.Stream;
 
-@RunWith(Parameterized.class)
 public class ImageServiceSaveImageModificationTest
 {
-
-	private int cropX;
-	private int cropY;
-	private int cropWidth;
-	private int cropHeight;
-	private int imageWidth;
-	private int imageHeight;
-	private boolean throwsError;
-	private String situation;
-
 	@Mock(name = "imageModificationManager")
 	private ImageModificationManager imageModificationManager;
 
@@ -44,46 +31,33 @@ public class ImageServiceSaveImageModificationTest
 	@InjectMocks
 	private ImageService imageService = new ImageServiceImpl();
 
-	public ImageServiceSaveImageModificationTest( int cropX,
-	                                              int cropY,
-	                                              int cropWidth,
-	                                              int cropHeight,
-	                                              int imageWidth,
-	                                              int imageHeight,
-	                                              boolean throwsError,
-	                                              String situation ) {
-		this.imageWidth = imageWidth;
-		this.imageHeight = imageHeight;
-		this.cropWidth = cropWidth;
-		this.cropHeight = cropHeight;
-		this.cropX = cropX;
-		this.cropY = cropY;
-		this.throwsError = throwsError;
-		this.situation = situation;
-	}
-
-	@Before
+	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.initMocks( this );
 	}
 
-	@Parameterized.Parameters(name = "{index} - {7}:  crop({0},{1},{2},{3}) image({4},{5}))")
-	public static Collection<Object[]> data() {
-		List<Object[]> data = new ArrayList<Object[]>();
-
-		data.add( new Object[] { 0, 0, 50, 100, 50, 100, false, "full size" } );
-		data.add( new Object[] { 10, 10, 30, 60, 50, 100, false, "small inside" } );
-		data.add( new Object[] { -10, 0, 50, 100, 50, 100, true, "outside left" } );
-		data.add( new Object[] { 10, 0, 50, 100, 50, 100, true, "outside right" } );
-		data.add( new Object[] { 0, -10, 50, 100, 50, 100, true, "outside top" } );
-		data.add( new Object[] { 0, 10, 50, 100, 50, 100, true, "outside bottom" } );
-		data.add( new Object[] { 0, 0, 100, 200, 50, 100, true, "outside right bottom" } );
-
-		return data;
+	public static Stream<Arguments> data() {
+		return Stream.of(
+				Arguments.of( 0, 0, 50, 100, 50, 100, false, "full size" ),
+				Arguments.of( 10, 10, 30, 60, 50, 100, false, "small inside" ),
+				Arguments.of( -10, 0, 50, 100, 50, 100, true, "outside left" ),
+				Arguments.of( 10, 0, 50, 100, 50, 100, true, "outside right" ),
+				Arguments.of( 0, -10, 50, 100, 50, 100, true, "outside top" ),
+				Arguments.of( 0, 10, 50, 100, 50, 100, true, "outside bottom" ),
+				Arguments.of( 0, 0, 100, 200, 50, 100, true, "outside right bottom" )
+		);
 	}
 
-	@Test
-	public void saveImageModification() throws Exception {
+	@ParameterizedTest(name = "{index} - {7}:  crop({0},{1},{2},{3}) image({4},{5}))")
+	@MethodSource("data")
+	public void saveImageModification( int cropX,
+	                                   int cropY,
+	                                   int cropWidth,
+	                                   int cropHeight,
+	                                   int imageWidth,
+	                                   int imageHeight,
+	                                   boolean throwsError,
+	                                   String situation ) throws Exception {
 		try {
 			imageService.saveImageModification( createModification( cropX, cropY, cropWidth, cropHeight ),
 			                                    createImage( imageWidth, imageHeight ) );
@@ -99,8 +73,16 @@ public class ImageServiceSaveImageModificationTest
 		}
 	}
 
-	@Test
-	public void saveImageModifications() throws Exception {
+	@ParameterizedTest(name = "{index} - {7}:  crop({0},{1},{2},{3}) image({4},{5}))")
+	@MethodSource("data")
+	public void saveImageModifications( int cropX,
+	                                    int cropY,
+	                                    int cropWidth,
+	                                    int cropHeight,
+	                                    int imageWidth,
+	                                    int imageHeight,
+	                                    boolean throwsError,
+	                                    String situation ) throws Exception {
 		try {
 			imageService.saveImageModifications( Arrays.asList( createModification( cropX, cropY, cropWidth, cropHeight ) ),
 			                                     createImage( imageWidth, imageHeight ) );

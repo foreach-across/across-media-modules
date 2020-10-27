@@ -4,7 +4,7 @@ import com.foreach.imageserver.core.business.ImageContext;
 import com.foreach.imageserver.core.business.ImageResolution;
 import com.foreach.imageserver.core.repositories.ImageContextRepository;
 import com.foreach.imageserver.core.repositories.ImageResolutionRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import test.AbstractIntegrationTest;
@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ImageResolutionRepositoryTest extends AbstractIntegrationTest
 {

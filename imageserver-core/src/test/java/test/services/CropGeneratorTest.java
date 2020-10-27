@@ -10,23 +10,23 @@ import com.foreach.imageserver.core.services.ImageResolutionServiceImpl;
 import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.ImageModificationDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 /**
  * @author Arne Vandamme
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CropGeneratorTest
 {
 	private int resolutionIdCounter;
@@ -48,7 +48,7 @@ public class CropGeneratorTest
 	@Mock
 	private ImageResolutionManager imageResolutionManager;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		imageResolutionService = new ImageResolutionServiceImpl();
 		cropGenerator = new CropGeneratorImpl();

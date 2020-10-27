@@ -7,7 +7,7 @@ import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageTransformDto;
 import com.foreach.imageserver.math.AspectRatio;
 import lombok.RequiredArgsConstructor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.imageserver.dto.ImageTransformDto.builder;
 import static org.assertj.core.api.Assertions.assertThat;

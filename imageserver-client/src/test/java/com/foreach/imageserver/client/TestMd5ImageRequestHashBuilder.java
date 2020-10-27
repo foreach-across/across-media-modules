@@ -4,10 +4,10 @@ import com.foreach.imageserver.dto.DimensionsDto;
 import com.foreach.imageserver.dto.ImageResolutionDto;
 import com.foreach.imageserver.dto.ImageTypeDto;
 import com.foreach.imageserver.dto.ImageVariantDto;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -16,14 +16,16 @@ public class TestMd5ImageRequestHashBuilder
 {
 	private Md5ImageRequestHashBuilder hashBuilder;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		hashBuilder = new Md5ImageRequestHashBuilder( "test" );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void nonNullTokenIsRequired() {
-		hashBuilder = new Md5ImageRequestHashBuilder( null );
+		assertThrows( IllegalArgumentException.class, () -> {
+			hashBuilder = new Md5ImageRequestHashBuilder( null );
+		} );
 	}
 
 	@Test

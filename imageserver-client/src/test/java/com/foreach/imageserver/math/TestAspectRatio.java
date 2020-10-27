@@ -1,15 +1,15 @@
 package com.foreach.imageserver.math;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAspectRatio
 {
 	private AspectRatio two;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		two = new AspectRatio( 2, 1 );
 	}
@@ -117,36 +117,42 @@ public class TestAspectRatio
 		assertEquals( true, AspectRatio.ONE.equals( inverseTv.divideBy( inverseTv ) ) );
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void underflow() {
 		// the smallest nonzero postive number we can express
 		AspectRatio smallestPositiveAspectRatio = new AspectRatio( 1, Integer.MAX_VALUE );
+		assertThrows( ArithmeticException.class, () -> {
+			AspectRatio evenSmaller = smallestPositiveAspectRatio.divideBy( two );
+			;
+		} );
 
-		AspectRatio evenSmaller = smallestPositiveAspectRatio.divideBy( two );
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void underflow2() {
 		// the biggest nonzero negative number we can express
 		AspectRatio biggestNegativeAspectRatio = new AspectRatio( -1, Integer.MAX_VALUE );
-
-		AspectRatio evenBigger = biggestNegativeAspectRatio.divideBy( two );
+		assertThrows( ArithmeticException.class, () -> {
+			AspectRatio evenBigger = biggestNegativeAspectRatio.divideBy( two );
+		} );
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void overflow() {
 		// the biggest nonzero postive number we can express
 		AspectRatio biggestPositiveAspectRatio = new AspectRatio( Integer.MAX_VALUE, 1 );
-
-		AspectRatio evenBigger = biggestPositiveAspectRatio.multiplyWith( two );
+		assertThrows( ArithmeticException.class, () -> {
+			AspectRatio evenBigger = biggestPositiveAspectRatio.multiplyWith( two );
+		} );
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void overflow2() {
 		// the smallest nonzero negative number we can express
 		AspectRatio smallestNegativeAspectRatio = new AspectRatio( Integer.MIN_VALUE, 1 );
-
-		AspectRatio evenBigger = smallestNegativeAspectRatio.multiplyWith( two );
+		assertThrows( ArithmeticException.class, () -> {
+			AspectRatio evenBigger = smallestNegativeAspectRatio.multiplyWith( two );
+		} );
 	}
 
 	@Test

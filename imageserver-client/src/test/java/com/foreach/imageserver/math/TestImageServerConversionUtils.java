@@ -2,10 +2,10 @@ package com.foreach.imageserver.math;
 
 import com.foreach.imageserver.dto.CropDto;
 import com.foreach.imageserver.dto.DimensionsDto;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.foreach.imageserver.math.ImageServerConversionUtils.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Arne Vandamme
@@ -120,10 +120,12 @@ public class TestImageServerConversionUtils
 		assertEquals( 200, normalized.getHeight() );
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void normalizeCropToBoxRequiresSourceToBeSet() {
 		CropDto crop = new CropDto( 0, 0, 500, 300 );
-		normalize( crop, new DimensionsDto( 250, 150 ) );
+		assertThrows( IllegalArgumentException.class, () -> {
+			normalize( crop, new DimensionsDto( 250, 150 ) );
+		} );
 	}
 
 	@Test
@@ -198,8 +200,7 @@ public class TestImageServerConversionUtils
 		assertEquals( expected, left.equals( right ) );
 
 		if ( expected ) {
-			assertEquals( "hashCode() is broken, it should return identical result for objects that are equal",
-			              left.hashCode(), right.hashCode() );
+			assertEquals( left.hashCode(), right.hashCode(), "hashCode() is broken, it should return identical result for objects that are equal" );
 		}
 	}
 }

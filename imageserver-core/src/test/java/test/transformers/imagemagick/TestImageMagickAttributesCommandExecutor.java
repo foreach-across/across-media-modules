@@ -6,33 +6,36 @@ import com.foreach.imageserver.core.transformers.ImageAttributesCommand;
 import com.foreach.imageserver.core.transformers.ImageModificationException;
 import com.foreach.imageserver.core.transformers.imagemagick.ImageMagickAttributesCommandExecutor;
 import org.im4java.process.ProcessStarter;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Arne Vandamme
  * @since 5.0.0
  */
 @ContextConfiguration(classes = TestImageMagickAttributesCommandExecutor.Config.class)
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
+@Testcontainers
 public class TestImageMagickAttributesCommandExecutor
 {
-	@ClassRule
+	@Container
 	public static GenericContainer imageserverContainer = ImageServerTestContainer.CONTAINER;
 
 	@Autowired
@@ -101,12 +104,14 @@ public class TestImageMagickAttributesCommandExecutor
 		assertEquals( 125, attributes.getDimensions().getHeight() );
 	}
 
-	@Test(expected = ImageModificationException.class)
+	@Test
 	public void getImageAttributesForUnrecognizedByteStream() {
 		ImageAttributesCommand command = ImageAttributesCommand.builder()
 		                                                       .imageStream( new ByteArrayInputStream( "This is not an image.".getBytes() ) )
 		                                                       .build();
-		executor.execute( command );
+		assertThrows( ImageModificationException.class, () -> {
+			executor.execute( command );
+		} );
 	}
 
 	private ImageAttributes fetchAttributes( String imageResource ) {
