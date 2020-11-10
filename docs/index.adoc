@@ -71,7 +71,15 @@ The following artifacts are available for the different <<components>>:
 == What's new in this version?
 :numbered!:
 
-=== 5.0.0-SNAPSHOT
+=== 6.1.0.RELEASE
+
+* Switched to JUnit5
+
+=== 6.0.0.RELEASE
+
+* Updates for AX5
+
+=== 5.0.0.RELEASE
 
 * FileManagerModule is now used for the file storage, repository ids: `imageserver-originals`, `imageserver-variants` and `imageserver-temp`
 * Support for PDF file format when ghostscript is present - including multi-page pdf
