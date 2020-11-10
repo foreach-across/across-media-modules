@@ -75,6 +75,7 @@ public class FileManagerTestApplication
 	}
 
 	@Bean
+	@Profile("aws")
 	public LocalStackContainer localStackContainer() {
 		LocalStackContainer localstack = new LocalStackContainer( "0.9.3" )
 				.withFileSystemBind( "../local-data/storage/localstack", "/tmp/localstack/data" )

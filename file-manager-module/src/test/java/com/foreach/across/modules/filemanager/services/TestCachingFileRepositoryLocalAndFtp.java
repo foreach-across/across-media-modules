@@ -20,42 +20,55 @@ import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
+import org.apache.commons.net.ftp.FTPClient;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.integration.ftp.session.DefaultFtpSessionFactory;
+import org.springframework.integration.ftp.session.FtpRemoteFileTemplate;
 import org.springframework.util.StreamUtils;
-import utils.AzureStorageHelper;
+import utils.FtpContainer;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
+class TestCachingFileRepositoryLocalAndFtp extends BaseFileRepositoryTest
 {
-	private static final String CONTAINER_NAME = "ax-filemanager-test";
-
-	private static CloudBlobClient cloudBlobClient;
-
-	private AzureFileRepository remoteRepository;
+	private SpringIntegrationFtpFileRepository remoteRepository;
 	private LocalFileRepository cacheRepository;
 
+	private static final FtpContainer ftpContainer = new FtpContainer();
+	private static FtpRemoteFileTemplate template;
+
 	@Override
-	@SneakyThrows
 	FileRepository createRepository() {
-		if ( cloudBlobClient == null ) {
-			cloudBlobClient = AzureStorageHelper.azurite.storageAccount().createCloudBlobClient();
-			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
+		if ( template == null ) {
+			DefaultFtpSessionFactory defaultFtpSessionFactory = new DefaultFtpSessionFactory();
+			defaultFtpSessionFactory.setClientMode( FTPClient.PASSIVE_LOCAL_DATA_CONNECTION_MODE );
+			defaultFtpSessionFactory.setUsername( "fmm" );
+			defaultFtpSessionFactory.setPassword( "test" );
+			defaultFtpSessionFactory.setHost( "localhost" );
+			defaultFtpSessionFactory.setPort( 21 );
+			defaultFtpSessionFactory.setDefaultTimeout( 5000 );
+			defaultFtpSessionFactory.setConnectTimeout( 5000 );
+			defaultFtpSessionFactory.setDataTimeout( 5000 );
+
+			template = new FtpRemoteFileTemplate( defaultFtpSessionFactory );
+			// STAT seems to incorrectly return files as still existing
+			template.setExistsMode( FtpRemoteFileTemplate.ExistsMode.NLST );
+			template.setAutoCreateDirectory( true );
 		}
+
 		FileManagerImpl fileManager = new FileManagerImpl();
 
-		remoteRepository = AzureFileRepository.builder()
-		                                      .repositoryId( "s3-repo" )
-		                                      .blobClient( cloudBlobClient )
-		                                      .containerName( CONTAINER_NAME )
-		                                      .build();
+		remoteRepository = SpringIntegrationFtpFileRepository.builder()
+		                                                     .repositoryId( "ftp-repo" )
+		                                                     .remoteFileTemplate( template )
+		                                                     .build();
 		remoteRepository.setFileManager( fileManager );
 
 		CachingFileRepository repositoryToTest = CachingFileRepository.withGeneratedFileDescriptor()
@@ -70,6 +83,25 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 		return repositoryToTest;
 	}
 
+	@BeforeAll
+	@SneakyThrows
+	static void init() {
+		ftpContainer.start();
+	}
+
+	@AfterAll
+	static void tearDown() {
+		ftpContainer.stop();
+	}
+
+	@AfterEach
+	void cleanUp() {
+		FolderResource rootFolder = remoteRepository.getRootFolderResource();
+		if ( !rootFolder.findResources( "*" ).isEmpty() ) {
+			assertThat( rootFolder.deleteChildren() ).isTrue();
+		}
+	}
+
 	@Test
 	@SneakyThrows
 	void cacheResourceMayBeRemoved() {
@@ -77,7 +109,7 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 		resource.copyFrom( RES_TEXTFILE );
 
 		LocalFileResource cache = (LocalFileResource) resource.getCache();
-		AzureFileResource target = (AzureFileResource) resource.getTarget();
+		SpringIntegrationFtpFileResource target = (SpringIntegrationFtpFileResource) resource.getTarget();
 
 		assertThat( readResource( resource ) ).isEqualTo( "some dummy text" );
 		assertThat( readResource( target ) ).isEqualTo( "some dummy text" );
@@ -120,7 +152,7 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 		resource.copyFrom( RES_TEXTFILE );
 
 		LocalFileResource cache = (LocalFileResource) resource.getCache();
-		AzureFileResource target = (AzureFileResource) resource.getTarget();
+		SpringIntegrationFtpFileResource target = (SpringIntegrationFtpFileResource) resource.getTarget();
 
 		try (OutputStream os = resource.getOutputStream()) {
 			StreamUtils.copy( "updated data", Charset.defaultCharset(), os );
@@ -138,7 +170,7 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 		resource.copyFrom( RES_TEXTFILE );
 
 		LocalFileResource cache = (LocalFileResource) resource.getCache();
-		AzureFileResource target = (AzureFileResource) resource.getTarget();
+		SpringIntegrationFtpFileResource target = (SpringIntegrationFtpFileResource) resource.getTarget();
 
 		resource.delete();
 		assertThat( resource.exists() ).isFalse();
@@ -153,7 +185,7 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 		resource.copyFrom( RES_TEXTFILE );
 
 		LocalFileResource cache = (LocalFileResource) resource.getCache();
-		AzureFileResource target = (AzureFileResource) resource.getTarget();
+		SpringIntegrationFtpFileResource target = (SpringIntegrationFtpFileResource) resource.getTarget();
 
 		FileResource remote = remoteRepository.getFileResource( target.getDescriptor() );
 		assertThat( remote.exists() ).isTrue();
@@ -168,12 +200,15 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 	@SneakyThrows
 	void folderIsCreated() {
 		FileResource file = fileRepository.getFileResource( FileDescriptor.of( fileRepository.getRepositoryId() + ":aa/bb/cc:myfile" ) );
-		assertThat( fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":aa/" ) ).exists() ).isTrue();
-		assertThat( fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":aa/bb/" ) ).exists() ).isTrue();
-		assertThat( fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":aa/bb/cc/" ) ).exists() ).isTrue();
+		assertThat( fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":aa/" ) ).exists() ).isFalse();
+		assertThat( fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":aa/bb/" ) ).exists() ).isFalse();
+		assertThat( fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":aa/bb/cc/" ) ).exists() ).isFalse();
 
 		file.copyFrom( RES_TEXTFILE );
 
+		assertThat( fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":aa/" ) ).exists() ).isTrue();
+		assertThat( fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":aa/bb/" ) ).exists() ).isTrue();
+		assertThat( fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":aa/bb/cc/" ) ).exists() ).isTrue();
 		assertThat( file.exists() ).isTrue();
 
 		FolderResource cc = file.getFolderResource();
@@ -204,7 +239,7 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 	@SneakyThrows
 	void createFolderAndFilesInFolder() {
 		FolderResource folder = fileRepository.getFolderResource( FolderDescriptor.of( fileRepository.getRepositoryId() + ":dd/cc/" ) );
-		assertThat( folder.exists() ).isTrue();
+		assertThat( folder.exists() ).isFalse();
 		folder.create();
 
 		assertThat( folder.exists() ).isTrue();
@@ -260,18 +295,5 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 		assertThat( root.findResources( "ee" ) ).contains( folderInRoot );
 		assertThat( root.findResources( "/?e/*" ) ).contains( fileInFolderInRoot );
 		assertThat( root.findResources( "/ee/*" ) ).contains( fileInFolderInRoot );
-	}
-
-	@Override
-	@Test
-	@Disabled
-	void findResourcesAndFilesWithHierarchySetup() {
-		super.findResourcesAndFilesWithHierarchySetup();
-	}
-
-	@AfterAll
-	@SneakyThrows
-	static void tearDown() {
-		cloudBlobClient.getContainerReference( CONTAINER_NAME ).deleteIfExists();
 	}
 }

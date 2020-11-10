@@ -39,3 +39,9 @@ fileManagerModule:
 acrossHibernate:
   properties:
     hibernate.hbm2ddl.auto: update
+
+ftp1:
+  username: stg
+  password: pw
+  port: 21
+  host: localhost
