@@ -22,8 +22,8 @@ import org.junit.jupiter.api.Test;
 import static com.foreach.across.modules.filemanager.business.FileDescriptor.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class TestFileDescriptor
 {

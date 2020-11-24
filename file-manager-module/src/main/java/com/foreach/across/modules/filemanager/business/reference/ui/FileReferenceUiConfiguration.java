@@ -63,7 +63,7 @@ class FileReferenceUiConfiguration implements EntityConfigurer
 				                      .viewElementBuilder( ViewElementMode.LIST_VALUE, fileReferenceDownloadLinkBuilder( true ) )
 		        )
 		        .listView( lvb -> lvb.showProperties( "name", "fileSize", "mimeType", "lastModified" )
-		                             .defaultSort( new Sort( Sort.Direction.DESC, "lastModified" ) ) );
+		                             .defaultSort( Sort.by( Sort.Direction.DESC, "lastModified" ) ) );
 	}
 
 	private ViewElementBuilder fileReferenceDownloadLinkBuilder( boolean forList ) {
