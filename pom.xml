@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>across-standard-module-parent</artifactId>
-		<version>5.1.0.RELEASE</version>
+		<version>5.2.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.foreach.across.modules</groupId>
@@ -61,7 +61,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<revision>0.2.0.RELEASE</revision>
+		<revision>0.3.0-SNAPSHOT</revision>
 		<webjars.bootbox>5.3.2</webjars.bootbox>
 		<webjars.codemirror>5.44.0</webjars.codemirror>
 		<webjars.lodash>4.17.4</webjars.lodash>
@@ -78,12 +78,12 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>admin-web-module</artifactId>
-				<version>4.0.0.RELEASE</version>
+				<version>4.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>entity-module</artifactId>
-				<version>4.1.0.RELEASE</version>
+				<version>4.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
@@ -98,7 +98,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>user-module</artifactId>
-				<version>4.0.0.RELEASE</version>
+				<version>4.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>

@@ -27,9 +27,9 @@ import com.foreach.across.modules.webcms.domain.image.connector.WebCmsImageConne
 import com.foreach.imageserver.client.ImageServerClient;
 import com.foreach.imageserver.client.Md5ImageRequestHashBuilder;
 import com.foreach.imageserver.client.RemoteImageServerClient;
-import liquibase.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.LazyInitTargetSource;
 import org.springframework.beans.factory.BeanFactory;
