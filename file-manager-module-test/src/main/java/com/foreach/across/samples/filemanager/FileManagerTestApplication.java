@@ -137,7 +137,7 @@ public class FileManagerTestApplication
 		System.out.println( "" );
 		SpringApplication springApplication = new SpringApplication( FileManagerTestApplication.class );
 		springApplication.setDefaultProperties(
-				Collections.singletonMap( "spring.config.additional-location", "${user.home}/dev-configs/fmm-test-application.yml" ) );
+				Collections.singletonMap( "spring.config.additional-location", "optional:${user.home}/dev-configs/fmm-test-application.yml" ) );
 		springApplication.run( args );
 	}
 }

@@ -3,7 +3,7 @@ package it;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.reference.FileReference;
 import com.foreach.across.modules.filemanager.business.reference.FileReferenceRepository;
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

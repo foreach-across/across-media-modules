@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>across-standard-module-parent</artifactId>
-		<version>5.1.0.RELEASE</version>
+		<version>5.2.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.foreach.across.modules</groupId>
@@ -49,7 +49,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<revision>2.2.0.RELEASE</revision>
+		<revision>2.3.0-SNAPSHOT</revision>
 	</properties>
 
 	<description>
@@ -76,19 +76,19 @@
 			<dependency>
 				<groupId>com.amazonaws</groupId>
 				<artifactId>aws-java-sdk-bom</artifactId>
-				<version>1.11.791</version>
+				<version>1.11.932</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-aws-core</artifactId>
-				<version>2.2.1.RELEASE</version>
+				<version>2.2.5.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>com.microsoft.azure</groupId>
 				<artifactId>azure-storage</artifactId>
-				<version>8.6.4</version>
+				<version>8.6.5</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
@@ -108,7 +108,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>entity-module</artifactId>
-				<version>4.1.0.RELEASE</version>
+				<version>4.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
@@ -118,7 +118,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>admin-web-module</artifactId>
-				<version>4.0.0.RELEASE</version>
+				<version>4.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-net</groupId>
