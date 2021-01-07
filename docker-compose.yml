@@ -1,5 +1,12 @@
 version: '2.1'
 services:
+  frontend:
+    image: 'beforeach/node:10'
+    command: 'bash -c "yarn install && gulp scss js --production"'
+    volumes:
+      - '.:/build'
+    working_dir: '/build/file-manager-module/src/main/frontend'
+
   maven-base:
     # 1.) Do not use the alpine image as it fails frontend-maven-plugin:install-node-and-yarn
     #     https://github.com/eirslett/frontend-maven-plugin/issues/743
