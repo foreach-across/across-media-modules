@@ -32,7 +32,7 @@ public class ImageServerTestEmbeddedApplication
 	public static void main( String[] args ) {
 		SpringApplication springApplication = new SpringApplication( ImageServerTestEmbeddedApplication.class );
 		springApplication.setDefaultProperties(
-				Collections.singletonMap( "spring.config.additional-location", "${user.home}/dev-configs/imageserver-embedded.yml" ) );
+				Collections.singletonMap( "spring.config.additional-location", "optional:${user.home}/dev-configs/imageserver-embedded.yml" ) );
 		springApplication.run( args );
 	}
 

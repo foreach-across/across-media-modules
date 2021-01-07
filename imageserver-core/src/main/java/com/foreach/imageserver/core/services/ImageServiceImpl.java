@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.ByteArrayInputStream;
@@ -208,7 +208,7 @@ public class ImageServiceImpl implements ImageService
 		storeImageModification( modifications, image );
 
 		if ( TransactionSynchronizationManager.isSynchronizationActive() ) {
-			TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronizationAdapter()
+			TransactionSynchronizationManager.registerSynchronization( new TransactionSynchronization()
 			{
 				@Override
 				public void afterCommit() {

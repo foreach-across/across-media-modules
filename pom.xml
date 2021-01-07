@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.foreach.across</groupId>
 		<artifactId>across-standard-module-parent</artifactId>
-		<version>5.1.0.RELEASE</version>
+		<version>5.2.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.foreach.imageserver</groupId>
@@ -44,7 +44,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<revision>6.1.0.RELEASE</revision>
+		<revision>6.2.0-SNAPSHOT</revision>
 
 		<sonar.exclusions>deploy/**,target/generated-sources/**</sonar.exclusions>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -90,7 +90,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>admin-web-module</artifactId>
-				<version>4.1.0.RELEASE</version>
+				<version>4.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
@@ -100,7 +100,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>user-module</artifactId>
-				<version>4.1.0.RELEASE</version>
+				<version>4.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
@@ -110,7 +110,7 @@
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
 				<artifactId>spring-security-module</artifactId>
-				<version>4.1.0.RELEASE</version>
+				<version>4.2.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
