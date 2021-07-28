@@ -1,12 +1,12 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.*;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpException;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -415,31 +415,36 @@ class TestSpringIntegrationSftpFolderResource
 	}
 
 	private void createFolderViaFtp( String path ) {
-		getSftpRemoteFileTemplate().<Void, FTPClient>executeWithClient( client -> {
+		getSftpRemoteFileTemplate().<Void, ChannelSftp>executeWithClient( client -> {
 			String[] parts = path.split( "/" );
 			try {
 				for ( int i = 0; i < parts.length; i++ ) {
 					String part = StringUtils.join( ArrayUtils.subarray( parts, 0, i + 1 ), "/" );
-					FTPFile remoteFile = client.mlistFile( part );
-					if ( remoteFile == null ) {
-						client.makeDirectory( part );
+
+					try {
+						client.stat( part );
 					}
+					catch ( SftpException ignore ) {
+						client.mkdir( part );
+					}
+//					if ( remoteFile == null ) {
+//					}
 				}
 			}
-			catch ( IOException ignore ) {
+			catch ( SftpException ignore ) {
 			}
 			return null;
 		} );
 	}
 
 	private void createFileViaFtp( String path, String content ) {
-		getSftpRemoteFileTemplate().<Void, FTPClient>executeWithClient( client -> {
+		getSftpRemoteFileTemplate().<Void, ChannelSftp>executeWithClient( client -> {
 			try {
 				InputStream inputStream = IOUtils.toInputStream( content, "UTF-8" );
-				client.storeFile( path, inputStream );
+				client.put( inputStream, path );
 				inputStream.close();
 			}
-			catch ( IOException ignore ) {
+			catch ( IOException | SftpException ignore ) {
 			}
 			return null;
 		} );
@@ -450,14 +455,13 @@ class TestSpringIntegrationSftpFolderResource
 	}
 
 	private boolean verifyFolderExistsViaFtp( String path ) {
-		return getSftpRemoteFileTemplate().<Boolean, FTPClient>executeWithClient( client -> {
+		return getSftpRemoteFileTemplate().<Boolean, ChannelSftp>executeWithClient( client -> {
 			try {
-				FTPFile ftpFile = client.mlistFile( path );
-				return ftpFile != null && ftpFile.isDirectory();
+				return client.stat( path ).isDir();
 			}
-			catch ( IOException e ) {
-				return false;
+			catch ( Exception e ) {
 			}
+			return false;
 		} );
 	}
 }

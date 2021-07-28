@@ -35,7 +35,7 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 
 	@Override
 	public boolean exists() {
-		return getFtpFile() != null;
+		return getSftpFile().exists();
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 
 	@Override
 	public long contentLength() throws IOException {
-		SFTPFile file = getFtpFile();
+		SFTPFile file = getSftpFile();
 		if ( file == null ) {
 			throw new FileNotFoundException( "Unable to locate file " + fileDescriptor );
 		}
@@ -61,7 +61,7 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 
 	@Override
 	public long lastModified() throws IOException {
-		SFTPFile file = getFtpFile();
+		SFTPFile file = getSftpFile();
 		if ( file == null ) {
 			throw new FileNotFoundException( "Unable to locate file " + fileDescriptor );
 		}
@@ -134,7 +134,7 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 		}
 	}
 
-	private SFTPFile getFtpFile() {
+	private SFTPFile getSftpFile() {
 		if ( file == null ) {
 			this.file = remoteFileTemplate.executeWithClient( this::fetchFileInfo );
 		}
@@ -142,7 +142,7 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 	}
 
 	private SFTPFile fetchFileInfo( ChannelSftp client ) {
-		return new SFTPFile( client, getPath() );
+		return new SFTPFile( remoteFileTemplate /*client*/, getPath() );
 	}
 //
 //	/**

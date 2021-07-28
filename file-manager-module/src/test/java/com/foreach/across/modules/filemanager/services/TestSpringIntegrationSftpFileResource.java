@@ -5,6 +5,7 @@ import com.foreach.across.modules.filemanager.business.FileResource;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
  * @author Steven Gentens
  * @since 1.4.0
  */
+@Slf4j
 class TestSpringIntegrationSftpFileResource
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
@@ -390,6 +392,7 @@ class TestSpringIntegrationSftpFileResource
 				inputStream.close();
 			}
 			catch ( IOException | SftpException ignore ) {
+				LOG.error( "Unable to create file via SFTP", ignore );
 			}
 			return null;
 		} );

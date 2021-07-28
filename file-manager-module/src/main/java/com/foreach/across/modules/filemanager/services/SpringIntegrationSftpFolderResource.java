@@ -30,7 +30,7 @@ public class SpringIntegrationSftpFolderResource extends SpringIntegrationFolder
 
 	@Override
 	public boolean exists() {
-		return retrieveRemoteFile( getPath() ) != null;
+		return retrieveRemoteFile( getPath() ).exists();
 	}
 
 	protected boolean exists( ChannelSftp client ) {
@@ -187,7 +187,7 @@ public class SpringIntegrationSftpFolderResource extends SpringIntegrationFolder
 	}
 
 	private SFTPFile retrieveRemoteFile( ChannelSftp client, String path ) {
-		return new SFTPFile( client, path );
+		return new SFTPFile( remoteFileTemplate, path );
 	}
 
 	private void findResourcesWithMatchingKeys( BiPredicate<String, String> keyMatcher,

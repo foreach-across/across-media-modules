@@ -2,6 +2,7 @@ package utils;
 
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.AsyncAuthException;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
@@ -73,6 +74,9 @@ public class SftpContainer
 //					}
 //				} )
 .build();
+		VirtualFileSystemFactory fileSystemFactory = new VirtualFileSystemFactory();
+		fileSystemFactory.setDefaultHomeDir( tempDir );
+		server.setFileSystemFactory( fileSystemFactory );
 		server.setSubsystemFactories( Collections.singletonList( factory ) );
 	}
 
