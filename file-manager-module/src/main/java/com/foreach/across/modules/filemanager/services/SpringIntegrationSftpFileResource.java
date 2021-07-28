@@ -2,11 +2,9 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
-import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.business.FolderResource;
 import com.jcraft.jsch.ChannelSftp;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.file.remote.session.Session;
 import org.springframework.integration.sftp.session.SftpRemoteFileTemplate;
@@ -90,7 +88,8 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 			instantiateAsEmptyFile( client );
 		}
 		resetFileMetadata();
-		return new FtpFileOutputStream( client.storeFileStream( getPath() ), client, session );
+		return client.getOutputStream();
+//		return new FtpFileOutputStream( client.storeFileStream( getPath() ), client, session );
 	}
 
 	void resetFileMetadata() {
@@ -104,11 +103,17 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 				folder.create();
 			}
 
-			boolean fileCreated = client.storeFile( getPath(), bin );
-
-			if ( !fileCreated ) {
-				throw new FileStorageException( "Unable to create a basic empty file" );
+			try {
+				client.put( bin, getPath() );//client.storeFile( getPath(), bin );
 			}
+			catch ( SftpException e ) {
+				LOG.error( "Unable to create empty file at {}", getPath() );
+				throw new IOException( e );
+			}
+
+//			if ( !fileCreated ) {
+//				throw new FileStorageException( "Unable to create a basic empty file" );
+//			}
 		}
 		return null;
 	}
@@ -120,7 +125,13 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 		}
 		Session<ChannelSftp.LsEntry> session = remoteFileTemplate.getSession();
 		ChannelSftp client = (ChannelSftp) session.getClientInstance();
-		return new FtpFileInputStream( client.retrieveFileStream( getPath() ), client, session );
+		try {
+			return client.get( getPath() );//new FtpFileInputStream( client.retrieveFileStream( getPath() ), client, session );
+		}
+		catch ( SftpException e ) {
+			LOG.error( "Unable to create inputstream for file {} ", getPath() );
+			throw new IOException( e );
+		}
 	}
 
 	private SFTPFile getFtpFile() {
@@ -133,116 +144,116 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 	private SFTPFile fetchFileInfo( ChannelSftp client ) {
 		return new SFTPFile( client, getPath() );
 	}
-
-	/**
-	 * Wrapper around an input stream retrieved through an {@link ChannelSftp}.
-	 * Ensures that {@link ChannelSftp#completePendingCommand()} is called when the stream is closed.
-	 */
-	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-	private static class FtpFileInputStream extends InputStream
-	{
-		private final InputStream inputStream;
-		private final ChannelSftp ftpClient;
-		private final Session session;
-		private boolean isClosed = false;
-
-		@Override
-		public int read( byte[] b ) throws IOException {
-			return inputStream.read( b );
-		}
-
-		@Override
-		public int read( byte[] b, int off, int len ) throws IOException {
-			return inputStream.read( b, off, len );
-		}
-
-		@Override
-		public long skip( long n ) throws IOException {
-			return inputStream.skip( n );
-		}
-
-		@Override
-		public int available() throws IOException {
-			return inputStream.available();
-		}
-
-		@Override
-		public void close() throws IOException {
-			if ( !isClosed ) {
-				inputStream.close();
-				if ( !ftpClient.completePendingCommand() ) {
-					LOG.error( "Unable to verify that the file has been modified correctly." );
-					throw new FileStorageException( "File transfer may not be successful. Please check the logs for more info." );
-				}
-				session.close();
-				isClosed = true;
-			}
-		}
-
-		@Override
-		public synchronized void mark( int readlimit ) {
-			inputStream.mark( readlimit );
-		}
-
-		@Override
-		public synchronized void reset() throws IOException {
-			inputStream.reset();
-		}
-
-		@Override
-		public boolean markSupported() {
-			return inputStream.markSupported();
-		}
-
-		@Override
-		public int read() throws IOException {
-			return inputStream.read();
-		}
-	}
-
-	/**
-	 * Wrapper around an output stream retrieved through an {@link ChannelSftp}.
-	 * Ensures that {@link ChannelSftp#completePendingCommand()} is called when the stream is closed.
-	 */
-	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-	private static class FtpFileOutputStream extends OutputStream
-	{
-		private final OutputStream outputStream;
-		private final ChannelSftp ftpClient;
-		private final Session session;
-		private boolean isClosed = false;
-
-		@Override
-		public void write( int b ) throws IOException {
-			outputStream.write( b );
-		}
-
-		@Override
-		public void write( byte[] b ) throws IOException {
-			outputStream.write( b );
-		}
-
-		@Override
-		public void write( byte[] b, int off, int len ) throws IOException {
-			outputStream.write( b, off, len );
-		}
-
-		@Override
-		public void flush() throws IOException {
-			outputStream.flush();
-		}
-
-		@Override
-		public void close() throws IOException {
-			if ( !isClosed ) {
-				outputStream.close();
-				if ( !ftpClient.completePendingCommand() ) {
-					LOG.error( "Unable to verify that the file has been modified correctly." );
-					throw new FileStorageException( "File transfer may not be successful. Please check the logs for more info." );
-				}
-				session.close();
-				isClosed = true;
-			}
-		}
-	}
+//
+//	/**
+//	 * Wrapper around an input stream retrieved through an {@link ChannelSftp}.
+//	 * Ensures that {@link ChannelSftp#completePendingCommand()} is called when the stream is closed.
+//	 */
+//	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+//	private static class FtpFileInputStream extends InputStream
+//	{
+//		private final InputStream inputStream;
+//		private final ChannelSftp ftpClient;
+//		private final Session session;
+//		private boolean isClosed = false;
+//
+//		@Override
+//		public int read( byte[] b ) throws IOException {
+//			return inputStream.read( b );
+//		}
+//
+//		@Override
+//		public int read( byte[] b, int off, int len ) throws IOException {
+//			return inputStream.read( b, off, len );
+//		}
+//
+//		@Override
+//		public long skip( long n ) throws IOException {
+//			return inputStream.skip( n );
+//		}
+//
+//		@Override
+//		public int available() throws IOException {
+//			return inputStream.available();
+//		}
+//
+//		@Override
+//		public void close() throws IOException {
+//			if ( !isClosed ) {
+//				inputStream.close();
+//				if ( !ftpClient.completePendingCommand() ) {
+//					LOG.error( "Unable to verify that the file has been modified correctly." );
+//					throw new FileStorageException( "File transfer may not be successful. Please check the logs for more info." );
+//				}
+//				session.close();
+//				isClosed = true;
+//			}
+//		}
+//
+//		@Override
+//		public synchronized void mark( int readlimit ) {
+//			inputStream.mark( readlimit );
+//		}
+//
+//		@Override
+//		public synchronized void reset() throws IOException {
+//			inputStream.reset();
+//		}
+//
+//		@Override
+//		public boolean markSupported() {
+//			return inputStream.markSupported();
+//		}
+//
+//		@Override
+//		public int read() throws IOException {
+//			return inputStream.read();
+//		}
+//	}
+//
+//	/**
+//	 * Wrapper around an output stream retrieved through an {@link ChannelSftp}.
+//	 * Ensures that {@link ChannelSftp#completePendingCommand()} is called when the stream is closed.
+//	 */
+//	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+//	private static class FtpFileOutputStream extends OutputStream
+//	{
+//		private final OutputStream outputStream;
+//		private final ChannelSftp ftpClient;
+//		private final Session session;
+//		private boolean isClosed = false;
+//
+//		@Override
+//		public void write( int b ) throws IOException {
+//			outputStream.write( b );
+//		}
+//
+//		@Override
+//		public void write( byte[] b ) throws IOException {
+//			outputStream.write( b );
+//		}
+//
+//		@Override
+//		public void write( byte[] b, int off, int len ) throws IOException {
+//			outputStream.write( b, off, len );
+//		}
+//
+//		@Override
+//		public void flush() throws IOException {
+//			outputStream.flush();
+//		}
+//
+//		@Override
+//		public void close() throws IOException {
+//			if ( !isClosed ) {
+//				outputStream.close();
+//				if ( !ftpClient.completePendingCommand() ) {
+//					LOG.error( "Unable to verify that the file has been modified correctly." );
+//					throw new FileStorageException( "File transfer may not be successful. Please check the logs for more info." );
+//				}
+//				session.close();
+//				isClosed = true;
+//			}
+//		}
+//	}
 }

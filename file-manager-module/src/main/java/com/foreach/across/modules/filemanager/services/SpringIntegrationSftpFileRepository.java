@@ -4,13 +4,10 @@ import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
+import com.jcraft.jsch.ChannelSftp;
 import lombok.Builder;
 import lombok.NonNull;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.integration.sftp.session.SftpRemoteFileTemplate;
-
-import java.io.IOException;
 
 public class SpringIntegrationSftpFileRepository extends AbstractFileRepository
 {
@@ -28,17 +25,10 @@ public class SpringIntegrationSftpFileRepository extends AbstractFileRepository
 
 	@Override
 	protected FileResource buildFileResource( FileDescriptor descriptor ) {
-		String path = SpringIntegrationFtpFileResource.getPath( descriptor );
-		FTPFile file = null;
+		String path = SpringIntegrationSftpFileResource.getPath( descriptor );
+		SFTPFile file = null;
 		if ( remoteFileTemplate.exists( path ) ) {
-			file = remoteFileTemplate.<FTPFile, FTPClient>executeWithClient( client -> {
-				try {
-					return client.mdtmFile( path );
-				}
-				catch ( IOException e ) {
-					return null;
-				}
-			} );
+			file = remoteFileTemplate.<SFTPFile, ChannelSftp>executeWithClient( client -> new SFTPFile( client, path ) );
 		}
 		return new SpringIntegrationSftpFileResource( descriptor, file, remoteFileTemplate );
 	}
