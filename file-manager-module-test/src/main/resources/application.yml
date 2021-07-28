@@ -45,3 +45,9 @@ ftp1:
   password: pw
   port: 21
   host: localhost
+
+sftp1:
+  username: demo
+  password: demo
+  port: 22
+  host: localhost
