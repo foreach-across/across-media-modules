@@ -88,7 +88,13 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 			instantiateAsEmptyFile( client );
 		}
 		resetFileMetadata();
-		return client.getOutputStream();
+		try {
+			return client.put( getPath() );
+		}
+		catch ( SftpException e ) {
+			LOG.error( "Unexpected error whilst opening an OutputStream for file {}", getPath() );
+			throw new IOException( e );
+		}
 //		return new FtpFileOutputStream( client.storeFileStream( getPath() ), client, session );
 	}
 

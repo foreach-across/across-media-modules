@@ -50,8 +50,8 @@ class TestSpringIntegrationSftpFileResource
 	private SftpRemoteFileTemplate getSftpRemoteFileTemplate() {
 		if ( template == null ) {
 			DefaultSftpSessionFactory defaultFtpSessionFactory = new DefaultSftpSessionFactory();
-			defaultFtpSessionFactory.setUser( "fmm" );
-			defaultFtpSessionFactory.setPassword( "test" );
+			defaultFtpSessionFactory.setUser( "demo" );
+			defaultFtpSessionFactory.setPassword( "demo" );
 			defaultFtpSessionFactory.setHost( "localhost" );
 			defaultFtpSessionFactory.setPort( 22 );
 			defaultFtpSessionFactory.setTimeout( 5000 );
@@ -66,19 +66,19 @@ class TestSpringIntegrationSftpFileResource
 
 	@BeforeAll
 	static void init() {
-		ftpContainer.start();
+//		ftpContainer.start();
 	}
 
 	@AfterAll
 	static void tearDown() {
-		ftpContainer.stop();
+//		ftpContainer.stop();
 	}
 
 	@BeforeEach
 	@SneakyThrows
 	void createResource() {
 		objectName = UUID.randomUUID().toString();
-		descriptor = FileDescriptor.of( "my-repo", "123/456", objectName );
+		descriptor = FileDescriptor.of( "my-repo", "sftp/123/456", objectName );
 		resource = new SpringIntegrationSftpFileResource( descriptor, null, getSftpRemoteFileTemplate() );
 		if ( !resource.getFolderResource().exists() ) {
 			resource.getFolderResource().create();
