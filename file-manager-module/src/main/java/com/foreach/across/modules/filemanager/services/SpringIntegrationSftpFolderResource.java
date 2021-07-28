@@ -2,6 +2,7 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.*;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +10,6 @@ import org.springframework.integration.file.remote.session.Session;
 import org.springframework.integration.sftp.session.SftpRemoteFileTemplate;
 import org.springframework.util.AntPathMatcher;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
@@ -256,36 +256,47 @@ public class SpringIntegrationSftpFolderResource extends SpringIntegrationFolder
 		return beforeIndex.contains( "/" ) ? beforeIndex.substring( 0, beforeIndex.lastIndexOf( '/' ) + 1 ) : "";
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<SpringIntegrationSftpFolderResource> retrieveFoldersForPath( ChannelSftp client, String path ) {
-		SFTPFile[] ftpFiles = null;
+		List<String> ftpFolderNames = new ArrayList<>();
 		try {
-			ftpFiles = client.listDirectories( path );
+			Vector<ChannelSftp.LsEntry> files = client.ls( path );
+			for ( ChannelSftp.LsEntry entry : files ) {
+				if ( !entry.getFilename().equals( "." ) && !entry.getFilename().equals( ".." ) && entry.getAttrs().isDir() ) {
+					ftpFolderNames.add( entry.getFilename() );
+				}
+			}
 		}
-		catch ( IOException e ) {
+		catch ( SftpException e ) {
 			LOG.error( "Unexpected error whilst listing directories for path '{}'. Falling back to no directories found.", path, e );
-			ftpFiles = new SFTPFile[0];
 		}
 
-		return Arrays.stream( ftpFiles )
-		             .map( file -> new SpringIntegrationSftpFolderResource(
-				             FolderDescriptor.of( folderDescriptor.getRepositoryId(), getPath() ).createFolderDescriptor( file.getName() ),
-				             remoteFileTemplate ) )
-		             .collect( Collectors.toList() );
+		return ftpFolderNames.stream()
+		                     .map( fileName -> new SpringIntegrationSftpFolderResource(
+				                     FolderDescriptor.of( folderDescriptor.getRepositoryId(), getPath() ).createFolderDescriptor( fileName ),
+				                     remoteFileTemplate ) )
+		                     .collect( Collectors.toList() );
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<SpringIntegrationSftpFileResource> retrieveFilesForPath( ChannelSftp client, String path ) {
-		SFTPFile[] ftpFiles = null;
+		List<String> ftpFileNames = new ArrayList<>();
+
 		try {
-			ftpFiles = client.listFiles( path );
+			Vector<ChannelSftp.LsEntry> files = client.ls( path );
+			for ( ChannelSftp.LsEntry entry : files ) {
+				if ( !entry.getAttrs().isDir() ) {
+					ftpFileNames.add( entry.getFilename() );
+				}
+			}
 		}
-		catch ( IOException e ) {
-			ftpFiles = new SFTPFile[0];
+		catch ( SftpException e ) {
+			LOG.error( "Unexpected error whilst listing files for path '{}'. Falling back to no directories found.", path, e );
 		}
 
-		return Arrays.stream( ftpFiles )
-		             .filter( ftpFile -> !ftpFile.isDirectory() )
-		             .map( this::createFileResource )
-		             .collect( Collectors.toList() );
+		return ftpFileNames.stream()
+		                   .map( fileName -> createFileResource( new SFTPFile( client, path + "/" + fileName ) ) ) // iffy full path creation maybe
+		                   .collect( Collectors.toList() );
 	}
 
 	private SpringIntegrationSftpFileResource createFileResource( SFTPFile file ) {
