@@ -9,6 +9,10 @@ import lombok.Builder;
 import lombok.NonNull;
 import org.springframework.integration.sftp.session.SftpRemoteFileTemplate;
 
+/**
+ * @author Steven Gentens
+ * @since 2.3.0
+ */
 public class SpringIntegrationSftpFileRepository extends AbstractFileRepository
 {
 	private final SftpRemoteFileTemplate remoteFileTemplate;

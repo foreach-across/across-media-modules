@@ -28,10 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
-/**
- * @author Steven Gentens
- * @since 1.4.0
- */
 @Slf4j
 class TestSpringIntegrationSftpFolderResource
 {

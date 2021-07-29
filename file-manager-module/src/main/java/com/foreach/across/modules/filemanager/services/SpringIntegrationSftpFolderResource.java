@@ -15,6 +15,10 @@ import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @author Steven Gentens
+ * @since 2.3.0
+ */
 @Slf4j
 public class SpringIntegrationSftpFolderResource extends SpringIntegrationFolderResource
 {
