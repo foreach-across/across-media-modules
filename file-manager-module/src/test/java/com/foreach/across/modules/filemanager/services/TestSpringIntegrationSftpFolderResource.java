@@ -434,8 +434,6 @@ class TestSpringIntegrationSftpFolderResource
 					catch ( SftpException ignore ) {
 						client.mkdir( part );
 					}
-//					if ( remoteFile == null ) {
-//					}
 				}
 			}
 			catch ( SftpException ignore ) {

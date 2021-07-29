@@ -31,49 +31,7 @@ public class SftpContainer
 		server.setUserAuthFactories( Arrays.asList( new UserAuthPasswordFactory() ) );
 		server.setPasswordAuthenticator( new SftpAuthenticator() );
 		SftpSubsystemFactory factory = new SftpSubsystemFactory.Builder()
-
-//				.withFileSystemAccessor( new SftpFileSystemAccessor()
-//				{
-//					@Override
-//					public SeekableByteChannel openFile( ServerSession session,
-//					                                     SftpEventListenerManager subsystem,
-//					                                     Path file,
-//					                                     String handle,
-//					                                     Set<? extends OpenOption> options,
-//					                                     FileAttribute<?>... attrs ) throws IOException {
-//						return null;
-//					}
-//
-//					@Override
-//					public FileLock tryLock( ServerSession session,
-//					                         SftpEventListenerManager subsystem,
-//					                         Path file,
-//					                         String handle,
-//					                         Channel channel,
-//					                         long position,
-//					                         long size,
-//					                         boolean shared ) throws IOException {
-//						return null;
-//					}
-//
-//					@Override
-//					public void syncFileData( ServerSession session,
-//					                          SftpEventListenerManager subsystem,
-//					                          Path file,
-//					                          String handle,
-//					                          Channel channel ) throws IOException {
-//
-//					}
-//
-//					@Override
-//					public DirectoryStream<Path> openDirectory( ServerSession session,
-//					                                            SftpEventListenerManager subsystem,
-//					                                            Path dir,
-//					                                            String handle ) throws IOException {
-//						return null;
-//					}
-//				} )
-.build();
+				.build();
 		VirtualFileSystemFactory fileSystemFactory = new VirtualFileSystemFactory();
 		fileSystemFactory.setDefaultHomeDir( tempDir );
 		server.setFileSystemFactory( fileSystemFactory );
@@ -93,7 +51,7 @@ public class SftpContainer
 
 	public class SftpAuthenticator implements PasswordAuthenticator
 	{
-		public SftpAuthenticator() {
+		SftpAuthenticator() {
 		}
 
 		@Override

@@ -14,7 +14,7 @@ public class SFTPFile
 
 	private SftpRemoteFileTemplate remoteFileTemplate;
 
-	public SFTPFile( SftpRemoteFileTemplate remoteFileTemplate, String path ) {
+	SFTPFile( SftpRemoteFileTemplate remoteFileTemplate, String path ) {
 		this.remoteFileTemplate = remoteFileTemplate;
 		this.path = path;
 		this.fileName = StringUtils.getFilename( path );
@@ -29,7 +29,6 @@ public class SFTPFile
 			catch ( SftpException e ) {
 				if ( e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE ) {
 					return false;
-					// file doesn't exist
 				}
 				LOG.error( "Unexpected error when checking whether file at {} exists", path, e );
 				return false;
@@ -44,7 +43,7 @@ public class SFTPFile
 			try {
 				return client.stat( path ).isDir();
 			}
-			catch ( Exception e ) {
+			catch ( Exception ignore ) {
 			}
 			return false;
 		} );
@@ -52,14 +51,6 @@ public class SFTPFile
 	}
 
 	public String getName() {
-//		return remoteFileTemplate.<Boolean, ChannelSftp>executeWithClient( client -> {
-//			try {
-//				return client.stat( path ).;
-//			}
-//			catch ( Exception e ) {
-//			}
-//			return false;
-//		} );
 		return fileName;
 	}
 
