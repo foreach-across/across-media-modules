@@ -214,8 +214,9 @@ abstract class BaseFileRepositoryTest
 			try (PrintWriter pw = new PrintWriter( os )) {
 				pw.print( "original text" );
 				pw.flush();
+				// after the try with resources, the printWriter is closed, which also closes the underlying output stream
+				os.flush();
 			}
-			os.flush();
 		}
 
 		assertEquals( "original text", read( descriptor ) );
@@ -231,8 +232,9 @@ abstract class BaseFileRepositoryTest
 			try (PrintWriter pw = new PrintWriter( os )) {
 				pw.print( "modified text" );
 				pw.flush();
+				// after the try with resources, the printWriter is closed, which also closes the underlying output stream
+				os.flush();
 			}
-			os.flush();
 		}
 
 		assertEquals( "modified text", read( descriptor ) );
