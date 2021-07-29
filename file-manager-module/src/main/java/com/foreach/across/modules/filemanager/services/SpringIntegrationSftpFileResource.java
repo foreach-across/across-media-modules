@@ -53,7 +53,7 @@ public class SpringIntegrationSftpFileResource extends SpringIntegrationFileReso
 	@Override
 	public long contentLength() throws IOException {
 		SFTPFile file = getSftpFile();
-		if ( file == null ) {
+		if ( !file.exists() ) {
 			throw new FileNotFoundException( "Unable to locate file " + fileDescriptor );
 		}
 		return file.getSize();

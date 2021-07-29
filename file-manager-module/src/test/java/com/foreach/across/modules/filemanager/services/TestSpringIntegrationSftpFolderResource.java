@@ -2,8 +2,10 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.foreach.across.modules.filemanager.business.*;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +21,7 @@ import utils.SftpContainer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +32,7 @@ import static org.mockito.Mockito.mock;
  * @author Steven Gentens
  * @since 1.4.0
  */
+@Slf4j
 class TestSpringIntegrationSftpFolderResource
 {
 	private static final SftpContainer ftpContainer = new SftpContainer();
@@ -417,12 +421,19 @@ class TestSpringIntegrationSftpFolderResource
 	private void createFolderViaFtp( String path ) {
 		getSftpRemoteFileTemplate().<Void, ChannelSftp>executeWithClient( client -> {
 			String[] parts = path.split( "/" );
+			parts = Arrays.stream( parts )
+			              .filter( x -> !"".equals( x ) )
+			              .toArray( String[]::new );
 			try {
 				for ( int i = 0; i < parts.length; i++ ) {
 					String part = StringUtils.join( ArrayUtils.subarray( parts, 0, i + 1 ), "/" );
+					part = StringUtils.prependIfMissing( part, "/" );
 
 					try {
-						client.stat( part );
+						SftpATTRS attrs = client.stat( part );
+						if ( !attrs.isDir() ) {
+							client.mkdir( part );
+						}
 					}
 					catch ( SftpException ignore ) {
 						client.mkdir( part );
@@ -432,6 +443,7 @@ class TestSpringIntegrationSftpFolderResource
 				}
 			}
 			catch ( SftpException ignore ) {
+				LOG.error( "Unexpected error whilst creating folder {}", path, ignore );
 			}
 			return null;
 		} );
@@ -445,6 +457,7 @@ class TestSpringIntegrationSftpFolderResource
 				inputStream.close();
 			}
 			catch ( IOException | SftpException ignore ) {
+				LOG.error( "Unexpected error whilst creating file {}", path, ignore );
 			}
 			return null;
 		} );

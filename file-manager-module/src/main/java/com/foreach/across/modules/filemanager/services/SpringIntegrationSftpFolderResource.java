@@ -295,7 +295,7 @@ public class SpringIntegrationSftpFolderResource extends SpringIntegrationFolder
 		}
 
 		return ftpFileNames.stream()
-		                   .map( fileName -> createFileResource( new SFTPFile( client, path + "/" + fileName ) ) ) // iffy full path creation maybe
+		                   .map( fileName -> createFileResource( new SFTPFile( remoteFileTemplate, path + "/" + fileName ) ) ) // iffy full path creation maybe
 		                   .collect( Collectors.toList() );
 	}
 

@@ -4,24 +4,20 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.sftp.session.SftpRemoteFileTemplate;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 public class SFTPFile
 {
-	private final ChannelSftp client;
 	private final String path;
+	private final String fileName;
+
 	private SftpRemoteFileTemplate remoteFileTemplate;
-
-	public SFTPFile( ChannelSftp client, String path ) {
-
-		this.client = client;
-		this.path = path;
-	}
 
 	public SFTPFile( SftpRemoteFileTemplate remoteFileTemplate, String path ) {
 		this.remoteFileTemplate = remoteFileTemplate;
-		this.client = null;
 		this.path = path;
+		this.fileName = StringUtils.getFilename( path );
 	}
 
 	public boolean exists() {
@@ -64,7 +60,7 @@ public class SFTPFile
 //			}
 //			return false;
 //		} );
-		return null;
+		return fileName;
 	}
 
 	public long getSize() {

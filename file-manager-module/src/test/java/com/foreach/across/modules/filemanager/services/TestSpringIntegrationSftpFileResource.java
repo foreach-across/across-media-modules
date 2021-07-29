@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.net.ftp.FTPClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,8 +49,8 @@ class TestSpringIntegrationSftpFileResource
 	private SftpRemoteFileTemplate getSftpRemoteFileTemplate() {
 		if ( template == null ) {
 			DefaultSftpSessionFactory defaultFtpSessionFactory = new DefaultSftpSessionFactory();
-			defaultFtpSessionFactory.setUser( "demo" );
-			defaultFtpSessionFactory.setPassword( "demo" );
+			defaultFtpSessionFactory.setUser( "fmm" );
+			defaultFtpSessionFactory.setPassword( "test" );
 			defaultFtpSessionFactory.setHost( "localhost" );
 			defaultFtpSessionFactory.setPort( 22 );
 			defaultFtpSessionFactory.setTimeout( 5000 );
@@ -66,19 +65,19 @@ class TestSpringIntegrationSftpFileResource
 
 	@BeforeAll
 	static void init() {
-//		ftpContainer.start();
+		ftpContainer.start();
 	}
 
 	@AfterAll
 	static void tearDown() {
-//		ftpContainer.stop();
+		ftpContainer.stop();
 	}
 
 	@BeforeEach
 	@SneakyThrows
 	void createResource() {
 		objectName = UUID.randomUUID().toString();
-		descriptor = FileDescriptor.of( "my-repo", "sftp/123/456", objectName );
+		descriptor = FileDescriptor.of( "my-repo", "123/456", objectName );
 		resource = new SpringIntegrationSftpFileResource( descriptor, null, getSftpRemoteFileTemplate() );
 		if ( !resource.getFolderResource().exists() ) {
 			resource.getFolderResource().create();
@@ -225,15 +224,15 @@ class TestSpringIntegrationSftpFileResource
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.contentLength() ).isNotEqualTo( 9 ).isEqualTo( RES_TEXTFILE.contentLength() );
 
-		String fileContent = getSftpRemoteFileTemplate().<String, FTPClient>executeWithClient( client -> {
+		String fileContent = getSftpRemoteFileTemplate().<String, ChannelSftp>executeWithClient( client -> {
 			String path = SpringIntegrationFileResource.getPath( resource.getDescriptor() );
 			try {
-				InputStream is = client.retrieveFileStream( path );
+				InputStream is = client.get( path );
 				String content = IOUtils.toString( is, Charset.forName( "UTF-8" ) );
 				is.close();
 				return content;
 			}
-			catch ( IOException ignore ) {
+			catch ( IOException | SftpException ignore ) {
 				return "";
 			}
 		} );
