@@ -19,6 +19,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static utils.FtpContainer.TEST_PORT;
 
 public class TestSpringIntegrationFtpFileRepository extends BaseFileRepositoryTest
 {
@@ -33,7 +34,7 @@ public class TestSpringIntegrationFtpFileRepository extends BaseFileRepositoryTe
 			defaultFtpSessionFactory.setUsername( "fmm" );
 			defaultFtpSessionFactory.setPassword( "test" );
 			defaultFtpSessionFactory.setHost( "localhost" );
-			defaultFtpSessionFactory.setPort( 21 );
+			defaultFtpSessionFactory.setPort( TEST_PORT );
 			defaultFtpSessionFactory.setDefaultTimeout( 5000 );
 			defaultFtpSessionFactory.setConnectTimeout( 5000 );
 			defaultFtpSessionFactory.setDataTimeout( 5000 );

@@ -6,6 +6,8 @@ import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.Authentication;
 import org.apache.ftpserver.ftplet.User;
+import org.apache.ftpserver.listener.Listener;
+import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.impl.AbstractUserManager;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission;
@@ -15,9 +17,12 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FtpContainer
 {
+	public static final int TEST_PORT = 10021;
 	private final Path tempDir;
 	private final FtpServer server;
 
@@ -26,6 +31,11 @@ public class FtpContainer
 		tempDir = Files.createTempDirectory( "fmm-ftp" );
 		FtpServerFactory serverFactory = new FtpServerFactory();
 		serverFactory.setUserManager( new InMemoryUserManager( tempDir.toFile() ) );
+		ListenerFactory listenerFactory = new ListenerFactory();
+		listenerFactory.setPort( TEST_PORT );
+		Map<String, Listener> listeners = new HashMap<>(); // must be mutable for tearDown()
+		listeners.put( "default", listenerFactory.createListener() );
+		serverFactory.setListeners( listeners );
 		server = serverFactory.createServer();
 	}
 
