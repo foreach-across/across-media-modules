@@ -210,25 +210,33 @@ public class AzureFileResource implements FileResource
 	private static class LazyOutputStream extends OutputStream
 	{
 		private final OutputStream fileOutputStream;
-		private boolean wasWrittenTo = false;
 		private boolean wasClosed = false;
 
 		@Override
 		public void write( int b ) throws IOException {
 			fileOutputStream.write( b );
-			wasWrittenTo = true;
+		}
+
+		@Override
+		public void write( byte[] b ) throws IOException {
+			fileOutputStream.write( b );
+		}
+
+		@Override
+		public void write( byte[] b, int off, int len ) throws IOException {
+			fileOutputStream.write( b, off, len );
 		}
 
 		@Override
 		public void flush() throws IOException {
-			if ( wasWrittenTo && !wasClosed ) {
+			if ( !wasClosed ) {
 				fileOutputStream.flush();
 			}
 		}
 
 		@Override
 		public void close() throws IOException {
-			if ( wasWrittenTo && !wasClosed ) {
+			if ( !wasClosed ) {
 				fileOutputStream.close();
 			}
 			super.close();
