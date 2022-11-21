@@ -5,7 +5,7 @@ import com.foreach.imageserver.core.transformers.ImageAttributes;
 import com.foreach.imageserver.core.transformers.ImageAttributesCommand;
 import com.foreach.imageserver.core.transformers.ImageModificationException;
 import com.foreach.imageserver.core.transformers.imagemagick.ImageMagickAttributesCommandExecutor;
-import org.im4java.process.ProcessStarter;
+import com.github.geko444.im4java.process.ProcessStarter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

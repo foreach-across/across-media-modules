@@ -5,7 +5,7 @@ import com.foreach.imageserver.core.business.ImageType;
 import com.foreach.imageserver.core.transformers.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.im4java.core.Info;
+import com.github.geko444.im4java.core.Info;
 
 import java.io.InputStream;
 import java.util.HashMap;
