@@ -12,10 +12,9 @@ import com.foreach.imageserver.dto.ImageTypeDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.im4java.core.ConvertCmd;
-import org.im4java.core.IMOperation;
-import org.im4java.process.Pipe;
-
+import com.github.geko444.im4java.core.ConvertCmd;
+import com.github.geko444.im4java.core.IMOperation;
+import com.github.geko444.im4java.process.Pipe;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Optional;

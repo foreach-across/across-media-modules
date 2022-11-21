@@ -1,6 +1,6 @@
 package com.foreach.imageserver.core.transformers.imagemagick;
 
-import org.im4java.process.ProcessStarter;
+import com.github.geko444.im4java.process.ProcessStarter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
