@@ -11,6 +11,7 @@ import com.foreach.imageserver.dto.*;
 import lombok.SneakyThrows;
 import com.github.geko444.im4java.core.IMOperation;
 import com.github.geko444.im4java.process.ProcessStarter;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ import static support.ImageUtils.*;
 @ContextConfiguration(classes = TestImageMagickTransformCommandExecutor.Config.class)
 @ExtendWith(SpringExtension.class)
 @Testcontainers
+@Ignore
 public class TestImageMagickTransformCommandExecutor
 {
 	@Container
