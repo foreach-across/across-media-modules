@@ -6,6 +6,7 @@ import com.foreach.imageserver.core.transformers.ImageAttributesCommand;
 import com.foreach.imageserver.core.transformers.ImageModificationException;
 import com.foreach.imageserver.core.transformers.imagemagick.ImageMagickAttributesCommandExecutor;
 import com.github.geko444.im4java.process.ProcessStarter;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ContextConfiguration(classes = TestImageMagickAttributesCommandExecutor.Config.class)
 @ExtendWith(SpringExtension.class)
 @Testcontainers
+@Ignore
 public class TestImageMagickAttributesCommandExecutor
 {
 	@Container
