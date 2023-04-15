@@ -190,6 +190,19 @@ public class AzureFileResource implements FileResource
 		return blobProperties;
 	}
 
+	/**
+	 * CloudBlockBlob cannot be mocked because it's final, and a real CloudBlockBlob needs a real connection string,
+	 * and will attempt to perform a real blob upload. This method allows you to work around that.
+	 */
+	public void uploadProperties() {
+		try {
+			blob.uploadProperties();
+		}
+		catch ( StorageException e ) {
+			throw handleStorageException( e );
+		}
+	}
+
 	@Override
 	public String toString() {
 		return getDescription();
