@@ -50,7 +50,7 @@ class TestSpringIntegrationFtpFolderResource
 			defaultFtpSessionFactory.setUsername( "fmm" );
 			defaultFtpSessionFactory.setPassword( "test" );
 			defaultFtpSessionFactory.setHost( "localhost" );
-			defaultFtpSessionFactory.setPort( 21 );
+			defaultFtpSessionFactory.setPort( 10021 );
 			defaultFtpSessionFactory.setDefaultTimeout( 5000 );
 			defaultFtpSessionFactory.setConnectTimeout( 5000 );
 			defaultFtpSessionFactory.setDataTimeout( 5000 );

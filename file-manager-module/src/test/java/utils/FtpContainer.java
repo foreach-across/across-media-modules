@@ -6,6 +6,7 @@ import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.Authentication;
 import org.apache.ftpserver.ftplet.User;
+import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.impl.AbstractUserManager;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission;
@@ -25,6 +26,9 @@ public class FtpContainer
 	public FtpContainer() {
 		tempDir = Files.createTempDirectory( "fmm-ftp" );
 		FtpServerFactory serverFactory = new FtpServerFactory();
+		ListenerFactory listenerFactory = new ListenerFactory();
+		listenerFactory.setPort( 10021 );
+		serverFactory.addListener("default", listenerFactory.createListener());
 		serverFactory.setUserManager( new InMemoryUserManager( tempDir.toFile() ) );
 		server = serverFactory.createServer();
 	}

@@ -48,7 +48,7 @@ class TestSpringIntegrationSftpFileResource
 			defaultFtpSessionFactory.setUser( "fmm" );
 			defaultFtpSessionFactory.setPassword( "test" );
 			defaultFtpSessionFactory.setHost( "localhost" );
-			defaultFtpSessionFactory.setPort( 22 );
+			defaultFtpSessionFactory.setPort( 10022 );
 			defaultFtpSessionFactory.setTimeout( 5000 );
 			defaultFtpSessionFactory.setChannelConnectTimeout( Duration.ofSeconds( 5 ) );
 			defaultFtpSessionFactory.setAllowUnknownKeys( true );

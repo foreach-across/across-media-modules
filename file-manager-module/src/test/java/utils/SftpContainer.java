@@ -26,7 +26,7 @@ public class SftpContainer
 	public SftpContainer() {
 		tempDir = Files.createTempDirectory( "fmm-ftp" );
 		server = SshServer.setUpDefaultServer();
-		server.setPort( 22 );
+		server.setPort( 10022 );
 		server.setKeyPairProvider( new SimpleGeneratorHostKeyProvider() );
 		server.setUserAuthFactories( Arrays.asList( new UserAuthPasswordFactory() ) );
 		server.setPasswordAuthenticator( new SftpAuthenticator() );
