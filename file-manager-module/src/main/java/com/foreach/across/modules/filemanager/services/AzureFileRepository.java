@@ -26,8 +26,16 @@ public class AzureFileRepository extends AbstractFileRepository
 		this.containerName = containerName;
 	}
 
+	public String getContainerName() {
+		return containerName;
+	}
+
+	public CloudBlobClient getBlobClient() {
+		return blobClient;
+	}
+
 	@Override
-	protected FileResource buildFileResource( FileDescriptor descriptor ) {
+	protected AzureFileResource buildFileResource( FileDescriptor descriptor ) {
 		return new AzureFileResource( descriptor, blobClient, containerName, createObjectName( descriptor ) );
 	}
 

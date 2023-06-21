@@ -20,26 +20,26 @@ import java.net.URL;
 
 public class AzureFileResource implements FileResource
 {
-	private final FileDescriptor fileDescriptor;
+	private final FileDescriptor descriptor;
 	private final CloudBlobClient blobClient;
 	private final String containerName;
 	private final String fileName;
 
-	private final CloudBlockBlob file;
+	private final CloudBlockBlob blob;
 
 	private volatile BlobProperties blobProperties;
 
-	AzureFileResource( @NonNull FileDescriptor fileDescriptor,
+	AzureFileResource( @NonNull FileDescriptor descriptor,
 	                   @NonNull CloudBlobClient cloudBlobClient,
 	                   @NonNull String containerName,
 	                   @NonNull String fileName ) {
-		this.fileDescriptor = fileDescriptor;
+		this.descriptor = descriptor;
 		this.blobClient = cloudBlobClient;
 		this.containerName = containerName;
 		this.fileName = fileName;
 		try {
 			CloudBlobContainer blobContainer = blobClient.getContainerReference( containerName );
-			this.file = blobContainer.getBlockBlobReference( fileName );
+			this.blob = blobContainer.getBlockBlobReference( fileName );
 		}
 		catch ( StorageException e ) {
 			throw handleStorageException( e );
@@ -51,20 +51,36 @@ public class AzureFileResource implements FileResource
 
 	@Override
 	public FileDescriptor getDescriptor() {
-		return fileDescriptor;
+		return descriptor;
+	}
+
+	public CloudBlobClient getBlobClient() {
+		return blobClient;
+	}
+
+	public String getContainerName() {
+		return containerName;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public CloudBlockBlob getBlob() {
+		return blob;
 	}
 
 	@Override
 	public FolderResource getFolderResource() {
 		int ix = fileName.lastIndexOf( '/' );
 		String folderObjectName = ix > 0 ? fileName.substring( 0, ix + 1 ) : "";
-		return new AzureFolderResource( fileDescriptor.getFolderDescriptor(), blobClient, containerName, folderObjectName );
+		return new AzureFolderResource( descriptor.getFolderDescriptor(), blobClient, containerName, folderObjectName );
 	}
 
 	@Override
 	public boolean delete() {
 		try {
-			file.delete( DeleteSnapshotsOption.INCLUDE_SNAPSHOTS, null, null, null );
+			blob.delete( DeleteSnapshotsOption.INCLUDE_SNAPSHOTS, null, null, null );
 			resetBlobProperties();
 			return true;
 		}
@@ -96,7 +112,7 @@ public class AzureFileResource implements FileResource
 	public OutputStream getOutputStream() {
 		try {
 			resetBlobProperties();
-			return new LazyOutputStream( file.openOutputStream() );
+			return new LazyOutputStream( blob.openOutputStream() );
 		}
 		catch ( StorageException e ) {
 			throw handleStorageException( e );
@@ -105,12 +121,12 @@ public class AzureFileResource implements FileResource
 
 	@Override
 	public URI getURI() {
-		return fileDescriptor.toResourceURI();
+		return descriptor.toResourceURI();
 	}
 
 	@Override
 	public URL getURL() throws IOException {
-		return fileDescriptor.toResourceURI().toURL();
+		return descriptor.toResourceURI().toURL();
 	}
 
 	@Override
@@ -125,19 +141,19 @@ public class AzureFileResource implements FileResource
 
 	@Override
 	public String getFilename() {
-		return fileDescriptor.getFileId();
+		return descriptor.getFileId();
 	}
 
 	@Override
 	public String getDescription() {
-		return "axfs [" + fileDescriptor.toString() + "] -> "
+		return "axfs [" + descriptor.toString() + "] -> "
 				+ String.format( "Azure storage blob resource[container='%s', blob='%s']", containerName, fileName );
 	}
 
 	@Override
 	public InputStream getInputStream() {
 		try {
-			return file.openInputStream();
+			return blob.openInputStream();
 		}
 		catch ( StorageException e ) {
 			throw handleStorageException( e );
@@ -149,29 +165,42 @@ public class AzureFileResource implements FileResource
 		if ( this == o ) {
 			return true;
 		}
-		return o != null && ( o instanceof FileResource && fileDescriptor.equals( ( (FileResource) o ).getDescriptor() ) );
+		return o != null && ( o instanceof FileResource && descriptor.equals( ( (FileResource) o ).getDescriptor() ) );
 	}
 
 	@Override
 	public int hashCode() {
-		return fileDescriptor.hashCode();
+		return descriptor.hashCode();
 	}
 
-	void resetBlobProperties() {
+	public void resetBlobProperties() {
 		this.blobProperties = null;
 	}
 
-	private BlobProperties getBlobProperties() {
+	public BlobProperties getBlobProperties() {
 		if ( blobProperties == null ) {
 			try {
-				file.downloadAttributes();
-				this.blobProperties = file.getProperties();
+				blob.downloadAttributes();
+				this.blobProperties = blob.getProperties();
 			}
 			catch ( StorageException e ) {
 				throw handleStorageException( e );
 			}
 		}
 		return blobProperties;
+	}
+
+	/**
+	 * CloudBlockBlob cannot be mocked because it's final, and a real CloudBlockBlob needs a real connection string,
+	 * and will attempt to perform a real blob upload. This method allows you to work around that.
+	 */
+	public void uploadProperties() {
+		try {
+			blob.uploadProperties();
+		}
+		catch ( StorageException e ) {
+			throw handleStorageException( e );
+		}
 	}
 
 	@Override
@@ -181,7 +210,7 @@ public class AzureFileResource implements FileResource
 
 	private FileStorageException handleStorageException( StorageException e ) {
 		if ( e.getHttpStatusCode() == 404 ) {
-			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + fileDescriptor.toString() + "] not found!" );
+			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + descriptor.toString() + "] not found!" );
 			exception.initCause( e );
 			return new FileStorageException( exception );
 		}
@@ -194,25 +223,33 @@ public class AzureFileResource implements FileResource
 	private static class LazyOutputStream extends OutputStream
 	{
 		private final OutputStream fileOutputStream;
-		private boolean wasWrittenTo = false;
 		private boolean wasClosed = false;
 
 		@Override
 		public void write( int b ) throws IOException {
 			fileOutputStream.write( b );
-			wasWrittenTo = true;
+		}
+
+		@Override
+		public void write( byte[] b ) throws IOException {
+			fileOutputStream.write( b );
+		}
+
+		@Override
+		public void write( byte[] b, int off, int len ) throws IOException {
+			fileOutputStream.write( b, off, len );
 		}
 
 		@Override
 		public void flush() throws IOException {
-			if ( wasWrittenTo && !wasClosed ) {
+			if ( !wasClosed ) {
 				fileOutputStream.flush();
 			}
 		}
 
 		@Override
 		public void close() throws IOException {
-			if ( wasWrittenTo && !wasClosed ) {
+			if ( !wasClosed ) {
 				fileOutputStream.close();
 			}
 			super.close();

@@ -23,6 +23,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
+import static utils.FtpContainer.TEST_PORT;
 
 /**
  * @author Arne Vandamme
@@ -50,7 +51,7 @@ class TestSpringIntegrationFtpFolderResource
 			defaultFtpSessionFactory.setUsername( "fmm" );
 			defaultFtpSessionFactory.setPassword( "test" );
 			defaultFtpSessionFactory.setHost( "localhost" );
-			defaultFtpSessionFactory.setPort( 21 );
+			defaultFtpSessionFactory.setPort( TEST_PORT );
 			defaultFtpSessionFactory.setDefaultTimeout( 5000 );
 			defaultFtpSessionFactory.setConnectTimeout( 5000 );
 			defaultFtpSessionFactory.setDataTimeout( 5000 );

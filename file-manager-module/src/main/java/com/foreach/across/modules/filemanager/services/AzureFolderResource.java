@@ -20,16 +20,16 @@ import java.util.function.BiPredicate;
 
 public class AzureFolderResource implements FolderResource
 {
-	private final FolderDescriptor folderDescriptor;
+	private final FolderDescriptor descriptor;
 	private final CloudBlobClient blobClient;
 	private final String containerName;
 	private final String directoryName;
 
-	public AzureFolderResource( @NonNull FolderDescriptor folderDescriptor,
+	public AzureFolderResource( @NonNull FolderDescriptor descriptor,
 	                            @NonNull CloudBlobClient cloudBlobClient,
 	                            @NonNull String containerName,
 	                            @NonNull String directoryName ) {
-		this.folderDescriptor = folderDescriptor;
+		this.descriptor = descriptor;
 		this.blobClient = cloudBlobClient;
 		this.containerName = containerName;
 		this.directoryName = directoryName;
@@ -37,13 +37,25 @@ public class AzureFolderResource implements FolderResource
 
 	@Override
 	public FolderDescriptor getDescriptor() {
-		return folderDescriptor;
+		return descriptor;
+	}
+
+	public CloudBlobClient getBlobClient() {
+		return blobClient;
+	}
+
+	public String getContainerName() {
+		return containerName;
+	}
+
+	public String getDirectoryName() {
+		return directoryName;
 	}
 
 	@Override
 	public Optional<FolderResource> getParentFolderResource() {
-		return folderDescriptor.getParentFolderDescriptor()
-		                       .map( fd -> new AzureFolderResource( fd, blobClient, containerName, extractParentObjectName() ) );
+		return descriptor.getParentFolderDescriptor()
+		                 .map( fd -> new AzureFolderResource( fd, blobClient, containerName, extractParentObjectName() ) );
 	}
 
 	@Override
@@ -53,14 +65,14 @@ public class AzureFolderResource implements FolderResource
 		}
 
 		if ( relativePath.endsWith( "/" ) ) {
-			FolderDescriptor descriptor = folderDescriptor.createFolderDescriptor( relativePath );
+			FolderDescriptor descriptor = this.descriptor.createFolderDescriptor( relativePath );
 			String childPath = stripCurrentFolderId( descriptor.getFolderId() );
 			String childObjectName = Paths.get( directoryName, childPath ).toString() + "/";
 
 			return new AzureFolderResource( descriptor, blobClient, containerName, childObjectName );
 		}
 
-		FileDescriptor descriptor = folderDescriptor.createFileDescriptor( relativePath );
+		FileDescriptor descriptor = this.descriptor.createFileDescriptor( relativePath );
 		String childPath = stripCurrentFolderId( descriptor.getFolderId() );
 		String childObjectName = Paths.get( directoryName, childPath, descriptor.getFileId() ).toString();
 
@@ -127,13 +139,13 @@ public class AzureFolderResource implements FolderResource
 			CloudBlockBlob listedBlob = (CloudBlockBlob) listBlobItem;
 			String objectName = listedBlob.getName();
 			String path = StringUtils.removeStart( objectName, directoryName );
-			return new AzureFileResource( folderDescriptor.createFileDescriptor( path ), blobClient, containerName, objectName );
+			return new AzureFileResource( descriptor.createFileDescriptor( path ), blobClient, containerName, objectName );
 		}
 		if ( listBlobItem instanceof CloudBlobDirectory ) {
 			CloudBlobDirectory listedDirectory = (CloudBlobDirectory) listBlobItem;
 			String objectName = listedDirectory.getPrefix();
 			String path = StringUtils.removeStart( objectName, directoryName );
-			return new AzureFolderResource( folderDescriptor.createFolderDescriptor( path ), blobClient, containerName, objectName );
+			return new AzureFolderResource( descriptor.createFolderDescriptor( path ), blobClient, containerName, objectName );
 		}
 
 		throw new FileStorageException( "Unsupported ListBlobItem type: " + listBlobItem.getClass() );
@@ -183,23 +195,23 @@ public class AzureFolderResource implements FolderResource
 		if ( this == o ) {
 			return true;
 		}
-		return o != null && ( o instanceof FolderResource && folderDescriptor.equals( ( (FolderResource) o ).getDescriptor() ) );
+		return o != null && ( o instanceof FolderResource && descriptor.equals( ( (FolderResource) o ).getDescriptor() ) );
 	}
 
 	@Override
 	public int hashCode() {
-		return folderDescriptor.hashCode();
+		return descriptor.hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return "axfs [" + folderDescriptor.toString() + "] -> "
+		return "axfs [" + descriptor.toString() + "] -> "
 				+ String.format( "Azure storage blob resource[container='%s', blob='%s']", containerName, directoryName );
 	}
 
 	private String stripCurrentFolderId( String folderId ) {
-		return StringUtils.defaultString( folderDescriptor.getFolderId() != null
-				                                  ? StringUtils.removeStart( folderId, folderDescriptor.getFolderId() )
+		return StringUtils.defaultString( descriptor.getFolderId() != null
+				                                  ? StringUtils.removeStart( folderId, descriptor.getFolderId() )
 				                                  : folderId );
 	}
 

@@ -1,5 +1,8 @@
 package com.foreach.across.samples.filemanager;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.foreach.across.config.AcrossApplication;
@@ -67,11 +70,24 @@ public class FileManagerTestApplication
 	@Bean
 	@Profile("aws")
 	public AmazonS3 amazonS3( LocalStackContainer localStackContainer ) {
-		return AmazonS3ClientBuilder.standard()
-		                            .withEndpointConfiguration( localStackContainer.getEndpointConfiguration( S3 ) )
-		                            .withPathStyleAccessEnabled( true )
-		                            .withCredentials( localStackContainer.getDefaultCredentialsProvider() )
-		                            .build();
+		return AmazonS3ClientBuilder
+				.standard()
+				.withEndpointConfiguration(
+						//localstack.getEndpointConfiguration( S3 )
+						new AwsClientBuilder.EndpointConfiguration(
+								localStackContainer.getEndpointOverride( S3 ).toString(),
+								localStackContainer.getRegion()
+						)
+
+				)
+				.withPathStyleAccessEnabled( true )
+				.withCredentials(
+						//localstack.getDefaultCredentialsProvider()
+						new AWSStaticCredentialsProvider(
+								new BasicAWSCredentials( localStackContainer.getAccessKey(), localStackContainer.getSecretKey() )
+						)
+				)
+				.build();
 	}
 
 	@Bean

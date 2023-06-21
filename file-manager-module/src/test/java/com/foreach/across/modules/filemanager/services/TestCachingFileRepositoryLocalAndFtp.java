@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static utils.FtpContainer.TEST_PORT;
 
 class TestCachingFileRepositoryLocalAndFtp extends BaseFileRepositoryTest
 {
@@ -52,7 +53,7 @@ class TestCachingFileRepositoryLocalAndFtp extends BaseFileRepositoryTest
 			defaultFtpSessionFactory.setUsername( "fmm" );
 			defaultFtpSessionFactory.setPassword( "test" );
 			defaultFtpSessionFactory.setHost( "localhost" );
-			defaultFtpSessionFactory.setPort( 21 );
+			defaultFtpSessionFactory.setPort( TEST_PORT );
 			defaultFtpSessionFactory.setDefaultTimeout( 5000 );
 			defaultFtpSessionFactory.setConnectTimeout( 5000 );
 			defaultFtpSessionFactory.setDataTimeout( 5000 );

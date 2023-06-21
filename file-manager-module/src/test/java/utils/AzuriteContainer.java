@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.lifecycle.Startable;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,12 +21,15 @@ public class AzuriteContainer extends GenericContainer<AzuriteContainer>
 
 	public AzuriteContainer() {
 		super( "mcr.microsoft.com/azure-storage/azurite" );
+		for ( Service service : Service.values() ) {
+			addExposedPort( service.getPort() );
+		}
 	}
 
 	public CloudStorageAccount storageAccount() throws URISyntaxException {
 		URI blob = fromUri( () -> developmentStorageAccount.getBlobEndpoint(), () -> Service.BLOB ); //10000
 		URI queue = fromUri( () -> developmentStorageAccount.getQueueEndpoint(), () -> Service.QUEUE ); //10001
-		//URI table = fromUri( () -> developmentStorageAccount.getTableEndpoint(), () -> Service.TABLE ); //10001
+		//URI table = fromUri( () -> developmentStorageAccount.getTableEndpoint(), () -> Service.TABLE ); //10002
 		return new CloudStorageAccount( developmentStorageAccount.getCredentials(), blob, queue, developmentStorageAccount.getTableEndpoint() );
 	}
 

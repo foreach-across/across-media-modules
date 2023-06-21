@@ -27,6 +27,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
+import static utils.SftpContainer.TEST_PORT;
 
 @Slf4j
 class TestSpringIntegrationSftpFolderResource
@@ -50,7 +51,7 @@ class TestSpringIntegrationSftpFolderResource
 			defaultFtpSessionFactory.setUser( "fmm" );
 			defaultFtpSessionFactory.setPassword( "test" );
 			defaultFtpSessionFactory.setHost( "localhost" );
-			defaultFtpSessionFactory.setPort( 22 );
+			defaultFtpSessionFactory.setPort( TEST_PORT );
 			defaultFtpSessionFactory.setTimeout( 5000 );
 			defaultFtpSessionFactory.setChannelConnectTimeout( Duration.ofSeconds( 5 ) );
 			defaultFtpSessionFactory.setAllowUnknownKeys( true );

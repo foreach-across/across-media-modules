@@ -1,5 +1,8 @@
 package utils;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -33,9 +36,21 @@ public class AmazonS3Helper
 	public AmazonS3 createClientWithBuckets( String... bucketsToCreate ) {
 		AmazonS3 amazonS3 = AmazonS3ClientBuilder
 				.standard()
-				.withEndpointConfiguration( localstack.getEndpointConfiguration( S3 ) )
+				.withEndpointConfiguration(
+						//localstack.getEndpointConfiguration( S3 )
+						new AwsClientBuilder.EndpointConfiguration(
+								localstack.getEndpointOverride(S3 ).toString(),
+								localstack.getRegion()
+						)
+
+				)
 				.withPathStyleAccessEnabled( true )
-				.withCredentials( localstack.getDefaultCredentialsProvider() )
+				.withCredentials(
+						//localstack.getDefaultCredentialsProvider()
+						new AWSStaticCredentialsProvider(
+								new BasicAWSCredentials( localstack.getAccessKey(), localstack.getSecretKey())
+						)
+				)
 				.build();
 
 		Stream.of( bucketsToCreate )

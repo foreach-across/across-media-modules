@@ -19,6 +19,8 @@ import java.util.Collections;
 
 public class SftpContainer
 {
+	public static final int TEST_PORT = 10022;
+
 	private final Path tempDir;
 	private final SshServer server;
 
@@ -26,7 +28,7 @@ public class SftpContainer
 	public SftpContainer() {
 		tempDir = Files.createTempDirectory( "fmm-ftp" );
 		server = SshServer.setUpDefaultServer();
-		server.setPort( 22 );
+		server.setPort( TEST_PORT );
 		server.setKeyPairProvider( new SimpleGeneratorHostKeyProvider() );
 		server.setUserAuthFactories( Arrays.asList( new UserAuthPasswordFactory() ) );
 		server.setPasswordAuthenticator( new SftpAuthenticator() );

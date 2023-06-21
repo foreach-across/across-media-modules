@@ -51,7 +51,9 @@ public class TestAzureFileRepository extends BaseFileRepositoryTest
 	@AfterAll
 	@SneakyThrows
 	static void destroyResource() {
-		cloudBlobClient.getContainerReference( CONTAINER_NAME ).deleteIfExists();
+		if ( cloudBlobClient != null ) {
+			cloudBlobClient.getContainerReference( CONTAINER_NAME ).deleteIfExists();
+		}
 	}
 
 	@Test
