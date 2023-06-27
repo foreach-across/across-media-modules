@@ -1,12 +1,13 @@
 package support;
 
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 public class ImageUtils
@@ -14,6 +15,18 @@ public class ImageUtils
 	@SneakyThrows
 	public static BufferedImage bufferedImage( InputStream inputStream ) {
 		return ImageIO.read( inputStream );
+	}
+
+	@SneakyThrows
+	public static BufferedImage bufferedImage( InputStream inputStream, File bufferFile ) {
+		Path path = bufferFile.toPath();
+		Files.createDirectories( path.getParent() );
+		try (OutputStream outputStream = new BufferedOutputStream( Files.newOutputStream( path ) )) {
+			IOUtils.copy( inputStream, outputStream );
+		}
+		try (InputStream bufferedInputStream = new BufferedInputStream( Files.newInputStream( path ) )) {
+			return ImageIO.read( bufferedInputStream );
+		}
 	}
 
 	public static BufferedImage bufferedImage( byte[] imageBytes ) throws IOException {

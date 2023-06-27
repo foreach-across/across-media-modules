@@ -26,6 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -294,7 +295,8 @@ public class TestImageMagickTransformCommandExecutor
 	private void assertImage( String expected, ImageTransformCommand command ) {
 		executor.execute( command );
 		try (InputStream is = command.getExecutionResult().getImageStream()) {
-			assertTrue( imagesAreEqual( bufferedImage( is ), bufferedImageFromClassPath( expected ) ) );
+			File bufferFile = Paths.get( "target" ).resolve( expected ).toFile();
+			assertTrue( imagesAreEqual( bufferedImage( is, bufferFile ), bufferedImageFromClassPath( expected ) ) );
 		}
 	}
 
