@@ -20,22 +20,15 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="imageserver-test-embedded" />
+        <module name="imageserver-client" />
+        <module name="imageserver-admin" />
         <module name="bamboo-specs" />
         <module name="imageserver-distribution-assembly" />
-        <module name="imageserver-client" />
         <module name="imageserver-core" />
-        <module name="imageserver-admin" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="bamboo-specs" target="1.8" />
-      <module name="imageserver-admin" target="1.8" />
       <module name="imageserver-assembly" target="1.8" />
-      <module name="imageserver-client" target="1.8" />
-      <module name="imageserver-core" target="1.8" />
-      <module name="imageserver-distribution-assembly" target="1.8" />
-      <module name="imageserver-platform" target="1.8" />
-      <module name="imageserver-test-embedded" target="1.8" />
       <module name="imageserver-test-standalone" target="1.8" />
     </bytecodeTargetLevel>
   </component>

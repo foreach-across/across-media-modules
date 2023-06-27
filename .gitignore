@@ -9,3 +9,10 @@ db
 local-data
 .DS_Store
 .flattened-pom.xml
+# Maven:
+.effective-pom.xml
+.dependency-tree.txt
+.foreach-deps.txt
+
+# Emacs:
+*~

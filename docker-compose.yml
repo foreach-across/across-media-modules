@@ -3,9 +3,7 @@ services:
   maven-gm:
     # 1.) Do not use the alpine image as it fails frontend-maven-plugin:install-node-and-yarn
     #     https://github.com/eirslett/frontend-maven-plugin/issues/743
-    # 2.) Avoid 3.5.4 or higher for now, surefire fails due to a broken openjdk package
-    #     https://github.com/carlossg/docker-maven/issues/90
-    image: 'imgsrv-maven-with-graphicsmagick:3.5.0-jdk-8'
+    image: 'imgsrv-maven-with-graphicsmagick:3.8.7-eclipse-temurin-8'
     build:
       context: .
       dockerfile: 'Dockerfile'
