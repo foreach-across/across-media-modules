@@ -2,15 +2,23 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="file-manager-module-no-hibernate-module" />
-        <module name="file-manager-module-no-entity-module" />
+        <module name="imageserver-client" />
         <module name="file-manager-module" />
         <module name="file-manager-module-test" />
+        <module name="imageserver-core" />
+        <module name="imageserver-test-embedded" />
+        <module name="file-manager-module-no-hibernate-module" />
+        <module name="file-manager-module-no-entity-module" />
+        <module name="imageserver-admin" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="imageserver-distribution-assembly" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

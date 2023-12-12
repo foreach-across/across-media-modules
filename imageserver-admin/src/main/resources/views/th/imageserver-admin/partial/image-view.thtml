@@ -1,0 +1,80 @@
+<div ng-controller="ImageViewController as controller">
+    <h3>View a stored image</h3>
+
+    <nav class="navbar navbar-default axu-mb-3" role="navigation">
+        <div>
+            <form role="form" class="navbar-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="controller.externalId"
+                           ng-enter="controller.loadImage()" placeholder="External id"/>
+                </div>
+                <a href="" ng-click="controller.loadImage()" class="btn btn-primary">load</a>
+            </form>
+        </div>
+    </nav>
+
+    <div ng-if="controller.feedback" class="alert alert-warning">
+        {{controller.feedback}}
+    </div>
+
+    <div ng-if="controller.image.existing" class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card axu-mb-3">
+                    <div class="card-body">
+                        <p><strong>{{controller.image.externalId}}</strong><br/>
+                            {{controller.image.dimensionsDto.width}} x {{controller.image.dimensionsDto.height}}<br/>
+                            {{controller.image.imageType}}<br/>
+                            {{controller.image.imageFileSize | bytes}}<br/>
+                        </p>
+                        {{controller.image.created | date:['dd MMM yyyy HH:mm:ss']}}
+                    </div>
+                </div>
+
+                <select class="form-control" ng-model="controller.selectedContext"
+                        ng-options="context for context in controller.contexts"
+                        ng-change="controller.selectContext(controller.selectedContext)"/>
+
+                <select class="form-control" ng-model="controller.selectedImageType"
+                        ng-options="imageType for imageType in controller.imageTypes"
+                        ng-change="controller.selectImageType(controller.selectedImageType)"/>
+
+                <div class="clearfix">
+
+                    <table class="table table-condensed">
+                        <tr role="presentation"
+                            ng-repeat="resolution in controller.resolutions | orderBy:['width','height']"
+                            ng-class="{active: resolution == controller.selectedResolution}">
+                            <td>
+                            <span class="badge pull-right" ng-if="controller.getCrop(resolution)"
+                                  title="Crop defined">!</span>
+                                <a href="" ng-click="controller.selectResolution(resolution, true)">{{resolution.name}}</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="fixed-preview" ui-scrollfix="190">
+                    <div class="alert alert-{{controller.selectedCrop ? 'success' : 'info'}}">
+                        {{controller.selectedResolution.name}} [ <strong>{{controller.selectedResolution.width}}</strong>
+                        x
+                        <strong>{{controller.selectedResolution.height}}</strong>
+                        ]
+                    <span class="pull-right" ng-if="controller.selectedCrop">
+                    Crop
+                    [ x: <strong>{{controller.selectedCrop.crop.x}}</strong>,
+                    y: <strong>{{controller.selectedCrop.crop.y}}</strong>,
+                    width: <strong>{{controller.selectedCrop.crop.width}}</strong>,
+                    height: <strong>{{controller.selectedCrop.crop.height}}</strong> ]
+                    </span>
+                    </div>
+
+                    <div class="col-md-12 thumbnail">
+                        <img ng-src="{{controller.previewUrl}}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

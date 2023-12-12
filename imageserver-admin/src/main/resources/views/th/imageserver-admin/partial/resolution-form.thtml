@@ -1,0 +1,65 @@
+<h3 ng-show="resolution.id == 0">Create a resolution</h3>
+<h3 ng-show="resolution.id">Modify resolution: {{resolution.width}}x{{resolution.height}}
+</h3>
+
+<div class="alert {{feedback.type}} alert-dismissable" ng-show="feedback.message">
+    {{feedback.message}}
+</div>
+
+<form role="form col-md-6">
+    <div class="form-group form-inline">
+        <label for="resolution.width" class="axu-pr-2">Dimensions</label>
+        <input class="form-control" type="text" id="resolution.width" name="resolution.width" ng-model="resolution.width"/>
+        <span class="axu-px-2">x</span>
+        <input type="text" class="form-control" name="resolution.height" ng-model="resolution.height"/>
+    </div>
+    <div class="form-group">
+        <label for="resolution.name">Name</label>
+        <input class="form-control" type="text" id="resolution.name" name="resolution.name" ng-model="resolution.name"/>
+    </div>
+    <div class="checkbox">
+        <label for="resolution.configurable">
+            <input type="checkbox" id="resolution.configurable" name="resolution.configurable" ng-model="resolution.configurable"/>
+            Crops are configurable for this resolution
+        </label>
+    </div>
+    <div class="checkbox">
+        <label for="resolution.pregenerateVariants">
+            <input type="checkbox" id="resolution.pregenerateVariants" name="resolution.pregenerateVariants" ng-model="resolution.pregenerateVariants"/>
+            Pregenerate variants for this resolution
+        </label>
+    </div>
+    <div class="form-group clearfix">
+        <label>Allowed output types</label>
+
+        <div ng-repeat="imageType in imageTypes" class="checkbox">
+            <label><input type="checkbox" name="imageType" ng-model="allowedOutputTypes[imageType]"/>
+                {{imageType}}</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 clearfix">
+            <div class="form-group clearfix">
+                <label for="resolution.tags">Tags</label>
+
+                <div ng-repeat="tag in resolution.tags track by $index">
+                    <input type="text" id="resolution.tags" name="resolution.tags"
+                           ng-model="resolution.tags[$index]"/>
+                    <a ng-show="$last" href="" ng-click="resolution.tags.push('')"><span
+                            class="glyphicon glyphicon-plus"></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group clearfix">
+        <label>Context</label>
+
+        <div ng-repeat="context in contexts" class="checkbox">
+            <label><input type="checkbox" name="context" ng-model="selectedContexts[context]"/>
+                {{context}}</label>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" ng-click="save()">Save</button>
+    <a ng-href="#/manage/resolutions" class="btn btn-link">Cancel</a>
+</form>

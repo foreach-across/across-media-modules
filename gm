@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+if [ -f /usr/bin/gm ]
+then
+    exec /usr/bin/gm "$@"
+elif [ -x /usr/bin/docker ]
+then
+    exec /usr/bin/docker exec -i imageserver-container /usr/bin/gm "$@"
+else
+    echo "gm nor docker installed" >>/dev/stderr
+    exit 66
+fi

@@ -14,6 +14,22 @@
     <file url="file://$PROJECT_DIR$/file-manager-module-test/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/file-manager-module/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/file-manager-module/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-admin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-admin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-admin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-client" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-client/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-distribution-assembly" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-distribution-assembly/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-distribution-assembly/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-test-embedded" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-test-embedded/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-test-embedded/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/imageserver-test-standalone" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>

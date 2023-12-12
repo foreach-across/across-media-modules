@@ -1,0 +1,23 @@
+<div ng-controller="ImageUploadController as image">
+    <h3>Upload an image</h3>
+
+    <form role="form">
+        <div ng-if="image.existing" class="alert alert-warning">
+            Image with external id <strong>{{image.externalId}}</strong> already exists.<br/>
+            <label><input type="checkbox" id="replaceExisting" ng-model="image.replaceExisting" /> replace the existing image</label>
+        </div>
+
+        <div class="form-group">
+            <label for="externalId">External id</label>
+            <input id="externalId" class="form-control" type="text" ng-model="image.externalId"
+                   ng-change="image.loadImageFeedback()"/>
+        </div>
+
+        <div class="form-group">
+            <label for="imageFile">Image file</label>
+            <input id="imageFile" type="file" ng-file-select="image.selectFile($files)"/>
+        </div>
+
+        <input class="btn btn-primary" type="submit" value="Upload" ng-click="image.upload()" ng-if="image.canUpload()"/>
+    </form>
+</div>

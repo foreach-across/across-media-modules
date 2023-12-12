@@ -1,0 +1,60 @@
+acrossHibernate:
+  hibernate-properties:
+    hibernate.format_sql: false
+    hibernate.use_sql_comments: false
+    hibernate.show_sql: false
+
+applicationInfo:
+  environmentId: development
+  applicationId: ImageServer
+  applicationName: ImageServer
+
+adminWebModule:
+  login:
+    rememberMe:
+      key: imageserver-test-embedded-changeme
+  root-path: /admin
+
+debugWebModule:
+  root-path: /debug
+  security:
+    password: imageserver-test-embedded-changeme
+
+logging:
+  request-response:
+    enabled: true
+
+server:
+  error:
+    includeStacktrace: ALWAYS
+
+spring:
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+
+acrossModule:
+  ImageServerAdminWebModule:
+    resources: ../imageserver-admin/src/main/resources
+
+imageServerCore:
+  rootPath: /resources/images
+  accessToken: standalone-access-token
+  createLocalClient: true
+  imageServerUrl: "http://localhost:${server.port}/resources/images"
+  md5HashToken: sample-hash-imgserver
+  streaming:
+    provideStackTrace: true
+  transformers:
+    imageMagick:
+      enabled: true
+      useGraphicsMagick: true
+      use-ghost-script: true
+    ghostscript:
+      enabled: false
+
+imageServerAdmin:
+  accessToken: standalone-access-token
+  imageServerUrl: /resources/images
+
