@@ -6,18 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="file-manager-module" />
-        <module name="file-manager-module-no-entity-module" />
         <module name="file-manager-module-no-hibernate-module" />
+        <module name="file-manager-module-no-entity-module" />
+        <module name="file-manager-module" />
         <module name="file-manager-module-test" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="file-manager-module" target="1.8" />
-      <module name="file-manager-module-no-entity-module" target="1.8" />
-      <module name="file-manager-module-no-hibernate-module" target="1.8" />
-      <module name="file-manager-module-project" target="1.8" />
-      <module name="file-manager-module-test" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

@@ -21,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
 import org.testcontainers.containers.wait.strategy.Wait;
+import utils.AzureStorageHelper;
 import utils.AzuriteContainer;
 
 import java.io.InputStream;
@@ -91,12 +92,13 @@ class TestCustomAzureFileRepositoryConfiguration
 
 		@Bean
 		AzuriteContainer azurite() {
-			AzuriteContainer azurite = new AzuriteContainer();
-			azurite.addExposedPorts( 10000, 10001 );
-			azurite.setCommand( "azurite", "-l", "/data", "--blobHost", "0.0.0.0", "--queueHost", "0.0.0.0" );
-			azurite.waitingFor( Wait.forListeningPort() );
-			azurite.start();
-			return azurite;
+//			AzuriteContainer azurite = new AzuriteContainer();
+//			azurite.addExposedPorts( 10000, 10001 );
+//			azurite.setCommand( "azurite", "-l", "/data", "--blobHost", "0.0.0.0", "--queueHost", "0.0.0.0" );
+//			azurite.waitingFor( Wait.forListeningPort() );
+//			azurite.start();
+//			return azurite;
+			return AzureStorageHelper.azurite;
 		}
 
 		@Bean

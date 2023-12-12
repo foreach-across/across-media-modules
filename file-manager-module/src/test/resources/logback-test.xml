@@ -17,4 +17,8 @@
 <configuration>
 	<include resource="logback-across-test.xml"/>
 	<logger name="com.foreach.across.modules.filemanager.services" level="trace"/>
+	<!-- TODO: Adapting this works on the laptop, but not on GitLab -->
+	<logger name="com.jcraft.jsch" level="warning"/>
+	<logger name="com.github.dockerjava" level="info"/>
+	<logger name="com.amazonaws" level="info"/>
 </configuration>

@@ -21,20 +21,15 @@
 
 	<parent>
 		<groupId>com.foreach.across.modules</groupId>
-		<artifactId>file-manager-module-project</artifactId>
+		<artifactId>across-media-modules</artifactId>
 		<version>${revision}</version>
 	</parent>
 
 	<artifactId>file-manager-module</artifactId>
-	<name>FileManagerModule</name>
 
 	<properties>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
 		<maven.deploy.skip>false</maven.deploy.skip>
-
-		<frontend.dir>src/main/frontend</frontend.dir>
-		<frontend.node.version>v9.10.1</frontend.node.version>
-		<frontend.yarn.version>v1.3.2</frontend.yarn.version>
 	</properties>
 
 	<dependencies>
@@ -71,11 +66,6 @@
 			<groupId>com.foreach.across</groupId>
 			<artifactId>across-web</artifactId>
 		</dependency>
-		<!--<dependency>-->
-		<!--<groupId>javax.servlet</groupId>-->
-		<!--<artifactId>javax.servlet-api</artifactId>-->
-		<!--<scope>provided</scope>-->
-		<!--</dependency>-->
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
@@ -232,44 +222,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.github.eirslett</groupId>
-				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.10.0</version>
-				<executions>
-					<execution>
-						<id>install node and yarn</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>install-node-and-yarn</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>yarn install</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>yarn</goal>
-						</goals>
-						<configuration>
-							<arguments>install</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>gulp build</id>
-						<goals>
-							<goal>gulp</goal>
-						</goals>
-						<configuration>
-							<arguments>scss js --production</arguments>
-						</configuration>
-					</execution>
-				</executions>
-				<configuration>
-					<nodeVersion>${frontend.node.version}</nodeVersion>
-					<yarnVersion>${frontend.yarn.version}</yarnVersion>
-					<workingDirectory>${frontend.dir}</workingDirectory>
-				</configuration>
 			</plugin>
 			<plugin>
 				<!-- This defines how a specific module will be flattened -->

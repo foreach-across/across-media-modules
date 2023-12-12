@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>file-manager-module-project</artifactId>
+		<artifactId>across-media-modules</artifactId>
 		<groupId>com.foreach.across.modules</groupId>
 		<version>${revision}</version>
 	</parent>
