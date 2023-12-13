@@ -1,0 +1,86 @@
+<html xmlns:wcm="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Auto create complex markup components</title>
+</head>
+<body>
+
+<div id="markup-with-placeholders" wcm:component="markup-with-placeholders" wcm:auto-create wcm:parse-placeholders>
+    Default markup <span wcm:placeholder="one">one</span> with
+    <th:block wcm:placeholder="two">two</th:block>
+    content
+</div>
+
+<div id="markup-with-included-placeholders" wcm:component="markup-with-included-placeholders" wcm:auto-create wcm:parse-placeholders>
+    Default markup <span wcm:placeholder="one" wcm:parent-create-include>one</span> with
+    <th:block wcm:placeholder="two">two</th:block>
+    content
+</div>
+
+<div id="markup-with-components" wcm:component="markup-with-components" wcm:auto-create wcm:type="html">
+    Markup with
+    <div wcm:component="footer" th:remove="tag">replaced by footer</div>
+    and content
+    <th:block wcm:component="content" wcm:scope="global">replaced by content</th:block>
+    and not found:
+    <div wcm:component="content" wcm:search-parent-scopes="false">not found</div>
+</div>
+
+<div id="markup-with-included-components" wcm:component="markup-with-included-components" wcm:auto-create wcm:type="html">
+    Markup with
+    <div wcm:component="footer" th:remove="tag" wcm:parent-create-include>replaced by footer</div>
+    and content
+    <th:block wcm:component="content" wcm:scope="global">replaced by content</th:block>
+    and not found:
+    <div wcm:component="content" wcm:search-parent-scopes="false" wcm:parent-create-include>not found</div>
+</div>
+
+<div id="markup-with-auto-created-components" wcm:component="markup-with-auto-created-components" wcm:auto-create>
+    Markup with
+    <th:block wcm:component="auto-created-for-include" wcm:auto-create="global">Global component: auto-created for include</th:block>
+    and content
+    <div wcm:component="page-html-created-for-include" wcm:parent-create-include wcm:auto-create>Page component: auto-created for include</div>
+</div>
+
+<div id="markup-with-placeholder-and-component" wcm:component="markup-with-placeholder-and-component" wcm:auto-create wcm:parse-placeholders>
+    Markup with
+    <div wcm:component="footer" th:remove="tag">replaced by footer</div>
+    and
+    <th:block wcm:placeholder="two">two</th:block>
+</div>
+
+<div id="markup-with-nested-placeholders-and-components" wcm:component="markup-with-nested-placeholders-and-components" wcm:auto-create wcm:parse-placeholders>
+    Root markup:
+    <div wcm:component="component-one" th:remove="tag" wcm:auto-create>
+        Component one:
+        <div wcm:placeholder="one">
+            Placeholder one:
+            <div wcm:component="component-two" wcm:auto-create>
+                Component two:
+                <th:block wcm:placeholder="two" wcm:parent-create-include>Placeholder two</th:block>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="markup-with-component-in-placeholders" wcm:component="markup-with-component-in-placeholders" wcm:auto-create wcm:parse-placeholders>
+    <div wcm:placeholder="header">
+        Placeholder component 1:
+        <th:block wcm:component="not-created" wcm:always-replace>non-created components that should have been replaced</th:block>
+        <th:block wcm:component="header-text-in-placeholder" wcm:auto-create>new component</th:block>
+    </div>
+    <th:block wcm:component="body-in-placeholder" wcm:auto-create>
+        <th:block wcm:placeholder="body-text">Placeholder component 2:
+            <div wcm:component="footer"/>
+        </th:block>
+    </th:block>
+</div>
+
+<!--/*
+create with container members
+    and container
+    <div wcm:component="created-container-for-include" wcm:type="container" wcm:auto-create wcm:scope="global">
+        <div wcm:component="footer-text">container footer text</div>
+    </div>
+*/-->
+</body>
+</html>

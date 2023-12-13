@@ -1,0 +1,75 @@
+types:
+  component:
+    partner:
+      objectId: "wcm:type:component:partner"
+      name: Partner
+      attributes:
+        type: fixed-container
+        componentRestricted: true
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          wcm:components:
+            name:
+              componentType: plain-text
+              title: Name
+            logo:
+              componentType: image
+              title: Logo
+            small-logo:
+              componentType: image
+              title: Small logo
+            url:
+              componentType: plain-text
+              title: Url
+            opt-in:
+              componentType: rich-text
+              title: Opt in
+
+    partner-container:
+      name: Partners
+      attributes:
+        type: container
+        childComponentsRestricted: true
+      wcm:types:
+        - typeSpecifier: "wcm:type:component:partner"
+          linkType: allowed-component
+
+    section:
+      name: Page section
+      description: Optionally allows configuring an image.
+      attributes:
+        type: fixed-container
+        template: "th/webCmsTest/fragments/components :: section"
+        metadata: "webapps.admin.application.ui.SectionComponentMetadata"
+      wcm:components:
+        componentTemplate:
+          componentType: container
+          title: Template component that will be copied to any new instance.
+          wcm:components:
+            image:
+              componentType: image
+              title: Image
+              sortIndex: 0
+            body:
+              componentType: rich-text
+              title: Body
+              sortIndex: 1
+              content: "<h3>@@container.title@@</h3>"
+
+assets:
+  component:
+    fixed-section:
+      title: Fixed section
+      componentType: section
+      wcm:components:
+        image:
+          image: "file:./src/main/test-data/test-image.jpg"
+    sample-image:
+      title: Sample image of a deer
+      componentType: image
+      image: "classpath:installers/test-data/deer.jpg"
+    sample-image-from-url:
+      title: Sample image fetched from URL
+      componentType: image
+      image: "http://images.freeimages.com/images/large-previews/afa/black-jaguar-1402097.jpg"

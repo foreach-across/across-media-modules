@@ -1,0 +1,53 @@
+#
+# Import default menu structures
+#
+# See: ITMenuReferenceData
+menus:
+  topNav:
+    description: Top navigation
+    items:
+      # Register fixed controller paths
+      /home:
+        title: Home
+        url: /home
+        sortIndex: 1
+      /categories:
+        title: Categories
+        group: true
+        sortIndex: 2
+      /categories/news:
+        title: News
+        url: /category/news
+        sortIndex: 1
+      /categories/gossip:
+        title: Gossip
+        url: /category/gossip
+        sortIndex: 2
+      /categories/deleteme:
+        title: Bad category
+        url: /category/bad
+        sortIndex: 3
+
+  sideNav:
+    description: Sidebar navigation
+    items:
+      /home:
+        title: Home
+        url: /
+
+  deleteMeNav:
+    description: Extension should delete this menu
+    items:
+      /home:
+        title: Deleted home
+        url: /home-url
+
+  navWithObjectId:
+    objectId: "wcm:menu:nav-object-id"
+    description: nav with an objectId
+    domain: domain.complex.domain
+
+  myOtherNav:
+    objectId: "wcm:menu:my-other-nav"
+    description: Another nav with an objectId
+    domain: domain.complex.domain

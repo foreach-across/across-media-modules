@@ -55,6 +55,10 @@
 		<across-base-modules.version>4.3-SNAPSHOT</across-base-modules.version>
 		<across-entity-admin-modules.version>4.3-SNAPSHOT</across-entity-admin-modules.version>
 		<across-user-auth-modules.version>4.3-SNAPSHOT</across-user-auth-modules.version>
+		<webjars.bootbox>5.3.2</webjars.bootbox>
+		<webjars.codemirror>5.44.0</webjars.codemirror>
+		<webjars.lodash>4.17.4</webjars.lodash>
+		<webjars.jquery.ui>1.12.1</webjars.jquery.ui>
 	</properties>
 
 	<description>
@@ -79,6 +83,8 @@
 		<module>imageserver-admin</module>
 		<module>imageserver-test-embedded</module>
 		<!--module>imageserver-distribution-assembly</module-->
+		<module>web-cms-module</module>
+		<module>web-cms-module-test</module>
 	</modules>
 
 	<dependencyManagement>
@@ -96,6 +102,12 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-aws-core</artifactId>
 				<version>2.2.6.RELEASE</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.cloudinary</groupId>
+				<artifactId>cloudinary-http44</artifactId>
+				<version>1.26.0</version>
 			</dependency>
 
 			<dependency>
@@ -129,7 +141,6 @@
 				<artifactId>spring-security-module</artifactId>
 				<version>${across-base-modules.version}</version>
 			</dependency>
-
 
 			<dependency>
 				<groupId>com.foreach.across.modules</groupId>
@@ -179,6 +190,28 @@
 				<groupId>commons-net</groupId>
 				<artifactId>commons-net</artifactId>
 				<version>3.9.0</version>
+			</dependency>
+
+			<!-- Webjars-->
+			<dependency>
+				<groupId>org.webjars.npm</groupId>
+				<artifactId>codemirror-minified</artifactId>
+				<version>${webjars.codemirror}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.webjars</groupId>
+				<artifactId>lodash</artifactId>
+				<version>${webjars.lodash}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.webjars.bower</groupId>
+				<artifactId>bootbox.js</artifactId>
+				<version>${webjars.bootbox}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.webjars</groupId>
+				<artifactId>jquery-ui</artifactId>
+				<version>${webjars.jquery.ui}</version>
 			</dependency>
 
 		</dependencies>

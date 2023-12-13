@@ -1,0 +1,25 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title th:text="${asset.title}">Page title</title>
+
+    <across:web-resources bucket="css" />
+    <across:web-resources bucket="javascript" />
+</head>
+<body>
+<!--
+<h1>[[${asset.title}]]</h1>
+<nav>
+    <ul>
+        <li th:each="item : ${topNav.items}">[[${asset.title}]]</li>
+    </ul>
+</nav>
+-->
+<div style="border: solid 3px red; padding: 10px;">
+    <div th:include="${childPage} :: body">
+        insert child page body content...
+    </div>
+</div>
+
+<across:web-resources bucket="javascript-page-end" />
+</body>
+</html>

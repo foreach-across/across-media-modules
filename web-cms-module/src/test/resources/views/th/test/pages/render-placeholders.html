@@ -1,0 +1,62 @@
+<html xmlns:wcm="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Component with placeholder rendering</title>
+</head>
+<body>
+
+<div id="no-component">
+    <div wcm:placeholder="one">one</div>
+</div>
+
+<div id="not-found-default-markup" wcm:component="not-found" wcm:parse-placeholders>
+    First: <strong wcm:placeholder="one">one</strong> and second: <em wcm:placeholder="two">two</em>.
+</div>
+
+<div id="placeholders-not-parsed" wcm:component="with-placeholders">
+    <div wcm:placeholder="one">one</div>
+    <th:block wcm:placeholder="two">two</th:block>
+    <div wcm:placeholder="three" th:remove="tag">three</div>
+</div>
+
+<div id="placeholders-rendered" wcm:component="with-placeholders" wcm:parse-placeholders>
+    <div wcm:placeholder="one">one</div>
+    <th:block wcm:placeholder="two">two</th:block>
+    <div wcm:placeholder="three" th:remove="tag">three</div>
+</div>
+
+<div id="placeholders-rendered-in-global-component" wcm:component="with-placeholders" wcm:scope="global" wcm:parse-placeholders>
+    <div wcm:placeholder="one">one</div>
+    <th:block wcm:placeholder="two">two</th:block>
+    <div wcm:placeholder="three" th:remove="tag">three</div>
+</div>
+
+<div id="nested-placeholders" wcm:component="with-placeholders" wcm:parse-placeholders>
+    <div wcm:placeholder="one">one</div>
+    <div wcm:component="content">
+        <th:block wcm:placeholder="two">two</th:block>
+        <ul>
+            <li wcm:placeholder="three">three</li>
+        </ul>
+    </div>
+</div>
+
+<div id="placeholder-that-contains-component" wcm:component="with-placeholders" wcm:parse-placeholders>
+    <div wcm:placeholder="one">
+        <th:block wcm:component="footer" wcm:scope="global"/>
+    </div>
+    <th:block wcm:placeholder="two" wcm:component="content">two</th:block>
+    <div wcm:placeholder="three" th:remove="tag">three</div>
+</div>
+
+<div id="nested-placeholders-with-include" wcm:component="with-placeholders" wcm:parse-placeholders>
+    <div wcm:placeholder="one" wcm:parent-create-include>one</div>
+    <div wcm:component="content">
+        <th:block wcm:placeholder="two" wcm:parent-create-include>two</th:block>
+        <ul>
+            <li wcm:placeholder="three" wcm:parent-create-include>three</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<html xmlns:wcm="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Interoperability with regular Thymeleaf expressions</title>
+</head>
+<body>
+
+<div th:if="${false}" id="not-created" wcm:component="not-created" wcm:type="html" wcm:auto-create>
+    should not get created
+</div>
+
+<div th:unless="${false}" id="should-get-created" wcm:component="should-get-created" wcm:type="html" wcm:auto-create>
+    should get created
+</div>
+
+<div id="nested-creation">
+    <wcm:component name="nested-not-created" type="html" th:if="${false}" auto-create>not created</wcm:component>
+    <wcm:component name="nested-created" type="html" th:if="${true}" auto-create title="Component created in nested">created</wcm:component>
+</div>
+
+<div id="fragment-created" th:insert="th/test/pages/auto-create/fragments :: say(hello)"></div>
+
+<div id="container-with-fragments" wcm:component="container-with-fragments" wcm:auto-create wcm:type="container">
+    <div th:replace="th/test/pages/auto-create/fragments :: say(hello-container)"/>
+    <th:block th:insert="th/test/pages/auto-create/fragments :: wave"></th:block>
+    <wcm:component name="last" type="plain-text">Last component</wcm:component>
+</div>
+</body>
+</html>

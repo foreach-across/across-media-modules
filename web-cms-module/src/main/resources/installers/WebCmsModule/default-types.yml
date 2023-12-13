@@ -1,0 +1,119 @@
+types:
+  # Default component types
+  component:
+    proxy:
+      objectId: "wcm:type:component:proxy"
+      name: Proxy component
+      description: A proxy for another component that will be rendered instead.
+      attributes:
+        type: proxy
+        componentRestricted: true
+    placeholder:
+      objectId: "wcm:type:component:placeholder"
+      name: Placeholder
+      description: Represents a placeholder for content provided by code or templates.
+      attributes:
+        type: placeholder
+        componentRestricted: true
+    container:
+      objectId: "wcm:type:component:container"
+      name: Container
+      description: Container of multiple ordered components.
+      attributes:
+        type: container
+    fixed-container:
+      objectId: "wcm:type:component:fixed-container"
+      name: Fixed container
+      description: Container of a fixed set of components.
+      attributes:
+        type: fixed-container
+        componentRestricted: true
+    text-field:
+      objectId: "wcm:type:component:text-field"
+      name: Text field
+      description: A single line of plain text.
+      attributes:
+        type: plain-text
+        multiLine: false
+    plain-text:
+      objectId: "wcm:type:component:plain-text"
+      name: Plain text
+      description: Plain text component.
+      attributes:
+        type: plain-text
+        rows: 1
+    rich-text:
+      objectId: "wcm:type:component:rich-text"
+      name: Rich text
+      description: Rich text component - supporting HTML markup and default assets if enabled by other modules.
+      attributes:
+        type: rich-text
+        profile: rich-text
+    html:
+      objectId: "wcm:type:component:html"
+      name: HTML
+      description: A snippet of HTML.
+      attributes:
+        type: markup
+    image:
+      objectId: "wcm:type:component:image"
+      name: Image
+      description: Image asset or external image link.
+      attributes:
+        type: image
+
+  # Default article types: blog and news
+  article:
+    blog:
+      objectId: "wcm:type:article:blog"
+      name: Blog
+      wcm:components:
+        # Default component name that contains the content components for this article type
+        contentTemplate:
+          title: Article components
+          componentType: container
+          wcm:components:
+            content:
+              title: Article content
+              componentType: container
+              wcm:components:
+                body:
+                  title: Body
+                  componentType: rich-text
+                  content: |
+                    <h1>@@title@@</h1>
+                    <p></p>
+                  sortIndex: 0
+    news:
+      objectId: "wcm:type:article:news"
+      name: News
+      attributes:
+        # Key of the parent type from which the attributes (and component) should be inherited
+        parent: blog
+
+  # Default publication types: blog and news
+  publication:
+    blog:
+      objectId: "wcm:type:publication:blog"
+      name: Blog
+      wcm:types:
+        - typeSpecifier: wcm:type:article:blog
+          linkType: article
+    news:
+      objectId: "wcm:type:publication:news"
+      name: News
+      wcm:types:
+        - typeSpecifier: wcm:type:article:news
+          linkType: article
+
+  # Default page types
+  page:
+    default:
+      objectId: "wcm:type:page:default"
+      name: Default
+    template:
+      objectId: "wcm:type:page:template"
+      name: Template
+      attributes:
+        hasEndpoint: false
+        isPublishable: false

@@ -1,0 +1,28 @@
+#
+# Modifies, adds and deletes pages.
+# Page key represents the canonical path but is only used for creation and lookup by canonical path.
+# If an object id property is specified, that one will be used as the unique identifier instead,
+# and the value of the key will be ignored altogether.
+#
+assets:
+  page:
+    - objectId: "wcm:asset:page:my-page-be"
+      wcm:action: delete
+      canonicalPath: /my-page
+      domain: be-foreach
+
+    - objectId: "wcm:asset:page:my-page-nl"
+      canonicalPath: /my-page
+      domain: nl-foreach
+      title: My Page (NL)
+
+    - objectId: "wcm:asset:page:other-page-with-url"
+      wcm:urls:
+        - path: /to-be-deleted
+          wcm:action: delete
+
+    - objectId: "wcm:asset:page:page-with-url-be"
+      wcm:domain: be-foreach
+      wcm:urls:
+        /to-be-deleted:
+          wcm:action: delete

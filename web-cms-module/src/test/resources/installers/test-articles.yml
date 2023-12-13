@@ -1,0 +1,14 @@
+# Create publication and article in one batch
+assets:
+  publication:
+    test-publication:
+      name: Test publication
+      publicationType: news
+      published: true
+  article:
+    - title: Test article 1
+      articleType: news
+      publication: test-publication
+    - title: Test article 2
+      articleType: news
+      publication: test-publication

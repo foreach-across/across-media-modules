@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:../local-data/local-imageserver/application-db
+
+imageServerCore:
+  rootPath: /resources/images
+  accessToken: wcm-imgserver
+  createLocalClient: true
+  imageServerUrl: "http://localhost:${server.port}/resources/images"
+  md5HashToken: wcm-hash-imgserver
+  store:
+    folder: ../local-data/local-imageserver/images
+  streaming:
+    provideStackTrace: true
+  transformers:
+    imageMagick:
+      enabled: true
+      useGraphicsMagick: true
+      # Location of GraphicsMagick ('path' property) should be added to the local application config: ${user.home}/dev-configs/wcm-test-application.yml
+
+imageServerAdmin:
+  imageServerUrl: /resources/images
+  accessToken: wcm-imgserver

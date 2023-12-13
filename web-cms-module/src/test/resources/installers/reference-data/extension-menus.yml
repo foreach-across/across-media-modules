@@ -1,0 +1,41 @@
+#
+# Extends previously defined data items
+#
+# See: ITMenuReferenceData
+menus:
+  # Update description on top navigation, change existing item, remove another item
+  - name: topNav
+    description: Top navigation - updated by extension
+    items:
+      - path: /categories
+        title: Categories - updated
+      - path: /categories/deleteme
+        wcm:action: delete
+      - asset: "wcm:asset:page:contact"
+      - asset: /my/other/contact
+
+  # Add item to sideNav
+  - name: sideNav
+    wcm:action: update
+    items:
+      /custom-sidenav:
+        title: Custom SideNav Item
+        url: /custom-sidenav-item
+        sortIndex: 1
+      /contact:
+        title: Contact
+        asset: "wcm:asset:page:contact"
+        sortIndex: 2
+      /contact2:
+        title: Contact2
+        asset: /my/other/contact
+        sortIndex: 3
+
+  # Remove the dummy menu
+  - name: deleteMeNav
+    wcm:action: delete
+
+  # Remove the domain
+  - objectId: "wcm:menu:my-other-nav"
+    name: myOtherNav
+    domain: null

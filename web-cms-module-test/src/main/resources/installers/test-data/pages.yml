@@ -1,0 +1,29 @@
+assets:
+  page:
+    - objectId: "wcm:asset:page:test-render-components"
+      template: tests/render-components
+      title: Test page for WebComponent rendering
+      pathSegmentGenerated: false
+      pathSegment: render-components
+      published: true
+      pageType: "wcm:type:default"
+      wcm:components:
+        page-title:
+          componentType: plain-text
+          title: Page title
+          content: Demo titel
+      wcm:menu-items:
+        - title: test-1
+          group: true
+          path: /my/generic/path
+          menu: sidenav
+        - title: test-2
+          path: /my/generic/path/2
+          sortIndex: 1
+          menu: sidenav
+    - objectId: "wcm:asset:page:test-auto-create-components"
+      template: tests/auto-create-components
+      title: Test page for WebComponent auto-creation
+      pathSegmentGenerated: false
+      pathSegment: auto-create-components
+      published: true

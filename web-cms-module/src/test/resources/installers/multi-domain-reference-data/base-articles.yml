@@ -1,0 +1,55 @@
+assets:
+  publication:
+    - objectId: "wcm:asset:publication:devtalks-nl"
+      publicationKey: devtalks-nl
+      name: Devtalks (NL)
+      publicationType:
+        typeKey: "nl-foreach:weird-facts"
+        domain: nl-foreach
+      published: true
+      domain: nl-foreach
+    - objectId: "wcm:asset:publication:devtalks-be"
+      publicationKey: devtalks-be
+      name: Devtalks (BE)
+      publicationType:
+        typeKey: "be-foreach:weird-facts"
+        domain: be-foreach
+      published: true
+      domain: be-foreach
+    - objectId: "wcm:asset:publication:devtalks-de"
+      publicationKey: devtalks-de
+      name: Devtalks (DE)
+      publicationType:
+        typeKey: "de-foreach:weird-facts"
+        domain: de-foreach
+      published: true
+      domain: de-foreach
+
+  article:
+    - objectId: "wcm:asset:article:devtalks-nl"
+      title: DevTalks Maart (NL)
+      description: to be deleted
+      articleType: blog
+      publication: "wcm:asset:publication:devtalks-nl"
+      domain: nl-foreach
+
+    - objectId: "wcm:asset:article:devtalks-de"
+      title: DevTalks Maart (DE)
+      articleType: blog
+      publication: "wcm:asset:publication:devtalks-de"
+      domain: de-foreach
+
+    - objectId: "wcm:asset:article:devtalks-be"
+      title: DevTalks Maart
+      articleType: blog
+      publication: "wcm:asset:publication:devtalks-be"
+      domain: be-foreach
+
+    - objectId: "wcm:asset:article:webcms-multi-dom"
+      title: MultiDomainSupport for WebCmsModule
+      description: MultiDomainSupport for WebCmsModule
+      articleType: blog
+      publication: blogs
+      domain: be-foreach
+
+

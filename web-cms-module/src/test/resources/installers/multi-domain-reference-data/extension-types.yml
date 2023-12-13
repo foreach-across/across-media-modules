@@ -1,0 +1,10 @@
+#
+# Extends previously defined data items
+#
+# See: ITTypeReferenceData
+types:
+  article:
+    big-article:
+      objectId: "wcm:type:article:big-article"
+      name: Big Article
+      domain: be-foreach

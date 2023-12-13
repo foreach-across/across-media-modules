@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright 2017 the original author or authors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+	<!-- Domain entity -->
+	<changeSet id="201708301738" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.domain}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates domain table</comment>
+
+		<createTable tableName="${table.domain}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_domain"/>
+			</column>
+			<column name="object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="domain_key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="name" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="description" type="java.sql.Types.NVARCHAR(500)"/>
+			<column name="active" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.domain}" indexName="ix_wcm_domain_oid" unique="true">
+			<column name="object_id"/>
+		</createIndex>
+
+		<createIndex tableName="${table.domain}" indexName="ix_wcm_domain_key" unique="true">
+			<column name="domain_key"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201708301735" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.domain_attributes}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates domain attributes table</comment>
+
+		<createTable tableName="${table.domain_attributes}">
+			<column name="type_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_domain_attr"
+				             referencedTableName="${table.domain}" referencedColumnNames="id" foreignKeyName="fk_wcm_domain_attr_domain"/>
+			</column>
+			<column name="attribute_key" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_domain_attr"/>
+			</column>
+			<column name="attribute_value" type="java.sql.Types.NCLOB"/>
+		</createTable>
+	</changeSet>
+
+	<!-- Add domain id reference on all related tables -->
+	<changeSet id="201708311038" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.asset}" columnName="domain_id"/>
+			</not>
+		</preConditions>
+		<comment>Add domain reference to asset table</comment>
+		<addColumn tableName="${table.asset}">
+			<column name="domain_id" type="java.sql.Types.BIGINT">
+				<constraints referencedTableName="${table.domain}" referencedColumnNames="id" foreignKeyName="fk_wcm_asset_domain"/>
+			</column>
+		</addColumn>
+		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_domain">
+			<column name="domain_id"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201708311044" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.type}" columnName="domain_id"/>
+			</not>
+		</preConditions>
+		<comment>Add domain reference to type table</comment>
+		<addColumn tableName="${table.type}">
+			<column name="domain_id" type="java.sql.Types.BIGINT">
+				<constraints referencedTableName="${table.domain}" referencedColumnNames="id" foreignKeyName="fk_wcm_type_domain"/>
+			</column>
+		</addColumn>
+		<createIndex tableName="${table.type}" indexName="ix_wcm_type_domain">
+			<column name="domain_id"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201708311045" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.menu}" columnName="domain_id"/>
+			</not>
+		</preConditions>
+		<comment>Add domain reference to menu table</comment>
+		<addColumn tableName="${table.menu}">
+			<column name="domain_id" type="java.sql.Types.BIGINT">
+				<constraints referencedTableName="${table.domain}" referencedColumnNames="id" foreignKeyName="fk_wcm_menu_domain"/>
+			</column>
+		</addColumn>
+		<createIndex tableName="${table.menu}" indexName="ix_wcm_menu_domain">
+			<column name="domain_id"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201708311046" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.endpoint}" columnName="domain_id"/>
+			</not>
+		</preConditions>
+		<comment>Add domain reference to endpoint table</comment>
+		<addColumn tableName="${table.endpoint}">
+			<column name="domain_id" type="java.sql.Types.BIGINT">
+				<constraints referencedTableName="${table.domain}" referencedColumnNames="id" foreignKeyName="fk_wcm_endpoint_domain"/>
+			</column>
+		</addColumn>
+		<createIndex tableName="${table.endpoint}" indexName="ix_wcm_endpoint_domain">
+			<column name="domain_id"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201708311047" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.component}" columnName="domain_id"/>
+			</not>
+		</preConditions>
+		<comment>Add domain reference to component table</comment>
+		<addColumn tableName="${table.component}">
+			<column name="domain_id" type="java.sql.Types.BIGINT">
+				<constraints referencedTableName="${table.domain}" referencedColumnNames="id" foreignKeyName="fk_wcm_component_domain"/>
+			</column>
+		</addColumn>
+		<createIndex tableName="${table.component}" indexName="ix_wcm_component_domain">
+			<column name="domain_id"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201709010914" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.menu}" columnName="object_id"/>
+			</not>
+		</preConditions>
+		<comment>Add object_id to menu table</comment>
+		<addColumn tableName="${table.menu}">
+			<column name="object_id" type="java.sql.Types.VARCHAR(100)"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="201709011030" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<dbms type="mssql"/>
+			</not>
+			<columnExists tableName="${table.menu}" columnName="object_id"/>
+		</preConditions>
+		<comment>Fills existing object_id columns based on name</comment>
+		<update tableName="${table.menu}">
+			<column name="object_id" valueComputed="('wcm:menu:'||name)" type="java.sql.Types.VARCHAR(100)"/>
+		</update>
+	</changeSet>
+
+	<changeSet id="201709011242" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<dbms type="mssql"/>
+			<columnExists tableName="${table.menu}" columnName="object_id"/>
+		</preConditions>
+		<comment>Fills existing object_id columns based on name - sql server</comment>
+		<update tableName="${table.menu}">
+			<column name="object_id" valueComputed="('wcm:menu:' + name)" type="java.sql.Types.VARCHAR(100)"/>
+		</update>
+	</changeSet>
+
+	<changeSet id="201709011243" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="${table.menu}" columnName="object_id"/>
+		</preConditions>
+		<comment>requires menu objectId to have a value</comment>
+		<addNotNullConstraint tableName="${table.menu}" columnName="object_id" columnDataType="java.sql.Types.VARCHAR(100)"/>
+
+		<createIndex tableName="${table.menu}" indexName="ix_wcm_menu_oid" unique="true">
+			<column name="object_id"/>
+		</createIndex>
+	</changeSet>
+
+	<!--Refactoring WebCmsTypeSpecifier to SINGLE_TABLE inheritance-->
+	<changeSet id="201709011634a" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.type}" columnName="description"/>
+			</not>
+		</preConditions>
+		<comment>Adds description column to wcm_type table</comment>
+		<addColumn tableName="${table.type}">
+			<column name="description" type="java.sql.Types.NVARCHAR(500)"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="201709011634b" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<foreignKeyConstraintExists foreignKeyName="fk_wcm_art_art_type" foreignKeyTableName="${table.article}"/>
+			<tableExists tableName="${table.article_type}"/>
+		</preConditions>
+		<comment>Drop the article_type table and refer fk_wcm_art_art_type to wcm_type table</comment>
+		<dropForeignKeyConstraint baseTableName="${table.article}" constraintName="fk_wcm_art_art_type"/>
+		<addForeignKeyConstraint baseTableName="${table.article}"
+		                         baseColumnNames="article_type_id"
+		                         constraintName="fk_wcm_art_art_type"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+		<dropTable tableName="${table.article_type}"/>
+	</changeSet>
+
+	<changeSet id="201709011634c" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<foreignKeyConstraintExists foreignKeyName="fk_wcm_pub_pubtype" foreignKeyTableName="${table.publication}"/>
+			<tableExists tableName="${table.publication_type}"/>
+		</preConditions>
+		<comment>Drop the publication_type table and refer fk_wcm_pub_pubtype to wcm_type table</comment>
+		<dropForeignKeyConstraint baseTableName="${table.publication}" constraintName="fk_wcm_pub_pubtype"/>
+		<addForeignKeyConstraint baseTableName="${table.publication}"
+		                         baseColumnNames="publication_type_id"
+		                         constraintName="fk_wcm_pub_pubtype"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+		<dropTable tableName="${table.publication_type}"/>
+	</changeSet>
+
+	<changeSet id="201709011634d" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<foreignKeyConstraintExists foreignKeyName="fk_wcm_pag_pag_type" foreignKeyTableName="${table.page}"/>
+			<tableExists tableName="${table.page_type}"/>
+		</preConditions>
+		<comment>Drop the table_type table and refer fk_wcm_pag_pag_type to wcm_type table</comment>
+		<dropForeignKeyConstraint baseTableName="${table.page}" constraintName="fk_wcm_pag_pag_type"/>
+		<addForeignKeyConstraint baseTableName="${table.page}"
+		                         baseColumnNames="page_type_id"
+		                         constraintName="fk_wcm_pag_pag_type"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+		<dropTable tableName="${table.page_type}"/>
+	</changeSet>
+
+	<changeSet id="201709011634e1-support-postgres" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<dbms type="mssql"/>
+				<dbms type="postgresql"/>
+			</not>
+			<tableExists tableName="${table.component_type}"/>
+			<columnExists tableName="${table.type}" columnName="description"/>
+		</preConditions>
+		<comment>Move existing descriptions of wcm_component_type to wcm_type</comment>
+		<sql>
+			UPDATE wcm_type wt
+			SET wt.description = ( SELECT wct.description FROM wcm_component_type wct WHERE wct.id = wt.id )
+		</sql>
+	</changeSet>
+
+	<changeSet id="201709011634e2-support-postgres" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<or>
+				<dbms type="mssql"/>
+				<dbms type="postgresql"/>
+			</or>
+			<tableExists tableName="${table.component_type}"/>
+			<columnExists tableName="${table.type}" columnName="description"/>
+		</preConditions>
+		<comment>Sql Server - Move existing descriptions of wcm_component_type to wcm_type</comment>
+		<sql>
+			UPDATE wcm_type
+			SET description = wct.description
+			FROM wcm_type wt, wcm_component_type wct
+			WHERE wt.id = wct.id;
+		</sql>
+	</changeSet>
+
+	<changeSet id="201709011634f" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<foreignKeyConstraintExists foreignKeyName="fk_wcm_comp_comptype" foreignKeyTableName="${table.component}"/>
+			<tableExists tableName="${table.component_type}"/>
+		</preConditions>
+		<comment>Drop the component_type table and refer fk_wcm_comp_comptype to wcm_type table</comment>
+		<dropForeignKeyConstraint baseTableName="${table.component}" constraintName="fk_wcm_comp_comptype"/>
+		<addForeignKeyConstraint baseTableName="${table.component}"
+		                         baseColumnNames="component_type_id"
+		                         constraintName="fk_wcm_comp_comptype"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+		<dropTable tableName="${table.component_type}"/>
+	</changeSet>
+
+	<changeSet id="201709011736" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<dbms type="oracle"/>
+			</not>
+			<columnExists tableName="${table.type_attributes}" columnName="attribute_value"/>
+		</preConditions>
+		<comment>Modify the attribute_value type of wcm_type_attributes table to clob</comment>
+		<modifyDataType tableName="${table.type_attributes}" columnName="attribute_value" newDataType="java.sql.Types.NCLOB"/>
+	</changeSet>
+
+	<changeSet id="201709021339" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<dbms type="oracle"/>
+			<columnExists tableName="${table.type_attributes}" columnName="attribute_value"/>
+		</preConditions>
+		<comment>Oracle - Modify the attribute_value type of wcm_type_attributes table to clob</comment>
+		<addColumn tableName="${table.type_attributes}">
+			<column name="new_attribute_value" type="java.sql.Types.NCLOB" valueComputed="(attribute_value)"/>
+		</addColumn>
+		<dropColumn tableName="${table.type_attributes}" columnName="attribute_value"/>
+		<renameColumn tableName="${table.type_attributes}" oldColumnName="new_attribute_value" newColumnName="attribute_value"
+		              columnDataType="java.sql.Types.NCLOB"/>
+	</changeSet>
+
+	<changeSet id="201709061555" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<indexExists tableName="${table.publication}" indexName="ix_wcm_pub_key"/>
+		</preConditions>
+		<comment>publicationkey no longer has to be unique (but unique in combination with domain)</comment>
+		<dropIndex tableName="${table.publication}" indexName="ix_wcm_pub_key"/>
+		<createIndex tableName="${table.publication}" indexName="ix_wcm_pub_key">
+			<column name="publication_key"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201709131126" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists tableName="${table.url}" indexName="ix_wcm_url_path"/>
+			</not>
+		</preConditions>
+		<comment>path should no longer be unique</comment>
+		<dropUniqueConstraint tableName="${table.url}" constraintName="uq_wcm_url_path"/>
+		<createIndex tableName="${table.url}" indexName="ix_wcm_url_path">
+			<column name="path"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201709136134" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<indexExists tableName="${table.type}" indexName="ix_wcm_type_otype_key"/>
+		</preConditions>
+		<comment>combination of object type and type key should no longer be unique</comment>
+		<dropIndex tableName="${table.type}" indexName="ix_wcm_type_otype_key"/>
+		<createIndex tableName="${table.type}" indexName="ix_wcm_type_otype_key">
+			<column name="object_type"/>
+			<column name="type_key"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201711061549" author="stg">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.asset}" columnName="sort_index"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates sortIndex on wcm_asset table</comment>
+		<addColumn tableName="${table.asset}">
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="1000">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+
+		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_sort_index">
+			<column name="sort_index"/>
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>

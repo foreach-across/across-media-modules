@@ -1,0 +1,81 @@
+#
+# Contains the assets used by mapping test controllers.
+# NOTE: tests currently do not use URL status as urls can't be imported
+#
+# See ITWebCmsAssetMapping
+assets:
+  page:
+    #
+    # Pages used with @WebCmsAssetMapping() rules
+    #
+    - objectId: "wcm:asset:page:mappings-one"
+      title: "Mappings: Page One"
+      canonicalPath: /mappings/page/one
+      published: true
+    - objectId: "wcm:asset:page:mappings-two"
+      title: "Mappings: Page Two"
+      canonicalPath: /mappings/page/two
+      published: true
+    - objectId: "wcm:asset:page:mappings-three"
+      title: "Mappings: Page Three"
+      canonicalPath: /mappings/page/three
+      published: true
+    - objectId: "wcm:asset:page:mappings-four"
+      title: "Mappings: Page Four"
+      canonicalPath: /mappings/page/four
+      published: true
+      pageType: template
+    - objectId: "wcm:asset:page:mappings-five"
+      title: "Mappings: Page Five"
+      canonicalPath: /mappings/page/five
+      published: true
+      pageType: default
+    - objectId: "wcm:asset:page:mappings-six"
+      title: "Mappings: Page Six"
+      canonicalPath: /mappings/page/six
+      published: true
+      pageType: template
+
+  article:
+    #
+    # Articles used with @WebCmsAssetMapping() rules
+    #
+    - title: "Mappings: Article One"
+      objectId: "wcm:asset:article:mappings-article-one"
+      articleType: news
+      publication: news
+      published: true
+    - title: "Mappings: Article Two"
+      objectId: "wcm:asset:article:mappings-article-two"
+      articleType: news
+      publication: news
+      published: true
+
+    #
+    # Articles used with @WebCmsArticleMapping() rules
+    #
+    - title: "Fact One: Small Music"
+      objectId: "wcm:asset:article:facts-one"
+      articleType: small-article
+      publication: music
+      published: true
+    - title: "Fact Two: Small Movies"
+      objectId: "wcm:asset:article:facts-two"
+      articleType: small-article
+      publication: movies
+      published: true
+    - title: "Fact Three: Big Music"
+      objectId: "wcm:asset:article:facts-three"
+      articleType: big-article
+      publication: music
+      published: true
+    - title: "Fact Four: Big Movies"
+      objectId: "wcm:asset:article:facts-four"
+      articleType: big-article
+      publication: movies
+      published: true
+    - title: "Fact Five: Small Movies"
+      objectId: "wcm:asset:article:facts-five"
+      articleType: small-article
+      publication: movies
+      published: true

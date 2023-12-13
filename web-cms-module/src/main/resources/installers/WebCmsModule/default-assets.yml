@@ -1,0 +1,37 @@
+assets:
+  # Article template pages for publications
+  page:
+    - objectId: "wcm:asset:page:blog-detail"
+      title: Blog detail template
+      canonicalPath: /blog/*
+      canonicalPathGenerated: false
+      pageType: template
+    - objectId: "wcm:asset:page:news-detail"
+      title: News detail template
+      canonicalPath: /news/*
+      canonicalPathGenerated: false
+      pageType: template
+
+  # Default publications: News and Blogs
+  publication:
+    blogs:
+      objectId: "wcm:asset:publication:blogs"
+      name: Blogs
+      publicationType: blog
+      published: true
+      articleTemplatePage: "wcm:asset:page:blog-detail"
+    news:
+      objectId: "wcm:asset:publication:news"
+      name: News
+      publicationType: news
+      published: true
+      articleTemplatePage: "wcm:asset:page:news-detail"
+
+  # Custom shared component
+  component:
+    sample-shared-component:
+      title: Sample global shared component
+      componentType: rich-text
+      content: |
+        <h1>Sample component</h1>
+        <p>This is a sample component - defined on the global scope.</p>

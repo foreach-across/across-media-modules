@@ -8,17 +8,17 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="imageserver-client" />
+        <module name="web-cms-module-multi-domain-test" />
         <module name="file-manager-module" />
+        <module name="web-cms-module-test" />
         <module name="file-manager-module-test" />
         <module name="imageserver-core" />
         <module name="imageserver-test-embedded" />
         <module name="file-manager-module-no-hibernate-module" />
         <module name="file-manager-module-no-entity-module" />
         <module name="imageserver-admin" />
+        <module name="web-cms-module" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="imageserver-distribution-assembly" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

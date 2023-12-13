@@ -1,0 +1,86 @@
+# Default multi-domain pages
+
+assets:
+  page:
+    - objectId: "wcm:asset:page:home-be-foreach"
+      title: Homepage (BE)
+      pathSegment: home-be
+      domain: "wcm:domain:be-foreach"
+      wcm:menu-items:
+        - menu: sideNav
+        - menu: topNav
+          domain: de-foreach
+          title: FAQ
+          path: /help/faq
+          sortIndex: 10
+
+    - objectId: "wcm:asset:page:foreach-cafe-be"
+      title: Foreach Cafe (BE)
+      canonicalPath: /cafe
+      published: true
+      domain: "wcm:domain:be-foreach"
+      wcm:menu-items:
+        - menu: topNav
+
+    - objectId: "wcm:asset:page:foreach-cafe-nl"
+      title: Foreach Cafe (NL)
+      canonicalPath: /cafe
+      published: true
+      domain: "wcm:domain:nl-foreach"
+
+    - objectId: "wcm:asset:page:foreach-cafe-de"
+      title: Foreach Cafe (DE)
+      canonicalPath: /cafe
+      published: true
+      domain: de-foreach
+
+    - objectId: "wcm:asset:page:my-page-be"
+      title: To be deleted
+      canonicalPath: /my-page
+      domain: be-foreach
+
+    - objectId: "wcm:asset:page:my-page-nl"
+      title: My Page
+      canonicalPath: /my-page
+      domain: nl-foreach
+
+    - title: Should be deleted
+      canonicalPath: /my-other-page
+      domain: nl-foreach
+
+    - title: Should be deleted
+      canonicalPath: /my-other-page
+      domain: be-foreach
+
+    - title: My other page
+      canonicalPath: /my-other-page
+      domain: de-foreach
+
+    - objectId: "wcm:asset:page:page-with-url"
+      canonicalPath: /page-with-url
+      domain: null
+      title: Page with url
+      wcm:urls:
+        /test-url: 200
+        /my-other-url: 301
+
+    - objectId: "wcm:asset:page:other-page-with-url"
+      canonicalPath: /other-page-with-url
+      domain: null
+      title: Other page with url
+      wcm:urls:
+        - path: /other-test-url
+          primary: true
+        - path: /to-be-deleted
+          httpStatus: 200
+
+    - objectId: "wcm:asset:page:page-with-url-be"
+      canonicalPath: /page-with-url-be
+      domain: be-foreach
+      wcm:domain: be-foreach
+      title: Page with url (BE)
+      wcm:urls:
+        /test-url-be:
+          httpStatus: 301
+        /to-be-deleted:
+          httpStatus: 200

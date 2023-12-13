@@ -1,0 +1,27 @@
+#
+# Defines publications used by different tests.
+#
+assets:
+  #
+  # Template page for the fact publications
+  #
+  page:
+    - objectId: "wcm:asset:page:fact"
+      title: Fact detail template
+      canonicalPath: /facts/*
+      pageType: template
+
+  #
+  # Custom publications: Music, Movies
+  #
+  publication:
+    music:
+      name: Music
+      publicationType: boring-facts
+      published: true
+      articleTemplatePage: "wcm:asset:page:fact"
+    movies:
+      name: Movies
+      publicationType: fun-facts
+      published: true
+      articleTemplatePage: "wcm:asset:page:fact"

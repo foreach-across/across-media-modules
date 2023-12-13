@@ -1,0 +1,36 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<h1 th:fragment="renderText(component)" class="some-header" th:text="${component.content}">
+    header text
+</h1>
+
+<h1 th:fragment="renderPlaceholder(component)" class="some-header"
+    th:text="${@webCmsPlaceholderContentModel.getPlaceholderContent(component.placeholderName).get()}">
+    header text
+</h1>
+
+<div th:fragment="customText(component)" th:with="metadata=${component.metadata}">
+    <h1 th:if="${metadata.enabled}">[[${metadata.country}]]</h1>
+    <p>[[${component.content}]]</p>
+</div>
+
+<div th:fragment="snippet(container)">
+    <across:view element="${container.getMember('title')}"/>
+    <p class="body">
+        <across:view element="${container.getMember('body')}"/>
+    </p>
+</div>
+
+<div th:fragment="customContainer(component)" th:with="metadata=${component.metadata}">
+    <p th:unless="${metadata.enabled}">disabled</p>
+    <h1>
+        <across:view th:unless="${metadata.title}" element="${component.getMember('title')}"/>
+        <th:block th:if="${metadata.title}">[[${metadata.title}]]</th:block>
+    </h1>
+</div>
+
+<div th:fragment="customProxy(component)" th:remove="tag">
+    <h5>
+        <across:view element="${component.target}"/>
+    </h5>
+</div>
+</html>

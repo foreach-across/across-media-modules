@@ -1,0 +1,21 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title th:text="${article.title}">Page title</title>
+</head>
+<body>
+
+<sub>Nieuws artikel</sub>
+<header wcm:component="page-header" wcm:scope="page" wcm:search-parent-scopes>
+
+</header>
+<section wcm:component="content" wcm:scope="article">
+</section>
+<hr size="1"/>
+<footer>
+    Page: [[${page.title}]]<br/>
+    Publication: [[${publication.name}]]<br/>
+    Custom footer text: [[${footer}]]
+</footer>
+
+</body>
+</html>

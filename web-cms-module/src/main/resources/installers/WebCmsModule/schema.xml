@@ -1,0 +1,976 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright 2017 the original author or authors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<!-- Default table names -->
+	<property name="table.page" value="wcm_page"/>
+	<property name="table.menu" value="wcm_menu"/>
+	<property name="table.menu_item" value="wcm_menu_item"/>
+	<property name="table.url" value="wcm_url"/>
+	<property name="table.endpoint" value="wcm_endpoint"/>
+	<property name="table.asset_endpoint" value="wcm_asset_endpoint"/>
+	<property name="table.remote_endpoint" value="wcm_remote_endpoint"/>
+	<property name="table.asset" value="wcm_asset"/>
+	<property name="table.type" value="wcm_type"/>
+	<property name="table.type_attributes" value="wcm_type_attributes"/>
+	<property name="table.publication" value="wcm_publication"/>
+	<property name="table.publication_type" value="wcm_publication_type"/>
+	<property name="table.article" value="wcm_article"/>
+	<property name="table.article_type" value="wcm_article_type"/>
+	<property name="table.component" value="wcm_component"/>
+	<property name="table.component_type" value="wcm_component_type"/>
+	<property name="table.image" value="wcm_image"/>
+	<property name="table.object_type_link" value="wcm_object_type_link"/>
+	<property name="table.object_asset_link" value="wcm_object_asset_link"/>
+	<property name="table.page_type" value="wcm_page_type"/>
+	<property name="table.domain" value="wcm_domain"/>
+	<property name="table.domain_attributes" value="wcm_domain_attributes"/>
+
+	<!-- Obsolete table names - these are both created/modified and removed in the changeset -->
+	<property name="table.asset_component_link" value="wcm_asset_component_link"/>
+	<property name="table.page_section" value="wcm_page_section"/>
+
+	<include file="com/foreach/across/core/installers/AcrossSequencesInstaller.xml"/>
+
+	<changeSet id="201406141719" author="arne" runAlways="true" dbms="oracle">
+		<sql>
+			ALTER session SET nls_length_semantics=CHAR;
+		</sql>
+	</changeSet>
+
+	<!-- Asset base type -->
+	<changeSet id="201703090927" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.asset}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates asset table</comment>
+
+		<createTable tableName="${table.asset}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_asset"/>
+			</column>
+			<column name="object_type" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="published" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+			<column name="publication_date" type="java.sql.Types.TIMESTAMP">
+				<constraints nullable="true"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_oid" unique="true">
+			<column name="object_id"/>
+		</createIndex>
+
+		<createIndex tableName="${table.asset}" indexName="ix_wcm_asset_type">
+			<column name="object_type"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Type specifier base type -->
+	<changeSet id="201703301205" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates type table</comment>
+
+		<createTable tableName="${table.type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_type"/>
+			</column>
+			<column name="object_type" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="type_key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="name" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.type}" indexName="ix_wcm_type_oid" unique="true">
+			<column name="object_id"/>
+		</createIndex>
+
+		<createIndex tableName="${table.type}" indexName="ix_wcm_type_otype_key" unique="true">
+			<column name="object_type"/>
+			<column name="type_key"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201704201458" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.type_attributes}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates type attributes table</comment>
+
+		<createTable tableName="${table.type_attributes}">
+			<column name="type_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_type_attr"
+				             referencedTableName="${table.type}" referencedColumnNames="id" foreignKeyName="fk_wcm_type_attr_type"/>
+			</column>
+			<column name="attribute_key" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_type_attr"/>
+			</column>
+			<column name="attribute_value" type="java.sql.Types.NVARCHAR(255)"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="201701081200" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.page}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates page table</comment>
+
+		<createTable tableName="${table.page}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_page"/>
+			</column>
+			<column name="path_segment" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="path_segment_generated" type="java.sql.Types.BOOLEAN" defaultValueBoolean="true">
+				<constraints nullable="false"/>
+			</column>
+			<column name="canonical_path" type="java.sql.Types.VARCHAR(500)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="canonical_path_generated" type="java.sql.Types.BOOLEAN" defaultValueBoolean="true">
+				<constraints nullable="false"/>
+			</column>
+			<column name="title" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="template" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="parent_id" type="java.sql.Types.BIGINT"/>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.page}"
+		                         baseColumnNames="parent_id"
+		                         constraintName="fk_wcm_page_parent_id"
+		                         referencedTableName="${table.page}"
+		                         referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="${table.page}"
+		                         baseColumnNames="id"
+		                         constraintName="fk_wcm_page_id"
+		                         referencedTableName="${table.asset}"
+		                         referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.page}" indexName="ix_wcm_page_cnp">
+			<column name="canonical_path"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201801090843" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.page_section}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates page section table</comment>
+
+		<createTable tableName="${table.page_section}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_page_section"/>
+			</column>
+			<column name="page_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="content" type="java.sql.Types.NCLOB"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0"/>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.page_section}"
+		                         baseColumnNames="page_id"
+		                         constraintName="fk_wcm_psect_page_id"
+		                         referencedTableName="${table.page}"
+		                         referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.page_section}" indexName="ix_wcm_psect_pid_name" unique="true">
+			<column name="page_id"/>
+			<column name="name"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Menu items -->
+	<changeSet id="201802160938" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.menu}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates menu table</comment>
+
+		<createTable tableName="${table.menu}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_menu"/>
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="description" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="true"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.menu}" indexName="ix_wcm_menu_name">
+			<column name="name"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201802160941" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.menu_item}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates menu item table</comment>
+
+		<createTable tableName="${table.menu_item}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_menu_item"/>
+			</column>
+			<column name="menu_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="page_id" type="java.sql.Types.BIGINT"/>
+			<column name="menu_path" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="title" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="url" type="java.sql.Types.VARCHAR(500)"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0"/>
+			<column name="is_group" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.menu_item}"
+		                         baseColumnNames="page_id"
+		                         constraintName="fk_wcm_mitem_page_id"
+		                         referencedTableName="${table.page}"
+		                         referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="${table.menu_item}"
+		                         baseColumnNames="menu_id"
+		                         constraintName="fk_wcm_mitem_menu_id"
+		                         referencedTableName="${table.menu}"
+		                         referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.menu_item}" indexName="ix_wcm_mitem_mid">
+			<column name="menu_id"/>
+		</createIndex>
+
+		<createIndex tableName="${table.menu_item}" indexName="ix_wcm_mitem_pid">
+			<column name="page_id"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Publication type -->
+	<changeSet id="201703301211" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.publication_type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates publication type table</comment>
+
+		<createTable tableName="${table.publication_type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_pubtype"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.publication_type}"
+		                         baseColumnNames="id"
+		                         constraintName="fk_wcm_pubtype_type"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<!-- Publication -->
+	<changeSet id="201703091028" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.publication}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates publication table</comment>
+
+		<createTable tableName="${table.publication}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_publication"/>
+			</column>
+			<column name="publication_key" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="name" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="publication_type_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="article_page_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="true"
+				             referencedTableName="${table.page}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_pub_art_page"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.publication}"
+		                         baseColumnNames="id"
+		                         constraintName="fk_wcm_pub_asset"
+		                         referencedTableName="${table.asset}"
+		                         referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="${table.publication}"
+		                         baseColumnNames="publication_type_id"
+		                         constraintName="fk_wcm_pub_pubtype"
+		                         referencedTableName="${table.publication_type}"
+		                         referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.publication}" indexName="ix_wcm_pub_key" unique="true">
+			<column name="publication_key"/>
+		</createIndex>
+
+		<createIndex tableName="${table.publication}" indexName="ix_wcm_pub_pubtype">
+			<column name="publication_type_id"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Article type -->
+	<changeSet id="201703301611" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.article_type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates article type table</comment>
+
+		<createTable tableName="${table.article_type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_arttype"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.article_type}"
+		                         baseColumnNames="id"
+		                         constraintName="fk_wcm_arttype_type"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<!-- Article -->
+	<changeSet id="201703301708" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.article}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates article table</comment>
+
+		<createTable tableName="${table.article}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             primaryKey="true"
+				             primaryKeyName="pk_wcm_article"
+				             referencedTableName="${table.asset}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_article_asset"/>
+			</column>
+			<column name="publication_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="title" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="sub_title" type="java.sql.Types.NVARCHAR(255)"/>
+			<column name="description" type="java.sql.Types.NVARCHAR(255)"/>
+			<column name="body" type="java.sql.Types.NCLOB"/>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.article}"
+		                         baseColumnNames="publication_id"
+		                         constraintName="fk_wcm_art_pub"
+		                         referencedTableName="${table.publication}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="201703010956" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.endpoint}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates base endpoint table</comment>
+
+		<createTable tableName="${table.endpoint}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_endpoint"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="201703010957" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.asset_endpoint}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates asset endpoint table</comment>
+
+		<createTable tableName="${table.asset_endpoint}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true"
+				             primaryKeyName="pk_wcm_asset_endpoint"
+				             referencedTableName="${table.endpoint}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_asset_ep_ep"/>
+			</column>
+			<column name="asset_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             referencedTableName="${table.asset}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_asset_ep_asset"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.asset_endpoint}"
+		             indexName="iw_wcm_ep_asset_aid"
+		             unique="true">
+			<column name="asset_id"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201703010958" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.remote_endpoint}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates remote endpoint table</comment>
+
+		<createTable tableName="${table.remote_endpoint}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true"
+				             primaryKeyName="pk_wcm_remote_endpoint"
+				             referencedTableName="${table.endpoint}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_remote_endpoint"/>
+			</column>
+			<column name="target_url" type="java.sql.Types.VARCHAR(2000)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="201703011056" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.url}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates url table</comment>
+
+		<createTable tableName="${table.url}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_url"/>
+			</column>
+			<column name="path" type="java.sql.Types.VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="http_status" type="java.sql.Types.INTEGER">
+				<constraints nullable="false"/>
+			</column>
+			<column name="is_primary" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+			<column name="endpoint_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             referencedTableName="${table.endpoint}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_url_endpoint"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="201703031547" author="svl">
+		<addUniqueConstraint tableName="${table.url}" columnNames="path" constraintName="uq_wcm_url_path"/>
+	</changeSet>
+
+	<!-- Component type -->
+	<changeSet id="201704091339" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.component_type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates component type table</comment>
+
+		<createTable tableName="${table.component_type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_comptype"
+				             referencedTableName="${table.type}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_comptype_type"/>
+			</column>
+			<column name="description" type="java.sql.Types.NVARCHAR(500)"/>
+		</createTable>
+	</changeSet>
+
+	<!-- Component -->
+	<changeSet id="201704091046" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.component}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates component table</comment>
+
+		<createTable tableName="${table.component}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_component"
+				             referencedTableName="${table.asset}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_comp_asset"/>
+
+			</column>
+			<column name="object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="owner_object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="component_type_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             foreignKeyName="fk_wcm_comp_comptype"
+				             referencedTableName="${table.component_type}"
+				             referencedColumnNames="id"/>
+			</column>
+			<column name="title" type="java.sql.Types.NVARCHAR(255)"/>
+			<column name="body" type="java.sql.Types.NCLOB"/>
+			<column name="metadata" type="java.sql.Types.NCLOB"/>
+		</createTable>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_component_oid" unique="true">
+			<column name="object_id"/>
+		</createIndex>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_comp_ownerid">
+			<column name="owner_object_id"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Asset - Component link -->
+	<changeSet id="201704091420" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.asset_component_link}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates asset component link table</comment>
+
+		<createTable tableName="${table.asset_component_link}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_as_comp_link"/>
+			</column>
+			<column name="asset_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" referencedTableName="${table.asset}" referencedColumnNames="id" foreignKeyName="fk_wcm_ascmp_asid"/>
+			</column>
+			<column name="component_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" referencedTableName="${table.component}" referencedColumnNames="id" foreignKeyName="fk_wcm_ascmp_compid"/>
+			</column>
+			<column name="name" type="java.sql.Types.VARCHAR(100)"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.asset_component_link}" indexName="ix_wcm_ascmp_asid">
+			<column name="asset_id"/>
+			<column name="sort_index"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201704200937" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="${table.asset_component_link}"/>
+		</preConditions>
+		<comment>Drop asset component link table</comment>
+		<dropTable tableName="${table.asset_component_link}"/>
+	</changeSet>
+
+	<changeSet id="201704200938" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.component}" columnName="name"/>
+			</not>
+		</preConditions>
+
+		<comment>Modify component table for core attributes</comment>
+
+		<addColumn tableName="${table.component}">
+			<column name="name" type="java.sql.Types.VARCHAR(100)"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+
+		<dropForeignKeyConstraint baseTableName="${table.component}" constraintName="fk_wcm_comp_asset"/>
+		<dropNotNullConstraint tableName="${table.component}" columnName="owner_object_id" columnDataType="java.sql.Types.VARCHAR(100)"/>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_comp_name">
+			<column name="owner_object_id"/>
+			<column name="name"/>
+		</createIndex>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_comp_sort">
+			<column name="owner_object_id"/>
+			<column name="sort_index"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Image -->
+	<changeSet id="201704021429" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.image}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates image table</comment>
+
+		<createTable tableName="${table.image}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             primaryKey="true"
+				             primaryKeyName="pk_wcm_image"
+				             referencedTableName="${table.asset}"
+				             referencedColumnNames="id"
+				             foreignKeyName="fk_wcm_image_asset"/>
+			</column>
+			<column name="name" type="java.sql.Types.NVARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="external_id" type="java.sql.Types.VARCHAR(255)"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="20170404115900" author="svl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.article}" columnName="image_id"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="${table.article}">
+			<column name="image_id" type="java.sql.Types.BIGINT"/>
+		</addColumn>
+		<addForeignKeyConstraint baseTableName="${table.article}" baseColumnNames="image_id" constraintName="fk_article_image"
+		                         referencedTableName="${table.image}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="201704231111" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="${table.page_section}"/>
+		</preConditions>
+
+		<comment>Drop page section table</comment>
+
+		<delete tableName="${table.page_section}"/>
+		<dropTable tableName="${table.page_section}"/>
+	</changeSet>
+
+	<!-- Article type on Article -->
+	<changeSet id="201704280746" author="arne" runInTransaction="true">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.article}" columnName="article_type_id"/>
+			</not>
+		</preConditions>
+
+		<comment>Drop body and image column on article table - add article type</comment>
+
+		<dropColumn tableName="${table.article}" columnName="body"/>
+		<dropForeignKeyConstraint baseTableName="${table.article}" constraintName="fk_article_image"/>
+		<dropColumn tableName="${table.article}" columnName="image_id"/>
+
+		<addColumn tableName="${table.article}">
+			<column name="article_type_id" type="java.sql.Types.BIGINT">
+				<constraints referencedTableName="${table.article_type}" referencedColumnNames="id" foreignKeyName="fk_wcm_art_art_type"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<!-- Object to type link table -->
+	<changeSet id="201704280816" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.object_type_link}"/>
+			</not>
+		</preConditions>
+
+		<comment>Create object to type link table</comment>
+
+		<createTable tableName="${table.object_type_link}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             primaryKey="true"
+				             primaryKeyName="pk_wcm_object_type_lnk"/>
+			</column>
+			<column name="owner_object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="type_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" referencedTableName="${table.type}" referencedColumnNames="id" foreignKeyName="fk_wcm_object_type_tid"/>
+			</column>
+			<column name="link_type" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.object_type_link}" indexName="ix_wcm_object_type_unq" unique="true">
+			<column name="owner_object_id"/>
+			<column name="type_id"/>
+			<column name="link_type"/>
+		</createIndex>
+
+		<createIndex tableName="${table.object_type_link}" indexName="ix_wcm_object_type_oidl">
+			<column name="owner_object_id"/>
+			<column name="link_type"/>
+			<column name="sort_index"/>
+		</createIndex>
+
+		<createIndex tableName="${table.object_type_link}" indexName="ix_wcm_object_type_tidl">
+			<column name="type_id"/>
+			<column name="link_type"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Object to asset link table -->
+	<changeSet id="201704280833" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.object_asset_link}"/>
+			</not>
+		</preConditions>
+
+		<comment>Create object to asset link table</comment>
+
+		<createTable tableName="${table.object_asset_link}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false"
+				             primaryKey="true"
+				             primaryKeyName="pk_wcm_object_asset_lnk"/>
+			</column>
+			<column name="owner_object_id" type="java.sql.Types.VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="asset_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" referencedTableName="${table.asset}" referencedColumnNames="id" foreignKeyName="fk_wcm_object_asset_aid"/>
+			</column>
+			<column name="link_type" type="java.sql.Types.VARCHAR(255)"/>
+			<column name="sort_index" type="java.sql.Types.INTEGER" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="${table.object_asset_link}" indexName="ix_wcm_object_asset_unq" unique="true">
+			<column name="owner_object_id"/>
+			<column name="asset_id"/>
+			<column name="link_type"/>
+		</createIndex>
+
+		<createIndex tableName="${table.object_asset_link}" indexName="ix_wcm_object_asset_oidl">
+			<column name="owner_object_id"/>
+			<column name="link_type"/>
+			<column name="sort_index"/>
+		</createIndex>
+
+		<createIndex tableName="${table.object_asset_link}" indexName="ix_wcm_object_asset_aidl">
+			<column name="asset_id"/>
+			<column name="link_type"/>
+		</createIndex>
+	</changeSet>
+
+	<!-- Extend component table: proxied_component_id, body_contains_markers -->
+	<changeSet id="201705161531" author="arne">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.component}" columnName="proxied_component_id"/>
+			</not>
+		</preConditions>
+
+		<comment>Adds proxied component and body_contains_markers column</comment>
+
+		<addColumn tableName="${table.component}">
+			<column name="body_contains_markers" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+			<column name="proxied_component_id" type="java.sql.Types.BIGINT">
+				<constraints nullable="true" referencedTableName="${table.component}" referencedColumnNames="id" foreignKeyName="fk_wcm_comp_comp"/>
+			</column>
+		</addColumn>
+
+		<createIndex tableName="${table.component}" indexName="ix_wcm_component_pcid">
+			<column name="proxied_component_id"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201706121101" author="rcl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${table.page_type}"/>
+			</not>
+		</preConditions>
+
+		<comment>Creates page type table</comment>
+
+		<createTable tableName="${table.page_type}">
+			<column name="id" type="java.sql.Types.BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_wcm_pagtype"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="${table.page_type}"
+		                         baseColumnNames="id"
+		                         constraintName="fk_wcm_pagtype_type"
+		                         referencedTableName="${table.type}"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="201706121102" author="rcl" runInTransaction="true">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.page}" columnName="page_type_id"/>
+			</not>
+		</preConditions>
+
+		<addColumn tableName="${table.page}">
+			<column name="page_type_id" type="java.sql.Types.BIGINT">
+				<constraints referencedTableName="${table.page_type}" referencedColumnNames="id" foreignKeyName="fk_wcm_pag_pag_type" nullable="true"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<!-- Add generated column to menu item -->
+	<changeSet id="201706130907" author="arne" runInTransaction="true">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.menu_item}" columnName="is_generated"/>
+			</not>
+		</preConditions>
+
+		<comment>Adds is_generated column to menu item table</comment>
+
+		<addColumn tableName="${table.menu_item}">
+			<column name="is_generated" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<!-- Migrate to endpoint id on menu item -->
+	<changeSet id="201706141038" author="arne" runInTransaction="true">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.menu_item}" columnName="endpoint_id"/>
+			</not>
+		</preConditions>
+
+		<comment>Adds endpoint_id column to menu item table - removes page_id</comment>
+
+		<dropForeignKeyConstraint baseTableName="${table.menu_item}" constraintName="fk_wcm_mitem_page_id"/>
+		<dropIndex tableName="${table.menu_item}" indexName="ix_wcm_mitem_pid"/>
+		<dropColumn tableName="${table.menu_item}" columnName="page_id"/>
+
+		<addColumn tableName="${table.menu_item}">
+			<column name="endpoint_id" type="java.sql.Types.BIGINT"/>
+		</addColumn>
+
+		<addForeignKeyConstraint baseTableName="${table.menu_item}"
+		                         baseColumnNames="endpoint_id"
+		                         constraintName="fk_wcm_mitem_endpoint_id"
+		                         referencedTableName="${table.endpoint}"
+		                         referencedColumnNames="id"/>
+
+		<createIndex tableName="${table.menu_item}" indexName="ix_wcm_mitem_eid">
+			<column name="endpoint_id"/>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="201706210804" author="rcl">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="${table.url}" columnName="is_primary_locked"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="${table.url}">
+			<column name="is_primary_locked" type="java.sql.Types.BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<include file="installers/WebCmsModule/schema-0.0.3.xml" />
+	<include file="installers/WebCmsModule/schema-0.0.6.xml" />
+</databaseChangeLog>
