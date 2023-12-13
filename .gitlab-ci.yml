@@ -11,23 +11,9 @@ variables:
 
   MAVEN_REPO_DIR: $CI_PROJECT_DIR/.m2/repository
 
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Maven.gitlab-ci.yml
-
-# Build JAVA applications using Apache Maven (http://maven.apache.org)
-# For docker image tags see https://hub.docker.com/_/maven/
-#
-# For general lifecycle information see https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
-
-# This template will build and test your projects
-# * Caches downloaded dependencies and plugins between invocation.
-# * Verify but don't deploy merge requests.
-# * Deploy built artifacts from master branch only.
-
   # `showDateTime` will show the passed time in milliseconds. You need to specify `--batch-mode` to make this work.
   MAVEN_OPTS: >-
+    -Xmx256m
     -Dhttps.protocols=TLSv1.2
     -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
     -Dorg.slf4j.simpleLogger.showDateTime=true
@@ -61,10 +47,7 @@ variables:
     GRANT SELECT ON SYS.DBA_RECYCLEBIN TO AXT;
 
 
-# This template uses the latest Maven 3 release, e.g., 3.8.6, and OpenJDK 8 (LTS)
-# for verifying and deploying images
-# Maven 3.8.x REQUIRES HTTPS repositories.
-# See https://maven.apache.org/docs/3.8.1/release-notes.html#how-to-fix-when-i-get-a-http-repository-blocked for more.
+# Keep version and apt-get commands in sync between .gitlab-ci.yml, Dockerfiles and .java files (for testcontainers):
 image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/maven:3.8-eclipse-temurin-8
 
 # Cache downloaded dependencies and plugins between builds.
@@ -77,6 +60,28 @@ cache:
 
 after_script:
   - rm -rf $MAVEN_REPO_DIR/com/foreach || echo "Nothing to delete" # Don't cache this
+  # It appears 4GB is not enough for some of the tests with Oracle (but that's not really the case ...):
+  # - I've seen the oracle job duration vary widely from 5 to 20 min. I've seen it 'hang' (no output) for a long time: this might be swapping.
+  # - I've seen at least two cases where maven was killed, probably by the OOM killer (but nothing to really confirm that):
+  #   https://gitlab.isaac.nl/antwerpen/across/across-media-modules/-/jobs/475011
+  #   https://gitlab.isaac.nl/antwerpen/across/across-media-modules/-/jobs/475134
+  # From a dmesg from a later job (https://gitlab.isaac.nl/antwerpen/across/across-media-modules/-/jobs/475188),
+  # I could see there was at least once a java process killed by the OOM killer:
+  #   [19004.343810] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/docker/c480de908f743e035dec8a9b846eba3f435b4d713bef9aba16b3c50cb4789d7c,task=java,pid=54980,uid=0
+  #   [19004.343853] Out of memory: Killed process 54980 (java) total-vm:3435944kB, anon-rss:674984kB, file-rss:0kB, shmem-rss:0kB, UID:0 pgtables:1644kB oom_score_adj:0
+  #   [19004.383415] oom_reaper: reaped process 54980 (java), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+  # With almost 3.5 GiB that makes sense.
+  # From the info higher in that job log (from dmesg) we can also see that Oracle was running,
+  # and that there were two java processes:
+  #   [19004.343584] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
+  #   [19004.343749] [  54980]     0 54980   858986   168746  1683456        0             0 java
+  #   [19004.343783] [  56559]     0 56559   869420   148972  1544192        0             0 java
+  # (total_vm unit is pages => 858986 * 4kB = 3435944kB)
+  # This would also mean that maven is the one with the most memory, not Oracle, nor the JVM started by surefire/failsafe to run the tests ...
+  # But then again, the output of `free` confirms that there is no swap (as it should be) ...
+  # To work around this, we had to set-Xmx for both maven itself (-Xmx256m) and for the JVM forked by the maven-failsafe-plugin (-Xmx512m)
+  - 'free -m || echo "free command failed (most likely not present)"'
+  - 'dmesg || echo "dmesg command failed (most likely not present)"'
 
 .frontend:
   stage: test
@@ -106,12 +111,10 @@ frontend:file-manager-module:
       alias: docker
       command: [ "--tls=false" ]
   variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-    DOCKER_DRIVER: overlay2
     #TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}
   script:
-    #- apt-get update && apt-get install -y docker.io
+    - apt-get update
+    - apt-get install -y ghostscript graphicsmagick # docker.io
     #- docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
     # - 'mvn $MAVEN_CLI_OPTS dependency:purge-local-repository -DmanualInclude=com.foreach -DreResolve=false'
     - find $CI_PROJECT_DIR/.m2/repository/com/foreach/ -type d -name "*-SNAPSHOT" | xargs rm -rf || echo "No snapshots to delete"
@@ -148,9 +151,18 @@ verify:jdk8:
 
 .itest:
   stage: test
+# Objects are merged in .gitlab-ci.yml files, but arrays are overwritten; so this needs to be duplicated in each itest job:
+#  services:
+#    - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:${DOCKER_VERSION}-dind
+#      alias: docker
+#      command: [ "--tls=false" ]
   script:
+    - apt-get update
+    - apt-get install -y ghostscript graphicsmagick
     # - 'mvn $MAVEN_CLI_OPTS dependency:purge-local-repository -DmanualInclude=com.foreach -DreResolve=false'
     - find $CI_PROJECT_DIR/.m2/repository/com/foreach/ -type d -name "*-SNAPSHOT" | xargs rm -rf || echo "No snapshots to delete"
+    - 'free -m || echo "free command failed (most likely not present)"'
+    - 'uptime || echo "uptime command failed (most likely not present)"'
     - 'mvn $MAVEN_CLI_OPTS test-compile failsafe:integration-test failsafe:verify -DacrossTest.datasource="$ACROSS_TEST_DATASOURCE" -Dmaven.javadoc.skip=true'
   artifacts:
     when: always
@@ -164,6 +176,10 @@ itest:h2:
     - .itest
   variables:
     ACROSS_TEST_DATASOURCE: h2
+  services:
+    - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:${DOCKER_VERSION}-dind
+      alias: docker
+      command: [ "--tls=false" ]
 
 itest:mssql:
   extends:
@@ -171,6 +187,9 @@ itest:mssql:
   variables:
     ACROSS_TEST_DATASOURCE: mssql
   services:
+    - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:${DOCKER_VERSION}-dind
+      alias: docker
+      command: [ "--tls=false" ]
     - name: mcr.microsoft.com/mssql/server:2017-latest
       alias: 'mssql'
       variables:
@@ -184,6 +203,9 @@ itest:mysql:
   variables:
     ACROSS_TEST_DATASOURCE: mysql
   services:
+    - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:${DOCKER_VERSION}-dind
+      alias: docker
+      command: [ "--tls=false" ]
     - name: '${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/mysql:8.0'
       alias: mysql
       variables:
@@ -199,6 +221,9 @@ itest:oracle:
   variables:
     ACROSS_TEST_DATASOURCE: oracle
   services:
+    - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:${DOCKER_VERSION}-dind
+      alias: docker
+      command: [ "--tls=false" ]
     - name: '${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/gvenzl/oracle-xe:18.4.0-slim' # This what testcontainers 1.18.1 uses
       alias: 'oracle'
       variables:
@@ -228,6 +253,9 @@ itest:postgresql:
   variables:
     ACROSS_TEST_DATASOURCE: postgres
   services:
+    - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:${DOCKER_VERSION}-dind
+      alias: docker
+      command: [ "--tls=false" ]
     - name: '${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/postgres:14.8'
       alias: postgres
       variables:
@@ -238,8 +266,8 @@ itest:postgresql:
 deploy:foreach:
   stage: deploy
   before_script:
-    - apt update
-    - apt -y install gpg
+    - apt-get update
+    - apt-get -y install gpg
     - gpg --pinentry-mode loopback --passphrase $ACROSS_GPG_PASSPHRASE --import $ACROSS_GPG_PRIVATE_KEY
     - gpg --list-keys
   script:

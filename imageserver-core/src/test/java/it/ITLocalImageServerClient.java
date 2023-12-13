@@ -59,7 +59,6 @@ import static javax.imageio.ImageIO.read;
 import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.apache.commons.lang3.time.DateUtils.parseDate;
 import static org.junit.jupiter.api.Assertions.*;
-import static test.transformers.imagemagick.ImageServerTestContainer.CONTAINER;
 
 /**
  * @author Arne Vandamme
@@ -69,11 +68,12 @@ import static test.transformers.imagemagick.ImageServerTestContainer.CONTAINER;
 @WebAppConfiguration
 @ContextConfiguration(classes = ITLocalImageServerClient.Config.class)
 @TestPropertySource(properties = { "spring.jpa.show-sql=true" })
-@Testcontainers
+//@Testcontainers
 public class ITLocalImageServerClient
 {
-	@Container
-	private static final GenericContainer imageserverContainer = CONTAINER;
+// Rely on /usr/bin/gm being present:
+//	@Container
+//	private static final GenericContainer imageserverContainer = CONTAINER;
 
 	@Autowired(required = false)
 	private ImageServerClient imageServerClient;

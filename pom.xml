@@ -192,6 +192,52 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.junit.jupiter</groupId>
+							<artifactId>junit-jupiter-engine</artifactId>
+							<version>${junit-jupiter.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.junit.vintage</groupId>
+							<artifactId>junit-vintage-engine</artifactId>
+							<version>${junit-jupiter.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>${maven-failsafe-plugin.version}</version>
+					<configuration>
+						<!-- 4GB RAM in the Amazon c6a.large (on GitLab CI/CD) is sometimes a bit tight,
+							 especially in combination with Oracle and testcontainers: for instance
+							 for file-manager-module and image-server. The JVM by default takes 1/4 of the RAM,
+							 which turns out to be 870400K in this case (measured using ManagementFactory.getMemoryMXBean().getHeapMemoryUsage() )
+						-->
+						<argLine>-Xmx512m</argLine>
+						<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
 	<!--
 	<build>
 		<plugins>
