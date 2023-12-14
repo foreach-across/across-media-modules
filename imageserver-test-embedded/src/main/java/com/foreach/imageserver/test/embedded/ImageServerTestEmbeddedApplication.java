@@ -48,8 +48,8 @@ public class ImageServerTestEmbeddedApplication
 						.withDockerfileFromBuilder( builder ->
 								                            builder
 										                            // This doesn't need maven, but we're already running in a container based on
-										                            // maven:3.8-eclipse-temurin-8, so at least we don't have to download another image (in CI)
-										                            .from( "maven:3.8-eclipse-temurin-8" )
+										                            // maven:3.9-eclipse-temurin-8, so at least we don't have to download another image (in CI)
+										                            .from( "maven:3.9-eclipse-temurin-8" )
 										                            .run( "apt-get update && apt-get install -y ghostscript graphicsmagick" )
 										                            .cmd( "tail -f /dev/null" )
 										                            .build() ) )
