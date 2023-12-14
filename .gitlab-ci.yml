@@ -9,6 +9,9 @@ variables:
   # Improve performance with overlayfs.
   DOCKER_DRIVER: overlay2
 
+  # https://java.testcontainers.org/features/image_name_substitution/
+  TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/
+
   MAVEN_REPO_DIR: $CI_PROJECT_DIR/.m2/repository
 
   # `showDateTime` will show the passed time in milliseconds. You need to specify `--batch-mode` to make this work.
@@ -80,8 +83,8 @@ after_script:
   # This would also mean that maven is the one with the most memory, not Oracle, nor the JVM started by surefire/failsafe to run the tests ...
   # But then again, the output of `free` confirms that there is no swap (as it should be) ...
   # To work around this, we had to set-Xmx for both maven itself (-Xmx256m) and for the JVM forked by the maven-failsafe-plugin (-Xmx512m)
-  - 'free -m || echo "free command failed (most likely not present)"'
-  - 'dmesg || echo "dmesg command failed (most likely not present)"'
+  # - 'free -m || echo "free command failed (most likely not present)"'
+  # - 'dmesg || echo "dmesg command failed (most likely not present)"'
 
 .frontend:
   stage: test
@@ -110,12 +113,11 @@ frontend:file-manager-module:
     - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:${DOCKER_VERSION}-dind
       alias: docker
       command: [ "--tls=false" ]
-  variables:
-    #TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}
   script:
     - apt-get update
-    - apt-get install -y ghostscript graphicsmagick # docker.io
-    #- docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
+    - apt-get install -y ghostscript graphicsmagick docker.io
+    # Needed for testcontainers to go through the GitLab Dependency Proxy:
+    - docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
     # - 'mvn $MAVEN_CLI_OPTS dependency:purge-local-repository -DmanualInclude=com.foreach -DreResolve=false'
     - find $CI_PROJECT_DIR/.m2/repository/com/foreach/ -type d -name "*-SNAPSHOT" | xargs rm -rf || echo "No snapshots to delete"
     - 'mvn $MAVEN_CLI_OPTS verify'
@@ -158,7 +160,9 @@ verify:jdk8:
 #      command: [ "--tls=false" ]
   script:
     - apt-get update
-    - apt-get install -y ghostscript graphicsmagick
+    - apt-get install -y ghostscript graphicsmagick docker.io
+    # Needed for testcontainers to go through the GitLab Dependency Proxy:
+    - docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
     # - 'mvn $MAVEN_CLI_OPTS dependency:purge-local-repository -DmanualInclude=com.foreach -DreResolve=false'
     - find $CI_PROJECT_DIR/.m2/repository/com/foreach/ -type d -name "*-SNAPSHOT" | xargs rm -rf || echo "No snapshots to delete"
     - 'free -m || echo "free command failed (most likely not present)"'
