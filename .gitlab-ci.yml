@@ -85,7 +85,7 @@ after_script:
 
 .frontend:
   stage: test
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/node:9.10.1
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/node:10
   script:
     - cd ${FRONTEND_DIR}
     - yarn install
