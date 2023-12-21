@@ -47,6 +47,19 @@ variables:
     GRANT SELECT ON SYS.DBA_RECYCLEBIN TO AXT;
 
 
+# I think this example workflow is exactly what we need:
+# https://docs.gitlab.com/ee/ci/yaml/workflow.html#switch-between-branch-pipelines-and-merge-request-pipelines
+# This runs:
+# - Branch pipelines when a merge request is not open for the branch.
+# - Merge request pipelines when a merge request is open for the branch.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+
 # Keep version and apt-get commands in sync between .gitlab-ci.yml, Dockerfiles and .java files (for testcontainers):
 image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/maven:3.9-eclipse-temurin-8
 
@@ -124,7 +137,6 @@ frontend:file-manager-module:
     reports:
       junit:
         - '**/target/surefire-reports/TEST-*.xml'
-        - '**/target/failsafe-reports/TEST-*.xml'
 #  except:
 #    variables:
 #      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -161,14 +173,11 @@ verify:jdk8:
     - apt-get install -y ghostscript graphicsmagick
     # - 'mvn $MAVEN_CLI_OPTS dependency:purge-local-repository -DmanualInclude=com.foreach -DreResolve=false'
     - find $CI_PROJECT_DIR/.m2/repository/com/foreach/ -type d -name "*-SNAPSHOT" | xargs rm -rf || echo "No snapshots to delete"
-    - 'free -m || echo "free command failed (most likely not present)"'
-    - 'uptime || echo "uptime command failed (most likely not present)"'
-    - 'mvn $MAVEN_CLI_OPTS test-compile failsafe:integration-test failsafe:verify -DacrossTest.datasource="$ACROSS_TEST_DATASOURCE" -Dmaven.javadoc.skip=true'
+    - 'mvn $MAVEN_CLI_OPTS test-compile failsafe:integration-test failsafe:verify -DacrossTest.datasource="$ACROSS_TEST_DATASOURCE"'
   artifacts:
     when: always
     reports:
       junit:
-        - '**/target/surefire-reports/TEST-*.xml'
         - '**/target/failsafe-reports/TEST-*.xml'
 
 itest:h2:
@@ -271,7 +280,7 @@ deploy:foreach:
     - gpg --pinentry-mode loopback --passphrase $ACROSS_GPG_PASSPHRASE --import $ACROSS_GPG_PRIVATE_KEY
     - gpg --list-keys
   script:
-    - mvn $MAVEN_CLI_OPTS --settings ci_settings.xml -Pacross deploy -DskipTests
+    - mvn $MAVEN_CLI_OPTS --settings ci_settings.xml --activate-profiles deploy,across deploy -DskipTests
 #  only:
 #    variables:
 #      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
