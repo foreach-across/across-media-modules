@@ -250,22 +250,13 @@
 					<artifactId>maven-failsafe-plugin</artifactId>
 					<version>${maven-failsafe-plugin.version}</version>
 					<configuration>
-						<!-- 4GB RAM in the Amazon c6a.large (on GitLab CI/CD) is sometimes a bit tight,
+						<!-- 4GiB RAM in the Amazon c6a.large (on GitLab CI/CD) is sometimes a bit tight,
 							 especially in combination with Oracle and testcontainers: for instance
 							 for file-manager-module and image-server. The JVM by default takes 1/4 of the RAM,
-							 which turns out to be 870400K in this case (measured using ManagementFactory.getMemoryMXBean().getHeapMemoryUsage() )
+							 which turns out to be 870400K with 4GiB (measured using ManagementFactory.getMemoryMXBean().getHeapMemoryUsage() )
 						-->
 						<argLine>-Xmx512m</argLine>
-						<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
 					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>integration-test</goal>
-								<goal>verify</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -274,54 +265,6 @@
 	<!--
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>delombok</goal>
-						</goals>
-						<configuration>
-							<addOutputDirectory>false</addOutputDirectory>
-							<outputDirectory>target/delombok</outputDirectory>
-							<sourceDirectory>src/main/java</sourceDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<failOnError>false</failOnError>
-					<doclint>none</doclint>
-					<sourcepath>
-						target/delombok;target/generated-sources
-					</sourcepath>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-					<execution>
-						<inherited>true</inherited>
-						<id>aggregate</id>
-						<goals>
-							<goal>aggregate-no-fork</goal>
-						</goals>
-						<phase>prepare-package</phase>
-						<configuration>
-							<reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
-							<destDir>${project.version}/javadoc</destDir>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>
@@ -356,6 +299,64 @@
 		</plugins>
 	</build>
 	-->
+
+	<profiles>
+		<profile>
+			<id>deploy</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.projectlombok</groupId>
+						<artifactId>lombok-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>delombok</goal>
+								</goals>
+								<configuration>
+									<addOutputDirectory>false</addOutputDirectory>
+									<outputDirectory>target/delombok</outputDirectory>
+									<sourceDirectory>src/main/java</sourceDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<failOnError>false</failOnError>
+							<doclint>none</doclint>
+							<sourcepath>
+								target/delombok;target/generated-sources
+							</sourcepath>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+							<execution>
+								<inherited>true</inherited>
+								<id>aggregate</id>
+								<goals>
+									<goal>aggregate-no-fork</goal>
+								</goals>
+								<phase>prepare-package</phase>
+								<configuration>
+									<reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
+									<destDir>${project.version}/javadoc</destDir>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<scm>
 		<url>https://bitbucket.org/beforeach/file-manager-module</url>
