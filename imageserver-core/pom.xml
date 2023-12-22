@@ -76,16 +76,6 @@
 			<groupId>org.ghost4j</groupId>
 			<artifactId>ghost4j</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>net.java.dev.jna</groupId>
-			<artifactId>jna</artifactId>
-			<!--
-			 TODO: Spring Boot has removed this as managed dependency
-			It was readded in Spring Boot 2.4 see https://github.com/spring-projects/spring-boot/issues/21313
-			https://github.com/spring-projects/spring-boot/commit/3325709a78d15511a35691fef87fa79329bfb04b
-			 -->
-			<version>4.5.2</version>
-		</dependency>
 		<!-- Left these in for future implementations -->
 		<dependency>
 			<groupId>foreach-custom</groupId>

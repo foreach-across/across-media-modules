@@ -99,21 +99,20 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-aws-core</artifactId>
-				<version>2.2.6.RELEASE</version>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-core</artifactId>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>
 				<groupId>com.cloudinary</groupId>
 				<artifactId>cloudinary-http44</artifactId>
 				<version>1.26.0</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.microsoft.azure</groupId>
-				<artifactId>azure-storage</artifactId>
-				<version>8.6.6</version>
 			</dependency>
 
 			<dependency>
@@ -174,10 +173,17 @@
 				<artifactId>im4java</artifactId>
 				<version>1.4.2</version>
 			</dependency>
+
 			<dependency>
-				<groupId>org.ghost4j</groupId>
-				<artifactId>ghost4j</artifactId>
-				<version>1.0.1</version>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>24.1.1-jre</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.microsoft.azure</groupId>
+				<artifactId>azure-storage</artifactId>
+				<version>8.6.6</version>
 			</dependency>
 
 			<dependency>
@@ -190,6 +196,35 @@
 				<groupId>commons-net</groupId>
 				<artifactId>commons-net</artifactId>
 				<version>3.9.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.ghost4j</groupId>
+				<artifactId>ghost4j</artifactId>
+				<version>1.0.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.java.dev.jna</groupId>
+				<artifactId>jna</artifactId>
+				<!--
+				Spring Boot has removed this as managed dependency:
+				https://github.com/spring-projects/spring-boot/issues/21313
+				https://github.com/spring-projects/spring-boot/commit/3325709a78d15511a35691fef87fa79329bfb04b
+				-->
+				<version>5.12.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>3.27.0-GA</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-aws-core</artifactId>
+				<version>2.2.6.RELEASE</version>
 			</dependency>
 
 			<!-- Webjars-->
