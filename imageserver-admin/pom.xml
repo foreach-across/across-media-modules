@@ -9,6 +9,8 @@
 	</parent>
 
 	<artifactId>imageserver-admin</artifactId>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>ImageServer Admin</description>
 
 	<properties>
 		<maven.javadoc.skip>false</maven.javadoc.skip>

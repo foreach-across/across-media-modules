@@ -10,6 +10,8 @@
 	</parent>
 
 	<artifactId>imageserver-client</artifactId>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>ImageServer Client</description>
 
 	<properties>
 		<maven.javadoc.skip>false</maven.javadoc.skip>

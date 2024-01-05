@@ -26,6 +26,8 @@
 	</parent>
 
 	<artifactId>file-manager-module</artifactId>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>File Manager Module</description>
 
 	<properties>
 		<maven.javadoc.skip>false</maven.javadoc.skip>

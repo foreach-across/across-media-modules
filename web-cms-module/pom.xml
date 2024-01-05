@@ -27,6 +27,8 @@
 	</parent>
 
 	<artifactId>web-cms-module</artifactId>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>Web CMS Module</description>
 
 	<properties>
 		<maven.javadoc.skip>false</maven.javadoc.skip>
