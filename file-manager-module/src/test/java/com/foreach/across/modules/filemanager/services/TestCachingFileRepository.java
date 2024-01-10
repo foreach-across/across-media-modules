@@ -167,7 +167,7 @@ class TestCachingFileRepository
 
 		CachedFileResource fr = repository.getFileResource( fd );
 
-		verifyZeroInteractions( cacheFileResource );
+		verifyNoInteractions( cacheFileResource );
 		assertThat( repository.getFileResource( fd ) ).isNotSameAs( fr );
 	}
 
@@ -240,7 +240,7 @@ class TestCachingFileRepository
 
 		repository.shutdown();
 
-		verifyZeroInteractions( cacheFileResource );
+		verifyNoInteractions( cacheFileResource );
 		assertThat( repository.getFileResource( fd ) ).isNotSameAs( fr );
 	}
 
@@ -271,7 +271,7 @@ class TestCachingFileRepository
 		when( expirationStrategy.apply( fr ) ).thenReturn( false );
 		repository.expireTrackedItems();
 
-		verifyZeroInteractions( cacheFileResource );
+		verifyNoInteractions( cacheFileResource );
 		assertThat( repository.getFileResource( fd ) ).isSameAs( fr );
 
 		when( expirationStrategy.apply( fr ) ).thenReturn( true );

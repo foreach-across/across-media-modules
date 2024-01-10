@@ -103,7 +103,7 @@ class TestExpiringFileRepository
 
 		ExpiringFileResource fr = repository.getFileResource( fd );
 
-		verifyZeroInteractions( targetFileResource );
+		verifyNoInteractions( targetFileResource );
 		assertThat( repository.getFileResource( fd ) ).isNotSameAs( fr );
 
 		// cleanup on finalize
@@ -142,7 +142,7 @@ class TestExpiringFileRepository
 		assertThat( fr ).isNull();
 
 		runFinalization();
-		verifyZeroInteractions( targetFileResource );
+		verifyNoInteractions( targetFileResource );
 	}
 
 	@Test
@@ -170,7 +170,7 @@ class TestExpiringFileRepository
 		assertThat( fr ).isNull();
 
 		runFinalization();
-		verifyZeroInteractions( targetFileResource );
+		verifyNoInteractions( targetFileResource );
 
 	}
 
@@ -191,7 +191,7 @@ class TestExpiringFileRepository
 
 		repository.shutdown();
 
-		verifyZeroInteractions( targetFileResource );
+		verifyNoInteractions( targetFileResource );
 		assertThat( repository.getFileResource( fd ) ).isNotSameAs( fr );
 
 		// cleanup on finalize
@@ -223,7 +223,7 @@ class TestExpiringFileRepository
 		when( expirationStrategy.apply( fr ) ).thenReturn( false );
 		repository.expireTrackedItems();
 
-		verifyZeroInteractions( targetFileResource );
+		verifyNoInteractions( targetFileResource );
 		assertThat( repository.getFileResource( fd ) ).isSameAs( fr );
 
 		when( expirationStrategy.apply( fr ) ).thenReturn( true );
@@ -423,7 +423,7 @@ class TestExpiringFileRepository
 			reset( targetRepository );
 
 			assertThat( repository.getFileResource( fd ) ).isSameAs( fr );
-			verifyZeroInteractions( targetRepository );
+			verifyNoInteractions( targetRepository );
 
 			fr.delete();
 			when( targetRepository.getFileResource( any() ) ).thenReturn( mock( FileResource.class ) );

@@ -71,7 +71,7 @@ public class TestHttpStatusType
 		assertEquals( expectedStatus, actual );
 		verify( rs, times( 1 ) ).getInt( anyString() );
 		verifyNoMoreInteractions( rs );
-		verifyZeroInteractions( session, owner );
+		verifyNoInteractions( session, owner );
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class TestHttpStatusType
 		assertNull( actual );
 		verify( rs, times( 1 ) ).getInt( anyString() );
 		verifyNoMoreInteractions( rs );
-		verifyZeroInteractions( session, owner );
+		verifyNoInteractions( session, owner );
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class TestHttpStatusType
 
 		verify( st, times( 1 ) ).setInt( index, expectedStatus.value() );
 		verifyNoMoreInteractions( st );
-		verifyZeroInteractions( session );
+		verifyNoInteractions( session );
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class TestHttpStatusType
 
 		verify( st, times( 1 ) ).setNull( index, Types.INTEGER );
 		verifyNoMoreInteractions( st );
-		verifyZeroInteractions( session );
+		verifyNoInteractions( session );
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class TestHttpStatusType
 
 		verify( st, times( 1 ) ).setNull( index, Types.INTEGER );
 		verifyNoMoreInteractions( st );
-		verifyZeroInteractions( session );
+		verifyNoInteractions( session );
 	}
 
 }

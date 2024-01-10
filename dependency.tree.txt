@@ -1,21 +1,11 @@
-com.foreach.across.modules:across-media-modules:pom:6.3-SNAPSHOT
-+- com.querydsl:querydsl-apt:jar:4.4.0:compile
-|  +- com.querydsl:querydsl-codegen:jar:4.4.0:compile
-|  |  +- com.querydsl:querydsl-core:jar:4.4.0:compile
-|  |  |  +- com.google.guava:guava:jar:24.1.1-jre:compile
-|  |  |  |  +- org.checkerframework:checker-compat-qual:jar:2.0.0:compile
-|  |  |  |  +- com.google.errorprone:error_prone_annotations:jar:2.1.3:compile
-|  |  |  |  +- com.google.j2objc:j2objc-annotations:jar:1.1:compile
-|  |  |  |  \- org.codehaus.mojo:animal-sniffer-annotations:jar:1.14:compile
-|  |  |  +- com.google.code.findbugs:jsr305:jar:1.3.9:compile
-|  |  |  +- com.mysema.commons:mysema-commons-lang:jar:0.2.4:compile
-|  |  |  \- com.infradna.tool:bridge-method-annotation:jar:1.13:compile
-|  |  +- com.mysema.codegen:codegen:jar:0.6.8:compile
-|  |  |  \- org.eclipse.jdt.core.compiler:ecj:jar:4.3.1:compile
-|  |  +- javax.inject:javax.inject:jar:1:compile
-|  |  \- org.reflections:reflections:jar:0.9.9:compile
-|  |     +- org.javassist:javassist:jar:3.27.0-GA:compile
-|  |     \- com.google.code.findbugs:annotations:jar:2.0.1:compile
-|  \- jakarta.persistence:jakarta.persistence-api:jar:2.2.3:compile
-+- org.projectlombok:lombok:jar:1.18.22:provided
-\- org.assertj:assertj-core:jar:3.18.1:test
+com.foreach.across.modules:across-media-modules:pom:6.4-SNAPSHOT
++- com.querydsl:querydsl-apt:jar:5.0.0:compile
+|  \- com.querydsl:querydsl-codegen:jar:5.0.0:compile
+|     +- com.querydsl:querydsl-core:jar:5.0.0:compile
+|     |  \- com.mysema.commons:mysema-commons-lang:jar:0.2.4:compile
+|     +- com.querydsl:codegen-utils:jar:5.0.0:compile
+|     |  \- org.eclipse.jdt:ecj:jar:3.26.0:compile
+|     +- javax.inject:javax.inject:jar:1:compile
+|     \- io.github.classgraph:classgraph:jar:4.8.108:compile
++- org.projectlombok:lombok:jar:1.18.26:provided
+\- org.assertj:assertj-core:jar:3.21.0:test

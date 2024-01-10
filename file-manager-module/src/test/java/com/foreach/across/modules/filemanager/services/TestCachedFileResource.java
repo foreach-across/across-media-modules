@@ -198,7 +198,7 @@ class TestCachedFileResource
 		when( cache.getInputStream() ).thenReturn( is );
 
 		assertThat( resource.getInputStream() ).isSameAs( is );
-		verifyZeroInteractions( target );
+		verifyNoInteractions( target );
 	}
 
 	@Test
