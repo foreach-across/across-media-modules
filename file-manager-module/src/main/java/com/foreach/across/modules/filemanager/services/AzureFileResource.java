@@ -1,11 +1,13 @@
 package com.foreach.across.modules.filemanager.services;
 
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.models.BlobProperties;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.business.FolderResource;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.*;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -15,38 +17,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 public class AzureFileResource implements FileResource
 {
 	private final FileDescriptor descriptor;
-	private final CloudBlobClient blobClient;
+	private final BlobServiceClient blobServiceClient;
 	private final String containerName;
 	private final String fileName;
 
-	private final CloudBlockBlob blob;
+	private final BlobClient blobClient;
 
 	private volatile BlobProperties blobProperties;
 
 	AzureFileResource( @NonNull FileDescriptor descriptor,
-	                   @NonNull CloudBlobClient cloudBlobClient,
+	                   @NonNull BlobServiceClient blobServiceClient,
 	                   @NonNull String containerName,
 	                   @NonNull String fileName ) {
 		this.descriptor = descriptor;
-		this.blobClient = cloudBlobClient;
+		this.blobServiceClient = blobServiceClient;
 		this.containerName = containerName;
 		this.fileName = fileName;
-		try {
-			CloudBlobContainer blobContainer = blobClient.getContainerReference( containerName );
-			this.blob = blobContainer.getBlockBlobReference( fileName );
-		}
-		catch ( StorageException e ) {
-			throw handleStorageException( e );
-		}
-		catch ( URISyntaxException e ) {
-			throw new FileStorageException( e );
-		}
+		BlobContainerClient blobContainer = blobServiceClient.getBlobContainerClient( containerName );
+		this.blobClient = blobContainer.getBlobClient( fileName );
 	}
 
 	@Override
@@ -54,8 +47,8 @@ public class AzureFileResource implements FileResource
 		return descriptor;
 	}
 
-	public CloudBlobClient getBlobClient() {
-		return blobClient;
+	public BlobServiceClient getBlobServiceClient() {
+		return blobServiceClient;
 	}
 
 	public String getContainerName() {
@@ -66,27 +59,26 @@ public class AzureFileResource implements FileResource
 		return fileName;
 	}
 
-	public CloudBlockBlob getBlob() {
-		return blob;
+	public BlobClient getBlobClient() {
+		return blobClient;
 	}
 
 	@Override
 	public FolderResource getFolderResource() {
 		int ix = fileName.lastIndexOf( '/' );
 		String folderObjectName = ix > 0 ? fileName.substring( 0, ix + 1 ) : "";
-		return new AzureFolderResource( descriptor.getFolderDescriptor(), blobClient, containerName, folderObjectName );
+		return new AzureFolderResource( descriptor.getFolderDescriptor(), blobServiceClient, containerName, folderObjectName );
 	}
 
 	@Override
 	public boolean delete() {
 		try {
-			blob.delete( DeleteSnapshotsOption.INCLUDE_SNAPSHOTS, null, null, null );
+			blobClient.delete();
 			resetBlobProperties();
 			return true;
 		}
-		catch ( StorageException e ) {
-			//This means the resource was not found and therefor was deleted for sure
-			return e.getHttpStatusCode() == 404;
+		catch ( RuntimeException e ) {
+			return false;
 		}
 	}
 
@@ -110,13 +102,8 @@ public class AzureFileResource implements FileResource
 
 	@Override
 	public OutputStream getOutputStream() {
-		try {
-			resetBlobProperties();
-			return new LazyOutputStream( blob.openOutputStream() );
-		}
-		catch ( StorageException e ) {
-			throw handleStorageException( e );
-		}
+		resetBlobProperties();
+		return new LazyOutputStream( blobClient.getAppendBlobClient().getBlobOutputStream() );
 	}
 
 	@Override
@@ -131,7 +118,7 @@ public class AzureFileResource implements FileResource
 
 	@Override
 	public long contentLength() {
-		return getBlobProperties().getLength();
+		return getBlobProperties().getBlobSize();
 	}
 
 	@Override
@@ -152,12 +139,7 @@ public class AzureFileResource implements FileResource
 
 	@Override
 	public InputStream getInputStream() {
-		try {
-			return blob.openInputStream();
-		}
-		catch ( StorageException e ) {
-			throw handleStorageException( e );
-		}
+		return blobClient.openInputStream();
 	}
 
 	@Override
@@ -179,13 +161,8 @@ public class AzureFileResource implements FileResource
 
 	public BlobProperties getBlobProperties() {
 		if ( blobProperties == null ) {
-			try {
-				blob.downloadAttributes();
-				this.blobProperties = blob.getProperties();
-			}
-			catch ( StorageException e ) {
-				throw handleStorageException( e );
-			}
+			blobClient.downloadContent();
+			this.blobProperties = blobClient.getProperties();
 		}
 		return blobProperties;
 	}
@@ -194,13 +171,8 @@ public class AzureFileResource implements FileResource
 	 * CloudBlockBlob cannot be mocked because it's final, and a real CloudBlockBlob needs a real connection string,
 	 * and will attempt to perform a real blob upload. This method allows you to work around that.
 	 */
-	public void uploadProperties() {
-		try {
-			blob.uploadProperties();
-		}
-		catch ( StorageException e ) {
-			throw handleStorageException( e );
-		}
+	public void uploadProperties( InputStream inputStream ) {
+		blobClient.upload( inputStream );
 	}
 
 	@Override
@@ -208,15 +180,16 @@ public class AzureFileResource implements FileResource
 		return getDescription();
 	}
 
-	private FileStorageException handleStorageException( StorageException e ) {
-		if ( e.getHttpStatusCode() == 404 ) {
-			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + descriptor.toString() + "] not found!" );
-			exception.initCause( e );
-			return new FileStorageException( exception );
-		}
-		else {
-			return new FileStorageException( e );
-		}
+	private FileStorageException handleStorageException( RuntimeException e ) {
+		//todo
+//		if ( e.getHttpStatusCode() == 404 ) {
+//			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + descriptor.toString() + "] not found!" );
+//			exception.initCause( e );
+//			return new FileStorageException( exception );
+//		}
+//		else {
+		return new FileStorageException( e );
+//		}
 	}
 
 	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)

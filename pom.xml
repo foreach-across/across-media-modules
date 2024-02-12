@@ -200,13 +200,6 @@
 				<version>3.42.0</version>
 			</dependency>
 
-			<!-- TODO remove this dependency and use com.azure:azure-storage-blob: -->
-			<dependency>
-				<groupId>com.microsoft.azure</groupId>
-				<artifactId>azure-storage</artifactId>
-				<version>8.6.6</version>
-			</dependency>
-
 			<dependency>
 				<groupId>commons-fileupload</groupId>
 				<artifactId>commons-fileupload</artifactId>

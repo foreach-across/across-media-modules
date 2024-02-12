@@ -1,10 +1,10 @@
 package com.foreach.across.modules.filemanager.services;
 
+import com.azure.storage.blob.BlobServiceClient;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -13,11 +13,11 @@ import java.nio.file.Paths;
 public class AzureFileRepository extends AbstractFileRepository
 {
 	private final String containerName;
-	private final CloudBlobClient blobClient;
+	private final BlobServiceClient blobClient;
 
 	@Builder
 	AzureFileRepository( @NonNull String repositoryId,
-	                     @NonNull CloudBlobClient blobClient,
+	                     @NonNull BlobServiceClient blobClient,
 	                     @NonNull String containerName,
 	                     PathGenerator pathGenerator ) {
 		super( repositoryId );
@@ -30,7 +30,7 @@ public class AzureFileRepository extends AbstractFileRepository
 		return containerName;
 	}
 
-	public CloudBlobClient getBlobClient() {
+	public BlobServiceClient getBlobClient() {
 		return blobClient;
 	}
 

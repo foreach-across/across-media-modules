@@ -119,12 +119,6 @@
 			<artifactId>spring-cloud-aws-core</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- TODO remove this dependency and use com.azure:azure-storage-blob: -->
-		<dependency>
-			<groupId>com.microsoft.azure</groupId>
-			<artifactId>azure-storage</artifactId>
-			<optional>true</optional>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-integration</artifactId>

@@ -1,8 +1,6 @@
 package utils;
 
-import com.microsoft.azure.storage.CloudStorageAccount;
-import com.microsoft.azure.storage.StorageUri;
-import com.microsoft.azure.storage.analytics.CloudAnalyticsClient;
+import com.azure.storage.blob.BlobServiceClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +24,7 @@ public class AzuriteContainer extends GenericContainer<AzuriteContainer>
 		}
 	}
 
-	public CloudStorageAccount storageAccount() throws URISyntaxException {
+	public BlobServiceClient storageAccount() throws URISyntaxException {
 		URI blob = fromUri( () -> developmentStorageAccount.getBlobEndpoint(), () -> Service.BLOB ); //10000
 		URI queue = fromUri( () -> developmentStorageAccount.getQueueEndpoint(), () -> Service.QUEUE ); //10001
 		//URI table = fromUri( () -> developmentStorageAccount.getTableEndpoint(), () -> Service.TABLE ); //10002
