@@ -18,6 +18,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.azure</groupId>
+			<artifactId>azure-storage-blob</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>file-manager-module</artifactId>
 			<version>${revision}</version>
@@ -75,6 +80,7 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-aws-core</artifactId>
 		</dependency>
+		<!-- TODO remove this dependency and use com.azure:azure-storage-blob: -->
 		<dependency>
 			<groupId>com.microsoft.azure</groupId>
 			<artifactId>azure-storage</artifactId>

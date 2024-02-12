@@ -36,6 +36,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.azure</groupId>
+			<artifactId>azure-storage-blob</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>com.foreach.across.modules</groupId>
 			<artifactId>properties-module</artifactId>
 			<optional>true</optional>
@@ -114,6 +119,7 @@
 			<artifactId>spring-cloud-aws-core</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- TODO remove this dependency and use com.azure:azure-storage-blob: -->
 		<dependency>
 			<groupId>com.microsoft.azure</groupId>
 			<artifactId>azure-storage</artifactId>
