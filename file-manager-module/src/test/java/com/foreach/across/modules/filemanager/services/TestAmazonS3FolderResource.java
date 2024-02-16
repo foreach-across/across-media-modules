@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.foreach.across.modules.filemanager.business.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.Resource;
@@ -41,7 +40,7 @@ class TestAmazonS3FolderResource
 	@BeforeEach
 	@SneakyThrows
 	void resetResource() {
-		String parentObjectName = UUID.randomUUID().toString() + "/";
+		String parentObjectName = UUID.randomUUID() + "/";
 		objectName = parentObjectName + "456/";
 		descriptor = FolderDescriptor.of( "my-repo", "123/456" );
 		resource = folderResource( descriptor, objectName );
@@ -77,7 +76,6 @@ class TestAmazonS3FolderResource
 	@Test
 	void equals() {
 		assertThat( resource )
-				.isEqualTo( resource )
 				.isNotEqualTo( mock( Resource.class ) )
 				.isEqualTo( folderResource( descriptor, "123/456/" ) )
 				.isNotEqualTo( folderResource( FolderDescriptor.of( "1:2/" ), "123/456/" ) );

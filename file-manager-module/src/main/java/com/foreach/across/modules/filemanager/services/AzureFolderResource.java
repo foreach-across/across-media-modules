@@ -117,11 +117,11 @@ public class AzureFolderResource implements FolderResource
 					resources.add( buildResourceFromListBlobItem( candidate ) );
 				}
 			}
-			if ( candidate.getProperties().getBlobType().equals( BlobType. ) ) {
-				BlobContainerClient listedDirectory = blobServiceClient.get( containerName )
-				                                                       .getBlobClient( candidate.getName() )
-				                                                       .getBlockBlobClient();
-				String objectName = listedDirectory.getAccountName();
+			else if ( candidate.getProperties().getBlobType().equals( BlobType.APPEND_BLOB ) ) {
+				BlockBlobClient listedBlob = blobServiceClient.getBlobContainerClient( containerName )
+				                                              .getBlobClient( candidate.getName() )
+				                                              .getBlockBlobClient();
+				String objectName = listedBlob.getAccountName();
 				if ( keyMatcher.test( objectName, directoryName + pattern ) ) {
 					resources.add( buildResourceFromListBlobItem( candidate ) );
 				}
@@ -140,22 +140,12 @@ public class AzureFolderResource implements FolderResource
 	}
 
 	private FileRepositoryResource buildResourceFromListBlobItem( BlobItem blobItem ) {
-		if ( blobItem.getProperties().getBlobType().equals( BlobType.BLOCK_BLOB ) ) {
-			BlockBlobClient listedBlob = blobServiceClient.getBlobContainerClient( containerName )
-			                                              .getBlobClient( blobItem.getName() )
-			                                              .getBlockBlobClient();
-			String objectName = listedBlob.getBlobName();
-			String path = StringUtils.removeStart( objectName, directoryName );
-			return new AzureFileResource( descriptor.createFileDescriptor( path ), blobServiceClient, containerName, objectName );
-		}
-		if ( blobItem instanceof CloudBlobDirectory ) {
-			CloudBlobDirectory listedDirectory = (CloudBlobDirectory) blobItem;
-			String objectName = listedDirectory.getPrefix();
-			String path = StringUtils.removeStart( objectName, directoryName );
-			return new AzureFolderResource( descriptor.createFolderDescriptor( path ), blobServiceClient, containerName, objectName );
-		}
-
-		throw new FileStorageException( "Unsupported ListBlobItem type: " + blobItem.getClass() );
+		BlockBlobClient listedBlob = blobServiceClient.getBlobContainerClient( containerName )
+		                                              .getBlobClient( blobItem.getName() )
+		                                              .getBlockBlobClient();
+		String objectName = listedBlob.getBlobName();
+		String path = StringUtils.removeStart( objectName, directoryName );
+		return new AzureFolderResource( descriptor.createFolderDescriptor( path ), blobServiceClient, containerName, objectName );
 	}
 
 	@Override

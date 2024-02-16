@@ -52,7 +52,7 @@ class AmazonS3FolderResource implements FolderResource
 
 	private String extractParentObjectName() {
 		Path parent = Paths.get( objectName ).getParent();
-		return parent != null ? parent.toString() + "/" : "";
+		return parent != null ? parent + "/" : "";
 	}
 
 	@Override
@@ -64,7 +64,7 @@ class AmazonS3FolderResource implements FolderResource
 		if ( relativePath.endsWith( "/" ) ) {
 			FolderDescriptor folderDescriptor = descriptor.createFolderDescriptor( relativePath );
 			String childPath = stripCurrentFolderId( folderDescriptor.getFolderId() );
-			String childObjectName = Paths.get( objectName, childPath ).toString() + "/";
+			String childObjectName = Paths.get( objectName, childPath ) + "/";
 			return new AmazonS3FolderResource( folderDescriptor, amazonS3, bucketName, childObjectName, taskExecutor );
 		}
 

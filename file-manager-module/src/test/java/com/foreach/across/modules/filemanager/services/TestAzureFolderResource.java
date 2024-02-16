@@ -39,14 +39,11 @@ public class TestAzureFolderResource
 	@SneakyThrows
 	void resetResource() {
 		if ( blobServiceClient == null ) {
-			blobServiceClient = new BlobServiceClientBuilder()
-
-					.buildClient();
-//					AzureStorageHelper.azurite.storageAccount().createCloudBlobClient();
+			blobServiceClient = AzureStorageHelper.azurite.storageAccount();
 			blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).createIfNotExists();
 		}
 
-		String parentObjectName = UUID.randomUUID().toString() + "/";
+		String parentObjectName = UUID.randomUUID() + "/";
 		objectName = parentObjectName + "456/";
 		descriptor = FolderDescriptor.of( "my-repo", "123/456" );
 		resource = folderResource( descriptor, objectName );
