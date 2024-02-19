@@ -104,14 +104,14 @@ public class AzureFolderResource implements FolderResource
 				if ( candidate.getProperties().getBlobType().equals( BlobType.BLOCK_BLOB ) ) {
 					String objectName = listedBlob.getBlobName();
 					if ( !objectName.equals( directoryName ) && !objectName.endsWith( "/" ) && keyMatcher.test( objectName, directoryName + pattern ) ) {
-						resources.add( buildResourceFromListBlobItem( objectName ) );
+						resources.add( buildResourceFromListBlobItem(candidate, objectName ) );
 					}
 				}
 			}
 			catch ( NullPointerException npe ) {
 				String objectName = listedBlob.getBlobName();
 				if ( keyMatcher.test( objectName, directoryName + pattern ) ) {
-					resources.add( buildResourceFromListBlobItem( objectName ) );
+					resources.add( buildResourceFromListBlobItem(candidate, objectName ) );
 				}
 				if ( keyMatcher.test( objectName, directoryName + getRootPattern( pattern ) ) ) {
 					addAllMatchingResources( objectName, resources, keyMatcher, pattern );
@@ -127,9 +127,18 @@ public class AzureFolderResource implements FolderResource
 		return pattern;
 	}
 
-	private FileRepositoryResource buildResourceFromListBlobItem( String objectName ) {
-		String path = StringUtils.removeStart( objectName, directoryName );
-		return new AzureFolderResource( descriptor.createFolderDescriptor( path ), blobServiceClient, containerName, objectName );
+	private FileRepositoryResource buildResourceFromListBlobItem(BlobItem candidate , String objectName ) {
+		try {
+			if ( candidate.getProperties().getBlobType().equals( BlobType.BLOCK_BLOB ) ) {
+				String path = StringUtils.removeStart( objectName, directoryName );
+				return new AzureFileResource( descriptor.createFileDescriptor( path ), blobServiceClient, containerName, objectName );
+			}
+		}
+		catch ( NullPointerException npe ) {
+			String path = StringUtils.removeStart( objectName, directoryName );
+			return new AzureFolderResource( descriptor.createFolderDescriptor( path ), blobServiceClient, containerName, objectName );
+		}
+		throw new FileStorageException( "Unsupported ListBlobItem type: " + candidate.getClass() );
 	}
 
 	@Override

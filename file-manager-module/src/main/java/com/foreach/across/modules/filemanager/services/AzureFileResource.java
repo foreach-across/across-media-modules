@@ -4,11 +4,13 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobProperties;
+import com.azure.storage.blob.models.BlobStorageException;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import software.amazon.ion.IonException;
@@ -18,8 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
+@Getter
 public class AzureFileResource implements FileResource
 {
 	private final FileDescriptor descriptor;
@@ -39,9 +43,14 @@ public class AzureFileResource implements FileResource
 		this.blobServiceClient = blobServiceClient;
 		this.containerName = containerName;
 		this.fileName = fileName;
-		this.blobClient = blobServiceClient
-				.getBlobContainerClient( containerName )
-				.getBlobClient( fileName );
+		try {
+			this.blobClient = blobServiceClient
+					.getBlobContainerClient( containerName )
+					.getBlobClient( fileName );
+		}
+		catch ( BlobStorageException e ) {
+			throw handleStorageException( e );
+		}
 	}
 
 	@Override
@@ -64,7 +73,7 @@ public class AzureFileResource implements FileResource
 			return true;
 		}
 		catch ( RuntimeException e ) {
-			return false;
+			return e.getMessage().contains( "404" );
 		}
 	}
 
@@ -88,8 +97,13 @@ public class AzureFileResource implements FileResource
 
 	@Override
 	public OutputStream getOutputStream() {
-		resetBlobProperties();
-		return new LazyOutputStream( blobClient.getAppendBlobClient().getBlobOutputStream() );
+		try {
+			resetBlobProperties();
+			return new LazyOutputStream( blobClient.getAppendBlobClient().getBlobOutputStream() );
+		}
+		catch ( BlobStorageException e ) {
+			throw handleStorageException( e );
+		}
 	}
 
 	@Override
@@ -125,7 +139,12 @@ public class AzureFileResource implements FileResource
 
 	@Override
 	public InputStream getInputStream() {
-		return blobClient.openInputStream();
+		try {
+			return blobClient.openInputStream();
+		}
+		catch ( BlobStorageException e ) {
+			throw handleStorageException( e );
+		}
 	}
 
 	@Override
@@ -147,8 +166,13 @@ public class AzureFileResource implements FileResource
 
 	public BlobProperties getBlobProperties() {
 		if ( blobProperties == null ) {
-			blobClient.downloadContent();
-			this.blobProperties = blobClient.getProperties();
+			try {
+				blobClient.downloadContent();
+				this.blobProperties = blobClient.getProperties();
+			}
+			catch ( BlobStorageException e ) {
+				throw handleStorageException( e );
+			}
 		}
 		return blobProperties;
 	}
@@ -161,8 +185,11 @@ public class AzureFileResource implements FileResource
 		try {
 			blobClient.upload( inputStream, inputStream.available() );
 		}
-		catch ( IOException e ) {
+		catch ( BlobStorageException e ) {
 			throw handleStorageException( e );
+		}
+		catch ( IOException e ) {
+			throw new RuntimeException( e );
 		}
 	}
 
@@ -171,7 +198,7 @@ public class AzureFileResource implements FileResource
 		return getDescription();
 	}
 
-	private FileStorageException handleStorageException( IOException e ) {
+	private FileStorageException handleStorageException( BlobStorageException e ) {
 		if ( e.getMessage().contains( "Status code 404" ) ) {
 			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + descriptor.toString() + "] not found!" );
 			exception.initCause( e );

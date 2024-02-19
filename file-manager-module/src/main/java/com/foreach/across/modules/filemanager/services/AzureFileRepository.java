@@ -6,10 +6,12 @@ import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 
 import java.nio.file.Paths;
 
+@Getter
 public class AzureFileRepository extends AbstractFileRepository
 {
 	private final String containerName;
@@ -24,14 +26,6 @@ public class AzureFileRepository extends AbstractFileRepository
 		setPathGenerator( pathGenerator );
 		this.blobClient = blobClient;
 		this.containerName = containerName;
-	}
-
-	public String getContainerName() {
-		return containerName;
-	}
-
-	public BlobServiceClient getBlobClient() {
-		return blobClient;
 	}
 
 	@Override
