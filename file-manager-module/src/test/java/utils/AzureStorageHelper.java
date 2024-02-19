@@ -9,6 +9,10 @@ public class AzureStorageHelper
 {
 	public final static AzuriteContainer azurite = new AzuriteContainer();
 
+	static {
+		azurite.start();
+	}
+
 	public static void createFolder( BlobServiceClient blobServiceClient, String containerName, String folderName ) {
 		// create meta-data for your folder and set content-length to 0
 		blobServiceClient

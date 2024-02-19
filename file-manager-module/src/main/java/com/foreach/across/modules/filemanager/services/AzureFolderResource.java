@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.AntPathMatcher;
 
+import javax.validation.constraints.Null;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -39,18 +40,6 @@ public class AzureFolderResource implements FolderResource
 	@Override
 	public FolderDescriptor getDescriptor() {
 		return descriptor;
-	}
-
-	public BlobServiceClient getBlobServiceClient() {
-		return blobServiceClient;
-	}
-
-	public String getContainerName() {
-		return containerName;
-	}
-
-	public String getDirectoryName() {
-		return directoryName;
 	}
 
 	@Override
@@ -107,23 +96,22 @@ public class AzureFolderResource implements FolderResource
 	                                      Collection<FileRepositoryResource> resources,
 	                                      BiPredicate<String, String> keyMatcher,
 	                                      String pattern ) {
-		for ( BlobItem candidate : blobServiceClient.getBlobContainerClient( containerName ).listBlobs() ) {
-			if ( candidate.getProperties().getBlobType().equals( BlobType.BLOCK_BLOB ) ) {
-				BlockBlobClient listedBlob = blobServiceClient.getBlobContainerClient( containerName )
-				                                              .getBlobClient( candidate.getName() )
-				                                              .getBlockBlobClient();
-				String objectName = listedBlob.getAccountName();
-				if ( !objectName.equals( directoryName ) && !objectName.endsWith( "/" ) && keyMatcher.test( objectName, directoryName + pattern ) ) {
-					resources.add( buildResourceFromListBlobItem( candidate ) );
+		for ( BlobItem candidate : blobServiceClient.getBlobContainerClient( containerName ).listBlobsByHierarchy( prefix ) ) {
+			BlockBlobClient listedBlob = blobServiceClient.getBlobContainerClient( containerName )
+			                                              .getBlobClient( candidate.getName() )
+			                                              .getBlockBlobClient();
+			try {
+				if ( candidate.getProperties().getBlobType().equals( BlobType.BLOCK_BLOB ) ) {
+					String objectName = listedBlob.getBlobName();
+					if ( !objectName.equals( directoryName ) && !objectName.endsWith( "/" ) && keyMatcher.test( objectName, directoryName + pattern ) ) {
+						resources.add( buildResourceFromListBlobItem( objectName ) );
+					}
 				}
 			}
-			else if ( candidate.getProperties().getBlobType().equals( BlobType.APPEND_BLOB ) ) {
-				BlockBlobClient listedBlob = blobServiceClient.getBlobContainerClient( containerName )
-				                                              .getBlobClient( candidate.getName() )
-				                                              .getBlockBlobClient();
-				String objectName = listedBlob.getAccountName();
+			catch ( NullPointerException npe ) {
+				String objectName = listedBlob.getBlobName();
 				if ( keyMatcher.test( objectName, directoryName + pattern ) ) {
-					resources.add( buildResourceFromListBlobItem( candidate ) );
+					resources.add( buildResourceFromListBlobItem( objectName ) );
 				}
 				if ( keyMatcher.test( objectName, directoryName + getRootPattern( pattern ) ) ) {
 					addAllMatchingResources( objectName, resources, keyMatcher, pattern );
@@ -139,11 +127,7 @@ public class AzureFolderResource implements FolderResource
 		return pattern;
 	}
 
-	private FileRepositoryResource buildResourceFromListBlobItem( BlobItem blobItem ) {
-		BlockBlobClient listedBlob = blobServiceClient.getBlobContainerClient( containerName )
-		                                              .getBlobClient( blobItem.getName() )
-		                                              .getBlockBlobClient();
-		String objectName = listedBlob.getBlobName();
+	private FileRepositoryResource buildResourceFromListBlobItem( String objectName ) {
 		String path = StringUtils.removeStart( objectName, directoryName );
 		return new AzureFolderResource( descriptor.createFolderDescriptor( path ), blobServiceClient, containerName, objectName );
 	}
@@ -202,7 +186,7 @@ public class AzureFolderResource implements FolderResource
 
 	@Override
 	public String toString() {
-		return "axfs [" + descriptor.toString() + "] -> "
+		return "axfs [" + descriptor + "] -> "
 				+ String.format( "Azure storage blob resource[container='%s', blob='%s']", containerName, directoryName );
 	}
 

@@ -1,6 +1,7 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.azure.core.util.BinaryData;
+import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
@@ -17,6 +18,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
 import utils.AzureStorageHelper;
+import utils.AzuriteContainer;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -28,13 +30,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
 class TestAzureFileResource
 {
 	private static final Resource RES_TEXTFILE = new ClassPathResource( "textfile.txt" );
 	private static final String CONTAINER_NAME = "ax-filemanager-test";
 
 	private BlobServiceClient blobServiceClient;
+	private BlobContainerClient blobContainerClient;
 	private FileDescriptor descriptor;
 	private FileResource resource;
 	private String objectName;
@@ -44,7 +46,7 @@ class TestAzureFileResource
 	void createResource() {
 		if ( blobServiceClient == null ) {
 			blobServiceClient = AzureStorageHelper.azurite.storageAccount();
-			blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).createIfNotExists();
+			blobContainerClient = blobServiceClient.createBlobContainerIfNotExists( CONTAINER_NAME );
 		}
 		objectName = UUID.randomUUID().toString();
 		descriptor = FileDescriptor.of( "my-repo", "123/456", objectName );
@@ -54,7 +56,7 @@ class TestAzureFileResource
 	@AfterEach
 	@SneakyThrows
 	void destroyResource() {
-		blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).deleteIfExists();
+		blobServiceClient.deleteBlobContainerIfExists( CONTAINER_NAME );
 	}
 
 	@Test
@@ -73,8 +75,7 @@ class TestAzureFileResource
 		assertThat( resource.getFolderResource().getDescriptor() ).isEqualTo( resource.getDescriptor().getFolderDescriptor() );
 
 		assertThat( resource.getFolderResource().listFiles() ).doesNotContain( resource );
-		blobServiceClient.getBlobContainerClient( CONTAINER_NAME )
-		                 .getBlobClient( objectName )
+		blobContainerClient.getBlobClient( objectName )
 		                 .upload( BinaryData.fromString( "some-data" ) );
 		assertThat( resource.getFolderResource().listFiles() ).contains( resource );
 	}
@@ -107,7 +108,7 @@ class TestAzureFileResource
 	@SneakyThrows
 	void exists() {
 		assertThat( resource.exists() ).isFalse();
-		blobServiceClient.createBlobContainer( CONTAINER_NAME )
+		blobContainerClient
 		                 .getBlobClient( objectName )
 		                 .upload( BinaryData.fromString( "some-data" ) );
 		assertThat( resource.exists() ).isTrue();
@@ -121,8 +122,7 @@ class TestAzureFileResource
 	@Test
 	@SneakyThrows
 	void isReadable() {
-		blobServiceClient.createBlobContainer( CONTAINER_NAME )
-		                 .getBlobClient( objectName )
+		blobContainerClient.getBlobClient( objectName )
 		                 .upload( BinaryData.fromString( "some-data" ) );
 		assertThat( resource.isReadable() ).isTrue();
 	}
@@ -140,7 +140,9 @@ class TestAzureFileResource
 	@Test
 	@SneakyThrows
 	void delete() {
-		blobServiceClient.createBlobContainer( CONTAINER_NAME ).getBlobClient( objectName ).upload( BinaryData.fromString( "some-data" ) );
+		blobContainerClient
+		                 .getBlobClient( objectName )
+		                 .upload( BinaryData.fromString( "some-data" ) );
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.delete() ).isTrue();
 		assertThat( resource.exists() ).isFalse();
@@ -194,7 +196,7 @@ class TestAzureFileResource
 	@SneakyThrows
 	void outputStreamResetsMetadata() {
 		assertThat( resource.exists() ).isFalse();
-		blobServiceClient.createBlobContainer( CONTAINER_NAME ).getBlobClient( objectName ).upload( BinaryData.fromString( "some-data" ) );
+		blobContainerClient.getBlobClient( objectName ).upload( BinaryData.fromString( "some-data" ) );
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.contentLength() ).isEqualTo( 9 );
 
@@ -206,7 +208,7 @@ class TestAzureFileResource
 
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.contentLength() ).isNotEqualTo( 9 ).isEqualTo( RES_TEXTFILE.contentLength() );
-		assertThat( blobServiceClient.createBlobContainer( CONTAINER_NAME )
+		assertThat( blobContainerClient
 		                             .getBlobClient( objectName )
 		                             .downloadContent()
 		                             .toString() )
@@ -279,7 +281,7 @@ class TestAzureFileResource
 	@Test
 	@SneakyThrows
 	void copyToFileResource() {
-		blobServiceClient.createBlobContainer( CONTAINER_NAME )
+		blobContainerClient
 		                 .getBlobClient( objectName )
 		                 .upload( BinaryData.fromString( "some-data" ) );
 
@@ -295,27 +297,27 @@ class TestAzureFileResource
 	@Test
 	@SneakyThrows
 	void noFileCreatedIfExceptionOnInputStream() {
-		assertThat( blobServiceClient.createBlobContainer( CONTAINER_NAME ).getBlobClient( objectName ).exists() ).isFalse();
+		assertThat( blobContainerClient.getBlobClient( objectName ).exists() ).isFalse();
 
 		InputStream inputStream = mock( InputStream.class );
 		when( inputStream.available() ).thenThrow( new IOException() );
 
 		assertThatExceptionOfType( IOException.class )
 				.isThrownBy( () -> resource.copyFrom( inputStream ) );
-		assertThat( blobServiceClient.createBlobContainer( CONTAINER_NAME ).getBlobClient( objectName ).exists() ).isFalse();
+		assertThat( blobContainerClient.getBlobClient( objectName ).exists() ).isFalse();
 	}
 
 	@Test
 	@SneakyThrows
 	void noFileCreatedIfExceptionOnOtherFileResource() {
-		assertThat( blobServiceClient.createBlobContainer( CONTAINER_NAME ).getBlobClient( objectName ).exists() ).isFalse();
+		assertThat( blobContainerClient.getBlobClient( objectName ).exists() ).isFalse();
 
 		FileResource other = mock( FileResource.class );
 		when( other.getInputStream() ).thenThrow( new IOException() );
 
 		assertThatExceptionOfType( IOException.class )
 				.isThrownBy( () -> resource.copyFrom( other ) );
-		assertThat( blobServiceClient.createBlobContainer( CONTAINER_NAME ).getBlobClient( objectName ).exists() ).isFalse();
+		assertThat( blobContainerClient.getBlobClient( objectName ).exists() ).isFalse();
 	}
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")
@@ -371,7 +373,7 @@ class TestAzureFileResource
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.contentLength() ).isNotEqualTo( 9 ).isEqualTo( RES_TEXTFILE.contentLength() );
 
-		assertThat( blobServiceClient.createBlobContainer( CONTAINER_NAME )
+		assertThat( blobContainerClient
 		                             .getBlobClient( objectName )
 		                             .downloadContent()
 		                             .toString() )
@@ -388,6 +390,6 @@ class TestAzureFileResource
 		}
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.contentLength() ).isEqualTo( 1 );
-		assertThat( blobServiceClient.createBlobContainer( CONTAINER_NAME ).getBlobClient( objectName ).downloadContent() ).isEqualTo( "\0" );
+		assertThat( blobContainerClient.getBlobClient( objectName ).downloadContent() ).isEqualTo( "\0" );
 	}
 }

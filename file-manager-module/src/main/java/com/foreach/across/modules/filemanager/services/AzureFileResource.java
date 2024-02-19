@@ -11,6 +11,7 @@ import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import software.amazon.ion.IonException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,29 +39,14 @@ public class AzureFileResource implements FileResource
 		this.blobServiceClient = blobServiceClient;
 		this.containerName = containerName;
 		this.fileName = fileName;
-		BlobContainerClient blobContainer = blobServiceClient.getBlobContainerClient( containerName );
-		this.blobClient = blobContainer.getBlobClient( fileName );
+		this.blobClient = blobServiceClient
+				.getBlobContainerClient( containerName )
+				.getBlobClient( fileName );
 	}
 
 	@Override
 	public FileDescriptor getDescriptor() {
 		return descriptor;
-	}
-
-	public BlobServiceClient getBlobServiceClient() {
-		return blobServiceClient;
-	}
-
-	public String getContainerName() {
-		return containerName;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public BlobClient getBlobClient() {
-		return blobClient;
 	}
 
 	@Override
@@ -172,7 +158,12 @@ public class AzureFileResource implements FileResource
 	 * and will attempt to perform a real blob upload. This method allows you to work around that.
 	 */
 	public void uploadProperties( InputStream inputStream ) {
-		blobClient.upload( inputStream );
+		try {
+			blobClient.upload( inputStream, inputStream.available() );
+		}
+		catch ( IOException e ) {
+			throw handleStorageException( e );
+		}
 	}
 
 	@Override
@@ -180,16 +171,15 @@ public class AzureFileResource implements FileResource
 		return getDescription();
 	}
 
-	private FileStorageException handleStorageException( RuntimeException e ) {
-		//todo
-//		if ( e.getHttpStatusCode() == 404 ) {
-//			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + descriptor.toString() + "] not found!" );
-//			exception.initCause( e );
-//			return new FileStorageException( exception );
-//		}
-//		else {
-		return new FileStorageException( e );
-//		}
+	private FileStorageException handleStorageException( IOException e ) {
+		if ( e.getMessage().contains( "Status code 404" ) ) {
+			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + descriptor.toString() + "] not found!" );
+			exception.initCause( e );
+			return new FileStorageException( exception );
+		}
+		else {
+			return new FileStorageException( e );
+		}
 	}
 
 	@RequiredArgsConstructor(access = AccessLevel.PRIVATE)

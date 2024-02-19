@@ -2,6 +2,7 @@ package utils;
 
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import com.ctc.wstx.shaded.msv_core.util.Uri;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import java.util.function.Supplier;
 
 public class AzuriteContainer extends GenericContainer<AzuriteContainer>
 {
-	private CloudStorageAccount developmentStorageAccount = CloudStorageAccount.getDevelopmentStorageAccount();
 
 	public AzuriteContainer() {
 		super( "mcr.microsoft.com/azure-storage/azurite" );
@@ -24,18 +24,17 @@ public class AzuriteContainer extends GenericContainer<AzuriteContainer>
 	}
 
 	public BlobServiceClient storageAccount() {
-		String containerIpAddress = getContainerIpAddress();
-//		String connectionString =
-//				"DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey= ;BlobEndpoint=http://localhost:10000/devstoreaccount1;";
 		return new BlobServiceClientBuilder()
-				.connectionString( connectionString )
+				.endpoint( String.format( "http://127.0.0.1:%s/devstoreaccount1", getMappedPort( Service.BLOB.port ) ) )
+				.credential( new StorageSharedKeyCredential( "devstoreaccount1",
+				                                             "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" ) )
 				.buildClient();
 	}
 
 	private URI fromUri( Supplier<URI> endpoint, Supplier<Service> service ) {
 		return UriComponentsBuilder.fromUri( endpoint.get() )
 		                           .port( getMappedPort( service.get().port ) )
-		                           .host( getContainerIpAddress() )
+		                           .host( getHost() )
 		                           .build()
 		                           .toUri();
 	}

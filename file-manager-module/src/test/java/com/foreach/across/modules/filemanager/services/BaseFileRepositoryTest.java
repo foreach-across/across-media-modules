@@ -265,7 +265,7 @@ abstract class BaseFileRepositoryTest
 
 	@Test
 	void renameFileToDifferentRepositoryThrowsIllegalArgument() {
-		FileDescriptor original = fileRepository.save( fileOne );
+		FileDescriptor original = fileRepository.createFileResource(  ).getDescriptor();
 		String renamedName = UUID.randomUUID().toString();
 		String renamedDir = UUID.randomUUID().toString();
 		FileDescriptor renamed = FileDescriptor.of( "foo", renamedDir, renamedName );

@@ -1,6 +1,7 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.azure.core.util.BinaryData;
+import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.foreach.across.modules.filemanager.business.*;
@@ -20,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
-@ExtendWith(SpringExtension.class)
 public class TestAzureFolderResource
 {
 	private static final String CONTAINER_NAME = "folder-resource-test";
@@ -40,7 +40,7 @@ public class TestAzureFolderResource
 	void resetResource() {
 		if ( blobServiceClient == null ) {
 			blobServiceClient = AzureStorageHelper.azurite.storageAccount();
-			blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).createIfNotExists();
+			blobServiceClient.createBlobContainerIfNotExists( CONTAINER_NAME );
 		}
 
 		String parentObjectName = UUID.randomUUID() + "/";
@@ -52,7 +52,7 @@ public class TestAzureFolderResource
 	@AfterEach
 	@SneakyThrows
 	void tearDown() {
-		blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).deleteIfExists();
+		blobServiceClient.deleteBlobContainerIfExists( CONTAINER_NAME );
 	}
 
 	@Test
