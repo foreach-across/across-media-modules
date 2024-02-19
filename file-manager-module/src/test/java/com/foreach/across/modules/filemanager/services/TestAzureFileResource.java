@@ -390,6 +390,6 @@ class TestAzureFileResource
 		}
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.contentLength() ).isEqualTo( 1 );
-		assertThat( blobContainerClient.getBlobClient( objectName ).downloadContent() ).isEqualTo( "\0" );
+		assertThat( blobContainerClient.getBlobClient( objectName ).downloadContent().toString() ).isEqualTo( "\0" );
 	}
 }

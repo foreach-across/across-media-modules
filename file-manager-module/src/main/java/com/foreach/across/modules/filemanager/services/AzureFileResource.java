@@ -99,7 +99,7 @@ public class AzureFileResource implements FileResource
 	public OutputStream getOutputStream() {
 		try {
 			resetBlobProperties();
-			return new LazyOutputStream( blobClient.getAppendBlobClient().getBlobOutputStream() );
+			return new LazyOutputStream( blobClient.getBlockBlobClient().getBlobOutputStream(true) );
 		}
 		catch ( BlobStorageException e ) {
 			throw handleStorageException( e );
