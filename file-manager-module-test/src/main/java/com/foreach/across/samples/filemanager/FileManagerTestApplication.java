@@ -5,6 +5,10 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.common.StorageSharedKeyCredential;
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.entity.EntityModule;
@@ -13,9 +17,6 @@ import com.foreach.across.modules.filemanager.services.*;
 import com.foreach.across.modules.hibernate.jpa.AcrossHibernateJpaModule;
 import com.foreach.across.modules.properties.PropertiesModule;
 import com.foreach.across.modules.web.AcrossWebModule;
-import com.microsoft.azure.storage.CloudStorageAccount;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
@@ -36,20 +37,23 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
                                EntityModule.NAME })
 public class FileManagerTestApplication
 {
-	@Bean
-	@Profile("azure")
-	public CloudStorageAccount azureStorage() {
-		return CloudStorageAccount.getDevelopmentStorageAccount();
-	}
+//	@Bean
+//	@Profile("azure")
+//	public BlobServiceClient azureStorage() {
+//		return new BlobServiceClientBuilder()
+//				.endpoint( String.format( "http://127.0.0.1:%s/devstoreaccount1", getMappedPort( Service.BLOB.port ) ) )
+//				.credential( new StorageSharedKeyCredential( "devstoreaccount1",
+//				                                             "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" ) )
+//				.buildClient();
+//	}
 
 	@Bean
 	@Profile("azure")
-	public FileRepository fileRepositoryAzure( CloudStorageAccount storageAccount ) {
-		CloudBlobClient cloudBlobClient = storageAccount.createCloudBlobClient();
+	public FileRepository fileRepositoryAzure( BlobServiceClient blobServiceClient ) {
 		try {
-			cloudBlobClient.getContainerReference( "car-files" ).createIfNotExists();
+			blobServiceClient.getBlobContainerClient( "car-files" ).createIfNotExists();
 		}
-		catch ( StorageException | URISyntaxException e ) {
+		catch ( BlobStorageException e ) {
 			e.printStackTrace();
 		}
 		return CachingFileRepository.withTranslatedFileDescriptor()
@@ -58,7 +62,7 @@ public class FileManagerTestApplication
 		                            .timeBasedExpiration( 10000, 0 )
 		                            .targetFileRepository(
 				                            AzureFileRepository.builder()
-				                                               .blobClient( cloudBlobClient )
+				                                               .blobClient( blobServiceClient )
 				                                               .containerName( "car-files" )
 				                                               .repositoryId( "permanent" )
 				                                               .build()
