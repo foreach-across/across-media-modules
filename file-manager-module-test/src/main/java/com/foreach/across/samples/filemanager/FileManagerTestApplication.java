@@ -37,15 +37,6 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
                                EntityModule.NAME })
 public class FileManagerTestApplication
 {
-//	@Bean
-//	@Profile("azure")
-//	public BlobServiceClient azureStorage() {
-//		return new BlobServiceClientBuilder()
-//				.endpoint( String.format( "http://127.0.0.1:%s/devstoreaccount1", getMappedPort( Service.BLOB.port ) ) )
-//				.credential( new StorageSharedKeyCredential( "devstoreaccount1",
-//				                                             "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" ) )
-//				.buildClient();
-//	}
 
 	@Bean
 	@Profile("azure")
