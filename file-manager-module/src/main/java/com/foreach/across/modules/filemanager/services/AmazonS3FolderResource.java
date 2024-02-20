@@ -52,7 +52,7 @@ class AmazonS3FolderResource implements FolderResource
 
 	private String extractParentObjectName() {
 		Path parent = Paths.get( objectName ).getParent();
-		return parent != null ? parent + "/" : "";
+		return parent != null ? parent.toString() + "/" : "";
 	}
 
 	@Override
