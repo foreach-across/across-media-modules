@@ -40,7 +40,7 @@ class TestAmazonS3FolderResource
 	@BeforeEach
 	@SneakyThrows
 	void resetResource() {
-		String parentObjectName = UUID.randomUUID() + "/";
+		String parentObjectName = UUID.randomUUID().toString() + "/";
 		objectName = parentObjectName + "456/";
 		descriptor = FolderDescriptor.of( "my-repo", "123/456" );
 		resource = folderResource( descriptor, objectName );
@@ -76,6 +76,7 @@ class TestAmazonS3FolderResource
 	@Test
 	void equals() {
 		assertThat( resource )
+				.isEqualTo( resource )
 				.isNotEqualTo( mock( Resource.class ) )
 				.isEqualTo( folderResource( descriptor, "123/456/" ) )
 				.isNotEqualTo( folderResource( FolderDescriptor.of( "1:2/" ), "123/456/" ) );

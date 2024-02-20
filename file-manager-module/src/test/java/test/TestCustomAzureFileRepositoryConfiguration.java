@@ -1,7 +1,6 @@
 package test;
 
 import com.azure.core.util.BinaryData;
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
@@ -45,7 +44,6 @@ class TestCustomAzureFileRepositoryConfiguration
 	@Test
 	@SneakyThrows
 	void cachedFileResource( @Autowired BlobServiceClient cloudBlobClient, @Autowired FileManager fileManager ) {
-		BlobContainerClient blobContainerClient = cloudBlobClient.getBlobContainerClient( CONTAINER_NAME );
 		FileResource myFile = fileManager.createFileResource( "az" );
 		myFile.copyFrom( RES_TEXTFILE );
 
@@ -56,17 +54,16 @@ class TestCustomAzureFileRepositoryConfiguration
 
 		assertThat( readResource( myFile ) ).isEqualTo( "some dummy text" );
 		assertThat( readResource( tempFile ) ).isEqualTo( "some dummy text" );
-
 		assertThat(
-				blobContainerClient
-						.getBlobClient( "12/34/56/" + myFile.getDescriptor().getFileId() )
-						.downloadContent()
-						.toString()
+				cloudBlobClient.getBlobContainerClient( CONTAINER_NAME )
+				               .getBlobClient( "12/34/56/" + myFile.getDescriptor().getFileId() )
+				               .downloadContent()
+				               .toString()
 		).isEqualTo( "some dummy text" );
 
-		blobContainerClient
-				.getBlobClient( "12/34/56/" + myFile.getDescriptor().getFileId() )
-				.upload( BinaryData.fromString( "updated text" ) );
+		cloudBlobClient.getBlobContainerClient(CONTAINER_NAME)
+		               .getBlobClient("12/34/56/" + myFile.getDescriptor().getFileId())
+		               .upload(BinaryData.fromString("updated text"), true);
 
 		tempFile.delete();
 		assertThat( tempFile.exists() ).isFalse();
