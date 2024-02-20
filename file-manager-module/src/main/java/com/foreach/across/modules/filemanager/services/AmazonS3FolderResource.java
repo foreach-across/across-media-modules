@@ -64,7 +64,7 @@ class AmazonS3FolderResource implements FolderResource
 		if ( relativePath.endsWith( "/" ) ) {
 			FolderDescriptor folderDescriptor = descriptor.createFolderDescriptor( relativePath );
 			String childPath = stripCurrentFolderId( folderDescriptor.getFolderId() );
-			String childObjectName = Paths.get( objectName, childPath ) + "/";
+			String childObjectName = Paths.get( objectName, childPath ).toString() + "/";
 			return new AmazonS3FolderResource( folderDescriptor, amazonS3, bucketName, childObjectName, taskExecutor );
 		}
 
