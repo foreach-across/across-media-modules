@@ -2,7 +2,6 @@ package com.foreach.across.modules.filemanager.services;
 
 import com.azure.storage.blob.BlobServiceClient;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
-import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
 import lombok.Builder;
@@ -15,22 +14,22 @@ import java.nio.file.Paths;
 public class AzureFileRepository extends AbstractFileRepository
 {
 	private final String containerName;
-	private final BlobServiceClient blobClient;
+	private final BlobServiceClient blobServiceClient;
 
 	@Builder
 	AzureFileRepository( @NonNull String repositoryId,
-	                     @NonNull BlobServiceClient blobClient,
+	                     @NonNull BlobServiceClient blobServiceClient,
 	                     @NonNull String containerName,
 	                     PathGenerator pathGenerator ) {
 		super( repositoryId );
 		setPathGenerator( pathGenerator );
-		this.blobClient = blobClient;
+		this.blobServiceClient = blobServiceClient;
 		this.containerName = containerName;
 	}
 
 	@Override
 	protected AzureFileResource buildFileResource( FileDescriptor descriptor ) {
-		return new AzureFileResource( descriptor, blobClient, containerName, createObjectName( descriptor ) );
+		return new AzureFileResource( descriptor, blobServiceClient, containerName, createObjectName( descriptor ) );
 	}
 
 	private String createObjectName( FileDescriptor descriptor ) {
@@ -48,6 +47,6 @@ public class AzureFileRepository extends AbstractFileRepository
 	@Override
 	protected FolderResource buildFolderResource( FolderDescriptor descriptor ) {
 		String objectName = descriptor.getFolderId() != null ? descriptor.getFolderId() + "/" : "";
-		return new AzureFolderResource( descriptor, blobClient, containerName, objectName );
+		return new AzureFolderResource( descriptor, blobServiceClient, containerName, objectName );
 	}
 }

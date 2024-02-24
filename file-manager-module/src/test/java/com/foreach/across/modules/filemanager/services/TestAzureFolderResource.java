@@ -1,17 +1,13 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.azure.core.util.BinaryData;
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.foreach.across.modules.filemanager.business.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import utils.AzureStorageHelper;
 
 import java.io.IOException;
@@ -348,8 +344,8 @@ public class TestAzureFolderResource
 	@SneakyThrows
 	private void createFileTree() {
 		blobServiceClient.getBlobContainerClient( CONTAINER_NAME )
-		               .getBlobClient( objectName + "childFile" )
-		               .upload( BinaryData.fromString( "dummy file" ) );
+		                 .getBlobClient( objectName + "childFile" )
+		                 .upload( BinaryData.fromString( "dummy file" ) );
 		childFile = fileResource( FileDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId(), "childFile" ), objectName + "childFile" );
 
 		assertThat( childFile.exists() ).isTrue();
@@ -360,8 +356,8 @@ public class TestAzureFolderResource
 		assertThat( childFolder.exists() ).isTrue();
 
 		blobServiceClient.getBlobContainerClient( CONTAINER_NAME )
-		               .getBlobClient( objectName + "childFolder/childFileInChildFolder" )
-		               .upload( BinaryData.fromString( "" ) );
+		                 .getBlobClient( objectName + "childFolder/childFileInChildFolder" )
+		                 .upload( BinaryData.fromString( "" ) );
 		childFileInChildFolder = fileResource(
 				FileDescriptor.of( descriptor.getRepositoryId(), childFolder.getDescriptor().getFolderId(), "childFileInChildFolder" ),
 				objectName + "childFolder/childFileInChildFolder"

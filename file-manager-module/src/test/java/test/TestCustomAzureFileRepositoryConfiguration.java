@@ -43,7 +43,7 @@ class TestCustomAzureFileRepositoryConfiguration
 
 	@Test
 	@SneakyThrows
-	void cachedFileResource( @Autowired BlobServiceClient cloudBlobClient, @Autowired FileManager fileManager ) {
+	void cachedFileResource( @Autowired BlobServiceClient blobServiceClient, @Autowired FileManager fileManager ) {
 		FileResource myFile = fileManager.createFileResource( "az" );
 		myFile.copyFrom( RES_TEXTFILE );
 
@@ -55,13 +55,13 @@ class TestCustomAzureFileRepositoryConfiguration
 		assertThat( readResource( myFile ) ).isEqualTo( "some dummy text" );
 		assertThat( readResource( tempFile ) ).isEqualTo( "some dummy text" );
 		assertThat(
-				cloudBlobClient.getBlobContainerClient( CONTAINER_NAME )
+				blobServiceClient.getBlobContainerClient( CONTAINER_NAME )
 				               .getBlobClient( "12/34/56/" + myFile.getDescriptor().getFileId() )
 				               .downloadContent()
 				               .toString()
 		).isEqualTo( "some dummy text" );
 
-		cloudBlobClient.getBlobContainerClient(CONTAINER_NAME)
+		blobServiceClient.getBlobContainerClient(CONTAINER_NAME)
 		               .getBlobClient("12/34/56/" + myFile.getDescriptor().getFileId())
 		               .upload(BinaryData.fromString("updated text"), true);
 
@@ -84,7 +84,7 @@ class TestCustomAzureFileRepositoryConfiguration
 
 		@Bean
 		@SneakyThrows
-		BlobServiceClient cloudBlobClient( AzuriteContainer azurite ) {
+		BlobServiceClient blobServiceClient( AzuriteContainer azurite ) {
 			BlobServiceClient blobServiceClient = azurite.storageAccount();
 			blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).createIfNotExists();
 			return blobServiceClient;
@@ -113,7 +113,7 @@ class TestCustomAzureFileRepositoryConfiguration
 			                            .targetFileRepository(
 					                            AzureFileRepository.builder()
 					                                               .repositoryId( "az" )
-					                                               .blobClient( blobServiceClient )
+					                                               .blobServiceClient( blobServiceClient )
 					                                               .containerName( CONTAINER_NAME )
 					                                               .pathGenerator( () -> "12/34/56" )
 					                                               .build()

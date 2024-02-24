@@ -1,7 +1,6 @@
 package com.foreach.across.modules.filemanager.services;
 
 import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobStorageException;
@@ -13,14 +12,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import software.amazon.ion.IonException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 @Getter
@@ -99,7 +96,7 @@ public class AzureFileResource implements FileResource
 	public OutputStream getOutputStream() {
 		try {
 			resetBlobProperties();
-			return new LazyOutputStream( blobClient.getBlockBlobClient().getBlobOutputStream(true) );
+			return new LazyOutputStream( blobClient.getBlockBlobClient().getBlobOutputStream( true ) );
 		}
 		catch ( BlobStorageException e ) {
 			throw handleStorageException( e );
@@ -167,7 +164,7 @@ public class AzureFileResource implements FileResource
 	public BlobProperties getBlobProperties() {
 		if ( blobProperties == null ) {
 			try {
-				blobClient.downloadContent();
+				//blobClient.downloadContent();
 				this.blobProperties = blobClient.getProperties();
 			}
 			catch ( BlobStorageException e ) {
@@ -175,22 +172,6 @@ public class AzureFileResource implements FileResource
 			}
 		}
 		return blobProperties;
-	}
-
-	/**
-	 * CloudBlockBlob cannot be mocked because it's final, and a real CloudBlockBlob needs a real connection string,
-	 * and will attempt to perform a real blob upload. This method allows you to work around that.
-	 */
-	public void uploadProperties( InputStream inputStream ) {
-		try {
-			blobClient.upload( inputStream, inputStream.available() );
-		}
-		catch ( BlobStorageException e ) {
-			throw handleStorageException( e );
-		}
-		catch ( IOException e ) {
-			throw new RuntimeException( e );
-		}
 	}
 
 	@Override

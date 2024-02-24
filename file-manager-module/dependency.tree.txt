@@ -200,13 +200,6 @@ com.foreach.across.modules:file-manager-module:jar:6.4-SNAPSHOT
 |  +- org.springframework:spring-beans:jar:5.3.31:compile
 |  +- com.amazonaws:aws-java-sdk-ec2:jar:1.11.1034:compile
 |  \- com.amazonaws:aws-java-sdk-cloudformation:jar:1.11.1034:compile
-+- com.microsoft.azure:azure-storage:jar:8.6.6:compile
-|  \- com.microsoft.azure:azure-keyvault-core:jar:1.2.4:compile
-|     \- com.google.guava:guava:jar:32.1.3-jre:compile
-|        +- com.google.guava:failureaccess:jar:1.0.1:compile
-|        +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
-|        +- com.google.errorprone:error_prone_annotations:jar:2.21.1:compile
-|        \- com.google.j2objc:j2objc-annotations:jar:2.8:compile
 +- org.springframework.boot:spring-boot-starter-integration:jar:2.6.15:compile
 |  +- org.springframework.boot:spring-boot-starter-aop:jar:2.6.15:compile
 |  |  \- org.aspectj:aspectjweaver:jar:1.9.7:compile
@@ -222,7 +215,7 @@ com.foreach.across.modules:file-manager-module:jar:6.4-SNAPSHOT
 +- com.mysql:mysql-connector-j:jar:8.0.33:test
 +- com.oracle.database.jdbc:ojdbc8:jar:21.3.0.0:test
 +- org.postgresql:postgresql:jar:42.3.8:test
-|  \- org.checkerframework:checker-qual:jar:3.42.0:compile
+|  \- org.checkerframework:checker-qual:jar:3.42.0:test
 +- com.h2database:h2:jar:1.4.200:test
 +- com.microsoft.sqlserver:mssql-jdbc:jar:9.4.1.jre8:test
 +- org.testcontainers:localstack:jar:1.19.3:test

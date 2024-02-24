@@ -53,7 +53,7 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 
 		remoteRepository = AzureFileRepository.builder()
 		                                      .repositoryId( "s3-repo" )
-		                                      .blobClient( blobServiceClient )
+		                                      .blobServiceClient( blobServiceClient )
 		                                      .containerName( CONTAINER_NAME )
 		                                      .build();
 		remoteRepository.setFileManager( fileManager );

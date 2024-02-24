@@ -41,7 +41,7 @@ public class TestAzureFileRepository extends BaseFileRepositoryTest
 
 		AzureFileRepository abs = AzureFileRepository.builder()
 		                                             .repositoryId( "azure-repo" )
-		                                             .blobClient( blobServiceClient )
+		                                             .blobServiceClient( blobServiceClient )
 		                                             .containerName( CONTAINER_NAME )
 		                                             .build();
 		abs.setFileManager( fileManager );

@@ -12,13 +12,10 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
 import utils.AzureStorageHelper;
-import utils.AzuriteContainer;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -76,7 +73,7 @@ class TestAzureFileResource
 
 		assertThat( resource.getFolderResource().listFiles() ).doesNotContain( resource );
 		blobContainerClient.getBlobClient( objectName )
-		                 .upload( BinaryData.fromString( "some-data" ) );
+		                   .upload( BinaryData.fromString( "some-data" ) );
 		assertThat( resource.getFolderResource().listFiles() ).contains( resource );
 	}
 
@@ -109,8 +106,8 @@ class TestAzureFileResource
 	void exists() {
 		assertThat( resource.exists() ).isFalse();
 		blobContainerClient
-		                 .getBlobClient( objectName )
-		                 .upload( BinaryData.fromString( "some-data" ) );
+				.getBlobClient( objectName )
+				.upload( BinaryData.fromString( "some-data" ) );
 		assertThat( resource.exists() ).isTrue();
 	}
 
@@ -123,7 +120,7 @@ class TestAzureFileResource
 	@SneakyThrows
 	void isReadable() {
 		blobContainerClient.getBlobClient( objectName )
-		                 .upload( BinaryData.fromString( "some-data" ) );
+		                   .upload( BinaryData.fromString( "some-data" ) );
 		assertThat( resource.isReadable() ).isTrue();
 	}
 
@@ -141,8 +138,8 @@ class TestAzureFileResource
 	@SneakyThrows
 	void delete() {
 		blobContainerClient
-		                 .getBlobClient( objectName )
-		                 .upload( BinaryData.fromString( "some-data" ) );
+				.getBlobClient( objectName )
+				.upload( BinaryData.fromString( "some-data" ) );
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.delete() ).isTrue();
 		assertThat( resource.exists() ).isFalse();
@@ -209,9 +206,9 @@ class TestAzureFileResource
 		assertThat( resource.exists() ).isTrue();
 		assertThat( resource.contentLength() ).isNotEqualTo( 9 ).isEqualTo( RES_TEXTFILE.contentLength() );
 		assertThat( blobContainerClient
-		                             .getBlobClient( objectName )
-		                             .downloadContent()
-		                             .toString() )
+				            .getBlobClient( objectName )
+				            .downloadContent()
+				            .toString() )
 				.isEqualTo( "some dummy text" );
 	}
 
@@ -282,8 +279,8 @@ class TestAzureFileResource
 	@SneakyThrows
 	void copyToFileResource() {
 		blobContainerClient
-		                 .getBlobClient( objectName )
-		                 .upload( BinaryData.fromString( "some-data" ) );
+				.getBlobClient( objectName )
+				.upload( BinaryData.fromString( "some-data" ) );
 
 		File otherTempFile = File.createTempFile( UUID.randomUUID().toString(), ".txt" );
 		FileResource other = new LocalFileResource( descriptor, otherTempFile.toPath() );
@@ -374,9 +371,9 @@ class TestAzureFileResource
 		assertThat( resource.contentLength() ).isNotEqualTo( 9 ).isEqualTo( RES_TEXTFILE.contentLength() );
 
 		assertThat( blobContainerClient
-		                             .getBlobClient( objectName )
-		                             .downloadContent()
-		                             .toString() )
+				            .getBlobClient( objectName )
+				            .downloadContent()
+				            .toString() )
 				.isEqualTo( "some dummy text" );
 	}
 

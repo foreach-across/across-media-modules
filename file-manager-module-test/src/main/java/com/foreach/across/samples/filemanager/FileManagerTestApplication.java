@@ -53,7 +53,7 @@ public class FileManagerTestApplication
 		                            .timeBasedExpiration( 10000, 0 )
 		                            .targetFileRepository(
 				                            AzureFileRepository.builder()
-				                                               .blobClient( blobServiceClient )
+				                                               .blobServiceClient( blobServiceClient )
 				                                               .containerName( "car-files" )
 				                                               .repositoryId( "permanent" )
 				                                               .build()
