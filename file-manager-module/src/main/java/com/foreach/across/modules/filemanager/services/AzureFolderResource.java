@@ -1,9 +1,7 @@
 package com.foreach.across.modules.filemanager.services;
 
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobItem;
-import com.azure.storage.blob.models.BlobType;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import com.foreach.across.modules.filemanager.business.*;
 import lombok.NonNull;
@@ -11,7 +9,6 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.AntPathMatcher;
 
-import javax.validation.constraints.Null;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -100,21 +97,18 @@ public class AzureFolderResource implements FolderResource
 			BlockBlobClient listedBlob = blobServiceClient.getBlobContainerClient( containerName )
 			                                              .getBlobClient( candidate.getName() )
 			                                              .getBlockBlobClient();
-			try {
-				if ( candidate.getProperties().getBlobType().equals( BlobType.BLOCK_BLOB ) ) {
-					String objectName = listedBlob.getBlobName();
-					if ( !objectName.equals( directoryName ) && !objectName.endsWith( "/" ) && keyMatcher.test( objectName, directoryName + pattern ) ) {
-						resources.add( buildResourceFromListBlobItem(candidate, objectName ) );
-					}
-				}
-			}
-			catch ( NullPointerException npe ) {
-				String objectName = listedBlob.getBlobName();
+			String objectName = listedBlob.getBlobName();
+			if ( candidate.isPrefix() ) {
 				if ( keyMatcher.test( objectName, directoryName + pattern ) ) {
-					resources.add( buildResourceFromListBlobItem(candidate, objectName ) );
+					resources.add( buildResourceFromListBlobItem( candidate, objectName ) );
 				}
 				if ( keyMatcher.test( objectName, directoryName + getRootPattern( pattern ) ) ) {
 					addAllMatchingResources( objectName, resources, keyMatcher, pattern );
+				}
+			}
+			else {
+				if ( !objectName.equals( directoryName ) && !objectName.endsWith( "/" ) && keyMatcher.test( objectName, directoryName + pattern ) ) {
+					resources.add( buildResourceFromListBlobItem( candidate, objectName ) );
 				}
 			}
 		}
@@ -127,18 +121,14 @@ public class AzureFolderResource implements FolderResource
 		return pattern;
 	}
 
-	private FileRepositoryResource buildResourceFromListBlobItem(BlobItem candidate , String objectName ) {
-		try {
-			if ( candidate.getProperties().getBlobType().equals( BlobType.BLOCK_BLOB ) ) {
-				String path = StringUtils.removeStart( objectName, directoryName );
-				return new AzureFileResource( descriptor.createFileDescriptor( path ), blobServiceClient, containerName, objectName );
-			}
-		}
-		catch ( NullPointerException npe ) {
-			String path = StringUtils.removeStart( objectName, directoryName );
+	private FileRepositoryResource buildResourceFromListBlobItem( BlobItem candidate, String objectName ) {
+		String path = StringUtils.removeStart( objectName, directoryName );
+		if ( candidate.isPrefix() ) {
 			return new AzureFolderResource( descriptor.createFolderDescriptor( path ), blobServiceClient, containerName, objectName );
 		}
-		throw new FileStorageException( "Unsupported ListBlobItem type: " + candidate.getClass() );
+		else {
+			return new AzureFileResource( descriptor.createFileDescriptor( path ), blobServiceClient, containerName, objectName );
+		}
 	}
 
 	@Override

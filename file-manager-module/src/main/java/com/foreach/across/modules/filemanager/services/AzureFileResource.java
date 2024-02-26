@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.net.URL;
 @Getter
 public class AzureFileResource implements FileResource
 {
+	public static final int NOT_FOUND = HttpStatus.NOT_FOUND.value();
 	private final FileDescriptor descriptor;
 	private final BlobServiceClient blobServiceClient;
 	private final String containerName;
@@ -69,8 +71,11 @@ public class AzureFileResource implements FileResource
 			resetBlobProperties();
 			return true;
 		}
-		catch ( RuntimeException e ) {
-			return e.getMessage().contains( "404" );
+		catch ( BlobStorageException e ) {
+			if ( e.getStatusCode() == NOT_FOUND ) {
+				return true;
+			}
+			throw new RuntimeException( e );
 		}
 	}
 
@@ -180,7 +185,7 @@ public class AzureFileResource implements FileResource
 	}
 
 	private FileStorageException handleStorageException( BlobStorageException e ) {
-		if ( e.getMessage().contains( "Status code 404" ) ) {
+		if ( e.getStatusCode() == NOT_FOUND ) {
 			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + descriptor.toString() + "] not found!" );
 			exception.initCause( e );
 			return new FileStorageException( exception );

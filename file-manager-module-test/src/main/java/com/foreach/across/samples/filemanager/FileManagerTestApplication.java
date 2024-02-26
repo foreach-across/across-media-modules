@@ -6,9 +6,6 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
-import com.azure.storage.blob.models.BlobStorageException;
-import com.azure.storage.common.StorageSharedKeyCredential;
 import com.foreach.across.config.AcrossApplication;
 import com.foreach.across.modules.adminweb.AdminWebModule;
 import com.foreach.across.modules.entity.EntityModule;
@@ -24,7 +21,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -41,12 +37,8 @@ public class FileManagerTestApplication
 	@Bean
 	@Profile("azure")
 	public FileRepository fileRepositoryAzure( BlobServiceClient blobServiceClient ) {
-		try {
-			blobServiceClient.getBlobContainerClient( "car-files" ).createIfNotExists();
-		}
-		catch ( BlobStorageException e ) {
-			e.printStackTrace();
-		}
+		String containerName = "car-files";
+		blobServiceClient.getBlobContainerClient( containerName ).createIfNotExists();
 		return CachingFileRepository.withTranslatedFileDescriptor()
 		                            .expireOnEvict( true )
 		                            .expireOnShutdown( true )
@@ -54,7 +46,7 @@ public class FileManagerTestApplication
 		                            .targetFileRepository(
 				                            AzureFileRepository.builder()
 				                                               .blobServiceClient( blobServiceClient )
-				                                               .containerName( "car-files" )
+				                                               .containerName( containerName )
 				                                               .repositoryId( "permanent" )
 				                                               .build()
 		                            )
