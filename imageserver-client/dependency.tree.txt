@@ -1,10 +1,10 @@
 com.foreach.across.modules:imageserver-client:jar:6.4-SNAPSHOT
 +- org.apache.commons:commons-lang3:jar:3.12.0:compile
 +- org.slf4j:slf4j-api:jar:1.7.36:compile
-+- org.springframework:spring-web:jar:5.3.31:compile
-|  +- org.springframework:spring-beans:jar:5.3.31:compile
-|  \- org.springframework:spring-core:jar:5.3.31:compile
-|     \- org.springframework:spring-jcl:jar:5.3.31:compile
++- org.springframework:spring-web:jar:5.3.32:compile
+|  +- org.springframework:spring-beans:jar:5.3.32:compile
+|  \- org.springframework:spring-core:jar:5.3.32:compile
+|     \- org.springframework:spring-jcl:jar:5.3.32:compile
 +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.5:test
 |  \- com.fasterxml.jackson.core:jackson-core:jar:2.13.5:test
 +- org.apache.httpcomponents:httpclient:jar:4.5.14:test
@@ -22,7 +22,7 @@ com.foreach.across.modules:imageserver-client:jar:6.4-SNAPSHOT
 |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
 |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
 |  \- org.objenesis:objenesis:jar:3.2:test
-+- org.springframework:spring-test:jar:5.3.31:test
++- org.springframework:spring-test:jar:5.3.32:test
 +- com.querydsl:querydsl-apt:jar:5.0.0:compile
 |  \- com.querydsl:querydsl-codegen:jar:5.0.0:compile
 |     +- com.querydsl:querydsl-core:jar:5.0.0:compile

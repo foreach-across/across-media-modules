@@ -12,9 +12,9 @@ com.foreach.across.modules:imageserver-admin:jar:6.4-SNAPSHOT
 |  |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.5:compile
 |  |  |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.13.5:compile
 |  |  |  \- org.springframework.boot:spring-boot-starter-tomcat:jar:2.6.15:compile
-|  |  |     +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.84:compile
-|  |  |     +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.84:compile
-|  |  |     \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.84:compile
+|  |  |     +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.86:compile
+|  |  |     +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.86:compile
+|  |  |     \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.86:compile
 |  |  +- org.thymeleaf:thymeleaf-spring5:jar:3.0.15.RELEASE:compile
 |  |  |  \- org.thymeleaf:thymeleaf:jar:3.0.15.RELEASE:compile
 |  |  |     +- org.attoparser:attoparser:jar:2.0.5.RELEASE:compile
@@ -22,7 +22,7 @@ com.foreach.across.modules:imageserver-admin:jar:6.4-SNAPSHOT
 |  |  +- org.thymeleaf.extras:thymeleaf-extras-java8time:jar:3.0.4.RELEASE:compile
 |  |  +- com.foreach.across:across-core:jar:5.4-SNAPSHOT:compile
 |  |  |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
-|  |  |  +- org.springframework:spring-jdbc:jar:5.3.31:compile
+|  |  |  +- org.springframework:spring-jdbc:jar:5.3.32:compile
 |  |  |  +- ch.qos.logback:logback-classic:jar:1.2.12:compile
 |  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.12:compile
 |  |  |  +- org.slf4j:jcl-over-slf4j:jar:1.7.36:compile
@@ -30,7 +30,7 @@ com.foreach.across.modules:imageserver-admin:jar:6.4-SNAPSHOT
 |  |  |  \- org.liquibase:liquibase-core:jar:4.17.0:compile
 |  |  |     \- com.opencsv:opencsv:jar:5.6:compile
 |  |  |        \- org.apache.commons:commons-text:jar:1.9:compile
-|  |  +- org.springframework:spring-webmvc:jar:5.3.31:compile
+|  |  +- org.springframework:spring-webmvc:jar:5.3.32:compile
 |  |  +- com.fasterxml.jackson.core:jackson-core:jar:2.13.5:compile
 |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.5:compile
 |  |  |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.5:compile
@@ -49,7 +49,7 @@ com.foreach.across.modules:imageserver-admin:jar:6.4-SNAPSHOT
 |  |  +- org.webjars.npm:autonumeric:jar:4.5.4:compile
 |  |  +- org.webjars.npm:tempusdominus-bootstrap:jar:5.32.1:compile
 |  |  |  +- org.webjars.npm:bootstrap:jar:5.0.0-beta3:compile
-|  |  |  +- org.webjars.npm:jquery:jar:3.7.1:compile
+|  |  |  +- org.webjars.npm:jquery:jar:4.0.0-beta:compile
 |  |  |  +- org.webjars.npm:moment:jar:2.24.0:compile
 |  |  |  \- org.webjars.npm:popper.js:jar:1.16.1-lts:compile
 |  |  +- org.webjars.npm:bootstrap-select:jar:1.13.11:compile
@@ -61,9 +61,9 @@ com.foreach.across.modules:imageserver-admin:jar:6.4-SNAPSHOT
 +- com.foreach.across.modules:user-module:jar:4.4-SNAPSHOT:compile
 |  +- com.foreach.across.modules:across-hibernate-module:jar:4.4-SNAPSHOT:compile
 |  |  +- org.springframework.data:spring-data-jpa:jar:2.6.10:compile
-|  |  |  \- org.springframework:spring-tx:jar:5.3.31:compile
-|  |  +- org.springframework:spring-orm:jar:5.3.31:compile
-|  |  +- org.springframework:spring-aop:jar:5.3.31:compile
+|  |  |  \- org.springframework:spring-tx:jar:5.3.32:compile
+|  |  +- org.springframework:spring-orm:jar:5.3.32:compile
+|  |  +- org.springframework:spring-aop:jar:5.3.32:compile
 |  |  +- org.hibernate:hibernate-core:jar:5.6.15.Final:compile
 |  |  |  +- javax.persistence:javax.persistence-api:jar:2.2:compile
 |  |  |  +- net.bytebuddy:byte-buddy:jar:1.11.22:compile
@@ -98,13 +98,13 @@ com.foreach.across.modules:imageserver-admin:jar:6.4-SNAPSHOT
 +- com.foreach.across.modules:spring-security-module:jar:4.4-SNAPSHOT:compile
 |  +- org.springframework.security:spring-security-core:jar:5.6.12:compile
 |  |  +- org.springframework.security:spring-security-crypto:jar:5.6.12:compile
-|  |  +- org.springframework:spring-beans:jar:5.3.31:compile
-|  |  +- org.springframework:spring-context:jar:5.3.31:compile
-|  |  +- org.springframework:spring-core:jar:5.3.31:compile
-|  |  |  \- org.springframework:spring-jcl:jar:5.3.31:compile
-|  |  \- org.springframework:spring-expression:jar:5.3.31:compile
+|  |  +- org.springframework:spring-beans:jar:5.3.32:compile
+|  |  +- org.springframework:spring-context:jar:5.3.32:compile
+|  |  +- org.springframework:spring-core:jar:5.3.32:compile
+|  |  |  \- org.springframework:spring-jcl:jar:5.3.32:compile
+|  |  \- org.springframework:spring-expression:jar:5.3.32:compile
 |  +- org.springframework.security:spring-security-web:jar:5.6.12:compile
-|  |  \- org.springframework:spring-web:jar:5.3.31:compile
+|  |  \- org.springframework:spring-web:jar:5.3.32:compile
 |  \- org.springframework.security:spring-security-config:jar:5.6.12:compile
 +- com.querydsl:querydsl-apt:jar:5.0.0:compile
 |  \- com.querydsl:querydsl-codegen:jar:5.0.0:compile
