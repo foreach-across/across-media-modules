@@ -16,11 +16,11 @@
 
 package com.foreach.across.modules.filemanager.services;
 
+import com.azure.storage.blob.BlobServiceClient;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Disabled;
@@ -37,7 +37,7 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 {
 	private static final String CONTAINER_NAME = "ax-filemanager-test";
 
-	private static CloudBlobClient cloudBlobClient;
+	private static BlobServiceClient blobServiceClient;
 
 	private AzureFileRepository remoteRepository;
 	private LocalFileRepository cacheRepository;
@@ -45,15 +45,15 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 	@Override
 	@SneakyThrows
 	FileRepository createRepository() {
-		if ( cloudBlobClient == null ) {
-			cloudBlobClient = AzureStorageHelper.azurite.storageAccount().createCloudBlobClient();
-			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
+		if ( blobServiceClient == null ) {
+			blobServiceClient = AzureStorageHelper.azurite.storageAccount();
+			blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).createIfNotExists();
 		}
 		FileManagerImpl fileManager = new FileManagerImpl();
 
 		remoteRepository = AzureFileRepository.builder()
 		                                      .repositoryId( "s3-repo" )
-		                                      .blobClient( cloudBlobClient )
+		                                      .blobServiceClient( blobServiceClient )
 		                                      .containerName( CONTAINER_NAME )
 		                                      .build();
 		remoteRepository.setFileManager( fileManager );
@@ -272,6 +272,6 @@ class TestCachingFileRepositoryLocalAndAzure extends BaseFileRepositoryTest
 	@AfterAll
 	@SneakyThrows
 	static void tearDown() {
-		cloudBlobClient.getContainerReference( CONTAINER_NAME ).deleteIfExists();
+		blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).deleteIfExists();
 	}
 }

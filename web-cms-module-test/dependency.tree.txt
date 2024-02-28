@@ -119,7 +119,7 @@ com.foreach.across.modules:web-cms-module-test:jar:6.4-SNAPSHOT
 |  |  +- org.apache.xmlgraphics:xmlgraphics-commons:jar:1.4:compile
 |  |  \- com.lowagie:itext:jar:2.1.7:compile
 |  +- org.postgresql:postgresql:jar:42.3.8:compile
-|  |  \- org.checkerframework:checker-qual:jar:3.5.0:runtime
+|  |  \- org.checkerframework:checker-qual:jar:3.42.0:runtime
 |  \- com.microsoft.sqlserver:mssql-jdbc:jar:9.4.1.jre8:compile
 +- com.foreach.across.modules:imageserver-admin:jar:6.4-SNAPSHOT:compile
 +- com.foreach.across.modules:imageserver-client:jar:6.4-SNAPSHOT:compile

@@ -1,51 +1,54 @@
 package com.foreach.across.modules.filemanager.services;
 
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.models.BlobProperties;
+import com.azure.storage.blob.models.BlobStorageException;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FileStorageException;
 import com.foreach.across.modules.filemanager.business.FolderResource;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
+@Getter
 public class AzureFileResource implements FileResource
 {
+	public static final int NOT_FOUND = HttpStatus.NOT_FOUND.value();
 	private final FileDescriptor descriptor;
-	private final CloudBlobClient blobClient;
+	private final BlobServiceClient blobServiceClient;
 	private final String containerName;
 	private final String fileName;
 
-	private final CloudBlockBlob blob;
+	private final BlobClient blobClient;
 
 	private volatile BlobProperties blobProperties;
 
 	AzureFileResource( @NonNull FileDescriptor descriptor,
-	                   @NonNull CloudBlobClient cloudBlobClient,
+	                   @NonNull BlobServiceClient blobServiceClient,
 	                   @NonNull String containerName,
 	                   @NonNull String fileName ) {
 		this.descriptor = descriptor;
-		this.blobClient = cloudBlobClient;
+		this.blobServiceClient = blobServiceClient;
 		this.containerName = containerName;
 		this.fileName = fileName;
 		try {
-			CloudBlobContainer blobContainer = blobClient.getContainerReference( containerName );
-			this.blob = blobContainer.getBlockBlobReference( fileName );
+			this.blobClient = blobServiceClient
+					.getBlobContainerClient( containerName )
+					.getBlobClient( fileName );
 		}
-		catch ( StorageException e ) {
+		catch ( BlobStorageException e ) {
 			throw handleStorageException( e );
-		}
-		catch ( URISyntaxException e ) {
-			throw new FileStorageException( e );
 		}
 	}
 
@@ -54,39 +57,25 @@ public class AzureFileResource implements FileResource
 		return descriptor;
 	}
 
-	public CloudBlobClient getBlobClient() {
-		return blobClient;
-	}
-
-	public String getContainerName() {
-		return containerName;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public CloudBlockBlob getBlob() {
-		return blob;
-	}
-
 	@Override
 	public FolderResource getFolderResource() {
 		int ix = fileName.lastIndexOf( '/' );
 		String folderObjectName = ix > 0 ? fileName.substring( 0, ix + 1 ) : "";
-		return new AzureFolderResource( descriptor.getFolderDescriptor(), blobClient, containerName, folderObjectName );
+		return new AzureFolderResource( descriptor.getFolderDescriptor(), blobServiceClient, containerName, folderObjectName );
 	}
 
 	@Override
 	public boolean delete() {
 		try {
-			blob.delete( DeleteSnapshotsOption.INCLUDE_SNAPSHOTS, null, null, null );
+			blobClient.delete();
 			resetBlobProperties();
 			return true;
 		}
-		catch ( StorageException e ) {
-			//This means the resource was not found and therefor was deleted for sure
-			return e.getHttpStatusCode() == 404;
+		catch ( BlobStorageException e ) {
+			if ( e.getStatusCode() == NOT_FOUND ) {
+				return true;
+			}
+			throw new RuntimeException( e );
 		}
 	}
 
@@ -112,9 +101,9 @@ public class AzureFileResource implements FileResource
 	public OutputStream getOutputStream() {
 		try {
 			resetBlobProperties();
-			return new LazyOutputStream( blob.openOutputStream() );
+			return new LazyOutputStream( blobClient.getBlockBlobClient().getBlobOutputStream( true ) );
 		}
-		catch ( StorageException e ) {
+		catch ( BlobStorageException e ) {
 			throw handleStorageException( e );
 		}
 	}
@@ -131,7 +120,7 @@ public class AzureFileResource implements FileResource
 
 	@Override
 	public long contentLength() {
-		return getBlobProperties().getLength();
+		return getBlobProperties().getBlobSize();
 	}
 
 	@Override
@@ -153,9 +142,9 @@ public class AzureFileResource implements FileResource
 	@Override
 	public InputStream getInputStream() {
 		try {
-			return blob.openInputStream();
+			return blobClient.openInputStream();
 		}
-		catch ( StorageException e ) {
+		catch ( BlobStorageException e ) {
 			throw handleStorageException( e );
 		}
 	}
@@ -180,27 +169,13 @@ public class AzureFileResource implements FileResource
 	public BlobProperties getBlobProperties() {
 		if ( blobProperties == null ) {
 			try {
-				blob.downloadAttributes();
-				this.blobProperties = blob.getProperties();
+				this.blobProperties = blobClient.getProperties();
 			}
-			catch ( StorageException e ) {
+			catch ( BlobStorageException e ) {
 				throw handleStorageException( e );
 			}
 		}
 		return blobProperties;
-	}
-
-	/**
-	 * CloudBlockBlob cannot be mocked because it's final, and a real CloudBlockBlob needs a real connection string,
-	 * and will attempt to perform a real blob upload. This method allows you to work around that.
-	 */
-	public void uploadProperties() {
-		try {
-			blob.uploadProperties();
-		}
-		catch ( StorageException e ) {
-			throw handleStorageException( e );
-		}
 	}
 
 	@Override
@@ -208,8 +183,8 @@ public class AzureFileResource implements FileResource
 		return getDescription();
 	}
 
-	private FileStorageException handleStorageException( StorageException e ) {
-		if ( e.getHttpStatusCode() == 404 ) {
+	private FileStorageException handleStorageException( BlobStorageException e ) {
+		if ( e.getStatusCode() == NOT_FOUND ) {
 			FileNotFoundException exception = new FileNotFoundException( "File resource with descriptor [" + descriptor.toString() + "] not found!" );
 			exception.initCause( e );
 			return new FileStorageException( exception );

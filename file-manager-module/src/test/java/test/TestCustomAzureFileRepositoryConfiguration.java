@@ -1,5 +1,7 @@
 package test;
 
+import com.azure.core.util.BinaryData;
+import com.azure.storage.blob.BlobServiceClient;
 import com.foreach.across.modules.filemanager.FileManagerModule;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
@@ -8,7 +10,6 @@ import com.foreach.across.modules.filemanager.services.CachingFileRepository;
 import com.foreach.across.modules.filemanager.services.FileManager;
 import com.foreach.across.modules.filemanager.services.FileRepository;
 import com.foreach.across.test.AcrossTestConfiguration;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
-import org.testcontainers.containers.wait.strategy.Wait;
 import utils.AzureStorageHelper;
 import utils.AzuriteContainer;
 
@@ -43,7 +43,7 @@ class TestCustomAzureFileRepositoryConfiguration
 
 	@Test
 	@SneakyThrows
-	void cachedFileResource( @Autowired CloudBlobClient cloudBlobClient, @Autowired FileManager fileManager ) {
+	void cachedFileResource( @Autowired BlobServiceClient blobServiceClient, @Autowired FileManager fileManager ) {
 		FileResource myFile = fileManager.createFileResource( "az" );
 		myFile.copyFrom( RES_TEXTFILE );
 
@@ -54,16 +54,16 @@ class TestCustomAzureFileRepositoryConfiguration
 
 		assertThat( readResource( myFile ) ).isEqualTo( "some dummy text" );
 		assertThat( readResource( tempFile ) ).isEqualTo( "some dummy text" );
-
 		assertThat(
-				cloudBlobClient.getContainerReference( CONTAINER_NAME )
-				               .getBlockBlobReference( "12/34/56/" + myFile.getDescriptor().getFileId() )
-				               .downloadText()
+				blobServiceClient.getBlobContainerClient( CONTAINER_NAME )
+				               .getBlobClient( "12/34/56/" + myFile.getDescriptor().getFileId() )
+				               .downloadContent()
+				               .toString()
 		).isEqualTo( "some dummy text" );
 
-		cloudBlobClient.getContainerReference( CONTAINER_NAME )
-		               .getBlockBlobReference( "12/34/56/" + myFile.getDescriptor().getFileId() )
-		               .uploadText( "updated text" );
+		blobServiceClient.getBlobContainerClient(CONTAINER_NAME)
+		               .getBlobClient("12/34/56/" + myFile.getDescriptor().getFileId())
+		               .upload(BinaryData.fromString("updated text"), true);
 
 		tempFile.delete();
 		assertThat( tempFile.exists() ).isFalse();
@@ -84,10 +84,10 @@ class TestCustomAzureFileRepositoryConfiguration
 
 		@Bean
 		@SneakyThrows
-		CloudBlobClient cloudBlobClient( AzuriteContainer azurite ) {
-			CloudBlobClient cloudBlobClient = azurite.storageAccount().createCloudBlobClient();
-			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
-			return cloudBlobClient;
+		BlobServiceClient blobServiceClient( AzuriteContainer azurite ) {
+			BlobServiceClient blobServiceClient = azurite.storageAccount();
+			blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).createIfNotExists();
+			return blobServiceClient;
 		}
 
 		@Bean
@@ -107,13 +107,13 @@ class TestCustomAzureFileRepositoryConfiguration
 		}
 
 		@Bean
-		FileRepository remoteRepository( CloudBlobClient cloudBlobClient ) {
+		FileRepository remoteRepository( BlobServiceClient blobServiceClient ) {
 			return CachingFileRepository.withTranslatedFileDescriptor()
 			                            .expireOnShutdown( true )
 			                            .targetFileRepository(
 					                            AzureFileRepository.builder()
 					                                               .repositoryId( "az" )
-					                                               .blobClient( cloudBlobClient )
+					                                               .blobServiceClient( blobServiceClient )
 					                                               .containerName( CONTAINER_NAME )
 					                                               .pathGenerator( () -> "12/34/56" )
 					                                               .build()

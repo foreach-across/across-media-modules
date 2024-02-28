@@ -1,23 +1,20 @@
 package utils;
 
-import com.microsoft.azure.storage.CloudStorageAccount;
-import com.microsoft.azure.storage.StorageUri;
-import com.microsoft.azure.storage.analytics.CloudAnalyticsClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.common.StorageSharedKeyCredential;
+import com.ctc.wstx.shaded.msv_core.util.Uri;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.lifecycle.Startable;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.function.Supplier;
 
 public class AzuriteContainer extends GenericContainer<AzuriteContainer>
 {
-	private CloudStorageAccount developmentStorageAccount = CloudStorageAccount.getDevelopmentStorageAccount();
 
 	public AzuriteContainer() {
 		super( "mcr.microsoft.com/azure-storage/azurite" );
@@ -26,27 +23,13 @@ public class AzuriteContainer extends GenericContainer<AzuriteContainer>
 		}
 	}
 
-	public CloudStorageAccount storageAccount() throws URISyntaxException {
-		URI blob = fromUri( () -> developmentStorageAccount.getBlobEndpoint(), () -> Service.BLOB ); //10000
-		URI queue = fromUri( () -> developmentStorageAccount.getQueueEndpoint(), () -> Service.QUEUE ); //10001
-		//URI table = fromUri( () -> developmentStorageAccount.getTableEndpoint(), () -> Service.TABLE ); //10002
-		return new CloudStorageAccount( developmentStorageAccount.getCredentials(), blob, queue, developmentStorageAccount.getTableEndpoint() );
-	}
-
-	private URI fromUri( Supplier<URI> endpoint, Supplier<Service> service ) {
-		return UriComponentsBuilder.fromUri( endpoint.get() )
-		                           .port( getMappedPort( service.get().port ) )
-		                           .host( getContainerIpAddress() )
-		                           .build()
-		                           .toUri();
-	}
-
-	public CloudAnalyticsClient getCloudAnalyticsClient() {
-		StorageUri x = developmentStorageAccount.getTableStorageUri();
-		StorageUri y = developmentStorageAccount.getBlobStorageUri();
-		UriComponents uri = UriComponentsBuilder.fromUri( developmentStorageAccount.getBlobEndpoint() ).port( getMappedPort( Service.BLOB.port ) ).host(
-				getContainerIpAddress() ).build();
-		return new CloudAnalyticsClient( x, y, developmentStorageAccount.getCredentials() );
+	public BlobServiceClient storageAccount() {
+		return new BlobServiceClientBuilder()
+				.endpoint( String.format( "http://%s:%s/devstoreaccount1", getHost().equals( "localhost" ) ? "127.0.0.1" : getHost(),
+				                          getMappedPort( Service.BLOB.port ) ) )
+				.credential( new StorageSharedKeyCredential( "devstoreaccount1",
+				                                             "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" ) )
+				.buildClient();
 	}
 
 	@RequiredArgsConstructor

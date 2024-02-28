@@ -1,10 +1,10 @@
 package com.foreach.across.modules.filemanager.services;
 
+import com.azure.storage.blob.BlobServiceClient;
 import com.foreach.across.modules.filemanager.business.FileDescriptor;
 import com.foreach.across.modules.filemanager.business.FileResource;
 import com.foreach.across.modules.filemanager.business.FolderDescriptor;
 import com.foreach.across.modules.filemanager.business.FolderResource;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,14 +23,14 @@ public class TestAzureFileRepository extends BaseFileRepositoryTest
 {
 	private static final String CONTAINER_NAME = "ax-filemanager-test";
 
-	private static CloudBlobClient cloudBlobClient;
+	private static BlobServiceClient blobServiceClient;
 
 	@BeforeAll
 	@SneakyThrows
 	static void createResource() {
-		if ( cloudBlobClient == null ) {
-			cloudBlobClient = AzureStorageHelper.azurite.storageAccount().createCloudBlobClient();
-			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
+		if ( blobServiceClient == null ) {
+			blobServiceClient = AzureStorageHelper.azurite.storageAccount();
+			blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).createIfNotExists();
 		}
 	}
 
@@ -41,7 +41,7 @@ public class TestAzureFileRepository extends BaseFileRepositoryTest
 
 		AzureFileRepository abs = AzureFileRepository.builder()
 		                                             .repositoryId( "azure-repo" )
-		                                             .blobClient( cloudBlobClient )
+		                                             .blobServiceClient( blobServiceClient )
 		                                             .containerName( CONTAINER_NAME )
 		                                             .build();
 		abs.setFileManager( fileManager );
@@ -51,8 +51,8 @@ public class TestAzureFileRepository extends BaseFileRepositoryTest
 	@AfterAll
 	@SneakyThrows
 	static void destroyResource() {
-		if ( cloudBlobClient != null ) {
-			cloudBlobClient.getContainerReference( CONTAINER_NAME ).deleteIfExists();
+		if ( blobServiceClient != null ) {
+			blobServiceClient.getBlobContainerClient( CONTAINER_NAME ).deleteIfExists();
 		}
 	}
 

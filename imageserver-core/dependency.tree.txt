@@ -140,7 +140,7 @@ com.foreach.across.modules:imageserver-core:jar:6.4-SNAPSHOT
 +- com.h2database:h2:jar:1.4.200:test
 +- com.mysql:mysql-connector-j:jar:8.0.33:test
 +- org.postgresql:postgresql:jar:42.3.8:compile
-|  \- org.checkerframework:checker-qual:jar:3.5.0:runtime
+|  \- org.checkerframework:checker-qual:jar:3.42.0:runtime
 +- com.oracle.database.jdbc:ojdbc8:jar:21.3.0.0:test
 +- com.microsoft.sqlserver:mssql-jdbc:jar:9.4.1.jre8:compile
 +- com.querydsl:querydsl-apt:jar:5.0.0:compile

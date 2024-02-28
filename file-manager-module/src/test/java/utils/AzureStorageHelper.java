@@ -1,31 +1,23 @@
 package utils;
 
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
-import lombok.experimental.UtilityClass;
+import com.azure.core.util.BinaryData;
+import com.azure.storage.blob.BlobServiceClient;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-@UtilityClass
+@Slf4j
 public class AzureStorageHelper
 {
-	public AzuriteContainer azurite = new AzuriteContainer();
+	public final static AzuriteContainer azurite = new AzuriteContainer();
 
 	static {
 		azurite.start();
 	}
 
-	public static void createFolder( CloudBlobClient cloudBlobClient, String containerName, String folderName ) {
+	public static void createFolder( BlobServiceClient blobServiceClient, String containerName, String folderName ) {
 		// create meta-data for your folder and set content-length to 0
-		try {
-			cloudBlobClient
-					.getContainerReference( containerName )
-					.getBlockBlobReference( folderName )
-					.uploadText( "" );
-		}
-		catch ( StorageException | IOException | URISyntaxException e ) {
-			e.printStackTrace();
-		}
+		blobServiceClient
+				.getBlobContainerClient( containerName )
+				.getBlobClient( folderName )
+				.upload( BinaryData.fromString( "" ) );
 	}
 }

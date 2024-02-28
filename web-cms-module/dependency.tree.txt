@@ -99,7 +99,7 @@ com.foreach.across.modules:web-cms-module:jar:6.4-SNAPSHOT
 +- com.mysql:mysql-connector-j:jar:8.0.33:test
 +- com.oracle.database.jdbc:ojdbc8:jar:21.3.0.0:test
 +- org.postgresql:postgresql:jar:42.3.8:test
-|  \- org.checkerframework:checker-qual:jar:3.5.0:test
+|  \- org.checkerframework:checker-qual:jar:3.42.0:test
 +- com.h2database:h2:jar:1.4.200:test
 +- com.microsoft.sqlserver:mssql-jdbc:jar:9.4.1.jre8:test
 +- com.foreach.across:across-test:jar:5.4-SNAPSHOT:test

@@ -1,14 +1,13 @@
 package com.foreach.across.modules.filemanager.services;
 
+import com.azure.core.util.BinaryData;
+import com.azure.storage.blob.BlobServiceClient;
 import com.foreach.across.modules.filemanager.business.*;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import utils.AzureStorageHelper;
 
 import java.io.IOException;
@@ -18,12 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
-@ExtendWith(SpringExtension.class)
 public class TestAzureFolderResource
 {
 	private static final String CONTAINER_NAME = "folder-resource-test";
 
-	private CloudBlobClient cloudBlobClient;
+	private BlobServiceClient blobServiceClient;
 	private FolderDescriptor descriptor;
 	private AzureFolderResource resource;
 	private String objectName;
@@ -36,12 +34,12 @@ public class TestAzureFolderResource
 	@BeforeEach
 	@SneakyThrows
 	void resetResource() {
-		if ( cloudBlobClient == null ) {
-			cloudBlobClient = AzureStorageHelper.azurite.storageAccount().createCloudBlobClient();
-			cloudBlobClient.getContainerReference( CONTAINER_NAME ).createIfNotExists();
+		if ( blobServiceClient == null ) {
+			blobServiceClient = AzureStorageHelper.azurite.storageAccount();
+			blobServiceClient.createBlobContainerIfNotExists( CONTAINER_NAME );
 		}
 
-		String parentObjectName = UUID.randomUUID().toString() + "/";
+		String parentObjectName = UUID.randomUUID() + "/";
 		objectName = parentObjectName + "456/";
 		descriptor = FolderDescriptor.of( "my-repo", "123/456" );
 		resource = folderResource( descriptor, objectName );
@@ -50,7 +48,7 @@ public class TestAzureFolderResource
 	@AfterEach
 	@SneakyThrows
 	void tearDown() {
-		cloudBlobClient.getContainerReference( CONTAINER_NAME ).deleteIfExists();
+		blobServiceClient.deleteBlobContainerIfExists( CONTAINER_NAME );
 	}
 
 	@Test
@@ -289,7 +287,7 @@ public class TestAzureFolderResource
 		assertThat( resource.delete( false ) ).isTrue();
 
 		assertThat( resource.exists() ).isTrue();
-		AzureStorageHelper.createFolder( cloudBlobClient, CONTAINER_NAME, objectName );
+		AzureStorageHelper.createFolder( blobServiceClient, CONTAINER_NAME, objectName );
 
 		createFileTree();
 		assertThat( resource.delete( false ) ).isTrue();
@@ -310,8 +308,10 @@ public class TestAzureFolderResource
 		childFileInChildFolder.resetBlobProperties();
 		assertThat( childFileInChildFolder.exists() ).isTrue();
 
-		AzureStorageHelper.createFolder( cloudBlobClient, CONTAINER_NAME, objectName );
-		assertThat( cloudBlobClient.getContainerReference( CONTAINER_NAME ).getBlockBlobReference( objectName ).exists() )
+		AzureStorageHelper.createFolder( blobServiceClient, CONTAINER_NAME, objectName );
+		assertThat( blobServiceClient.getBlobContainerClient( CONTAINER_NAME )
+		                             .getBlobClient( objectName )
+		                             .exists() )
 				.isTrue();
 
 		assertThat( resource.delete( true ) ).isTrue();
@@ -343,21 +343,21 @@ public class TestAzureFolderResource
 
 	@SneakyThrows
 	private void createFileTree() {
-		cloudBlobClient.getContainerReference( CONTAINER_NAME )
-		               .getBlockBlobReference( objectName + "childFile" )
-		               .uploadText( "dummy file" );
+		blobServiceClient.getBlobContainerClient( CONTAINER_NAME )
+		                 .getBlobClient( objectName + "childFile" )
+		                 .upload( BinaryData.fromString( "dummy file" ) );
 		childFile = fileResource( FileDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId(), "childFile" ), objectName + "childFile" );
 
 		assertThat( childFile.exists() ).isTrue();
 
-		AzureStorageHelper.createFolder( cloudBlobClient, CONTAINER_NAME, objectName + "childFolder/" );
+		AzureStorageHelper.createFolder( blobServiceClient, CONTAINER_NAME, objectName + "childFolder/" );
 		childFolder = folderResource( FolderDescriptor.of( descriptor.getRepositoryId(), descriptor.getFolderId() + "/childFolder" ),
 		                              objectName + "childFolder/" );
 		assertThat( childFolder.exists() ).isTrue();
 
-		cloudBlobClient.getContainerReference( CONTAINER_NAME )
-		               .getBlockBlobReference( objectName + "childFolder/childFileInChildFolder" )
-		               .uploadText( "" );
+		blobServiceClient.getBlobContainerClient( CONTAINER_NAME )
+		                 .getBlobClient( objectName + "childFolder/childFileInChildFolder" )
+		                 .upload( BinaryData.fromString( "" ) );
 		childFileInChildFolder = fileResource(
 				FileDescriptor.of( descriptor.getRepositoryId(), childFolder.getDescriptor().getFolderId(), "childFileInChildFolder" ),
 				objectName + "childFolder/childFileInChildFolder"
@@ -374,11 +374,11 @@ public class TestAzureFolderResource
 	}
 
 	private AzureFolderResource folderResource( FolderDescriptor descriptor, String objectName ) throws IOException {
-		return new AzureFolderResource( descriptor, cloudBlobClient, CONTAINER_NAME, objectName );
+		return new AzureFolderResource( descriptor, blobServiceClient, CONTAINER_NAME, objectName );
 	}
 
 	private AzureFileResource fileResource( FileDescriptor descriptor, String objectName ) throws IOException {
-		return new AzureFileResource( descriptor, cloudBlobClient, CONTAINER_NAME, objectName );
+		return new AzureFileResource( descriptor, blobServiceClient, CONTAINER_NAME, objectName );
 	}
 
 }

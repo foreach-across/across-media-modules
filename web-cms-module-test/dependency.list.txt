@@ -83,7 +83,7 @@ org.apache.xmlgraphics:xmlgraphics-commons:jar:1.4:compile
 org.assertj:assertj-core:jar:3.21.0:test
 org.atteo:evo-inflector:jar:1.2.2:compile
 org.attoparser:attoparser:jar:2.0.5.RELEASE:compile
-org.checkerframework:checker-qual:jar:3.5.0:runtime
+org.checkerframework:checker-qual:jar:3.42.0:runtime
 org.eclipse.jdt:ecj:jar:3.26.0:compile
 org.ghost4j:ghost4j:jar:1.0.1:compile
 org.glassfish.jaxb:jaxb-runtime:jar:2.3.8:compile

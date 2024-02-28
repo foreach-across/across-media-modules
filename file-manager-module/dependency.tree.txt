@@ -1,4 +1,44 @@
 com.foreach.across.modules:file-manager-module:jar:6.4-SNAPSHOT
++- com.azure:azure-storage-blob:jar:12.25.1:compile
+|  +- com.azure:azure-core:jar:1.45.1:compile
+|  |  +- com.azure:azure-json:jar:1.1.0:compile
+|  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.5:compile
+|  |  \- io.projectreactor:reactor-core:jar:3.4.29:compile
+|  |     \- org.reactivestreams:reactive-streams:jar:1.0.4:compile
+|  +- com.azure:azure-core-http-netty:jar:1.13.11:compile
+|  |  +- io.netty:netty-handler:jar:4.1.92.Final:compile
+|  |  |  +- io.netty:netty-resolver:jar:4.1.92.Final:compile
+|  |  |  \- io.netty:netty-transport:jar:4.1.92.Final:compile
+|  |  +- io.netty:netty-handler-proxy:jar:4.1.92.Final:compile
+|  |  |  \- io.netty:netty-codec-socks:jar:4.1.92.Final:compile
+|  |  +- io.netty:netty-buffer:jar:4.1.92.Final:compile
+|  |  +- io.netty:netty-codec:jar:4.1.92.Final:compile
+|  |  +- io.netty:netty-codec-http:jar:4.1.92.Final:compile
+|  |  +- io.netty:netty-codec-http2:jar:4.1.92.Final:compile
+|  |  +- io.netty:netty-transport-native-unix-common:jar:4.1.92.Final:compile
+|  |  +- io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.92.Final:compile
+|  |  |  \- io.netty:netty-transport-classes-epoll:jar:4.1.92.Final:compile
+|  |  +- io.netty:netty-transport-native-kqueue:jar:osx-x86_64:4.1.92.Final:compile
+|  |  |  \- io.netty:netty-transport-classes-kqueue:jar:4.1.92.Final:compile
+|  |  +- io.netty:netty-tcnative-boringssl-static:jar:2.0.61.Final:compile
+|  |  |  +- io.netty:netty-tcnative-classes:jar:2.0.61.Final:compile
+|  |  |  +- io.netty:netty-tcnative-boringssl-static:jar:linux-x86_64:2.0.61.Final:compile
+|  |  |  +- io.netty:netty-tcnative-boringssl-static:jar:linux-aarch_64:2.0.61.Final:compile
+|  |  |  +- io.netty:netty-tcnative-boringssl-static:jar:osx-x86_64:2.0.61.Final:compile
+|  |  |  +- io.netty:netty-tcnative-boringssl-static:jar:osx-aarch_64:2.0.61.Final:compile
+|  |  |  \- io.netty:netty-tcnative-boringssl-static:jar:windows-x86_64:2.0.61.Final:compile
+|  |  +- io.projectreactor.netty:reactor-netty-http:jar:1.0.32:compile
+|  |  |  +- io.netty:netty-resolver-dns:jar:4.1.92.Final:compile
+|  |  |  |  \- io.netty:netty-codec-dns:jar:4.1.92.Final:compile
+|  |  |  +- io.netty:netty-resolver-dns-native-macos:jar:osx-x86_64:4.1.92.Final:compile
+|  |  |  |  \- io.netty:netty-resolver-dns-classes-macos:jar:4.1.92.Final:compile
+|  |  |  \- io.projectreactor.netty:reactor-netty-core:jar:1.0.32:compile
+|  |  \- io.netty:netty-common:jar:4.1.92.Final:compile
+|  +- com.azure:azure-storage-common:jar:12.24.1:compile
+|  +- com.azure:azure-storage-internal-avro:jar:12.10.1:compile
+|  \- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:jar:2.13.5:compile
+|     +- org.codehaus.woodstox:stax2-api:jar:4.2.1:compile
+|     \- com.fasterxml.woodstox:woodstox-core:jar:6.4.0:compile
 +- com.foreach.across.modules:properties-module:jar:4.4-SNAPSHOT:compile
 |  \- com.foreach.libs:common-spring:jar:1.1:compile
 |     \- javax.mail:mail:jar:1.4.1:compile
@@ -38,7 +78,6 @@ com.foreach.across.modules:file-manager-module:jar:6.4-SNAPSHOT
 |  +- org.springframework.data:spring-data-commons:jar:2.6.10:compile
 |  +- com.fasterxml.jackson.core:jackson-core:jar:2.13.5:compile
 |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.5:compile
-|  |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.5:compile
 |  +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
 |  +- org.atteo:evo-inflector:jar:1.2.2:compile
 |  \- org.webjars:lodash:jar:4.17.4:compile
@@ -161,20 +200,12 @@ com.foreach.across.modules:file-manager-module:jar:6.4-SNAPSHOT
 |  +- org.springframework:spring-beans:jar:5.3.32:compile
 |  +- com.amazonaws:aws-java-sdk-ec2:jar:1.11.1034:compile
 |  \- com.amazonaws:aws-java-sdk-cloudformation:jar:1.11.1034:compile
-+- com.microsoft.azure:azure-storage:jar:8.6.6:compile
-|  \- com.microsoft.azure:azure-keyvault-core:jar:1.2.4:compile
-|     \- com.google.guava:guava:jar:23.2-jre:compile
-|        +- com.google.errorprone:error_prone_annotations:jar:2.0.18:compile
-|        +- com.google.j2objc:j2objc-annotations:jar:1.1:compile
-|        \- org.codehaus.mojo:animal-sniffer-annotations:jar:1.14:compile
 +- org.springframework.boot:spring-boot-starter-integration:jar:2.6.15:compile
 |  +- org.springframework.boot:spring-boot-starter-aop:jar:2.6.15:compile
 |  |  \- org.aspectj:aspectjweaver:jar:1.9.7:compile
 |  \- org.springframework.integration:spring-integration-core:jar:5.5.18:compile
 |     +- org.springframework:spring-messaging:jar:5.3.32:compile
-|     +- org.springframework.retry:spring-retry:jar:1.3.4:compile
-|     \- io.projectreactor:reactor-core:jar:3.4.29:compile
-|        \- org.reactivestreams:reactive-streams:jar:1.0.4:compile
+|     \- org.springframework.retry:spring-retry:jar:1.3.4:compile
 +- org.springframework.integration:spring-integration-ftp:jar:5.5.18:compile
 |  +- org.springframework.integration:spring-integration-file:jar:5.5.18:compile
 |  +- commons-net:commons-net:jar:3.9.0:compile
@@ -184,7 +215,7 @@ com.foreach.across.modules:file-manager-module:jar:6.4-SNAPSHOT
 +- com.mysql:mysql-connector-j:jar:8.0.33:test
 +- com.oracle.database.jdbc:ojdbc8:jar:21.3.0.0:test
 +- org.postgresql:postgresql:jar:42.3.8:test
-|  \- org.checkerframework:checker-qual:jar:3.5.0:test
+|  \- org.checkerframework:checker-qual:jar:3.42.0:test
 +- com.h2database:h2:jar:1.4.200:test
 +- com.microsoft.sqlserver:mssql-jdbc:jar:9.4.1.jre8:test
 +- org.testcontainers:localstack:jar:1.19.3:test
