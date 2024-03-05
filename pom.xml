@@ -64,9 +64,9 @@
 
 	<description>
 		Across standard module that provides a set of generic services for accessing files across different types
-		of file repositories (eg. disk, remote storage...).
+		of file repositories (e.g. disk, remote storage...).
 	</description>
-	<url>https://across.dev/modules/across-media-modules</url>
+	<url>https://foreach-across.github.io/modules/#across-media-modules</url>
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
@@ -333,6 +333,6 @@
 	-->
 
 	<scm>
-		<url>https://github.com/foreachos/across-media-modules</url>
+		<url>https://github.com/foreach-across/across-media-modules</url>
 	</scm>
 </project>

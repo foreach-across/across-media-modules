@@ -20,8 +20,8 @@ In order to start the test application in development mode with support for one 
 ### License
 Licensed under version 2.0 of the [Apache License][].
 
-[module page]: https://across.dev/modules/filemanagermodule
-[contributor guidelines]: https://across.dev/contributing
+[module page]: https://foreach-across.github.io/modules/file-manager-module
+[contributor guidelines]: https://foreach-across.github.io/contributing
 [Maven]: http://maven.apache.org
 [Apache License]: http://www.apache.org/licenses/LICENSE-2.0
 [Localstack]: https://github.com/localstack/localstack
