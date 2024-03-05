@@ -1,11 +1,11 @@
 com.foreach.across.modules:file-manager-module:jar:6.4-SNAPSHOT
-+- com.azure:azure-storage-blob:jar:12.25.1:compile
-|  +- com.azure:azure-core:jar:1.45.1:compile
++- com.azure:azure-storage-blob:jar:12.25.2:compile
+|  +- com.azure:azure-core:jar:1.46.0:compile
 |  |  +- com.azure:azure-json:jar:1.1.0:compile
 |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.5:compile
 |  |  \- io.projectreactor:reactor-core:jar:3.4.29:compile
 |  |     \- org.reactivestreams:reactive-streams:jar:1.0.4:compile
-|  +- com.azure:azure-core-http-netty:jar:1.13.11:compile
+|  +- com.azure:azure-core-http-netty:jar:1.14.0:compile
 |  |  +- io.netty:netty-handler:jar:4.1.92.Final:compile
 |  |  |  +- io.netty:netty-resolver:jar:4.1.92.Final:compile
 |  |  |  \- io.netty:netty-transport:jar:4.1.92.Final:compile
@@ -34,8 +34,8 @@ com.foreach.across.modules:file-manager-module:jar:6.4-SNAPSHOT
 |  |  |  |  \- io.netty:netty-resolver-dns-classes-macos:jar:4.1.92.Final:compile
 |  |  |  \- io.projectreactor.netty:reactor-netty-core:jar:1.0.32:compile
 |  |  \- io.netty:netty-common:jar:4.1.92.Final:compile
-|  +- com.azure:azure-storage-common:jar:12.24.1:compile
-|  +- com.azure:azure-storage-internal-avro:jar:12.10.1:compile
+|  +- com.azure:azure-storage-common:jar:12.24.2:compile
+|  +- com.azure:azure-storage-internal-avro:jar:12.10.2:compile
 |  \- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:jar:2.13.5:compile
 |     +- org.codehaus.woodstox:stax2-api:jar:4.2.1:compile
 |     \- com.fasterxml.woodstox:woodstox-core:jar:6.4.0:compile

@@ -7,12 +7,12 @@ com.amazonaws:aws-java-sdk-ec2:jar:1.11.1034:compile
 com.amazonaws:aws-java-sdk-kms:jar:1.11.1034:compile
 com.amazonaws:aws-java-sdk-s3:jar:1.11.1034:compile
 com.amazonaws:jmespath-java:jar:1.11.1034:compile
-com.azure:azure-core-http-netty:jar:1.13.11:compile
-com.azure:azure-core:jar:1.45.1:compile
+com.azure:azure-core-http-netty:jar:1.14.0:compile
+com.azure:azure-core:jar:1.46.0:compile
 com.azure:azure-json:jar:1.1.0:compile
-com.azure:azure-storage-blob:jar:12.25.1:compile
-com.azure:azure-storage-common:jar:12.24.1:compile
-com.azure:azure-storage-internal-avro:jar:12.10.1:compile
+com.azure:azure-storage-blob:jar:12.25.2:compile
+com.azure:azure-storage-common:jar:12.24.2:compile
+com.azure:azure-storage-internal-avro:jar:12.10.2:compile
 com.fasterxml.jackson.core:jackson-annotations:jar:2.13.5:compile
 com.fasterxml.jackson.core:jackson-core:jar:2.13.5:compile
 com.fasterxml.jackson.core:jackson-databind:jar:2.13.5:compile
