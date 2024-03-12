@@ -5,6 +5,6 @@ com.querydsl:querydsl-codegen:jar:5.0.0:compile
 com.querydsl:querydsl-core:jar:5.0.0:compile
 io.github.classgraph:classgraph:jar:4.8.108:compile
 javax.inject:javax.inject:jar:1:compile
-org.assertj:assertj-core:jar:3.21.0:test
+org.assertj:assertj-core:jar:3.22.0:test
 org.eclipse.jdt:ecj:jar:3.26.0:compile
-org.projectlombok:lombok:jar:1.18.26:provided
+org.projectlombok:lombok:jar:1.18.30:provided

@@ -1,4 +1,4 @@
-com.foreach.across.modules:imageserver-client:jar:6.4-SNAPSHOT
+com.foreach.across.modules:imageserver-client:jar:6.5-SNAPSHOT
 +- org.apache.commons:commons-lang3:jar:3.12.0:compile
 +- org.slf4j:slf4j-api:jar:1.7.36:compile
 +- org.springframework:spring-web:jar:5.3.32:compile
@@ -10,7 +10,7 @@ com.foreach.across.modules:imageserver-client:jar:6.4-SNAPSHOT
 +- org.apache.httpcomponents:httpclient:jar:4.5.14:test
 |  +- org.apache.httpcomponents:httpcore:jar:4.4.16:test
 |  \- commons-codec:commons-codec:jar:1.15:test
-+- org.assertj:assertj-core:jar:3.21.0:test
++- org.assertj:assertj-core:jar:3.22.0:test
 +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.5:compile
 +- org.hamcrest:hamcrest-core:jar:2.2:test
 |  \- org.hamcrest:hamcrest:jar:2.2:test
@@ -18,9 +18,9 @@ com.foreach.across.modules:imageserver-client:jar:6.4-SNAPSHOT
 |  +- org.opentest4j:opentest4j:jar:1.2.0:test
 |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
 |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-+- org.mockito:mockito-core:jar:4.0.0:test
-|  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
-|  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
++- org.mockito:mockito-core:jar:4.5.1:test
+|  +- net.bytebuddy:byte-buddy:jar:1.12.23:test
+|  +- net.bytebuddy:byte-buddy-agent:jar:1.12.23:test
 |  \- org.objenesis:objenesis:jar:3.2:test
 +- org.springframework:spring-test:jar:5.3.32:test
 +- com.querydsl:querydsl-apt:jar:5.0.0:compile
@@ -31,4 +31,4 @@ com.foreach.across.modules:imageserver-client:jar:6.4-SNAPSHOT
 |     |  \- org.eclipse.jdt:ecj:jar:3.26.0:compile
 |     +- javax.inject:javax.inject:jar:1:compile
 |     \- io.github.classgraph:classgraph:jar:4.8.108:compile
-\- org.projectlombok:lombok:jar:1.18.26:provided
+\- org.projectlombok:lombok:jar:1.18.30:provided
