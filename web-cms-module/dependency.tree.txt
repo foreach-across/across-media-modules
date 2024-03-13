@@ -1,5 +1,5 @@
-com.foreach.across.modules:web-cms-module:jar:6.4-SNAPSHOT
-+- com.foreach.across:across-web:jar:5.4-SNAPSHOT:compile
+com.foreach.across.modules:web-cms-module:jar:6.4.2
++- com.foreach.across:across-web:jar:5.4.2:compile
 |  +- org.springframework.boot:spring-boot-starter-web:jar:2.6.15:compile
 |  |  +- org.springframework.boot:spring-boot-starter-json:jar:2.6.15:compile
 |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.5:compile
@@ -14,7 +14,7 @@ com.foreach.across.modules:web-cms-module:jar:6.4-SNAPSHOT
 |  |  |  \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
 |  |  \- org.slf4j:slf4j-api:jar:1.7.36:compile
 |  +- org.thymeleaf.extras:thymeleaf-extras-java8time:jar:3.0.4.RELEASE:compile
-|  +- com.foreach.across:across-core:jar:5.4-SNAPSHOT:compile
+|  +- com.foreach.across:across-core:jar:5.4.2:compile
 |  |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
 |  |  +- org.springframework:spring-jdbc:jar:5.3.32:compile
 |  |  +- ch.qos.logback:logback-classic:jar:1.2.12:compile
@@ -32,7 +32,7 @@ com.foreach.across.modules:web-cms-module:jar:6.4-SNAPSHOT
 |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.15:compile
 |  |  \- org.springframework.boot:spring-boot:jar:2.6.15:compile
 |  \- org.yaml:snakeyaml:jar:1.29:compile
-+- com.foreach.across.modules:across-hibernate-module:jar:4.4-SNAPSHOT:compile
++- com.foreach.across.modules:across-hibernate-module:jar:4.4.2:compile
 |  +- org.springframework.data:spring-data-jpa:jar:2.6.10:compile
 |  |  \- org.springframework:spring-tx:jar:5.3.32:compile
 |  +- org.springframework:spring-orm:jar:5.3.32:compile
@@ -57,20 +57,20 @@ com.foreach.across.modules:web-cms-module:jar:6.4-SNAPSHOT
 |  +- com.querydsl:querydsl-jpa:jar:5.0.0:compile
 |  |  \- com.querydsl:querydsl-core:jar:5.0.0:compile
 |  |     \- com.mysema.commons:mysema-commons-lang:jar:0.2.4:compile
-|  \- com.foreach.across:across-autoconfigure:jar:2.4-SNAPSHOT:compile
+|  \- com.foreach.across:across-autoconfigure:jar:2.4.2:compile
 +- org.springframework:spring-context-support:jar:5.3.32:compile
 |  +- org.springframework:spring-beans:jar:5.3.32:compile
 |  +- org.springframework:spring-context:jar:5.3.32:compile
 |  \- org.springframework:spring-core:jar:5.3.32:compile
 |     \- org.springframework:spring-jcl:jar:5.3.32:compile
-+- com.foreach.across.modules:admin-web-module:jar:4.4-SNAPSHOT:compile
-|  +- com.foreach.across.modules:spring-security-module:jar:4.4-SNAPSHOT:compile
++- com.foreach.across.modules:admin-web-module:jar:4.4.2:compile
+|  +- com.foreach.across.modules:spring-security-module:jar:4.4.2:compile
 |  |  +- org.springframework.security:spring-security-core:jar:5.6.12:compile
 |  |  |  \- org.springframework.security:spring-security-crypto:jar:5.6.12:compile
 |  |  +- org.springframework.security:spring-security-web:jar:5.6.12:compile
 |  |  \- org.springframework.security:spring-security-config:jar:5.6.12:compile
-|  +- com.foreach.across.modules:bootstrap-ui-module:jar:4.4-SNAPSHOT:compile
-|  |  +- com.foreach.across.modules:ax-bootstrap-4-utilities:jar:4.4-SNAPSHOT:compile
+|  +- com.foreach.across.modules:bootstrap-ui-module:jar:4.4.2:compile
+|  |  +- com.foreach.across.modules:ax-bootstrap-4-utilities:jar:4.4.2:compile
 |  |  +- org.webjars:jquery:jar:3.4.1:compile
 |  |  +- org.webjars:bootstrap:jar:4.3.1:compile
 |  |  |  \- org.webjars:popper.js:jar:1.14.3:compile
@@ -88,7 +88,7 @@ com.foreach.across.modules:web-cms-module:jar:6.4-SNAPSHOT
 |  |  \- org.webjars:font-awesome:jar:5.10.1:compile
 |  +- org.thymeleaf.extras:thymeleaf-extras-springsecurity5:jar:3.0.5.RELEASE:compile
 |  \- org.webjars.bower:toastr:jar:2.1.2:compile
-+- com.foreach.across.modules:entity-module:jar:4.4-SNAPSHOT:compile
++- com.foreach.across.modules:entity-module:jar:4.4.2:compile
 |  +- org.hibernate.validator:hibernate-validator:jar:6.2.5.Final:compile
 |  |  \- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
 |  +- org.springframework.data:spring-data-commons:jar:2.6.10:compile
@@ -102,7 +102,7 @@ com.foreach.across.modules:web-cms-module:jar:6.4-SNAPSHOT
 |  \- org.checkerframework:checker-qual:jar:3.42.0:test
 +- com.h2database:h2:jar:1.4.200:test
 +- com.microsoft.sqlserver:mssql-jdbc:jar:9.4.1.jre8:test
-+- com.foreach.across:across-test:jar:5.4-SNAPSHOT:test
++- com.foreach.across:across-test:jar:5.4.2:test
 |  +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
 |  |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
 |  |  +- junit:junit:jar:4.13.2:test
@@ -135,7 +135,7 @@ com.foreach.across.modules:web-cms-module:jar:6.4-SNAPSHOT
 |  +- org.testcontainers:postgresql:jar:1.19.3:test
 |  +- org.testcontainers:mssqlserver:jar:1.19.3:test
 |  \- org.testcontainers:oracle-xe:jar:1.19.3:test
-+- com.foreach.across.modules:imageserver-client:jar:6.4-SNAPSHOT:compile
++- com.foreach.across.modules:imageserver-client:jar:6.4.2:compile
 |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.5:compile
 +- com.cloudinary:cloudinary-http44:jar:1.26.0:compile
 |  +- com.cloudinary:cloudinary-core:jar:1.26.0:compile

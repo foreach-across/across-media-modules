@@ -1,5 +1,5 @@
-com.foreach.across.modules:file-manager-module-no-hibernate-module:jar:6.4-SNAPSHOT
-+- com.foreach.across.modules:file-manager-module:jar:6.4-SNAPSHOT:compile
+com.foreach.across.modules:file-manager-module-no-hibernate-module:jar:6.4.2
++- com.foreach.across.modules:file-manager-module:jar:6.4.2:compile
 |  +- org.hibernate.validator:hibernate-validator:jar:6.2.5.Final:compile
 |  |  +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
 |  |  +- org.jboss.logging:jboss-logging:jar:3.4.3.Final:compile
@@ -8,7 +8,7 @@ com.foreach.across.modules:file-manager-module-no-hibernate-module:jar:6.4-SNAPS
 |  |  \- org.apache.sshd:sshd-core:jar:2.10.0:compile
 |  |     \- org.apache.sshd:sshd-common:jar:2.10.0:compile
 |  \- commons-io:commons-io:jar:2.11.0:compile
-+- com.foreach.across:across-core:jar:5.4-SNAPSHOT:compile
++- com.foreach.across:across-core:jar:5.4.2:compile
 |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.15:compile
 |  +- org.yaml:snakeyaml:jar:1.29:compile
 |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
@@ -31,7 +31,7 @@ com.foreach.across.modules:file-manager-module-no-hibernate-module:jar:6.4-SNAPS
 |     \- com.opencsv:opencsv:jar:5.6:compile
 |        +- org.apache.commons:commons-text:jar:1.9:compile
 |        \- org.apache.commons:commons-collections4:jar:4.4:compile
-+- com.foreach.across:across-web:jar:5.4-SNAPSHOT:compile
++- com.foreach.across:across-web:jar:5.4.2:compile
 |  +- org.springframework.boot:spring-boot-starter-web:jar:2.6.15:compile
 |  |  +- org.springframework.boot:spring-boot-starter-json:jar:2.6.15:compile
 |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.5:compile
@@ -63,7 +63,7 @@ com.foreach.across.modules:file-manager-module-no-hibernate-module:jar:6.4-SNAPS
 +- com.h2database:h2:jar:1.4.200:compile
 +- org.springframework.boot:spring-boot-devtools:jar:2.6.15:compile
 |  \- org.springframework.boot:spring-boot:jar:2.6.15:compile
-+- com.foreach.across:across-test:jar:5.4-SNAPSHOT:compile
++- com.foreach.across:across-test:jar:5.4.2:compile
 |  +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:compile
 |  |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:compile
 |  |  |  +- org.opentest4j:opentest4j:jar:1.2.0:compile
