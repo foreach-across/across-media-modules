@@ -54,9 +54,10 @@ class ITWebCmsModule
 
 	@Test
 	void adminWebWithoutEntityModule() {
-		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME,
-		                                            AdminWebModule.NAME )
-		                                  .build()
+		try (AcrossTestContext ctx = web()
+				.register( FakeWebSecurityConfiguration.class )
+				.modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME, AdminWebModule.NAME )
+				.build()
 		) {
 			assertTrue( ctx.contextInfo().hasModule( WebCmsModule.NAME ) );
 		}
@@ -64,9 +65,10 @@ class ITWebCmsModule
 
 	@Test
 	void entityAndAdminWebModule() {
-		try (AcrossTestContext ctx = web().modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME,
-		                                            AdminWebModule.NAME, EntityModule.NAME )
-		                                  .build()
+		try (AcrossTestContext ctx = web()
+				.register( FakeWebSecurityConfiguration.class )
+				.modules( WebCmsModule.NAME, AcrossHibernateJpaModule.NAME, AdminWebModule.NAME, EntityModule.NAME )
+				.build()
 		) {
 			assertTrue( ctx.contextInfo().hasModule( WebCmsModule.NAME ) );
 		}

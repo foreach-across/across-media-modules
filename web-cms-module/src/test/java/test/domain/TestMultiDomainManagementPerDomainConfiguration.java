@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.stream.Stream;
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @author Arne Vandamme
  * @since 0.0.3
  */
+@EnableWebSecurity
 @ExtendWith(SpringExtension.class)
 @AcrossWebAppConfiguration
 public class TestMultiDomainManagementPerDomainConfiguration extends AbstractMultiDomainTest
