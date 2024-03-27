@@ -1,4 +1,4 @@
-com.foreach.across.modules:across-media-modules:pom:6.4.2
+com.foreach.across.modules:across-media-modules:pom:dev-SNAPSHOT
 +- com.querydsl:querydsl-apt:jar:5.0.0:compile
 |  \- com.querydsl:querydsl-codegen:jar:5.0.0:compile
 |     +- com.querydsl:querydsl-core:jar:5.0.0:compile

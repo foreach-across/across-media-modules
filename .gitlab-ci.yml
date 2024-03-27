@@ -9,6 +9,12 @@ include:
       - '/gitlab-ci/deploy.gitlab-ci.yml'
 
 variables:
+  ACROSS_FRAMEWORK_VERSION: 5.4-SNAPSHOT
+  ACROSS_AUTOCONFIGURE_VERSION: 2.4-SNAPSHOT
+  ACROSS_BASE_MODULES_VERSION: 4.4-SNAPSHOT
+  ACROSS_ENTITY_ADMIN_MODULES_VERSION: 4.4-SNAPSHOT
+  ACROSS_USER_AUTH_MODULES_VERSION: 4.4-SNAPSHOT
+  REVISION: 6.4-SNAPSHOT
   NODEJS_DOCKER_IMAGE_VERSION: 10
 
 .frontend:
@@ -31,12 +37,14 @@ frontend:file-manager-module:
 
 .verify:
   before_script:
+    - if [[ -f ci-before.sh ]]; then ./ci-before.sh; fi
     - apt-get update
     - apt-get install -y ghostscript graphicsmagick # docker.io
     #- docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
 
 .itest:
   before_script:
+    - if [[ -f ci-before.sh ]]; then ./ci-before.sh; fi
     - apt-get update
     - apt-get install -y ghostscript graphicsmagick # docker.io
     #- docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
