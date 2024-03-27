@@ -38,7 +38,6 @@ frontend:file-manager-module:
 .verify:
   before_script:
     - if [[ -f ci-before.sh ]]; then ./ci-before.sh; fi
-    - git diff
     - apt-get update
     - apt-get install -y ghostscript graphicsmagick # docker.io
     #- docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
@@ -46,7 +45,6 @@ frontend:file-manager-module:
 .itest:
   before_script:
     - if [[ -f ci-before.sh ]]; then ./ci-before.sh; fi
-    - git diff
     - apt-get update
     - apt-get install -y ghostscript graphicsmagick # docker.io
     #- docker login -u $CI_DEPENDENCY_PROXY_USER -p $CI_DEPENDENCY_PROXY_PASSWORD $CI_DEPENDENCY_PROXY_SERVER
