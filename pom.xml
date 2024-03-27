@@ -43,7 +43,7 @@
 		<repository>
 			<id>across</id>
 			<name>Across Repository</name>
-			<url>https://repository.foreach.be/nexus/repository/public/</url>
+			<url>https://repository.antwerpen.io-external.com/nexus/repository/public/</url>
 		</repository>
 	</repositories>
 
