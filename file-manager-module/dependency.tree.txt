@@ -71,10 +71,10 @@ com.foreach.across.modules:file-manager-module:jar:dev-SNAPSHOT
 |  \- com.foreach.across:across-autoconfigure:jar:dev-SNAPSHOT:compile
 +- com.foreach.across.modules:entity-module:jar:dev-SNAPSHOT:compile
 |  +- com.foreach.across.modules:spring-security-module:jar:dev-SNAPSHOT:compile
-|  |  +- org.springframework.security:spring-security-core:jar:5.7.11:compile
-|  |  |  \- org.springframework.security:spring-security-crypto:jar:5.7.11:compile
-|  |  +- org.springframework.security:spring-security-web:jar:5.7.11:compile
-|  |  \- org.springframework.security:spring-security-config:jar:5.7.11:compile
+|  |  +- org.springframework.security:spring-security-core:jar:5.8.11:compile
+|  |  |  \- org.springframework.security:spring-security-crypto:jar:5.8.11:compile
+|  |  +- org.springframework.security:spring-security-web:jar:5.8.11:compile
+|  |  \- org.springframework.security:spring-security-config:jar:5.8.11:compile
 |  +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
 |  +- com.fasterxml.jackson.core:jackson-core:jar:2.13.5:compile
 |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.5:compile

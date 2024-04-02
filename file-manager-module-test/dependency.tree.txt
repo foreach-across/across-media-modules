@@ -89,10 +89,10 @@ com.foreach.across.modules:file-manager-module-test:jar:dev-SNAPSHOT
 |  \- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.13.5:compile
 +- com.foreach.across.modules:entity-module:jar:dev-SNAPSHOT:compile
 |  +- com.foreach.across.modules:spring-security-module:jar:dev-SNAPSHOT:compile
-|  |  +- org.springframework.security:spring-security-core:jar:5.7.11:compile
-|  |  |  \- org.springframework.security:spring-security-crypto:jar:5.7.11:compile
-|  |  +- org.springframework.security:spring-security-web:jar:5.7.11:compile
-|  |  \- org.springframework.security:spring-security-config:jar:5.7.11:compile
+|  |  +- org.springframework.security:spring-security-core:jar:5.8.11:compile
+|  |  |  \- org.springframework.security:spring-security-crypto:jar:5.8.11:compile
+|  |  +- org.springframework.security:spring-security-web:jar:5.8.11:compile
+|  |  \- org.springframework.security:spring-security-config:jar:5.8.11:compile
 |  +- org.springframework.data:spring-data-commons:jar:2.7.18:compile
 |  +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
 |  +- org.atteo:evo-inflector:jar:1.2.2:compile
