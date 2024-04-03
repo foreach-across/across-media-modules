@@ -56,6 +56,7 @@
 		<across-base-modules.version>dev-SNAPSHOT</across-base-modules.version>
 		<across-entity-admin-modules.version>dev-SNAPSHOT</across-entity-admin-modules.version>
 		<across-user-auth-modules.version>dev-SNAPSHOT</across-user-auth-modules.version>
+		<apache-sshd.version>2.12.1</apache-sshd.version>
 		<webjars.bootbox>5.3.2</webjars.bootbox>
 		<webjars.codemirror>5.44.0</webjars.codemirror>
 		<webjars.lodash>4.17.4</webjars.lodash>
@@ -227,6 +228,27 @@
 				https://github.com/spring-projects/spring-boot/commit/3325709a78d15511a35691fef87fa79329bfb04b
 				-->
 				<version>5.12.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.sshd</groupId>
+				<artifactId>sshd-common</artifactId>
+				<version>${apache-sshd.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.sshd</groupId>
+				<artifactId>sshd-core</artifactId>
+				<version>${apache-sshd.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.sshd</groupId>
+				<artifactId>sshd-osgi</artifactId>
+				<version>${apache-sshd.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.sshd</groupId>
+				<artifactId>sshd-sftp</artifactId>
+				<version>${apache-sshd.version}</version>
 			</dependency>
 
 			<dependency>

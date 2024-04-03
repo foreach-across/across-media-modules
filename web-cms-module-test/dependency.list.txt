@@ -73,9 +73,9 @@ org.apache.httpcomponents:httpcore:jar:4.4.16:compile
 org.apache.httpcomponents:httpmime:jar:4.5.14:compile
 org.apache.logging.log4j:log4j-api:jar:2.17.2:compile
 org.apache.logging.log4j:log4j-to-slf4j:jar:2.17.2:compile
-org.apache.sshd:sshd-common:jar:2.10.0:compile
-org.apache.sshd:sshd-core:jar:2.10.0:compile
-org.apache.sshd:sshd-sftp:jar:2.10.0:compile
+org.apache.sshd:sshd-common:jar:2.12.1:compile
+org.apache.sshd:sshd-core:jar:2.12.1:compile
+org.apache.sshd:sshd-sftp:jar:2.12.1:compile
 org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.86:compile
 org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.86:compile
 org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.86:compile

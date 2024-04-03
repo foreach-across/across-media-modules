@@ -98,9 +98,9 @@ com.foreach.across.modules:web-cms-module-test:jar:dev-SNAPSHOT
 |  \- org.springframework.boot:spring-boot-autoconfigure:jar:2.7.18:compile
 +- com.foreach.across.modules:imageserver-core:jar:dev-SNAPSHOT:compile
 |  +- com.foreach.across.modules:file-manager-module:jar:dev-SNAPSHOT:compile
-|  |  \- org.apache.sshd:sshd-sftp:jar:2.10.0:compile
-|  |     \- org.apache.sshd:sshd-core:jar:2.10.0:compile
-|  |        \- org.apache.sshd:sshd-common:jar:2.10.0:compile
+|  |  \- org.apache.sshd:sshd-sftp:jar:2.12.1:compile
+|  |     \- org.apache.sshd:sshd-core:jar:2.12.1:compile
+|  |        \- org.apache.sshd:sshd-common:jar:2.12.1:compile
 |  +- com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
 |  |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
 |  |  +- ch.qos.logback:logback-classic:jar:1.2.12:compile

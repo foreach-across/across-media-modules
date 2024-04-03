@@ -181,9 +181,9 @@ com.foreach.across.modules:file-manager-module:jar:dev-SNAPSHOT
 +- org.apache.ftpserver:ftpserver-core:jar:1.2.0:test
 |  +- org.apache.ftpserver:ftplet-api:jar:1.2.0:test
 |  \- org.apache.mina:mina-core:jar:2.1.6:test
-+- org.apache.sshd:sshd-core:jar:2.10.0:test
-|  \- org.apache.sshd:sshd-common:jar:2.10.0:test
-+- org.apache.sshd:sshd-sftp:jar:2.10.0:compile
++- org.apache.sshd:sshd-core:jar:2.12.1:test
+|  \- org.apache.sshd:sshd-common:jar:2.12.1:test
++- org.apache.sshd:sshd-sftp:jar:2.12.1:compile
 +- commons-io:commons-io:jar:2.11.0:compile
 +- org.springframework.boot:spring-boot-configuration-processor:jar:2.7.18:compile
 +- com.amazonaws:aws-java-sdk-s3:jar:1.11.1034:compile
