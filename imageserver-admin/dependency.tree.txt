@@ -97,16 +97,16 @@ com.foreach.across.modules:imageserver-admin:jar:dev-SNAPSHOT
 |  +- org.apache.commons:commons-collections4:jar:4.4:compile
 |  \- org.aspectj:aspectjrt:jar:1.9.7:compile
 +- com.foreach.across.modules:spring-security-module:jar:dev-SNAPSHOT:compile
-|  +- org.springframework.security:spring-security-core:jar:5.7.11:compile
-|  |  +- org.springframework.security:spring-security-crypto:jar:5.7.11:compile
+|  +- org.springframework.security:spring-security-core:jar:5.8.11:compile
+|  |  +- org.springframework.security:spring-security-crypto:jar:5.8.11:compile
 |  |  +- org.springframework:spring-beans:jar:5.3.33:compile
 |  |  +- org.springframework:spring-context:jar:5.3.33:compile
 |  |  +- org.springframework:spring-core:jar:5.3.33:compile
 |  |  |  \- org.springframework:spring-jcl:jar:5.3.33:compile
 |  |  \- org.springframework:spring-expression:jar:5.3.33:compile
-|  +- org.springframework.security:spring-security-web:jar:5.7.11:compile
+|  +- org.springframework.security:spring-security-web:jar:5.8.11:compile
 |  |  \- org.springframework:spring-web:jar:5.3.33:compile
-|  \- org.springframework.security:spring-security-config:jar:5.7.11:compile
+|  \- org.springframework.security:spring-security-config:jar:5.8.11:compile
 +- com.querydsl:querydsl-apt:jar:5.0.0:compile
 |  \- com.querydsl:querydsl-codegen:jar:5.0.0:compile
 |     +- com.querydsl:querydsl-core:jar:5.0.0:compile

@@ -88,10 +88,10 @@ com.foreach.across.modules:imageserver-test-embedded:jar:dev-SNAPSHOT
 |  |  +- org.apache.commons:commons-collections4:jar:4.4:compile
 |  |  \- org.aspectj:aspectjrt:jar:1.9.7:compile
 |  \- com.foreach.across.modules:spring-security-module:jar:dev-SNAPSHOT:compile
-|     +- org.springframework.security:spring-security-core:jar:5.7.11:compile
-|     |  \- org.springframework.security:spring-security-crypto:jar:5.7.11:compile
-|     +- org.springframework.security:spring-security-web:jar:5.7.11:compile
-|     \- org.springframework.security:spring-security-config:jar:5.7.11:compile
+|     +- org.springframework.security:spring-security-core:jar:5.8.11:compile
+|     |  \- org.springframework.security:spring-security-crypto:jar:5.8.11:compile
+|     +- org.springframework.security:spring-security-web:jar:5.8.11:compile
+|     \- org.springframework.security:spring-security-config:jar:5.8.11:compile
 +- com.foreach.libs:common-web:jar:1.1:compile
 |  +- com.foreach.libs:common-spring:jar:1.1:compile
 |  |  \- javax.mail:mail:jar:1.4.1:compile
