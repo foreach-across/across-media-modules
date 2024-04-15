@@ -9,7 +9,7 @@
     <remote-repository>
       <option name="id" value="across" />
       <option name="name" value="Across Repository" />
-      <option name="url" value="https://repository.foreach.be/nexus/repository/public/" />
+      <option name="url" value="https://repository.antwerpen.io-external.com/nexus/repository/public/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
