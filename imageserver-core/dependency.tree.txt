@@ -18,21 +18,21 @@ com.foreach.across.modules:imageserver-core:jar:dev-SNAPSHOT
 |  |  \- org.springframework.boot:spring-boot:jar:2.7.18:compile
 |  +- org.yaml:snakeyaml:jar:1.30:compile
 |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
-|  +- org.springframework:spring-context:jar:5.3.33:compile
-|  |  +- org.springframework:spring-beans:jar:5.3.33:compile
-|  |  \- org.springframework:spring-expression:jar:5.3.33:compile
-|  +- org.springframework:spring-jdbc:jar:5.3.33:compile
-|  |  \- org.springframework:spring-tx:jar:5.3.33:compile
-|  +- ch.qos.logback:logback-classic:jar:1.2.12:compile
-|  |  \- ch.qos.logback:logback-core:jar:1.2.12:compile
+|  +- org.springframework:spring-context:jar:5.3.34:compile
+|  |  +- org.springframework:spring-beans:jar:5.3.34:compile
+|  |  \- org.springframework:spring-expression:jar:5.3.34:compile
+|  +- org.springframework:spring-jdbc:jar:5.3.34:compile
+|  |  \- org.springframework:spring-tx:jar:5.3.34:compile
+|  +- ch.qos.logback:logback-classic:jar:1.2.13:compile
+|  |  \- ch.qos.logback:logback-core:jar:1.2.13:compile
 |  +- org.slf4j:slf4j-api:jar:1.7.36:compile
 |  +- org.slf4j:jcl-over-slf4j:jar:1.7.36:compile
 |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
-|  \- org.liquibase:liquibase-core:jar:4.17.0:compile
-|     +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
-|     \- com.opencsv:opencsv:jar:5.6:compile
-|        +- org.apache.commons:commons-text:jar:1.9:compile
-|        \- org.apache.commons:commons-collections4:jar:4.4:compile
+|  \- org.liquibase:liquibase-core:jar:4.27.0:compile
+|     +- com.opencsv:opencsv:jar:5.9:compile
+|     +- org.apache.commons:commons-text:jar:1.11.0:compile
+|     +- org.apache.commons:commons-collections4:jar:4.4:compile
+|     \- javax.xml.bind:jaxb-api:jar:2.3.1:compile
 +- com.foreach.across:across-web:jar:dev-SNAPSHOT:compile
 |  +- org.springframework.boot:spring-boot-starter-web:jar:2.7.18:compile
 |  |  +- org.springframework.boot:spring-boot-starter:jar:2.7.18:compile
@@ -45,25 +45,25 @@ com.foreach.across.modules:imageserver-core:jar:dev-SNAPSHOT
 |  |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.5:compile
 |  |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.13.5:compile
 |  |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:2.7.18:compile
-|  |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.86:compile
-|  |  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.86:compile
-|  |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.86:compile
-|  |  \- org.springframework:spring-web:jar:5.3.33:compile
+|  |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.87:compile
+|  |  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.87:compile
+|  |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.87:compile
+|  |  \- org.springframework:spring-web:jar:5.3.34:compile
 |  +- org.thymeleaf:thymeleaf-spring5:jar:3.0.15.RELEASE:compile
 |  |  \- org.thymeleaf:thymeleaf:jar:3.0.15.RELEASE:compile
 |  |     +- org.attoparser:attoparser:jar:2.0.5.RELEASE:compile
 |  |     \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
 |  +- org.thymeleaf.extras:thymeleaf-extras-java8time:jar:3.0.4.RELEASE:compile
-|  +- org.springframework:spring-webmvc:jar:5.3.33:compile
+|  +- org.springframework:spring-webmvc:jar:5.3.34:compile
 |  \- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.13.5:compile
 +- com.foreach.across.modules:ehcache-module:jar:dev-SNAPSHOT:compile
 |  +- net.sf.ehcache:ehcache:jar:2.10.9.2:compile
-|  \- org.springframework:spring-context-support:jar:5.3.33:compile
+|  \- org.springframework:spring-context-support:jar:5.3.34:compile
 +- com.foreach.across.modules:across-hibernate-module:jar:dev-SNAPSHOT:compile
 |  +- org.springframework.data:spring-data-jpa:jar:2.7.18:compile
 |  |  \- org.springframework.data:spring-data-commons:jar:2.7.18:compile
-|  +- org.springframework:spring-orm:jar:5.3.33:compile
-|  +- org.springframework:spring-aop:jar:5.3.33:compile
+|  +- org.springframework:spring-orm:jar:5.3.34:compile
+|  +- org.springframework:spring-aop:jar:5.3.34:compile
 |  +- org.hibernate:hibernate-core:jar:5.6.15.Final:compile
 |  |  +- javax.persistence:javax.persistence-api:jar:2.2:compile
 |  |  +- net.bytebuddy:byte-buddy:jar:1.12.23:compile
@@ -84,8 +84,8 @@ com.foreach.across.modules:imageserver-core:jar:dev-SNAPSHOT
 |  \- com.foreach.across:across-autoconfigure:jar:dev-SNAPSHOT:compile
 +- com.fasterxml.jackson.core:jackson-core:jar:2.13.5:compile
 +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.5:compile
-+- commons-fileupload:commons-fileupload:jar:1.4:compile
-+- commons-io:commons-io:jar:2.11.0:compile
++- commons-fileupload:commons-fileupload:jar:1.5:compile
++- commons-io:commons-io:jar:2.16.1:compile
 +- com.github.geko444:im4java:jar:1.4.2:compile
 +- org.ghost4j:ghost4j:jar:1.0.1:compile
 |  +- net.java.dev.jna:jna:jar:5.12.1:compile
@@ -114,29 +114,29 @@ com.foreach.across.modules:imageserver-core:jar:dev-SNAPSHOT
 |  +- org.mockito:mockito-core:jar:4.5.1:test
 |  |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.23:test
 |  |  \- org.objenesis:objenesis:jar:3.2:test
-|  +- org.testcontainers:testcontainers:jar:1.19.3:test
+|  +- org.testcontainers:testcontainers:jar:1.19.7:test
 |  |  +- org.apache.commons:commons-compress:jar:1.24.0:test
 |  |  +- org.rnorth.duct-tape:duct-tape:jar:1.0.8:test
 |  |  |  \- org.jetbrains:annotations:jar:17.0.0:test
-|  |  +- com.github.docker-java:docker-java-api:jar:3.3.4:test
-|  |  \- com.github.docker-java:docker-java-transport-zerodep:jar:3.3.4:test
-|  |     \- com.github.docker-java:docker-java-transport:jar:3.3.4:test
-|  +- org.testcontainers:mysql:jar:1.19.3:test
-|  |  \- org.testcontainers:jdbc:jar:1.19.3:test
-|  |     \- org.testcontainers:database-commons:jar:1.19.3:test
-|  +- org.testcontainers:postgresql:jar:1.19.3:test
-|  +- org.testcontainers:mssqlserver:jar:1.19.3:test
-|  \- org.testcontainers:oracle-xe:jar:1.19.3:test
+|  |  +- com.github.docker-java:docker-java-api:jar:3.3.6:test
+|  |  \- com.github.docker-java:docker-java-transport-zerodep:jar:3.3.6:test
+|  |     \- com.github.docker-java:docker-java-transport:jar:3.3.6:test
+|  +- org.testcontainers:mysql:jar:1.19.7:test
+|  |  \- org.testcontainers:jdbc:jar:1.19.7:test
+|  |     \- org.testcontainers:database-commons:jar:1.19.7:test
+|  +- org.testcontainers:postgresql:jar:1.19.7:test
+|  +- org.testcontainers:mssqlserver:jar:1.19.7:test
+|  \- org.testcontainers:oracle-xe:jar:1.19.7:test
 +- org.mockito:mockito-junit-jupiter:jar:4.5.1:test
 |  \- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
 |     +- org.opentest4j:opentest4j:jar:1.2.0:test
 |     \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
 +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
 |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-+- org.springframework:spring-test:jar:5.3.33:test
-|  \- org.springframework:spring-core:jar:5.3.33:compile
-|     \- org.springframework:spring-jcl:jar:5.3.33:compile
-+- org.testcontainers:junit-jupiter:jar:1.19.3:test
++- org.springframework:spring-test:jar:5.3.34:test
+|  \- org.springframework:spring-core:jar:5.3.34:compile
+|     \- org.springframework:spring-jcl:jar:5.3.34:compile
++- org.testcontainers:junit-jupiter:jar:1.19.7:test
 +- com.h2database:h2:jar:2.1.214:test
 +- com.mysql:mysql-connector-j:jar:8.0.33:test
 +- org.postgresql:postgresql:jar:42.3.8:compile
