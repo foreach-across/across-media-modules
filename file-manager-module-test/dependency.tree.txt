@@ -54,6 +54,7 @@ com.foreach.across.modules:file-manager-module-test:jar:dev-SNAPSHOT
 |        \- javax.activation:activation:jar:1.1:compile
 +- com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
 |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.7.18:compile
+|  |  \- org.springframework.boot:spring-boot:jar:2.7.18:compile
 |  +- org.yaml:snakeyaml:jar:1.30:compile
 |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
 |  +- org.springframework:spring-context:jar:5.3.34:compile
@@ -153,8 +154,6 @@ com.foreach.across.modules:file-manager-module-test:jar:dev-SNAPSHOT
 |  |     \- org.slf4j:jul-to-slf4j:jar:1.7.36:compile
 |  \- com.zaxxer:HikariCP:jar:4.0.3:compile
 +- com.h2database:h2:jar:2.1.214:compile
-+- org.springframework.boot:spring-boot-devtools:jar:2.7.18:compile
-|  \- org.springframework.boot:spring-boot:jar:2.7.18:compile
 +- com.amazonaws:aws-java-sdk-s3:jar:1.11.1034:compile
 |  +- com.amazonaws:aws-java-sdk-kms:jar:1.11.1034:compile
 |  +- com.amazonaws:aws-java-sdk-core:jar:1.11.1034:compile

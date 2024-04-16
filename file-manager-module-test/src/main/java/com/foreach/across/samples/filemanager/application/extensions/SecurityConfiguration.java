@@ -18,9 +18,10 @@ package com.foreach.across.samples.filemanager.application.extensions;
 
 import com.foreach.across.core.annotations.ModuleConfiguration;
 import com.foreach.across.modules.spring.security.SpringSecurityModule;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
  * @author Arne Vandamme
@@ -29,10 +30,14 @@ import org.springframework.security.config.annotation.authentication.configurati
 @EnableGlobalAuthentication
 public class SecurityConfiguration
 {
-	@Autowired
-	public void configureGlobal( AuthenticationManagerBuilder auth ) throws Exception {
-		auth.inMemoryAuthentication()
-		    .withUser( "admin" ).password( "{noop}admin" )
-		    .authorities( "access administration" );
+	@Bean
+	public InMemoryUserDetailsManager userDetailsService() {
+		return new InMemoryUserDetailsManager(
+				User.builder()
+				    .username( "admin" )
+				    .password( "{noop}admin" )
+				    .authorities( "access administration" )
+				    .build()
+		);
 	}
 }

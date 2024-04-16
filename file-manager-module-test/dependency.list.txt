@@ -139,7 +139,6 @@ org.slf4j:jcl-over-slf4j:jar:1.7.36:compile
 org.slf4j:jul-to-slf4j:jar:1.7.36:compile
 org.slf4j:slf4j-api:jar:1.7.36:compile
 org.springframework.boot:spring-boot-autoconfigure:jar:2.7.18:compile
-org.springframework.boot:spring-boot-devtools:jar:2.7.18:compile
 org.springframework.boot:spring-boot-starter-aop:jar:2.7.18:compile
 org.springframework.boot:spring-boot-starter-integration:jar:2.7.18:compile
 org.springframework.boot:spring-boot-starter-jdbc:jar:2.7.18:compile
