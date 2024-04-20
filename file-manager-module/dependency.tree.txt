@@ -1,4 +1,4 @@
-com.foreach.across.modules:file-manager-module:jar:6.5.0-beta-1
+com.foreach.across.modules:file-manager-module:jar:6.5-SNAPSHOT
 +- com.azure:azure-storage-blob:jar:12.25.2:compile
 |  +- com.azure:azure-core:jar:1.46.0:compile
 |  |  +- com.azure:azure-json:jar:1.1.0:compile
@@ -39,11 +39,11 @@ com.foreach.across.modules:file-manager-module:jar:6.5.0-beta-1
 |  \- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:jar:2.13.5:compile
 |     +- org.codehaus.woodstox:stax2-api:jar:4.2.1:compile
 |     \- com.fasterxml.woodstox:woodstox-core:jar:6.4.0:compile
-+- com.foreach.across.modules:properties-module:jar:4.5.0-beta-1:compile
++- com.foreach.across.modules:properties-module:jar:4.5-SNAPSHOT:compile
 |  \- com.foreach.libs:common-spring:jar:1.1:compile
 |     \- javax.mail:mail:jar:1.4.1:compile
 |        \- javax.activation:activation:jar:1.1:compile
-+- com.foreach.across.modules:across-hibernate-module:jar:4.5.0-beta-1:compile
++- com.foreach.across.modules:across-hibernate-module:jar:4.5-SNAPSHOT:compile
 |  +- org.springframework.data:spring-data-jpa:jar:2.7.18:compile
 |  |  +- org.springframework:spring-tx:jar:5.3.34:compile
 |  |  \- org.springframework:spring-core:jar:5.3.34:compile
@@ -56,6 +56,7 @@ com.foreach.across.modules:file-manager-module:jar:6.5.0-beta-1
 |  |  +- antlr:antlr:jar:2.7.7:compile
 |  |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:jar:1.1.1.Final:compile
 |  |  +- org.jboss:jandex:jar:2.4.2.Final:compile
+|  |  +- javax.activation:javax.activation-api:jar:1.2.0:compile
 |  |  +- org.hibernate.common:hibernate-commons-annotations:jar:5.1.2.Final:compile
 |  |  +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
 |  |  \- org.glassfish.jaxb:jaxb-runtime:jar:2.3.9:compile
@@ -67,9 +68,9 @@ com.foreach.across.modules:file-manager-module:jar:6.5.0-beta-1
 |  +- com.querydsl:querydsl-jpa:jar:5.0.0:compile
 |  |  \- com.querydsl:querydsl-core:jar:5.0.0:compile
 |  |     \- com.mysema.commons:mysema-commons-lang:jar:0.2.4:compile
-|  \- com.foreach.across:across-autoconfigure:jar:2.5.0-beta-1:compile
-+- com.foreach.across.modules:entity-module:jar:4.5.0-beta-1:compile
-|  +- com.foreach.across.modules:spring-security-module:jar:4.5.0-beta-1:compile
+|  \- com.foreach.across:across-autoconfigure:jar:2.5-SNAPSHOT:compile
++- com.foreach.across.modules:entity-module:jar:4.5-SNAPSHOT:compile
+|  +- com.foreach.across.modules:spring-security-module:jar:4.5-SNAPSHOT:compile
 |  |  +- org.springframework.security:spring-security-core:jar:5.8.12:compile
 |  |  |  \- org.springframework.security:spring-security-crypto:jar:5.8.12:compile
 |  |  +- org.springframework.security:spring-security-web:jar:5.8.12:compile
@@ -80,8 +81,8 @@ com.foreach.across.modules:file-manager-module:jar:6.5.0-beta-1
 |  +- com.google.code.findbugs:jsr305:jar:3.0.2:compile
 |  +- org.atteo:evo-inflector:jar:1.2.2:compile
 |  \- org.webjars:lodash:jar:4.17.4:compile
-+- com.foreach.across.modules:bootstrap-ui-module:jar:4.5.0-beta-1:compile
-|  +- com.foreach.across.modules:ax-bootstrap-4-utilities:jar:4.5.0-beta-1:compile
++- com.foreach.across.modules:bootstrap-ui-module:jar:4.5-SNAPSHOT:compile
+|  +- com.foreach.across.modules:ax-bootstrap-4-utilities:jar:4.5-SNAPSHOT:compile
 |  +- org.webjars:jquery:jar:3.4.1:compile
 |  +- org.webjars:bootstrap:jar:4.3.1:compile
 |  |  \- org.webjars:popper.js:jar:1.14.3:compile
@@ -97,10 +98,10 @@ com.foreach.across.modules:file-manager-module:jar:6.5.0-beta-1
 |  +- org.webjars.npm:bootstrap-select:jar:1.13.11:compile
 |  +- org.webjars.npm:corejs-typeahead:jar:1.2.1:compile
 |  \- org.webjars:font-awesome:jar:5.10.1:compile
-+- com.foreach.across.modules:admin-web-module:jar:4.5.0-beta-1:compile
++- com.foreach.across.modules:admin-web-module:jar:4.5-SNAPSHOT:compile
 |  +- org.thymeleaf.extras:thymeleaf-extras-springsecurity5:jar:3.0.5.RELEASE:compile
 |  \- org.webjars.bower:toastr:jar:2.1.2:compile
-+- com.foreach.across:across-core:jar:5.5.0-beta-1:compile
++- com.foreach.across:across-core:jar:5.5-SNAPSHOT:compile
 |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.7.18:compile
 |  |  \- org.springframework.boot:spring-boot:jar:2.7.18:compile
 |  +- org.yaml:snakeyaml:jar:1.30:compile
@@ -117,7 +118,7 @@ com.foreach.across.modules:file-manager-module:jar:6.5.0-beta-1
 |     +- com.opencsv:opencsv:jar:5.9:compile
 |     +- org.apache.commons:commons-text:jar:1.11.0:compile
 |     \- org.apache.commons:commons-collections4:jar:4.4:compile
-+- com.foreach.across:across-web:jar:5.5.0-beta-1:compile
++- com.foreach.across:across-web:jar:5.5-SNAPSHOT:compile
 |  +- org.springframework.boot:spring-boot-starter-web:jar:2.7.18:compile
 |  |  +- org.springframework.boot:spring-boot-starter:jar:2.7.18:compile
 |  |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.7.18:compile
@@ -144,7 +145,7 @@ com.foreach.across.modules:file-manager-module:jar:6.5.0-beta-1
 |  +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
 |  +- org.jboss.logging:jboss-logging:jar:3.4.3.Final:compile
 |  \- com.fasterxml:classmate:jar:1.5.1:compile
-+- com.foreach.across:across-test:jar:5.5.0-beta-1:test
++- com.foreach.across:across-test:jar:5.5-SNAPSHOT:test
 |  +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
 |  |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
 |  |  +- junit:junit:jar:4.13.2:test
@@ -198,8 +199,7 @@ com.foreach.across.modules:file-manager-module:jar:6.5.0-beta-1
 +- org.springframework.cloud:spring-cloud-aws-core:jar:2.2.6.RELEASE:compile
 |  +- org.springframework:spring-beans:jar:5.3.34:compile
 |  +- com.amazonaws:aws-java-sdk-ec2:jar:1.11.1034:compile
-|  +- com.amazonaws:aws-java-sdk-cloudformation:jar:1.11.1034:compile
-|  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+|  \- com.amazonaws:aws-java-sdk-cloudformation:jar:1.11.1034:compile
 +- org.springframework.boot:spring-boot-starter-integration:jar:2.7.18:compile
 |  +- org.springframework.boot:spring-boot-starter-aop:jar:2.7.18:compile
 |  |  \- org.aspectj:aspectjweaver:jar:1.9.7:compile
