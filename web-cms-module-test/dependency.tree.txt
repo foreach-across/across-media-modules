@@ -79,9 +79,8 @@ com.foreach.across.modules:web-cms-module-test:jar:dev-SNAPSHOT
 |  \- org.slf4j:log4j-over-slf4j:jar:1.7.36:compile
 +- com.foreach.across.modules:user-module:jar:dev-SNAPSHOT:compile
 |  +- com.foreach.across.modules:properties-module:jar:dev-SNAPSHOT:compile
-|  |  \- com.foreach.libs:common-spring:jar:1.1:compile
-|  |     \- javax.mail:mail:jar:1.4.1:compile
-|  |        \- javax.activation:activation:jar:1.1:compile
+|  |  \- com.foreach.libs:common-spring:jar:2.0.0-beta-1:compile
+|  |     \- javax.mail:javax.mail-api:jar:1.6.2:compile
 |  +- org.apache.commons:commons-collections4:jar:4.4:compile
 |  \- org.aspectj:aspectjrt:jar:1.9.7:compile
 +- org.springframework.boot:spring-boot-starter-tomcat:jar:2.7.18:compile
@@ -102,7 +101,7 @@ com.foreach.across.modules:web-cms-module-test:jar:dev-SNAPSHOT
 |  |     \- org.apache.sshd:sshd-core:jar:2.12.1:compile
 |  |        \- org.apache.sshd:sshd-common:jar:2.12.1:compile
 |  +- com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
-|  |  +- com.foreach.libs:common-concurrent:jar:1.1:compile
+|  |  +- com.foreach.libs:common-concurrent:jar:2.0.0-beta-1:compile
 |  |  +- ch.qos.logback:logback-classic:jar:1.2.13:compile
 |  |  |  \- ch.qos.logback:logback-core:jar:1.2.13:compile
 |  |  +- org.slf4j:jcl-over-slf4j:jar:1.7.36:compile

@@ -34,8 +34,8 @@ com.foreach.across.modules:spring-security-module:jar:dev-SNAPSHOT:compile
 com.foreach.across:across-autoconfigure:jar:dev-SNAPSHOT:compile
 com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
 com.foreach.across:across-web:jar:dev-SNAPSHOT:compile
-com.foreach.libs:common-concurrent:jar:1.1:compile
-com.foreach.libs:common-spring:jar:1.1:compile
+com.foreach.libs:common-concurrent:jar:2.0.0-beta-1:compile
+com.foreach.libs:common-spring:jar:2.0.0-beta-1:compile
 com.github.docker-java:docker-java-api:jar:3.3.6:compile
 com.github.docker-java:docker-java-transport-zerodep:jar:3.3.6:compile
 com.github.docker-java:docker-java-transport:jar:3.3.6:compile
@@ -88,10 +88,9 @@ io.projectreactor:reactor-core:jar:3.4.34:compile
 jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
 jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
 jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:compile
-javax.activation:activation:jar:1.1:compile
 javax.activation:javax.activation-api:jar:1.2.0:compile
 javax.inject:javax.inject:jar:1:compile
-javax.mail:mail:jar:1.4.1:compile
+javax.mail:javax.mail-api:jar:1.6.2:compile
 javax.persistence:javax.persistence-api:jar:2.2:compile
 javax.servlet:javax.servlet-api:jar:4.0.1:provided
 javax.xml.bind:jaxb-api:jar:2.3.1:compile
