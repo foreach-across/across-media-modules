@@ -8,7 +8,7 @@ com.foreach.across.modules:imageserver-core:jar:dev-SNAPSHOT
 |     \- org.apache.sshd:sshd-core:jar:2.12.1:compile
 |        \- org.apache.sshd:sshd-common:jar:2.12.1:compile
 +- com.foreach.across.modules:properties-module:jar:dev-SNAPSHOT:compile
-|  \- com.foreach.libs:common-spring:jar:2.0.0-beta-1:compile
+|  \- com.foreach.libs:common-spring:jar:2.0.0-beta-2:compile
 |     \- javax.mail:javax.mail-api:jar:1.6.2:compile
 +- com.foreach.across.modules:imageserver-client:jar:dev-SNAPSHOT:compile
 |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.5:compile
@@ -16,7 +16,7 @@ com.foreach.across.modules:imageserver-core:jar:dev-SNAPSHOT
 |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.7.18:compile
 |  |  \- org.springframework.boot:spring-boot:jar:2.7.18:compile
 |  +- org.yaml:snakeyaml:jar:1.30:compile
-|  +- com.foreach.libs:common-concurrent:jar:2.0.0-beta-1:compile
+|  +- com.foreach.libs:common-concurrent:jar:2.0.0-beta-2:compile
 |  +- org.springframework:spring-context:jar:5.3.34:compile
 |  |  +- org.springframework:spring-beans:jar:5.3.34:compile
 |  |  \- org.springframework:spring-expression:jar:5.3.34:compile

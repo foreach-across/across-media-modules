@@ -19,8 +19,8 @@ com.foreach.across.modules:user-module:jar:dev-SNAPSHOT:compile
 com.foreach.across:across-autoconfigure:jar:dev-SNAPSHOT:compile
 com.foreach.across:across-core:jar:dev-SNAPSHOT:compile
 com.foreach.across:across-web:jar:dev-SNAPSHOT:compile
-com.foreach.libs:common-concurrent:jar:2.0.0-beta-1:compile
-com.foreach.libs:common-spring:jar:2.0.0-beta-1:compile
+com.foreach.libs:common-concurrent:jar:2.0.0-beta-2:compile
+com.foreach.libs:common-spring:jar:2.0.0-beta-2:compile
 com.google.code.findbugs:jsr305:jar:3.0.2:compile
 com.mysema.commons:mysema-commons-lang:jar:0.2.4:compile
 com.opencsv:opencsv:jar:5.9:compile
