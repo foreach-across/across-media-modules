@@ -78,25 +78,6 @@
 			<groupId>org.ghost4j</groupId>
 			<artifactId>ghost4j</artifactId>
 		</dependency>
-		<!-- Left these in for future implementations -->
-		<dependency>
-			<groupId>foreach-custom</groupId>
-			<artifactId>commons-imaging</artifactId>
-			<version>1.0</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-			<version>2.0.11</version>
-			<optional>true</optional>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<dependency>
 			<groupId>com.foreach.across</groupId>

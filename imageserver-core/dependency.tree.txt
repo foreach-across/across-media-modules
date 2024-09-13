@@ -94,9 +94,6 @@ com.foreach.across.modules:imageserver-core:jar:dev-SNAPSHOT
 |  |  \- commons-collections:commons-collections:jar:3.2.1:compile
 |  +- org.apache.xmlgraphics:xmlgraphics-commons:jar:1.4:compile
 |  \- com.lowagie:itext:jar:2.1.7:compile
-+- foreach-custom:commons-imaging:jar:1.0:compile
-+- org.apache.pdfbox:pdfbox:jar:2.0.11:compile
-|  \- org.apache.pdfbox:fontbox:jar:2.0.11:compile
 +- com.foreach.across:across-test:jar:dev-SNAPSHOT:test
 |  +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
 |  |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
